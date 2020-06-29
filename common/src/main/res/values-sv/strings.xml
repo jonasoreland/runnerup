@@ -350,4 +350,5 @@
   <string name="path_simplification_menu">Förenkla GPS-spår</string>
   <string name="File_format">Uppladdningsformat:</string>
   <string name="File_need_one_format">Åtminstone ett format behövs!</string>
+    <string name="Error">Fel</string>
 </resources>

@@ -48,7 +48,7 @@
   <string-array name="target_types">
     <item>None</item>
     <item>Pace</item>
-    <item>Heartrate zone</item>
+    <item>Heart rate zone</item>
   </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">

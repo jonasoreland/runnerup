@@ -14,7 +14,7 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
+  <string name="app_name" translatable="false">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,23 +24,18 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">HR</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s at %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK, rats</string>
-  <!--other-->
   <string name="Type">Type</string>
   <string name="active">active</string>
   <string name="rest">rest</string>
   <string name="recovery">recovery</string>
-  <string name="warm_up">warm up</string>
-  <string name="cool_down">cool down</string>
-  <string name="repeat">repeat</string>
-  <string name="repeat_times">Repeat %1$dx</string>
+  <string name="warm_up">warmup</string>
+  <string name="cool_down">cooldown</string>
+  <string name="repeat">Repeat</string>
+  <string name="repeat_times">Repeat %1$d times</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
   <string name="Distance">Distance</string>
@@ -121,14 +116,14 @@
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
   <string name="Synchronizing">Synchronizing</string>
-  <string name="synchronizing_feed">synchronizing feed…</string>
+  <string name="synchronizing_feed">Synchronizing feed…</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Manage connections</string>
   <string name="accounts_category_unconnected">Connect an account</string>
   <string name="Show_disabled_accounts">Show disabled accounts</string>
   <string name="Hide_disabled_accounts">Hide disabled accounts</string>
   <string name="Clear_uploads">Clear uploads</string>
-  <string name="Upload_missing_workouts">Upload (missing) workouts</string>
+  <string name="Upload_missing_workouts">Upload missing workouts</string>
   <string name="Disconnect_account">Disconnect account</string>
   <string name="Edit_activity">Edit activity</string>
   <string name="Share_activity">Share activity</string>
@@ -151,32 +146,28 @@
   <string name="Select_type_of_Bluetooth_device">Select type of Bluetooth device</string>
   <string name="Scanning">Scanning</string>
   <string name="Failed_to_load_workout">Failed to load workout!!</string>
-  <string name="Problem">Problem</string>
+  <string name="Error">Error</string>
   <string name="Edit_step">Edit step</string>
   <string name="Create_new_audio_cue_scheme">Create new audio cue scheme</string>
-  <string name="Great">Great!</string>
-  <string name="OK_darn">OK, darn!</string>
   <string name="Yes">Yes</string>
   <string name="Create">Create</string>
-  <string name="Darn">Darn!</string>
-  <string name="Dismiss">Dismiss</string>
   <string name="No_way">No way</string>
   <string name="No">No</string>
-  <string name="Loading">Loading…</string>
+  <string name="Loading">Loading</string>
   <string name="Saving">Saving</string>
-  <string name="Cancellingplease_wait">Cancelling… please wait</string>
+  <string name="Cancellingplease_wait">Cancelling, please wait…</string>
   <string name="Are_you_sure">Are you sure?</string>
   <string name="Configure_audio_cues">Configure audio cues</string>
   <string name="Downloadeditremove_workouts">Download/edit/remove workouts</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">You need to connect to a RunnerUp Live account</string>
+  <string name="Note_you_need_to_connect_to_the_account_too">You must connect to a RunnerUp Live account</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, use \"Recovery\" instead of \"Rest\" (pause) steps</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">For inserted countdown steps, use \"Recovery\" instead of \"Rest\" (pause) steps</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, use Recovery instead of Rest (pause) steps</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">For inserted countdown steps, use Recovery instead of Rest (pause) steps</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Export database to storage</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Import database from storage</string>
-  <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if having set target)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Suppress cue for start/pause/resume/stop</string>
-  <string name="Test_audio_cue">Test audio cue</string>
+  <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach to help you reach target (if any)</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Mute start/pause/resume/stop cues</string>
+  <string name="Test_audio_cue">Test audio cues</string>
   <string name="Accounts">Accounts</string>
   <string name="Audio_cues">Audio cues</string>
   <string name="Heart_Rate_Monitor">Heart rate monitor</string>
@@ -184,29 +175,29 @@
   <string name="Autolap">Autolap</string>
   <string name="Autolap_m">Autolap (m)</string>
   <string name="Autopause">Autopause</string>
-  <string name="Autopause_summary">Autopause in basic workouts as well as \"Warmup\" and "Cooldown\" steps</string>
+  <string name="Autopause_summary">Autopause in basic workouts and Warmup and Cooldown steps</string>
   <string name="Enable_RunnerUpLive">Enable RunnerUp Live</string>
   <string name="Headset_key_startstop">Headset key start/stop</string>
   <string name="Activity_countdown">Countdown to activity start</string>
-  <string name="Activity_countdown_summary">Add countdown to activity start for basic workouts</string>
+  <string name="Activity_countdown_summary">Add countdown to basic workout start</string>
   <string name="Countdown_time_s">Countdown time (s)</string>
-  <string name="Unit_preference_title">Unit Preferences</string>
-  <string name="Unit_preference">Distance unit preference</string>
+  <string name="Unit_preference_title">Units</string>
+  <string name="Unit_preference">Distance unit</string>
   <string name="Auto_start_GPS">Autostart GPS</string>
   <string name="Advanced_options">Advanced options</string>
   <string name="Mapbox_default_style">Mapbox style</string>
   <string name="RunnerUp_live_address">RunnerUp Live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
-  <string name="Autopause_min_pace_minkm">Autopause min pace (min/km)</string>
+  <string name="Autopause_min_pace_minkm">Autopause minimum pace (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interval rest steps</string>
   <string name="Convert_rest_on_Advanced_tab">Recovery in countdown steps</string>
   <string name="Target_pace_moving_average_seconds">Target feedback moving average (s)</string>
   <string name="Target_pace_grace_seconds">Target feedback grace period (s)</string>
   <string name="Autolap_during_intervals">Autolap in workouts</string>
   <string name="Autolap_basic_summary">Autolap in basic workouts</string>
-  <string name="Autolap_during_intervals_summary">Autolap in last step and \"Active\" steps</string>
+  <string name="Autolap_during_intervals_summary">Autolap in last step and Active steps</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown after key press</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Add a countdown \"Recovery\" or \"Rest\" step after a step that ends with user key press</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Add a countdown Recovery or Rest step after a step ended by a key press</string>
   <string name="Step_countdown_time_s">Step countdown time (s)</string>
   <string name="Smooth_pace_graph">Smooth pace graph</string>
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
@@ -227,7 +218,7 @@
   <string name="Distance_triggered_audio_cue_summary">Periodic feedback</string>
   <string name="Cue_intervall_m">Cue intervall (m)</string>
   <string name="End_of_lap_audio_cue">End of lap</string>
-  <string name="End_of_lap_audio_cue_summary">End of autolap and \"Active\" steps</string>
+  <string name="End_of_lap_audio_cue_summary">End of autolap and Active steps</string>
   <string name="Mute_music_during_audio_cues">Mute music during audio cues</string>
   <string name="Cue_information">Cue information</string>
   <string name="Total_distance">Total distance</string>
@@ -254,7 +245,7 @@
   <string name="Current_heart_rate_zone">Current heart rate zone</string>
   <string name="Current_cadence">Current cadence</string>
   <string name="Current">Current</string>
-  <string name="Misc_cues">Misc cues</string>
+  <string name="Misc_cues">Other cues</string>
   <string name="Target_coaching">Target coaching</string>
   <string name="Skip_event_audio_cues">Skip event audio cues</string>
   <string name="Push">Press here</string>
@@ -266,8 +257,8 @@
   <string name="Manual_activity_title">Add manual entry</string>
   <string name="Add_manual_entry">Add manual entry</string>
   <string name="Add_workout_notes">Add workout notes</string>
-  <string name="Pruning_deleted_activities_from_database">Prune deleted activities from the database</string>
-  <string name="Prune">Prune</string>
+  <string name="Pruning_deleted_activities_from_database">Clean deleted activities</string>
+  <string name="Prune">Permanently delete</string>
   <string name="Heartrate_zones_distribution">Heart rate zone distribution</string>
   <string name="Battery_level">Battery level</string>
   <string name="Activity_ready">Activity ready</string>
@@ -278,7 +269,7 @@
   <string name="Low_HRM_battery_level">Low HRM battery level</string>
   <string name="High_HRM_battery_level">High HRM battery level</string>
   <string name="Warning">Warning</string>
-  <string name="Do_not_show_again">Do not show again</string>
+  <string name="Do_not_show_again">Do not show this again</string>
   <string name="Waiting_for_phone" tools:ignore="UnusedResources">Waiting for phone</string>
   <string name="Saving_on_phone" tools:ignore="UnusedResources">Saving on phone</string>
   <string name="Save">Save</string>
@@ -302,28 +293,28 @@
   <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Downloading %1$s will overwrite %2$s workout with same name</string>
   <string name="Delete_workout">Delete workout</string>
   <string name="RunnerUp_workout">RunnerUp workout</string>
-  <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nHere is a workout I think you might like.</string>
+  <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nI think you might like this workout.</string>
   <string name="Share_workout">Share workout…</string>
   <string name="New_audio_scheme">New audio scheme</string>
-  <string name="GPS_permission_required">GPS permission is required</string>
+  <string name="GPS_permission_required">GPS permission required</string>
   <string name="Default">Default</string>
-  <string name="Notes_about_your_workout">Notes about your workout</string>
+  <string name="Notes_about_your_workout">Workout notes</string>
   <string name="Downloading_from_1s">Downloading from %1$s</string>
   <string name="Uploading_to_1s">Uploading to %1$s</string>
   <string name="Loading_activities">Loading activities</string>
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
   <string name="No_feed_to_show">No feed to show</string>
-  <string name="Unused_currently">Unused currently.</string>
+  <string name="Unused_currently">Currently unused</string>
   <string name="Unknown">Unknown</string>
   <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>
-  <string name="cue_hrm_connection_restored">Restored connection to heart rate monitor</string>
-  <string name="cue_hrm_connection_lost">Lost connection to heart rate monitor</string>
-  <string name="HRM_connection_audio_cue">HRM connection triggered audio cue</string>
+  <string name="cue_hrm_connection_restored">Connection to heart rate monitor restored</string>
+  <string name="cue_hrm_connection_lost">Connection to heart rate monitor lost</string>
+  <string name="HRM_connection_audio_cue">HRM connection audio cues</string>
   <string name="Audio_cue_unit">Include unit in audio cue</string>
-  <string name="latest_feed_click_to_refresh">Latest feed (click to refresh)</string>
+  <string name="latest_feed_click_to_refresh">Latest feed (press to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
   <string name="Current_speed_from_GPS_points">Current speed from GPS points</string>
@@ -331,24 +322,24 @@
   <string name="use_step_sensor_summary">Use for cadence</string>
   <string name="use_temperature_sensor">Temperature sensor</string>
   <string name="use_pressure_sensor_title">Pressure sensor</string>
-  <string name="use_pressure_sensor_summary">Use the barometer to calculate elevation</string>
+  <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
   <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to the GPS elevation</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Use the initial GPS elevation to average out the barometric elevation</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
   <string name="Lap_start">Lap start</string>
-  <string name="Lap_start_summary">Cue for start of laps and \"Active\", \"Warmup\" and \"Cooldown\" steps</string>
+  <string name="Lap_start_summary">Cue for start of laps and Active, Warmup, and Cooldown steps</string>
   <string name="Lock_activity_buttons">Lock activity buttons</string>
   <string name="Lock_activity_buttons_message">Lock activity buttons by fast clicking the header</string>
   <string name="Speed">Speed</string>
   <string name="Speed_unit_preference">Speed unit</string>
   <string name="path_simplification">Path simplification</string>
-  <string name="path_simplification_info">Reduce the resolution of the GPS path (logged locations over time). Smooths the path and decreases the size of an activity in the database or an exported file.</string>
+  <string name="path_simplification_info">Reduce the resolution of the GPS path (locations logged over time). Smooths the path and decreases the size of an activity in the database or an exported file.</string>
   <string name="path_simplification_on_save">Simplify when saving activity</string>
   <string name="path_simplification_on_export">Simplify when uploading to accounts</string>
   <string name="path_simplification_tolerance">Tolerance (m)</string>
   <string name="path_simplification_algorithm">Algorithm</string>
-  <string name="path_simplification_algorithm_info">Choose fast or high quality path simplification</string>
+  <string name="path_simplification_algorithm_info">Choose fast or high-quality path simplification</string>
   <string name="path_simplification_menu">Simplify path</string>
-  <string name="File_format">Upload file(s) as:</string>
-  <string name="File_need_one_format">At least one format needed!</string>
+  <string name="File_format">Upload files as:</string>
+  <string name="File_need_one_format">You must specify at least one format</string>
 </resources>
