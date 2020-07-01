@@ -147,7 +147,7 @@ public class SyncManager {
     @SuppressWarnings("UnusedReturnValue")
     public long load(String synchronizerName) {
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
         String args[] = {
                 synchronizerName
@@ -1321,7 +1321,7 @@ public class SyncManager {
         }
 
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
         Cursor c = null;
@@ -1348,7 +1348,7 @@ public class SyncManager {
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
         String from[] = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FLAGS
+                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
         SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
