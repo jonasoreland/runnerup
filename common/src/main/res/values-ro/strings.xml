@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="app_name">RunnerUp</string>
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">km</string>
+  <string name="metrics_distance_mi">mi</string>
+  <string name="metrics_distance_m">m</string>
+  <string name="metrics_elapsed_h">h</string>
+  <string name="metrics_elapsed_m">m</string>
+  <string name="metrics_elapsed_min">min</string>
+  <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_heartrate">RC</string>
+  <!--format hint stuff-->
+  <string name="Maximum_heart_rate_MHR">Ritmul cardiac maxim (RCM)</string>
+  <string name="Target_pace_HHMMSS">Ritmul țintit</string>
+  <!--strings with argument to provide-->
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s la %2$s</string>
+  <!--weird stuff: should it be placeholders or even removed?-->
+  <string name="ok_rats">OK</string>
+  <!--other-->
+  <string name="Type">Tip</string>
+  <string name="active">activitate</string>
+  <string name="rest">odihnă</string>
+  <string name="recovery">recuperare</string>
+  <string name="warm_up">încălzire</string>
+  <string name="cool_down">răcire</string>
+  <string name="repeat">repetă</string>
+  <string name="repeat_times">Repetă de %1$d ori</string>
+  <string name="time">timp</string>
+  <string name="distance">distanţă</string>
+  <string name="Distance">Distanţă</string>
+  <string name="speed">viteză</string>
+  <string name="pace">ritm</string>
+  <string name="heart_rate_zone">zona de ritm cardiac</string>
+  <string name="cadence">cadenţă</string>
+  <string name="temperature">temperatură</string>
+  <string name="pressure">presiune</string>
+  <string name="Zone">Zonă</string>
+  <string name="Device">Dispozitiv</string>
+  <string name="Start_hour">Ora de începere</string>
+  <string name="Heart_rate">Ritmul cardiac</string>
+  <string name="Pace">Ritm</string>
+  <string name="Scan">Analiză</string>
+  <string name="Connect">Conectează</string>
+  <string name="Connecting">Se conectează</string>
+  <string name="Download">Descarcă</string>
+  <string name="Share">Împărtășește</string>
+  <string name="Delete">Șterge</string>
+  <string name="Total">Total</string>
+  <string name="Interval">Interval</string>
+  <string name="Lap">Rundă</string>
+  <string name="New_lap">Runda nouă</string>
+  <string name="Next_lap">Runda următoară</string>
+  <string name="Pause">Pauză</string>
+  <string name="Stop">Stop</string>
+  <string name="Workout">Antrenament</string>
+  <string name="Download_workouts">Descarcă antrenamente</string>
+  <string name="Audio_cue_settings">Setări audio cue</string>
+  <string name="Sport">Exerciţiu</string>
+  <string name="Target">Ţintă</string>
+  <string name="Target_heart_rate_zone">Zona țintă a ritmului cardiac</string>
+  <string name="Interval_type">Tipul de interval</string>
+  <string name="Rest_type">Tipul de odihnă</string>
+  <string name="Repetitions">Repetări</string>
+  <string name="Date">Dată</string>
+  <string name="No_devices_connected">Nu există dispozitive conectate</string>
+  <string name="GPS_satellites">Sateliți GPS</string>
+  <string name="GPS_indicator_off">GPS oprit</string>
+  <string name="GPS_status_accuracy">GPS: %1$d/%2$d sat. (%3$s)</string>
+  <string name="GPS_status_no_accuracy">GPS: %1$d/%2$d sateliți</string>
+  <string name="GPS_accuracy_elevation">prec. %1$s, elev. %2$s</string>
+  <string name="GPS_accuracy_no_elevation">precizie %s</string>
+  <string name="GPS_level_poor">GPS slab</string>
+  <string name="GPS_level_acceptable">GPS acceptabil</string>
+  <string name="GPS_level_good">GPS bun</string>
+  <string name="Start_GPS">Pornește GPS-ul</string>
+  <string name="Duration">Durată</string>
+  <string name="Cancel">Anulează</string>
+  <string name="value">valoare</string>
+  <string name="Select_all">Selectează tot</string>
+  <string name="Clear_all">Șterge tot</string>
+  <string name="Username">Nume de utilizator</string>
+  <string name="Password">Parolă</string>
+  <string name="Show_password">Arată parola</string>
+  <string name="intensity">intensitate</string>
+  <string name="Step_intensity">Intensitatea etapei</string>
+  <string name="Low_pace">Ritm lent</string>
+  <string name="High_pace">Ritm rapid</string>
+  <string name="Sex">Sex</string>
+  <string name="upload">Încarcă</string>
+  <string name="feed">Feed</string>
+  <string name="Notes">Notițe</string>
+  <string name="Laps">Runde</string>
+  <string name="Map">Hartă</string>
+  <string name="Graph">Grafic</string>
+  <string name="Upload">Încarcă</string>
+  <string name="Disconnect">Deconectează</string>
+  <string name="Resume">Reluă</string>
+  <string name="Save_activity">Salvează activitatea</string>
+  <string name="Upload_activity">Încarcă activitatea</string>
+  <string name="Uploaded">Încărcat</string>
+  <string name="Finished">Terminat</string>
+  <string name="Until_press">Până apasă</string>
+  <string name="Discard_activity">Renunță la activitatea</string>
+  <string name="Configure_accounts">Editează conturile</string>
+  <string name="Refresh">Reîncarcă</string>
+  <string name="Age">Vârstă</string>
+  <string name="Synchronizing">Se sincronizează</string>
+  <string name="synchronizing_feed">se sincronizează feedul...</string>
+  <string name="OK">OK</string>
+  <string name="accounts_category_connected">Gestionează conexiunile</string>
+  <string name="accounts_category_unconnected">Conectează un cont</string>
+  <string name="Show_disabled_accounts">Afișează conturile dezactivate</string>
+  <string name="Hide_disabled_accounts">Ascunde conturile dezactivate</string>
+  <string name="Clear_uploads">Șterge încărcările</string>
+  <string name="Upload_missing_workouts">Încarcă antrenamentele care lipsesc</string>
+</resources>

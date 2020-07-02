@@ -40,7 +40,7 @@
   <string name="warm_up">échauffement</string>
   <string name="cool_down">refroidissement</string>
   <string name="repeat">répétition</string>
-  <string name="repeat_times">Répéter %1$dx</string>
+  <string name="repeat_times">Répéter %1$d fois</string>
   <string name="time">temps</string>
   <string name="distance">distance</string>
   <string name="Distance">Distance</string>
@@ -144,7 +144,7 @@
   <string name="Enable_GPS">Activer le GPS</string>
   <string name="Waiting_for_GPS">En attente du GPS...</string>
   <string name="Start_activity">Démarrer la séance</string>
-  <string name="Wear_OS_Device">Porter appareil OS</string>
+  <string name="Wear_OS_Device">Appareil Wear OS</string>
   <string name="Clear_HR_settings">Supprimer les paramètres FC</string>
   <string name="Heart_rate_monitor_is_not_supported_for_your_device">Cardiofréquencemètre non compatible avec votre appareil</string>
   <string name="Select_type_of_Bluetooth_device">Sélectionnez le type d\'appareil Bluetooth</string>
@@ -209,8 +209,8 @@
   <string name="Step_countdown_time_s">Compte à rebours d\'étape (s)</string>
   <string name="Smooth_pace_graph">Lisser le graphique de rythme</string>
   <string name="Smooth_pace_filters">Filtre(s) de lissage du rythme</string>
-  <string name="Poll_interval_ms">Fréquence de raffraichissement du GPS (en millisecondes)</string>
-  <string name="Poll_distance_m">Fréquence de raffraichissement du GPS (en mètres)</string>
+  <string name="Poll_interval_ms">Fréquence de raffraîchissement du GPS (ms)</string>
+  <string name="Poll_distance_m">Fréquence de raffraîchissement du GPS (m)</string>
   <string name="Adjust_altitude">Ajuster l\'altitude GPS à geoid (EGM96)</string>
   <string name="Export">Exporter</string>
   <string name="Import">Importer</string>
@@ -265,7 +265,7 @@
   <string name="Manual_activity_title">Ajouter une entrée manuelle</string>
   <string name="Add_manual_entry">Ajouter une entrée manuelle</string>
   <string name="Add_workout_notes">Ajouter des notes à l\'entraînement</string>
-  <string name="Pruning_deleted_activities_from_database">Nettoyer les séance supprimées de la base de données</string>
+  <string name="Pruning_deleted_activities_from_database">Nettoyer les séances supprimées de la base de données</string>
   <string name="Prune">Nettoyer</string>
   <string name="Heartrate_zones_distribution">Distribution des zones de fréq. cardiaque</string>
   <string name="Battery_level">Niveau de batterie</string>
@@ -333,19 +333,21 @@
   <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'élévation</string>
   <string name="adjust_barometer_altitude_from_gps">Ajuster l\'altitude du baromètre à l\'élévation GPS</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une élévation barométrique moyenne</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS et notifications d\'activité</string>
+  <string name="channel_notification_ongoing">Notifications de GPS et activité RunnerUp</string>
   <string name="Lap_start">Début du tour</string>
   <string name="Lap_start_summary">Suivi audio pour chaque tour et étape \"Active\", \"Échauffement\" et \"Récupération\"</string>
   <string name="Lock_activity_buttons">Verrouiller les boutons d\'activité</string>
-  <string name="Lock_activity_buttons_message">Verrouiller les boutons d\'activité d\'un clic rapide sur l\'entête</string>
+  <string name="Lock_activity_buttons_message">Verrouiller les boutons d\'activité en cliquant rapidement sur l\'entête</string>
   <string name="Speed">Vitesse</string>
   <string name="Speed_unit_preference">Unité de vitesse</string>
   <string name="path_simplification">Simplification des traces GPS</string>
   <string name="path_simplification_info">Réduit la résolution des traces GPS (enregistrement des positions au fil du temps). Lisse la trace et réduit le poids d\'une activité dans la base de données ou dans un fichier exporté.</string>
+  <string name="path_simplification_on_save">Simplifier lors de l\'enregistrement</string>
+  <string name="path_simplification_on_export">Simplifier lors du téléchargement aux comptes</string>
   <string name="path_simplification_tolerance">Tolérance en mètres</string>
   <string name="path_simplification_algorithm">Algorithme</string>
   <string name="path_simplification_algorithm_info">Choisissez entre rapidité et haute qualité de la simplification de la trace</string>
   <string name="path_simplification_menu">Simplifier la trace</string>
   <string name="File_format">Fichier(s) au format:</string>
-  <string name="File_need_one_format">Sélectionnez au moins un format !</string>
+  <string name="File_need_one_format">Sélectionnez au moins un format.</string>
 </resources>

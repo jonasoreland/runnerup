@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>Mile</item>
+    <item>Kilometri</item>
+  </string-array>
+  <string-array name="speedUnitEntries">
+    <item>Ritm</item>
+    <item>Viteză</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Încălzire</item>
+    <item>Activitate</item>
+    <item>Odihnă</item>
+    <item>Recuperare</item>
+    <item>Răcire</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>Până la apăsare</item>
+    <item>Timp</item>
+    <item>Distanţă</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>Nici un</item>
+    <item>Ritm</item>
+    <item>Zona de ritm cardiac</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Alergare</item>
+    <item>Ciclism</item>
+    <item>Alte</item>
+    <item>Orienteering</item>
+    <item>Umblare</item>
+  </string-array>
+  <string-array name="types">
+    <item>Timp</item>
+    <item>Distanţă</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Bărbat</item>
+    <item>Femeie</item>
+  </string-array>
+  <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Distanță-Radială (rapid)</item>
+    <item>Ramer-Douglas-Peucker (calitate superioară)</item>
+  </string-array>
+</resources>
