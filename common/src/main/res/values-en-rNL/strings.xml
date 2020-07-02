@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,14 +23,9 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Hr</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximale hartslag (HFmax)</string>
   <string name="Target_pace_HHMMSS">Doel tempo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK, rats</string>
-  <!--other-->
   <string name="Type">Type</string>
   <string name="active">actief</string>
   <string name="rest">rust</string>
@@ -130,15 +124,10 @@
   <string name="Select_type_of_Bluetooth_device">Selecteer het type Bluetooth-apparaat</string>
   <string name="Scanning">Zoeken naar</string>
   <string name="Failed_to_load_workout">De training kon niet geladen worden!!</string>
-  <string name="Problem">Probleem</string>
   <string name="Edit_step">Stap bewerken</string>
   <string name="Create_new_audio_cue_scheme">Nieuwe auditieve signaal schema aanmaken</string>
-  <string name="Great">Geweldig!</string>
-  <string name="OK_darn">OK, verdorie!</string>
   <string name="Yes">Ja</string>
   <string name="Create">Maken</string>
-  <string name="Darn">Verdorie!</string>
-  <string name="Dismiss">Afwijzen</string>
   <string name="No_way">Absoluut niet</string>
   <string name="No">Nee</string>
   <string name="Loading">Laden…</string>

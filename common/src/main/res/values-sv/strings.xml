@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,23 +23,18 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Puls</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maxpuls (MHR)</string>
   <string name="Target_pace_HHMMSS">Måltempo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK, nedrans</string>
-  <!--other-->
   <string name="Type">Typ</string>
   <string name="active">aktiv</string>
   <string name="rest">vila</string>
   <string name="recovery">återhämtning</string>
   <string name="warm_up">uppvärmning</string>
   <string name="cool_down">nedvarvning</string>
-  <string name="repeat">upprepning</string>
-  <string name="repeat_times">Upprepa %1$dx</string>
+  <string name="repeat">Upprepning</string>
+  <string name="repeat_times">Upprepa %1$d gånger</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>
   <string name="Distance">Distans</string>
@@ -121,14 +115,14 @@
   <string name="Refresh">Uppdatera</string>
   <string name="Age">Ålder</string>
   <string name="Synchronizing">Synkroniserar</string>
-  <string name="synchronizing_feed">synkroniserar flöde…</string>
+  <string name="synchronizing_feed">Synkroniserar flöde…</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Hantera kopplingar</string>
   <string name="accounts_category_unconnected">Koppla konto</string>
   <string name="Show_disabled_accounts">Visa inaktiverade konton</string>
   <string name="Hide_disabled_accounts">Dölj inaktiverade konton</string>
   <string name="Clear_uploads">Rensa uppladdningar</string>
-  <string name="Upload_missing_workouts">Ladda upp (saknade) träningspass</string>
+  <string name="Upload_missing_workouts">Ladda upp träningspass</string>
   <string name="Disconnect_account">Koppla ifrån konto</string>
   <string name="Edit_activity">Redigera aktivitet</string>
   <string name="Share_activity">Dela aktivitet</string>
@@ -150,31 +144,27 @@
   <string name="Select_type_of_Bluetooth_device">Välj typ av Bluetooth-enhet</string>
   <string name="Scanning">Skannar</string>
   <string name="Failed_to_load_workout">Misslyckades med att ladda träningspass!!</string>
-  <string name="Problem">Problem</string>
+  <string name="Error">Fel</string>
   <string name="Edit_step">Redigera steg</string>
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
-  <string name="Great">Kanon!</string>
-  <string name="OK_darn">OK… typiskt!</string>
   <string name="Yes">Ja</string>
   <string name="Create">Skapa</string>
-  <string name="Darn">Nedrans!</string>
-  <string name="Dismiss">Avslå</string>
   <string name="No_way">Inte alls</string>
   <string name="No">Nej</string>
-  <string name="Loading">Laddar…</string>
+  <string name="Loading">Laddar</string>
   <string name="Saving">Sparar</string>
-  <string name="Cancellingplease_wait">Avbryter… vänta</string>
+  <string name="Cancellingplease_wait">Avbryter, vänta…</string>
   <string name="Are_you_sure">Är du säker?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
   <string name="Downloadeditremove_workouts">Ladda ned/redigera/ta bort träningspass</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Obs, du måste ansluta till kontot också</string>
+  <string name="Note_you_need_to_connect_to_the_account_too">Du måste ansluta till ett RunnerUp konto</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Använd dina lurar för att starta/pausa/återuppta RunnerUp</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben, använd \"Återhämting\" för \"Vila\" (paus) steg</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">För inlagda nedräkningssteg, använd \"Återhämting\" för \"Vila\" (paus) steg</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben, använd Återhämting för Vila (paus) steg</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">För inlagda nedräkningssteg, använd Återhämting för Vila (paus) steg</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportera databas till sdkort (t.ex. före uppgradering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importera databas från sdkort (t.ex. efter uppgradering)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Coach för att hjälpa dig nå målet (om mål är satt)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Skippa meddelande att träningspass startas/pausas/återupptas/stoppas</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Skippa meddelande då träningspass startas/pausas/återupptas/stoppas</string>
   <string name="Test_audio_cue">Testa ljudmeddelande</string>
   <string name="Accounts">Konton</string>
   <string name="Audio_cues">Ljudmeddelanden</string>
@@ -183,13 +173,13 @@
   <string name="Autolap">Autovarv</string>
   <string name="Autolap_m">Autovarv (m)</string>
   <string name="Autopause">Autopaus</string>
-  <string name="Autopause_summary">Autopaus i standard pass samt \"Uppvärmning\" och \"Nedvarvning\" steg</string>
+  <string name="Autopause_summary">Autopaus i standard pass samt Uppvärmning och Nedvarvning steg</string>
   <string name="Enable_RunnerUpLive">Aktivera Live</string>
   <string name="Headset_key_startstop">Hörlursknapp start/stopp</string>
   <string name="Activity_countdown">Nedräkning till aktivitet start</string>
   <string name="Activity_countdown_summary">Lägg till nedräkning till aktivitetsstart för standard pass</string>
   <string name="Countdown_time_s">Nedräkningstid (s)</string>
-  <string name="Unit_preference_title">Måttenheter</string>
+  <string name="Unit_preference_title">Enheter</string>
   <string name="Unit_preference">Distansenhet</string>
   <string name="Auto_start_GPS">Autostarta GPS</string>
   <string name="Advanced_options">Avancerade inställningar</string>
@@ -203,9 +193,9 @@
   <string name="Target_pace_grace_seconds">Målåterkoppling anståndstid (s)</string>
   <string name="Autolap_during_intervals">Autovarv i pass</string>
   <string name="Autolap_basic_summary">Autovarv i standard pass</string>
-  <string name="Autolap_during_intervals_summary">Autovarv i sista steget samt \"Aktiv\" steg</string>
+  <string name="Autolap_during_intervals_summary">Autovarv i sista steget samt Aktiv steg</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Nedräkning efter knapptryckning</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Lägg till nedräknings \"Återhämtning\" eller \"Vila\" steg efter steg som avslutas med knapptryckning</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Lägg till nedräknings Återhämtning eller Vila steg efter steg som avslutas med knapptryckning</string>
   <string name="Step_countdown_time_s">Nedräkningssteg (s)</string>
   <string name="Smooth_pace_graph">Utjämning tempograf</string>
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
@@ -226,7 +216,7 @@
   <string name="Distance_triggered_audio_cue_summary">Periodisk återkoppling</string>
   <string name="Cue_intervall_m">Meddelande intervall (m)</string>
   <string name="End_of_lap_audio_cue">Varvslut</string>
-  <string name="End_of_lap_audio_cue_summary">Autovarvslut samt slut på \"Aktiv\" steg</string>
+  <string name="End_of_lap_audio_cue_summary">Autovarvslut samt slut på Aktiv steg</string>
   <string name="Mute_music_during_audio_cues">Tysta musik under ljudmeddelanden</string>
   <string name="Cue_information">Information i ljudmeddelanden</string>
   <string name="Total_distance">Total distans</string>
@@ -265,7 +255,7 @@
   <string name="Manual_activity_title">Lägg till manuell aktivitet</string>
   <string name="Add_manual_entry">Lägg till manuell aktivitet</string>
   <string name="Add_workout_notes">Lägg till noteringar</string>
-  <string name="Pruning_deleted_activities_from_database">Radera borttagna aktiviteter från databasen</string>
+  <string name="Pruning_deleted_activities_from_database">Radera borttagna aktiviteter</string>
   <string name="Prune">Radera</string>
   <string name="Heartrate_zones_distribution">Pulszon fördelning</string>
   <string name="Battery_level">Batterinivå</string>
@@ -306,7 +296,7 @@
   <string name="New_audio_scheme">Nytt ljudschema</string>
   <string name="GPS_permission_required">GPS behörighet krävs</string>
   <string name="Default">Standard</string>
-  <string name="Notes_about_your_workout">Anteckningar om ditt träningspass</string>
+  <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>
   <string name="Uploading_to_1s">Laddar upp till %1$s</string>
   <string name="Loading_activities">Laddar aktiviteter</string>
@@ -322,7 +312,7 @@
   <string name="cue_hrm_connection_lost">Tappat koppling till pulsmätare</string>
   <string name="HRM_connection_audio_cue">Meddelande triggat av koppling till pulsmätare</string>
   <string name="Audio_cue_unit">Inkludera enhet i meddelanden</string>
-  <string name="latest_feed_click_to_refresh">Senaste flöde (klicka för att uppdatera)</string>
+  <string name="latest_feed_click_to_refresh">Senaste flöde (tryck för att uppdatera)</string>
   <string name="log_extended_gps_summary">Exportera enbart i GPX</string>
   <string name="log_extended_gps_title">Logga utökad GPS noggrannhetsdata</string>
   <string name="Current_speed_from_GPS_points">Aktuell fart från GPS punkter</string>
@@ -335,13 +325,13 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
   <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
   <string name="Lap_start">Varv start</string>
-  <string name="Lap_start_summary">Meddelande vid start av varv och \"Aktiv\", \"Uppvärmning\" och \"Nedvarvning\" steg</string>
+  <string name="Lap_start_summary">Meddelande vid start av varv och Aktiv, Uppvärmning och Nedvarvning steg</string>
   <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
   <string name="Lock_activity_buttons_message">Lås aktivitetsknappar genom att knacka snabbt på toppfälten</string>
   <string name="Speed">Hastighet</string>
   <string name="Speed_unit_preference">Hastighetsenhet</string>
   <string name="path_simplification">GPS-spår förenkling</string>
-  <string name="path_simplification_info">Reducera upplösning för GPS-spår (antalet punkter). Jämnar ut GPS-spår och minskar storleken för aktiviteten i databasen eller i export.</string>
+  <string name="path_simplification_info">Reducera upplösningen för GPS-spår (antalet punkter). Jämnar ut GPS-spår och minskar storleken för aktiviteten i databasen eller i export.</string>
   <string name="path_simplification_on_save">Förenkla då aktivitet sparas</string>
   <string name="path_simplification_on_export">Förenkla vid uppladdning till konton</string>
   <string name="path_simplification_tolerance">Tolerans (m)</string>
@@ -349,6 +339,5 @@
   <string name="path_simplification_algorithm_info">Välj snabb eller hög kvalitet GPS-spår förenkling</string>
   <string name="path_simplification_menu">Förenkla GPS-spår</string>
   <string name="File_format">Uppladdningsformat:</string>
-  <string name="File_need_one_format">Åtminstone ett format behövs!</string>
-    <string name="Error">Fel</string>
+  <string name="File_need_one_format">Åtminstone ett format behövs</string>
 </resources>

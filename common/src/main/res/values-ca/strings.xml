@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">FC</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Freqüència cardíaca màxima (FCM)</string>
   <string name="Target_pace_HHMMSS">Ritme objectiu</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s a les %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">D\'acord</string>
-  <!--other-->
   <string name="Type">Tipus</string>
   <string name="active">activitat</string>
   <string name="rest">descans</string>
@@ -54,7 +48,7 @@
   <string name="Device">Dispositiu</string>
   <string name="Start_hour">Hora d\'inici</string>
   <string name="Heart_rate">Freqüència cardíaca</string>
-  <string name="Pace">Ritme</string>
+  <string name="Pace">ritme</string>
   <string name="Scan">Analitza</string>
   <string name="Connect">Connecta</string>
   <string name="Connecting">Connectant</string>
@@ -121,14 +115,14 @@
   <string name="Refresh">Actualitza</string>
   <string name="Age">Edat</string>
   <string name="Synchronizing">Sincronitzant</string>
-  <string name="synchronizing_feed">S\'està sincronitzant el canal.</string>
+  <string name="synchronizing_feed">S\'està sincronitzant el canal...</string>
   <string name="OK">D\'acord</string>
   <string name="accounts_category_connected">Gestiona les connexions</string>
   <string name="accounts_category_unconnected">Connecta un compte</string>
   <string name="Show_disabled_accounts">Mostra els comptes desactivats</string>
   <string name="Hide_disabled_accounts">Amaga els comptes desactivats</string>
   <string name="Clear_uploads">Neteja les càrregues</string>
-  <string name="Upload_missing_workouts">Carrega els entrenaments (absents)</string>
+  <string name="Upload_missing_workouts">Carrega els entrenaments absents</string>
   <string name="Disconnect_account">Desconnecta el compte</string>
   <string name="Edit_activity">Edita l\'activitat</string>
   <string name="Share_activity">Comparteix l\'activitat</string>
@@ -137,7 +131,7 @@
   <string name="Configure_heart_rate_zones">Configura zones freqüència cardíaca</string>
   <string name="Clear_heart_rate_zone_settings">Esborra configuració zones FC</string>
   <string name="Manage_audio_cues">Gestiona les pistes d\'àudio</string>
-  <string name="Manage_workouts">Gestiona els entrenaments</string>
+  <string name="Manage_workouts">Gestiona entrenaments</string>
   <string name="Settings">Configuració</string>
   <string name="Whats_new">Novetats</string>
   <string name="Rate_RunnerUp">Puntueu RunnerUp</string>
@@ -150,20 +144,16 @@
   <string name="Select_type_of_Bluetooth_device">Seleccioneu el tipus de dispositiu Bluetooth</string>
   <string name="Scanning">S\'està analitzant</string>
   <string name="Failed_to_load_workout">No s\'ha pogut carregar l\'entrenament.</string>
-  <string name="Problem">Error</string>
+  <string name="Error">Error</string>
   <string name="Edit_step">Editeu l\'etapa</string>
   <string name="Create_new_audio_cue_scheme">Nou esquema de pistes d\'àudio</string>
-  <string name="Great">D\'acord</string>
-  <string name="OK_darn">D\'acord</string>
   <string name="Yes">Sí</string>
   <string name="Create">Crea</string>
-  <string name="Darn">D\'acord</string>
-  <string name="Dismiss">Omet</string>
   <string name="No_way">De cap manera</string>
   <string name="No">No</string>
-  <string name="Loading">S\'està carregant…</string>
+  <string name="Loading">Carregant</string>
   <string name="Saving">Desant</string>
-  <string name="Cancellingplease_wait">S\'està cancel·lant…</string>
+  <string name="Cancellingplease_wait">Cancel·lant, espereu...</string>
   <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Configure_audio_cues">Configura les pistes d\'àudio</string>
   <string name="Downloadeditremove_workouts">Descarregueu, editeu o suprimiu entrenaments</string>
@@ -173,9 +163,9 @@
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Utilitzeu etapes de Recuperació en lloc de Descans (pausa) amb les etapes de compte enrere inserides</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporteu la base de dades al dispositiu</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importeu la base de dades des del dispositiu</string>
-  <string name="Coach_to_help_you_reach_target_if_having_set_target">Entrenador per ajudar-vos a assolir l\'objectiu (si se n\'ha definit cap)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Silencieu la pista d\'inici/pausa/represa/aturada</string>
-  <string name="Test_audio_cue">Proveu les pistes d\'àudio</string>
+  <string name="Coach_to_help_you_reach_target_if_having_set_target">Entrenador per ajudar-vos a assolir l\'objectiu (si n\'hi ha cap)</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Silencieu les pistes d\'inici/pausa/represa/aturada</string>
+  <string name="Test_audio_cue">Prova de pistes d\'àudio</string>
   <string name="Accounts">Comptes</string>
   <string name="Audio_cues">Pistes d\'àudio</string>
   <string name="Heart_Rate_Monitor">Monitor de freqüència cardíaca</string>
@@ -187,7 +177,7 @@
   <string name="Enable_RunnerUpLive">Habilita RunnerUp Live</string>
   <string name="Headset_key_startstop">Botó auriculars inici/aturada</string>
   <string name="Activity_countdown">Compte enrere d\'inici d\'activitat</string>
-  <string name="Activity_countdown_summary">Afegiu un compte enrere a l\'inici de l\'activitat dels entrenaments bàsics</string>
+  <string name="Activity_countdown_summary">Afegiu un compte enrere a l\'inici dels entrenaments bàsics</string>
   <string name="Countdown_time_s">Temps del compte enrere (s)</string>
   <string name="Unit_preference_title">Unitats</string>
   <string name="Unit_preference">Unitat de longitud</string>
@@ -196,22 +186,22 @@
   <string name="Mapbox_default_style">Estil de Mapbox</string>
   <string name="RunnerUp_live_address">Adreça RunnerUp Live</string>
   <string name="Autopause_after_s">Pausa automàtica rere (s)</string>
-  <string name="Autopause_min_pace_minkm">Ritme mínim pausa automàtica (min/km)</string>
+  <string name="Autopause_min_pace_minkm">Ritme mínim pausa autom. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Etapes de descans en intervals</string>
-  <string name="Convert_rest_on_Advanced_tab">Recuperació en etapes de compte enrere</string>
-  <string name="Target_pace_moving_average_seconds">Freqüència de mesura del ritme objectiu (s)</string>
+  <string name="Convert_rest_on_Advanced_tab">Recuperació en comptes enrere</string>
+  <string name="Target_pace_moving_average_seconds">Freqüència de mesura de l\'objectiu (s)</string>
   <string name="Target_pace_grace_seconds">Període de gràcia del ritme objectiu (s)</string>
   <string name="Autolap_during_intervals">Tram automàtic en entrenaments</string>
   <string name="Autolap_basic_summary">Tram automàtic en entrenaments bàsics</string>
   <string name="Autolap_during_intervals_summary">Tram automàtic en darrera etapa i etapes Activitat</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Compte enrere en prémer botó</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Afegiu un compte enrere d\'etapa Recuperació o Descans rere una etapa que acabi quan l\'usuari toca un botó</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Afegiu un compte enrere d\'etapa Recuperació o Descans rere una etapa que acabi amb la pressió d\'un botó</string>
   <string name="Step_countdown_time_s">Compte enrere de l\'etapa (s)</string>
   <string name="Smooth_pace_graph">Gràfic de ritme suau</string>
   <string name="Smooth_pace_filters">Filtre de ritme suau (s)</string>
   <string name="Poll_interval_ms">Interval de sondeig del GPS (ms)</string>
   <string name="Poll_distance_m">Distància de sondeig del GPS (m)</string>
-  <string name="Adjust_altitude">Ajusta l\'altitud del GPS al geoide (EGM96)</string>
+  <string name="Adjust_altitude">Ajusta l\'altitud del GPS al geoide</string>
   <string name="Export">Exporta</string>
   <string name="Import">Importa</string>
   <string name="Experimental_HRM_devices">Dispositius MFC experimentals</string>
@@ -227,7 +217,7 @@
   <string name="Cue_intervall_m">Interval de les pistes (m)</string>
   <string name="End_of_lap_audio_cue">Final de tram</string>
   <string name="End_of_lap_audio_cue_summary">Final de tram automàtic i d\'etapes Activitat</string>
-  <string name="Mute_music_during_audio_cues">Silencia la música durant les pistes d\'àudio</string>
+  <string name="Mute_music_during_audio_cues">Silencia la música amb les pistes</string>
   <string name="Cue_information">Informació de les pistes</string>
   <string name="Total_distance">Distància total</string>
   <string name="Total_time">Temps total</string>
@@ -255,7 +245,7 @@
   <string name="Current">Actual</string>
   <string name="Misc_cues">Altres pistes</string>
   <string name="Target_coaching">Entrenament d\'objectius</string>
-  <string name="Skip_event_audio_cues">Omet pistes d\'àudio d\'esdeveniments</string>
+  <string name="Skip_event_audio_cues">Omet pistes d\'esdeveniments</string>
   <string name="Push">Premeu aquí</string>
   <string name="Android_text_to_speech_settings">Opcions de veu d\'Android</string>
   <string name="Start">Inicia</string>
@@ -265,7 +255,7 @@
   <string name="Manual_activity_title">Entrada manual</string>
   <string name="Add_manual_entry">Entrada manual</string>
   <string name="Add_workout_notes">Afegiu notes d\'entrenament</string>
-  <string name="Pruning_deleted_activities_from_database">Elimineu definitivament les activitats suprimides de la base de dades</string>
+  <string name="Pruning_deleted_activities_from_database">Elimineu definitivament les activitats suprimides</string>
   <string name="Prune">Elimina definitivament</string>
   <string name="Heartrate_zones_distribution">Distribució de zones de freqüència cardíaca</string>
   <string name="Battery_level">Nivell de la bateria</string>
@@ -306,7 +296,7 @@
   <string name="New_audio_scheme">Nou esquema d\'àudio</string>
   <string name="GPS_permission_required">Es requereix el permís del GPS</string>
   <string name="Default">Per defecte</string>
-  <string name="Notes_about_your_workout">Notes sobre l\'entrenament</string>
+  <string name="Notes_about_your_workout">Notes d\'entrenament</string>
   <string name="Downloading_from_1s">Descarregant des de %1$s</string>
   <string name="Uploading_to_1s">Carregant a %1$s</string>
   <string name="Loading_activities">Carregant activitats</string>
@@ -320,10 +310,10 @@
   <string name="Maintenance">Manteniment</string>
   <string name="cue_hrm_connection_restored">S\'ha restaurat la connexió al monitor de freqüència cardíaca</string>
   <string name="cue_hrm_connection_lost">S\'ha perdut la connexió al monitor de freqüència cardíaca</string>
-  <string name="HRM_connection_audio_cue">Pista d\'àudio de connexió d\'MFC</string>
-  <string name="Audio_cue_unit">Inclou la unitat en les pistes d\'àudio</string>
-  <string name="latest_feed_click_to_refresh">Feed més recent (premeu per actualitzar)</string>
-  <string name="log_extended_gps_summary">Exporta només en GPX</string>
+  <string name="HRM_connection_audio_cue">Pistes d\'àudio de connexió d\'MFC</string>
+  <string name="Audio_cue_unit">Inclou la unitat en les pistes</string>
+  <string name="latest_feed_click_to_refresh">Feed recent (premeu per actualitzar)</string>
+  <string name="log_extended_gps_summary">Exporteu només en GPX</string>
   <string name="log_extended_gps_title">Registra detalls de precisió GPS</string>
   <string name="Current_speed_from_GPS_points">Velocitat actual de punts GPS</string>
   <string name="use_step_sensor_title">Sensor de pas</string>
@@ -343,11 +333,11 @@
   <string name="path_simplification">Simplificació de ruta</string>
   <string name="path_simplification_info">Reduïu la resolució de la ruta del GPS (ubicacions registrades amb el pas del temps). Suavitza la ruta i redueix la mida d\'una activitat en la base de dades o un arxiu exportat.</string>
   <string name="path_simplification_on_save">Simplifica en desar l\'activitat</string>
-  <string name="path_simplification_on_export">Simplifica en carregar als comptes</string>
+  <string name="path_simplification_on_export">Simplifica càrrega a comptes</string>
   <string name="path_simplification_tolerance">Tolerància (m)</string>
   <string name="path_simplification_algorithm">Algorisme</string>
   <string name="path_simplification_algorithm_info">Escolliu entre simplificació de ruta ràpida o d\'alta qualitat</string>
   <string name="path_simplification_menu">Simplifica la ruta</string>
-  <string name="File_format">Carrega els fitxers com:</string>
-  <string name="File_need_one_format">Cal almenys un format.</string>
+  <string name="File_format">Carrega els fitxers com a:</string>
+  <string name="File_need_one_format">Heu d\'especificar almenys un format.</string>
 </resources>

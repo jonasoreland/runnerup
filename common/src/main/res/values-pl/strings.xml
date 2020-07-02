@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Hr</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksymalne tętno (MHR)</string>
   <string name="Target_pace_HHMMSS">Tempo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$sw%2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, rats</string>
-  <!--other-->
   <string name="Type">Rodzaj</string>
   <string name="active">aktywność</string>
   <string name="rest">odpoczynek</string>
@@ -150,15 +144,10 @@
   <string name="Select_type_of_Bluetooth_device">Wybierz rodzaj urządzenia Bluetooth</string>
   <string name="Scanning">Skanuje</string>
   <string name="Failed_to_load_workout">Błąd przy ładowaniu treningu</string>
-  <string name="Problem">Problem</string>
   <string name="Edit_step">Edycja etapu</string>
   <string name="Create_new_audio_cue_scheme">Utwórz schemat wskazówek audio</string>
-  <string name="Great">Udało się!</string>
-  <string name="OK_darn">OK, darn!</string>
   <string name="Yes">Tak</string>
   <string name="Create">Utwórz</string>
-  <string name="Darn">Darn!</string>
-  <string name="Dismiss">Zamknij</string>
   <string name="No_way">No way</string>
   <string name="No">Nie</string>
   <string name="Loading">Ładuje…</string>

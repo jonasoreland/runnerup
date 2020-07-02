@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,22 +23,17 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">BPM</string>
-  <!--format hint stuff-->
-  <string name="Maximum_heart_rate_MHR">Massima frequenza cardiaca (HR max)</string>
+  <string name="Maximum_heart_rate_MHR">Frequenza cardiaca massima (HR max)</string>
   <string name="Target_pace_HHMMSS">Ritmo obiettivo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s alle %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK</string>
-  <!--other-->
   <string name="Type">Tipo</string>
   <string name="active">attivo</string>
   <string name="rest">riposo</string>
   <string name="recovery">recupero</string>
   <string name="warm_up">riscaldamento</string>
   <string name="cool_down">defaticamento</string>
-  <string name="repeat">ripetizione</string>
+  <string name="repeat">Ripeti</string>
   <string name="repeat_times">Ripeti %1$d volte</string>
   <string name="time">tempo</string>
   <string name="distance">distanza</string>
@@ -128,7 +122,7 @@
   <string name="Show_disabled_accounts">Mostra account disattivati</string>
   <string name="Hide_disabled_accounts">Nascondi account disattivati</string>
   <string name="Clear_uploads">Svuota caricamenti</string>
-  <string name="Upload_missing_workouts">Carica allenamenti (mancanti)</string>
+  <string name="Upload_missing_workouts">Carica allenamenti mancanti</string>
   <string name="Disconnect_account">Disconnetti account</string>
   <string name="Edit_activity">Modifica attività</string>
   <string name="Share_activity">Condividi attività</string>
@@ -150,40 +144,36 @@
   <string name="Select_type_of_Bluetooth_device">Seleziona tipo dispositivo Bluetooth</string>
   <string name="Scanning">Ricerca…</string>
   <string name="Failed_to_load_workout">Caricamento allenamento fallito.</string>
-  <string name="Problem">Problema</string>
-  <string name="Edit_step">Modifica passo</string>
+  <string name="Error">Errore</string>
+  <string name="Edit_step">Modifica fase</string>
   <string name="Create_new_audio_cue_scheme">Crea nuovo schema riferimenti audio</string>
-  <string name="Great">OK</string>
-  <string name="OK_darn">OK</string>
   <string name="Yes">Sì</string>
   <string name="Create">Crea</string>
-  <string name="Darn">OK</string>
-  <string name="Dismiss">Chiudi</string>
   <string name="No_way">Assolutamente no</string>
   <string name="No">No</string>
-  <string name="Loading">Caricamento…</string>
+  <string name="Loading">Caricamento</string>
   <string name="Saving">Salvando…</string>
-  <string name="Cancellingplease_wait">Cancellando… prego attendere</string>
+  <string name="Cancellingplease_wait">Sto annullando, attendere prego</string>
   <string name="Are_you_sure">Ne sei sicuro?</string>
-  <string name="Configure_audio_cues">Configura riferimenti audio</string>
+  <string name="Configure_audio_cues">Configura notifiche audio</string>
   <string name="Downloadeditremove_workouts">Scarica/modifica/rimuovi allenamenti</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Attento, devi anche connettere l\'account</string>
+  <string name="Note_you_need_to_connect_to_the_account_too">Devi connetterti ad un account RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa gli auricolari per avviare/sospendere/riprendere RunnerUp</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Nella tabella Intervalli, utilizza passi di \"Recupero\" al posto di \"Riposo\" (pausa)</string>
-  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Per i passi di conto alla rovescia inseriti, utilizzare passi di \"Recupero\" anziché \"Riposo\" (pausa)</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Nella tabella Intervalli, utilizza \"Recupero\" al posto di \"Riposo\" (pausa)</string>
+  <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Per le fasi di conto alla rovescia, utilizzare Recupero invece di Riposo (pausa)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Esporta database su sdcard (ad esempio prima di un aggiornamento di sistema)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importa database su sdcard (ad esempio dopo un aggiornamento di sistema)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Allenatore (ti aiuta a raggiungere l\'obiettivo - se fissato)</string>
   <string name="Keep_silent_when_workout_startpauseresumestop">Disattiva notifica audio quando l\'allenamento inizia/viene sospeso/riprende/finisce</string>
-  <string name="Test_audio_cue">Prova riferimenti audio</string>
+  <string name="Test_audio_cue">Prova notifiche audio</string>
   <string name="Accounts">Account</string>
-  <string name="Audio_cues">Riferimenti audio</string>
+  <string name="Audio_cues">Notifiche audio</string>
   <string name="Heart_Rate_Monitor">Monitor frequenza cardiaca</string>
   <string name="Heart_Rate_Zones">Zone BPM</string>
   <string name="Autolap">Giri automatici</string>
   <string name="Autolap_m">Giro automatico (m)</string>
   <string name="Autopause">Pausa automatica</string>
-  <string name="Autopause_summary">Metti in pausa automaticamente durante allenamenti di base, \"Riscaldamento\" e \"Defaticamento\"</string>
+  <string name="Autopause_summary">Pausa automatica durante allenamenti di base e le fasi di Riscaldamento e Defaticamento</string>
   <string name="Enable_RunnerUpLive">Abilita Live</string>
   <string name="Headset_key_startstop">Usa tasti auricolari per avviare/interrompere</string>
   <string name="Activity_countdown">Conto alla rovescia per iniziare l\'attività</string>
@@ -196,17 +186,17 @@
   <string name="Mapbox_default_style">Stile del Mapbox</string>
   <string name="RunnerUp_live_address">Indirizzo RunnerUp Live</string>
   <string name="Autopause_after_s">Pausa automatica dopo (s)</string>
-  <string name="Autopause_min_pace_minkm">Autopausa al di sotto del passo minimo (min/km)</string>
+  <string name="Autopause_min_pace_minkm">Pausa automatica quando il passo è inferiore a (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Passi di riposo a intervalli</string>
   <string name="Convert_rest_on_Advanced_tab">Recupero nei passi di conto alla rovescia</string>
   <string name="Target_pace_moving_average_seconds">Tempo medio del ritmo obiettivo (s)</string>
   <string name="Target_pace_grace_seconds">Periodo di tolleranza del ritmo obiettivo (s)</string>
   <string name="Autolap_during_intervals">Giro automàtico</string>
-  <string name="Autolap_basic_summary">Giro automàtico negli allenamenti di base</string>
-  <string name="Autolap_during_intervals_summary">Giro automatico nell\'ultimo passo e passi \"Attivi\"</string>
+  <string name="Autolap_basic_summary">Giro automatico negli allenamenti di base</string>
+  <string name="Autolap_during_intervals_summary">Giro automatico nell\'ultima fase e nelle fasi Attive</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown dopo pressione</string>
-  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Aggiungi un conto alla rovescia di passo \"Recupero\" o \"Riposo\" dopo un passo che termina con una pressione di tasto</string>
-  <string name="Step_countdown_time_s">Conto alla rovescia in passi</string>
+  <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Aggiungi una fase conto alla rovescia Recupero o Riposo dopo una fase che termina con una pressione del tasto</string>
+  <string name="Step_countdown_time_s">Conto alla rovescia della fase (s)</string>
   <string name="Smooth_pace_graph">Grafico del passo ponderato</string>
   <string name="Smooth_pace_filters">Filtro valori del passo</string>
   <string name="Poll_interval_ms">Intervallo polling (ms)</string>
@@ -226,7 +216,7 @@
   <string name="Distance_triggered_audio_cue_summary">Feedback periodico</string>
   <string name="Cue_intervall_m">Intervallo riferimento (m)</string>
   <string name="End_of_lap_audio_cue">Fine di giro</string>
-  <string name="End_of_lap_audio_cue_summary">Fine di giro automatico e passi \"Attivi\"</string>
+  <string name="End_of_lap_audio_cue_summary">Fine delle fasi giro automatico e Attivo</string>
   <string name="Mute_music_during_audio_cues">Silenzia musica durante riferimenti audio</string>
   <string name="Cue_information">Informazione riferimento</string>
   <string name="Total_distance">Distanza complessiva</string>
@@ -253,7 +243,7 @@
   <string name="Current_heart_rate_zone">Zona di frequenza cardiaca corrente</string>
   <string name="Current_cadence">Cadenza attuale</string>
   <string name="Current">Attuale</string>
-  <string name="Misc_cues">Altri riferimenti</string>
+  <string name="Misc_cues">Altre notifiche</string>
   <string name="Target_coaching">Obiettivi del coach</string>
   <string name="Skip_event_audio_cues">Salta i riferimenti audio degli eventi</string>
   <string name="Push">Premi</string>
@@ -265,8 +255,8 @@
   <string name="Manual_activity_title">Aggiungi un inserimento manuale</string>
   <string name="Add_manual_entry">Aggiungi un inserimento manuale</string>
   <string name="Add_workout_notes">Aggiungi note allenamento</string>
-  <string name="Pruning_deleted_activities_from_database">Scarta dal database le attività eliminate</string>
-  <string name="Prune">Scarta</string>
+  <string name="Pruning_deleted_activities_from_database">Scarta le attività eliminate</string>
+  <string name="Prune">Cancella definitivamente</string>
   <string name="Heartrate_zones_distribution">Distribuzione zone BPM</string>
   <string name="Battery_level">Livello batteria</string>
   <string name="Activity_ready">Attività pronta</string>
@@ -320,9 +310,9 @@
   <string name="Maintenance">Manutenzione</string>
   <string name="cue_hrm_connection_restored">Connessione per il controllo del battito cardiaco ristabilita </string>
   <string name="cue_hrm_connection_lost">Connessione per il controllo del battito cardiaco interrotta</string>
-  <string name="HRM_connection_audio_cue">Allarme generato dal controllo del battito cardiaco</string>
+  <string name="HRM_connection_audio_cue">Notifiche connessione dal controllo del battito cardiaco</string>
   <string name="Audio_cue_unit">Includi unità nell\'audio</string>
-  <string name="latest_feed_click_to_refresh">Ultimo feed (click per aggiornare)</string>
+  <string name="latest_feed_click_to_refresh">Ultimo feed (premi per aggiornare)</string>
   <string name="log_extended_gps_summary">Esposta solo in GPX</string>
   <string name="log_extended_gps_title">Log dell\'accuratezza del GPS</string>
   <string name="Current_speed_from_GPS_points">Velocità attuale dai punti GPS</string>
@@ -335,7 +325,7 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Utilizza l\'altitudine GPS iniziale per l\'altitudine barometrica media</string>
   <string name="channel_notification_ongoing">Notifiche GPS e attività RunnerUp</string>
   <string name="Lap_start">Inizio giro</string>
-  <string name="Lap_start_summary">Riferimento per l\'inizio dei giri e passi \"Attivi\", \"Riscaldamento\" e \"Defaticamento\"</string>
+  <string name="Lap_start_summary">Notifiche di inizio giro e delle fasi Attivo, Riscaldamento e Defaticamento</string>
   <string name="Lock_activity_buttons">Blocca i pulsanti d\'attività</string>
   <string name="Lock_activity_buttons_message">Blocca i pulsanti d\'attività facendo clic rapidamente sull\'intestazione</string>
   <string name="Speed">Velocità</string>
@@ -349,5 +339,5 @@
   <string name="path_simplification_algorithm_info">Scegli una semplificazione del percorso veloce o di alta qualità</string>
   <string name="path_simplification_menu">Simplifica il percorso</string>
   <string name="File_format">Carica i file come:</string>
-  <string name="File_need_one_format">È necessario almeno un formato.</string>
+  <string name="File_need_one_format">È necessario indicare almeno un formato.</string>
 </resources>

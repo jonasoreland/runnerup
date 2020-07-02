@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Pul</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Legmagasabb pulzus</string>
   <string name="Target_pace_HHMMSS">Kitűzött tempó</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s %2$s-kor</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, rats</string>
-  <!--other-->
   <string name="Type">Írd be</string>
   <string name="active">aktív</string>
   <string name="rest">pihenő</string>
@@ -135,15 +129,10 @@
   <string name="Select_type_of_Bluetooth_device">Bluetooth eszköz típusának kiválasztása</string>
   <string name="Scanning">Keresés</string>
   <string name="Failed_to_load_workout">Edzés betöltése sikertelen!</string>
-  <string name="Problem">Probléma</string>
   <string name="Edit_step">Szakasz szerkesztése</string>
   <string name="Create_new_audio_cue_scheme">Új beszéd profil létrehozása</string>
-  <string name="Great">Nagyszerű!</string>
-  <string name="OK_darn">Ok, a mindenit!</string>
   <string name="Yes">Igen</string>
   <string name="Create">Létrehozás</string>
-  <string name="Darn">A mindenit!</string>
-  <string name="Dismiss">Eltüntet</string>
   <string name="No_way">Nem létezik</string>
   <string name="No">Nem</string>
   <string name="Loading">Betöltés…</string>

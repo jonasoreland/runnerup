@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Hr</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksimalus širdies ritmas (MHR)</string>
   <string name="Target_pace_HHMMSS">Tikslinis tempas</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$sprie %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">gerai, draugužiai</string>
-  <!--other-->
   <string name="Type">Tipas</string>
   <string name="active">aktyvus</string>
   <string name="rest">poilsis</string>
@@ -150,15 +144,10 @@
   <string name="Select_type_of_Bluetooth_device">Pasirinkti Bluetooth įrangos tipą</string>
   <string name="Scanning">Skenavimas</string>
   <string name="Failed_to_load_workout">Nepavyko įkelti treniruotės!!</string>
-  <string name="Problem">Problema</string>
   <string name="Edit_step">Redaguoti intervalą</string>
   <string name="Create_new_audio_cue_scheme">Sukurti naują garsinių nurodymų schemą</string>
-  <string name="Great">Puiku!</string>
-  <string name="OK_darn">Gerai, gerai!</string>
   <string name="Yes">Taip</string>
   <string name="Create">Sukurti</string>
-  <string name="Darn">Po šimts!</string>
-  <string name="Dismiss">Nutraukti</string>
   <string name="No_way">Jokiu būdu</string>
   <string name="No">Ne</string>
   <string name="Loading">Kraunasi…</string>

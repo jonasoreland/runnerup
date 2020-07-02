@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">ml</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">HR</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maksimisyke (MHR)</string>
   <string name="Target_pace_HHMMSS">Tavoite vauhti</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s klo %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK, hassua</string>
-  <!--other-->
   <string name="Type">Tyyppi</string>
   <string name="active">Aktiivinen</string>
   <string name="rest">lepo</string>
@@ -150,15 +144,10 @@
   <string name="Select_type_of_Bluetooth_device">Valitse Bluetooth laitteen tyyppi</string>
   <string name="Scanning">Etsitään</string>
   <string name="Failed_to_load_workout">Harjoituksen lataus epäonnistui!!</string>
-  <string name="Problem">Ongelma</string>
   <string name="Edit_step">Muokkaa vaihetta</string>
   <string name="Create_new_audio_cue_scheme">Luo uusi äänipalaute kokonaisuus</string>
-  <string name="Great">Hienoa!</string>
-  <string name="OK_darn">OK, himpskatti!</string>
   <string name="Yes">Kyllä</string>
   <string name="Create">Luo</string>
-  <string name="Darn">Voi harmi!</string>
-  <string name="Dismiss">Poistu</string>
   <string name="No_way">Voi ei</string>
   <string name="No">Ei</string>
   <string name="Loading">Ladataan...</string>
