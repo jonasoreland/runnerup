@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -23,11 +22,7 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <!--format hint stuff-->
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <!--other-->
   <string name="Type">tipo</string>
   <string name="active">ativo</string>
   <string name="rest">pausa</string>
@@ -94,11 +89,8 @@
   <string name="Enable_GPS">Activar GPS</string>
   <string name="Waiting_for_GPS">Esperando pelo GPS</string>
   <string name="Start_activity">Iniciar atividade</string>
-  <string name="Problem">Problema</string>
-  <string name="Great">Ótimo!</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
-  <string name="Darn">Raios!</string>
   <string name="No_way">Nem pensar</string>
   <string name="No">Não</string>
   <string name="Loading">Carregando…</string>

@@ -311,7 +311,7 @@ public class MainLayout extends TabActivity
             }
 
         })
-                .setNegativeButton(getString(R.string.Dismiss), new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

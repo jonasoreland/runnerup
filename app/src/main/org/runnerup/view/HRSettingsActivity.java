@@ -313,7 +313,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device))
-                .setNegativeButton(getString(R.string.ok_rats), listener);
+                .setNegativeButton(getString(R.string.OK), listener);
         builder.show();
     }
 

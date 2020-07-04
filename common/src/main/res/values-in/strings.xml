@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mil</string>
@@ -24,14 +23,9 @@
   <string name="metrics_elapsed_min">men</string>
   <string name="metrics_elapsed_s">d</string>
   <string name="metrics_heartrate">Jam</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Denyut jantung maksimum (DJM)</string>
   <string name="Target_pace_HHMMSS">Target ritme</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">ok, rats</string>
-  <!--other-->
   <string name="Type">Tipe</string>
   <string name="active">aktif</string>
   <string name="rest">istirahat</string>
@@ -131,15 +125,10 @@
   <string name="Select_type_of_Bluetooth_device">Pilih tipe gawai Bluetooth</string>
   <string name="Scanning">Memindai</string>
   <string name="Failed_to_load_workout">Gagal mengunggah latihan!</string>
-  <string name="Problem">Masalah</string>
   <string name="Edit_step">Edit langkah</string>
   <string name="Create_new_audio_cue_scheme">Buat skema isyarat suara baru</string>
-  <string name="Great">Hebat!</string>
-  <string name="OK_darn">OK, damn!</string>
   <string name="Yes">Ya</string>
   <string name="Create">Buat</string>
-  <string name="Darn">Damn!</string>
-  <string name="Dismiss">Selesai</string>
   <string name="No_way">Tidak mungkin</string>
   <string name="No">Tidak</string>
   <string name="Loading">Memuat…</string>

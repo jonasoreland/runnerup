@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">رانرآپ</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">کیلومتر</string>
   <string name="metrics_distance_mi">مایل</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">دقیقه</string>
   <string name="metrics_elapsed_s">ثانیه</string>
   <string name="metrics_heartrate">ضربان قلب</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">حداکثر ضربان قلب (MHR)</string>
   <string name="Target_pace_HHMMSS">سرعت موردنظر</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s در %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">باشه، بیخیال</string>
-  <!--other-->
   <string name="Type">نوع</string>
   <string name="active">فعال</string>
   <string name="rest">استراحت</string>
@@ -150,15 +144,10 @@
   <string name="Select_type_of_Bluetooth_device">نوع دستگاه بلوتوثی را انتخاب کنید</string>
   <string name="Scanning">در حال جستجو</string>
   <string name="Failed_to_load_workout">خطا در بارگیری تمرین!!</string>
-  <string name="Problem">مشکل</string>
   <string name="Edit_step">ویرایش مرحله</string>
   <string name="Create_new_audio_cue_scheme">ساخت شمای صف صدای جدید</string>
-  <string name="Great">عالی!</string>
-  <string name="OK_darn">باشه.</string>
   <string name="Yes">بلی</string>
   <string name="Create">بساز</string>
-  <string name="Darn">باشه.</string>
-  <string name="Dismiss">بیخیال</string>
   <string name="No_way">اصلا</string>
   <string name="No">نه</string>
   <string name="Loading">در حال بارگذاری...</string>

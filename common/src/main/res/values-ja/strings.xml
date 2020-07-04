@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,15 +23,10 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Hr</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">最大心拍数 (MHR)</string>
   <string name="Target_pace_HHMMSS">目標ペース</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK</string>
-  <!--other-->
   <string name="Type">タイプ</string>
   <string name="active">アクティブ</string>
   <string name="rest">休憩</string>
@@ -150,15 +144,10 @@
   <string name="Select_type_of_Bluetooth_device">Bluetooth デバイスのタイプを選択してください</string>
   <string name="Scanning">スキャン中</string>
   <string name="Failed_to_load_workout">ワークアウトのロードに失敗しました!!</string>
-  <string name="Problem">問題</string>
   <string name="Edit_step">ステップを編集</string>
   <string name="Create_new_audio_cue_scheme">新しい音声合図スキームを作成</string>
-  <string name="Great">すばらしい!</string>
-  <string name="OK_darn">OK</string>
   <string name="Yes">はい</string>
   <string name="Create">作成</string>
-  <string name="Darn">驚いた!</string>
-  <string name="Dismiss">閉じる</string>
   <string name="No_way">とんでもない</string>
   <string name="No">いいえ</string>
   <string name="Loading">ロード中…</string>

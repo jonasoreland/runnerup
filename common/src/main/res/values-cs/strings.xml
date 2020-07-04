@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">míle</string>
@@ -24,13 +23,9 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Tep</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Maximální rychlost tepu (MHR)</string>
   <string name="Target_pace_HHMMSS">Cílové tempo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <!--other-->
   <string name="Type">Typ</string>
   <string name="active">aktivní</string>
   <string name="rest">odpočinek</string>
@@ -97,7 +92,6 @@
   <string name="Delete_activity">Smazat aktivitu</string>
   <string name="Recompute_activity">Přepočítat aktivitu</string>
   <string name="Settings">Nastavení</string>
-  <string name="Great">Skvěle!</string>
   <string name="Yes">Ano</string>
   <string name="Create">Vytvořit</string>
   <string name="No">Ne</string>

@@ -17,8 +17,8 @@
   <string name="cue_activity">activity</string>
   <string name="cue_interval">interval</string>
   <string name="cue_lap">lap</string>
-  <string name="cue_warmup">warm up</string>
-  <string name="cue_cooldown">cool down</string>
+  <string name="cue_warmup">warmup</string>
+  <string name="cue_cooldown">cooldown</string>
   <string name="cue_current">current</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mile</string>

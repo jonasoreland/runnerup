@@ -144,9 +144,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 importData(fileName, data);
             } catch (Exception e) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.Problem))
+                        .setTitle(getString(R.string.Error))
                         .setMessage(getString(R.string.Failed_to_import) + ": " + fileName)
-                        .setPositiveButton(getString(R.string.OK_darn),
+                        .setPositiveButton(getString(R.string.OK),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();

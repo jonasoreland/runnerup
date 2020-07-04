@@ -18,7 +18,7 @@
   <string name="cue_interval">intervalle</string>
   <string name="cue_lap">tour</string>
   <string name="cue_warmup">échauffement</string>
-  <string name="cue_cooldown">refroidissement</string>
+  <string name="cue_cooldown">récupération</string>
   <string name="cue_current">actuel</string>
   <string name="cue_perkilometer">par kilomètre</string>
   <string name="cue_permile">par mile</string>
@@ -27,8 +27,8 @@
   <string name="cue_resumed">repris</string>
   <string name="cue_stopped">arrêté</string>
   <string name="cue_completed">terminé</string>
-  <string name="cue_speedup">accélérez !</string>
-  <string name="cue_slowdown">ralentissez !</string>
+  <string name="cue_speedup">accélérez</string>
+  <string name="cue_slowdown">ralentissez</string>
   <plurals name="cue_hour">
     <item quantity="one">%d heure</item>
     <item quantity="other">%d heures</item>

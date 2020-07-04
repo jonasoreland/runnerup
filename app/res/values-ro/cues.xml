@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">activitate</string>
+  <string name="cue_interval">interval</string>
+  <string name="cue_lap">rundă</string>
+  <string name="cue_warmup">încălzire</string>
+  <string name="cue_cooldown">răcire</string>
+  <string name="cue_current">actual</string>
+  <string name="cue_perkilometer">pe kilometru</string>
+  <string name="cue_permile">pe milă</string>
+  <string name="cue_started">început</string>
+  <string name="cue_paused">întrerupt</string>
+  <string name="cue_resumed">reluat</string>
+  <string name="cue_stopped">oprit</string>
+  <string name="cue_completed">terminat</string>
+  <string name="cue_speedup">accelerează</string>
+  <string name="cue_slowdown">incetineste</string>
+  <plurals name="cue_hour">
+    <item quantity="one">%d oră</item>
+    <item quantity="few">%d ore</item>
+    <item quantity="other">%d ore</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">%d minut</item>
+    <item quantity="few">%d minute</item>
+    <item quantity="other">%d minute</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">%d secundă</item>
+    <item quantity="few">%d secunde</item>
+    <item quantity="other">%d secunde</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">%d metru</item>
+    <item quantity="few">%d metri</item>
+    <item quantity="other">%d metri</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">%s kilometru</item>
+    <item quantity="few">%s kilometri</item>
+    <item quantity="other">%s kilometri</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">%s milă</item>
+    <item quantity="few">%s mile</item>
+    <item quantity="other">%s mile</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilometru pe oră</item>
+    <item quantity="few">%s kilometri pe oră</item>
+    <item quantity="other">%s kilometri pe oră</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s milă pe oră</item>
+    <item quantity="few">%s mile pe oră</item>
+    <item quantity="other">%s mile pe oră</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">%d bpm</item>
+    <item quantity="few">%d bpm</item>
+    <item quantity="other">%d bpm</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d rpm</item>
+    <item quantity="few">%d rpm</item>
+    <item quantity="other">%d rpm</item>
+  </plurals>
+  <string name="cue_activity_paused">activitatea întreruptă</string>
+  <string name="cue_activity_resumed">activitatea reluată</string>
+  <string name="cue_activity_stopped">activitatea oprită</string>
+  <string name="cue_lap_started">runda începută</string>
+  <string name="cue_lap_completed">runda terminată</string>
+  <string name="cue_warmup_started">încălzirea începută</string>
+  <string name="cue_cooldown_started">răcirea începută</string>
+</resources>

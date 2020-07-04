@@ -643,10 +643,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             String to = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
             builder.setMessage("Copied " + cnt + " bytes")
-                    .setPositiveButton(ctx.getString(R.string.Great), listener);
+                    .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString())
-                    .setNegativeButton(ctx.getString(R.string.Darn), listener);
+                    .setNegativeButton(ctx.getString(R.string.OK), listener);
         }
         builder.show();
     }
@@ -665,10 +665,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             String from = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
             builder.setMessage("Copied " + cnt + " bytes")
-                    .setPositiveButton(ctx.getString(R.string.Great), listener);
+                    .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString())
-                    .setNegativeButton(ctx.getString(R.string.Darn), listener);
+                    .setNegativeButton(ctx.getString(R.string.OK), listener);
         }
         builder.show();
     }

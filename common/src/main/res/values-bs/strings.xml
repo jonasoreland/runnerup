@@ -14,7 +14,6 @@
   ~
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-  <string name="app_name">RunnerUp</string>
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -24,22 +23,14 @@
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
   <string name="metrics_heartrate">Puls</string>
-  <!--format hint stuff-->
   <string name="Maximum_heart_rate_MHR">Max puls (MP)</string>
   <string name="Target_pace_HHMMSS">Ciljani tempo</string>
-  <!--strings with argument to provide-->
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
   <string name="formatting_date_at_time">%1$s u %2$s</string>
-  <!--weird stuff: should it be placeholders or even removed?-->
-  <string name="ok_rats">OK, miševi</string>
-  <!--other-->
   <string name="Type">Tip</string>
   <string name="active">aktivan</string>
   <string name="rest">odmor</string>
   <string name="recovery">oporavak</string>
-  <string name="warm_up">zagrijavanje</string>
-  <string name="cool_down">hlađenje</string>
-  <string name="repeat">ponavljanje</string>
   <string name="time">vrijeme</string>
   <string name="distance">razdaljina</string>
   <string name="Distance">Razdaljina</string>
@@ -110,11 +101,8 @@
   <string name="Configure_accounts">Konfiguriši račune</string>
   <string name="Refresh">Osvježi</string>
   <string name="Age">Godine</string>
-  <string name="Synchronizing">Sinhronizacija:</string>
-  <string name="synchronizing_feed">sinhronizacija vrijesti…</string>
   <string name="OK">OK</string>
   <string name="Clear_uploads">Očisti uploade</string>
-  <string name="Upload_missing_workouts">Upload treninga (koji nedostaju)</string>
   <string name="Disconnect_account">Otkači račun</string>
   <string name="Edit_activity">Izmijeni aktivnost</string>
   <string name="Share_activity">Podijeli aktivnost</string>
@@ -135,15 +123,10 @@
   <string name="Select_type_of_Bluetooth_device">Odaberi tip Bluetooth uređaja</string>
   <string name="Scanning">Skeniranje</string>
   <string name="Failed_to_load_workout">Greška učitavanja treninga!!</string>
-  <string name="Problem">Problem</string>
   <string name="Edit_step">Promijeni korak</string>
   <string name="Create_new_audio_cue_scheme">Napravi novu šemu audio napomena</string>
-  <string name="Great">Sjajno!</string>
-  <string name="OK_darn">OK, dođavola!</string>
   <string name="Yes">Da</string>
   <string name="Create">Kreiraj</string>
-  <string name="Darn">Dođavola!</string>
-  <string name="Dismiss">Otkaži</string>
   <string name="No_way">Nema šanse</string>
   <string name="No">Ne</string>
   <string name="Loading">Učitavanje…</string>
