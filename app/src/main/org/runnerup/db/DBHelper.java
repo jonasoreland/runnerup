@@ -479,7 +479,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
-        insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED);
+        insertAccount(arg0, DropboxSynchronizer.NAME, 0);
         insertAccount(arg0, WebDavSynchronizer.NAME, 1);
     }
 
