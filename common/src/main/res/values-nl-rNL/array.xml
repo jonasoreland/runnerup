@@ -24,7 +24,7 @@
   <string-array name="target_types">
     <item>Geen</item>
     <item>Tempo</item>
-    <item>Hartslagzone</item>
+    <item>Hartslag zone</item>
   </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
