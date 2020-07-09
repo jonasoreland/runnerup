@@ -25,10 +25,13 @@
         <!-- Transifex refuses quantity="one" for tr,pl (gradle) lint requires it, Inspect allows both-->
         <ignore path="res/values-tr/cues.xml" />
         <ignore path="res/values-pl/cues.xml" />
+        <ignore path="res/values-zh/cues.xml" />
     </issue>
     <issue id="UnusedQuantity">
         <ignore path="res/values-lt/cues.xml" />
+        <ignore path="res/values-zh/cues.xml" />
     </issue>
+
     <issue id="InvalidPackage">
         <ignore regexp=".*okio.*" />
         <ignore regexp=".*retrofit.*" />

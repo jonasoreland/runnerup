@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2012 - 2016 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<resources>
+    <string-array name="unitEntries">
+        <item>英里</item>
+        <item>公里</item>
+    </string-array>
+    <string-array name="unitValues">
+        <item>英里</item>
+        <item>公里</item>
+    </string-array>
+    <!--Note: keep in same order as DB.INTENSITY-->
+    <string-array name="step_intensity_types">
+        <item>热身</item>
+        <item>运动</item>
+        <item>休息</item>
+        <item>放松</item>
+        <item>缓和</item>
+    </string-array>
+    <string-array name="duration_types">
+        <item>直到按键</item>
+        <item>时间</item>
+        <item>距离</item>
+    </string-array>
+    <string-array name="target_types">
+        <item>None</item>
+        <item>配速</item>
+        <item>心率区间</item>
+    </string-array>
+    <!-- Note: keep in same order as DB.ACCOUNT.SPORT_ -->
+    <string-array name="sportEntries">
+        <item>跑步</item>
+        <item>骑行</item>
+        <item>其他</item>
+        <item>越野</item>
+        <item>行走</item>
+    </string-array>
+    <string-array name="types">
+        <item>时间</item>
+        <item>距离</item>
+    </string-array>
+    <string-array name="sexes">
+        <item>男</item>
+        <item>女</item>
+    </string-array>
+</resources>
