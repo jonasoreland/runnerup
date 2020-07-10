@@ -72,10 +72,9 @@ import org.runnerup.util.MapWrapper;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
+import org.runnerup.workout.Sport;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -120,7 +119,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private SyncManager syncManager = null;
     private Formatter formatter = null;
 
-    private long startTime = 0; // activity start time in unix timestamp
+    private long mStartTime = 0; // activity start time in unix timestamp
 
     /**
      * Called when the activity is first created.
@@ -481,7 +480,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         // Must include the _id column for the adapter to work
         String[] from = new String[]{
                 DB.ACTIVITY.START_TIME,
-                DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.COMMENT,
+                DB.ACTIVITY.DISTANCE,
+                DB.ACTIVITY.TIME,
+                DB.ACTIVITY.COMMENT,
                 DB.ACTIVITY.SPORT
         };
 
@@ -493,7 +494,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         if (tmp.containsKey(DB.ACTIVITY.START_TIME)) {
             long st = tmp.getAsLong(DB.ACTIVITY.START_TIME);
-            startTime = st;
+            mStartTime = st;
             setTitle(formatter.formatDateTime(st));
         }
         double d = 0;
@@ -931,10 +932,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     private void shareActivity() {
-        final int which[] = {
+        final int[] which = {
             1 //TODO preselect tcx - choice should be remembered
         };
-        final CharSequence items[] = {
+        final CharSequence[] items = {
                 "gpx", "tcx" /* "nike+xml" */
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -959,10 +960,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
                         //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
                         //Solid Explorer File Manager works though
+                        String actType = Sport.textOf(sport.getValueInt());
                         Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
                                 + "/" + mID
-                                + "/" + String.format(Locale.getDefault(), "RunnerUp_%04d_%s.%s", mID,
-                                FileNameHelper.unixTimeToString(startTime), fmt));
+                                + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
                     }

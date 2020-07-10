@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+ * Copyright (C) 2012 - 2020 jonas.oreland@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,47 +26,33 @@ import java.util.Locale;
  */
 public class FileNameHelper {
 
-    private static String DATE_TIME_FORMAT_STRING = "yyyyMMddHHmmss";
+    private static String DATE_TIME_FORMAT_STRING = "yyyy-MM-dd-HH-mm-ss";
 
     /**
      * Generate export file name
-     * @param activityId activity index
-     * @param activityType activity type
-     * @param activityStartTime  activity start time with String type
-     * @return the generated filename
-     */
-    public static String getExportFileName(long activityId, String activityType, String activityStartTime) {
-        String fileBase =
-                String.format(Locale.getDefault(), "RunnerUp_%04d_%s_%s.",
-                        activityId, activityType, activityStartTime);
-
-        return fileBase;
-    }
-
-    /**
-     * Generate export file name
-     * @param activityId activity index
-     * @param activityType activity type
      * @param activityStartTime  activity start time in unix timestamp
+     * @param activityType activity type
      * @return the generated filename
      */
-    public static String getExportFileName(long activityId, String activityType, long activityStartTime) {
-        return getExportFileName(activityId, activityType, unixTimeToString(activityStartTime));
+    public static String getExportFileName(long activityStartTime, String activityType) {
+        return String.format(Locale.getDefault(),
+                "RunnerUp_%s_%s.",
+                unixTimeToString(activityStartTime),
+                activityType);
     }
 
     /**
-     * Generate filename for DropBox/WebDav
-     * @param activityId activity index
-     * @param activityType activity type
+     * Generate filename including the model name, to limit sorting in services like DropBox/WebDav
      * @param activityStartTime activity start time in unix timestamp
-     * @param fileExt file extension (tcx/gpx)
+     * @param activityType activity type
      * @return the generated filename for DropBox/WebDav
      */
-    public static String getDropBoxUploadFileName(long activityId, String activityType, long activityStartTime, String fileExt) {
-        return String.format(Locale.getDefault(), "/RunnerUp_%s_%04d_%s_%s.%s",
-                android.os.Build.MODEL.replaceAll("\\s","_"), activityId, activityType,
+    public static String getExportFileNameWithModel(long activityStartTime, String activityType) {
+        return String.format(Locale.getDefault(),
+                "/RunnerUp_%s_%s_%s.",
+                android.os.Build.MODEL.replaceAll("\\s","_"),
                 unixTimeToString(activityStartTime),
-                fileExt);
+                activityType);
     }
 
     /**
@@ -74,7 +60,7 @@ public class FileNameHelper {
      * @param timeStamp unix timestamp in seconds
      * @return converted string in 'DATE_TIME_FORMAT_STRING' format
      */
-    public static String unixTimeToString(long timeStamp) {
+    private static String unixTimeToString(long timeStamp) {
         return new SimpleDateFormat(DATE_TIME_FORMAT_STRING,
                 Locale.getDefault()).format(new Date(timeStamp * 1000L));
     }
