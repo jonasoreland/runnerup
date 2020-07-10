@@ -34,12 +34,8 @@ import org.runnerup.util.FileNameHelper;
 import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
@@ -229,17 +225,18 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
                 }
             }
 
+            String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
             if (mFormat.contains(FileFormats.TCX)) {
                 TCX tcx = new TCX(db, simplifier);
                 StringWriter writer = new StringWriter();
                 tcx.export(mID, writer);
-                s = uploadFile(db, mID, sport, startTime, writer, FileFormats.TCX.getValue());
+                s = uploadFile(writer, fileBase, FileFormats.TCX.getValue());
             }
             if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
                 GPX gpx = new GPX(db, true, true, simplifier);
                 StringWriter writer = new StringWriter();
                 gpx.export(mID, writer);
-                s = uploadFile(db, mID, sport, startTime, writer, FileFormats.GPX.getValue());
+                s = uploadFile(writer, fileBase, FileFormats.GPX.getValue());
             }
 
         } catch (Exception e) {
@@ -250,14 +247,12 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         return s;
     }
 
-    private Status uploadFile(SQLiteDatabase db, long mID, Sport sport, long startTime, StringWriter writer, String fileExt) {
-        String file = FileNameHelper.getDropBoxUploadFileName(mID, sport.TapiriikType(), startTime, fileExt);
-
+    private Status uploadFile(StringWriter writer, String fileBase, String fileExt) {
         Status s = Status.ERROR;
         try{
             OkHttpClient client = getAuthClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/"+fileExt+"+xml"),writer.toString());
-            Request request = new Request.Builder().url(url +file).method("PUT", body).build();
+            RequestBody body = RequestBody.create(MediaType.parse("application/" + fileExt + "+xml"), writer.toString());
+            Request request = new Request.Builder().url(url + fileBase + fileExt).method("PUT", body).build();
 
             Response response = client.newCall(request).execute();
             int responseCode = response.code();

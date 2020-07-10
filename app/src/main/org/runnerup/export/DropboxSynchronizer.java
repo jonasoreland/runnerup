@@ -225,18 +225,12 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
     }
 
     // upload a single file
-    private Status uploadFile(SQLiteDatabase db, final long mID, Sport sport,
-                              long startTime,
-                              StringWriter writer, String fileExt)
+    private Status uploadFile(StringWriter writer, final long mID, String fileBase, String fileExt)
             throws IOException, JSONException {
 
         Status s;
 
-        String date = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
-
         // Upload to default directory /Apps/RunnerUp
-        String file = FileNameHelper.getDropBoxUploadFileName(mID, sport.TapiriikType(), startTime, fileExt);
-
         HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod(RequestMethod.POST.name());
@@ -244,7 +238,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         conn.setRequestProperty("Authorization", "Bearer " + access_token);
         JSONObject parameters = new JSONObject();
         try {
-            parameters.put("path", file);
+            parameters.put("path", fileBase + fileExt);
             parameters.put("mode", "add");
             parameters.put("autorename", true);
         } catch (JSONException e) {
@@ -321,17 +315,18 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
                 }
             }
 
+            String fileBase = FileNameHelper.getExportFileNameWithModel(start_time, sport.TapiriikType());
             if (mFormat.contains(FileFormats.TCX)) {
                 TCX tcx = new TCX(db, simplifier);
                 StringWriter writer = new StringWriter();
                 tcx.export(mID, writer);
-                s = uploadFile(db, mID, sport, start_time, writer, FileFormats.TCX.getValue());
+                s = uploadFile(writer, mID, fileBase, FileFormats.TCX.getValue());
             }
             if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
                 GPX gpx = new GPX(db, true, true, simplifier);
                 StringWriter writer = new StringWriter();
                 gpx.export(mID, writer);
-                s = uploadFile(db, mID, sport, start_time, writer, FileFormats.GPX.getValue());
+                s = uploadFile(writer, mID, fileBase, FileFormats.GPX.getValue());
             }
 
         } catch (Exception e) {
