@@ -129,7 +129,7 @@ dependencies {
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
     //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
+    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
     latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
     latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
     latestImplementation 'com.jjoe64:graphview:4.2.2'
