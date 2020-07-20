@@ -22,11 +22,9 @@ Track your sport activities with RunnerUp using the GPS in your Android phone.
 
 ## Release
 
-* [Play Store](https://play.google.com/store/apps/details?id=org.runnerup).
-* [GitHub](https://github.com/jonasoreland/runnerup/releases). (RunnerUp 2.x versions including beta and release candidates.)
-* [F-Droid](https://f-droid.org/packages/org.runnerup.free/). This version does not contain some features due to licensing, see the F-Droid description.
-
-Join the beta program in Play for release candidates or monitor releases on GitHub.
+* [Play Store](https://play.google.com/store/apps/details?id=org.runnerup) Join [beta group](https://play.google.com/apps/testing/org.runnerup) for early access.
+* [GitHub](https://github.com/jonasoreland/runnerup/releases) All releases, including alpha releases.
+* [F-Droid](https://f-droid.org/packages/org.runnerup.free/) This version does not contain some features due to licensing, see the F-Droid description.
 
 The current 2.x release support Android 4.0 and later. The Play release also supports Android 2.2, 2.3, but due to lack of test devices, RunnerUp cannot support Android 2.x. The "Froyo" version do not include graphs, maps and elevation GeoId correction.
 
