@@ -95,6 +95,7 @@
 
         <TextView
             android:id="@+id/hr_log"
+            android:importantForAccessibility="no"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
