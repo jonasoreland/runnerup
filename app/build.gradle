@@ -208,8 +208,8 @@ android.applicationVariants.all {
 //Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html
 //Most comments from there removed
 
-// Map for the version code that gives each ABI a value.
-ext.abiCodes = ['arm64-v8a': 1, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
+// Map for the version code that gives each ABI a value (generic has lower value)
+ext.abiCodes = ['arm64-v8a': 8, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
 
 import com.android.build.OutputFile
 
