@@ -32,8 +32,14 @@ public class DurationPicker extends LinearLayout {
         super(context, attrs);
 
         hours = new NumberPicker(context, attrs);
+        hours.setMinimumHeight(48);
+        hours.setMinimumWidth(48);
         minutes = new NumberPicker(context, attrs);
+        minutes.setMinimumHeight(48);
+        minutes.setMinimumWidth(48);
         seconds = new NumberPicker(context, attrs);
+        seconds.setMinimumHeight(48);
+        seconds.setMinimumWidth(48);
 
         hours.setOrientation(VERTICAL);
         minutes.setOrientation(VERTICAL);

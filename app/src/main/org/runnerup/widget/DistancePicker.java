@@ -44,6 +44,8 @@ public class DistancePicker extends LinearLayout {
                 LayoutParams.MATCH_PARENT));
         unitString = new TextView(context, attrs);
         unitString.setTextSize(25);
+        unitString.setMinimumHeight(48);
+        unitString.setMinimumWidth(48);
         unitStringLayout.addView(unitString);
         meters = new NumberPicker(context, attrs);
 

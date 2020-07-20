@@ -58,6 +58,8 @@
         android:background="@color/subsectionBg"
         android:cacheColorHint="@color/subsectionBg"
         android:clipToPadding="false"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:paddingLeft="@dimen/activity_margin"
         android:paddingRight="@dimen/activity_margin"
         android:paddingTop="@dimen/activity_margin"
@@ -70,6 +72,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:background="@drawable/btn_blue"
         android:text="@string/Download_workouts" />
 

@@ -37,12 +37,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:scaleType="center" />
 
         <ImageView
             android:id="@+id/account_list_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:scaleType="center"
             tools:ignore="ContentDescription"/>
     </LinearLayout>
@@ -68,6 +72,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_upload_button"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:text="@string/Disconnect" />
 
     <Button
@@ -77,25 +83,31 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/account_download_button"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:text="@string/upload" />
 
   <Button
-    style="@style/ButtonText"
-    android:id="@+id/account_download_button"
-    android:background="@drawable/btn_blue"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="false"
-    android:text="@string/Download"
-    android:layout_above="@+id/ok_account_button"/>
+      style="@style/ButtonText"
+      android:id="@+id/account_download_button"
+      android:background="@drawable/btn_blue"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="false"
+      android:minWidth="48dp"
+      android:minHeight="48dp"
+      android:text="@string/Download"
+      android:layout_above="@+id/ok_account_button" />
 
   <Button
-        android:id="@+id/ok_account_button"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_green"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/OK" />
+      android:id="@+id/ok_account_button"
+      style="@style/ButtonText"
+      android:background="@drawable/btn_green"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:minWidth="48dp"
+      android:minHeight="48dp"
+      android:text="@string/OK" />
 
 </RelativeLayout>

@@ -202,6 +202,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 cb.setOnCheckedChangeListener(sendCBChecked);
+                cb.setMinimumHeight(48);
+                cb.setMinimumWidth(48);
                 addRow(getResources().getString(R.string.Automatic_upload), cb);
             } else {
                 Button btn = (Button) findViewById(R.id.account_upload_button);
@@ -216,6 +218,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                     cb.setChecked(format.contains(f));
                     cb.setTag(f);
                     cb.setOnCheckedChangeListener(sendCBChecked);
+                    cb.setMinimumHeight(48);
+                    cb.setMinimumWidth(48);
                     addRow(f.getName(), cb);
                 }
             }
@@ -250,6 +254,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     private void addRow(String string, View btn) {
         TableLayout table = (TableLayout) findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
+        row.setMinimumHeight(48);
+        row.setMinimumWidth(48);
         TextView title = new TextView(this);
         title.setText(string);
         row.addView(title);
