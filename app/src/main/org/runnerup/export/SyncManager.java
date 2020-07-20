@@ -394,7 +394,11 @@ public class SyncManager {
         }
         if (AuthMethod.USER_PASS_URL.equals(authMethod)) {
             rowUrl.setVisibility(View.VISIBLE);
-            urlInput.setText(authConfig.optString(DB.ACCOUNT.URL));
+            String url = authConfig.optString(DB.ACCOUNT.URL);
+            if (url == null || url.isEmpty()) {
+                url = sync.getPublicUrl();
+            }
+            urlInput.setText(url);
         } else {
             rowUrl.setVisibility(View.GONE);
         }

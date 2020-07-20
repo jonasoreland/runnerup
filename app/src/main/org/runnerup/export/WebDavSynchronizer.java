@@ -48,12 +48,11 @@ import okhttp3.Route;
 
 public class WebDavSynchronizer extends DefaultSynchronizer {
 
-    public static final String NAME = "WebDav";
+    public static final String NAME = "WebDAV";
 
     private long id = 0;
 
     private PathSimplifier simplifier;
-    private FileFormats format;
     private String username;
     private String password;
     private String url;
@@ -80,6 +79,11 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
 
     @Override
     public String getPublicUrl() {
+        if (url == null || url.isEmpty()) {
+            // Some default to help formatting
+            // TODO Separate URL for upload and access
+            return "https://site.com/remote.php/dav/files/useremail/runnerup";
+        }
         return url;
     }
 
