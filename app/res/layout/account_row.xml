@@ -70,7 +70,7 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/account_list_feed"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -80,7 +80,7 @@
             android:minHeight="48dp"
             android:contentDescription="@string/feed" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/account_list_upload"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

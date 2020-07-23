@@ -21,8 +21,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.loader.content.CursorLoader;
 
-public class SimpleCursorLoader extends android.support.v4.content.CursorLoader {
+
+public class SimpleCursorLoader extends CursorLoader {
 
     private final SQLiteDatabase mDB;
     private final String mTable;

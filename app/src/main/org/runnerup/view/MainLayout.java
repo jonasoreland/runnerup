@@ -41,11 +41,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +55,13 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -72,13 +79,9 @@ import java.util.List;
 public class MainLayout extends TabActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private Drawable myGetDrawable(int resId) {
-        return getResources().getDrawable(resId);
-    }
-
     private View getTabView(CharSequence label, int iconResource) {
         @SuppressLint("InflateParams")View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
-        ((ImageView)tabView.findViewById(R.id.icon)).setContentDescription(label);
+        tabView.findViewById(R.id.icon).setContentDescription(label);
         Drawable icon = ContextCompat.getDrawable(this, iconResource);
         ((ImageView)tabView.findViewById(R.id.icon)).setImageDrawable(icon);
         return tabView;
@@ -200,12 +203,13 @@ public class MainLayout extends TabActivity
     }
 
     private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
-        String list[] = null;
+        String[] list;
 
         try {
             list = mgr.list(srcBase);
         } catch (IOException e) {
             e.printStackTrace();
+            list = null;
         }
         if (list != null) {
             for (String add : list) {
