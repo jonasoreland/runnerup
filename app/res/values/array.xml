@@ -42,6 +42,7 @@
     <item>العَرَبِيَّة‎‎</item>
     <item>Bahasa Indonesia</item>
     <item>Català</item>
+    <item>Čeština</item>
     <item>Deutsch</item>
     <item>Español</item>
     <item>زبان فارسی</item>
@@ -65,8 +66,9 @@
   <string-array name="cueLanguageCodes" translatable="false">
     <item>en</item>
     <item>ar</item>
-    <item>id</item>
+    <item>in</item>
     <item>ca</item>
+    <item>cs</item>
     <item>de</item>
     <item>es</item>
     <item>fa</item>
