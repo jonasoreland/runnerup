@@ -33,6 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -339,7 +340,11 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         public void onClick(View v) {
             final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) v
                     .getTag()));
-            startActivity(intent);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.i(getClass().getName(), "No handler for file intent installed? " + e.getMessage());
+            }
         }
     };
 
