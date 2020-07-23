@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -26,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
@@ -33,9 +35,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +73,7 @@ import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
+import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
@@ -87,7 +95,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class StartActivity extends AppCompatActivity implements TickListener, GpsInformation {
+public class StartActivity extends AppCompatActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback, TickListener, GpsInformation {
 
     private enum GpsLevel {POOR, ACCEPTABLE, GOOD}
 
@@ -462,7 +471,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     }
 
     private void onGpsTrackerBound() {
-        if (getAutoStartGps()) {
+        // check and request permissions at startup
+        boolean missingEssentialPermission = checkPermissions(false);
+        if (!missingEssentialPermission && getAutoStartGps()) {
             startGps();
         } else {
             switch (mTracker.getState()) {
@@ -496,7 +507,11 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     }
 
     private void startGps() {
-        Log.e(getClass().getName(), "StartActivity.startGps()");
+        Log.v(getClass().getName(), "StartActivity.startGps()");
+        if (!mGpsStatus.isEnabled()) {
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        }
+
         if (mGpsStatus != null && !mGpsStatus.isLogging())
             mGpsStatus.start(this);
 
@@ -549,20 +564,18 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         final CheckBox dontShowAgain = new CheckBox(this);
         dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
 
-        AlertDialog.Builder prompt = new AlertDialog.Builder(this)
+        AlertDialog prompt = new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
                 .setMessage(getResources().getText(R.string.Low_HRM_battery_level)
                 + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
                 .setTitle(getResources().getText(R.string.Warning))
-                .setPositiveButton(getResources().getText(R.string.OK), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (dontShowAgain.isChecked()) {
-                    prefs.edit().putBoolean(pref_key, true).apply();
-                }
-            }
-        });
-        prompt.show();
+                .setPositiveButton(getResources().getText(R.string.OK), (dialog, which) -> {
+                    if (dontShowAgain.isChecked()) {
+                        prefs.edit().putBoolean(pref_key, true).apply();
+                    }
+                })
+                .show();
     }
 
     private final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
@@ -627,16 +640,125 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         }
     };
 
-    private final OnClickListener gpsEnableClick = new OnClickListener() {
-        public void onClick(View v) {
-            if (!mGpsStatus.isEnabled()) {
-                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-            } else if (mTracker.getState() != TrackerState.CONNECTED) {
-                startGps();
-            }
-            updateView();
+    private final OnClickListener gpsEnableClick = v -> {
+        if (checkPermissions(true)) {
+            // Handle view update etc in permission callback
+            return;
         }
+
+        if (mTracker.getState() != TrackerState.CONNECTED) {
+            startGps();
+        }
+        updateView();
     };
+
+
+    private List<String> getPermissions() {
+        List<String> requiredPerms = new ArrayList<>();
+        requiredPerms.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        requiredPerms.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            requiredPerms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean enabled = prefs.getBoolean(this.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
+            if (enabled && TrackerCadence.isAvailable(this)) {
+                requiredPerms.add(Manifest.permission.ACTIVITY_RECOGNITION);
+            }
+        }
+
+        return requiredPerms;
+    }
+
+    /**
+     * Check that required permissions are allowed
+     * @param popup
+     * @return
+     */
+    private boolean checkPermissions(boolean popup) {
+        boolean missingEssentialPermission = false;
+        boolean missingAnyPermission = false;
+        List<String> requiredPerms = getPermissions();
+        List<String> requestPerms = new ArrayList<>();
+
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                missingAnyPermission = true;
+                // Filter non essential permissions for result
+                missingEssentialPermission = missingEssentialPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
+                    // A denied permission, show motivation in a popup
+                    String s = "Permission " + perm + " is explicitly denied";
+                    Log.i(getClass().getName(), s);
+                } else {
+                    requestPerms.add(perm);
+                }
+            }
+        }
+
+        if (missingAnyPermission) {
+            final String[] permissions = new String[requestPerms.size()];
+            requestPerms.toArray(permissions);
+
+            if (popup && (missingEssentialPermission || requestPerms.size() > 0)) {
+                // Essential or requestable permissions missing
+                String baseMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                        ? getString(R.string.GPS_permission_text)
+                        : getString(R.string.GPS_permission_text_pre_Android10);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                        .setTitle(getString(R.string.GPS_permission_required))
+                        .setMessage(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                                ? getString(R.string.GPS_permission_text)
+                                : getString(R.string.GPS_permission_text_pre_Android10))
+                        .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> dialog.dismiss());
+                if (requestPerms.size() > 0) {
+                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> {
+                        ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
+                    });
+                    builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
+                } else {
+                    builder.setMessage(baseMessage);
+                }
+                builder.show();
+            } else if (requestPerms.size() > 0) {
+                ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
+            }
+        }
+
+        return missingEssentialPermission;
+    }
+
+    // Id to identify a permission request.
+    // TODO When released in 1.2.0, use https://developer.android.com/reference/androidx/activity/result/contract/ActivityResultContracts.RequestPermission
+    private static final int REQUEST_LOCATION = 3000;
+
+    // TODO This callback is not called (due to requestPermissions(this.getParent()?), so onCreate() is used
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            // Check if the only required permission has been granted (could react on the response)
+            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                String s = "Permission response OK";
+                Log.i(getClass().getName(), s);
+                if (mTracker.getState() != TrackerState.CONNECTED) {
+                    startGps();
+                }
+                updateView();
+
+            } else {
+                String s = "Permission was not granted: " + " ("+grantResults.length+", "+permissions.length + ")";
+                Log.i(getClass().getName(), s);
+            }
+        } else {
+            String s = "Unexpected permission request: " + requestCode;
+            Log.w(getClass().getName(), s);
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     private void toggleStatusDetails() {
         statusDetailsShown = !statusDetailsShown;

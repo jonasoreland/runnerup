@@ -296,6 +296,11 @@
   <string name="Share_workout">Share workout…</string>
   <string name="New_audio_scheme">New audio scheme</string>
   <string name="GPS_permission_required">GPS permission required</string>
+  <string name="GPS_permission_text_pre_Android10">Location permission required in system settings</string>
+  <string name="GPS_permission_text">Location permission \"Allow all the time\" required in system settings.\nFor running cadence \"Physical activity\" permission is required too.</string>
+  <string name="Activity_recognition_permission_required">Activity recognition permission required</string>
+  <string name="Activity_recognition_text">The permission \"Physical activity\" is required for running cadence</string>
+  <string name="Request_permission_text">Allow permission by clicking \"OK\".</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Workout notes</string>
   <string name="Downloading_from_1s">Downloading from %1$s</string>
