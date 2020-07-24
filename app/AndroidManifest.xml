@@ -38,7 +38,7 @@
     <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" android:minSdkVersion="28"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
@@ -227,8 +227,13 @@
                 android:value=".view.SettingsActivity"/>
         </activity>
 
-        <service android:name=".tracker.Tracker"/>
-        <service android:name=".export.RunnerUpLiveSynchronizer$LiveService"/>
+        <service
+            android:name=".tracker.Tracker"
+            android:foregroundServiceType="location" />
+
+        <service
+            android:name=".export.RunnerUpLiveSynchronizer$LiveService"
+            android:foregroundServiceType="location" />
 
         <receiver
             android:name=".tracker.component.HeadsetButtonReceiver"
