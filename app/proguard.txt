@@ -3,6 +3,11 @@
 ############################
 # RunnerUp internal
 
+# will keep line numbers and file name obfuscation
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+-keepattributes EnclosingMethod
+
 # All implementations of internal interfaces do not use all methods
 # org.runnerup.view.StepButton.**
 # org.runnerup.widget.ClassicSpinner.**
