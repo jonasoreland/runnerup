@@ -149,6 +149,8 @@ public class SpinnerPresenter {
             public void onClick(View v) {
                 edit.setText(mSpin.getViewValueText());
                 edit.setInputType(mInputType);
+                edit.setMinimumHeight(48);
+                edit.setMinimumWidth(148);
                 if(edit.getParent() != null) {
                     ((LinearLayout)edit.getParent()).removeView(edit);
                 }

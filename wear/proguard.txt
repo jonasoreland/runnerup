@@ -3,3 +3,4 @@
 #PlayServices related?
 -dontnote com.google.protobuf.zz*
 -dontnote com.google.android.gms.dynamic.IObjectWrapper
+-dontwarn com.google.android.wearable.**

@@ -3,17 +3,23 @@
 ############################
 # RunnerUp internal
 
+# will keep line numbers and file name obfuscation
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+-keepattributes EnclosingMethod
+
 # All implementations of internal interfaces do not use all methods
-#-dontnote org.runnerup.view.StepButton
-#-dontnote org.runnerup.widget.ClassicSpinner
-#-dontnote org.runnerup.widget.TitleSpinner
+# org.runnerup.view.StepButton.**
+# org.runnerup.widget.ClassicSpinner.**
+# org.runnerup.widget.TitleSpinner.**
+-keep,includedescriptorclasses class org.runnerup.**
 
 #PlayServices related?
 -dontnote com.google.protobuf.zz*
 -dontnote com.google.android.gms.dynamic.IObjectWrapper
 
 #AntPlus is optional - used by reflection
--keep class org.runnerup.hr.AntPlus {
+-keep,includedescriptorclasses class org.runnerup.hr.AntPlus {
   *;
 }
 -keepclassmembers class org.runnerup.hr.AntPlus {
@@ -23,15 +29,20 @@
 ############################
 # ANTplus
 
-#ref to fit
 -keep class com.dsi.ant.plugins.**
-#-dontwarn com.dsi.ant.**
 -keeppackagenames com.dsi.ant.**
+
+#ref to com.garmin.fit
+-dontwarn com.dsi.ant.**
 
 ############################
 # GraphView
 
 -dontnote com.jjoe64.graphview.LegendRenderer
+
+############################
+# other, unknown
+-dontnote Object
 
 ############################
 # Other mapbox
@@ -43,6 +54,9 @@
 -dontnote okio.BufferedSink
 
 #############################
+# Keep descriptor class
+-keep class com.mapbox.mapboxsdk.maps.renderer.glsurfaceview.MapboxGLSurfaceView$OnGLSurfaceViewDetachedListener
+
 # From mapbox demo https://github.com/mapbox/mapbox-android-demo/blob/master/MapboxAndroidDemo/proguard-rules.pro
 
 # Retrofit 2

@@ -234,7 +234,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                         launchMain(saveName);
                     }
                 })
-                .setNegativeButton(getString(R.string.No_way),
+                .setNegativeButton(getString(R.string.No),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do nothing but close the dialog

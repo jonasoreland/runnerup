@@ -305,11 +305,14 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
     private void createNewAudioSchemeDialog() {
         final EditText editText = new EditText(this);
+        editText.setMinimumHeight(48);
+        editText.setMinimumWidth(48);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Create_new_audio_cue_scheme))
         // Get the layout inflater
         .setView(editText)
-        .setPositiveButton(getString(R.string.Create), new OnClickListener() {
+        .setPositiveButton(getString(R.string.OK), new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String scheme = editText.getText().toString();

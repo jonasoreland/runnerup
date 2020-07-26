@@ -49,6 +49,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:hint="URL"
             android:inputType="textUri"
             tools:ignore="HardcodedText,AutoFill"/>

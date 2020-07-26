@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.wearable.view.GridViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.wearable.view.GridViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

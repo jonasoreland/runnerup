@@ -26,7 +26,7 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
-            if (rootProject.ext.allowNonFree) {
+            if (rootProject.ext.enableWear) {
                 java.srcDirs += ['src/play']
             } else {
                 java.srcDirs += ['src/free']
@@ -48,7 +48,7 @@ android {
             compileSdkVersion rootProject.ext.compileSdkVersion
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
-            versionCode 14000000 + rootProject.ext.versionCode
+            versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
         }
     }
 
@@ -69,7 +69,7 @@ android {
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
-        resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ru", "sv", "tr", "zh"
+        resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "in", "it", "ja", "lt", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "tr", "zh"
     }
 
     signingConfigs {
@@ -117,19 +117,21 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
-    if (rootProject.ext.allowNonFree) {
+    if (rootProject.ext.enableWear) {
         latestWearApp project(':wear')
     }
 
     //noinspection GradleCompatible
     latestImplementation "com.android.support:design:${rootProject.ext.supportLibrary}"
     latestImplementation "com.android.support:cardview-v7:${rootProject.ext.supportLibrary}"
-    //noinspection GradleDependency
-    latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    if (rootProject.ext.enableWear) {
+        //noinspection GradleDependency
+        latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    }
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
     //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
+    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
     latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
     latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
     latestImplementation 'com.jjoe64:graphview:4.2.2'
@@ -208,8 +210,8 @@ android.applicationVariants.all {
 //Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html
 //Most comments from there removed
 
-// Map for the version code that gives each ABI a value.
-ext.abiCodes = ['arm64-v8a': 1, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
+// Map for the version code that gives each ABI a value (generic has lower value)
+ext.abiCodes = ['arm64-v8a': 8, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
 
 import com.android.build.OutputFile
 

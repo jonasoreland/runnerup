@@ -33,6 +33,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -202,6 +203,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_UPLOAD);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 cb.setOnCheckedChangeListener(sendCBChecked);
+                cb.setMinimumHeight(48);
+                cb.setMinimumWidth(48);
                 addRow(getResources().getString(R.string.Automatic_upload), cb);
             } else {
                 Button btn = (Button) findViewById(R.id.account_upload_button);
@@ -216,6 +219,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                     cb.setChecked(format.contains(f));
                     cb.setTag(f);
                     cb.setOnCheckedChangeListener(sendCBChecked);
+                    cb.setMinimumHeight(48);
+                    cb.setMinimumWidth(48);
                     addRow(f.getName(), cb);
                 }
             }
@@ -250,6 +255,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     private void addRow(String string, View btn) {
         TableLayout table = (TableLayout) findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
+        row.setMinimumHeight(48);
+        row.setMinimumWidth(48);
         TextView title = new TextView(this);
         title.setText(string);
         row.addView(title);
@@ -333,7 +340,11 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         public void onClick(View v) {
             final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse((String) v
                     .getTag()));
-            startActivity(intent);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.i(getClass().getName(), "No handler for file intent installed? " + e.getMessage());
+            }
         }
     };
 

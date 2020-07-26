@@ -100,7 +100,14 @@ public class OAuth2Activity extends AppCompatActivity {
         mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mSpinner.setMessage(getString(R.string.Loading));
         
-        final WebView wv = new WebView(this);
+        // https://stackoverflow.com/questions/41025200/android-view-inflateexception-error-inflating-class-android-webkit-webview/58131421#58131421
+        WebView wvt;
+        try {
+            wvt = new WebView(this);
+        } catch (Exception e) {
+            wvt = new WebView(getApplicationContext());
+        }
+        final WebView wv = wvt;
         wv.setVerticalScrollBarEnabled(false);
         wv.setHorizontalScrollBarEnabled(false);
         wv.getSettings().setJavaScriptEnabled(true);
@@ -144,7 +151,6 @@ public class OAuth2Activity extends AppCompatActivity {
                 if (!isFinishing())
                     mSpinner.show();
             }
-
 
             // TODO: Fix "WrongThread"
             @SuppressLint({"StaticFieldLeak", "WrongThread"})

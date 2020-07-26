@@ -37,7 +37,9 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/Sport"
             android:key="@string/pref_sport"
-            android:spinnerMode="dropdown"/>
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:spinnerMode="dropdown" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -55,19 +57,21 @@
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"/>
+                android:layout_alignParentTop="true"
+                android:minWidth="48dp"
+                android:minHeight="48dp" />
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@android:id/tabs">
+                android:layout_below="@android:id/tabs" >
 
-                <include layout="@layout/start_basic"/>
+                <include layout="@layout/start_basic" />
 
-                <include layout="@layout/start_interval"/>
+                <include layout="@layout/start_interval" />
 
-                <include layout="@layout/start_advanced"/>
+                <include layout="@layout/start_advanced" />
             </FrameLayout>
 
             <RelativeLayout
@@ -190,8 +194,10 @@
                     android:layout_height="16dp"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/status_frame"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
                     app:srcCompat="@drawable/ic_expand_up_white_24dp"
-                    tools:ignore="ContentDescription"/>
+                    tools:ignore="ContentDescription" />
 
                 <Button
                     android:id="@+id/gps_enable_button"

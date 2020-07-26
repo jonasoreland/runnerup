@@ -78,7 +78,7 @@ public class MainLayout extends TabActivity
 
     private View getTabView(CharSequence label, int iconResource) {
         @SuppressLint("InflateParams")View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
-        // ((TextView)tabView.findViewById(R.id.title)).setText(label);
+        ((ImageView)tabView.findViewById(R.id.icon)).setContentDescription(label);
         Drawable icon = ContextCompat.getDrawable(this, iconResource);
         ((ImageView)tabView.findViewById(R.id.icon)).setImageDrawable(icon);
         return tabView;

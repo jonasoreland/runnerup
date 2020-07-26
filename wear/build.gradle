@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -9,7 +8,7 @@ android {
         minSdkVersion 23
         targetSdkVersion rootProject.ext.compileSdkVersion
         versionName rootProject.ext.versionName
-        versionCode rootProject.ext.versionCode
+        versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
     }
 
     dexOptions {

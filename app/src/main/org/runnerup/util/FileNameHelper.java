@@ -42,10 +42,10 @@ public class FileNameHelper {
     }
 
     /**
-     * Generate filename including the model name, to limit sorting in services like DropBox/WebDav
+     * Generate filename including the model name, to limit sorting in services like DropBox/WebDAV
      * @param activityStartTime activity start time in unix timestamp
      * @param activityType activity type
-     * @return the generated filename for DropBox/WebDav
+     * @return the generated filename for DropBox/WebDAV
      */
     public static String getExportFileNameWithModel(long activityStartTime, String activityType) {
         return String.format(Locale.getDefault(),

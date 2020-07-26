@@ -16,14 +16,16 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:runnerup="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/dialog_padding_vert"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="@dimen/dialog_padding_vert">
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="48dp"
+    android:minHeight="48dp"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingTop="@dimen/dialog_padding_vert"
+    android:paddingRight="16dp"
+    android:paddingBottom="@dimen/dialog_padding_vert">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/step_intensity"
