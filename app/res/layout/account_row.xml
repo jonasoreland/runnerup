@@ -15,6 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
@@ -42,7 +43,7 @@
 
             <ImageView
                 android:id="@+id/account_list_icon"
-                android:src="@drawable/circle_40dp"
+                app:srcCompat="@drawable/circle_40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -70,7 +71,7 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/account_list_feed"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -80,7 +81,7 @@
             android:minHeight="48dp"
             android:contentDescription="@string/feed" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/account_list_upload"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

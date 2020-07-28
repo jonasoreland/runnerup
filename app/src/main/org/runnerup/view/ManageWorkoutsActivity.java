@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -31,8 +30,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -573,7 +572,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             if (currentlySelectedWorkout == null)
                 return;
 
-            final Activity context = ManageWorkoutsActivity.this;
+            final AppCompatActivity context = ManageWorkoutsActivity.this;
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             final String name = selected.workoutName;
             final Intent intent = new Intent(Intent.ACTION_SEND);
@@ -590,6 +589,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
             syncManager.onActivityResult(requestCode, resultCode, data);
         }

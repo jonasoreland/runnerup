@@ -7,6 +7,11 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = preDexEnabled && !travisBuild
@@ -44,6 +49,7 @@ repositories {
 }
 
 dependencies {
+    implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
     if (rootProject.ext.antPlusLib) {
         implementation files("../" + antPlusLib)
     }

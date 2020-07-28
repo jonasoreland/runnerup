@@ -18,7 +18,7 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,7 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -216,6 +216,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (!hrProvider.isEnabled()) {
                 log("Bluetooth not enabled!");

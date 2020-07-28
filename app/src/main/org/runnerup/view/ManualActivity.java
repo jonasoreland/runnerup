@@ -21,7 +21,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,6 +105,7 @@ public class ManualActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {//todo is this log needed?
+        super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
             if (data.getStringExtra("url") != null)
                 Log.e(getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));

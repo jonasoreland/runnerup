@@ -26,14 +26,14 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.SwitchCompat;
+import androidx.annotation.NonNull;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.core.content.ContextCompat;
+import androidx.loader.content.Loader;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -333,6 +333,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
             mSyncManager.onActivityResult(requestCode, resultCode, data);
             this.mCursorAdapter.notifyDataSetChanged();

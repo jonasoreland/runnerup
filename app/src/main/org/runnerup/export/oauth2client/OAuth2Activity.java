@@ -18,14 +18,12 @@
 package org.runnerup.export.oauth2client;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -33,6 +31,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -183,7 +183,7 @@ public class OAuth2Activity extends AppCompatActivity {
                         Log.e(getClass().getName(), "e: " + e);
                         Intent res = new Intent()
                                 .putExtra("error", e);
-                        OAuth2Activity.this.setResult(Activity.RESULT_CANCELED, res);
+                        OAuth2Activity.this.setResult(AppCompatActivity.RESULT_CANCELED, res);
                         OAuth2Activity.this.finish();
                         return;
                     }
@@ -211,7 +211,7 @@ public class OAuth2Activity extends AppCompatActivity {
                     new AsyncTask<String, String, Integer>() {
                         @Override
                         protected Integer doInBackground(String... params) {
-                            int resultCode = Activity.RESULT_CANCELED;
+                            int resultCode = AppCompatActivity.RESULT_CANCELED;
                             HttpURLConnection conn = null;
 
                             try {
@@ -236,7 +236,7 @@ public class OAuth2Activity extends AppCompatActivity {
 
                                     res.putExtra(DB.ACCOUNT.AUTH_CONFIG, obj.toString());
                                     if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                                        resultCode = Activity.RESULT_OK;
+                                        resultCode = AppCompatActivity.RESULT_OK;
                                     }
                                 } catch (IOException e) {
                                     InputStream inS = conn.getErrorStream();
@@ -283,7 +283,7 @@ public class OAuth2Activity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public static Intent getIntent(Activity activity, OAuth2Server server) {
+    public static Intent getIntent(AppCompatActivity activity, OAuth2Server server) {
         Bundle b = new Bundle();
         b.putString(OAuth2ServerCredentials.CLIENT_ID, server.getClientId());
         b.putString(OAuth2ServerCredentials.CLIENT_SECRET,

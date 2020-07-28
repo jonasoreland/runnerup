@@ -18,7 +18,6 @@
 package org.runnerup.hr;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -32,6 +31,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.HashSet;
 import java.util.List;
@@ -112,7 +113,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return Bt20Base.isEnabledImpl();
     }
 
-    public boolean startEnableIntent(Activity activity, int requestCode) {
+    public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
         return Bt20Base.startEnableIntentImpl(activity, requestCode);
     }
 

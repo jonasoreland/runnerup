@@ -21,7 +21,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.Gravity;

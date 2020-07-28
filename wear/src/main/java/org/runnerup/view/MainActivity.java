@@ -38,6 +38,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
+
 import java.util.ArrayList;
 
 public class MainActivity extends Activity implements Constants, ValueModel.ChangeListener<TrackerState> {
