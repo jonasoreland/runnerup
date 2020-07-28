@@ -83,7 +83,7 @@ public class ListenerService extends WearableListenerService {
      * @return
      */
     public static String getChannelId(Context context) {
-        if (Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (mChannel == null) {
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

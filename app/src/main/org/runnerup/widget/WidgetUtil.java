@@ -60,7 +60,7 @@ public class WidgetUtil {
     @SuppressWarnings("deprecation")
     
     public static void setBackground(View v, Drawable d) {
-        if (Build.VERSION.SDK_INT < 16) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             v.setBackgroundDrawable(d);
         } else {
             v.setBackground(d);

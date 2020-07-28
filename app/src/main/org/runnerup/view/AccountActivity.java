@@ -166,7 +166,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                         tv.setTag(synchronizer.getPublicUrl());
                         // FileSynchronizer: SDK 24 requires the file URI to be handled as FileProvider
                         // Something like OI File Manager is needed too
-                        if (Build.VERSION.SDK_INT < 24 || !synchronizer.getName().equals(FileSynchronizer.NAME)) {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || !synchronizer.getName().equals(FileSynchronizer.NAME)) {
                             tv.setOnClickListener(urlButtonClick);
                         }
                     }

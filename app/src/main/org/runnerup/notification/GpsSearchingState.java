@@ -36,7 +36,7 @@ public class GpsSearchingState implements NotificationState {
                 .setSmallIcon(R.drawable.ic_stat_notify)
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true);
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setCategory(NotificationCompat.CATEGORY_SERVICE);
         }

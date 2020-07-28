@@ -55,7 +55,7 @@ public class OngoingState implements NotificationState {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .addAction(R.drawable.ic_av_newlap, context.getString(R.string.Lap), pendingLap)
                 .addAction(R.drawable.ic_av_pause, context.getString(R.string.Pause), pendingPause);
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setCategory(NotificationCompat.CATEGORY_SERVICE);
         }

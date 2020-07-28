@@ -483,10 +483,13 @@ public class SyncManager {
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
 
         String path;
-        if (Build.VERSION.SDK_INT >= 19) {
-            //noinspection InlinedApi
-            path = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOCUMENTS).getPath();
+        if (Build.VERSION.SDK_INT >= 29) {
+            // All paths are related to Environment.DIRECTORY_DOCUMENTS
+            path = "";
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                //noinspection InlinedApi
+                path = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOCUMENTS).getPath() + File.separator;
         } else {
             path = Environment.getExternalStorageDirectory().getPath();
         }
@@ -545,7 +548,7 @@ public class SyncManager {
     private boolean checkStoragePermissions(final AppCompatActivity activity) {
         boolean result = true;
         String[] requiredPerms;
-        if (Build.VERSION.SDK_INT >= 16) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             //noinspection InlinedApi
             requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
         } else {
