@@ -646,7 +646,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString())
-                    .setNegativeButton(ctx.getString(R.string.OK), listener);
+                    .setNegativeButton(ctx.getString(R.string.Cancel), listener);
         }
         builder.show();
     }
@@ -668,7 +668,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString())
-                    .setNegativeButton(ctx.getString(R.string.OK), listener);
+                    .setNegativeButton(ctx.getString(R.string.Cancel), listener);
         }
         builder.show();
     }
