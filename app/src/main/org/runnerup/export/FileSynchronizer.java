@@ -17,11 +17,15 @@
 
 package org.runnerup.export;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -30,6 +34,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
@@ -39,6 +44,7 @@ import org.runnerup.workout.Sport;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,14 +56,16 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public static final String NAME = "File";
 
     private long id = 0;
+    private Context mContext;
     private String mPath;
     private FileFormats mFormat;
     private PathSimplifier simplifier;
 
-    FileSynchronizer() {}
+    private FileSynchronizer() {}
 
     FileSynchronizer(Context context, PathSimplifier simplifier) {
         this();
+        this.mContext = context;
         this.simplifier = simplifier;
     }
 
@@ -73,7 +81,12 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     @Override
     public String getPublicUrl() {
-        return "file://" + mPath;
+        return "file://"
+                + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                // Only for display
+                ? Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath() + File.separator
+                : "")
+                + mPath;
     }
 
     @Override
@@ -96,6 +109,10 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 mFormat = new FileFormats(config.getAsString(DB.ACCOUNT.FORMAT));
                 JSONObject tmp = new JSONObject(authConfig);
                 mPath = tmp.optString(DB.ACCOUNT.URL, null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath != null && mPath.startsWith(File.separator)) {
+                    // Migrate to use scooped storage
+                    mPath = mPath.substring(mPath.lastIndexOf(File.separator));
+                }
             } catch (JSONException e) {
                 Log.w(getName(), "init: Dropping config due to failure to parse json from " + authConfig + ", " + e);
             }
@@ -111,7 +128,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 tmp.put(DB.ACCOUNT.URL, mPath);
             } catch (JSONException e) {
                 Log.w(getName(), "getAuthConfig: Failure to create json for " + mPath + ", " + e);
-    }
+            }
         }
         return tmp.toString();
     }
@@ -130,8 +147,13 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public Status connect() {
         Status s = Status.NEED_AUTH;
         s.authMethod = AuthMethod.FILEPERMISSION;
-        if (TextUtils.isEmpty(mPath))
+        if (TextUtils.isEmpty(mPath)) {
             return s;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            s = Status.OK;
+            return s;
+        }
         try {
             File dstDir = new File(mPath);
             //noinspection ResultOfMethodCallIgnored
@@ -142,6 +164,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         } catch (SecurityException e) {
             //Status is NEED_AUTH
         }
+
         return s;
     }
 
@@ -174,28 +197,47 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 }
             }
 
-            String fileBase = new File(mPath).getAbsolutePath() + File.separator +
-                    FileNameHelper.getExportFileName(startTime, sport.TapiriikType());
-
+            String fileBase = FileNameHelper.getExportFileName(startTime, sport.TapiriikType());
             if (mFormat.contains(FileFormats.TCX)) {
+                OutputStream out = getOutputStream(fileBase + FileFormats.TCX.getValue(), ActivityProvider.TCX_MIME);
                 TCX tcx = new TCX(db, simplifier);
-                File file = new File(fileBase + FileFormats.TCX.getValue());
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 tcx.export(mID, new OutputStreamWriter(out));
-                s.externalId = Uri.fromFile(file).toString();
-                s.externalIdStatus = ExternalIdStatus.NONE; //Not working yet
             }
             if (mFormat.contains(FileFormats.GPX)) {
+                OutputStream out = getOutputStream(fileBase + FileFormats.GPX.getValue(), ActivityProvider.GPX_MIME);
                 GPX gpx = new GPX(db, true, true, simplifier);
-                File file = new File(fileBase + FileFormats.GPX.getValue());
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 gpx.export(mID, new OutputStreamWriter(out));
             }
+            s.externalIdStatus = ExternalIdStatus.NONE;
             s = Status.OK;
         } catch (IOException e) {
             //Status is ERROR
         }
         return s;
+    }
+
+    private OutputStream getOutputStream(String fileName, String mimeType) throws IOException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // mPath must be a relative location
+            final String relativeLocation = Environment.DIRECTORY_DOCUMENTS + File.separator + mPath;
+
+            final ContentValues contentValues = new ContentValues();
+            contentValues.put(MediaStore.Files.FileColumns.DISPLAY_NAME, fileName);
+            contentValues.put(MediaStore.Files.FileColumns.RELATIVE_PATH, relativeLocation);
+            // TODO int mediaType = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q ? 0 : MediaStore.Files.FileColumns.MEDIA_TYPE_DOCUMENT;
+            contentValues.put(MediaStore.Files.FileColumns.MEDIA_TYPE, 0);
+            contentValues.put(MediaStore.Files.FileColumns.MIME_TYPE, mimeType);
+
+            final ContentResolver resolver = mContext.getApplicationContext().getContentResolver();
+
+            final Uri contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+            Uri uri = resolver.insert(contentUri, contentValues);
+            return resolver.openOutputStream(uri);
+        } else {
+            String path = new File(mPath).getAbsolutePath() + File.separator + fileName;
+            File file = new File(path);
+            return new BufferedOutputStream(new FileOutputStream(file));
+        }
     }
 
     @Override

@@ -17,7 +17,6 @@
 
 package org.runnerup.db;
 
-import androidx.appcompat.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,6 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.util.Log;
+import androidx.appcompat.app.AlertDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +51,7 @@ import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.util.FileUtil;
 import org.runnerup.workout.FileFormats;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -624,6 +625,11 @@ public class DBHelper extends SQLiteOpenHelper implements
         return ctx.getFilesDir().getPath() + "/../databases/" + DBNAME;
     }
 
+    private static String getDefaultBackupPath(Context ctx) {
+        // A path that can be used with SDK 29 scooped storage
+        return ctx.getExternalFilesDir(null) + File.separator + "runnerup.db.export";
+    }
+
     public static void importDatabase(Context ctx, String from) {
         final DBHelper mDBHelper = DBHelper.getHelper(ctx);
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -637,15 +643,19 @@ public class DBHelper extends SQLiteOpenHelper implements
             }
         };
 
+        if (from == null) {
+            from = getDefaultBackupPath(ctx);
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
-                .setTitle("Import " + DBNAME + " from " + from);
+                .setTitle("Import " + DBNAME);
         try {
             String to = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
-            builder.setMessage("Copied " + cnt + " bytes")
+            builder.setMessage("Copied " + cnt + " bytes from " + from +
+                "\n\nRestart to use the database")
                     .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString())
+            builder.setMessage("Exception: " + e.toString() + " for " + from)
                     .setNegativeButton(ctx.getString(R.string.Cancel), listener);
         }
         builder.show();
@@ -659,15 +669,19 @@ public class DBHelper extends SQLiteOpenHelper implements
             }
         };
 
+        if (to == null) {
+            to = getDefaultBackupPath(ctx);
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx)
-                .setTitle("Export " + DBNAME + " to " + to);
+                .setTitle("Export " + DBNAME);
         try {
             String from = getDbPath(ctx);
             int cnt = FileUtil.copyFile(to, from);
-            builder.setMessage("Copied " + cnt + " bytes")
+            builder.setMessage("Exported " + cnt + " bytes to " + to +
+                    "\n\nNote that the file will be deleted at uninstall")
                     .setPositiveButton(ctx.getString(R.string.OK), listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString())
+            builder.setMessage("Exception: " + e.toString() + " for " + to)
                     .setNegativeButton(ctx.getString(R.string.Cancel), listener);
         }
         builder.show();
