@@ -657,10 +657,10 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         updateView();
     }
 
-    private GpsLevel getGpsLevel(double gpsAccuracyMeters) {
-        if (gpsAccuracyMeters <= 7)
+    private GpsLevel getGpsLevel(double gpsAccuracyMeters, int sats) {
+        if (gpsAccuracyMeters <= 7 && sats > 7)
             return GpsLevel.GOOD;
-        else if (gpsAccuracyMeters <= 15)
+        else if (gpsAccuracyMeters <= 15 && sats > 4)
             return GpsLevel.ACCEPTABLE;
         else return GpsLevel.POOR;
     }
@@ -707,14 +707,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             int satAvailCount = mGpsStatus.getSatellitesAvailable();
 
             // gps accuracy
-            float accuracy = -1;
-            if (mTracker != null) {
-                Location l = mTracker.getLastKnownLocation();
-
-                if (l != null) {
-                    accuracy = l.getAccuracy();
-                }
-            }
+            float accuracy = getGpsAccuracy();
 
             // gps details
             String gpsAccuracy = getGpsAccuracyString(accuracy);
@@ -740,7 +733,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 }
                 gpsEnable.setVisibility(View.GONE);
 
-                switch (getGpsLevel(accuracy)) {
+                switch (getGpsLevel(accuracy, satFixedCount)) {
                     case POOR:
                         gpsIndicator.setImageResource(R.drawable.ic_gps_1);
                         gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
@@ -826,28 +819,43 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     }
 
     @Override
-    public String getGpsAccuracy() {
+    public float getGpsAccuracy() {
         if (mTracker != null) {
             Location l = mTracker.getLastKnownLocation();
 
             if (l != null) {
-                return getGpsAccuracyString(l.getAccuracy());
+                return l.getAccuracy();
             }
         }
-        return "";
+        return -1;
     }
 
     public String getGpsAccuracyString(float accuracy) {
+        String res = "";
         if (accuracy > 0) {
             String accString = formatter.formatElevation(Formatter.Format.TXT_SHORT, accuracy);
             if (mTracker.getCurrentElevation() != null) {
-                return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
+                res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
                         accString, formatter.formatElevation(Formatter.Format.TXT_SHORT, mTracker.getCurrentElevation()));
             } else {
-                return String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
+                res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
                         accString);
             }
-        } else return "";
+        }
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Extra info in debug builds
+            if (mTracker != null) {
+                Location l = mTracker.getLastKnownLocation();
+
+                if (l != null) {
+                    res += " ["
+                            + l.getVerticalAccuracyMeters() + " m, "
+                            + l.getSpeedAccuracyMetersPerSecond() + " m/s, "
+                            + l.getBearingAccuracyDegrees() + " deg]";
+                }
+            }
+        }
+        return res;
     }
 
     private String getHRDetailString() {

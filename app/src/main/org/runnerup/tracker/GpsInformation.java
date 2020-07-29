@@ -1,7 +1,7 @@
 package org.runnerup.tracker;
 
 public interface GpsInformation {
-    String getGpsAccuracy();
+    float getGpsAccuracy();
 
     int getSatellitesAvailable();
 
