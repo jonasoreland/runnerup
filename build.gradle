@@ -32,7 +32,7 @@ project.ext {
     //The Git tag for the release must be identical for F-Droid
     versionName = '2.1.0.1'
     versionCode = 241
-    latestBaseVersionCode = 14000000
+    latestBaseVersionCode = 15000000
 
     travisBuild = System.getenv("TRAVIS") == "true"
     // allows for -Dpre-dex=false to be set
