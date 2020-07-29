@@ -99,16 +99,14 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     }
 
     @Override
-    public void reset() {
+    public void reset() {}
 
-    }
-
+    // Below are default empty methods from Synchronizer
     @Override
     public Status connect() {
-        return null;
+        return Status.OK;
     }
 
-    /** Below are default empty methods from Synchronizer */
     public Status getAuthResult(int resultCode, Intent data) {
         return Status.OK;
     }

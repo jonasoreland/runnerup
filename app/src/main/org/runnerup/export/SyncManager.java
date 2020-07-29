@@ -286,7 +286,7 @@ public class SyncManager {
         }
     }
 
-    private Status handleRefreshComplete(final Synchronizer synchronizer, Status s) {
+    private Status handleRefreshComplete(final Synchronizer synchronizer, final Status s) {
         switch (s) {
             case OK: {
                 ContentValues tmp = new ContentValues();
