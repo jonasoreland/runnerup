@@ -20,6 +20,7 @@ package org.runnerup.view;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,18 +98,22 @@ class AudioSchemeListAdapter extends BaseAdapter {
 
     public void reload() {
         audioSchemes.clear();
-        String[] from = new String[]{
-                DB.AUDIO_SCHEMES.NAME
-        };
+        try {
+            String[] from = new String[]{
+                    DB.AUDIO_SCHEMES.NAME
+            };
 
-        Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null,
-                DB.AUDIO_SCHEMES.SORT_ORDER + " desc");
-        if (c.moveToFirst()) {
-            do {
-                audioSchemes.add(c.getString(0));
-            } while (c.moveToNext());
+            Cursor c = mDB.query(DB.AUDIO_SCHEMES.TABLE, from, null, null, null, null,
+                    DB.AUDIO_SCHEMES.SORT_ORDER + " desc");
+            if (c.moveToFirst()) {
+                do {
+                    audioSchemes.add(c.getString(0));
+                } while (c.moveToNext());
+            }
+            c.close();
+        } catch (Exception ex) {
+            Log.e(getClass().getName(), "Query failed:", ex);
         }
-        c.close();
         this.notifyDataSetChanged();
     }
 }

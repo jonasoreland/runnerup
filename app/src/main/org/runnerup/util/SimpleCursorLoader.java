@@ -20,6 +20,7 @@ package org.runnerup.util;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.loader.content.CursorLoader;
 
@@ -41,8 +42,14 @@ public class SimpleCursorLoader extends CursorLoader {
 
     @Override
     public Cursor loadInBackground() {
-        final Cursor cursor = mDB.query(mTable, getProjection(), getSelection(),
-                getSelectionArgs(), null, null, getSortOrder());
+        Cursor cursor;
+        try {
+            cursor = mDB.query(mTable, getProjection(), getSelection(),
+                    getSelectionArgs(), null, null, getSortOrder());
+        } catch (Exception ex) {
+            Log.e(getClass().getName(), "Query failed:", ex);
+            cursor = null;
+        }
         if (cursor != null) {
             // Ensure the cursor window is filled
             cursor.getCount();
