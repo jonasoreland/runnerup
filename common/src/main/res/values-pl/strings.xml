@@ -114,8 +114,8 @@
   <string name="Configure_accounts">Konfiguruj konta</string>
   <string name="Refresh">Odśwież</string>
   <string name="Age">Wiek</string>
-  <string name="Synchronizing">Sychronizuje:</string>
   <string name="synchronizing_feed">aktualizuję kanał...</string>
+  <string name="Synchronizing">Synchronizowanie</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Zarządzaj połączeniami</string>
   <string name="accounts_category_unconnected">Podłącz konto</string>
