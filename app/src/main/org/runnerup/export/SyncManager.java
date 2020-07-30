@@ -212,7 +212,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(WebDavSynchronizer.NAME)) {
             synchronizer = new WebDavSynchronizer(simplifier);
         } else {
-            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
+            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
         }
 
         if (synchronizer != null) {

@@ -91,7 +91,7 @@ public class SettingsActivity extends PreferenceActivity {
         simplifyOnSave.setOnPreferenceChangeListener((preference, newValue) -> {
             if ((Boolean) newValue) {
                 simplifyOnExport.setChecked(true);
-            };
+            }
             return true;
         });
     }
