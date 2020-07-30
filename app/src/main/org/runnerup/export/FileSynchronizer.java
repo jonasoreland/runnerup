@@ -17,9 +17,11 @@
 
 package org.runnerup.export;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -28,6 +30,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,6 +158,11 @@ public class FileSynchronizer extends DefaultSynchronizer {
             s = Status.OK;
             return s;
         }
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            return s;
+        }
+
         try {
             File dstDir = new File(mPath);
             //noinspection ResultOfMethodCallIgnored
@@ -183,35 +192,36 @@ public class FileSynchronizer extends DefaultSynchronizer {
                     Constants.DB.ACTIVITY.SPORT,
                     DB.ACTIVITY.START_TIME,
             };
-            Cursor c = null;
-            try {
-                c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
-                        null, null, null, null);
+            try (Cursor c = db.query(DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                    null, null, null, null)) {
                 if (c.moveToFirst()) {
                     sport = Sport.valueOf(c.getInt(0));
                     startTime = c.getLong(1);
                 }
-            } finally {
-                if (c != null) {
-                    c.close();
-                }
             }
 
             String fileBase = FileNameHelper.getExportFileName(startTime, sport.TapiriikType());
+            s = Status.OK;
             if (mFormat.contains(FileFormats.TCX)) {
                 OutputStream out = getOutputStream(fileBase + FileFormats.TCX.getValue(), ActivityProvider.TCX_MIME);
-                TCX tcx = new TCX(db, simplifier);
-                tcx.export(mID, new OutputStreamWriter(out));
+                if (out == null) {
+                    s = Status.ERROR;
+                } else {
+                    TCX tcx = new TCX(db, simplifier);
+                    tcx.export(mID, new OutputStreamWriter(out));
+                }
             }
             if (mFormat.contains(FileFormats.GPX)) {
                 OutputStream out = getOutputStream(fileBase + FileFormats.GPX.getValue(), ActivityProvider.GPX_MIME);
-                GPX gpx = new GPX(db, true, true, simplifier);
-                gpx.export(mID, new OutputStreamWriter(out));
+                if (out == null) {
+                    s = Status.ERROR;
+                } else {
+                    GPX gpx = new GPX(db, true, true, simplifier);
+                    gpx.export(mID, new OutputStreamWriter(out));
+                }
             }
-            s.externalIdStatus = ExternalIdStatus.NONE;
-            s = Status.OK;
         } catch (IOException e) {
-            //Status is ERROR
+            s = Status.ERROR;
         }
         return s;
     }
@@ -232,9 +242,17 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
             final Uri contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
             Uri uri = resolver.insert(contentUri, contentValues);
+            if (uri == null) {
+                Log.w(getName(), "No uri: " + contentUri + " " + fileName);
+                return null;
+            }
             return resolver.openOutputStream(uri);
         } else {
             String path = new File(mPath).getAbsolutePath() + File.separator + fileName;
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Log.w(getName(), "No permission to write to: " + path);
+                return null;
+            }
             File file = new File(path);
             return new BufferedOutputStream(new FileOutputStream(file));
         }
