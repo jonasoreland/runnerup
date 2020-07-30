@@ -342,8 +342,14 @@ public class SyncManager {
             String[] args = {
                     Long.toString(synchronizer.getId())
             };
-            mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-       } else {
+            try {
+                mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
+            } catch (Exception ex) {
+                Log.e(getClass().getName(), "Update failed:", ex);
+                s = Status.ERROR;
+            }
+        }
+        if (s != Status.OK) {
             synchronizer.reset();
         }
         cb.run(synchronizer.getName(), s);
