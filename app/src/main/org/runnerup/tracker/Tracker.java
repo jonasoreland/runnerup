@@ -100,7 +100,6 @@ public class Tracker extends android.app.Service implements
     private TrackerPebble trackerPebble; // created if version is sufficient
 
     private boolean mBug23937Checked = false;
-    private long mBug23937Delta = 0;
     private long mSystemToGpsDiffTimeNanos = 0;
     private boolean mCurrentSpeedFromGpsPoints = false;
 
@@ -669,6 +668,7 @@ public class Tracker extends android.app.Service implements
             // The GPS time stamp should normally not need to be changed,
             // but approx diff is needed to find if data is valid
 
+            long mBug23937Delta;
             if (!mBug23937Checked && gpsDiffTime < -(24 * 3600 - 120) * 1000 * NANO_IN_MILLI &&
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mBug23937Delta = gpsDiffTime;

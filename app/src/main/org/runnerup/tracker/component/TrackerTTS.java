@@ -28,7 +28,6 @@ import java.util.HashMap;
 public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
-    private Context context;
 
     private static final String NAME = "TTS";
 
@@ -39,7 +38,6 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
-        this.context = context;
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
