@@ -79,7 +79,7 @@ abstract class AbstractSimplify<T> {
         T point = null;
         T prevPoint = points[0];
 
-        List<T> newPoints = new ArrayList<T>();
+        List<T> newPoints = new ArrayList<>();
         newPoints.add(prevPoint);
 
         for (int i = 1; i < points.length; ++i) {
@@ -114,7 +114,7 @@ abstract class AbstractSimplify<T> {
         bitSet.set(0);
         bitSet.set(points.length - 1);
 
-        List<Range> stack = new ArrayList<Range>();
+        List<Range> stack = new ArrayList<>();
         stack.add(new Range(0, points.length - 1));
 
         while (!stack.isEmpty()) {
@@ -141,7 +141,7 @@ abstract class AbstractSimplify<T> {
             }
         }
 
-        List<T> newPoints = new ArrayList<T>(bitSet.cardinality());
+        List<T> newPoints = new ArrayList<>(bitSet.cardinality());
         for (int index = bitSet.nextSetBit(0); index >= 0; index = bitSet.nextSetBit(index + 1)) {
             newPoints.add(points[index]);
         }

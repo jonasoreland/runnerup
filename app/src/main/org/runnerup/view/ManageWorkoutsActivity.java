@@ -365,7 +365,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 providers.add(tmp);
 
                 workouts.remove(synchronizer.getName());
-                workouts.put(synchronizer.getName(), new ArrayList<WorkoutRef>());
+                workouts.put(synchronizer.getName(), new ArrayList<>());
             }
         }
 

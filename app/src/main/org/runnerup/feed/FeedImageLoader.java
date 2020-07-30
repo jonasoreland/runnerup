@@ -32,7 +32,7 @@ import java.util.WeakHashMap;
 
 public class FeedImageLoader {
     static private final Map<String, Bitmap> imageCache = Collections
-            .synchronizedMap(new WeakHashMap<String, Bitmap>());
+            .synchronizedMap(new WeakHashMap<>());
 
     public interface Callback {
         void run(final String url, final Bitmap b);
