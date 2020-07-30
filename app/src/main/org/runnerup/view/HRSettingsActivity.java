@@ -520,7 +520,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                         });
                     }
 
-                    graphViewListData.add(new DataPoint((age - timerStartTime) / 1000, hrValue));
+                    graphViewListData.add(new DataPoint((age - timerStartTime) / 1000.0, hrValue));
                     while (graphViewListData.size() > GRAPH_HISTORY_SECONDS) {
                         graphViewListData.remove(0);
                     }

@@ -125,7 +125,9 @@ public class HRZonesBar extends View {
 
             //draw actual values and bars
             if(calculatedBarHeight > minBarHeight) {
+                //noinspection IntegerDivisionInFloatingPointContext
                 canvas.drawText(zoneName, zoneOffset, topOffset + (i+1) * borderSize + calculatedBarHeight * (i + 1) - fontSize / 2, fontPaint);
+                //noinspection IntegerDivisionInFloatingPointContext
                 canvas.drawText(percent + "%", percentOffset, topOffset + (i+1) * borderSize + calculatedBarHeight * (i + 1) - fontSize / 2, fontPaint);
             }
 

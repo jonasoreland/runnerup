@@ -661,7 +661,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 case LAP:
                     return (/* 1* */ 60 + 5 * 60 * Math.random());
                 case CURRENT:
-                    return System.currentTimeMillis() / 1000;
+                    return System.currentTimeMillis() / 1000.0;
             }
             return 0;
         }

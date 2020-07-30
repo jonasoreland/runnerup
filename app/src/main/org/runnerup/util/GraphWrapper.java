@@ -167,7 +167,7 @@ public class GraphWrapper implements Constants {
         }
 
         void clearSmooth(double tot_distance) {
-            if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2))
+            if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2.0))
                     && sum_distance > 0) {
                 emit(tot_distance);
             }

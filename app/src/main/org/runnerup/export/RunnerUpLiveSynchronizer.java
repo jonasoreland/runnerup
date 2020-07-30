@@ -195,7 +195,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                 .putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
                 formatter.formatElapsedTime(Formatter.Format.TXT_LONG,
-                        Math.round(elapsedTimeMillis / 1000)))
+                        Math.round(elapsedTimeMillis / 1000.0)))
                 .putExtra(
                 LiveService.PARAM_IN_PACE,
                 formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, elapsedTimeMillis == 0 ? null :
