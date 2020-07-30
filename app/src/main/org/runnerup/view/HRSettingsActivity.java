@@ -338,8 +338,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void selectProvider() {
-        final CharSequence items[] = new CharSequence[providers.size()];
-        final CharSequence itemNames[] = new CharSequence[providers.size()];
+        final CharSequence[] items = new CharSequence[providers.size()];
+        final CharSequence[] itemNames = new CharSequence[providers.size()];
         for (int i = 0; i < items.length; i++) {
             items[i] = providers.get(i).getProviderName();
             itemNames[i] = providers.get(i).getName();
@@ -505,7 +505,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 if (age != lastTimestamp) {
                     if (graphViewSeries == null) {
                         timerStartTime = System.currentTimeMillis();
-                        DataPoint empty[] = {};
+                        DataPoint[] empty = {};
                         graphViewSeries = new LineGraphSeries<>(empty);
                         graphView.addSeries(graphViewSeries);
                         graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {

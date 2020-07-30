@@ -96,7 +96,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
                 mConnectCallback = callback;
                 return ResultCode.RESULT_PENDING;
             } else {
-                String list[] = {
+                String[] list = {
                         GPS_PROVIDER,
                         NETWORK_PROVIDER,
                         PASSIVE_PROVIDER };

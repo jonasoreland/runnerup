@@ -37,7 +37,7 @@ public class GoogleStaticMap {
         this.mDB = mDB;
     }
 
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         long lat0 = 0, lot0 = 0;
         StringBuffer dst = new StringBuffer();
         for (int i = 0; i + 1 < args.length; i += 2) {

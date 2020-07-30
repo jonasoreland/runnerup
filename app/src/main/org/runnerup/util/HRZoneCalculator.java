@@ -44,7 +44,7 @@ public class HRZoneCalculator {
     private HRZoneCalculator(Resources res, SharedPreferences prefs) {
         final String pct = res.getString(R.string.pref_hrz_thresholds);
         if (prefs.contains(pct)) {
-            int limits[] = SafeParse.parseIntList(prefs.getString(pct, ""));
+            int[] limits = SafeParse.parseIntList(prefs.getString(pct, ""));
             if (limits != null) {
                 zoneLimitsPct = limits;
             }

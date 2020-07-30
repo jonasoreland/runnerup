@@ -169,7 +169,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
                     DB.PRIMARY_KEY, DB.ACTIVITY.START_TIME,
                     DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME, DB.ACTIVITY.SPORT
             };
-            String args[] = {
+            String[] args = {
                     mSynchronizerName
             };
             final String w = "NOT EXISTS (SELECT 1 FROM " + DB.EXPORT.TABLE + " r," +

@@ -208,7 +208,7 @@ public class NikeXML {
 
     private boolean emitHeartrateStats(long mID) throws IllegalArgumentException,
             IllegalStateException, IOException {
-        String args[] = {
+        String[] args = {
             Long.toString(mID)
         };
         Cursor c = mDB.rawQuery("select min(" + DB.LOCATION.HR + "), max(" + DB.LOCATION.HR
@@ -241,7 +241,7 @@ public class NikeXML {
             throws IllegalArgumentException, IllegalStateException, IOException {
         long _id;
         { // 1 find a point with specified value
-            String args[] = {
+            String[] args = {
                     Long.toString(mID), Integer.toString(hrVal)
             };
             Cursor c = mDB.rawQuery(
@@ -255,11 +255,11 @@ public class NikeXML {
         }
 
         // 2 iterate to that position from start...
-        String cols[] = {
+        String[] cols = {
                 DB.LOCATION.TYPE, DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.TIME,
                 DB.LOCATION.SPEED
         };
-        String args[] = {
+        String[] args = {
                 Long.toString(mID), Long.toString(_id)
         };
         Cursor c = mDB.query(DB.LOCATION.TABLE, cols,

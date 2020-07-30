@@ -60,7 +60,7 @@ public class LocationEntity extends AbstractEntity {
                     break;
                 case Constants.DB.LOCATION.TYPE_PAUSE:
                 case Constants.DB.LOCATION.TYPE_GPS:
-                    float res[] = {
+                    float[] res = {
                             0
                     };
                     Location.distanceBetween(lastLocation.getLatitude(),

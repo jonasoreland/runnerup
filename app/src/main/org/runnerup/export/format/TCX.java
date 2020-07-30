@@ -251,7 +251,7 @@ public class TCX {
                             } else {
                                 // Only for older activities, also increases distance when pausing
                                 // Most importers do not use this info anyway
-                                float d[] = {
+                                float[] d = {
                                         0
                                 };
                                 if (last_lat != 0 || last_longi != 0) {

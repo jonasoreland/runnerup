@@ -267,7 +267,7 @@ public class FeedList extends Observable implements Constants {
 
         final boolean print = false; // enable printout of match failure
 
-        String keys[] = {
+        String[] keys = {
                 DB.FEED.FEED_TYPE,
                 DB.FEED.FEED_SUBTYPE,
                 DB.FEED.FEED_TYPE_STRING,

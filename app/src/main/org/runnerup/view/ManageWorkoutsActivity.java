@@ -160,7 +160,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         if (ContentResolver.SCHEME_FILE.contentEquals(data.getScheme())) {
             name = data.getLastPathSegment();
         } else if (ContentResolver.SCHEME_CONTENT.contentEquals(data.getScheme())) {
-            String projection[] = {
+            String[] projection = {
                     MediaStore.MediaColumns.DISPLAY_NAME
             };
             Cursor c = getContentResolver().query(data, projection, null, null, null);
@@ -187,7 +187,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             throw new Exception("Failed to parse content");
 
         final boolean exists = WorkoutSerializer.getFile(this, fileName).exists();
-        final boolean selected[] = {
+        final boolean[] selected = {
                 false
         };
 
@@ -200,7 +200,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                             try {
                                 if (exists && !selected[0]) {
                                     String name = "";
-                                    String tmp[] = fileName.split("\\.");
+                                    String[] tmp = fileName.split("\\.");
                                     if (tmp.length > 0) {
                                         for (int i = 0; i < tmp.length - 1; i++)
                                             name = name.concat(tmp[i]);
@@ -235,7 +235,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                         });
 
         if (exists) {
-            String items[] = {
+            String[] items = {
                     getString(R.string.Overwrite_existing)
             };
             builder.setMultiChoiceItems(items, selected,
@@ -249,7 +249,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         File f = WorkoutSerializer.getFile(this, file);
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(f));
         BufferedInputStream in = new BufferedInputStream(is);
-        byte buf[] = new byte[1024];
+        byte[] buf = new byte[1024];
         while (in.read(buf) > 0) {
             out.write(buf);
         }
@@ -321,7 +321,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     }
 
     private void requery() {
-        ContentValues allSynchronizers[];
+        ContentValues[] allSynchronizers;
         {
             /*
              * Accounts/reports

@@ -196,7 +196,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             conn = null;
 
-            final String path[] = {
+            final String[] path = {
                     "soap:Envelope", "soap:Body", "SaveGpxResponse", "SaveGpxResult",
                     "ResponseStatus", "ResponseCode"
             };
@@ -317,7 +317,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             conn = null;
 
-            final String path[] = {
+            final String[] path = {
                     "soap:Envelope", "soap:Body",
                     "SaveGpxResponse", "SaveGpxResult", "ResponseStatus",
                     "ResponseCode"

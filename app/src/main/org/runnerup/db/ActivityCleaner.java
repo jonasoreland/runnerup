@@ -229,7 +229,7 @@ public class ActivityCleaner implements Constants {
                 + " and " + DB.LOCATION.LAP + " = " + lap,
                 null, null, null, "_id", null);
         if (c.moveToFirst()) {
-            Location p[] = {
+            Location[] p = {
                     null, null
             };
             do {

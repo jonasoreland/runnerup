@@ -397,7 +397,7 @@ public class Tracker extends android.app.Service implements
 
     public void saveLap(ContentValues tmp) {
         tmp.put(DB.LAP.ACTIVITY, mActivityId);
-        String key[] = {
+        String[] key = {
                 Long.toString(mLapId)
         };
         mDB.update(DB.LAP.TABLE, tmp, "_id = ?", key);
@@ -558,7 +558,7 @@ public class Tracker extends android.app.Service implements
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
-            String key[] = {
+            String[] key = {
                     Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
@@ -591,7 +591,7 @@ public class Tracker extends android.app.Service implements
         tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
         tmp.put(Constants.DB.ACTIVITY.TIME, Math.round(getTimeMs()/1000.0d)); // time should be updated last for conditionalRecompute
 
-        String key[] = {
+        String[] key = {
                 Long.toString(mActivityId)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);

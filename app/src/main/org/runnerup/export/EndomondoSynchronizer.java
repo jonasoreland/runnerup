@@ -447,7 +447,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         if (!string.contains(" in ")) {
             // either time or distance specified
             if (string.contains("km") || string.contains("mi")) {
-                String dist[] = string.split(" ", 2);
+                String[] dist = string.split(" ", 2);
                 if (dist.length == 2) {
                     double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
@@ -458,7 +458,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 }
             } else {
                 boolean hms = string.matches("([0-9]+h:)?([0-9]{2}m:)?([0-9]{2}s)");
-                String time[] = string.replaceAll("[hms]", "").split(":");
+                String[] time = string.replaceAll("[hms]", "").split(":");
                 if (hms) {
                     long duration = 0;
                     long mul = 1;
@@ -470,9 +470,9 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 }
             }
         } else {
-            String arr[] = string.split(" in ");
+            String[] arr = string.split(" in ");
             if (arr.length >= 1) {
-                String dist[] = arr[0].split(" ", 2);
+                String[] dist = arr[0].split(" ", 2);
                 if (dist.length == 2) {
                     double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
@@ -483,7 +483,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 }
             }
             if (arr.length >= 2) {
-                String time[] = arr[1].replaceAll("[hms]", "").split(":");
+                String[] time = arr[1].replaceAll("[hms]", "").split(":");
                 long duration = 0;
                 long mul = 1;
                 for (int i = 0; i < time.length; i++) {

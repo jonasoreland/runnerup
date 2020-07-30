@@ -86,7 +86,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        int ids[] = null;
+        int[] ids = null;
         int card = 0;
         switch (rowsOnScreen) {
             case 3:

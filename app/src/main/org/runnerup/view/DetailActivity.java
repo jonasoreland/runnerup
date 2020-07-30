@@ -730,7 +730,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
         tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
-        String whereArgs[] = {
+        String[] whereArgs = {
                 Long.toString(mID)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);

@@ -125,7 +125,7 @@ public class FacebookCourse {
     }
 
     private JSONArray trail(long activityId) throws JSONException {
-        final String cols[] = {
+        final String[] cols = {
                 DB.LOCATION.TYPE, DB.LOCATION.LATITUDE,
                 DB.LOCATION.LONGITUDE, DB.LOCATION.TIME, DB.LOCATION.SPEED,
                 DB.PRIMARY_KEY // 5

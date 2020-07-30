@@ -136,7 +136,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG
         };
 
-        String args[] = {
+        String[] args = {
                 mSynchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
@@ -364,7 +364,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 }
                 tmp.put(DB.ACCOUNT.FLAGS, flags);
             }
-            String args[] = {
+            String[] args = {
                     mSynchronizerName
             };
             mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
@@ -385,10 +385,10 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            final CharSequence items[] = {
+            final CharSequence[] items = {
                 getString(R.string.Clear_uploads_from_phone)
             };
-            final boolean selected[] = {
+            final boolean[] selected = {
                 true
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(

@@ -162,7 +162,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         user_key = null;
     }
 
-    private String toHexString(byte messageDigest[]) {
+    private String toHexString(byte[] messageDigest) {
         StringBuilder hexString = new StringBuilder();
         for (byte b : messageDigest) {
             StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & b));

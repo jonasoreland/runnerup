@@ -294,7 +294,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return s;
     }
 
-    private JSONObject createObj(URL url, Part<?> parts[]) throws Exception{
+    private JSONObject createObj(URL url, Part<?>[] parts) throws Exception{
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -328,7 +328,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 SyncHelper.URLEncode(access_token)));
         Part<StringWritable> payloadPart = new Part<>("object",
                 new StringWritable(obj.toString()));
-        Part<?> parts[] = {
+        Part<?>[] parts = {
                 themePart, payloadPart
         };
 
@@ -374,7 +374,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         //            "message", new StringWritable(runObj.getString("comment"))));
         //}
 
-        Part<?> parts[] = new Part<?>[list.size()];
+        Part<?>[] parts = new Part<?>[list.size()];
         list.toArray(parts);
 
         URL url2 = new URL(sport.IsCycling() ? BIKE_ENDPOINT : RUN_ENDPOINT);

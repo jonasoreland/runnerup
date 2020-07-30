@@ -107,8 +107,8 @@ public class GraphWrapper implements Constants {
         final int interval;
         boolean first = true;
         int pos = 0;
-        double time[];
-        double distance[];
+        double[] time;
+        double[] distance;
         double sum_time = 0;
         double sum_distance = 0;
         double acc_time = 0;
@@ -245,7 +245,7 @@ public class GraphWrapper implements Constants {
 
         class GraphFilter {
 
-            double data[];
+            double[] data;
             final List<DataPoint> source;
 
             GraphFilter(List<DataPoint> velocityList) {
@@ -260,12 +260,12 @@ public class GraphWrapper implements Constants {
                     source.set(i, new DataPoint(source.get(i).getX(), data[i]));
             }
 
-            void init(double window[], double val) {
+            void init(double[] window, double val) {
                 for (int j = 0; j < window.length - 1; j++)
                     window[j] = val;
             }
 
-            void shiftLeft(double window[], double newVal) {
+            void shiftLeft(double[] window, double newVal) {
                 System.arraycopy(window, 1, window, 0, window.length - 1);
                 window[window.length - 1] = newVal;
             }
@@ -274,7 +274,7 @@ public class GraphWrapper implements Constants {
              * Perform in place moving average
              */
             void movingAvergage(int windowLen) {
-                double window[] = new double[windowLen];
+                double[] window = new double[windowLen];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -299,7 +299,7 @@ public class GraphWrapper implements Constants {
              * Perform in place moving average
              */
             void movingMedian(int windowLen) {
-                double window[] = new double[windowLen];
+                double[] window = new double[windowLen];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -307,7 +307,7 @@ public class GraphWrapper implements Constants {
                     window[i + mid] = data[i];
                 }
 
-                double sort[] = new double[windowLen];
+                double[] sort = new double[windowLen];
                 for (int i = 0; i < data.length; i++) {
                     System.arraycopy(window, 0, sort, 0, windowLen);
                     Arrays.sort(sort);
@@ -321,7 +321,7 @@ public class GraphWrapper implements Constants {
              */
             void SavitzkyGolay5() {
                 final int len = 5;
-                double window[] = new double[len];
+                double[] window = new double[len];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -342,7 +342,7 @@ public class GraphWrapper implements Constants {
              */
             void SavitzkyGolay7() {
                 final int len = 7;
-                double window[] = new double[len];
+                double[] window = new double[len];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -378,10 +378,10 @@ public class GraphWrapper implements Constants {
                         graphView.getContext()).getString(
                         graphView.getContext().getResources().getString(R.string.pref_pace_graph_smoothing_filters),
                         defaultFilterList);
-                final String filters[] = filterList.split(";");
+                final String[] filters = filterList.split(";");
                 System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
                 for (String filter : filters) {
-                    int args[] = getArgs(filter);
+                    int[] args = getArgs(filter);
                     if (filter.startsWith("mm")) {
                         if (args.length == 1) {
                             f.movingMedian(args[0]);
@@ -458,8 +458,8 @@ public class GraphWrapper implements Constants {
             try {
                 s = s.substring(s.indexOf('(') + 1);
                 s = s.substring(0, s.indexOf(')'));
-                String sargs[] = s.split(",");
-                int args[] = new int[sargs.length];
+                String[] sargs = s.split(",");
+                int[] args = new int[sargs.length];
                 for (int i = 0; i < args.length; i++) {
                     args[i] = Integer.parseInt(sargs[i]);
                 }

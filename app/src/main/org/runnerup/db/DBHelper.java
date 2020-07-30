@@ -392,8 +392,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private void migrateFileSynchronizerInfo(SQLiteDatabase arg0) {
         // Migrate storage of parameters
-        String from[] = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
-        String args[] = { FileSynchronizer.NAME };
+        String[] from = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
+        String[] args = { FileSynchronizer.NAME };
         Cursor c = arg0.query(DB.ACCOUNT.TABLE, from,
                 DB.ACCOUNT.NAME + " = ? and "
                         + DB.ACCOUNT.AUTH_CONFIG + " is not null",
@@ -507,7 +507,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
         if (newId == -1 && arg1.size() > 1) {
             //values could be updated
-            String arr[] = {
+            String[] arr = {
                     arg1.getAsString(DB.ACCOUNT.NAME)
             };
             //DBVERSION update
@@ -520,7 +520,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     public static void deleteAccount(SQLiteDatabase db, long id) {
         Log.e("DBHelper", "deleting account: " + id);
-        String args[] = {
+        String[] args = {
                 Long.toString(id)
         };
         db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
@@ -553,7 +553,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     public static void deleteActivity(SQLiteDatabase db, long id) {
         Log.e("DBHelper", "deleting activity: " + id);
-        String args[] = {
+        String[] args = {
                 Long.toString(id)
         };
         db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
@@ -567,7 +567,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         final DBHelper mDBHelper = DBHelper.getHelper(ctx);
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        String from[] = { "_id" };
+        String[] from = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",
                 null, null, null, null, null);
         final ArrayList<Long> list = new ArrayList<>(10);

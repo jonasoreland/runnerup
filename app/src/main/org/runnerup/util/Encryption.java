@@ -164,7 +164,7 @@ public class Encryption {
         out.close();
     }
 
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         if (args.length == 2) {
             final String name = args[0];
             final String key = args[1];
@@ -190,7 +190,7 @@ public class Encryption {
         return digest.digest(text.getBytes("UTF-8"));
     }
 
-    public static String toHex(byte bytes[]) {
+    public static String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02X", b));

@@ -456,7 +456,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         private void readHR() {
-            Integer hr[] = new Integer[1];
+            Integer[] hr = new Integer[1];
             final int frameSize = getFrameSize();
             byte[] buffer = new byte[2 * frameSize];
             int bytesInBuffer = 0;
@@ -577,7 +577,7 @@ public abstract class Bt20Base extends BtHRBase {
 
         public abstract int parseBuffer(byte[] buffer);
 
-        public abstract int findNextAlignment(byte buffer[]);
+        public abstract int findNextAlignment(byte[] buffer);
     }
 
     protected abstract int getFrameSize();
@@ -648,7 +648,7 @@ public abstract class Bt20Base extends BtHRBase {
             return -1;
         }
 
-        private static int calcCrc8(byte buffer[], @SuppressWarnings("SameParameterValue") int start, @SuppressWarnings("SameParameterValue") int length) {
+        private static int calcCrc8(byte[] buffer, @SuppressWarnings("SameParameterValue") int start, @SuppressWarnings("SameParameterValue") int length) {
             int crc = 0x0;
 
             for (int i = start; i < (start + length); i++) {
@@ -689,7 +689,7 @@ public abstract class Bt20Base extends BtHRBase {
             return 16;
         }
 
-        private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+        private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
             if (bytesInBuffer < pos + 4)
                 return false;
 
@@ -718,7 +718,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         @Override
-        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
             hrVal[0] = null;
             for (int i = 0; i < bytesInBuffer; i++) {
                 if (startOfMessage(buffer, bytesInBuffer, i)) {
@@ -756,7 +756,7 @@ public abstract class Bt20Base extends BtHRBase {
             return FRAME_SIZE;
         }
 
-        private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+        private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
             if (bytesInBuffer < pos + FRAME_SIZE)
                 return false;
 
@@ -782,7 +782,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         @Override
-        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
             hrVal[0] = null;
             for (int i = 0; i < bytesInBuffer; i++) {
                 if (startOfMessage(buffer, bytesInBuffer, i)) {

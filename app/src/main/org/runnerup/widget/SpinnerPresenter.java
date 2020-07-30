@@ -70,7 +70,7 @@ public class SpinnerPresenter {
     private SpinnerInterface.OnSetValueListener mSetValueListener = null;
     private Type mType;
     private boolean mFirstSetValue = true;
-    private int values[] = null;
+    private int[] values = null;
     private long mCurrValue = -1;
     private CharSequence mLabel;
 

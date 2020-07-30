@@ -144,10 +144,10 @@ public class SyncManager {
 
     @SuppressWarnings("UnusedReturnValue")
     public long load(String synchronizerName) {
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
-        String args[] = {
+        String[] args = {
                 synchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
@@ -695,7 +695,7 @@ public class SyncManager {
     }
 
     private void resetDB(final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
-        final String args[] = {
+        final String[] args = {
             Long.toString(synchronizer.getId())
         };
         ContentValues config = new ContentValues();
@@ -712,7 +712,7 @@ public class SyncManager {
 
     public void clearUploadsByName(Callback callback, String synchronizerName) {
         Synchronizer synchronizer = synchronizers.get(synchronizerName);
-        final String args[] = {
+        final String[] args = {
                 Long.toString(synchronizer.getId())
         };
         mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
@@ -722,7 +722,7 @@ public class SyncManager {
     public void clearUpload(String name, long id) {
         Synchronizer synchronizer = synchronizers.get(name);
         if (synchronizer != null) {
-            final String args[] = {
+            final String[] args = {
                     Long.toString(synchronizer.getId()), Long.toString(id)
             };
             mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ? AND " + DB.EXPORT.ACTIVITY
@@ -929,8 +929,8 @@ public class SyncManager {
         try {
             f1 = new FileInputStream(w);
             f2 = new FileInputStream(f);
-            byte buf1[] = new byte[1024];
-            byte buf2[] = new byte[1024];
+            byte[] buf1 = new byte[1024];
+            byte[] buf2 = new byte[1024];
             do {
                 int cnt1 = f1.read(buf1);
                 int cnt2 = f2.read(buf2);
@@ -1250,7 +1250,7 @@ public class SyncManager {
             return;
         }
 
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
@@ -1272,7 +1272,7 @@ public class SyncManager {
 
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 

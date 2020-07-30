@@ -324,7 +324,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             filePart.setFilename(String.format(Locale.getDefault(),
                     "RunnerUp_%04d.tcx", mID));
             filePart.setContentType("application/octet-stream");
-            Part<?> parts[] = {
+            Part<?>[] parts = {
                     filePart, null
             };
             if (!TextUtils.isEmpty(desc)) {

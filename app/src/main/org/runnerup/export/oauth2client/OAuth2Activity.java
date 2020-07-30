@@ -169,7 +169,7 @@ public class OAuth2Activity extends AppCompatActivity {
                 if (url.startsWith(mRedirectUri)) {
                     Uri u = Uri.parse(url);
                     String e = null;
-                    String check[] = {
+                    String[] check = {
                             "error", "error_type"
                     };
                     for (String aCheck : check) {
@@ -228,7 +228,7 @@ public class OAuth2Activity extends AppCompatActivity {
 
                                 try {
                                     BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                                    char buf[] = new char[1024];
+                                    char[] buf = new char[1024];
                                     int len;
                                     while ((len = in.read(buf)) != -1) {
                                         obj.append(buf, 0, len);

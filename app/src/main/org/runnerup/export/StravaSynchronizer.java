@@ -383,7 +383,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             filePart.setContentType("application/octet-stream");
             Part<StringWritable> activityTypePart = new Part<>("activity_type",
                     new StringWritable(dbInfo.stravaType));
-            Part<?> parts[] = {
+            Part<?>[] parts = {
                     dataTypePart, filePart, activityTypePart, null
             };
             if (!TextUtils.isEmpty(dbInfo.desc)) {

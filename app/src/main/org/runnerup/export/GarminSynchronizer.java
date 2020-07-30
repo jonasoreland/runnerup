@@ -455,7 +455,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     new StringWritable(writer.toString()));
             part2.setFilename("RunnerUp.tcx");
             part2.setContentType("application/octet-stream");
-            Part<?> parts[] = {
+            Part<?>[] parts = {
                 part2
             };
 
@@ -637,7 +637,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             InputStream in = new BufferedInputStream(conn.getInputStream());
             out = new FileOutputStream(dst);
             int cnt = 0;
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             while (in.read(buf) > 0) {
                 cnt += buf.length;
                 out.write(buf);

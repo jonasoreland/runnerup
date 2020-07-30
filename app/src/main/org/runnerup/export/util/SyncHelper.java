@@ -66,7 +66,7 @@ public final class SyncHelper {
         }
     }
 
-    public static void postMulti(HttpURLConnection conn, Part<?> parts[]) throws IOException {
+    public static void postMulti(HttpURLConnection conn, Part<?>[] parts) throws IOException {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****" + Long.toString(System.currentTimeMillis())

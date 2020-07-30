@@ -122,7 +122,7 @@ public abstract class AbstractEntity implements DBEntity {
     }
 
     public void readByPrimaryKey(SQLiteDatabase DB, long primaryKey) {
-        String cols[] = new String[getValidColumns().size()];
+        String[] cols = new String[getValidColumns().size()];
         getValidColumns().toArray(cols);
         Cursor cursor = DB.query(getTableName(), cols, "_id = "
                 + primaryKey, null, null, null, null);

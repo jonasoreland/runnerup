@@ -97,7 +97,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         boolean hasHRZones = hrZones.isConfigured();
 
         if (!hasHR || !hasHRZones) {
-            final int remove[] = {
+            final int[] remove = {
                     R.string.cueinfo_total_hrz,
                     R.string.cueinfo_step_hrz,
                     R.string.cueinfo_lap_hrz,
@@ -107,7 +107,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         }
 
         if (!hasHR) {
-            final int remove[] = {
+            final int[] remove = {
                     R.string.cueinfo_total_hr,
                     R.string.cueinfo_step_hr,
                     R.string.cueinfo_lap_hr,
@@ -228,7 +228,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         //noinspection ResultOfMethodCallIgnored
         a.delete();
 
-        String args[] = {
+        String[] args = {
                 name
         };
         mDB.delete(DB.AUDIO_SCHEMES.TABLE, DB.AUDIO_SCHEMES.NAME + "= ?", args);
