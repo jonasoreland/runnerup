@@ -5,15 +5,34 @@
   </head>
   <body>
     <h1>What's new</h1>
-    <h2>v2.1.0.1</h2>
+    <h2>v2.2.0.0</h2>
     <p>
     <ul>
-      <li>#947 AndroidX and AppCompatActivity migration</li>
+      <li>Version changed to 2.2 for Play release, previous production is 2.1.0.0</li>
+      <li>#949 Play console crashe corrections</li>
+      <li>#948 Target Android 10, update permission handling
+        <br>Changes required to target Android 10 and prepare for Android 11/R, required to update the app in Play.
+        <ul>
+          <li> Use SDK 29 scooped storage for external files, Google is limiting the file system use from Android 10/11
+<br>For FileSynchronizer, save exports to a subdirectory of Documents, similar to the previous defaults.
+<br>For db import/export use hardcoded getExternalFilesDir() and let the user copy files.</li>
+          <li>Permissions for activity and background for Android 10
+<br>If permissions are denied, give motivation and let the user try again
+(unless "don't ask again" is ticked)
+<br>Remove snackbar as it will not rerequest permissions if the user ticks "don't ask again".
+Instead use a popup that asks the user to go to system settings,
+without starting the workout. (Linking to system settings is not
+recommended in the Google guidelines.)
+          </li>
+        </ul>
+      </li>
+      <li>#947 AndroidX and AppCompatActivity migration
+      <br>Internal change, support libraries replaced with Google's updated libraries</li>
     </ul>
     <h2>v2.1.0.0</h2>
     <p>
     <ul>
-      <li>Minor version number changed to 2.1 to prepare for Play release, previous production is 2.0.2.1</li>
+      <li>Minor version number changed to 2.1 for Play release, previous production is 2.0.2.1</li>
       <li>#946 Play console feedback
         <ul>
           <li>Translations update: Czech cue, Romanian, Indonesian </li>

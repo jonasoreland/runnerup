@@ -17,19 +17,15 @@
 
 package org.runnerup.view;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Service;
 import android.app.TabActivity;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -37,9 +33,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,15 +42,9 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TabHost;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -67,12 +55,9 @@ import org.runnerup.util.Formatter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class MainLayout extends TabActivity
-        implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainLayout extends TabActivity {
 
     private View getTabView(CharSequence label, int iconResource) {
         @SuppressLint("InflateParams")View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
@@ -164,8 +149,6 @@ public class MainLayout extends TabActivity
         if (upgradeState == UpgradeState.UPGRADE) {
             whatsNew();
         }
-        //GPS is essential, always nag user if not granted
-        requestGpsPermissions(this, tabHost.getCurrentView());
 
         //Import workouts/schemes. No permission needed
         handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
@@ -187,13 +170,9 @@ public class MainLayout extends TabActivity
         }
 
         if (filePath != null) {
-            if (requestReadStoragePermissions(MainLayout.this)) {
-                Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-                DBHelper.importDatabase(MainLayout.this, filePath);
-            } else {
-                Toast.makeText(this, "Storage permission not granted in Android settings, db is not imported.",
-                        Toast.LENGTH_SHORT).show();
-            }
+            // No check for permissions or that this is within scooped storage (>=SDK29)
+            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+            DBHelper.importDatabase(MainLayout.this, filePath);
         }
     }
 
@@ -300,124 +279,12 @@ public class MainLayout extends TabActivity
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = (WebView) view.findViewById(R.id.web_view1);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Whats_new))
                 .setView(view)
-                .setPositiveButton(getString(R.string.Rate_RunnerUp), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onRateClick.onClick(null);
-            }
-
-        })
-                .setNegativeButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+                .setPositiveButton(getString(R.string.Rate_RunnerUp), (dialog, which) -> onRateClick.onClick(null))
+                .setNegativeButton(getString(R.string.OK), (dialog, which) -> dialog.dismiss())
+                .show();
         wv.loadUrl("file:///android_asset/changes.html");
-    }
-
-    private static void requestGpsPermissions(final Activity activity, final View view) {
-        String[] requiredPerms = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        List<String> defaultPerms = new ArrayList<>();
-        List<String> shouldPerms = new ArrayList<>();
-        for (final String perm : requiredPerms) {
-            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
-
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)) {
-                    shouldPerms.add(perm);
-                } else {
-                    defaultPerms.add(perm);
-                }
-            }
-        }
-        if (defaultPerms.size() > 0) {
-            // No explanation needed, we can request the permission.
-            final String[] perms = new String[defaultPerms.size()];
-            defaultPerms.toArray(perms);
-            ActivityCompat.requestPermissions(activity, perms, REQUEST_LOCATION);
-        }
-
-        if (shouldPerms.size() > 0) {
-            //Snackbar, no popup
-            final String[] perms = new String[shouldPerms.size()];
-            shouldPerms.toArray(perms);
-            Snackbar.make(view, activity.getResources().getString(R.string.GPS_permission_required),
-                    Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.OK, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ActivityCompat.requestPermissions(activity, perms, REQUEST_LOCATION);
-                        }
-                    })
-                    .show();
-        }
-    }
-
-    private static boolean requestReadStoragePermissions(final Activity activity) {
-        boolean ret = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
-                ContextCompat.checkSelfPermission(activity,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ret = false;
-
-            //Request permission (not using shouldShowRequestPermissionRationale())
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_READ_EXTERNAL_STORAGE);
-            String s = "Requesting read permission";
-            Log.i(activity.getClass().getSimpleName(), s);
-        }
-        return ret;
-    }
-
-    /**
-     * Id to identify a permission request.
-     */
-    private static final int REQUEST_LOCATION = 1000;
-    private static final int REQUEST_READ_EXTERNAL_STORAGE = 2000;
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2001;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        if (requestCode == REQUEST_READ_EXTERNAL_STORAGE || requestCode == REQUEST_WRITE_EXTERNAL_STORAGE) {
-            // Check if the only required permission has been granted (could react on the response)
-            //noinspection StatementWithEmptyBody
-            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //OK, could redo request here
-            } else {
-                String s = (requestCode == REQUEST_READ_EXTERNAL_STORAGE ? "READ" : "WRITE")
-                        + " permission was NOT granted";
-                if (grantResults.length >= 1) {
-                    s += grantResults[0];
-                }
-
-                Log.i(getClass().getSimpleName(), s);
-                //Toast.makeText(SettingsActivity.this, s, Toast.LENGTH_SHORT).show();
-            }
-
-        } else if (requestCode == REQUEST_LOCATION) {
-            // Check if the only required permission has been granted (could react on the response)
-            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                String s = "Permission response OK: " + grantResults.length;
-                Log.v("MainLayout", s);
-                //Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
-            } else {
-                String s = "Location Permission was not granted: ";
-                Log.i("MainLayout", s);
-                Toast.makeText(MainLayout.this, s, Toast.LENGTH_SHORT).show();
-            }
-
-        } else {
-            String s = "Unexpected permission request: " + requestCode;
-            Log.w("MainLayout", s);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 }

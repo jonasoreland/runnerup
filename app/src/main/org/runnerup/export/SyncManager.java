@@ -292,7 +292,7 @@ public class SyncManager {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
-                String args[] = {
+                String[] args = {
                         Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
@@ -335,19 +335,15 @@ public class SyncManager {
         authCallback = null;
         authSynchronizer = null;
         if (s == Status.OK) {
-            try {
-                ContentValues tmp = new ContentValues();
-                tmp.put("_id", synchronizer.getId());
-                tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
+            ContentValues tmp = new ContentValues();
+            tmp.put("_id", synchronizer.getId());
+            tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
 
-                String[] args = {
-                        Long.toString(synchronizer.getId())
-                };
-                mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-            } catch (Exception ex) {
-                Log.e(getClass().getName(), "Update failed:", ex);
-            }
-        } else {
+            String[] args = {
+                    Long.toString(synchronizer.getId())
+            };
+            mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
+       } else {
             synchronizer.reset();
         }
         cb.run(synchronizer.getName(), s);
@@ -483,14 +479,17 @@ public class SyncManager {
         final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
 
         String path;
-        if (Build.VERSION.SDK_INT >= 19) {
-            //noinspection InlinedApi
-            path = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOCUMENTS).getPath();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // All paths are related to Environment.DIRECTORY_DOCUMENTS
+            path = "";
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                //noinspection InlinedApi
+                path = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOCUMENTS).getPath() + File.separator;
         } else {
-            path = Environment.getExternalStorageDirectory().getPath();
+            path = Environment.getExternalStorageDirectory().getPath() + File.separator;
         }
-        path += File.separator + "RunnerUp";
+        path += "RunnerUp";
         tv1.setText(path);
 
         if (sync.getAuthNotice() != 0) {
@@ -510,9 +509,17 @@ public class SyncManager {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //Set default values
-
                         ContentValues tmp = new ContentValues();
-                        tmp.put(DB.ACCOUNT.URL, tv1.getText().toString());
+                        String uri = tv1.getText().toString().trim();
+                        while (uri.endsWith(File.separator)){
+                            uri = uri.substring(0, uri.length()-1);
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            while (uri.startsWith(File.separator)) {
+                                uri = uri.substring(1);
+                            }
+                        }
+                        tmp.put(DB.ACCOUNT.URL, uri);
                         ContentValues config = new ContentValues();
                         config.put("_id", sync.getId());
                         config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
@@ -545,7 +552,7 @@ public class SyncManager {
     private boolean checkStoragePermissions(final AppCompatActivity activity) {
         boolean result = true;
         String[] requiredPerms;
-        if (Build.VERSION.SDK_INT >= 16) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             //noinspection InlinedApi
             requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
         } else {

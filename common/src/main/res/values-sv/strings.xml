@@ -149,7 +149,6 @@
   <string name="Create_new_audio_cue_scheme">Skapa nytt schema för ljudmeddelande</string>
   <string name="Yes">Ja</string>
   <string name="Create">Skapa</string>
-  <string name="No_way">Inte alls</string>
   <string name="No">Nej</string>
   <string name="Loading">Laddar</string>
   <string name="Saving">Sparar</string>
@@ -295,6 +294,11 @@
   <string name="Share_workout">Dela träningspass…</string>
   <string name="New_audio_scheme">Nytt ljudschema</string>
   <string name="GPS_permission_required">GPS behörighet krävs</string>
+  <string name="GPS_permission_text_pre_Android10">Behörighet för Plats behövs i systeminställningar</string>
+  <string name="GPS_permission_text">Behörighet för Plats behövs i systeminställningar.\nFör stegfrekvens behövs behörighet för Kroppssensorer också.</string>
+  <string name="Activity_recognition_permission_required">Behörighet för Kroppssensorer behövs</string>
+  <string name="Activity_recognition_text">Behörighet för Kroppssensorer behövs för stegfrekvens</string>
+  <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>
