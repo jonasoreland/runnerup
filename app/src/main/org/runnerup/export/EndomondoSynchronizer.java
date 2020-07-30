@@ -449,7 +449,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             if (string.contains("km") || string.contains("mi")) {
                 String dist[] = string.split(" ", 2);
                 if (dist.length == 2) {
-                    double d = Double.valueOf(dist[0]);
+                    double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
                         d *= Formatter.km_meters;
                     else if (dist[1].contains("mi"))
@@ -463,7 +463,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                     long duration = 0;
                     long mul = 1;
                     for (int i = 0; i < time.length; i++) {
-                        duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+                        duration += (mul * Long.parseLong(time[time.length - 1 - i]));
                         mul = mul * 60;
                     }
                     c.put(DB.FEED.DURATION, duration);
@@ -474,7 +474,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             if (arr.length >= 1) {
                 String dist[] = arr[0].split(" ", 2);
                 if (dist.length == 2) {
-                    double d = Double.valueOf(dist[0]);
+                    double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
                         d *= Formatter.km_meters;
                     else if (dist[1].contains("mi"))
@@ -487,7 +487,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 long duration = 0;
                 long mul = 1;
                 for (int i = 0; i < time.length; i++) {
-                    duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+                    duration += (mul * Long.parseLong(time[time.length - 1 - i]));
                     mul = mul * 60;
                 }
                 c.put(DB.FEED.DURATION, duration);

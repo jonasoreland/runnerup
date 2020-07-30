@@ -243,7 +243,7 @@ public class NumberPicker extends LinearLayout {
             updateView();
         } else {
             try {
-                int l = Integer.valueOf(str);
+                int l = Integer.parseInt(str);
                 setValueImpl(l);
             } catch (NumberFormatException ex) {
             }

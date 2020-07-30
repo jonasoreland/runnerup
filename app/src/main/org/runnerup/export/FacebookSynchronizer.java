@@ -209,7 +209,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
                 Uri uri = Uri.parse("https://keso?" + authConfig);
                 access_token = uri.getQueryParameter("access_token");
-                expire_time = Long.valueOf(uri.getQueryParameter("expires"));
+                expire_time = Long.parseLong(uri.getQueryParameter("expires"));
                 token_now = System.currentTimeMillis();
                 return Status.OK;
             } catch (Exception ex) {
