@@ -290,13 +290,13 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         if (val) {
             long bitval = (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
-                    + "\'");
+                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
+                    + "'");
         } else {
             long mask = ~(long) (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
-                    + "\'");
+                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
+                    + "'");
         }
     }
 
