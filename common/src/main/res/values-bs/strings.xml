@@ -55,7 +55,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">Krug</string>
   <string name="New_lap">Novi krug</string>
-  <string name="Next_lap">Slijedeći krug</string>
   <string name="Pause">Pauza</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Trening</string>
@@ -127,7 +126,6 @@
   <string name="Create_new_audio_cue_scheme">Napravi novu šemu audio napomena</string>
   <string name="Yes">Da</string>
   <string name="Create">Kreiraj</string>
-  <string name="No_way">Nema šanse</string>
   <string name="No">Ne</string>
   <string name="Loading">Učitavanje…</string>
   <string name="Saving">Snimanje</string>
@@ -227,7 +225,6 @@
   <string name="Activity_ready">Aktivnost spremna</string>
   <string name="Ready_to_start_running">Spremni za trčanje!</string>
   <string name="Searching_for_GPS">Traženje GPS</string>
-  <string name="Activity_ongoing">Aktivnost traje</string>
   <string name="RunnerUp_activity_started">RunnerUp aktivnos počela</string>
   <string name="Low_HRM_battery_level">Nizak nivo baterije monitora pulsa</string>
   <string name="High_HRM_battery_level">Visok nivo baterije monitora pulsa</string>
@@ -268,7 +265,6 @@
   <string name="No_feed_to_show">Nema vrijesti za prikazivanje</string>
   <string name="Unused_currently">Trenutno se ne koristi.</string>
   <string name="Unknown">Nepoznato</string>
-  <string name="RunningFreeOnlinePasswordNotice">Napomena: Koristite \"secret key\" kao šifru postavljenu na stranici pod dijelom Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Snimanje</string>
   <string name="Sensors">Senzori</string>
   <string name="Maintenance">Održavanje</string>

@@ -59,7 +59,6 @@
   <string name="Interval">Interwałowy</string>
   <string name="Lap">Okrążenie</string>
   <string name="New_lap">Nowe okrążenie</string>
-  <string name="Next_lap">Następne okrążenie</string>
   <string name="Pause">Pauza</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Trening</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">Utwórz schemat wskazówek audio</string>
   <string name="Yes">Tak</string>
   <string name="Create">Utwórz</string>
-  <string name="No_way">No way</string>
   <string name="No">Nie</string>
   <string name="Loading">Ładuje…</string>
   <string name="Saving">Zapisuje</string>
@@ -252,8 +250,7 @@
   <string name="Activity_ready">Gotowy</string>
   <string name="Ready_to_start_running">Czas rozpocząć trening!</string>
   <string name="Searching_for_GPS">Szukam GPS</string>
-  <string name="Activity_ongoing">Trening w toku</string>
-  <string name="RunnerUp_activity_started">RunnerUp trening rozpoczęty</string>
+    <string name="RunnerUp_activity_started">RunnerUp trening rozpoczęty</string>
   <string name="Low_HRM_battery_level">Niski poziom baterii HRM</string>
   <string name="High_HRM_battery_level">Wysoki poziom baterii HRM</string>
   <string name="Warning">Uwaga</string>
@@ -294,7 +291,6 @@
   <string name="No_feed_to_show">Brak wątku do wyświetlenia</string>
   <string name="Unused_currently">Obecnie nieużywany.</string>
   <string name="Unknown">Nieznane</string>
-  <string name="RunningFreeOnlinePasswordNotice">Uwaga: użyj \"secret key\" jako hasła ustawionego na stronie w Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Nagrywanie</string>
   <string name="Sensors">Czujniki</string>
   <string name="Maintenance">Utrzymanie</string>

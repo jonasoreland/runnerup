@@ -54,7 +54,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">putaran</string>
   <string name="New_lap">Putaran baru</string>
-  <string name="Next_lap">Putaran berikutnya</string>
   <string name="Pause">Jeda</string>
   <string name="Stop">Berhenti</string>
   <string name="Workout">Latihan</string>
@@ -129,7 +128,6 @@
   <string name="Create_new_audio_cue_scheme">Buat skema isyarat suara baru</string>
   <string name="Yes">Ya</string>
   <string name="Create">Buat</string>
-  <string name="No_way">Tidak mungkin</string>
   <string name="No">Tidak</string>
   <string name="Loading">Memuat…</string>
   <string name="Saving">Menyimpan</string>
@@ -227,7 +225,6 @@
   <string name="Activity_ready">Aktivitas siap</string>
   <string name="Ready_to_start_running">Siap untuk berlari!</string>
   <string name="Searching_for_GPS">Mencari GPS</string>
-  <string name="Activity_ongoing">Aktivitas berjalan</string>
   <string name="RunnerUp_activity_started">Aktivitas RunnerUp dimulai</string>
   <string name="Low_HRM_battery_level">Sisa baterai MDJ rendah</string>
   <string name="High_HRM_battery_level">Sisa baterai MDJ tinggi</string>

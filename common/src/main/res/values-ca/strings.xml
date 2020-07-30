@@ -59,7 +59,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">Tram</string>
   <string name="New_lap">Nou tram</string>
-  <string name="Next_lap">Següent tram</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Atura</string>
   <string name="Workout">Entrenament</string>
@@ -149,7 +148,6 @@
   <string name="Create_new_audio_cue_scheme">Nou esquema de pistes d\'àudio</string>
   <string name="Yes">Sí</string>
   <string name="Create">Crea</string>
-  <string name="No_way">De cap manera</string>
   <string name="No">No</string>
   <string name="Loading">Carregant</string>
   <string name="Saving">Desant</string>
@@ -262,7 +260,6 @@
   <string name="Activity_ready">Activitat a punt</string>
   <string name="Ready_to_start_running">A punt per començar a córrer!</string>
   <string name="Searching_for_GPS">S\'està cercant el GPS…</string>
-  <string name="Activity_ongoing">Activitat en curs</string>
   <string name="RunnerUp_activity_started">Activitat RunnerUp iniciada</string>
   <string name="Low_HRM_battery_level">Bateria MFC baixa</string>
   <string name="High_HRM_battery_level">Bateria MFC alta</string>
@@ -304,7 +301,6 @@
   <string name="No_feed_to_show">No hi ha res per mostrar</string>
   <string name="Unused_currently">No utilitzat actualment</string>
   <string name="Unknown">Desconegut</string>
-  <string name="RunningFreeOnlinePasswordNotice">Nota: Utilitzeu com a contrasenya la \"clau secreta\" establerta al lloc web, a Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Enregistrament</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Manteniment</string>

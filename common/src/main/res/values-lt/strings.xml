@@ -59,7 +59,6 @@
   <string name="Interval">Intervalas</string>
   <string name="Lap">Etapas</string>
   <string name="New_lap">Naujas etapas</string>
-  <string name="Next_lap">Kitas etapas</string>
   <string name="Pause">Pauzė</string>
   <string name="Stop">Baigti</string>
   <string name="Workout">Treniruotė</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">Sukurti naują garsinių nurodymų schemą</string>
   <string name="Yes">Taip</string>
   <string name="Create">Sukurti</string>
-  <string name="No_way">Jokiu būdu</string>
   <string name="No">Ne</string>
   <string name="Loading">Kraunasi…</string>
   <string name="Saving">Išsaugoja</string>
@@ -233,8 +231,7 @@
   <string name="Activity_ready">Veikla paruošta</string>
   <string name="Ready_to_start_running">Pasiruošęs pradėti bėgimą!</string>
   <string name="Searching_for_GPS">Ieškoma GPS</string>
-  <string name="Activity_ongoing">Veikla vyksta</string>
-  <string name="RunnerUp_activity_started">RunnerUp veikla pradėta</string>
+    <string name="RunnerUp_activity_started">RunnerUp veikla pradėta</string>
   <string name="Low_HRM_battery_level">Žemas pulsometro baterijos lygis</string>
   <string name="High_HRM_battery_level">Aukštas pulsometro baterijos lygis</string>
   <string name="Warning">Dėmesio</string>

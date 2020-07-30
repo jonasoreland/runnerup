@@ -60,7 +60,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">Lap</string>
   <string name="New_lap">New lap</string>
-  <string name="Next_lap">Next lap</string>
   <string name="Pause">Pause</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Workout</string>
@@ -263,7 +262,6 @@
   <string name="Activity_ready">Activity ready</string>
   <string name="Ready_to_start_running">Ready to start running!</string>
   <string name="Searching_for_GPS">Searching for GPS</string>
-  <string name="Activity_ongoing">Activity ongoing</string>
   <string name="RunnerUp_activity_started">RunnerUp activity started</string>
   <string name="Low_HRM_battery_level">Low HRM battery level</string>
   <string name="High_HRM_battery_level">High HRM battery level</string>
@@ -298,8 +296,6 @@
   <string name="GPS_permission_required">GPS permission required</string>
   <string name="GPS_permission_text_pre_Android10">Location permission required in system settings</string>
   <string name="GPS_permission_text">Location permission \"Allow all the time\" required in system settings.\nFor running cadence \"Physical activity\" permission is required too.</string>
-  <string name="Activity_recognition_permission_required">Activity recognition permission required</string>
-  <string name="Activity_recognition_text">The permission \"Physical activity\" is required for running cadence</string>
   <string name="Request_permission_text">Allow permission by clicking \"OK\".</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Workout notes</string>
@@ -310,7 +306,6 @@
   <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Currently unused</string>
   <string name="Unknown">Unknown</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Recording</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Maintenance</string>

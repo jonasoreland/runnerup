@@ -59,7 +59,6 @@
   <string name="Interval">Intervallo</string>
   <string name="Lap">Giro</string>
   <string name="New_lap">Nuovo giro</string>
-  <string name="Next_lap">Prossimo giro</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Ferma</string>
   <string name="Workout">Allenamento</string>
@@ -149,7 +148,6 @@
   <string name="Create_new_audio_cue_scheme">Crea nuovo schema riferimenti audio</string>
   <string name="Yes">Sì</string>
   <string name="Create">Crea</string>
-  <string name="No_way">Assolutamente no</string>
   <string name="No">No</string>
   <string name="Loading">Caricamento</string>
   <string name="Saving">Salvando…</string>
@@ -262,8 +260,7 @@
   <string name="Activity_ready">Attività pronta</string>
   <string name="Ready_to_start_running">Pronto per iniziare a correre!</string>
   <string name="Searching_for_GPS">Ricerca GPS</string>
-  <string name="Activity_ongoing">Attività in corso</string>
-  <string name="RunnerUp_activity_started">Attività RunnerUp iniziata</string>
+    <string name="RunnerUp_activity_started">Attività RunnerUp iniziata</string>
   <string name="Low_HRM_battery_level">Livello batteria HRM basso</string>
   <string name="High_HRM_battery_level">Livello batteria HRM alto</string>
   <string name="Warning">Attenzione</string>
@@ -304,7 +301,6 @@
   <string name="No_feed_to_show">Nessun feed da mostrare</string>
   <string name="Unused_currently">Attualmente non utilizzato</string>
   <string name="Unknown">Sconosciuto</string>
-  <string name="RunningFreeOnlinePasswordNotice">Nota: utilizzare la \"chiave segreta\" come password impostata sul sito Web in Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Registrazione in corso</string>
   <string name="Sensors">Sensori</string>
   <string name="Maintenance">Manutenzione</string>

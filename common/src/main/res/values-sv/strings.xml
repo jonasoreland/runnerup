@@ -59,7 +59,6 @@
   <string name="Interval">Intervall</string>
   <string name="Lap">Varv</string>
   <string name="New_lap">Nytt varv</string>
-  <string name="Next_lap">Nästa varv</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Stoppa</string>
   <string name="Workout">Träningspass</string>
@@ -261,8 +260,7 @@
   <string name="Activity_ready">Aktivitet redo</string>
   <string name="Ready_to_start_running">Redo att springa!</string>
   <string name="Searching_for_GPS">Söker efter GPS</string>
-  <string name="Activity_ongoing">Aktivitet pågår</string>
-  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startad</string>
+    <string name="RunnerUp_activity_started">RunnerUp-aktivitet startad</string>
   <string name="Low_HRM_battery_level">Låg batterinivå i pulsmätare</string>
   <string name="High_HRM_battery_level">Hög batterinivå i pulsmätare</string>
   <string name="Warning">Varning</string>
@@ -296,8 +294,6 @@
   <string name="GPS_permission_required">GPS behörighet krävs</string>
   <string name="GPS_permission_text_pre_Android10">Behörighet för Plats behövs i systeminställningar</string>
   <string name="GPS_permission_text">Behörighet för Plats behövs i systeminställningar.\nFör stegfrekvens behövs behörighet för Kroppssensorer också.</string>
-  <string name="Activity_recognition_permission_required">Behörighet för Kroppssensorer behövs</string>
-  <string name="Activity_recognition_text">Behörighet för Kroppssensorer behövs för stegfrekvens</string>
   <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
@@ -308,7 +304,6 @@
   <string name="No_feed_to_show">Inget flöde att visa</string>
   <string name="Unused_currently">Används ej för närvarande</string>
   <string name="Unknown">Okänt</string>
-  <string name="RunningFreeOnlinePasswordNotice">Notera: Använd den hemliga nyckel som lösenord från Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Inspelning</string>
   <string name="Sensors">Sensorer</string>
   <string name="Maintenance">Underhåll</string>

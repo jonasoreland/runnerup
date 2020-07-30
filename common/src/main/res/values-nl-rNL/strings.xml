@@ -59,7 +59,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">Ronde</string>
   <string name="New_lap">Nieuwe ronde</string>
-  <string name="Next_lap">Volgende ronde</string>
   <string name="Pause">Pauzeren</string>
   <string name="Stop">Stoppen</string>
   <string name="Workout">Training</string>
@@ -147,7 +146,6 @@
   <string name="Create_new_audio_cue_scheme">Maak nieuw audiocueschema aan</string>
   <string name="Yes">Ja</string>
   <string name="Create">Creëren</string>
-  <string name="No_way">Absoluut niet</string>
   <string name="No">Nee</string>
   <string name="Loading">Laden</string>
   <string name="Saving">Bezig met opslaan</string>
@@ -243,8 +241,7 @@
   <string name="Activity_ready">Activiteit is gereed</string>
   <string name="Ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
   <string name="Searching_for_GPS">Naar gps aan het zoeken</string>
-  <string name="Activity_ongoing">Activiteit is gaande</string>
-  <string name="RunnerUp_activity_started">RunnerUp-activiteit gestart</string>
+    <string name="RunnerUp_activity_started">RunnerUp-activiteit gestart</string>
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
@@ -282,7 +279,6 @@
   <string name="Fetching_activities_from_1s">Bezig met ophalen van activiteiten van %1$s</string>
   <string name="No_feed_to_show">Feed is leeg</string>
   <string name="Unknown">Onbekend</string>
-  <string name="RunningFreeOnlinePasswordNotice">Let op: gebruik de \"geheime sleutel\" als wachtwoord, zoals ingesteld op de website via Toevoegen &gt; Training synchroniseren &gt; SportTracks.</string>
   <string name="Recording">Bezig met vastleggen</string>
   <string name="Sensors">Sensors</string>
   <string name="Maintenance">Onderhoud</string>
