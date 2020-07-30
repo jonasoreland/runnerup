@@ -548,7 +548,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                 list.add(get(c));
             } while (c.moveToNext());
         }
-        return list.toArray(new ContentValues[list.size()]);
+        return list.toArray(new ContentValues[0]);
     }
 
     public static void deleteActivity(SQLiteDatabase db, long id) {

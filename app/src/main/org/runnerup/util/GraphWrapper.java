@@ -413,7 +413,7 @@ public class GraphWrapper implements Constants {
                 f.complete();
             }
             LineGraphSeries<DataPoint> graphViewData = new LineGraphSeries<>(
-                    velocityList.toArray(new DataPoint[velocityList.size()]));
+                    velocityList.toArray(new DataPoint[0]));
             graphView.addSeries(graphViewData); // data
             graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
             graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
@@ -430,7 +430,7 @@ public class GraphWrapper implements Constants {
             });
             if (showHR) {
                 LineGraphSeries<DataPoint> graphViewData2 = new LineGraphSeries<>(
-                        hrList.toArray(new DataPoint[hrList.size()]));
+                        hrList.toArray(new DataPoint[0]));
                 graphView2.addSeries(graphViewData2); // data
                 graphView2.getViewport().setMinX(graphView2.getViewport().getMinX(true));
                 graphView2.getViewport().setMaxX(graphView2.getViewport().getMaxX(true));
