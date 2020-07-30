@@ -69,11 +69,11 @@ public interface HRProvider {
 
     /**
      * Presents the user if the settings screen to enable the provider's protocol. When this is done,
-     * 'activity' will have {@link AppCompatActivity#onActivityResult(int, int, android.content.Intent)} called
+     * 'activity' will have  called
      *
      * @param activity The {@link AppCompatActivity} currently being displayed to the user
      * @param requestCode An arbitrary code that will be given to
-     *                  {@link AppCompatActivity#onActivityResult(int, int, android.content.Intent)}
+     *
      * @return true if the intent was sent
      */
     boolean startEnableIntent(AppCompatActivity activity, int requestCode);
