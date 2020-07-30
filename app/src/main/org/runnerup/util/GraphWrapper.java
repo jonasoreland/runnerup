@@ -417,19 +417,16 @@ public class GraphWrapper implements Constants {
             graphView.addSeries(graphViewData); // data
             graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
             graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
-            graphViewData.setOnDataPointTapListener(new OnDataPointTapListener() {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    String msg = String.format("%s: %s\n%s: %s %s",
-                            graphView.getContext().getString(R.string.Distance),
-                            formatter.formatDistance(Formatter.Format.TXT_SHORT,
-                            (long) dataPoint.getX()),
-                            formatter.formatVelocityLabel(),
-                            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
-                            formatter.getVelocityUnit(graphView.getContext())
-                    );
-                    Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-                }
+            graphViewData.setOnDataPointTapListener((series, dataPoint) -> {
+                String msg = String.format("%s: %s\n%s: %s %s",
+                        graphView.getContext().getString(R.string.Distance),
+                        formatter.formatDistance(Formatter.Format.TXT_SHORT,
+                        (long) dataPoint.getX()),
+                        formatter.formatVelocityLabel(),
+                        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
+                        formatter.getVelocityUnit(graphView.getContext())
+                );
+                Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
             });
             if (showHR) {
                 LineGraphSeries<DataPoint> graphViewData2 = new LineGraphSeries<>(
@@ -437,13 +434,10 @@ public class GraphWrapper implements Constants {
                 graphView2.addSeries(graphViewData2); // data
                 graphView2.getViewport().setMinX(graphView2.getViewport().getMinX(true));
                 graphView2.getViewport().setMaxX(graphView2.getViewport().getMaxX(true));
-                graphViewData2.setOnDataPointTapListener(new OnDataPointTapListener() {
-                    @Override
-                    public void onTap(Series series, DataPointInterface dataPoint) {
-                        String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
-                                graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY());
-                        Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-                    }
+                graphViewData2.setOnDataPointTapListener((series, dataPoint) -> {
+                    String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                            graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY());
+                    Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
                 });
 
                 if (showHRZhist) {

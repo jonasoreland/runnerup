@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -40,8 +39,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -367,15 +364,9 @@ public class SyncManager {
         String password = authConfig != null ? authConfig.optString("password", "") : null;
         tv1.setText(username);
         tv2.setText(password);
-        cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                tv2.setInputType(InputType.TYPE_CLASS_TEXT
-                        | (isChecked ? 0
-                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
-            }
-        });
+        cb.setOnCheckedChangeListener((buttonView, isChecked) -> tv2.setInputType(InputType.TYPE_CLASS_TEXT
+                | (isChecked ? 0
+                : InputType.TYPE_TEXT_VARIATION_PASSWORD)));
         if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(sync.getAuthNotice());
@@ -399,42 +390,26 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            //noinspection ConstantConditions
-                            authConfig.put("username", tv1.getText());
-                            authConfig.put("password", tv2.getText());
-                            if (authMethod == AuthMethod.USER_PASS_URL) {
-                                authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                    try {
+                        //noinspection ConstantConditions
+                        authConfig.put("username", tv1.getText());
+                        authConfig.put("password", tv2.getText());
+                        if (authMethod == AuthMethod.USER_PASS_URL) {
+                            authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
                         }
-                        testUserPass(sync, authConfig);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                    testUserPass(sync, authConfig);
                 })
-                .setNeutralButton("Skip", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
+                .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                    if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        handleAuthComplete(sync, Status.CANCEL);
                     }
-                })
-                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
-                    }
-                })
-                .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                            handleAuthComplete(sync, Status.CANCEL);
-                        }
-                        return false;
-                    }
+                    return false;
                 });
         builder.show();
     }
@@ -500,43 +475,32 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Set default values
-                        ContentValues tmp = new ContentValues();
-                        String uri = tv1.getText().toString().trim();
-                        while (uri.endsWith(File.separator)){
-                            uri = uri.substring(0, uri.length()-1);
+                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                    //Set default values
+                    ContentValues tmp = new ContentValues();
+                    String uri = tv1.getText().toString().trim();
+                    while (uri.endsWith(File.separator)){
+                        uri = uri.substring(0, uri.length()-1);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        while (uri.startsWith(File.separator)) {
+                            uri = uri.substring(1);
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            while (uri.startsWith(File.separator)) {
-                                uri = uri.substring(1);
-                            }
-                        }
-                        tmp.put(DB.ACCOUNT.URL, uri);
-                        ContentValues config = new ContentValues();
-                        config.put("_id", sync.getId());
-                        config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
-                        sync.init(config);
+                    }
+                    tmp.put(DB.ACCOUNT.URL, uri);
+                    ContentValues config = new ContentValues();
+                    config.put("_id", sync.getId());
+                    config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
+                    sync.init(config);
 
-                        handleAuthComplete(sync, sync.connect());
-                    }
+                    handleAuthComplete(sync, sync.connect());
                 })
-                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
+                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                    if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        handleAuthComplete(sync, Status.CANCEL);
                     }
-                })
-                .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                            handleAuthComplete(sync, Status.CANCEL);
-                        }
-                        return false;
-                    }
+                    return false;
                 });
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
@@ -633,19 +597,15 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName,
-                                            Synchronizer.Status status) {
-                                switch (status) {
-                                    case OK:
-                                        doUpload(synchronizer);
-                                        break;
+                        handleAuth((synchronizerName, status) -> {
+                            switch (status) {
+                                case OK:
+                                    doUpload(synchronizer);
+                                    break;
 
-                                    default:
-                                        nextSynchronizer();
-                                        break;
-                                }
+                                default:
+                                    nextSynchronizer();
+                                    break;
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -689,12 +649,7 @@ public class SyncManager {
         }
     }
 
-    private final Callback disableSynchronizerCallback = new Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            nextSynchronizer();
-        }
-    };
+    private final Callback disableSynchronizerCallback = (synchronizerName, status) -> nextSynchronizer();
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
                         Synchronizer.Status status) {
@@ -883,20 +838,16 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName,
-                                    Synchronizer.Status status) {
-                                switch (status) {
-                                    case OK:
-                                        doListWorkout(synchronizer);
-                                        break;
+                        handleAuth((synchronizerName, status) -> {
+                            switch (status) {
+                                case OK:
+                                    doListWorkout(synchronizer);
+                                    break;
 
-                                    default:
-                                        // Unexpected result, nothing to do
-                                        nextListWorkout();
-                                        break;
-                                }
+                                default:
+                                    // Unexpected result, nothing to do
+                                    nextListWorkout();
+                                    break;
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -1073,16 +1024,13 @@ public class SyncManager {
         Button noButton = mSpinner.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (noButton != null) {
             noButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    v -> {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
                         if (mSpinner != null)
                             mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
-                    }
-                });
+                    });
         }
         syncNextActivity(synchronizer, mode);
     }
@@ -1091,14 +1039,11 @@ public class SyncManager {
         String msg = getResources().getString(mode.getTextId(), synchronizerName);
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        synchronized (cancel) {
-                            cancel.append('t');
-                        }
-                        mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
+                (dialog, which) -> {
+                    synchronized (cancel) {
+                        cancel.append('t');
                     }
+                    mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
                 });
         mSpinner.setCancelable(false);
         mSpinner.setCanceledOnTouchOutside(false);
@@ -1190,19 +1135,16 @@ public class SyncManager {
 
                         // TODO Handling of NEED_AUTH and CANCEL hangs the app
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName, Synchronizer.Status s2) {
-                                switch (s2) {
-                                    case OK:
-                                        doSyncMulti(synchronizer, mode, activityItem);
-                                        break;
+                        handleAuth((synchronizerName, s2) -> {
+                            switch (s2) {
+                                case OK:
+                                    doSyncMulti(synchronizer, mode, activityItem);
+                                    break;
 
-                                    default:
-                                        // Unexpected result, nothing to do
-                                        syncNextActivity(synchronizer, mode);
-                                        break;
-                                }
+                                default:
+                                    // Unexpected result, nothing to do
+                                    syncNextActivity(synchronizer, mode);
+                                    break;
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -1295,14 +1237,11 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName, Synchronizer.Status s2) {
-                                if (s2 == Synchronizer.Status.OK) {
-                                    syncFeed(synchronizer);
-                                } else {
-                                    nextSyncFeed();
-                                }
+                        handleAuth((synchronizerName, s2) -> {
+                            if (s2 == Synchronizer.Status.OK) {
+                                syncFeed(synchronizer);
+                            } else {
+                                nextSyncFeed();
                             }
                         }, synchronizer, result.authMethod);
                         return;

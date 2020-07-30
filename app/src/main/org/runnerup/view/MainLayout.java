@@ -263,15 +263,12 @@ public class MainLayout extends TabActivity {
         }
     }
 
-    private final OnClickListener onRateClick = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            try {
-                Uri uri = Uri.parse("market://details?id=" + getPackageName());
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+    private final OnClickListener onRateClick = arg0 -> {
+        try {
+            Uri uri = Uri.parse("market://details?id=" + getPackageName());
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     };
 

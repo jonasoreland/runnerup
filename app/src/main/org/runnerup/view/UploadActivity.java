@@ -159,12 +159,9 @@ public class UploadActivity extends AppCompatActivity implements Constants {
     private void fillData() {
         if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
             syncManager.load(mSynchronizerName);
-            syncManager.loadActivityList(allSyncActivities, mSynchronizerName, new SyncManager.Callback() {
-                @Override
-                public void run(String synchronizerName, Status status) {
-                    filterAlreadyPresentActivities();
-                    requery();
-                }
+            syncManager.loadActivityList(allSyncActivities, mSynchronizerName, (synchronizerName, status) -> {
+                filterAlreadyPresentActivities();
+                requery();
             });
         } else {
             // Fields from the database (projection)
@@ -257,16 +254,12 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnClickListener onActivityClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View arg0) {
-            long id = ((UploadListAdapter.ViewHolderUploadActivity) arg0.getTag()).activityID;
-            Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
-            intent.putExtra("ID", id);
-            intent.putExtra("mode", "details");
-            startActivityForResult(intent, 100);
-        }
+    private final OnClickListener onActivityClick = arg0 -> {
+        long id = ((UploadListAdapter.ViewHolderUploadActivity) arg0.getTag()).activityID;
+        Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
+        intent.putExtra("ID", id);
+        intent.putExtra("mode", "details");
+        startActivityForResult(intent, 100);
     };
 
     class UploadListAdapter extends BaseAdapter {
@@ -381,17 +374,12 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnCheckedChangeListener checkedChangeClick = new OnCheckedChangeListener() {
-
-        @Override
-        public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-            int pos = (Integer) arg0.getTag();
-            SyncActivityItem tmp = allSyncActivities.get(pos);
-            tmp.setSkipFlag(!arg1);
-            updateSyncCount();
-            requery();
-        }
-
+    private final OnCheckedChangeListener checkedChangeClick = (arg0, arg1) -> {
+        int pos = (Integer) arg0.getTag();
+        SyncActivityItem tmp = allSyncActivities.get(pos);
+        tmp.setSkipFlag(!arg1);
+        updateSyncCount();
+        requery();
     };
 
     private final OnClickListener uploadButtonClick = new OnClickListener() {
@@ -433,53 +421,43 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         return selected;
     }
 
-    private final SyncManager.Callback syncCallback = new SyncManager.Callback() {
-
-        @Override
-        public void run(String synchronizerName, Status status) {
-            fetching = false;
-            if (cancelSync.length() > 0 || status == Status.CANCEL) {
-                finish();
-                return;
-            }
-            if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
-                fillData();
-            } else {
-                filterAlreadyPresentActivities();
-                requery();
-            }
+    private final SyncManager.Callback syncCallback = (synchronizerName, status) -> {
+        fetching = false;
+        if (cancelSync.length() > 0 || status == Status.CANCEL) {
+            finish();
+            return;
         }
-    };
-
-    private final OnClickListener clearAllButtonClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            for (SyncActivityItem tmp : allSyncActivities) {
-                if (tmp.isRelevantForSynch(syncMode)) {
-                    tmp.setSkipFlag(Boolean.TRUE);
-                }
-            }
-            updateSyncCount();
+        if (syncMode.equals(SyncManager.SyncMode.UPLOAD)) {
+            fillData();
+        } else {
+            filterAlreadyPresentActivities();
             requery();
         }
     };
 
-    private final OnClickListener setAllButtonClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int i = 0;
-            final int maxUpload = 30;
-            for (SyncActivityItem ai : allSyncActivities) {
-                if (ai.isRelevantForSynch(syncMode)) {
-                    // Limit uploads by default, to not overload services (even if action is not all)
-                    Boolean upload = mSynchronizerName.contentEquals(FileSynchronizer.NAME) ||
-                            i++ < maxUpload;
-                    ai.setSkipFlag(!upload);
-                }
+    private final OnClickListener clearAllButtonClick = v -> {
+        for (SyncActivityItem tmp : allSyncActivities) {
+            if (tmp.isRelevantForSynch(syncMode)) {
+                tmp.setSkipFlag(Boolean.TRUE);
             }
-            updateSyncCount();
-            requery();
         }
+        updateSyncCount();
+        requery();
+    };
+
+    private final OnClickListener setAllButtonClick = v -> {
+        int i = 0;
+        final int maxUpload = 30;
+        for (SyncActivityItem ai : allSyncActivities) {
+            if (ai.isRelevantForSynch(syncMode)) {
+                // Limit uploads by default, to not overload services (even if action is not all)
+                Boolean upload = mSynchronizerName.contentEquals(FileSynchronizer.NAME) ||
+                        i++ < maxUpload;
+                ai.setSkipFlag(!upload);
+            }
+        }
+        updateSyncCount();
+        requery();
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

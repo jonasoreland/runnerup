@@ -132,13 +132,11 @@ public class NumberPicker extends LinearLayout {
     private void createValueText(Context context) {
         valueText = new EditText(context);
         valueText.setTextSize(textSize);
-        valueText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    valueText.selectAll();
-                } else {
-                    validateInput(valueText);
-                }
+        valueText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                valueText.selectAll();
+            } else {
+                validateInput(valueText);
             }
         });
         valueText.setInputType(InputType.TYPE_CLASS_NUMBER);

@@ -82,17 +82,14 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         showDisabledBtn.setTextAppearance(this, R.style.TextAppearance_AppCompat_Button);
         showDisabledBtn.setText(R.string.Show_disabled_accounts);
         showDisabledBtn.setBackgroundResource(0);
-        showDisabledBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mShowDisabled = !mShowDisabled;
-                if (mShowDisabled) {
-                    ((Button) view).setText(R.string.Hide_disabled_accounts);
-                } else {
-                    ((Button) view).setText(R.string.Show_disabled_accounts);
-                }
-                getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
+        showDisabledBtn.setOnClickListener(view -> {
+            mShowDisabled = !mShowDisabled;
+            if (mShowDisabled) {
+                ((Button) view).setText(R.string.Hide_disabled_accounts);
+            } else {
+                ((Button) view).setText(R.string.Show_disabled_accounts);
             }
+            getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
         });
         listView.addFooterView(showDisabledBtn);
 
@@ -239,22 +236,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             // upload box
             accountUploadBox.setTag(synchronizer);
             setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
-            accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
-                }
-            });
+            accountUploadBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1));
 
             // feed box
             accountFeedBox.setTag(synchronizer);
             setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
-            accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
-                }
-            });
+            accountFeedBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1));
 
             if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 accountUploadBox.setEnabled(true);
@@ -313,12 +300,9 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         }
     }
 
-    private final SyncManager.Callback callback = new SyncManager.Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            if (status == Synchronizer.Status.OK) {
-                startActivity(synchronizerName, false);
-            }
+    private final SyncManager.Callback callback = (synchronizerName, status) -> {
+        if (status == Status.OK) {
+            startActivity(synchronizerName, false);
         }
     };
 

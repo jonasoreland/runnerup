@@ -394,18 +394,15 @@ public class FeedList extends Observable implements Constants {
     }
 
     public static void sort(List<ContentValues> list) {
-        java.util.Collections.sort(list, new Comparator<ContentValues>() {
-            @Override
-            public int compare(ContentValues lhs, ContentValues rhs) {
-                long t1 = lhs.getAsLong(DB.FEED.START_TIME);
-                long t2 = rhs.getAsLong(DB.FEED.START_TIME);
-                if (t1 < t2) {
-                    return +1;
-                } else if (t1 > t2) {
-                    return -1;
-                }
-                return 0;
+        java.util.Collections.sort(list, (lhs, rhs) -> {
+            long t1 = lhs.getAsLong(DB.FEED.START_TIME);
+            long t2 = rhs.getAsLong(DB.FEED.START_TIME);
+            if (t1 < t2) {
+                return +1;
+            } else if (t1 > t2) {
+                return -1;
             }
+            return 0;
         });
 
     }

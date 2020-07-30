@@ -98,11 +98,6 @@ class WorkoutListAdapter extends BaseAdapter {
 
     public static String[] load(Context ctx) {
         File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
-        return f.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".json");
-            }
-        });
+        return f.list((dir, filename) -> filename.endsWith(".json"));
     }
 }

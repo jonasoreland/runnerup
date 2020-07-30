@@ -207,12 +207,7 @@ public class StartActivity extends AppCompatActivity
         wearOsIndicator = (ImageView) findViewById(R.id.wearos_indicator);
         wearOsMessage = (TextView) findViewById(R.id.wearos_message);
 
-        findViewById(R.id.status_layout).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleStatusDetails();
-            }
-        });
+        findViewById(R.id.status_layout).setOnClickListener(view -> toggleStatusDetails());
 
         tabHost = (TabHost) findViewById(R.id.tabhost_start);
         tabHost.setup();
@@ -277,12 +272,9 @@ public class StartActivity extends AppCompatActivity
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
         advancedDownloadWorkoutButton = (Button) findViewById(R.id.advanced_download_button);
-        advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
-                StartActivity.this.startActivityForResult(intent, 113);
-            }
+        advancedDownloadWorkoutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
+            StartActivity.this.startActivityForResult(intent, 113);
         });
 
         if (getParent() != null && getParent().getIntent() != null) {
@@ -426,17 +418,14 @@ public class StartActivity extends AppCompatActivity
     private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mTracker == null || startButton.getVisibility() != View.VISIBLE)
-                        return;
+            runOnUiThread(() -> {
+                if (mTracker == null || startButton.getVisibility() != View.VISIBLE)
+                    return;
 
-                    if (mTracker.getState() == TrackerState.INIT /* this will start gps */ ||
-                            mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
-                            mTracker.getState() == TrackerState.CONNECTED) {
-                        startButton.performClick();
-                    }
+                if (mTracker.getState() == TrackerState.INIT /* this will start gps */ ||
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
+                        mTracker.getState() == TrackerState.CONNECTED) {
+                    startButton.performClick();
                 }
             });
         }
@@ -576,15 +565,11 @@ public class StartActivity extends AppCompatActivity
                 .show();
     }
 
-    private final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
-
-        @Override
-        public void onTabChanged(String tabId) {
-            if (tabId.contentEquals(TAB_ADVANCED)) {
-                loadAdvanced(null);
-            }
-            updateView();
+    private final OnTabChangeListener onTabChangeListener = tabId -> {
+        if (tabId.contentEquals(TAB_ADVANCED)) {
+            loadAdvanced(null);
         }
+        updateView();
     };
 
     private Workout prepareWorkout() {
@@ -712,9 +697,7 @@ public class StartActivity extends AppCompatActivity
                                 : getString(R.string.GPS_permission_text_pre_Android10))
                         .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
-                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> {
-                        ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
-                    });
+                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
                     builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
@@ -1069,13 +1052,9 @@ public class StartActivity extends AppCompatActivity
         updateView();
     }
 
-    private final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
-
-        @Override
-        public void onClose(SpinnerInterface spinner, boolean ok) {
-            if (ok) {
-                updateTargetView();
-            }
+    private final OnCloseDialogListener simpleTargetTypeClick = (spinner, ok) -> {
+        if (ok) {
+            updateTargetView();
         }
     };
 
@@ -1153,11 +1132,7 @@ public class StartActivity extends AppCompatActivity
             builder.setTitle(getString(R.string.Failed_to_load_workout));
             builder.setMessage("" + ex.toString());
             builder.setPositiveButton(getString(R.string.OK),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             builder.show();
         }
     }
@@ -1207,26 +1182,19 @@ public class StartActivity extends AppCompatActivity
 
     }
 
-    private final Runnable onWorkoutChanged = new Runnable() {
-        @Override
-        public void run() {
-            String name = advancedWorkoutSpinner.getValue().toString();
-            if (advancedWorkout != null) {
-                Context ctx = getApplicationContext();
-                try {
-                    WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
-                } catch (Exception ex) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                            .setTitle(getString(R.string.Failed_to_load_workout))
-                            .setMessage("" + ex.toString())
-                            .setPositiveButton(getString(R.string.OK),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    builder.show();
-                }
+    private final Runnable onWorkoutChanged = () -> {
+        String name = advancedWorkoutSpinner.getValue().toString();
+        if (advancedWorkout != null) {
+            Context ctx = getApplicationContext();
+            try {
+                WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
+            } catch (Exception ex) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                        .setTitle(getString(R.string.Failed_to_load_workout))
+                        .setMessage("" + ex.toString())
+                        .setPositiveButton(getString(R.string.OK),
+                                (dialog, which) -> dialog.dismiss());
+                builder.show();
             }
         }
     };

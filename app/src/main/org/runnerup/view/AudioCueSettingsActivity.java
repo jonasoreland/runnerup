@@ -118,15 +118,11 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
         {
             Preference btn = findPreference("tts_settings");
-            btn.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent()
-                            .setAction("com.android.settings.TTS_SETTINGS");
-                    startActivity(intent);
-                    return false;
-                }
-
+            btn.setOnPreferenceClickListener(preference -> {
+                Intent intent1 = new Intent()
+                        .setAction("com.android.settings.TTS_SETTINGS");
+                startActivity(intent1);
+                return false;
             });
         }
 
@@ -191,20 +187,15 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.Are_you_sure))
                 .setPositiveButton(getString(R.string.Yes),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        deleteAudioScheme();
-                    }
-                })
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            deleteAudioScheme();
+                        })
                 .setNegativeButton(getString(R.string.No),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        dialog.dismiss();
-                    }
-
-                });
+                        (dialog, which) -> {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        });
         builder.show();
         return true;
     }
@@ -310,21 +301,15 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 .setTitle(getString(R.string.Create_new_audio_cue_scheme))
         // Get the layout inflater
         .setView(editText)
-        .setPositiveButton(getString(R.string.OK), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String scheme = editText.getText().toString();
-                if (!scheme.contentEquals("")) {
-                    createNewAudioScheme(scheme);
-                    updateSortOrder(scheme);
-                    switchTo(scheme);
-                }
+        .setPositiveButton(getString(R.string.OK), (dialog, which) -> {
+            String scheme = editText.getText().toString();
+            if (!scheme.contentEquals("")) {
+                createNewAudioScheme(scheme);
+                updateSortOrder(scheme);
+                switchTo(scheme);
             }
         })
-        .setNegativeButton(getString(R.string.Cancel), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> {
         });
         builder.show();
     }
@@ -334,32 +319,28 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         TextToSpeech tts = null;
         final ArrayList<Feedback> feedback = new ArrayList<>();
 
-        private final OnInitListener mTTSOnInitListener = new OnInitListener() {
+        private final OnInitListener mTTSOnInitListener = arg0 -> {
+            SharedPreferences prefs;
+            if (settingsName == null || settingsName.contentEquals(DEFAULT))
+                prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            else
+                prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX,
+                        Context.MODE_PRIVATE);
+            final boolean mute = prefs.getBoolean(getResources().getString(R.string.pref_mute_bool),
+                    false);
 
-            @Override
-            public void onInit(int arg0) {
-                SharedPreferences prefs;
-                if (settingsName == null || settingsName.contentEquals(DEFAULT))
-                    prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                else
-                    prefs = getApplicationContext().getSharedPreferences(settingsName + SUFFIX,
-                            Context.MODE_PRIVATE);
-                final boolean mute = prefs.getBoolean(getResources().getString(R.string.pref_mute_bool),
-                        false);
-
-                Workout w = Workout.fakeWorkoutForTestingAudioCue();
-                RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
-                HashMap<String, Object> bindValues = new HashMap<>();
-                bindValues.put(Workout.KEY_TTS, rutts);
-                bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
-                bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
-                w.onBind(w, bindValues);
-                for (Feedback f : feedback) {
-                    f.onInit(w);
-                    f.onBind(w, bindValues);
-                    f.emit(w, AudioCueSettingsActivity.this.getApplicationContext());
-                    rutts.emit();
-                }
+            Workout w = Workout.fakeWorkoutForTestingAudioCue();
+            RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
+            HashMap<String, Object> bindValues = new HashMap<>();
+            bindValues.put(Workout.KEY_TTS, rutts);
+            bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
+            bindValues.put(Workout.KEY_HRZONES, new HRZones(AudioCueSettingsActivity.this));
+            w.onBind(w, bindValues);
+            for (Feedback f : feedback) {
+                f.onInit(w);
+                f.onBind(w, bindValues);
+                f.emit(w, AudioCueSettingsActivity.this.getApplicationContext());
+                rutts.emit();
             }
         };
 

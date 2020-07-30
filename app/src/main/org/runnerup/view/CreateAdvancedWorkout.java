@@ -143,35 +143,31 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     }
 
 
-    private final View.OnClickListener onAddButtonClick = new View.OnClickListener() {
+    private final View.OnClickListener onAddButtonClick = view -> {
 
-        @Override
-        public void onClick(View view) {
+        TableRow row = (TableRow) view.getParent();
+        final StepButton stepButton = (StepButton) row.findViewById(R.id.workout_step_button);
 
-            TableRow row = (TableRow) view.getParent();
-            final StepButton stepButton = (StepButton) row.findViewById(R.id.workout_step_button);
+        Step currentStep = stepButton.getStep();
+        if (currentStep instanceof RepeatStep) {
+            RepeatStep rs = (RepeatStep) currentStep;
+            rs.getSteps().add(new Step());
+        } else {
 
-            Step currentStep = stepButton.getStep();
-            if (currentStep instanceof RepeatStep) {
-                RepeatStep rs = (RepeatStep) currentStep;
-                rs.getSteps().add(new Step());
-            } else {
-
-                int index = advancedWorkout.getSteps().indexOf(currentStep);
-                if (index < 0) {
-                    for (Step se : advancedWorkout.getSteps()) {
-                        if (se instanceof RepeatStep) {
-                            index = ((RepeatStep) se).getSteps().indexOf(currentStep);
-                            ((RepeatStep) se).getSteps().add(index + 1, new Step());
-                        }
+            int index = advancedWorkout.getSteps().indexOf(currentStep);
+            if (index < 0) {
+                for (Step se : advancedWorkout.getSteps()) {
+                    if (se instanceof RepeatStep) {
+                        index = ((RepeatStep) se).getSteps().indexOf(currentStep);
+                        ((RepeatStep) se).getSteps().add(index + 1, new Step());
                     }
-                } else {
-                    advancedWorkout.getSteps().add(index + 1, new Step());
                 }
+            } else {
+                advancedWorkout.getSteps().add(index + 1, new Step());
             }
-            advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
-            advancedWorkoutStepsAdapter.notifyDataSetChanged();
         }
+        advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
+        advancedWorkoutStepsAdapter.notifyDataSetChanged();
     };
 
 
@@ -185,27 +181,16 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
             if(!dontAskAgain) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
                         .setMultiChoiceItems(new String[]{"Don't ask again"}, new boolean[]{dontAskAgain},
-                                new DialogInterface.OnMultiChoiceClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int indexSelected, boolean isChecked) {
-                                        dontAskAgain = isChecked;
-                                    }
-                                })
+                                (dialog, indexSelected, isChecked) -> dontAskAgain = isChecked)
 
                         .setTitle(getString(R.string.Are_you_sure))
                         .setPositiveButton(getString(R.string.Yes),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        deleteStep(stepButton);
-                                    }
+                                (dialog, which) -> {
+                                    dialog.dismiss();
+                                    deleteStep(stepButton);
                                 })
                         .setNegativeButton(getString(R.string.No),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
+                                (dialog, which) -> dialog.dismiss());
                 builder.show();
             } else {
                 deleteStep(stepButton);
@@ -234,58 +219,42 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         }
     };
 
-    private final Runnable onWorkoutChanged = new Runnable() {
-        @Override
-        public void run() {
-            String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
-            if (advancedWorkout != null) {
-                Context ctx = getApplicationContext();
-                try {
-                    WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
-                } catch (Exception ex) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                            .setTitle(getString(R.string.Failed_to_load_workout))
-                            .setMessage("" + ex.toString())
-                            .setPositiveButton(getString(R.string.OK),
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                    builder.show();
-                }
-            }
-        }
-    };
-
-    private final View.OnClickListener addStepButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            advancedWorkout.addStep(new Step());
-            advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
-            advancedWorkoutStepsAdapter.notifyDataSetChanged();
-        }
-    };
-
-    private final View.OnClickListener addRepeatStepButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            advancedWorkout.addStep(new RepeatStep());
-            advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
-            advancedWorkoutStepsAdapter.notifyDataSetChanged();
-        }
-    };
-
-    private final View.OnClickListener saveWorkoutButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    private final Runnable onWorkoutChanged = () -> {
+        String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
+        if (advancedWorkout != null) {
+            Context ctx = getApplicationContext();
             try {
-                String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
-                WorkoutSerializer.writeFile(getApplicationContext(), advWorkoutName, advancedWorkout);
-                finish();
-            } catch (Exception e) {
-                handleWorkoutFileException(e);
+                WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
+            } catch (Exception ex) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
+                        .setTitle(getString(R.string.Failed_to_load_workout))
+                        .setMessage("" + ex.toString())
+                        .setPositiveButton(getString(R.string.OK),
+                                (dialog, which) -> dialog.dismiss());
+                builder.show();
             }
+        }
+    };
+
+    private final View.OnClickListener addStepButtonClick = v -> {
+        advancedWorkout.addStep(new Step());
+        advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
+        advancedWorkoutStepsAdapter.notifyDataSetChanged();
+    };
+
+    private final View.OnClickListener addRepeatStepButtonClick = view -> {
+        advancedWorkout.addStep(new RepeatStep());
+        advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
+        advancedWorkoutStepsAdapter.notifyDataSetChanged();
+    };
+
+    private final View.OnClickListener saveWorkoutButtonClick = v -> {
+        try {
+            String advWorkoutName = advancedWorkoutSpinner.getValue().toString();
+            WorkoutSerializer.writeFile(getApplicationContext(), advWorkoutName, advancedWorkout);
+            finish();
+        } catch (Exception e) {
+            handleWorkoutFileException(e);
         }
     };
 
@@ -294,38 +263,25 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         .setTitle(getString(R.string.Failed_to_create_workout))
                 .setMessage("" + e.toString())
                 .setPositiveButton(getString(R.string.OK),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                        (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 
-    private final View.OnClickListener discardWorkoutButtonClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                    .setTitle("Delete workout?")
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final View.OnClickListener discardWorkoutButtonClick = view -> {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
+                .setTitle("Delete workout?")
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             dialog.dismiss();
                             String name = advancedWorkoutSpinner.getValue().toString();
                             File f = WorkoutSerializer.getFile(getApplicationContext(), name);
                             //noinspection ResultOfMethodCallIgnored
                             f.delete();
                             finish();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            builder.show();
-        }
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> dialog.dismiss());
+        builder.show();
     };
 }

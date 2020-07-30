@@ -176,21 +176,15 @@ public class StepButton extends LinearLayout {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
                     .setTitle(getResources().getString(R.string.repeat))
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    step.setRepeatCount(numberPicker.getValue());
-                    dialog.dismiss();
-                    setStep(step); // redraw
-                    if (mOnChangedListener != null) {
-                        mOnChangedListener.run();
-                    }
-                }
-            })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                        step.setRepeatCount(numberPicker.getValue());
+                        dialog.dismiss();
+                        setStep(step); // redraw
+                        if (mOnChangedListener != null) {
+                            mOnChangedListener.run();
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
             alert.show();
         }
     };
@@ -208,21 +202,15 @@ public class StepButton extends LinearLayout {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
                     .setTitle(getResources().getString(R.string.Edit_step))
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    save.run();
-                    dialog.dismiss();
-                    setStep(step); // redraw
-                    if (mOnChangedListener != null) {
-                        mOnChangedListener.run();
-                    }
-                }
-            })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                        save.run();
+                        dialog.dismiss();
+                        setStep(step); // redraw
+                        if (mOnChangedListener != null) {
+                            mOnChangedListener.run();
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
             alert.show();
         }
     };
@@ -336,39 +324,35 @@ public class StepButton extends LinearLayout {
             targetType.setValue(step.getTargetType().getValue());
         }
 
-        return new Runnable() {
-
-            @Override
-            public void run() {
-                step.setIntensity(Intensity.valueOf(stepType.getValueInt()));
-                step.setDurationType(Dimension.valueOf(durationType.getValueInt()));
-                switch (durationType.getValueInt()) {
-                    case DIMENSION.DISTANCE:
-                        step.setDurationValue(SafeParse.parseDouble(
-                                durationDistance.getValue().toString(), 1000));
-                        break;
-                    case DIMENSION.TIME:
-                        step.setDurationValue(SafeParse.parseSeconds(
-                                durationTime.getValue().toString(), 60));
-                        break;
+        return () -> {
+            step.setIntensity(Intensity.valueOf(stepType.getValueInt()));
+            step.setDurationType(Dimension.valueOf(durationType.getValueInt()));
+            switch (durationType.getValueInt()) {
+                case DIMENSION.DISTANCE:
+                    step.setDurationValue(SafeParse.parseDouble(
+                            durationDistance.getValue().toString(), 1000));
+                    break;
+                case DIMENSION.TIME:
+                    step.setDurationValue(SafeParse.parseSeconds(
+                            durationTime.getValue().toString(), 60));
+                    break;
+            }
+            step.setTargetType(Dimension.valueOf(targetType.getValueInt()));
+            switch (targetType.getValueInt()) {
+                case DIMENSION.PACE: {
+                    double unitMeters = Formatter.getUnitMeters(mContext);
+                    double paceLo = (double) SafeParse.parseSeconds(
+                            targetPaceLo.getValue().toString(), 5 * 60);
+                    double paceHi = (double) SafeParse.parseSeconds(
+                            targetPaceHi.getValue().toString(), 5 * 60);
+                    step.setTargetValue(paceLo / unitMeters, paceHi / unitMeters);
+                    break;
                 }
-                step.setTargetType(Dimension.valueOf(targetType.getValueInt()));
-                switch (targetType.getValueInt()) {
-                    case DIMENSION.PACE: {
-                        double unitMeters = Formatter.getUnitMeters(mContext);
-                        double paceLo = (double) SafeParse.parseSeconds(
-                                targetPaceLo.getValue().toString(), 5 * 60);
-                        double paceHi = (double) SafeParse.parseSeconds(
-                                targetPaceHi.getValue().toString(), 5 * 60);
-                        step.setTargetValue(paceLo / unitMeters, paceHi / unitMeters);
-                        break;
-                    }
-                    case DIMENSION.HRZ:
-                        step.setTargetType(Dimension.HR);
-                        Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
-                                targetHrz.getValueInt() + 1);
-                        step.setTargetValue(range.first, range.second);
-                }
+                case DIMENSION.HRZ:
+                    step.setTargetType(Dimension.HR);
+                    Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
+                            targetHrz.getValueInt() + 1);
+                    step.setTargetValue(range.first, range.second);
             }
         };
     }

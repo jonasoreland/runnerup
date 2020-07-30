@@ -18,7 +18,6 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -37,17 +36,14 @@ import org.runnerup.util.FileNameHelper;
 import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
-import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.Route;
 
 public class WebDavSynchronizer extends DefaultSynchronizer {
 
@@ -193,15 +189,12 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
      * @return the OkHttpClient containing basic auth
      */
     private OkHttpClient getAuthClient() {
-        return new OkHttpClient().newBuilder().authenticator(new Authenticator() {
-            @Override
-            public Request authenticate(Route route, @NonNull Response response) throws IOException {
-                if (response.request().header("Authorization") != null) {
-                    return null; // Give up, we've already failed to authenticate.
-                }
-                String credential = Credentials.basic(username, password);
-                return response.request().newBuilder().header("Authorization", credential).build();
+        return new OkHttpClient().newBuilder().authenticator((route, response) -> {
+            if (response.request().header("Authorization") != null) {
+                return null; // Give up, we've already failed to authenticate.
             }
+            String credential = Credentials.basic(username, password);
+            return response.request().newBuilder().header("Authorization", credential).build();
         }).build();
     }
 

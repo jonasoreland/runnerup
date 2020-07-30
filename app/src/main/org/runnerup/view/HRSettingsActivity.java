@@ -92,23 +92,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private DeviceAdapter deviceAdapter = null;
     private boolean mIsScanning = false;
 
-    private final OnClickListener hrZonesClick = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
-        }
-    };
+    private final OnClickListener hrZonesClick = arg0 -> startActivity(new Intent(HRSettingsActivity.this, HRZonesActivity.class));
     
-    private final OnClickListener scanButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            clear();
-            stopTimer();
+    private final OnClickListener scanButtonClick = v -> {
+        clear();
+        stopTimer();
 
-            close();
-            mIsScanning = true;
-            log("select HR-provider");
-            selectProvider();
-        }
+        close();
+        mIsScanning = true;
+        log("select HR-provider");
+        selectProvider();
     };
 
     @Override
@@ -133,12 +126,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         scanButton = (Button) findViewById(R.id.scan_button);
         scanButton.setOnClickListener(scanButtonClick);
         connectButton = (Button) findViewById(R.id.connect_button);
-        connectButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                connect();
-            }
-        });
+        connectButton.setOnClickListener(arg0 -> connect());
 
         formatter = new Formatter(this);
         {
@@ -247,20 +235,13 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Clear_HR_settings))
                 .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                doClear();
-            }
-        })
+                .setPositiveButton(getString(R.string.OK), (dialog, which) -> doClear())
 
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        dialog.dismiss();
-                    }
-
-                });
+                        (dialog, which) -> {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        });
         builder.show();
     }
 
@@ -305,12 +286,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void notSupported() {
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+        DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device))
@@ -373,37 +349,29 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Select_type_of_Bluetooth_device))
                 .setPositiveButton(getString(R.string.OK),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int which) {
-                        if (hrProvider == null && items.length > 0) {
-                            // Select the first in the list
-                            hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
-                                    items[0].toString());
-                        }
-                        log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
-                        open();
-                    }
-                })
+                        (dialog, which) -> {
+                            if (hrProvider == null && items.length > 0) {
+                                // Select the first in the list
+                                hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
+                                        items[0].toString());
+                            }
+                            log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
+                            open();
+                        })
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        mIsScanning = false;
-                        hrProvider = null;
-                        load();
-                        open();
-                        dialog.dismiss();
-                    }
-
-                })
+                        (dialog, which) -> {
+                            mIsScanning = false;
+                            hrProvider = null;
+                            load();
+                            open();
+                            dialog.dismiss();
+                        })
                 .setSingleChoiceItems(itemNames, 0,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
-                                items[arg1].toString());
-                        log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
-                    }
-                });
+                        (arg0, arg1) -> {
+                            hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
+                                    items[arg1].toString());
+                            log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
+                        });
         builder.show();
     }
 
@@ -416,44 +384,33 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Scanning))
                 .setPositiveButton(getString(R.string.Connect),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        log(hrProvider.getProviderName() + ".stopScan()");
-                        hrProvider.stopScan();
-                        connect();
-                        updateView();
-                        dialog.dismiss();
-                    }
-                })
+                        (dialog, which) -> {
+                            log(hrProvider.getProviderName() + ".stopScan()");
+                            hrProvider.stopScan();
+                            connect();
+                            updateView();
+                            dialog.dismiss();
+                        })
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        log(hrProvider.getProviderName() + ".stopScan()");
-                        hrProvider.stopScan();
-                        load();
-                        open();
-                        dialog.dismiss();
-                        updateView();
-                    }
-                })
+                        (dialog, which) -> {
+                            log(hrProvider.getProviderName() + ".stopScan()");
+                            hrProvider.stopScan();
+                            load();
+                            open();
+                            dialog.dismiss();
+                            updateView();
+                        })
                 .setSingleChoiceItems(deviceAdapter, -1,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        HRDeviceRef hrDevice = deviceAdapter.deviceList.get(arg1);
-                        btAddress = hrDevice.getAddress();
-                        btName = hrDevice.getName();
-                    }
-                });
+                        (arg0, arg1) -> {
+                            HRDeviceRef hrDevice = deviceAdapter.deviceList.get(arg1);
+                            btAddress = hrDevice.getAddress();
+                            btName = hrDevice.getName();
+                        });
         if (hrProvider.isBondingDevice()) {
-            builder.setNeutralButton("Pairing", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    Intent i = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-                    startActivityForResult(i, 123);
-                }
+            builder.setNeutralButton("Pairing", (dialog, which) -> {
+                dialog.cancel();
+                Intent i = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                startActivityForResult(i, 123);
             });
         }
         builder.show();
@@ -517,11 +474,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         hrReader.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        readHR();
-                    }
-                });
+                handler.post(() -> readHR());
             }
         }, 0, 500);
     }

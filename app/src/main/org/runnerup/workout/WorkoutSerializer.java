@@ -93,12 +93,7 @@ public class WorkoutSerializer {
             }
         }
 
-        Collections.sort(list, new Comparator<jsonstep>() {
-            @Override
-            public int compare(jsonstep lhs, jsonstep rhs) {
-                return lhs.order - rhs.order;
-            }
-        });
+        Collections.sort(list, (lhs, rhs) -> lhs.order - rhs.order);
 
         for (jsonstep s : list) {
             if (s.parentStep != null) {

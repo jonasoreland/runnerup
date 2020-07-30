@@ -638,12 +638,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.close();
         mDBHelper.close();
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+        DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         if (from == null) {
             from = getDefaultBackupPath(ctx);
@@ -664,12 +659,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void exportDatabase(Context ctx, String to) {
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+        DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         if (to == null) {
             to = getDefaultBackupPath(ctx);

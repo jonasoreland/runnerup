@@ -473,16 +473,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
                     // Android 4.3
                     log("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
-                    hrClientHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            log("before connect");
-                            btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
-                            if (btGatt == null) {
-                                reportConnectFailed("connectGatt returned null");
-                            } else {
-                                log("connectGatt: " + btGatt);
-                            }
+                    hrClientHandler.post(() -> {
+                        log("before connect");
+                        btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+                        if (btGatt == null) {
+                            reportConnectFailed("connectGatt returned null");
+                        } else {
+                            log("connectGatt: " + btGatt);
                         }
                     });
                 } else {
@@ -501,12 +498,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
             mScanDevices.add(address);
 
-            hrClientHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mIsScanning) { // NOTE: mIsScanning in user-thread
-                        hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, device));
-                    }
+            hrClientHandler.post(() -> {
+                if (mIsScanning) { // NOTE: mIsScanning in user-thread
+                    hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, device));
                 }
             });
         }
@@ -585,14 +579,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     private void reportConnected(final boolean b) {
         if (hrClientHandler != null) {
-            hrClientHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mIsConnecting && hrClient != null) {
-                        mIsConnected = b;
-                        mIsConnecting = false;
-                        hrClient.onConnectResult(b);
-                    }
+            hrClientHandler.post(() -> {
+                if (mIsConnecting && hrClient != null) {
+                    mIsConnected = b;
+                    mIsConnecting = false;
+                    hrClient.onConnectResult(b);
                 }
             });
         }

@@ -46,12 +46,9 @@ abstract class BtHRBase implements HRProvider {
             if(Looper.myLooper() == Looper.getMainLooper()) {
                 hrClient.log(this, msg);
             } else {
-                hrClientHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (hrClient != null)
-                            hrClient.log(BtHRBase.this, msg);
-                    }
+                hrClientHandler.post(() -> {
+                    if (hrClient != null)
+                        hrClient.log(BtHRBase.this, msg);
                 });
             }
         }

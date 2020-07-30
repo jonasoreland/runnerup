@@ -292,16 +292,13 @@ public class Tracker extends android.app.Service implements
         }
     }
 
-    private final TrackerComponent.Callback onConnectCallback = new TrackerComponent.Callback() {
-        @Override
-        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state.set(TrackerState.ERROR);
-            } else if (state.get() == TrackerState.CONNECTING) {
-                state.set(TrackerState.CONNECTED);
-                /* now we're connected */
-                components.onConnected();
-            }
+    private final TrackerComponent.Callback onConnectCallback = (component, resultCode) -> {
+        if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+            state.set(TrackerState.ERROR);
+        } else if (state.get() == TrackerState.CONNECTING) {
+            state.set(TrackerState.CONNECTED);
+            /* now we're connected */
+            components.onConnected();
         }
     };
 
@@ -535,17 +532,14 @@ public class Tracker extends android.app.Service implements
             onEndCallback.run(components, res);
     }
 
-    private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
-        @Override
-        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state.set(TrackerState.ERROR);
-            } else {
-                state.set(TrackerState.INIT);
-            }
-
-            handleNextState();
+    private final TrackerComponent.Callback onEndCallback = (component, resultCode) -> {
+        if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+            state.set(TrackerState.ERROR);
+        } else {
+            state.set(TrackerState.INIT);
         }
+
+        handleNextState();
     };
 
     public void completeActivity(boolean save) {

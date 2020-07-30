@@ -52,12 +52,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
 
     @Override
     public void setOnClickSpinnerOpen() {
-        setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSpinner.performClick();
-            }
-        });
+        setViewOnClickListener(view -> mSpinner.performClick());
     }
 
     @Override

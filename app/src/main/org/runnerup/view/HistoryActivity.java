@@ -72,13 +72,10 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         ListView listView = (ListView) findViewById(R.id.history_list);
         fab = findViewById(R.id.history_add);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HistoryActivity.this,
-                        ManualActivity.class);
-                startActivityForResult(i, 0);
-            }
+        fab.setOnClickListener(v -> {
+            Intent i = new Intent(HistoryActivity.this,
+                    ManualActivity.class);
+            startActivityForResult(i, 0);
         });
 
         mDB = DBHelper.getReadableDatabase(this);

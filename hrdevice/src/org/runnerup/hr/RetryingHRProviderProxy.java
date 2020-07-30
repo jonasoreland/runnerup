@@ -234,12 +234,9 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
             int delayMillis = getRetryDelayMillis();
             log("retry in " + delayMillis + "ms");
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    log("retry connect");
-                    provider.connect(connectRef);
-                }
+            handler.postDelayed(() -> {
+                log("retry connect");
+                provider.connect(connectRef);
             }, delayMillis);
 
         }
@@ -328,12 +325,9 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             if(Looper.myLooper() == Looper.getMainLooper()) {
                 client.log(this, msg);
             } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (client != null)
-                            client.log(RetryingHRProviderProxy.this, msg);
-                    }
+                handler.post(() -> {
+                    if (client != null)
+                        client.log(RetryingHRProviderProxy.this, msg);
                 });
             }
         }

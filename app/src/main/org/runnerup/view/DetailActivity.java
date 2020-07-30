@@ -295,9 +295,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
-                            dialog.dismiss();
-                        });
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
                 builderRecompute.show();
                 break;
 
@@ -315,9 +313,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
-                            dialog.dismiss();
-                        });
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
                 builderSimplify.show();
                 break;
 
@@ -663,14 +659,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     //noinspection deprecation
                     b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
                 }
-                b.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(DetailActivity.this,
-                                AccountListActivity.class);
-                        DetailActivity.this.startActivityForResult(i,
-                                SyncManager.EDIT_ACCOUNT_REQUEST);
-                    }
+                b.setOnClickListener(v -> {
+                    Intent i = new Intent(DetailActivity.this,
+                            AccountListActivity.class);
+                    DetailActivity.this.startActivityForResult(i,
+                            SyncManager.EDIT_ACCOUNT_REQUEST);
                 });
                 return b;
             }
@@ -755,34 +748,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnLongClickListener clearUploadClick = new OnLongClickListener() {
-
-        @Override
-        public boolean onLongClick(View arg0) {
-            final String name = (String) arg0.getTag();
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle("Clear upload for " + name)
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnLongClickListener clearUploadClick = arg0 -> {
+        final String name = (String) arg0.getTag();
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle("Clear upload for " + name)
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             dialog.dismiss();
                             syncManager.clearUpload(name, mID);
                             requery();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-            return false;
-        }
-
+                        });
+        builder.show();
+        return false;
     };
 
     //Note: onClick set in reportlist_row.xml
@@ -806,40 +789,30 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return;
             }
             uploading = true;
-            syncManager.startUploading(new SyncManager.Callback() {
-                @Override
-                public void run(String synchronizerName, Synchronizer.Status status) {
-                    uploading = false;
-                    DetailActivity.this.setResult(RESULT_OK);
-                    DetailActivity.this.finish();
-                }
+            syncManager.startUploading((synchronizerName, status) -> {
+                uploading = false;
+                DetailActivity.this.setResult(RESULT_OK);
+                DetailActivity.this.finish();
             }, pendingSynchronizers, mID);
         }
     };
 
-    private final OnClickListener discardButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle(getString(R.string.Discard_activity))
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnClickListener discardButtonClick = v -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(getString(R.string.Discard_activity))
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_CANCELED);
                             DetailActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-        }
+                        });
+        builder.show();
     };
 
     @Override
@@ -857,24 +830,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnClickListener resumeButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            DetailActivity.this.setResult(RESULT_FIRST_USER);
-            DetailActivity.this.finish();
-        }
+    private final OnClickListener resumeButtonClick = v -> {
+        DetailActivity.this.setResult(RESULT_FIRST_USER);
+        DetailActivity.this.finish();
     };
 
-    private final OnClickListener uploadButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            uploading = true;
-            syncManager.startUploading(new SyncManager.Callback() {
-                @Override
-                public void run(String synchronizerName, Synchronizer.Status status) {
-                    uploading = false;
-                    requery();
-                }
-            }, pendingSynchronizers, mID);
-        }
+    private final OnClickListener uploadButtonClick = v -> {
+        uploading = true;
+        syncManager.startUploading((synchronizerName, status) -> {
+            uploading = false;
+            requery();
+        }, pendingSynchronizers, mID);
     };
 
     private final OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
@@ -898,30 +864,23 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    private final OnClickListener deleteButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle(getString(R.string.Delete_activity))
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnClickListener deleteButtonClick = v -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(getString(R.string.Delete_activity))
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-        }
+                        });
+        builder.show();
     };
 
     @Override
@@ -943,47 +902,37 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))
                 .setPositiveButton(getString(R.string.OK),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int w) {
-                        if (which[0] == -1) {
-                            dialog.dismiss();
-                            return;
-                        }
+                        (dialog, w) -> {
+                            if (which[0] == -1) {
+                                dialog.dismiss();
+                                return;
+                            }
 
-                        final Context context = DetailActivity.this;
-                        final CharSequence fmt = items[which[0]];
-                        final Intent intent = new Intent(Intent.ACTION_SEND);
+                            final Context context = DetailActivity.this;
+                            final CharSequence fmt = items[which[0]];
+                            final Intent intent = new Intent(Intent.ACTION_SEND);
 
-                        if (fmt.equals("tcx")) {
-                            intent.setType(TCX_MIME);
-                        } else {
-                            intent.setType(GPX_MIME);
-                        }
+                            if (fmt.equals("tcx")) {
+                                intent.setType(TCX_MIME);
+                            } else {
+                                intent.setType(GPX_MIME);
+                            }
 
-                        //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
-                        //Solid Explorer File Manager works though
-                        String actType = Sport.textOf(sport.getValueInt());
-                        Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
-                                + "/" + mID
-                                + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
-                        intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
-                    }
-                })
+                            //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
+                            //Solid Explorer File Manager works though
+                            String actType = Sport.textOf(sport.getValueInt());
+                            Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
+                                    + "/" + mID
+                                    + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
+                            intent.putExtra(Intent.EXTRA_STREAM, uri);
+                            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
+                        })
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        dialog.dismiss();
-                    }
-
-                })
-                .setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int w) {
-                which[0] = w;
-            }
-        });
+                        (dialog, which1) -> {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        })
+                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w);
         builder.show();
     }
 }

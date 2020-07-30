@@ -75,19 +75,16 @@ public class FeedActivity extends AppCompatActivity implements Constants {
 
         Toolbar actionbar = (Toolbar) findViewById(R.id.feed_actionbar);
         actionbar.inflateMenu(R.menu.feed_menu);
-        actionbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_configure_accounts:
-                        configureAccounts();
-                        return true;
-                    case R.id.menu_refresh:
-                        refresh();
-                        return true;
-                }
-                return false;
+        actionbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_configure_accounts:
+                    configureAccounts();
+                    return true;
+                case R.id.menu_refresh:
+                    refresh();
+                    return true;
             }
+            return false;
         });
 
         syncManager = new SyncManager(this);
@@ -134,12 +131,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final Callback syncDone = new Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            feedProgress.setVisibility(View.GONE);
-        }
-    };
+    private final Callback syncDone = (synchronizerName, status) -> feedProgress.setVisibility(View.GONE);
 
     @Override
     public void onDestroy() {
@@ -224,12 +216,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
 
                 // avatar
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {
-                    FeedImageLoader.LoadImageAsync(tmp.getAsString(DB.FEED.USER_IMAGE_URL), new FeedImageLoader.Callback() {
-                        @Override
-                        public void run(String url, Bitmap b) {
-                            ivAvatar.setImageBitmap(b);
-                        }
-                    });
+                    FeedImageLoader.LoadImageAsync(tmp.getAsString(DB.FEED.USER_IMAGE_URL), (url, b) -> ivAvatar.setImageBitmap(b));
                 }
 
                 // String time = formatter.formatTime(Formatter.TXT,

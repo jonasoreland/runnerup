@@ -62,12 +62,7 @@ public class FeedWidgetProvider extends AppWidgetProvider {
                 UpdateInProgress = true;
                 Set<String> set = mSyncManager.feedSynchronizersSet(context);
                 // this will trigger onUpdate automatically
-                mSyncManager.synchronizeFeed(new SyncManager.Callback() {
-                    @Override
-                    public void run(String synchronizerName, Synchronizer.Status status) {
-                        UpdateInProgress = false;
-                    }
-                }, set, feed, null);
+                mSyncManager.synchronizeFeed((synchronizerName, status) -> UpdateInProgress = false, set, feed, null);
             }
         } else {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

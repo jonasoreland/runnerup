@@ -200,13 +200,9 @@ public class TrackerWear extends DefaultTrackerComponent
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).
 
                                 setResultCallback(
-                                        new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-
-                                            @Override
-                                            public void onResult (@NonNull NodeApi.GetConnectedNodesResult nodes){
-                                                for (Node node : nodes.getNodes()) {
-                                                    onPeerConnected(node);
-                                                }
+                                        nodes -> {
+                                            for (Node node : nodes.getNodes()) {
+                                                onPeerConnected(node);
                                             }
                                         }
 
@@ -217,12 +213,7 @@ public class TrackerWear extends DefaultTrackerComponent
                     public void onConnectionSuspended(int cause) {
                     }
                 })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult result) {
-                        callback.run(TrackerWear.this, ResultCode.RESULT_ERROR);
-                    }
-                })
+                .addOnConnectionFailedListener(result -> callback.run(TrackerWear.this, ResultCode.RESULT_ERROR))
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
@@ -233,15 +224,12 @@ public class TrackerWear extends DefaultTrackerComponent
         Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
                 .scheme(WEAR_URI_SCHEME).path(Wear.Path.WEAR_NODE_ID).build())
                 .setResultCallback(
-                        new ResultCallback<DataItemBuffer>() {
-                            @Override
-                            public void onResult(@NonNull DataItemBuffer dataItems) {
-                                for (DataItem dataItem : dataItems) {
-                                    wearNode = dataItem.getUri().getHost();
-                                    Log.e(getName(), "getDataItem => wearNode:" + wearNode);
-                                }
-                                dataItems.release();
+                        dataItems -> {
+                            for (DataItem dataItem : dataItems) {
+                                wearNode = dataItem.getUri().getHost();
+                                Log.e(getName(), "getDataItem => wearNode:" + wearNode);
                             }
+                            dataItems.release();
                         });
     }
 
@@ -285,13 +273,10 @@ public class TrackerWear extends DefaultTrackerComponent
     private void setData(String path, Bundle b) {
         Wearable.DataApi.putDataItem(mGoogleApiClient,
                 PutDataRequest.create(path).setData(DataMap.fromBundle(b).toByteArray()))
-                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                    @Override
-                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-                        if (!dataItemResult.getStatus().isSuccess()) {
-                            Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
-                                    "status code: " + dataItemResult.getStatus().getStatusCode());
-                        }
+                .setResultCallback(dataItemResult -> {
+                    if (!dataItemResult.getStatus().isSuccess()) {
+                        Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
+                                "status code: " + dataItemResult.getStatus().getStatusCode());
                     }
                 });
     }

@@ -149,30 +149,28 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         final Boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
 
         TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
-        t.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                // Detect tapping on the header
-                int action = event.getAction();
-                if (active && action == MotionEvent.ACTION_DOWN) {
-                    final int maxTapTime = 1000;
-                    long time = event.getEventTime();
-                    if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
-                        boolean enabled = !pauseButton.isEnabled();
-                        pauseButton.setEnabled(enabled);
-                        stopButton.setEnabled(enabled);
-                        for (int i = 0; i < mTapArray.length; i++) {
-                            mTapArray[i] = 0;
-                        }
-                    } else {
-                        if (mTapIndex == 0) {
-                            Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
-                        }
-                        mTapArray[mTapIndex] = time;
-                        mTapIndex = (mTapIndex + 1) % mTapArray.length;
+        t.setOnTouchListener((v, event) -> {
+            // Detect tapping on the header
+            int action = event.getAction();
+            if (active && action == MotionEvent.ACTION_DOWN) {
+                final int maxTapTime = 1000;
+                long time = event.getEventTime();
+                if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
+                    boolean enabled = !pauseButton.isEnabled();
+                    pauseButton.setEnabled(enabled);
+                    stopButton.setEnabled(enabled);
+                    for (int i = 0; i < mTapArray.length; i++) {
+                        mTapArray[i] = 0;
                     }
+                } else {
+                    if (mTapIndex == 0) {
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
+                    }
+                    mTapArray[mTapIndex] = time;
+                    mTapIndex = (mTapIndex + 1) % mTapArray.length;
                 }
-                return false;
             }
+            return false;
         });
         bindGpsTracker();
     }
@@ -249,11 +247,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                RunActivity.this.handler.post(new Runnable() {
-                    public void run() {
-                        RunActivity.this.onTick();
-                    }
-                });
+                RunActivity.this.handler.post(RunActivity.this::onTick);
             }
         }, 0, 500);
     }
@@ -298,11 +292,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener stopButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            doStop();
-        }
-    };
+    private final OnClickListener stopButtonClick = v -> doStop();
 
     @Override
     public void onBackPressed() {
@@ -347,15 +337,13 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener pauseButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            if (workout.isPaused()) {
-                workout.onResume(workout);
-            } else {
-                workout.onPause(workout);
-            }
-            setPauseButtonEnabled(!workout.isPaused());
+    private final OnClickListener pauseButtonClick = v -> {
+        if (workout.isPaused()) {
+            workout.onResume(workout);
+        } else {
+            workout.onPause(workout);
         }
+        setPauseButtonEnabled(!workout.isPaused());
     };
 
     private void setPauseButtonEnabled(boolean enabled) {
@@ -370,11 +358,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener newLapButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            workout.onNewLapOrNextStep();
-        }
-    };
+    private final OnClickListener newLapButtonClick = v -> workout.onNewLapOrNextStep();
 
     private void updateView() {
         if (mTracker.getState() == TrackerState.STOPPED){

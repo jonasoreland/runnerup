@@ -204,12 +204,9 @@ public abstract class Bt20Base extends BtHRBase {
 
         mIsScanning = true;
 
-        hrClientHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
-                publishDevice(list);
-            }
+        hrClientHandler.post(() -> {
+            Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
+            publishDevice(list);
         });
     }
 
@@ -223,13 +220,7 @@ public abstract class Bt20Base extends BtHRBase {
             BluetoothDevice dev = list.iterator().next();
             list.remove(dev);
             hrClient.onScanResult(createDeviceRef(getProviderName(), dev));
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    publishDevice(list);
-                }
-            });
+            hrClientHandler.post(() -> publishDevice(list));
         }
     }
 
@@ -259,19 +250,15 @@ public abstract class Bt20Base extends BtHRBase {
         cancelThreads();
 
         if (hrClient != null) {
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (mIsConnecting && hrClient != null) {
-                        // Start connected thread...
-                        connectedThread = new ConnectedThread(bluetoothDevice, btDeviceName,
-                                bluetoothSocket);
-                        connectedThread.start();
-                    } else {
-                        log("closeSocket");
-                        closeSocket(bluetoothSocket);
-                    }
+            hrClientHandler.post(() -> {
+                if (mIsConnecting && hrClient != null) {
+                    // Start connected thread...
+                    connectedThread = new ConnectedThread(bluetoothDevice, btDeviceName,
+                            bluetoothSocket);
+                    connectedThread.start();
+                } else {
+                    log("closeSocket");
+                    closeSocket(bluetoothSocket);
                 }
             });
         } else {
@@ -305,22 +292,18 @@ public abstract class Bt20Base extends BtHRBase {
         log("reportConnected(" + result + ") mIsConnecting: " + mIsConnecting
                 + ", mIsConnected: " + mIsConnected + ", hrClient: " + hrClient);
         if (hrClient != null) {
-            hrClientHandler.post(new Runnable() {
+            hrClientHandler.post(() -> {
+                boolean reset = !result;
+                if (mIsConnecting && hrClient != null) {
+                    mIsConnected = result;
+                    mIsConnecting = false;
+                    hrClient.onConnectResult(result);
+                } else {
+                    reset = true;
+                }
 
-                @Override
-                public void run() {
-                    boolean reset = !result;
-                    if (mIsConnecting && hrClient != null) {
-                        mIsConnected = result;
-                        mIsConnecting = false;
-                        hrClient.onConnectResult(result);
-                    } else {
-                        reset = true;
-                    }
-
-                    if (reset) {
-                        Bt20Base.this.reset();
-                    }
+                if (reset) {
+                    Bt20Base.this.reset();
                 }
             });
         }
@@ -553,17 +536,13 @@ public abstract class Bt20Base extends BtHRBase {
     private void reportDisconnected(@SuppressWarnings("SameParameterValue") final boolean ok) {
         log("reportDisconnect(" + ok + ")");
         if (hrClientHandler != null) {
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (hrClient == null) {
-                        log("reportDisconnect() hrClient == null");
-                        return;
-                    }
-
-                    hrClient.onDisconnectResult(ok);
+            hrClientHandler.post(() -> {
+                if (hrClient == null) {
+                    log("reportDisconnect() hrClient == null");
+                    return;
                 }
+
+                hrClient.onDisconnectResult(ok);
             });
         } else {
             log("reportDisconnect() hrClientHandler == null");

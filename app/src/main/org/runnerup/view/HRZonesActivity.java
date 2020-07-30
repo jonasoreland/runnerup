@@ -93,33 +93,21 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                 zonesTable.addView(row);
             }
         }
-        ageSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
-
-            @Override
-            public void onClose(SpinnerInterface spinner, boolean ok) {
-                if (ok) {
-                    recomputeMaxHR();
-                }
+        ageSpinner.setOnCloseDialogListener((spinner, ok) -> {
+            if (ok) {
+                recomputeMaxHR();
             }
         });
 
-        sexSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
-
-            @Override
-            public void onClose(SpinnerInterface spinner, boolean ok) {
-                if (ok) {
-                    recomputeMaxHR();
-                }
+        sexSpinner.setOnCloseDialogListener((spinner, ok) -> {
+            if (ok) {
+                recomputeMaxHR();
             }
         });
 
-        maxHRSpinner.setOnCloseDialogListener(new SpinnerInterface.OnCloseDialogListener() {
-
-            @Override
-            public void onClose(SpinnerInterface spinner, boolean ok) {
-                if (ok) {
-                    recomputeZones();
-                }
+        maxHRSpinner.setOnCloseDialogListener((spinner, ok) -> {
+            if (ok) {
+                recomputeZones();
             }
         });
     }
@@ -167,38 +155,30 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     }
 
     private void recomputeMaxHR() {
-        new Handler().post(new Runnable() {
+        new Handler().post(() -> {
+            try {
+                int age = Integer.parseInt(ageSpinner.getValue().toString());
+                int maxHR = HRZoneCalculator.computeMaxHR(age,
+                        "Male".contentEquals(sexSpinner.getValue()));
+                maxHRSpinner.setValue(Integer.toString(maxHR));
+                recomputeZones();
+            } catch (NumberFormatException ex) {
 
-            @Override
-            public void run() {
-                try {
-                    int age = Integer.parseInt(ageSpinner.getValue().toString());
-                    int maxHR = HRZoneCalculator.computeMaxHR(age,
-                            "Male".contentEquals(sexSpinner.getValue()));
-                    maxHRSpinner.setValue(Integer.toString(maxHR));
-                    recomputeZones();
-                } catch (NumberFormatException ex) {
-
-                }
             }
         });
     }
 
     private void recomputeZones() {
-        new Handler().post(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    int zoneCount = hrZoneCalculator.getZoneCount();
-                    int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
-                    for (int i = 0; i < zoneCount; i++) {
-                        Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
-                        zones.get(2 * i /*+ 0*/).setText(String.format(Locale.getDefault(), "%d", val.first));
-                        zones.get(2 * i + 1).setText(String.format(Locale.getDefault(), "%d", val.second));
-                    }
-                } catch (NumberFormatException ex) {
+        new Handler().post(() -> {
+            try {
+                int zoneCount = hrZoneCalculator.getZoneCount();
+                int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                for (int i = 0; i < zoneCount; i++) {
+                    Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
+                    zones.get(2 * i /*+ 0*/).setText(String.format(Locale.getDefault(), "%d", val.first));
+                    zones.get(2 * i + 1).setText(String.format(Locale.getDefault(), "%d", val.second));
                 }
+            } catch (NumberFormatException ex) {
             }
         });
     }
@@ -222,25 +202,20 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Clear_heart_rate_zone_settings))
                 .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.OK), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                ageSpinner.clear();
-                sexSpinner.clear();
-                maxHRSpinner.clear();
-                hrZones.clear();
-                dialog.dismiss();
-                skipSave = true;
-                finish();
-            }
-        })
+                .setPositiveButton(getString(R.string.OK), (dialog, which) -> {
+                    ageSpinner.clear();
+                    sexSpinner.clear();
+                    maxHRSpinner.clear();
+                    hrZones.clear();
+                    dialog.dismiss();
+                    skipSave = true;
+                    finish();
+                })
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        dialog.dismiss();
-                    }
-
-                });
+                        (dialog, which) -> {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        });
         builder.show();
     }
 

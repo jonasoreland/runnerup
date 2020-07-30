@@ -38,15 +38,12 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    callback.run(TrackerTTS.this, ResultCode.RESULT_OK);
-                }
-                else {
-                    callback.run(TrackerTTS.this, ResultCode.RESULT_ERROR);
-                }
+        tts = new TextToSpeech(context, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                callback.run(TrackerTTS.this, ResultCode.RESULT_OK);
+            }
+            else {
+                callback.run(TrackerTTS.this, ResultCode.RESULT_ERROR);
             }
         });
         return ResultCode.RESULT_PENDING;
