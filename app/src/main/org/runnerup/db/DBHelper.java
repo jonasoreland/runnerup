@@ -69,6 +69,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     //        + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
     //        + ");";
 
+    @SuppressWarnings("SyntaxError")
     private static final String CREATE_TABLE_ACTIVITY = "create table "
             + DB.ACTIVITY.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
@@ -125,6 +126,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LAP.AVG_CADENCE + " real ")
             + ");";
 
+    @SuppressWarnings("SyntaxError")
     private static final String CREATE_TABLE_ACCOUNT = "create table "
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
