@@ -1329,11 +1329,9 @@ public class SyncManager {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
-        Cursor c = null;
-        try {
-            c = mDB.query(DB.ACCOUNT.TABLE, from,
-                    "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
-                    null, null, null, null, null);
+        try (Cursor c = mDB.query(DB.ACCOUNT.TABLE, from,
+                "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
+                null, null, null, null, null)) {
             if (c.moveToFirst()) {
                 do {
                     ContentValues config = DBHelper.get(c);
@@ -1344,9 +1342,6 @@ public class SyncManager {
                     }
                 } while (c.moveToNext());
             }
-        } finally {
-            if (c != null)
-                c.close();
         }
     }
 

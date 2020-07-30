@@ -310,17 +310,11 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
                     Constants.DB.ACTIVITY.SPORT,
                     DB.ACTIVITY.START_TIME,
             };
-            Cursor c = null;
-            try {
-                c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
-                        null, null, null, null);
+            try (Cursor c = db.query(DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                    null, null, null, null)) {
                 if (c.moveToFirst()) {
                     sport = Sport.valueOf(c.getInt(0));
                     start_time = c.getLong(1);
-                }
-            } finally {
-                if (c != null) {
-                    c.close();
                 }
             }
 
