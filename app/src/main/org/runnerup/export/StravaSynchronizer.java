@@ -498,12 +498,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     @Override
     public boolean checkSupport(Synchronizer.Feature f) {
-        switch (f) {
-            case UPLOAD:
-                return true;
-            default:
-                return false;
-        }
+        return f == Feature.UPLOAD;
     }
 
     @Override

@@ -89,10 +89,9 @@ public class ManualActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_save:
-                saveEntry();
-                return true;
+        if (item.getItemId() == R.id.menu_save) {
+            saveEntry();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

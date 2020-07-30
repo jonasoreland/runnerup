@@ -112,9 +112,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

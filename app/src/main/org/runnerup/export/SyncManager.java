@@ -598,14 +598,10 @@ public class SyncManager {
 
                     case NEED_AUTH:
                         handleAuth((synchronizerName, status) -> {
-                            switch (status) {
-                                case OK:
-                                    doUpload(synchronizer);
-                                    break;
-
-                                default:
-                                    nextSynchronizer();
-                                    break;
+                            if (status == Synchronizer.Status.OK) {
+                                doUpload(synchronizer);
+                            } else {
+                                nextSynchronizer();
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -839,15 +835,10 @@ public class SyncManager {
 
                     case NEED_AUTH:
                         handleAuth((synchronizerName, status) -> {
-                            switch (status) {
-                                case OK:
-                                    doListWorkout(synchronizer);
-                                    break;
-
-                                default:
-                                    // Unexpected result, nothing to do
-                                    nextListWorkout();
-                                    break;
+                            if (status == Synchronizer.Status.OK) {
+                                doListWorkout(synchronizer);
+                            } else {// Unexpected result, nothing to do
+                                nextListWorkout();
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -1136,15 +1127,10 @@ public class SyncManager {
                         // TODO Handling of NEED_AUTH and CANCEL hangs the app
                     case NEED_AUTH:
                         handleAuth((synchronizerName, s2) -> {
-                            switch (s2) {
-                                case OK:
-                                    doSyncMulti(synchronizer, mode, activityItem);
-                                    break;
-
-                                default:
-                                    // Unexpected result, nothing to do
-                                    syncNextActivity(synchronizer, mode);
-                                    break;
+                            if (s2 == Synchronizer.Status.OK) {
+                                doSyncMulti(synchronizer, mode, activityItem);
+                            } else {// Unexpected result, nothing to do
+                                syncNextActivity(synchronizer, mode);
                             }
                         }, synchronizer, result.authMethod);
                         return;
