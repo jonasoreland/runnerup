@@ -1170,7 +1170,7 @@ public class StartActivity extends AppCompatActivity
         public View getView(int position, View convertView, ViewGroup parent) {
             StepListEntry entry = steps.get(position);
             StepButton button =
-                    (convertView != null && convertView instanceof StepButton) ?
+                    (convertView instanceof StepButton) ?
                             (StepButton) convertView : new StepButton(StartActivity.this, null);
             button.setStep(entry.step);
 

@@ -62,6 +62,7 @@ import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -159,9 +160,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                     boolean enabled = !pauseButton.isEnabled();
                     pauseButton.setEnabled(enabled);
                     stopButton.setEnabled(enabled);
-                    for (int i = 0; i < mTapArray.length; i++) {
-                        mTapArray[i] = 0;
-                    }
+                    Arrays.fill(mTapArray, 0);
                 } else {
                     if (mTapIndex == 0) {
                         Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();

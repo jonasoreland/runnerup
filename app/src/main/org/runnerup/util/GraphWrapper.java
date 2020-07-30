@@ -156,9 +156,7 @@ public class GraphWrapper implements Constants {
             this.hrCalc = new HRZones(res, prefs);
             if (hrCalc.isConfigured()) {
                 this.hrzHist = new double[hrCalc.getCount() + 1];
-                for (int i = 0; i < this.hrzHist.length; i++) {
-                    this.hrzHist[i] = 0;
-                }
+                Arrays.fill(this.hrzHist, 0);
                 showHRZhist = true;
             }
             this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context);

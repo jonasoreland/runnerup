@@ -570,7 +570,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         public View getChildView(int groupPosition, int childPosition,
                                  boolean isLastChild, View view, ViewGroup parent) {
 
-            if (view == null || !(view instanceof LinearLayout)) {
+            if (!(view instanceof LinearLayout)) {
                 LayoutInflater infalInflater = (LayoutInflater) context
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 view = infalInflater.inflate(R.layout.manage_workouts_list_row, parent, false);

@@ -21,6 +21,8 @@ import android.util.Log;
 
 import org.runnerup.BuildConfig;
 
+import java.util.Arrays;
+
 
 public class TargetTrigger extends Trigger {
 
@@ -168,9 +170,7 @@ public class TargetTrigger extends Trigger {
     }
 
     private void reset() {
-        for (int i = 0; i < measure.length; i++) {
-            measure[i] = 0;
-        }
+        Arrays.fill(measure, 0);
         inited = false;
         cntMeasures = 0;
         graceCount = initialGrace;

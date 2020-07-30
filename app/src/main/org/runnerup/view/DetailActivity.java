@@ -855,6 +855,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (arg1) {
                     pendingSynchronizers.add((String) arg0.getTag());
                 } else {
+                    //noinspection SuspiciousMethodCalls
                     pendingSynchronizers.remove(arg0.getTag());
                 }
                 if (mode == MODE_DETAILS) {

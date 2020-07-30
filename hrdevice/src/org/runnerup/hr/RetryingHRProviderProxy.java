@@ -81,7 +81,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             case CONNECTING:
                 return 750 * (attempt - 1);
             case RECONNECTING:
-                return 3000 * (attempt < 6 ? attempt : 6);
+                return 3000 * (Math.min(attempt, 6));
         }
         return 0;
     }

@@ -266,7 +266,7 @@ public class TCX {
                             if (!cLocation.isNull(7)) {
                                 long hr = cLocation.getInt(7);
                                 if (hr > 0) {
-                                    maxHR = hr > maxHR ? hr : maxHR;
+                                    maxHR = Math.max(hr, maxHR);
                                     sumHR += hr;
                                     cntHR++;
 
