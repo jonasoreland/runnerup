@@ -286,7 +286,7 @@ public class SyncManager {
         }
     }
 
-    private Status handleRefreshComplete(final Synchronizer synchronizer, Status s) {
+    private Status handleRefreshComplete(final Synchronizer synchronizer, final Status s) {
         switch (s) {
             case OK: {
                 ContentValues tmp = new ContentValues();
@@ -334,25 +334,23 @@ public class SyncManager {
         Callback cb = authCallback;
         authCallback = null;
         authSynchronizer = null;
-        switch (s) {
-            case OK: {
+        if (s == Status.OK) {
+            try {
                 ContentValues tmp = new ContentValues();
                 tmp.put("_id", synchronizer.getId());
                 tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
 
-                String args[] = {
+                String[] args = {
                         Long.toString(synchronizer.getId())
                 };
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-                cb.run(synchronizer.getName(), s);
-                break;
+            } catch (Exception ex) {
+                Log.e(getClass().getName(), "Update failed:", ex);
             }
-
-            default:
-                synchronizer.reset();
-                cb.run(synchronizer.getName(), s);
-                break;
+        } else {
+            synchronizer.reset();
         }
+        cb.run(synchronizer.getName(), s);
     }
 
     private JSONObject newObj(String str) {

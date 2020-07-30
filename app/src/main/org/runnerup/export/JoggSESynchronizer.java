@@ -192,7 +192,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
                     "ResponseStatus", "ResponseCode"
             };
             final Node e = navigate(doc, path);
-            Log.e(getName(), "reply: " + e.getTextContent());
+            if (e != null) {
+                Log.e(getName(), "reply: " + e.getTextContent());
+            }
             if (e != null && e.getTextContent() != null
                     && LOGIN_OK.contentEquals(e.getTextContent())) {
                 isConnected = true;

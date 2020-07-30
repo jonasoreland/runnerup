@@ -58,8 +58,14 @@ public class FeedList extends Observable implements Constants {
 
     public void load() {
         list.clear();
-        Cursor c = mDB.query(DB.FEED.TABLE, null, null, null, null, null, DB.FEED.START_TIME
-                + " desc", Integer.toString(MAX_ITEMS));
+        final Cursor c;
+        try {
+            c = mDB.query(DB.FEED.TABLE, null, null, null, null, null, DB.FEED.START_TIME
+                    + " desc", Integer.toString(MAX_ITEMS));
+        } catch (Exception ex) {
+            Log.e(getClass().getName(), "Query failed:", ex);
+            return;
+        }
         if (c.moveToFirst()) {
             do {
                 list.add(DBHelper.get(c));
