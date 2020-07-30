@@ -287,12 +287,11 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
                     if (code != HttpURLConnection.HTTP_OK) {
                         Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
                         status = Status.ERROR;
-                        break;
                     } else {
                         Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
                         status = Status.OK;
-                        break;
                     }
+                    break;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

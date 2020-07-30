@@ -267,13 +267,12 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         boolean res = btGatt.discoverServices();
                         log("discoverServices() => " + res);
-                        return;
                     } else {
                         boolean res = btGatt.connect();
                         log("reconnect while connecting => btGatt.connect() => "
                                         + res);
-                        return;
                     }
+                    return;
                 }
 
                 if (mIsDisconnecting) {
@@ -332,14 +331,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
 
             log(" => DummyRead");
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                DummyReadForSecLevelCheck(gatt);
-                // continue in onCharacteristicRead
-            } else {
-                DummyReadForSecLevelCheck(gatt);
-                // reportConnectFailed("onServicesDiscovered(" + gatt + ", " +
-                // status + ")");
-            }
+            DummyReadForSecLevelCheck(gatt);
+            // if GATT_SUCCESS, continue in onCharacteristicRead
+            // no report on error
         }
 
         /*

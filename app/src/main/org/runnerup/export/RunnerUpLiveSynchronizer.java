@@ -141,9 +141,6 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
 
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
-        if (username == null || password == null) {
-            return s;
-        }
 
         return s;
     }
