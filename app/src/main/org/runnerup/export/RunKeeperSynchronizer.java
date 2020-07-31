@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -177,6 +178,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -187,6 +189,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceRunkeeper;}
 
@@ -209,6 +212,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return access_token != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -393,8 +397,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 
@@ -425,7 +430,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
             conn = null;
 
             if (responseCode >= HttpURLConnection.HTTP_OK && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-                s = Status.OK;
                 s.activityId = mID;
                 if (!TextUtils.isEmpty(externalId)) {
                     s.externalId = externalId;

@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -91,6 +93,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -101,9 +104,11 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_jogg;}
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceJogg;}
 
@@ -127,6 +132,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return username != null && password != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -277,8 +283,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(final SQLiteDatabase db, final long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 

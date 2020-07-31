@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -136,6 +138,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -146,9 +149,11 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return PUBLIC_URL;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_facebook;}
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceFacebook; }
 
@@ -174,6 +179,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         }
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -252,8 +258,9 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 

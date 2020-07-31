@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -132,6 +134,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -142,9 +145,11 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceStrava;}
 
+    @DrawableRes
     @Override
     public int getIconId() {
         return R.drawable.service_strava;
@@ -164,6 +169,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();

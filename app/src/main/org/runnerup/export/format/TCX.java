@@ -54,8 +54,6 @@ public class TCX {
     private Sport sport = null;
     private PathSimplifier simplifier;
 
-    private boolean addGratuitousTrack = false;
-
     public TCX(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this.mDB = mDB;
         this.simplifier = simplifier;
@@ -341,6 +339,7 @@ public class TCX {
                 }
                 // Digifit chokes if there isn't at least *1* trackpoint, but is
                 // ok even if it's empty.
+                boolean addGratuitousTrack = false;
                 if (!hasTrackpoints && addGratuitousTrack) {
                     mXML.startTag("", "Track");
                     mXML.startTag("", "Trackpoint");
@@ -378,9 +377,5 @@ public class TCX {
 
     public Sport getSport() {
         return sport;
-    }
-
-    public void setAddGratuitousTrack(boolean addGratuitousTrack) {
-        this.addGratuitousTrack = addGratuitousTrack;
     }
 }

@@ -23,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -72,11 +74,13 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         this.simplifier = simplifier;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {
         return R.drawable.service_runalyze;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.serviceRunalyze;
@@ -120,6 +124,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -144,6 +149,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();

@@ -130,7 +130,7 @@ public class GPX {
                 mXML.endTag("", "desc");
             }
 
-            exportLaps(activityId, startTime * 1000);
+            exportLaps(activityId);
             mXML.endTag("", "trk");
             mXML.endTag("", "gpx");
             mXML.flush();
@@ -144,7 +144,7 @@ public class GPX {
         }
     }
 
-    private void exportLaps(long activityId, long startTime) throws IOException {
+    private void exportLaps(long activityId) throws IOException {
         String[] lColumns = {
                 DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
                 DB.LAP.INTENSITY

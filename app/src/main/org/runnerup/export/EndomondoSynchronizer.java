@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseArray;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -102,6 +103,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -112,6 +114,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceEndomondo; }
 
@@ -127,9 +130,13 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         if (auth != null) {
             try {
                 JSONObject tmp = new JSONObject(auth);
+                //noinspection ConstantConditions
                 username = tmp.optString("username", null);
+                //noinspection ConstantConditions
                 password = tmp.optString("password", null);
+                //noinspection ConstantConditions
                 deviceId = tmp.optString("deviceId", null);
+                //noinspection ConstantConditions
                 authToken = tmp.optString("authToken", null);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -142,6 +149,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return username != null && password != null && deviceId != null && authToken != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -256,8 +264,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
@@ -343,8 +351,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 

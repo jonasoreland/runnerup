@@ -22,6 +22,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -72,11 +74,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         this.simplifier = simplifier;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {
         return R.drawable.service_dropbox;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.serviceDropbox;
@@ -120,6 +124,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -145,6 +150,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();

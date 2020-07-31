@@ -213,7 +213,7 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
             synchronizer = new DropboxSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(WebDavSynchronizer.NAME)) {
-            synchronizer = new WebDavSynchronizer(mContext, simplifier);
+            synchronizer = new WebDavSynchronizer(simplifier);
         } else {
             Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
         }

@@ -55,6 +55,7 @@ dependencies {
 
     implementation "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
     implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    implementation 'androidx.annotation:annotation:1.1.0'
 }
 
 def props = new Properties()

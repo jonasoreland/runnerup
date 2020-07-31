@@ -24,6 +24,7 @@ import android.util.Pair;
 import android.util.Patterns;
 import android.util.SparseArray;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -90,6 +91,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -100,6 +102,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceRuntastic;}
 
@@ -131,6 +134,7 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
         authToken = null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -284,8 +288,9 @@ public class RuntasticSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 

@@ -23,7 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.R;
@@ -62,17 +65,20 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return 0;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return null;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {
         //0 is used if the resource id cannot be found
         return 0;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.serviceDefault;
@@ -84,15 +90,20 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         //Other config can be retrieved from db in Upload()
     }
 
+    @NonNull
     @Override
-    public String getAuthConfig() {
-        return null;
-    }
+    public abstract String getAuthConfig();
 
+    /**
+     * Must be implemented for AuthMethod.OAUTH2
+     * @param a
+     * @return
+     */
     @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity a) {
-        return null;
+        Log.e(getName(), "getAuthIntent: getAuthIntent must be implemented for OAUTH2");
+        return new Intent();
     }
 
     @Override
@@ -257,8 +268,9 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return html;
     }
 
+    @StringRes
     @Override
-    public Integer getAuthNotice() {
+    public int getAuthNotice() {
         return 0;
     }
 

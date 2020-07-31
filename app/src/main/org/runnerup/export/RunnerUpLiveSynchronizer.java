@@ -28,6 +28,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -74,11 +75,13 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceRunnerUpLive;}
 
@@ -94,7 +97,9 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         if (auth != null) {
             try {
                 JSONObject tmp = new JSONObject(auth);
+                //noinspection ConstantConditions
                 username = tmp.optString("username", null);
+                //noinspection ConstantConditions
                 password = tmp.optString("password", null);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -107,6 +112,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         return username != null && password != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();

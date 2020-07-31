@@ -45,6 +45,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'androidx.annotation:annotation:1.1.0'
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"

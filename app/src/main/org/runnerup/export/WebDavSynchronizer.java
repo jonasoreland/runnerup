@@ -23,6 +23,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         super();
     }
 
-    public WebDavSynchronizer(Context mContext, PathSimplifier simplifier) {
+    public WebDavSynchronizer(PathSimplifier simplifier) {
         this();
         this.simplifier = simplifier;
     }
@@ -74,6 +75,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -92,6 +94,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
    /* @Override
     public int getIconId() {return R.drawable.service_webdav;}*/
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.colorPrimary;
@@ -105,8 +108,11 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
             try {
                 mFormat = new FileFormats(config.getAsString(Constants.DB.ACCOUNT.FORMAT));
                 JSONObject tmp = new JSONObject(authToken);
+                //noinspection ConstantConditions
                 username = tmp.optString("username", null);
+                //noinspection ConstantConditions
                 password = tmp.optString("password", null);
+                //noinspection ConstantConditions
                 url = tmp.optString("url", null);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -119,6 +125,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         return username != null && password != null && url != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -151,13 +158,9 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
 
         try {
             OkHttpClient client = getAuthClient();
-            // Empty body
-            RequestBody body = RequestBody.create(null, "");
             Request request = new Request.Builder().url(url).method("PROPFIND", null).build();
 
             Response response = client.newCall(request).execute();
-
-
             int responseCode = response.code();
 
             response.close();
@@ -256,7 +259,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
     }
 
     private Status uploadFile(StringWriter writer, String fileBase, String fileExt) {
-        Status s = Status.ERROR;
+        Status s;
         try{
             OkHttpClient client = getAuthClient();
             RequestBody body = RequestBody.create(MediaType.parse("application/" + fileExt + "+xml"), writer.toString());
@@ -264,9 +267,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
 
             Response response = client.newCall(request).execute();
             int responseCode = response.code();
-            if(responseCode<=299){
-                s =  Status.OK;
-            }
+            s = responseCode<=299 ? Status.OK : Status.ERROR;
         }catch(Exception e){
             s = Status.ERROR;
         }

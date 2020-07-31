@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -96,6 +97,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -106,6 +108,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceMapMyRun; }
 
@@ -133,6 +136,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
                 user_id != null && user_key != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -243,8 +247,8 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
