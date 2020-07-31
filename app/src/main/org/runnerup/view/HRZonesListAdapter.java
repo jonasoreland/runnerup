@@ -33,8 +33,8 @@ class HRZonesListAdapter extends BaseAdapter {
     /**
 	 * 
 	 */
-    HRZones hrZones = null;
-    private LayoutInflater inflater = null;
+    HRZones hrZones;
+    private LayoutInflater inflater;
 
     public HRZonesListAdapter(Context ctx, LayoutInflater inflater) {
         super();

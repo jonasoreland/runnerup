@@ -35,9 +35,9 @@ import java.util.ArrayList;
 
 class AudioSchemeListAdapter extends BaseAdapter {
 
-    private LayoutInflater inflater = null;
-    private SQLiteDatabase mDB = null;
-    private boolean createNewItem = true;
+    private LayoutInflater inflater;
+    private SQLiteDatabase mDB;
+    private boolean createNewItem;
     private final ArrayList<String> audioSchemes = new ArrayList<>();
 
     public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {

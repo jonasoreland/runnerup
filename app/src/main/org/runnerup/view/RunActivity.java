@@ -498,7 +498,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     class WorkoutAdapter extends BaseAdapter {
 
-        ArrayList<WorkoutRow> rows = null;
+        ArrayList<WorkoutRow> rows;
 
         WorkoutAdapter(ArrayList<WorkoutRow> workoutRows) {
             this.rows = workoutRows;
