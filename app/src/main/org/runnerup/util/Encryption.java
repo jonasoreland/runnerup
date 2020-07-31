@@ -181,12 +181,14 @@ public class Encryption {
     public static byte[] SHA1(String text) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
         final MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        //noinspection CharsetObjectCanBeUsed
         return digest.digest(text.getBytes("UTF-8"));
     }
 
     public static byte[] md5(String text) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
         final MessageDigest digest = MessageDigest.getInstance("MD5");
+        //noinspection CharsetObjectCanBeUsed
         return digest.digest(text.getBytes("UTF-8"));
     }
 
