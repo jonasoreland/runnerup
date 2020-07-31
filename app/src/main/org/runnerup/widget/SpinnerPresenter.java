@@ -295,7 +295,7 @@ public class SpinnerPresenter {
 
                 private String getValue(TimePicker dp) {
                     Calendar c = Calendar.getInstance();
-                    c.set(2000,01,01, dp.getCurrentHour(), dp.getCurrentMinute());
+                    c.set(2000,1,1, dp.getCurrentHour(), dp.getCurrentMinute());
                     DateFormat df = android.text.format.DateFormat.getTimeFormat(mContext);
                     return df.format(c.getTime());
                 }
