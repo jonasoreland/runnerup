@@ -74,7 +74,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     private String access_token = null;
     private String refresh_token = null;
     private long access_expire = -1;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     StravaSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {

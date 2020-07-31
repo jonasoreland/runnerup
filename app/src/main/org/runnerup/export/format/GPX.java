@@ -36,12 +36,12 @@ import java.util.TimeZone;
 
 public class GPX {
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
     private KXmlSerializer mXML;
-    private SimpleDateFormat simpleDateFormat;
+    private final SimpleDateFormat simpleDateFormat;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     public GPX(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this(mDB, true, false, simplifier);

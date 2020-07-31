@@ -291,7 +291,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     private class OnConfigureAudioListener implements OnSetValueListener {
-        AudioSchemeListAdapter adapter;
+        final AudioSchemeListAdapter adapter;
 
         OnConfigureAudioListener(AudioSchemeListAdapter adapter) {
             this.adapter = adapter;
@@ -314,7 +314,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     private class OnConfigureWorkoutsListener implements OnSetValueListener {
-        WorkoutListAdapter adapter;
+        final WorkoutListAdapter adapter;
 
         OnConfigureWorkoutsListener(WorkoutListAdapter adapter) {
             this.adapter = adapter;

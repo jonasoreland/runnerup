@@ -43,10 +43,10 @@ public class NikeXML {
 
     private static final String DEVICE = "iPod";
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
     private KXmlSerializer mXML = null;
-    private SimpleDateFormat simpleDateFormat;
-    private PathSimplifier simplifier;
+    private final SimpleDateFormat simpleDateFormat;
+    private final PathSimplifier simplifier;
 
     public NikeXML(final SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
@@ -383,7 +383,7 @@ public class NikeXML {
 
     class ExtendedData extends Emitter
     {
-        Dim d;
+        final Dim d;
         final StringBuffer buf = new StringBuffer();
 
         public ExtendedData(final Dim dim) {

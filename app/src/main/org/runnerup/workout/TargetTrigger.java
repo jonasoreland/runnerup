@@ -32,7 +32,7 @@ public class TargetTrigger extends Trigger {
     private int graceCount = 30; //
     @SuppressWarnings("FieldCanBeLocal")
     private final int initialGrace = 20;
-    private int minGraceCount; //
+    private final int minGraceCount; //
 
     Scope scope = Scope.STEP;
     private Dimension dimension;
@@ -40,14 +40,14 @@ public class TargetTrigger extends Trigger {
     Range range = null;
 
     private int cntMeasures = 0;
-    private double[] measure;
+    private final double[] measure;
     @SuppressWarnings("FieldCanBeLocal")
-    private int skip_values;
-    private double[] sort_measure;
+    private final int skip_values;
+    private final double[] sort_measure;
     private double lastTimestamp = 0;
 
-    private double[] measure_time;
-    private double[] measure_distance;
+    private final double[] measure_time;
+    private final double[] measure_distance;
 
     /**
      * cache computing of median

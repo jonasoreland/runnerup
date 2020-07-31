@@ -29,11 +29,11 @@ import android.widget.TextView;
 import org.runnerup.R;
 
 public class TitleSpinner extends LinearLayout implements SpinnerInterface {
-    SpinnerPresenter mPresenter;
-    LinearLayout mLayout;
-    TextView mLabel;
-    TextView mValue;
-    Spinner mSpinner;
+    final SpinnerPresenter mPresenter;
+    final LinearLayout mLayout;
+    final TextView mLabel;
+    final TextView mValue;
+    final Spinner mSpinner;
 
     public TitleSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);

@@ -52,7 +52,7 @@ import java.util.Locale;
 public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Runalyze";
-    public static int ENABLED = BuildConfig.RUNALYZE_ENABLED;
+    public static final int ENABLED = BuildConfig.RUNALYZE_ENABLED;
     private static final String BASE_URL = BuildConfig.RUNALYZE_ENABLED > 0 ? "https://runalyze.com" : "https://testing.runalyze.com";
     private static final String PUBLIC_URL = BASE_URL;
 
@@ -65,7 +65,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     private String access_token = null;
     private String refresh_token = null;
     private long access_expire = -1;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     RunalyzeSynchronizer(PathSimplifier simplifier) {
         if (ENABLED == 0) {

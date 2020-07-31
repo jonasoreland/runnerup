@@ -46,8 +46,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GraphWrapper implements Constants {
-    private GraphView graphView;
-    private GraphView graphView2;
+    private final GraphView graphView;
+    private final GraphView graphView2;
 
     private final LinearLayout graphTab;
     private final HRZonesBar hrzonesBar;
@@ -107,13 +107,13 @@ public class GraphWrapper implements Constants {
         final int interval;
         boolean first = true;
         int pos = 0;
-        double[] time;
-        double[] distance;
+        final double[] time;
+        final double[] distance;
         double sum_time = 0;
         double sum_distance = 0;
         double acc_time = 0;
 
-        int[] hr;
+        final int[] hr;
         double[] hrzHist = null;
 
         double tot_avg_hr = 0;
@@ -121,14 +121,14 @@ public class GraphWrapper implements Constants {
         double avg_velocity = 0;
         double min_velocity = Double.MAX_VALUE;
         double max_velocity = Double.MIN_VALUE;
-        List<DataPoint> velocityList;
-        List<DataPoint> hrList;
+        final List<DataPoint> velocityList;
+        final List<DataPoint> hrList;
 
         boolean showHR = false;
         boolean showHRZhist = false;
-        HRZones hrCalc;
+        final HRZones hrCalc;
 
-        SpeedUnit preferred_speedunit;
+        final SpeedUnit preferred_speedunit;
 
         public GraphProducer(Context context, int noPoints) {
             final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
@@ -245,7 +245,7 @@ public class GraphWrapper implements Constants {
 
         class GraphFilter {
 
-            double[] data;
+            final double[] data;
             final List<DataPoint> source;
 
             GraphFilter(List<DataPoint> velocityList) {

@@ -98,7 +98,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private TextView currentHr;
     private TextView activityHeaderHr;
     // A circular buffer for tap events
-    private long[] mTapArray= {0, 0, 0, 0};
+    private final long[] mTapArray= {0, 0, 0, 0};
     private int mTapIndex = 0;
 
     class WorkoutRow {
@@ -483,7 +483,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     class WorkoutAdapter extends BaseAdapter {
 
-        ArrayList<WorkoutRow> rows;
+        final ArrayList<WorkoutRow> rows;
 
         WorkoutAdapter(ArrayList<WorkoutRow> workoutRows) {
             this.rows = workoutRows;

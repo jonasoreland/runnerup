@@ -586,7 +586,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     class DeviceAdapter extends BaseAdapter {
 
         final ArrayList<HRDeviceRef> deviceList = new ArrayList<>();
-        LayoutInflater inflater;
+        final LayoutInflater inflater;
         // --Commented out by Inspection (2017-08-11 13:06):Resources resources = null;
 
         DeviceAdapter(Context ctx) {

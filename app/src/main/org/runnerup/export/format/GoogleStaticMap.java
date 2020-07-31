@@ -31,7 +31,7 @@ import java.net.URLEncoder;
 
 public class GoogleStaticMap {
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
 
     public GoogleStaticMap(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this.mDB = mDB;

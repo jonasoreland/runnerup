@@ -67,7 +67,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     private long id = 0;
     private String access_token = null;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     RunningAHEADSynchronizer(SyncManager syncManager, PathSimplifier simplifier) {
         if (CLIENT_ID == null || CLIENT_SECRET == null) {

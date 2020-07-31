@@ -27,9 +27,9 @@ public class PathSimplifier {
      * The higher the tolerance, the smoother the path.
      * Note, if too big, the total distance might be reduced and won't match the reality.
      */
-    private double toleranceDeg;
+    private final double toleranceDeg;
     /** High quality (true) or fast (false) simplification. */
-    private boolean high_quality;
+    private final boolean high_quality;
 
     /** Distance in meters between two degrees of latitude at equator,
      * as computed by android.location.Location.distanceTo()  */
@@ -56,7 +56,7 @@ public class PathSimplifier {
      *
      * https://github.com/hgoebl/simplify-java
      */
-    private static PointExtractor<Location> locationPointExtractor = new PointExtractor<Location>() {
+    private static final PointExtractor<Location> locationPointExtractor = new PointExtractor<Location>() {
         @Override
         public double getX(Location point) {
             return point.getLatitude() * PathSimplifier.MULTIPLIER;

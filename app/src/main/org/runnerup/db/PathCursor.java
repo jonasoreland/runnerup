@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class PathCursor {
 
-    private Cursor cursor;
+    private final Cursor cursor;
     private ArrayList<Integer> ignoreIDs;
-    private int idxLocId;
+    private final int idxLocId;
 
     public PathCursor(SQLiteDatabase mDB, long activityId, String[] columns, int idxLocId, PathSimplifier simplifier) {
 

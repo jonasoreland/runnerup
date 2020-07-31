@@ -63,16 +63,16 @@ public class SpinnerPresenter {
         TS_NUMBERPICKER
     }
 
-    private Context mContext;
+    private final Context mContext;
     private String mKey = null;
-    private SpinnerInterface mSpin;
+    private final SpinnerInterface mSpin;
     private int mInputType = 0;
     private SpinnerInterface.OnSetValueListener mSetValueListener = null;
     private Type mType;
     private boolean mFirstSetValue = true;
     private int[] values = null;
     private long mCurrValue = -1;
-    private CharSequence mLabel;
+    private final CharSequence mLabel;
 
     SpinnerPresenter(Context context, AttributeSet attrs, SpinnerInterface spinnerInterface) { //todo duration + other pickers don't appear to work
         mContext = context;

@@ -82,7 +82,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     FacebookSynchronizer(Context context, SyncManager syncManager, PathSimplifier simplifier) {
         this.context = context;

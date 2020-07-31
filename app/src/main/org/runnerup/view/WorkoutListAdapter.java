@@ -35,7 +35,7 @@ class WorkoutListAdapter extends BaseAdapter {
     /**
 	 * 
 	 */
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     private String[] workoutList = new String[0];
 
     public WorkoutListAdapter(LayoutInflater inflater) {

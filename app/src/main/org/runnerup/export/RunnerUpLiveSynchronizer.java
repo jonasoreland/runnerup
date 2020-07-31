@@ -57,7 +57,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     private long id = 0;
     private String username = null;
     private String password = null;
-    private String postUrl;
+    private final String postUrl;
     private final Formatter formatter;
     private long mTimeLastLog;
 

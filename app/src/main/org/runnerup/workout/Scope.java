@@ -29,8 +29,8 @@ public enum Scope {
     LAP(3, R.string.cue_lap),
     CURRENT(4, R.string.cue_current);
 
-    int value;
-    int cueId;
+    final int value;
+    final int cueId;
 
     Scope(int val, int cueId) {
         this.value = val;

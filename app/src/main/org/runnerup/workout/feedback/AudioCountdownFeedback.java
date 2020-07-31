@@ -31,8 +31,8 @@ import java.util.HashMap;
 
 public class AudioCountdownFeedback extends Feedback {
 
-    private Scope scope;
-    private Dimension dimension;
+    private final Scope scope;
+    private final Dimension dimension;
     private RUTextToSpeech textToSpeech;
     private Formatter formatter;
 

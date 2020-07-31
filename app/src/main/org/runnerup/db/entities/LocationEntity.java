@@ -119,7 +119,7 @@ public class LocationEntity extends AbstractEntity {
                     Constants.DB.LOCATION.LAP,
                     Constants.DB.LOCATION.HR
             };
-            Cursor c;
+            final Cursor c;
             E prev = null;
 
             public int getCount() {

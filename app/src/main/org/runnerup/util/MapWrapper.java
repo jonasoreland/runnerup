@@ -61,14 +61,14 @@ import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 public class MapWrapper implements Constants {
 
-    private MapView mapView;
+    private final MapView mapView;
     private LineManager lineManager;
     private SymbolManager symbolManager;
 
-    private long mID;
-    private SQLiteDatabase mDB;
+    private final long mID;
+    private final SQLiteDatabase mDB;
     private final Context context;
-    private Formatter formatter;
+    private final Formatter formatter;
 
     public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {
         this.context = context;

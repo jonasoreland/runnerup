@@ -72,7 +72,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
 
     JoggSESynchronizer(final SyncManager syncManager, PathSimplifier simplifier) {

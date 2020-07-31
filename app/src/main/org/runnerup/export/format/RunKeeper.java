@@ -59,8 +59,8 @@ import java.util.concurrent.TimeUnit;
 
 public class RunKeeper {
 
-    private SQLiteDatabase mDB;
-    private PathSimplifier simplifier;
+    private final SQLiteDatabase mDB;
+    private final PathSimplifier simplifier;
 
     public RunKeeper(SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
