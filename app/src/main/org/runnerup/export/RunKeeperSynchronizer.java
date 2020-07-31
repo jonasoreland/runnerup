@@ -372,7 +372,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                     Log.e(Constants.LOG, e.getMessage());
                     return null;
                 }
-                Float time = Float.parseFloat(item.getString("duration"));
+                @SuppressWarnings("WrapperTypeMayBePrimitive") Float time = Float.parseFloat(item.getString("duration"));
                 ai.setDuration(time.longValue());
                 BigDecimal dist = new BigDecimal(Float.parseFloat(item.getString("total_distance")));
                 dist = dist.setScale(2, BigDecimal.ROUND_UP);

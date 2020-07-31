@@ -147,7 +147,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final Resources res = this.getResources();
-        final Boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+        final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
 
         TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
         t.setOnTouchListener((v, event) -> {

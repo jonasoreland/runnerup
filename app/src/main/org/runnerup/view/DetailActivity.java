@@ -252,7 +252,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     private void setUploadVisibility() {
-        Boolean enabled = !pendingSynchronizers.isEmpty();
+        boolean enabled = !pendingSynchronizers.isEmpty();
         if (enabled) {
             uploadButton.setVisibility(View.VISIBLE);
         } else {
