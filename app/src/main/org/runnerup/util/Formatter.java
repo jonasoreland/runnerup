@@ -153,8 +153,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     public String getCueString(int msgId) {
-        String s =  cueResources.getString(msgId);
-        return s;
+        return cueResources.getString(msgId);
 
     }
 

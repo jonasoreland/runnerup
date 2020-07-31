@@ -297,8 +297,7 @@ public class OAuth2Activity extends AppCompatActivity {
             b.putString(OAuth2ServerCredentials.AUTH_EXTRA, extra);
         }
 
-        Intent args = new Intent(activity, OAuth2Activity.class)
-                .putExtra(OAuth2Activity.OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
-        return args;
+        return new Intent(activity, OAuth2Activity.class)
+                .putExtra(OAuth2ServerCredentials.AUTH_ARGUMENTS, b);
     }
 }

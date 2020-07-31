@@ -46,8 +46,7 @@ public class HRManager {
                 try {
                     Class<?> clazz = Class.forName(Lib);
                     Method method = clazz.getDeclaredMethod("checkLibrary", Context.class);
-                    boolean res = (boolean) method.invoke(null, ctx);
-                    return res;
+                    return (boolean) method.invoke(null, ctx);
                 } catch (Exception e) {
                     Log.d(Lib, Name + "Library is not loaded "+e);
                 }
