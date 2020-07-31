@@ -1,5 +1,7 @@
 package org.runnerup.common.util;
 
+import androidx.annotation.NonNull;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -179,6 +181,7 @@ public class ValueModelTest {
             return getRandom().hashCode();
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "TestObject{" +

@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 
+import androidx.annotation.NonNull;
+
 public class EventTrigger extends Trigger {
 
     Scope scope = Scope.STEP;
@@ -84,6 +86,7 @@ public class EventTrigger extends Trigger {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "[ EventTrigger: " + this.scope + " " + this.event + " skipCounter: " + skipCounter

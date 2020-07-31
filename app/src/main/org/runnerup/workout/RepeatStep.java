@@ -17,6 +17,8 @@
 
 package org.runnerup.workout;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +64,7 @@ public class RepeatStep extends Step {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "currentStep: " + currentStep + "(" + steps.size() + ") currentRepeat: "
