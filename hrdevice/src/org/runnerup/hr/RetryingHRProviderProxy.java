@@ -317,7 +317,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
         String res = "[ RetryingHRProviderProxy: " +
                 provider.getProviderName() +
-                ", attempt: " + Integer.toString(attempt) +
+                ", attempt: " + attempt +
                 " ]" +
                 ", state: " + state + ", request: " + requestedState + ", " + msg;
         System.err.println(res);

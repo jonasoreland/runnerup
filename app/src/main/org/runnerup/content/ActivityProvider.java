@@ -114,7 +114,7 @@ public class ActivityProvider extends ContentProvider {
                 }
                 @SuppressWarnings("ConstantConditions") final File file = new File(path.getAbsolutePath() + File.separator + name);
                 final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-                Log.e(getClass().getName(), Integer.toString(i) + ": putting cache file in: "
+                Log.e(getClass().getName(), i + ": putting cache file in: "
                         + file.getAbsolutePath());
                 //noinspection Convert2Diamond
                 return new Pair<File, OutputStream>(file, out);

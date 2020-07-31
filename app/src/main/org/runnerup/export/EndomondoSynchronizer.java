@@ -252,7 +252,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         while ((s = in.readLine()) != null) {
             int c = s.indexOf('=');
             if (c == -1) {
-                obj.put("_" + Integer.toString(lineno), s);
+                obj.put("_" + lineno, s);
             } else {
                 obj.put(s.substring(0, c), s.substring(c + 1));
             }
@@ -277,7 +277,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer, summary);
 
-            String workoutId = deviceId + "-" + Long.toString(mID);
+            String workoutId = deviceId + "-" + mID;
             Log.e(getName(), "workoutId: " + workoutId);
 
             StringBuilder url = new StringBuilder()

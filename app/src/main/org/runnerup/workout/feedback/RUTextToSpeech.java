@@ -87,7 +87,7 @@ public class RUTextToSpeech {
             val = this.id;
             this.id++;
         }
-        return UTTERANCE_ID + Long.toString(val);
+        return UTTERANCE_ID + val;
     }
 
     @SuppressWarnings("UnusedReturnValue")

@@ -307,7 +307,7 @@ public class TrackerWear extends DefaultTrackerComponent
             int screenNo = 0;
             for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
                 int itemNo = 0;
-                String itemPrefix = Integer.toString(screenNo) + ".";
+                String itemPrefix = screenNo + ".";
                 for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
                     b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(item.second,
                             item.first.second, workoutInfo.get(item.first.first, item.first.second)));
@@ -412,7 +412,7 @@ public class TrackerWear extends DefaultTrackerComponent
         int screenNo = 0;
         for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
             int itemNo = 0;
-            String itemPrefix = Integer.toString(screenNo) + ".";
+            String itemPrefix = screenNo + ".";
             for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
                 b.putString(Wear.RunInfo.HEADER + itemPrefix + itemNo,
                         context.getString(item.first.second.getTextId()));

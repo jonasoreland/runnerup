@@ -394,7 +394,7 @@ public class NikeXML {
         public void emit(final Pos p, final Vector<Pos> posHist, final Vector<Location> hist) {
             if (d == Dim.DISTANCE) {
                 buf.append(' ');
-                buf.append(Double.toString(Math.round(1000.0 * p.sumDistance / 1000.0) / 1000.0d));
+                buf.append(Math.round(1000.0 * p.sumDistance / 1000.0) / 1000.0d);
             } else if (d == Dim.SPEED) {
                 double deltaTime = p.sumTime;
                 double deltaDist = p.sumDistance;
@@ -407,7 +407,7 @@ public class NikeXML {
                     speed = deltaDist / deltaTime;
                 }
                 buf.append(' ');
-                buf.append(Double.toString(speed));
+                buf.append(speed);
             } else if (d == Dim.HR) {
                 double deltaTime = p.sumTime;
                 double deltaHR = p.sumHR;
@@ -420,7 +420,7 @@ public class NikeXML {
                     avgHR = deltaHR / deltaTime;
                 }
                 buf.append(' ');
-                buf.append(Long.toString(Math.round(avgHR)));
+                buf.append(Math.round(avgHR));
             }
         }
     }

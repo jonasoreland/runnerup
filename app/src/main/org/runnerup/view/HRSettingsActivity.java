@@ -224,7 +224,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private int lineNo = 0;
 
     private void log(String msg) {
-        logBuffer.insert(0, Integer.toString(++lineNo) + ": " + msg + "\n");
+        logBuffer.insert(0, ++lineNo + ": " + msg + "\n");
         if (logBuffer.length() > 5000) {
             logBuffer.setLength(5000);
         }

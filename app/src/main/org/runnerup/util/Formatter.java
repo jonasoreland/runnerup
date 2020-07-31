@@ -718,7 +718,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT_SHORT:
                 return formatDistance(meters, true);
             case TXT_LONG:
-                return Long.toString(meters) + " m";
+                return meters + " m";
         }
         return null;
     }
