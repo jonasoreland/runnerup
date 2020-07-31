@@ -28,7 +28,6 @@ import org.runnerup.R;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 
 class WorkoutListAdapter extends BaseAdapter {

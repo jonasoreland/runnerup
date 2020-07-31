@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.*;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.util.Random;

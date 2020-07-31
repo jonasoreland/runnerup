@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.app.AlertDialog;
@@ -40,7 +39,6 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
-import org.runnerup.widget.SpinnerInterface;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 

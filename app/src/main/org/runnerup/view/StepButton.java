@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;

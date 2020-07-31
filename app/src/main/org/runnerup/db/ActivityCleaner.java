@@ -18,20 +18,12 @@
 package org.runnerup.db;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.goebl.simplify.PointExtractor;
-import com.goebl.simplify.Simplify;
-
-import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
 import java.util.ArrayList;

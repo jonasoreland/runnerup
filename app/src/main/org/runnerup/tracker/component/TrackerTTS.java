@@ -17,10 +17,8 @@
 package org.runnerup.tracker.component;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 
-import org.runnerup.R;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 

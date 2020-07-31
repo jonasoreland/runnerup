@@ -21,9 +21,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 import org.runnerup.common.util.Constants;
 

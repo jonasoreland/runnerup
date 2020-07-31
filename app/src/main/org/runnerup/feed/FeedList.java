@@ -27,7 +27,6 @@ import org.runnerup.db.DBHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Observable;

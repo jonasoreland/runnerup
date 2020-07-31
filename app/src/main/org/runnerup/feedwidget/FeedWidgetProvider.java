@@ -17,7 +17,6 @@ import android.widget.RemoteViews;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.feed.FeedList;
 import org.runnerup.view.MainLayout;
 

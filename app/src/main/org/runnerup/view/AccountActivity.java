@@ -18,8 +18,6 @@
 package org.runnerup.view;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -56,7 +54,6 @@ import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
-import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.FileFormats;
