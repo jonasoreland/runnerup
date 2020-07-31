@@ -41,20 +41,20 @@ import java.util.Locale;
 
 public class Formatter implements OnSharedPreferenceChangeListener {
 
-    private Context context = null;
-    private Resources resources = null;
-    private LocaleResources cueResources = null;
-    private SharedPreferences sharedPreferences = null;
-    private java.text.DateFormat dateFormat = null;
-    private java.text.DateFormat timeFormat = null;
-    private java.text.DateFormat monthFormat = null;
-    private java.text.DateFormat dayOfMonthFormat = null;
+    private Context context;
+    private Resources resources;
+    private LocaleResources cueResources;
+    private SharedPreferences sharedPreferences;
+    private java.text.DateFormat dateFormat;
+    private java.text.DateFormat timeFormat;
+    private java.text.DateFormat monthFormat;
+    private java.text.DateFormat dayOfMonthFormat;
     //private HRZones hrZones = null;
 
     private boolean metric = true;
     private String base_unit = "km";
     private double base_meters = km_meters;
-    private boolean unitCue = false;
+    private boolean unitCue;
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;

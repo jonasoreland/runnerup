@@ -30,22 +30,22 @@ public class TargetTrigger extends Trigger {
     private int graceCount = 30; //
     @SuppressWarnings("FieldCanBeLocal")
     private final int initialGrace = 20;
-    private int minGraceCount = 30; //
+    private int minGraceCount; //
 
     Scope scope = Scope.STEP;
-    private Dimension dimension = Dimension.PACE;
+    private Dimension dimension;
 
     Range range = null;
 
     private int cntMeasures = 0;
-    private double[] measure = null;
+    private double[] measure;
     @SuppressWarnings("FieldCanBeLocal")
-    private int skip_values = 1;
-    private double[] sort_measure = null;
+    private int skip_values;
+    private double[] sort_measure;
     private double lastTimestamp = 0;
 
-    private double[] measure_time = null;
-    private double[] measure_distance = null;
+    private double[] measure_time;
+    private double[] measure_distance;
 
     /**
      * cache computing of median

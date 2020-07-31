@@ -107,13 +107,13 @@ public class GraphWrapper implements Constants {
         final int interval;
         boolean first = true;
         int pos = 0;
-        double time[] = null;
-        double distance[] = null;
+        double time[];
+        double distance[];
         double sum_time = 0;
         double sum_distance = 0;
         double acc_time = 0;
 
-        int[] hr = null;
+        int[] hr;
         double[] hrzHist = null;
 
         double tot_avg_hr = 0;
@@ -121,12 +121,12 @@ public class GraphWrapper implements Constants {
         double avg_velocity = 0;
         double min_velocity = Double.MAX_VALUE;
         double max_velocity = Double.MIN_VALUE;
-        List<DataPoint> velocityList = null;
-        List<DataPoint> hrList = null;
+        List<DataPoint> velocityList;
+        List<DataPoint> hrList;
 
         boolean showHR = false;
         boolean showHRZhist = false;
-        HRZones hrCalc = null;
+        HRZones hrCalc;
 
         SpeedUnit preferred_speedunit;
 
@@ -247,7 +247,7 @@ public class GraphWrapper implements Constants {
 
         class GraphFilter {
 
-            double data[] = null;
+            double data[];
             final List<DataPoint> source;
 
             GraphFilter(List<DataPoint> velocityList) {

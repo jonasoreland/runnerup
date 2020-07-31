@@ -92,8 +92,8 @@ public class FeedList extends Observable implements Constants {
     }
 
     public class FeedUpdater {
-        List<ContentValues> currList = null;
-        List<ContentValues> addList = null;
+        List<ContentValues> currList;
+        List<ContentValues> addList;
         String synchronizer = null;
         int added = 0;
         int discarded = 0;

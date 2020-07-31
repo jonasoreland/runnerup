@@ -44,8 +44,8 @@ public class GpsStatus implements LocationListener,
     private static final int HIST_LEN = 3;
 
     private boolean mIsFixed = false;
-    private Context context = null;
-    private Location[] mHistory = null;
+    private Context context;
+    private Location[] mHistory;
     private LocationManager locationManager = null;
     private TickListener listener = null;
 

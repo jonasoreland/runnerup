@@ -37,7 +37,7 @@ import java.util.Locale;
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
-    private boolean mute = false;
+    private boolean mute;
     private final TextToSpeech textToSpeech;
     private final AudioManager audioManager;
     private long id = (long) (System.nanoTime() + (1000 * Math.random()));

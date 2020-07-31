@@ -65,10 +65,10 @@ public class MapWrapper implements Constants {
     private LineManager lineManager;
     private SymbolManager symbolManager;
 
-    private long mID = 0;
-    private SQLiteDatabase mDB = null;
+    private long mID;
+    private SQLiteDatabase mDB;
     private final Context context;
-    private Formatter formatter = null;
+    private Formatter formatter;
 
     public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {
         this.context = context;
