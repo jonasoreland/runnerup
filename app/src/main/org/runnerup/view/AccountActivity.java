@@ -93,17 +93,17 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            Button btn = (Button) findViewById(R.id.ok_account_button);
+            Button btn = findViewById(R.id.ok_account_button);
             btn.setOnClickListener(okButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_upload_button);
+            Button btn = findViewById(R.id.account_upload_button);
             btn.setOnClickListener(uploadButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_download_button);
+            Button btn = findViewById(R.id.account_download_button);
             if (synchronizer.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) &&
                 synchronizer.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
@@ -113,7 +113,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            Button btn = (Button) findViewById(R.id.disconnect_account_button);
+            Button btn = findViewById(R.id.disconnect_account_button);
             btn.setOnClickListener(disconnectButtonClick);
         }
     }
@@ -155,8 +155,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             }
 
             {
-                ImageView im = (ImageView) findViewById(R.id.account_list_icon);
-                TextView tv = (TextView) findViewById(R.id.account_list_name);
+                ImageView im = findViewById(R.id.account_list_icon);
+                TextView tv = findViewById(R.id.account_list_name);
                 if (synchronizer.getIconId() == 0 || mSynchronizerName.equals(FileSynchronizer.NAME)) {
                     if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                         tv.setText(synchronizer.getPublicUrl());
@@ -204,7 +204,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setMinimumWidth(48);
                 addRow(getResources().getString(R.string.Automatic_upload), cb);
             } else {
-                Button btn = (Button) findViewById(R.id.account_upload_button);
+                Button btn = findViewById(R.id.account_upload_button);
                 btn.setVisibility(View.GONE);
             }
 
@@ -250,7 +250,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     }
 
     private void addRow(String string, View btn) {
-        TableLayout table = (TableLayout) findViewById(R.id.account_table);
+        TableLayout table = findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
         row.setMinimumHeight(48);
         row.setMinimumWidth(48);

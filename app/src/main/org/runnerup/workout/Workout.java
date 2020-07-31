@@ -356,7 +356,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 double d = getDistance(scope);
                 double t = getTime(scope);
                 if (t == 0)
-                    return (double) 0;
+                    return 0;
                 return d / t;
             case STEP:
             case LAP:

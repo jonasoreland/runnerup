@@ -67,7 +67,7 @@ public class HRZonesBar extends View {
 
         //calculate bar height and chart offset
         AppCompatActivity activity = (AppCompatActivity) getContext();
-        LinearLayout buttons = (LinearLayout)activity.findViewById(R.id.buttons);
+        LinearLayout buttons = activity.findViewById(R.id.buttons);
 
         int actualHeight = getHeight() - buttons.getHeight();
         float calculatedBarHeight = (actualHeight - 2*borderSize - (hrzData.length-1) * separatorSize)/hrzData.length; // Height of the bar

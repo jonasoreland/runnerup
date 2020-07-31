@@ -73,7 +73,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
 
-        Toolbar actionbar = (Toolbar) findViewById(R.id.feed_actionbar);
+        Toolbar actionbar = findViewById(R.id.feed_actionbar);
         actionbar.inflateMenu(R.menu.feed_menu);
         actionbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
@@ -94,12 +94,12 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         feed.load(); // load from DB
 
         feedAdapter = new FeedListAdapter(this, feed);
-        ListView feedList = (ListView) findViewById(R.id.feed_list);
+        ListView feedList = findViewById(R.id.feed_list);
         feedList.setAdapter(feedAdapter);
         feedList.setDividerHeight(2);
 
-        feedProgress = (LinearLayout) findViewById(R.id.feed_progress);
-        feedProgressLabel = (TextView) findViewById(R.id.feed_progress_label);
+        feedProgress = findViewById(R.id.feed_progress);
+        feedProgressLabel = findViewById(R.id.feed_progress_label);
         startSync();
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -196,7 +196,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
             if (FeedList.isHeaderDate(tmp)) {
 
                 View v = layoutInflator.inflate(R.layout.feed_row_date_header, parent, false);
-                TextView tv = (TextView)v.findViewById(R.id.feed_date_header);
+                TextView tv = v.findViewById(R.id.feed_date_header);
                 DateFormat a = android.text.format.DateFormat.getLongDateFormat(context);
                 tv.setText(a.format(tmp.getAsLong(DB.FEED.START_TIME)));
                 return v;
@@ -204,15 +204,15 @@ public class FeedActivity extends AppCompatActivity implements Constants {
             } else if (FeedList.isActivity(tmp)) {
 
                 View v = layoutInflator.inflate(R.layout.feed_row_activity, parent, false);
-                final ImageView ivAvatar = (ImageView)v.findViewById(R.id.feed_avatar);
-                ImageView ivSport = (ImageView)v.findViewById(R.id.feed_sport_emblem);
-                TextView tvPerson = (TextView)v.findViewById(R.id.feed_person);
-                TextView tvSource = (TextView)v.findViewById(R.id.feed_source);
-                TextView tvSport = (TextView)v.findViewById(R.id.feed_sport);
-                TextView tvDistance = (TextView)v.findViewById(R.id.feed_distance);
-                TextView tvDuration = (TextView)v.findViewById(R.id.feed_duration);
-                TextView tvPace = (TextView)v.findViewById(R.id.feed_pace);
-                TextView tvNotes = (TextView)v.findViewById(R.id.feed_notes);
+                final ImageView ivAvatar = v.findViewById(R.id.feed_avatar);
+                ImageView ivSport = v.findViewById(R.id.feed_sport_emblem);
+                TextView tvPerson = v.findViewById(R.id.feed_person);
+                TextView tvSource = v.findViewById(R.id.feed_source);
+                TextView tvSport = v.findViewById(R.id.feed_sport);
+                TextView tvDistance = v.findViewById(R.id.feed_distance);
+                TextView tvDuration = v.findViewById(R.id.feed_duration);
+                TextView tvPace = v.findViewById(R.id.feed_pace);
+                TextView tvNotes = v.findViewById(R.id.feed_notes);
 
                 // avatar
                 if (tmp.containsKey(DB.FEED.USER_IMAGE_URL)) {

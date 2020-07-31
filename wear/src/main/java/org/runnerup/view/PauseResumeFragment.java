@@ -49,10 +49,10 @@ public class PauseResumeFragment extends Fragment implements ValueModel.ChangeLi
         View view = inflater.inflate(R.layout.newlap_pause_resume, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        mButtonPauseResume = (CircledImageView) view.findViewById(R.id.icon_resume);
+        mButtonPauseResume = view.findViewById(R.id.icon_resume);
         mButtonPauseResume.setOnClickListener(pauseButtonClick);
-        mButtonPauseResumeTxt = (TextView) view.findViewById(R.id.txt_resume);
-        mButtonNewLap = (CircledImageView) view.findViewById(R.id.icon_newlap);
+        mButtonPauseResumeTxt = view.findViewById(R.id.txt_resume);
+        mButtonNewLap = view.findViewById(R.id.icon_newlap);
         mButtonNewLap.setOnClickListener(newLapButtonClick);
         //TextView buttonNewLapTxt = (TextView) view.findViewById(R.id.txt_newlap);
 

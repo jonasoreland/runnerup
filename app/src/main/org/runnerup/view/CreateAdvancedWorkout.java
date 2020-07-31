@@ -46,26 +46,26 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         Intent intent = getIntent();
         String advWorkoutName = intent.getStringExtra(ManageWorkoutsActivity.WORKOUT_NAME);
 
-        advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.new_workout_spinner);
+        advancedWorkoutSpinner = findViewById(R.id.new_workout_spinner);
         advancedWorkoutSpinner.setValue(advWorkoutName);
         advancedWorkoutSpinner.setEnabled(false);
 
         dontAskAgain = false;
 
-        ListView advancedStepList = (ListView) findViewById(R.id.new_advnced_workout_steps);
+        ListView advancedStepList = findViewById(R.id.new_advnced_workout_steps);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
-        Button addStepButton = (Button) findViewById(R.id.add_step_button);
+        Button addStepButton = findViewById(R.id.add_step_button);
         addStepButton.setOnClickListener(addStepButtonClick);
 
-        Button addRepeatButton = (Button) findViewById(R.id.add_repeat_button);
+        Button addRepeatButton = findViewById(R.id.add_repeat_button);
         addRepeatButton.setOnClickListener(addRepeatStepButtonClick);
 
-        Button saveWorkoutButton = (Button) findViewById(R.id.workout_save_button);
+        Button saveWorkoutButton = findViewById(R.id.workout_save_button);
         saveWorkoutButton.setOnClickListener(saveWorkoutButtonClick);
 
-        Button discardWorkoutButton = (Button) findViewById(R.id.workout_discard_button);
+        Button discardWorkoutButton = findViewById(R.id.workout_discard_button);
         discardWorkoutButton.setOnClickListener(discardWorkoutButtonClick);
 
         try {
@@ -119,13 +119,13 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                 LayoutInflater inflater = getLayoutInflater();
                 view = inflater.inflate(R.layout.advanced_workout_row, parent, false);
 
-                viewHolder.button = (StepButton) view.findViewById(R.id.workout_step_button);
+                viewHolder.button = view.findViewById(R.id.workout_step_button);
                 viewHolder.button.setOnChangedListener(onWorkoutChanged);
 
-                viewHolder.add = (Button) view.findViewById(R.id.add_button);
+                viewHolder.add = view.findViewById(R.id.add_button);
                 viewHolder.add.setOnClickListener(onAddButtonClick);
 
-                viewHolder.del = (Button) view.findViewById(R.id.del_button);
+                viewHolder.del = view.findViewById(R.id.del_button);
                 viewHolder.del.setOnClickListener(onDeleteButtonClick);
 
                 view.setTag(viewHolder);
@@ -146,7 +146,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     private final View.OnClickListener onAddButtonClick = view -> {
 
         TableRow row = (TableRow) view.getParent();
-        final StepButton stepButton = (StepButton) row.findViewById(R.id.workout_step_button);
+        final StepButton stepButton = row.findViewById(R.id.workout_step_button);
 
         Step currentStep = stepButton.getStep();
         if (currentStep instanceof RepeatStep) {
@@ -176,7 +176,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             TableRow row = (TableRow) view.getParent();
-            final StepButton stepButton = (StepButton) row.findViewById(R.id.workout_step_button);
+            final StepButton stepButton = row.findViewById(R.id.workout_step_button);
 
             if(!dontAskAgain) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)

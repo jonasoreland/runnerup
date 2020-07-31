@@ -59,9 +59,9 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     private View addZoneRow(LayoutInflater inflator, ViewGroup root, int zone) {
         @SuppressLint("InflateParams") TableRow row = (TableRow) inflator.inflate(R.layout.heartratezonerow, null);
-        TextView tv = (TextView) row.findViewById(R.id.zonetext);
-        EditText lo = (EditText) row.findViewById(R.id.zonelo);
-        EditText hi = (EditText) row.findViewById(R.id.zonehi);
+        TextView tv = row.findViewById(R.id.zonetext);
+        EditText lo = row.findViewById(R.id.zonelo);
+        EditText hi = row.findViewById(R.id.zonehi);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
         tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
@@ -80,10 +80,10 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
         hrZones = new HRZones(this);
         hrZoneCalculator = new HRZoneCalculator(this);
-        ageSpinner = (TitleSpinner) findViewById(R.id.hrz_age);
-        sexSpinner = (TitleSpinner) findViewById(R.id.hrz_sex);
-        maxHRSpinner = (TitleSpinner) findViewById(R.id.hrz_mhr);
-        TableLayout zonesTable = (TableLayout) findViewById(R.id.zones_table);
+        ageSpinner = findViewById(R.id.hrz_age);
+        sexSpinner = findViewById(R.id.hrz_sex);
+        maxHRSpinner = findViewById(R.id.hrz_mhr);
+        TableLayout zonesTable = findViewById(R.id.zones_table);
         {
             int zoneCount = hrZoneCalculator.getZoneCount();
             LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

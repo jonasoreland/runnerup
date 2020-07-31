@@ -117,20 +117,20 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             notSupported();
         }
 
-        tvLog = (TextView) findViewById(R.id.hr_log);
+        tvLog = findViewById(R.id.hr_log);
         tvLog.setMovementMethod(new ScrollingMovementMethod());
-        tvBTName = (TextView) findViewById(R.id.hr_device);
-        tvHR = (TextView) findViewById(R.id.hr_value);
-        tvBatteryLevel = (TextView) findViewById(R.id.hr_battery);
+        tvBTName = findViewById(R.id.hr_device);
+        tvHR = findViewById(R.id.hr_value);
+        tvBatteryLevel = findViewById(R.id.hr_battery);
         tvBatteryLevel.setVisibility(View.GONE);
-        scanButton = (Button) findViewById(R.id.scan_button);
+        scanButton = findViewById(R.id.scan_button);
         scanButton.setOnClickListener(scanButtonClick);
-        connectButton = (Button) findViewById(R.id.connect_button);
+        connectButton = findViewById(R.id.connect_button);
         connectButton.setOnClickListener(arg0 -> connect());
 
         formatter = new Formatter(this);
         {
-            LinearLayout graphLayout = (LinearLayout) findViewById(R.id.hr_graph_layout);
+            LinearLayout graphLayout = findViewById(R.id.hr_graph_layout);
             graphView = new GraphView(this);
             graphView.setTitle(getString(R.string.Heart_rate));
             graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
@@ -618,7 +618,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             } else {
                 row = convertView;
             }
-            TextView tv = (TextView) row.findViewById(android.R.id.text1);
+            TextView tv = row.findViewById(android.R.id.text1);
             //tv.setTextColor(resources.getColor(R.color.black));
 
             HRDeviceRef btDevice = deviceList.get(position);

@@ -74,7 +74,7 @@ class DisabledEntriesAdapter extends BaseAdapter {
             convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
                     false);
         }
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         ret.setText(str);
 
         if (disabled != null && disabled.contains(str))

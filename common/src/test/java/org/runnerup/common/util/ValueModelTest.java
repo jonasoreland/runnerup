@@ -73,7 +73,7 @@ public class ValueModelTest {
 
         sut.set(null);
 
-        verify(listener, never()).onValueChanged(eq(sut), (TestObject) anyObject(), (TestObject) anyObject());
+        verify(listener, never()).onValueChanged(eq(sut), anyObject(), anyObject());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ValueModelTest {
         sut.unregisterChangeListener(listener);
         sut.set(newValue);
 
-        verify(listener, never()).onValueChanged(eq(sut), (TestObject) anyObject(), (TestObject) anyObject());
+        verify(listener, never()).onValueChanged(eq(sut), anyObject(), anyObject());
     }
 
     @Test
@@ -114,9 +114,9 @@ public class ValueModelTest {
 
         sut.set(newValue);
 
-        verify(listener1, never()).onValueChanged(eq(sut), (TestObject) anyObject(), (TestObject) anyObject());
-        verify(listener2, never()).onValueChanged(eq(sut), (TestObject) anyObject(), (TestObject) anyObject());
-        verify(listener3, never()).onValueChanged(eq(sut), (TestObject) anyObject(), (TestObject) anyObject());
+        verify(listener1, never()).onValueChanged(eq(sut), anyObject(), anyObject());
+        verify(listener2, never()).onValueChanged(eq(sut), anyObject(), anyObject());
+        verify(listener3, never()).onValueChanged(eq(sut), anyObject(), anyObject());
     }
 
     @Test

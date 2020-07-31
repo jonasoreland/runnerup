@@ -352,12 +352,12 @@ public class SyncManager {
 
     private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
         final View view = View.inflate(mActivity, R.layout.userpass, null);
-        final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
-        final TextView tv1 = (TextView) view.findViewById(R.id.username);
-        final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
-        final TextView urlInput = (TextView) view.findViewById(R.id.url_input);
-        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
-        final TableRow rowUrl = (TableRow) view.findViewById(R.id.table_row_url);
+        final CheckBox cb = view.findViewById(R.id.showpass);
+        final TextView tv1 = view.findViewById(R.id.username);
+        final TextView tv2 = view.findViewById(R.id.password_input);
+        final TextView urlInput = view.findViewById(R.id.url_input);
+        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
+        final TableRow rowUrl = view.findViewById(R.id.table_row_url);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig != null ? authConfig.optString("username", "") : null;
@@ -445,8 +445,8 @@ public class SyncManager {
 
     private void askFileUrl(final Synchronizer sync) {
         final View view = View.inflate(mActivity, R.layout.filepermission, null);
-        final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
-        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
+        final TextView tv1 = view.findViewById(R.id.fileuri);
+        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
 
         String path;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

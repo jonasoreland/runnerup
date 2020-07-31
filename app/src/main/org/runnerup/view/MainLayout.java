@@ -275,7 +275,7 @@ public class MainLayout extends TabActivity {
     private void whatsNew() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
-        WebView wv = (WebView) view.findViewById(R.id.web_view1);
+        WebView wv = view.findViewById(R.id.web_view1);
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Whats_new))
                 .setView(view)

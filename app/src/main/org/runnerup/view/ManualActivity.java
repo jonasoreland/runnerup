@@ -68,16 +68,16 @@ public class ManualActivity extends AppCompatActivity {
 
         setContentView(R.layout.manual);
 
-        manualSport = (TitleSpinner) findViewById(R.id.manual_sport);
-        manualDate = (TitleSpinner) findViewById(R.id.manual_date);
-        manualTime = (TitleSpinner) findViewById(R.id.manual_time);
-        manualDistance = (TitleSpinner) findViewById(R.id.manual_distance);
+        manualSport = findViewById(R.id.manual_sport);
+        manualDate = findViewById(R.id.manual_date);
+        manualTime = findViewById(R.id.manual_time);
+        manualDistance = findViewById(R.id.manual_distance);
         manualDistance.setOnSetValueListener(onSetManualDistance);
-        manualDuration = (TitleSpinner) findViewById(R.id.manual_duration);
+        manualDuration = findViewById(R.id.manual_duration);
         manualDuration.setOnSetValueListener(onSetManualDuration);
-        manualPace = (TitleSpinner) findViewById(R.id.manual_pace);
+        manualPace = findViewById(R.id.manual_pace);
         manualPace.setVisibility(View.GONE);
-        manualNotes = (EditText) findViewById(R.id.manual_notes);
+        manualNotes = findViewById(R.id.manual_notes);
     }
 
     @Override

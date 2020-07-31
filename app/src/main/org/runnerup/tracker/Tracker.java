@@ -574,7 +574,7 @@ public class Tracker extends android.app.Service implements
     private void saveActivity() {
         ContentValues tmp = new ContentValues();
         if (mHeartbeatNanos > 0) {
-            long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / (double)mHeartbeatNanos); // BPM
+            long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
             tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
         }
         if (mMaxHR > 0)

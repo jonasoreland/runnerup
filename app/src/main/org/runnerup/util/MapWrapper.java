@@ -189,7 +189,7 @@ public class MapWrapper implements Constants {
                         type == DB.LOCATION.TYPE_END ||
                         type == DB.LOCATION.TYPE_PAUSE ||
                         type == DB.LOCATION.TYPE_RESUME) {
-                    iconImage = ((Integer) type).toString();
+                    iconImage = type.toString();
                 } else {
                     iconImage = null;
                 }

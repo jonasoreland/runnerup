@@ -88,23 +88,23 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         formatter = new Formatter(this);
         syncManager = new SyncManager(this);
 
-        listView = (ListView) findViewById(R.id.upload_list);
+        listView = findViewById(R.id.upload_list);
         listView.setDividerHeight(1);
         listView.setAdapter(new UploadListAdapter(this));
 
         {
-            Button btn = (Button) findViewById(R.id.account_upload_set_all);
+            Button btn = findViewById(R.id.account_upload_set_all);
             btn.setOnClickListener(setAllButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_upload_clear_all);
+            Button btn = findViewById(R.id.account_upload_clear_all);
             btn.setOnClickListener(clearAllButtonClick);
         }
 
         {
-            Button dwbtn = (Button) findViewById(R.id.account_download_button);
-            Button upbtn = (Button) findViewById(R.id.account_upload_button);
+            Button dwbtn = findViewById(R.id.account_download_button);
+            Button upbtn = findViewById(R.id.account_upload_button);
             if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
                 dwbtn.setOnClickListener(downloadButtonClick);
                 actionButton = dwbtn;
@@ -123,8 +123,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             // synchronizer initialized in fillData() for DOWNLOAD only
             Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
 
-            TextView tv = (TextView) findViewById(R.id.account_upload_list_name);
-            ImageView im = (ImageView) findViewById(R.id.account_upload_list_icon);
+            TextView tv = findViewById(R.id.account_upload_list_name);
+            ImageView im = findViewById(R.id.account_upload_list_icon);
             if (synchronizer == null || synchronizer.getIconId() == 0) {
                 im.setVisibility(View.GONE);
                 tv.setText(mSynchronizerName);
@@ -306,12 +306,12 @@ public class UploadActivity extends AppCompatActivity implements Constants {
                 viewHolder = new ViewHolderUploadActivity();
 
                 view = inflater.inflate(R.layout.upload_row, parent, false);
-                viewHolder.tvStartTime = (TextView) view.findViewById(R.id.upload_list_start_time);
-                viewHolder.tvDistance = (TextView) view.findViewById(R.id.upload_list_distance);
-                viewHolder.tvTime = (TextView) view.findViewById(R.id.upload_list_time);
-                viewHolder.tvPace = (TextView) view.findViewById(R.id.upload_list_pace);
-                viewHolder.tvSport = (TextView) view.findViewById(R.id.upload_list_sport);
-                viewHolder.cb = (CheckBox) view.findViewById(R.id.upload_list_check);
+                viewHolder.tvStartTime = view.findViewById(R.id.upload_list_start_time);
+                viewHolder.tvDistance = view.findViewById(R.id.upload_list_distance);
+                viewHolder.tvTime = view.findViewById(R.id.upload_list_time);
+                viewHolder.tvPace = view.findViewById(R.id.upload_list_pace);
+                viewHolder.tvSport = view.findViewById(R.id.upload_list_sport);
+                viewHolder.cb = view.findViewById(R.id.upload_list_check);
 
                 view.setTag(viewHolder);
             } else {

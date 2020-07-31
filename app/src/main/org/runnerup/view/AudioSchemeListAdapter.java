@@ -83,7 +83,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
                     false);
         }
 
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         ret.setText(getItem(position).toString());
         return ret;
     }

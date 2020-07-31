@@ -80,7 +80,7 @@ class HRZonesListAdapter extends BaseAdapter {
                     false);
         }
 
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         Object obj = getItem(position);
         if (obj != null)
             ret.setText(obj.toString());

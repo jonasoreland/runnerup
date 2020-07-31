@@ -155,7 +155,7 @@ public class KXmlSerializer implements XmlSerializer {
 
     // BEGIN android-added
     private static void reportInvalidCharacter(char ch) {
-        throw new IllegalArgumentException("Illegal character (" + Integer.toHexString((int) ch) + ")");
+        throw new IllegalArgumentException("Illegal character (" + Integer.toHexString(ch) + ")");
     }
     // END android-added
 

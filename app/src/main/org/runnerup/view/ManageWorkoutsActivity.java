@@ -109,19 +109,19 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         adapter = new WorkoutAccountListAdapter(this);
-        ExpandableListView list = (ExpandableListView) findViewById(R.id.expandable_list_view);
+        ExpandableListView list = findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
 
-        downloadButton = (Button) findViewById(R.id.download_workout_button);
+        downloadButton = findViewById(R.id.download_workout_button);
         downloadButton.setOnClickListener(downloadButtonClick);
         // No download provider currently exists
         downloadButton.setVisibility(View.GONE);
-        deleteButton = (Button) findViewById(R.id.delete_workout_button);
+        deleteButton = findViewById(R.id.delete_workout_button);
         deleteButton.setOnClickListener(deleteButtonClick);
-        createButton = (Button) findViewById(R.id.create_workout_button);
+        createButton = findViewById(R.id.create_workout_button);
         createButton.setOnClickListener(createButtonClick);
 
-        shareButton = (Button) findViewById(R.id.share_workout_button);
+        shareButton = findViewById(R.id.share_workout_button);
         shareButton.setOnClickListener(shareButtonClick);
 
         handleButtons();
@@ -577,7 +577,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             }
 
             WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);
-            RadioButton cb = (RadioButton) view.findViewById(R.id.download_workout_checkbox);
+            RadioButton cb = view.findViewById(R.id.download_workout_checkbox);
 
             cb.setTag(workout);
             cb.setChecked(currentlySelectedWorkout != null
@@ -616,7 +616,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 convertView = inflater.inflate(R.layout.manage_workouts_list_category, parent, false);
             }
 
-            TextView categoryText = (TextView)convertView.findViewById(R.id.category_text);
+            TextView categoryText = convertView.findViewById(R.id.category_text);
             categoryText.setText(getProvider(groupPosition));
 
             if (isExpanded)
