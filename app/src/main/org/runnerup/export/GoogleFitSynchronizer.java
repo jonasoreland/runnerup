@@ -22,6 +22,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -174,6 +176,7 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
         return null;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
 

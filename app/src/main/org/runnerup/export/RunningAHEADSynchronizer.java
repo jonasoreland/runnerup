@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -160,11 +161,13 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
 
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity activity) {
         return OAuth2Activity.getIntent(activity, this);
     }
 
+    @NonNull
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -189,6 +192,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
         access_token = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
@@ -199,6 +203,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
         return Synchronizer.Status.OK;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s;

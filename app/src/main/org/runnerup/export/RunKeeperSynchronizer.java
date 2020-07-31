@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
@@ -70,7 +71,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     public static final String NAME = "RunKeeper";
     private static final String PUBLIC_URL = "https://runkeeper.com";
-    private Context context = null;
+    private Context context;
     /**
      * @todo register OAuth2Server
      */
@@ -220,11 +221,13 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return tmp.toString();
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity activity) {
         return OAuth2Activity.getIntent(activity, this);
     }
 
+    @NonNull
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -246,6 +249,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         access_token = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
@@ -309,6 +313,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return s;
     }
 
+    @NonNull
     public Status listActivities(List<SyncActivityItem> list) {
         Status s = connect();
         if (s != Status.OK) {
@@ -385,6 +390,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
         return null;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s;

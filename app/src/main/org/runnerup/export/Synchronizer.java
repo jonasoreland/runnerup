@@ -22,6 +22,8 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.feed.FeedList.FeedUpdater;
@@ -35,15 +37,19 @@ public interface Synchronizer {
     enum RequestMethod { GET, POST, PATCH, PUT }
 
     enum AuthMethod {
-        OAUTH2, USER_PASS, FILEPERMISSION, USER_PASS_URL
+        NONE, OAUTH2, USER_PASS, FILEPERMISSION, USER_PASS_URL
     }
 
     enum Status {
         OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH, NEED_REFRESH;
+        @Nullable
         public Exception ex = null;
-        public AuthMethod authMethod = null;
+        @NonNull
+        public AuthMethod authMethod = AuthMethod.NONE;
         public Long activityId = SyncManager.ERROR_ACTIVITY_ID;
+        @NonNull
         public ExternalIdStatus externalIdStatus = ExternalIdStatus.NONE;
+        @Nullable
         public String externalId = null ;
     }
 
@@ -107,9 +113,7 @@ public interface Synchronizer {
      */
     String getAuthConfig();
 
-    /**
-	 *
-	 */
+    @NonNull
     Intent getAuthIntent(AppCompatActivity activity);
 
     /**
@@ -125,19 +129,22 @@ public interface Synchronizer {
     /**
      * Connect
      *
-     * @return true ok false cancel/fail
+     * @return the status
      */
+    @NonNull
     Status connect();
 
     /**
      * handle result from authIntent
      */
+    @NonNull
     Status getAuthResult(int resultCode, Intent data);
 
     /**
      * @param db
      * @param mID
      */
+    @NonNull
     Status upload(SQLiteDatabase db, long mID);
 
     /**
@@ -145,8 +152,9 @@ public interface Synchronizer {
      * Done in the background, can take substantial time for some services
      * @param db
      * @param uploadStatus The status with the (temporary) identifier for the upload
-     * @return the external ID
+     * @return the external ID in Status
      */
+    @NonNull
     Status getExternalId(SQLiteDatabase db, Status uploadStatus);
 
     /**
@@ -162,6 +170,7 @@ public interface Synchronizer {
      *
      * @return list of Pair<synchronizerName,Workout>
      */
+    @NonNull
     Status listWorkouts(List<Pair<String, String>> list);
 
     /**
@@ -178,12 +187,15 @@ public interface Synchronizer {
      *
      * @return Status
      */
+    @NonNull
     Status listActivities(List<SyncActivityItem> list);
+
     /**
      * Download a selected activity and records in the RunnerUp database
      *  @param db
      * @param item the ActivityItem of the activity to be downloaded
      */
+    @NonNull
     Status download(SQLiteDatabase db, SyncActivityItem item);
 
     /**
@@ -192,13 +204,14 @@ public interface Synchronizer {
      */
     void logout();
 
-
     /**
      * @param feedUpdater
      * @return
      */
+    @NonNull
     Status getFeed(FeedUpdater feedUpdater);
 
+    @NonNull
     Status refreshToken();
 
     /**

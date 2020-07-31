@@ -41,8 +41,8 @@ import java.util.Locale;
 
 public class FacebookCourse {
 
-    private SQLiteDatabase mDB = null;
-    private Formatter formatter = null;
+    private SQLiteDatabase mDB;
+    private Formatter formatter;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
     private PathSimplifier simplifier;

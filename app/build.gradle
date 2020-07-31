@@ -122,11 +122,13 @@ dependencies {
         latestWearApp project(':wear')
     }
 
+    implementation 'androidx.annotation:annotation:1.1.0'
     latestImplementation "com.google.android.material:material:1.1.0"
     if (rootProject.ext.enableWear) {
         //noinspection GradleDependency
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     }
+
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
     //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"

@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
@@ -145,6 +147,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         isConnected = false;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         if (isConnected) {
@@ -271,6 +274,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         mXML.flush();
     }
 
+    @NonNull
     @Override
     public Status upload(final SQLiteDatabase db, final long mID) {
         Status s;

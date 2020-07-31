@@ -115,7 +115,7 @@ public class GoogleFitData {
     }
     private final Context mContext;
     private final String mProjectId;
-    private SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB;
 
     public GoogleFitData(final SQLiteDatabase db, String project, Context ctx) {
         this.mDB = db;
