@@ -119,7 +119,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 JSONObject tmp = new JSONObject(authConfig);
                 //noinspection ConstantConditions
                 mPath = tmp.optString(DB.ACCOUNT.URL, null);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath != null && mPath.startsWith(File.separator)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath.startsWith(File.separator)) {
                     // Migrate to use scooped storage
                     mPath = mPath.substring(mPath.lastIndexOf(File.separator));
                 }
