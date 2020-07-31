@@ -528,10 +528,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         if (dim == Dimension.HR) {
             return tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.HRZ) {
-            if (hrZones == null ||
-                    !hrZones.isConfigured() ||
-                    !tracker.isComponentConnected(TrackerHRM.NAME))
-                return false;
+            return hrZones != null &&
+                    hrZones.isConfigured() &&
+                    tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.CAD) {
             return tracker.isComponentConnected(TrackerCadence.NAME);
         } else if (dim == Dimension.TEMPERATURE) {
