@@ -374,7 +374,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 }
                 @SuppressWarnings("WrapperTypeMayBePrimitive") Float time = Float.parseFloat(item.getString("duration"));
                 ai.setDuration(time.longValue());
-                BigDecimal dist = new BigDecimal(Float.parseFloat(item.getString("total_distance")));
+                BigDecimal dist = BigDecimal.valueOf(Float.parseFloat(item.getString("total_distance")));
                 dist = dist.setScale(2, BigDecimal.ROUND_UP);
                 ai.setDistance(dist.doubleValue());
                 ai.setURI(REST_URL + item.getString("uri"));
