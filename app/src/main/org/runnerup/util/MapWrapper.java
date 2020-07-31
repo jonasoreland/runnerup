@@ -259,7 +259,6 @@ public class MapWrapper implements Constants {
                     //A workaround is to try move the camera at view updates as long as position is 0,0
                     mapView.getViewTreeObserver().addOnGlobalLayoutListener(
                             new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @SuppressWarnings("deprecation")
                                 // We check which build version we are using.
                                 @Override
                                 public void onGlobalLayout() {

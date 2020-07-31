@@ -83,7 +83,6 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     public Double getValue() {
         Double val;
         Float pressure = tracker.getCurrentPressure();
-        //noinspection ConstantConditions
         if (pressure != null && BuildConfig.VERSION_CODE >= 9) {
             //Pressure available - use it for elevation
             //TODO get real sea level pressure (online) or set offset from start/end

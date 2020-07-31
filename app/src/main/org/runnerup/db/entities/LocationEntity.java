@@ -87,7 +87,6 @@ public class LocationEntity extends AbstractEntity {
 
         @NonNull
         @Override
-        @SuppressWarnings("unchecked")
         public Iterator<E> iterator() {
             iter = new LocationIterator(this.mID, this.mDB);
             return iter;

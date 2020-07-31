@@ -219,7 +219,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         LinearLayout graphTab = (LinearLayout) findViewById(R.id.tab_graph);
         LinearLayout hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
-        //noinspection UnusedAssignment
         GraphWrapper graphWrapper = new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
 
         tabSpec = th.newTabSpec("share");
@@ -656,7 +655,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     b.setTextColor(getResources().getColorStateList(R.color.btn_text_color, getTheme()));
                 } else {
-                    //noinspection deprecation
                     b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
                 }
                 b.setOnClickListener(v -> {

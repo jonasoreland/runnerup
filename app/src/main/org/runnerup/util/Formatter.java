@@ -100,7 +100,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                     !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
                 defaultLocale = configuration.getLocales().get(0);
             } else {
-                //noinspection deprecation
                 defaultLocale = configuration.locale;
             }
 
@@ -115,7 +114,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             if (Build.VERSION.SDK_INT >= 17) {
                 configuration.setLocale(locale);
             } else {
-                //noinspection deprecation
                 configuration.locale = locale;
             }
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());

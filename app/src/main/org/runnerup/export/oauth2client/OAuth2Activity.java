@@ -78,7 +78,6 @@ public class OAuth2Activity extends AppCompatActivity {
     private ProgressDialog mSpinner = null;
     private Bundle mArgs = null;
 
-    @SuppressWarnings("deprecation")
     private void setSavedPassword(WebView wv, boolean val) {
         wv.getSettings().setSavePassword(false);
     }

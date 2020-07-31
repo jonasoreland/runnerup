@@ -212,7 +212,6 @@ public class RUTextToSpeech {
 class UtteranceCompletion {
 
     @SuppressLint("ObsoleteSdkInt")
-    @SuppressWarnings("deprecation")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
