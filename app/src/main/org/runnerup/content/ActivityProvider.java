@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ActivityProvider extends ContentProvider {
@@ -103,13 +104,13 @@ public class ActivityProvider extends ContentProvider {
                 switch (i) {
                     case 0:
                     default:
-                        path = ctx.getExternalCacheDir();
+                        path = Objects.requireNonNull(ctx).getExternalCacheDir();
                         break;
                     case 1:
-                        path = ctx.getExternalFilesDir("tcx");
+                        path = Objects.requireNonNull(ctx).getExternalFilesDir("tcx");
                         break;
                     case 2:
-                        path = ctx.getCacheDir();
+                        path = Objects.requireNonNull(ctx).getCacheDir();
                         break;
                 }
                 @SuppressWarnings("ConstantConditions") final File file = new File(path.getAbsolutePath() + File.separator + name);

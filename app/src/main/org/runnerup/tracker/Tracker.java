@@ -68,6 +68,7 @@ import org.runnerup.workout.Workout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -826,7 +827,7 @@ public class Tracker extends android.app.Service implements
         if (get) {
             PowerManager pm = (PowerManager) this
                     .getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+            mWakeLock = Objects.requireNonNull(pm).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                     "RunnerUp:wakeLock");
             if (mWakeLock != null) {
                 //Set a timeout, this is before activity is started
