@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.R;
@@ -88,6 +89,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return null;
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity a) {
         return null;
@@ -102,21 +104,25 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     public void reset() {}
 
     // Below are default empty methods from Synchronizer
+    @NonNull
     @Override
     public Status connect() {
         return Status.OK;
     }
 
+    @NonNull
     public Status getAuthResult(int resultCode, Intent data) {
         return Status.OK;
     }
 
+    @NonNull
     public Status upload(SQLiteDatabase db, long mID) {
         Status s = Status.ERROR;
         s.activityId = mID;
         return s;
     }
 
+    @NonNull
     public Status getExternalId(SQLiteDatabase db, Status uploadStatus) {
         return Status.ERROR;
     }
@@ -125,6 +131,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         return false;
     }
 
+    @NonNull
     public Status listWorkouts(List<Pair<String, String>> list) {
         return Status.OK;
     }
@@ -132,11 +139,13 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     public void downloadWorkout(File dst, String key) throws Exception {
     }
 
+    @NonNull
     @Override
     public Status listActivities(List<SyncActivityItem> list) {
         return Status.INCORRECT_USAGE;
     }
 
+    @NonNull
     @Override
     public final Status download(SQLiteDatabase db, SyncActivityItem item) {
         return persistActivity(db, download(item));
@@ -191,11 +200,14 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         formValues.clear();
     }
 
+    @NonNull
     public Status getFeed(FeedUpdater feedUpdater) {
         return Status.OK;
     }
 
     @Override
+
+    @NonNull
     public Status refreshToken() {
         return Status.ERROR;
     }

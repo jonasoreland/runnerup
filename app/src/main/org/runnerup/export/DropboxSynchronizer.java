@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -62,7 +63,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
     private long id = 0;
     private String access_token = null;
     private FileFormats mFormat;
-    private PathSimplifier simplifier = null;
+    private PathSimplifier simplifier;
 
     DropboxSynchronizer(Context context, PathSimplifier simplifier) {
         if (ENABLED == 0) {
@@ -155,11 +156,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         return tmp.toString();
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity activity) {
         return OAuth2Activity.getIntent(activity, this);
     }
 
+    @NonNull
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -195,6 +198,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         access_token = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.OK;
@@ -284,6 +288,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         return s;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s = connect();

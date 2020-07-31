@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -188,11 +189,13 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity activity) {
         return OAuth2Activity.getIntent(activity, this);
     }
 
+    @NonNull
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -225,6 +228,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private static final long ONE_DAY = 24 * 60 * 60;
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
@@ -245,6 +249,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return Synchronizer.Status.OK;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s;

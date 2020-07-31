@@ -28,6 +28,8 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
@@ -54,7 +56,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     private long id = 0;
     private String username = null;
     private String password = null;
-    private String postUrl = POST_URL;
+    private String postUrl;
     private final Formatter formatter;
     private long mTimeLastLog;
 
@@ -124,6 +126,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         password = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         if (isConfigured()) {

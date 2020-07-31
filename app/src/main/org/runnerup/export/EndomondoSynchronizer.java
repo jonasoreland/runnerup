@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -163,6 +165,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         authToken = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         if (isConfigured()) {
@@ -250,6 +253,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return obj;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status s;
@@ -336,6 +340,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return false;
     }
 
+    @NonNull
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
         Status s;

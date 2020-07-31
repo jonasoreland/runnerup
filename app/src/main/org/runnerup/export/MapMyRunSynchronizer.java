@@ -23,6 +23,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
@@ -168,6 +170,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
 
     }
 
+    @NonNull
     @Override
     public Status connect() {
         if (isConfigured()) {
@@ -237,6 +240,7 @@ public class MapMyRunSynchronizer extends DefaultSynchronizer {
         return s;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status s;

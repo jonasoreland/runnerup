@@ -153,7 +153,7 @@ public final class SyncHelper {
     }
 
     public static JSONObject parse(HttpURLConnection conn, String name) throws IOException, JSONException {
-        JSONObject obj = null;
+        JSONObject obj;
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             obj = SyncHelper.parse(in);

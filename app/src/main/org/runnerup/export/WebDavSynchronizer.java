@@ -23,6 +23,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.R;
@@ -137,6 +139,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         url = null;
     }
 
+    @NonNull
     @Override
     public Status connect() {
 
@@ -189,7 +192,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
     private OkHttpClient getAuthClient() {
         return new OkHttpClient().newBuilder().authenticator(new Authenticator() {
             @Override
-            public Request authenticate(Route route, Response response) throws IOException {
+            public Request authenticate(Route route, @NonNull Response response) throws IOException {
                 if (response.request().header("Authorization") != null) {
                     return null; // Give up, we've already failed to authenticate.
                 }
@@ -199,6 +202,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
         }).build();
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID){
         Status s = connect();

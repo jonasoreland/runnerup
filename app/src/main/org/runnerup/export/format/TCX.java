@@ -47,10 +47,10 @@ import java.util.TimeZone;
 
 public class TCX {
 
-    private SQLiteDatabase mDB = null;
+    private SQLiteDatabase mDB;
     private KXmlSerializer mXML = null;
     private String notes = null;
-    private SimpleDateFormat simpleDateFormat = null;
+    private SimpleDateFormat simpleDateFormat;
     private Sport sport = null;
     private PathSimplifier simplifier;
 

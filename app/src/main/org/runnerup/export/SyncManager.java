@@ -270,12 +270,9 @@ public class SyncManager {
 
             case NEED_AUTH:
                 mSpinner.show();
-                handleAuth(new Callback() {
-                    @Override
-                    public void run(String synchronizerName, Status status) {
-                        mSpinner.dismiss();
-                        callback.run(synchronizerName, status);
-                    }
+                handleAuth((synchronizerName, status) -> {
+                    mSpinner.dismiss();
+                    callback.run(synchronizerName, status);
                 }, synchronizer, s.authMethod);
                 return;
 
@@ -287,26 +284,18 @@ public class SyncManager {
     }
 
     private Status handleRefreshComplete(final Synchronizer synchronizer, final Status s) {
-        switch (s) {
-            case OK: {
-                ContentValues tmp = new ContentValues();
-                tmp.put("_id", synchronizer.getId());
-                tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
-                String[] args = {
-                        Long.toString(synchronizer.getId())
-                };
-                mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-                break;
-            }
-
-            case NEED_AUTH:
-                //Handle by caller
-                break;
-
-            default:
-                // No reset, refresh_token should still be valid
-                break;
+        if (s == Status.OK) {
+            ContentValues tmp = new ContentValues();
+            tmp.put("_id", synchronizer.getId());
+            tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
+            String[] args = {
+                    Long.toString(synchronizer.getId())
+            };
+            mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
         }
+        // case NEED_AUTH: Handle by caller
+        // default: No reset, refresh_token should still be valid
+
         return s;
     }
 

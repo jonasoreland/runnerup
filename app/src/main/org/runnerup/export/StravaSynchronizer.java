@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -40,12 +41,8 @@ import org.runnerup.export.util.StringWritable;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.workout.Sport;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -182,11 +179,13 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     }
 
+    @NonNull
     @Override
     public Intent getAuthIntent(AppCompatActivity activity) {
         return OAuth2Activity.getIntent(activity, this);
     }
 
+    @NonNull
     @Override
     public Status getAuthResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
@@ -232,6 +231,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.OK;
@@ -254,6 +254,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return s;
     }
 
+    @NonNull
     public Status refreshToken() {
         Status s;
 
@@ -348,6 +349,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
         return compressed;
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
         Status s = connect();
@@ -432,6 +434,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     /**
      * Strava processing
      */
+    @NonNull
     @Override
     public Status getExternalId(final SQLiteDatabase db, Status uploadStatus) {
         Status result = Status.ERROR;

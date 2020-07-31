@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,6 +151,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         isConnected = false;
     }
 
+    @NonNull
     @Override
     public Status connect() {
         Status s = Status.NEED_AUTH;
@@ -421,6 +424,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         }
     }
 
+    @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
         Status s;
@@ -519,6 +523,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return "";
     }
 
+    @NonNull
     @Override
     public Status listWorkouts(List<Pair<String, String>> list) {
         Status s;
