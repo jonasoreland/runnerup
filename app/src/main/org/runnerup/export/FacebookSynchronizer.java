@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -80,7 +82,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss.SSSZ", Locale.getDefault());
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     FacebookSynchronizer(Context context, SyncManager syncManager, PathSimplifier simplifier) {
         this.context = context;
@@ -136,6 +138,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -146,9 +149,11 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return PUBLIC_URL;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_facebook;}
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceFacebook; }
 
@@ -174,6 +179,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         }
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -203,7 +209,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 String authConfig = data.getStringExtra(DB.ACCOUNT.AUTH_CONFIG);
                 Uri uri = Uri.parse("https://keso?" + authConfig);
                 access_token = uri.getQueryParameter("access_token");
-                expire_time = Long.valueOf(uri.getQueryParameter("expires"));
+                expire_time = Long.parseLong(uri.getQueryParameter("expires"));
                 token_now = System.currentTimeMillis();
                 return Status.OK;
             } catch (Exception ex) {
@@ -252,8 +258,9 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 
@@ -287,7 +294,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         return s;
     }
 
-    private JSONObject createObj(URL url, Part<?> parts[]) throws Exception{
+    private JSONObject createObj(URL url, Part<?>[] parts) throws Exception{
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -321,7 +328,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
                 SyncHelper.URLEncode(access_token)));
         Part<StringWritable> payloadPart = new Part<>("object",
                 new StringWritable(obj.toString()));
-        Part<?> parts[] = {
+        Part<?>[] parts = {
                 themePart, payloadPart
         };
 
@@ -367,7 +374,7 @@ public class FacebookSynchronizer extends DefaultSynchronizer implements OAuth2S
         //            "message", new StringWritable(runObj.getString("comment"))));
         //}
 
-        Part<?> parts[] = new Part<?>[list.size()];
+        Part<?>[] parts = new Part<?>[list.size()];
         list.toArray(parts);
 
         URL url2 = new URL(sport.IsCycling() ? BIKE_ENDPOINT : RUN_ENDPOINT);

@@ -58,7 +58,6 @@
   <string name="Interval">Интервал</string>
   <string name="Lap">Круг</string>
   <string name="New_lap">Новый</string>
-  <string name="Next_lap">Следующий</string>
   <string name="Pause">Пауза</string>
   <string name="Stop">Остановить</string>
   <string name="Workout">Тренировка</string>
@@ -133,7 +132,6 @@
   <string name="Create_new_audio_cue_scheme">Создать голосовую схему</string>
   <string name="Yes">Да</string>
   <string name="Create">Создать</string>
-  <string name="No_way">Ни за что</string>
   <string name="No">Нет</string>
   <string name="Loading">Загрузка…</string>
   <string name="Saving">Сохранение</string>
@@ -233,8 +231,7 @@
   <string name="Activity_ready">Готово</string>
   <string name="Ready_to_start_running">Готов к старту!</string>
   <string name="Searching_for_GPS">Поиск спутников GPS</string>
-  <string name="Activity_ongoing">Продолжать</string>
-  <string name="RunnerUp_activity_started">Начал движение</string>
+    <string name="RunnerUp_activity_started">Начал движение</string>
   <string name="Low_HRM_battery_level">Низкий уровень заряда датчика HRM</string>
   <string name="High_HRM_battery_level">Высокий уровень заряда датчика HRM</string>
   <string name="Warning">Предупреждение</string>
@@ -274,7 +271,6 @@
   <string name="No_feed_to_show">Нет данных для отображения</string>
   <string name="Unused_currently">Устаревшие</string>
   <string name="Unknown">Неизвестно</string>
-  <string name="RunningFreeOnlinePasswordNotice">Примечание: Используй пароль \"secret key\" на SportTracks перед добавлением и синхронизацией</string>
   <string name="Recording">Настройка записи движения</string>
   <string name="Sensors">Настройка датчиков</string>
   <string name="Maintenance">Управление базой данных</string>

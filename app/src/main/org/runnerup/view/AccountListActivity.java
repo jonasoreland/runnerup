@@ -40,7 +40,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -76,24 +75,21 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        ListView listView = (ListView) findViewById(R.id.account_list);
+        ListView listView = findViewById(R.id.account_list);
 
         // button footer
         Button showDisabledBtn = new Button(this);
         showDisabledBtn.setTextAppearance(this, R.style.TextAppearance_AppCompat_Button);
         showDisabledBtn.setText(R.string.Show_disabled_accounts);
         showDisabledBtn.setBackgroundResource(0);
-        showDisabledBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mShowDisabled = !mShowDisabled;
-                if (mShowDisabled) {
-                    ((Button) view).setText(R.string.Hide_disabled_accounts);
-                } else {
-                    ((Button) view).setText(R.string.Show_disabled_accounts);
-                }
-                getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
+        showDisabledBtn.setOnClickListener(view -> {
+            mShowDisabled = !mShowDisabled;
+            if (mShowDisabled) {
+                ((Button) view).setText(R.string.Hide_disabled_accounts);
+            } else {
+                ((Button) view).setText(R.string.Show_disabled_accounts);
             }
+            getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
         });
         listView.addFooterView(showDisabledBtn);
 
@@ -116,9 +112,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home) {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -177,12 +172,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             view.setTag(synchronizer);
 
-            TextView sectionTitle = (TextView)view.findViewById(R.id.section_title);
-            ImageView accountIcon = (ImageView)view.findViewById(R.id.account_list_icon);
-            TextView accountIconText = (TextView)view.findViewById(R.id.account_list_icon_text);
-            TextView accountNameText = (TextView)view.findViewById(R.id.account_list_name);
-            SwitchCompat accountUploadBox = (SwitchCompat)view.findViewById(R.id.account_list_upload);
-            SwitchCompat accountFeedBox = (SwitchCompat)view.findViewById(R.id.account_list_feed);
+            TextView sectionTitle = view.findViewById(R.id.section_title);
+            ImageView accountIcon = view.findViewById(R.id.account_list_icon);
+            TextView accountIconText = view.findViewById(R.id.account_list_icon_text);
+            TextView accountNameText = view.findViewById(R.id.account_list_name);
+            SwitchCompat accountUploadBox = view.findViewById(R.id.account_list_upload);
+            SwitchCompat accountFeedBox = view.findViewById(R.id.account_list_feed);
 
             // category name
             int curPosition = cursor.getPosition();
@@ -240,22 +235,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             // upload box
             accountUploadBox.setTag(synchronizer);
             setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
-            accountUploadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1);
-                }
-            });
+            accountUploadBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1));
 
             // feed box
             accountFeedBox.setTag(synchronizer);
             setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
-            accountFeedBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-                    setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1);
-                }
-            });
+            accountFeedBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1));
 
             if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 accountUploadBox.setEnabled(true);
@@ -304,22 +289,19 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         if (val) {
             long bitval = (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
-                    + "\'");
+                    DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
+                    + "'");
         } else {
             long mask = ~(long) (1 << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
-                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = \'" + synchronizerName
-                    + "\'");
+                    DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
+                    + "'");
         }
     }
 
-    private final SyncManager.Callback callback = new SyncManager.Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            if (status == Synchronizer.Status.OK) {
-                startActivity(synchronizerName, false);
-            }
+    private final SyncManager.Callback callback = (synchronizerName, status) -> {
+        if (status == Status.OK) {
+            startActivity(synchronizerName, false);
         }
     };
 

@@ -36,12 +36,12 @@ import java.util.TimeZone;
 
 public class GPX {
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
     private KXmlSerializer mXML;
-    private SimpleDateFormat simpleDateFormat;
+    private final SimpleDateFormat simpleDateFormat;
     final private boolean mGarminExt; //Also Cluetrust
     private final boolean mAccuracyExtensions;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     public GPX(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this(mDB, true, false, simplifier);
@@ -130,7 +130,7 @@ public class GPX {
                 mXML.endTag("", "desc");
             }
 
-            exportLaps(activityId, startTime * 1000);
+            exportLaps(activityId);
             mXML.endTag("", "trk");
             mXML.endTag("", "gpx");
             mXML.flush();
@@ -144,7 +144,7 @@ public class GPX {
         }
     }
 
-    private void exportLaps(long activityId, long startTime) throws IOException {
+    private void exportLaps(long activityId) throws IOException {
         String[] lColumns = {
                 DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME,
                 DB.LAP.INTENSITY

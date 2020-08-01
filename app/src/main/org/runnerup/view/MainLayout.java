@@ -263,22 +263,19 @@ public class MainLayout extends TabActivity {
         }
     }
 
-    private final OnClickListener onRateClick = new OnClickListener() {
-        @Override
-        public void onClick(View arg0) {
-            try {
-                Uri uri = Uri.parse("market://details?id=" + getPackageName());
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+    private final OnClickListener onRateClick = arg0 -> {
+        try {
+            Uri uri = Uri.parse("market://details?id=" + getPackageName());
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     };
 
     private void whatsNew() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
-        WebView wv = (WebView) view.findViewById(R.id.web_view1);
+        WebView wv = view.findViewById(R.id.web_view1);
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Whats_new))
                 .setView(view)

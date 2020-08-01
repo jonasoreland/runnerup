@@ -31,6 +31,8 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
@@ -78,6 +80,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -93,9 +96,11 @@ public class FileSynchronizer extends DefaultSynchronizer {
                 + mPath;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_file;}
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.colorPrimary;}
 
@@ -112,8 +117,9 @@ public class FileSynchronizer extends DefaultSynchronizer {
             try {
                 mFormat = new FileFormats(config.getAsString(DB.ACCOUNT.FORMAT));
                 JSONObject tmp = new JSONObject(authConfig);
+                //noinspection ConstantConditions
                 mPath = tmp.optString(DB.ACCOUNT.URL, null);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath != null && mPath.startsWith(File.separator)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath.startsWith(File.separator)) {
                     // Migrate to use scooped storage
                     mPath = mPath.substring(mPath.lastIndexOf(File.separator));
                 }
@@ -124,6 +130,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -181,9 +188,9 @@ public class FileSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, final long mID) {
-        Status s = Status.ERROR;
+        Status s = connect();
         s.activityId = mID;
-        if ((s = connect()) != Status.OK) {
+        if (s != Status.OK) {
             return s;
         }
 
@@ -203,7 +210,6 @@ public class FileSynchronizer extends DefaultSynchronizer {
             }
 
             String fileBase = FileNameHelper.getExportFileName(startTime, sport.TapiriikType());
-            s = Status.OK;
             if (mFormat.contains(FileFormats.TCX)) {
                 OutputStream out = getOutputStream(fileBase + FileFormats.TCX.getValue(), ActivityProvider.TCX_MIME);
                 if (out == null) {

@@ -20,7 +20,6 @@ package org.runnerup.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -30,11 +29,11 @@ import android.widget.TextView;
 import org.runnerup.R;
 
 public class TitleSpinner extends LinearLayout implements SpinnerInterface {
-    SpinnerPresenter mPresenter;
-    LinearLayout mLayout;
-    TextView mLabel;
-    TextView mValue;
-    Spinner mSpinner;
+    final SpinnerPresenter mPresenter;
+    final LinearLayout mLayout;
+    final TextView mLabel;
+    final TextView mValue;
+    final Spinner mSpinner;
 
     public TitleSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -43,22 +42,17 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.title_spinner, this);
 
-        mLayout = (LinearLayout)findViewById(R.id.title_spinner);
-        mLabel = (TextView)findViewById(R.id.title);
-        mValue = (TextView)findViewById(R.id.value);
-        mSpinner = (Spinner)findViewById(R.id.spinner);
+        mLayout = findViewById(R.id.title_spinner);
+        mLabel = findViewById(R.id.title);
+        mValue = findViewById(R.id.value);
+        mSpinner = findViewById(R.id.spinner);
 
         mPresenter = new SpinnerPresenter(context, attrs, this);
     }
 
     @Override
     public void setOnClickSpinnerOpen() {
-        setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSpinner.performClick();
-            }
-        });
+        setViewOnClickListener(view -> mSpinner.performClick());
     }
 
     @Override

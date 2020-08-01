@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.SparseArray;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -102,6 +103,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -112,6 +114,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceEndomondo; }
 
@@ -127,9 +130,13 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         if (auth != null) {
             try {
                 JSONObject tmp = new JSONObject(auth);
+                //noinspection ConstantConditions
                 username = tmp.optString("username", null);
+                //noinspection ConstantConditions
                 password = tmp.optString("password", null);
+                //noinspection ConstantConditions
                 deviceId = tmp.optString("deviceId", null);
+                //noinspection ConstantConditions
                 authToken = tmp.optString("authToken", null);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -142,6 +149,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         return username != null && password != null && deviceId != null && authToken != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -244,7 +252,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         while ((s = in.readLine()) != null) {
             int c = s.indexOf('=');
             if (c == -1) {
-                obj.put("_" + Integer.toString(lineno), s);
+                obj.put("_" + lineno, s);
             } else {
                 obj.put(s.substring(0, c), s.substring(c + 1));
             }
@@ -256,8 +264,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
@@ -269,7 +277,7 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
             StringWriter writer = new StringWriter();
             tcx.export(mID, writer, summary);
 
-            String workoutId = deviceId + "-" + Long.toString(mID);
+            String workoutId = deviceId + "-" + mID;
             Log.e(getName(), "workoutId: " + workoutId);
 
             StringBuilder url = new StringBuilder()
@@ -343,8 +351,8 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status getFeed(FeedUpdater feedUpdater) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
 
@@ -439,9 +447,9 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
         if (!string.contains(" in ")) {
             // either time or distance specified
             if (string.contains("km") || string.contains("mi")) {
-                String dist[] = string.split(" ", 2);
+                String[] dist = string.split(" ", 2);
                 if (dist.length == 2) {
-                    double d = Double.valueOf(dist[0]);
+                    double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
                         d *= Formatter.km_meters;
                     else if (dist[1].contains("mi"))
@@ -450,23 +458,23 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 }
             } else {
                 boolean hms = string.matches("([0-9]+h:)?([0-9]{2}m:)?([0-9]{2}s)");
-                String time[] = string.replaceAll("[hms]", "").split(":");
+                String[] time = string.replaceAll("[hms]", "").split(":");
                 if (hms) {
                     long duration = 0;
                     long mul = 1;
                     for (int i = 0; i < time.length; i++) {
-                        duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+                        duration += (mul * Long.parseLong(time[time.length - 1 - i]));
                         mul = mul * 60;
                     }
                     c.put(DB.FEED.DURATION, duration);
                 }
             }
         } else {
-            String arr[] = string.split(" in ");
+            String[] arr = string.split(" in ");
             if (arr.length >= 1) {
-                String dist[] = arr[0].split(" ", 2);
+                String[] dist = arr[0].split(" ", 2);
                 if (dist.length == 2) {
-                    double d = Double.valueOf(dist[0]);
+                    double d = Double.parseDouble(dist[0]);
                     if (dist[1].contains("km"))
                         d *= Formatter.km_meters;
                     else if (dist[1].contains("mi"))
@@ -475,11 +483,11 @@ public class EndomondoSynchronizer extends DefaultSynchronizer {
                 }
             }
             if (arr.length >= 2) {
-                String time[] = arr[1].replaceAll("[hms]", "").split(":");
+                String[] time = arr[1].replaceAll("[hms]", "").split(":");
                 long duration = 0;
                 long mul = 1;
                 for (int i = 0; i < time.length; i++) {
-                    duration += (mul * Long.valueOf(time[time.length - 1 - i]));
+                    duration += (mul * Long.parseLong(time[time.length - 1 - i]));
                     mul = mul * 60;
                 }
                 c.put(DB.FEED.DURATION, duration);

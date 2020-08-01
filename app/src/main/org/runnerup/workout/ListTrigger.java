@@ -22,11 +22,11 @@ import java.util.ArrayList;
 
 public class ListTrigger extends Trigger {
 
-    private Scope scope;
-    private Dimension dimension;
+    private final Scope scope;
+    private final Dimension dimension;
 
     private int pos;
-    private ArrayList<Double> triggerTimes;
+    private final ArrayList<Double> triggerTimes;
 
     ListTrigger(Dimension d, Scope s, ArrayList<Double> triggerTimes){
         this.dimension = d;

@@ -33,8 +33,8 @@ class HRZonesListAdapter extends BaseAdapter {
     /**
 	 * 
 	 */
-    HRZones hrZones = null;
-    private LayoutInflater inflater = null;
+    final HRZones hrZones;
+    private final LayoutInflater inflater;
 
     public HRZonesListAdapter(Context ctx, LayoutInflater inflater) {
         super();
@@ -80,7 +80,7 @@ class HRZonesListAdapter extends BaseAdapter {
                     false);
         }
 
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         Object obj = getItem(position);
         if (obj != null)
             ret.setText(obj.toString());

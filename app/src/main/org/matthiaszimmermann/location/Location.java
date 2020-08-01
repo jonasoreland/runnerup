@@ -1,5 +1,7 @@
 package org.matthiaszimmermann.location;
 
+import androidx.annotation.NonNull;
+
 public class Location {
 	// TODO verify if this is meaningful (eg. if this is sufficient for cm accuracy on earth)
 	private static final double EPSILON = 0.00000001;
@@ -75,6 +77,7 @@ public class Location {
 
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "(" + getLatitude() + "," + getLongitude() + ")";

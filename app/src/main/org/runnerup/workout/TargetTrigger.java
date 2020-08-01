@@ -21,6 +21,8 @@ import android.util.Log;
 
 import org.runnerup.BuildConfig;
 
+import java.util.Arrays;
+
 
 public class TargetTrigger extends Trigger {
 
@@ -30,22 +32,22 @@ public class TargetTrigger extends Trigger {
     private int graceCount = 30; //
     @SuppressWarnings("FieldCanBeLocal")
     private final int initialGrace = 20;
-    private int minGraceCount = 30; //
+    private final int minGraceCount; //
 
     Scope scope = Scope.STEP;
-    private Dimension dimension = Dimension.PACE;
+    private Dimension dimension;
 
     Range range = null;
 
     private int cntMeasures = 0;
-    private double[] measure = null;
+    private final double[] measure;
     @SuppressWarnings("FieldCanBeLocal")
-    private int skip_values = 1;
-    private double[] sort_measure = null;
+    private final int skip_values;
+    private final double[] sort_measure;
     private double lastTimestamp = 0;
 
-    private double[] measure_time = null;
-    private double[] measure_distance = null;
+    private final double[] measure_time;
+    private final double[] measure_distance;
 
     /**
      * cache computing of median
@@ -168,9 +170,7 @@ public class TargetTrigger extends Trigger {
     }
 
     private void reset() {
-        for (int i = 0; i < measure.length; i++) {
-            measure[i] = 0;
-        }
+        Arrays.fill(measure, 0);
         inited = false;
         cntMeasures = 0;
         graceCount = initialGrace;

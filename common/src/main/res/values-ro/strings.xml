@@ -59,7 +59,6 @@
   <string name="Interval">Interval</string>
   <string name="Lap">Rundă</string>
   <string name="New_lap">Runda nouă</string>
-  <string name="Next_lap">Runda următoară</string>
   <string name="Pause">Pauză</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Antrenament</string>
@@ -149,7 +148,6 @@
   <string name="Create_new_audio_cue_scheme">Creează o nouă schemă audio cue</string>
   <string name="Yes">Da</string>
   <string name="Create">Creează</string>
-  <string name="No_way">În nici un caz</string>
   <string name="No">Nu</string>
   <string name="Loading">Se încarcă</string>
   <string name="Saving">Se salvează</string>
@@ -262,8 +260,7 @@
   <string name="Activity_ready">Activitate gata</string>
   <string name="Ready_to_start_running">Gata să începi să alergi!</string>
   <string name="Searching_for_GPS">Se caută GPS</string>
-  <string name="Activity_ongoing">Activitate în derulare</string>
-  <string name="RunnerUp_activity_started">Activitatea RunnerUp începută</string>
+    <string name="RunnerUp_activity_started">Activitatea RunnerUp începută</string>
   <string name="Low_HRM_battery_level">Nivel redus al bateriei MRC</string>
   <string name="High_HRM_battery_level">Nivel ridicat al bateriei MRC</string>
   <string name="Warning">Aviz</string>
@@ -304,7 +301,6 @@
   <string name="No_feed_to_show">Nici un feed de afișat</string>
   <string name="Unused_currently">Neutilizat în prezent</string>
   <string name="Unknown">Necunoscut</string>
-  <string name="RunningFreeOnlinePasswordNotice">Notă: Utilizați „cheia secretă” ca parolă setată pe site-ul Web la Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Se înregistrează</string>
   <string name="Sensors">Senzori</string>
   <string name="Maintenance">Întreținere</string>

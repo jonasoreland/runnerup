@@ -17,10 +17,8 @@
 package org.runnerup.tracker.component;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 
-import org.runnerup.R;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
@@ -30,7 +28,6 @@ import java.util.HashMap;
 public class TrackerTTS extends DefaultTrackerComponent {
 
     private TextToSpeech tts;
-    private Context context;
 
     private static final String NAME = "TTS";
 
@@ -41,16 +38,12 @@ public class TrackerTTS extends DefaultTrackerComponent {
 
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
-        this.context = context;
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    callback.run(TrackerTTS.this, ResultCode.RESULT_OK);
-                }
-                else {
-                    callback.run(TrackerTTS.this, ResultCode.RESULT_ERROR);
-                }
+        tts = new TextToSpeech(context, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                callback.run(TrackerTTS.this, ResultCode.RESULT_OK);
+            }
+            else {
+                callback.run(TrackerTTS.this, ResultCode.RESULT_ERROR);
             }
         });
         return ResultCode.RESULT_PENDING;

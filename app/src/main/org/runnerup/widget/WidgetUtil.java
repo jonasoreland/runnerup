@@ -57,8 +57,6 @@ public class WidgetUtil {
         return txtTab;
     }
 
-    @SuppressWarnings("deprecation")
-    
     public static void setBackground(View v, Drawable d) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             v.setBackgroundDrawable(d);

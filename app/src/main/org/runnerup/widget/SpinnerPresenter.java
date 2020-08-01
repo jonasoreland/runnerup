@@ -29,7 +29,6 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
@@ -64,16 +63,16 @@ public class SpinnerPresenter {
         TS_NUMBERPICKER
     }
 
-    private Context mContext;
+    private final Context mContext;
     private String mKey = null;
-    private SpinnerInterface mSpin;
+    private final SpinnerInterface mSpin;
     private int mInputType = 0;
     private SpinnerInterface.OnSetValueListener mSetValueListener = null;
     private Type mType;
     private boolean mFirstSetValue = true;
-    private int values[] = null;
+    private int[] values = null;
     private long mCurrValue = -1;
-    private CharSequence mLabel;
+    private final CharSequence mLabel;
 
     SpinnerPresenter(Context context, AttributeSet attrs, SpinnerInterface spinnerInterface) { //todo duration + other pickers don't appear to work
         mContext = context;
@@ -144,40 +143,33 @@ public class SpinnerPresenter {
         setValueWithoutSave(defaultValue);
 
         final EditText edit = new EditText(context, attrs);
-        mSpin.setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edit.setText(mSpin.getViewValueText());
-                edit.setInputType(mInputType);
-                edit.setMinimumHeight(48);
-                edit.setMinimumWidth(148);
-                if(edit.getParent() != null) {
-                    ((LinearLayout)edit.getParent()).removeView(edit);
-                }
+        mSpin.setViewOnClickListener(v -> {
+            edit.setText(mSpin.getViewValueText());
+            edit.setInputType(mInputType);
+            edit.setMinimumHeight(48);
+            edit.setMinimumWidth(148);
+            if(edit.getParent() != null) {
+                ((LinearLayout)edit.getParent()).removeView(edit);
+            }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(edit);
+            final LinearLayout layout = createLayout(context);
+            layout.addView(edit);
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), (dialog, whichButton) -> {
                         setValue(edit.getText().toString());
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(true);
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                    })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 
@@ -237,43 +229,38 @@ public class SpinnerPresenter {
 
         final DatePicker datePicker = new DatePicker(context, attrs);
 
-        mSpin.setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(datePicker.getParent() != null) {
-                    ((LinearLayout)datePicker.getParent()).removeView(datePicker);
+        mSpin.setViewOnClickListener(v -> {
+            if(datePicker.getParent() != null) {
+                ((LinearLayout)datePicker.getParent()).removeView(datePicker);
+            }
+
+            final LinearLayout layout = createLayout(context);
+            layout.addView(datePicker);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setValue(getValue(datePicker));
+                    dialog.dismiss();
+                    layout.removeView(datePicker);
+                    onClose(true);
                 }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(datePicker);
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(datePicker));
-                        dialog.dismiss();
-                        layout.removeView(datePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(DatePicker dp) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
-                        DateFormat df = android.text.format.DateFormat.getDateFormat(context);
-                        return df.format(c.getTime());
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                private String getValue(DatePicker dp) {
+                    Calendar c = Calendar.getInstance();
+                    c.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
+                    DateFormat df = android.text.format.DateFormat.getDateFormat(context);
+                    return df.format(c.getTime());
+                }
+            })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(datePicker);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 
@@ -286,44 +273,39 @@ public class SpinnerPresenter {
 
         final TimePicker timePicker = new TimePicker(context, attrs);
 
-        mSpin.setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timePicker.setIs24HourView(true);
-                if(timePicker.getParent() != null) {
-                    ((LinearLayout)timePicker.getParent()).removeView(timePicker);
+        mSpin.setViewOnClickListener(v -> {
+            timePicker.setIs24HourView(true);
+            if(timePicker.getParent() != null) {
+                ((LinearLayout)timePicker.getParent()).removeView(timePicker);
+            }
+
+            final LinearLayout layout = createLayout(context);
+            layout.addView(timePicker);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setValue(getValue(timePicker));
+                    dialog.dismiss();
+                    layout.removeView(timePicker);
+                    onClose(true);
                 }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(timePicker);
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(timePicker));
-                        dialog.dismiss();
-                        layout.removeView(timePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(TimePicker dp) {
-                        Calendar c = Calendar.getInstance();
-                        c.set(2000,01,01, dp.getCurrentHour(), dp.getCurrentMinute());
-                        DateFormat df = android.text.format.DateFormat.getTimeFormat(mContext);
-                        return df.format(c.getTime());
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                private String getValue(TimePicker dp) {
+                    Calendar c = Calendar.getInstance();
+                    c.set(2000,1,1, dp.getCurrentHour(), dp.getCurrentMinute());
+                    DateFormat df = android.text.format.DateFormat.getTimeFormat(mContext);
+                    return df.format(c.getTime());
+                }
+            })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(timePicker);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 
@@ -331,42 +313,37 @@ public class SpinnerPresenter {
                                      CharSequence defaultValue) {
         setValueWithoutSave(defaultValue);
 
-        mSpin.setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final DurationPicker picker = new DurationPicker(context, attrs);
-                picker.setEpochTime(mCurrValue);
-                if(picker.getParent() != null) {
-                    ((LinearLayout)picker.getParent()).removeView(picker);
+        mSpin.setViewOnClickListener(v -> {
+            final DurationPicker picker = new DurationPicker(context, attrs);
+            picker.setEpochTime(mCurrValue);
+            if(picker.getParent() != null) {
+                ((LinearLayout)picker.getParent()).removeView(picker);
+            }
+
+            final LinearLayout layout = createLayout(context);
+            layout.addView(picker);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setValue(getPickerValue());
+                    dialog.dismiss();
+                    layout.removeView(picker);
+                    onClose(true);
                 }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(picker);
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getPickerValue());
-                        dialog.dismiss();
-                        layout.removeView(picker);
-                        onClose(true);
-                    }
-
-                    private String getPickerValue() {
-                        return DateUtils.formatElapsedTime(picker.getEpochTime());
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                private String getPickerValue() {
+                    return DateUtils.formatElapsedTime(picker.getEpochTime());
+                }
+            })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(picker);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 
@@ -376,41 +353,36 @@ public class SpinnerPresenter {
 
         final DistancePicker distancePicker = new DistancePicker(context, attrs);
 
-        mSpin.setViewOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                distancePicker.setDistance(mCurrValue);
-                if(distancePicker.getParent() != null) {
-                    ((LinearLayout)distancePicker.getParent()).removeView(distancePicker);
+        mSpin.setViewOnClickListener(v -> {
+            distancePicker.setDistance(mCurrValue);
+            if(distancePicker.getParent() != null) {
+                ((LinearLayout)distancePicker.getParent()).removeView(distancePicker);
+            }
+
+            final LinearLayout layout = createLayout(context);
+            layout.addView(distancePicker);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setValue(getValue(distancePicker));
+                    dialog.dismiss();
+                    layout.removeView(distancePicker);
+                    onClose(true);
                 }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(distancePicker);
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(distancePicker));
-                        dialog.dismiss();
-                        layout.removeView(distancePicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(DistancePicker dp) {
-                        return Long.toString(dp.getDistance());
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                private String getValue(DistancePicker dp) {
+                    return Long.toString(dp.getDistance());
+                }
+            })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(distancePicker);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 
@@ -420,41 +392,36 @@ public class SpinnerPresenter {
         final NumberPicker numberPicker = new NumberPicker(context, attrs);
         numberPicker.setOrientation(VERTICAL);
 
-        mSpin.setViewOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberPicker.setValue((int) mCurrValue);
-                if(numberPicker.getParent() != null) {
-                    ((LinearLayout)numberPicker.getParent()).removeView(numberPicker);
+        mSpin.setViewOnClickListener(v -> {
+            numberPicker.setValue((int) mCurrValue);
+            if(numberPicker.getParent() != null) {
+                ((LinearLayout)numberPicker.getParent()).removeView(numberPicker);
+            }
+
+            final LinearLayout layout = createLayout(context);
+            layout.addView(numberPicker);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+                    .setTitle(mLabel)
+                    .setView(layout)
+                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    setValue(getValue(numberPicker));
+                    dialog.dismiss();
+                    layout.removeView(numberPicker);
+                    onClose(true);
                 }
 
-                final LinearLayout layout = createLayout(context);
-                layout.addView(numberPicker);
-
-                AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                        .setTitle(mLabel)
-                        .setView(layout)
-                        .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        setValue(getValue(numberPicker));
-                        dialog.dismiss();
-                        layout.removeView(numberPicker);
-                        onClose(true);
-                    }
-
-                    private String getValue(NumberPicker dp) {
-                        return Integer.toString(dp.getValue());
-                    }
-                })
-                        .setNegativeButton(context.getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                private String getValue(NumberPicker dp) {
+                    return Integer.toString(dp.getValue());
+                }
+            })
+                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(numberPicker);
                         onClose(false);
-                    }
-                });
-                alert.show();
-            }
+                    });
+            alert.show();
         });
     }
 

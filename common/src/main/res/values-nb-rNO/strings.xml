@@ -58,7 +58,6 @@
   <string name="Interval">Intervall</string>
   <string name="Lap">Runde</string>
   <string name="New_lap">Ny runde</string>
-  <string name="Next_lap">Neste runde</string>
   <string name="Pause">Pause</string>
   <string name="Stop">Stopp</string>
   <string name="Workout">Treningsøkt</string>
@@ -133,7 +132,6 @@
   <string name="Create_new_audio_cue_scheme">Lag nytt opplegg for lydinstrukser</string>
   <string name="Yes">Ja</string>
   <string name="Create">Lag</string>
-  <string name="No_way">Absolutt ikke</string>
   <string name="No">Nei</string>
   <string name="Loading">Laster…</string>
   <string name="Saving">Lagrer</string>
@@ -233,8 +231,7 @@
   <string name="Activity_ready">Aktivitet klar</string>
   <string name="Ready_to_start_running">Klar til å springe!</string>
   <string name="Searching_for_GPS">Søker etter GPS</string>
-  <string name="Activity_ongoing">Aktivitet pågår</string>
-  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startet</string>
+    <string name="RunnerUp_activity_started">RunnerUp-aktivitet startet</string>
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>
@@ -274,7 +271,6 @@
   <string name="No_feed_to_show">Ingen strøm å vise</string>
   <string name="Unused_currently">For tiden ikke i bruk.</string>
   <string name="Unknown">Ukjent</string>
-  <string name="RunningFreeOnlinePasswordNotice">Merk: Bruk \"Hemmelig nøkkel\" som passord satt på nettsider under Legg til &gt; synkroniser trening &gt; SportTracks.</string>
   <string name="Recording">Opptak</string>
   <string name="Sensors">Sensorer</string>
   <string name="Maintenance">Vedlikehold</string>

@@ -28,6 +28,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -56,7 +57,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     private long id = 0;
     private String username = null;
     private String password = null;
-    private String postUrl;
+    private final String postUrl;
     private final Formatter formatter;
     private long mTimeLastLog;
 
@@ -74,11 +75,13 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceRunnerUpLive;}
 
@@ -94,7 +97,9 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         if (auth != null) {
             try {
                 JSONObject tmp = new JSONObject(auth);
+                //noinspection ConstantConditions
                 username = tmp.optString("username", null);
+                //noinspection ConstantConditions
                 password = tmp.optString("password", null);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -107,6 +112,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
         return username != null && password != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -135,9 +141,6 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
 
         Status s = Status.NEED_AUTH;
         s.authMethod = Synchronizer.AuthMethod.USER_PASS;
-        if (username == null || password == null) {
-            return s;
-        }
 
         return s;
     }
@@ -189,7 +192,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                 .putExtra(
                 LiveService.PARAM_IN_ELAPSED_TIME,
                 formatter.formatElapsedTime(Formatter.Format.TXT_LONG,
-                        Math.round(elapsedTimeMillis / 1000)))
+                        Math.round(elapsedTimeMillis / 1000.0)))
                 .putExtra(
                 LiveService.PARAM_IN_PACE,
                 formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, elapsedTimeMillis == 0 ? null :

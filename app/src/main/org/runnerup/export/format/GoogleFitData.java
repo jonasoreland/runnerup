@@ -269,7 +269,7 @@ public class GoogleFitData {
         ArrayList<String> pColumns = new ArrayList<>();
         pColumns.add("MIN(" + DB.LOCATION.TIME + ") AS MIN");
         pColumns.add("MAX(" + DB.LOCATION.TIME + ")");
-        Cursor minMaxTime = getDB().query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]), DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
+        Cursor minMaxTime = getDB().query(DB.LOCATION.TABLE, pColumns.toArray(new String[0]), DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         minMaxTime.moveToFirst();
 
         pColumns = new ArrayList<>();
@@ -279,7 +279,7 @@ public class GoogleFitData {
             pColumns.add(field.getColumn());
         }
 
-        Cursor cursor = getDB().query(DB.LOCATION.TABLE, pColumns.toArray(new String[pColumns.size()]), DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
+        Cursor cursor = getDB().query(DB.LOCATION.TABLE, pColumns.toArray(new String[0]), DB.LOCATION.ACTIVITY + " = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
         long startTime = minMaxTime.getLong(0) * MICRO_TO_NANOS;
@@ -338,7 +338,7 @@ public class GoogleFitData {
             pColumns.add(field.getColumn());
         }
 
-        Cursor cursor = getDB().query(DB.ACTIVITY.TABLE, pColumns.toArray(new String[pColumns.size()]), "_id = " + activityId, null, null, null, null);
+        Cursor cursor = getDB().query(DB.ACTIVITY.TABLE, pColumns.toArray(new String[0]), "_id = " + activityId, null, null, null, null);
         cursor.moveToFirst();
 
         //time as nanos

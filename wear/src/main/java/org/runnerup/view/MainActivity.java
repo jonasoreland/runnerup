@@ -58,14 +58,14 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pager = (GridViewPager) findViewById(R.id.pager);
+        pager = findViewById(R.id.pager);
         FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getFragmentManager());
         pager.setAdapter(pageAdapter);
 
-        LinearLayout verticalDotsPageIndicator = (LinearLayout) findViewById(R.id.vert_page_indicator);
+        LinearLayout verticalDotsPageIndicator = findViewById(R.id.vert_page_indicator);
         MyDotsPageIndicator dot2 = new MyDotsPageIndicator(verticalDotsPageIndicator);
 
-        DotsPageIndicator dotsPageIndicator = (DotsPageIndicator) findViewById(R.id.page_indicator);
+        DotsPageIndicator dotsPageIndicator = findViewById(R.id.page_indicator);
         dotsPageIndicator.setPager(pager);
         dotsPageIndicator.setDotFadeWhenIdle(false);
         dotsPageIndicator.setDotFadeOutDelay(1000 * 3600 * 24);

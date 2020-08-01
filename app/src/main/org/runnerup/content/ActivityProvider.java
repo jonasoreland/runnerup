@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ActivityProvider extends ContentProvider {
@@ -103,18 +104,18 @@ public class ActivityProvider extends ContentProvider {
                 switch (i) {
                     case 0:
                     default:
-                        path = ctx.getExternalCacheDir();
+                        path = Objects.requireNonNull(ctx).getExternalCacheDir();
                         break;
                     case 1:
-                        path = ctx.getExternalFilesDir("tcx");
+                        path = Objects.requireNonNull(ctx).getExternalFilesDir("tcx");
                         break;
                     case 2:
-                        path = ctx.getCacheDir();
+                        path = Objects.requireNonNull(ctx).getCacheDir();
                         break;
                 }
                 @SuppressWarnings("ConstantConditions") final File file = new File(path.getAbsolutePath() + File.separator + name);
                 final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-                Log.e(getClass().getName(), Integer.toString(i) + ": putting cache file in: "
+                Log.e(getClass().getName(), i + ": putting cache file in: "
                         + file.getAbsolutePath());
                 //noinspection Convert2Diamond
                 return new Pair<File, OutputStream>(file, out);
@@ -155,32 +156,42 @@ public class ActivityProvider extends ContentProvider {
                 PathSimplifier simplifier = PathSimplifier.getPathSimplifierForExport(getContext());
 
                 try {
-                    if (res == TCX) {
-                        TCX tcx = new TCX(mDB, simplifier);
-                        tcx.export(activityId, new OutputStreamWriter(out.second));
-                        Log.e(getClass().getName(), "export tcx");
-                    } else if (res == GPX) {
-                        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-                        //The data must exist if log, use the log option as a possibility to "deactivate" too
-                        boolean extraData = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
-                        GPX gpx = new GPX(mDB, true, extraData, simplifier);
-                        gpx.export(activityId, new OutputStreamWriter(out.second));
-                        Log.e(getClass().getName(), "export gpx");
-                    } else if (res == NIKE) {
-                        NikeXML xml = new NikeXML(mDB, simplifier);
-                        xml.export(activityId, new OutputStreamWriter(out.second));
-                    } else if (res == MAPS) {
-                        GoogleStaticMap map = new GoogleStaticMap(mDB, simplifier);
-                        String str = map.export(activityId, 2000);
-                        out.second.write(str.getBytes());
-                    } else if (res == FACEBOOK_COURSE) {
-                        FacebookCourse map = new FacebookCourse(getContext(), mDB, simplifier);
-                        final boolean includeMap = true;
-                        String str = map.export(activityId, includeMap, null).toString();
-                        out.second.write(str.getBytes());
-                    } else if (res == RUNKEEPER) {
-                        RunKeeper map = new RunKeeper(mDB, simplifier);
-                        map.export(activityId, new OutputStreamWriter(out.second));
+                    switch (res) {
+                        case TCX:
+                            TCX tcx = new TCX(mDB, simplifier);
+                            tcx.export(activityId, new OutputStreamWriter(out.second));
+                            Log.e(getClass().getName(), "export tcx");
+                            break;
+                        case GPX:
+                            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+                            //The data must exist if log, use the log option as a possibility to "deactivate" too
+                            boolean extraData = prefs.getBoolean(this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy), false);
+                            GPX gpx = new GPX(mDB, true, extraData, simplifier);
+                            gpx.export(activityId, new OutputStreamWriter(out.second));
+                            Log.e(getClass().getName(), "export gpx");
+                            break;
+                        case NIKE:
+                            NikeXML xml = new NikeXML(mDB, simplifier);
+                            xml.export(activityId, new OutputStreamWriter(out.second));
+                            break;
+                        case MAPS: {
+                            GoogleStaticMap map = new GoogleStaticMap(mDB, simplifier);
+                            String str = map.export(activityId, 2000);
+                            out.second.write(str.getBytes());
+                            break;
+                        }
+                        case FACEBOOK_COURSE: {
+                            FacebookCourse map = new FacebookCourse(getContext(), mDB, simplifier);
+                            final boolean includeMap = true;
+                            String str = map.export(activityId, includeMap, null).toString();
+                            out.second.write(str.getBytes());
+                            break;
+                        }
+                        case RUNKEEPER: {
+                            RunKeeper map = new RunKeeper(mDB, simplifier);
+                            map.export(activityId, new OutputStreamWriter(out.second));
+                            break;
+                        }
                     }
                     out.second.flush();
                     out.second.close();

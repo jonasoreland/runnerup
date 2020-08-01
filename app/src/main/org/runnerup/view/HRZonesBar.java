@@ -67,7 +67,7 @@ public class HRZonesBar extends View {
 
         //calculate bar height and chart offset
         AppCompatActivity activity = (AppCompatActivity) getContext();
-        LinearLayout buttons = (LinearLayout)activity.findViewById(R.id.buttons);
+        LinearLayout buttons = activity.findViewById(R.id.buttons);
 
         int actualHeight = getHeight() - buttons.getHeight();
         float calculatedBarHeight = (actualHeight - 2*borderSize - (hrzData.length-1) * separatorSize)/hrzData.length; // Height of the bar
@@ -125,7 +125,9 @@ public class HRZonesBar extends View {
 
             //draw actual values and bars
             if(calculatedBarHeight > minBarHeight) {
+                //noinspection IntegerDivisionInFloatingPointContext
                 canvas.drawText(zoneName, zoneOffset, topOffset + (i+1) * borderSize + calculatedBarHeight * (i + 1) - fontSize / 2, fontPaint);
+                //noinspection IntegerDivisionInFloatingPointContext
                 canvas.drawText(percent + "%", percentOffset, topOffset + (i+1) * borderSize + calculatedBarHeight * (i + 1) - fontSize / 2, fontPaint);
             }
 

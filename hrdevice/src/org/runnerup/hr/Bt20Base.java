@@ -204,12 +204,9 @@ public abstract class Bt20Base extends BtHRBase {
 
         mIsScanning = true;
 
-        hrClientHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
-                publishDevice(list);
-            }
+        hrClientHandler.post(() -> {
+            Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
+            publishDevice(list);
         });
     }
 
@@ -223,13 +220,7 @@ public abstract class Bt20Base extends BtHRBase {
             BluetoothDevice dev = list.iterator().next();
             list.remove(dev);
             hrClient.onScanResult(createDeviceRef(getProviderName(), dev));
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    publishDevice(list);
-                }
-            });
+            hrClientHandler.post(() -> publishDevice(list));
         }
     }
 
@@ -259,19 +250,15 @@ public abstract class Bt20Base extends BtHRBase {
         cancelThreads();
 
         if (hrClient != null) {
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (mIsConnecting && hrClient != null) {
-                        // Start connected thread...
-                        connectedThread = new ConnectedThread(bluetoothDevice, btDeviceName,
-                                bluetoothSocket);
-                        connectedThread.start();
-                    } else {
-                        log("closeSocket");
-                        closeSocket(bluetoothSocket);
-                    }
+            hrClientHandler.post(() -> {
+                if (mIsConnecting && hrClient != null) {
+                    // Start connected thread...
+                    connectedThread = new ConnectedThread(bluetoothDevice, btDeviceName,
+                            bluetoothSocket);
+                    connectedThread.start();
+                } else {
+                    log("closeSocket");
+                    closeSocket(bluetoothSocket);
                 }
             });
         } else {
@@ -305,22 +292,18 @@ public abstract class Bt20Base extends BtHRBase {
         log("reportConnected(" + result + ") mIsConnecting: " + mIsConnecting
                 + ", mIsConnected: " + mIsConnected + ", hrClient: " + hrClient);
         if (hrClient != null) {
-            hrClientHandler.post(new Runnable() {
+            hrClientHandler.post(() -> {
+                boolean reset = !result;
+                if (mIsConnecting && hrClient != null) {
+                    mIsConnected = result;
+                    mIsConnecting = false;
+                    hrClient.onConnectResult(result);
+                } else {
+                    reset = true;
+                }
 
-                @Override
-                public void run() {
-                    boolean reset = !result;
-                    if (mIsConnecting && hrClient != null) {
-                        mIsConnected = result;
-                        mIsConnecting = false;
-                        hrClient.onConnectResult(result);
-                    } else {
-                        reset = true;
-                    }
-
-                    if (reset) {
-                        Bt20Base.this.reset();
-                    }
+                if (reset) {
+                    Bt20Base.this.reset();
                 }
             });
         }
@@ -473,7 +456,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         private void readHR() {
-            Integer hr[] = new Integer[1];
+            Integer[] hr = new Integer[1];
             final int frameSize = getFrameSize();
             byte[] buffer = new byte[2 * frameSize];
             int bytesInBuffer = 0;
@@ -553,17 +536,13 @@ public abstract class Bt20Base extends BtHRBase {
     private void reportDisconnected(@SuppressWarnings("SameParameterValue") final boolean ok) {
         log("reportDisconnect(" + ok + ")");
         if (hrClientHandler != null) {
-            hrClientHandler.post(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (hrClient == null) {
-                        log("reportDisconnect() hrClient == null");
-                        return;
-                    }
-
-                    hrClient.onDisconnectResult(ok);
+            hrClientHandler.post(() -> {
+                if (hrClient == null) {
+                    log("reportDisconnect() hrClient == null");
+                    return;
                 }
+
+                hrClient.onDisconnectResult(ok);
             });
         } else {
             log("reportDisconnect() hrClientHandler == null");
@@ -598,7 +577,7 @@ public abstract class Bt20Base extends BtHRBase {
 
         public abstract int parseBuffer(byte[] buffer);
 
-        public abstract int findNextAlignment(byte buffer[]);
+        public abstract int findNextAlignment(byte[] buffer);
     }
 
     protected abstract int getFrameSize();
@@ -669,7 +648,7 @@ public abstract class Bt20Base extends BtHRBase {
             return -1;
         }
 
-        private static int calcCrc8(byte buffer[], @SuppressWarnings("SameParameterValue") int start, @SuppressWarnings("SameParameterValue") int length) {
+        private static int calcCrc8(byte[] buffer, @SuppressWarnings("SameParameterValue") int start, @SuppressWarnings("SameParameterValue") int length) {
             int crc = 0x0;
 
             for (int i = start; i < (start + length); i++) {
@@ -710,7 +689,7 @@ public abstract class Bt20Base extends BtHRBase {
             return 16;
         }
 
-        private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+        private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
             if (bytesInBuffer < pos + 4)
                 return false;
 
@@ -739,7 +718,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         @Override
-        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
             hrVal[0] = null;
             for (int i = 0; i < bytesInBuffer; i++) {
                 if (startOfMessage(buffer, bytesInBuffer, i)) {
@@ -777,7 +756,7 @@ public abstract class Bt20Base extends BtHRBase {
             return FRAME_SIZE;
         }
 
-        private boolean startOfMessage(byte buffer[], int bytesInBuffer, int pos) {
+        private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
             if (bytesInBuffer < pos + FRAME_SIZE)
                 return false;
 
@@ -803,7 +782,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         @Override
-        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer hrVal[]) {
+        public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
             hrVal[0] = null;
             for (int i = 0; i < bytesInBuffer; i++) {
                 if (startOfMessage(buffer, bytesInBuffer, i)) {

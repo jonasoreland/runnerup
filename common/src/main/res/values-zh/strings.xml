@@ -59,7 +59,6 @@
   <string name="Interval">间隔</string>
   <string name="Lap">分段</string>
   <string name="New_lap">新的分段</string>
-  <string name="Next_lap">下一分段</string>
   <string name="Pause">暂停</string>
   <string name="Stop">停止</string>
   <string name="Workout">训练</string>
@@ -149,7 +148,6 @@
   <string name="Create_new_audio_cue_scheme">创建语音提示方案</string>
   <string name="Yes">是的</string>
   <string name="Create">创建</string>
-  <string name="No_way">不要了</string>
   <string name="No">不要</string>
   <string name="Loading">加载中…</string>
   <string name="Saving">保存中</string>
@@ -262,8 +260,7 @@
   <string name="Activity_ready">活动准备好了</string>
   <string name="Ready_to_start_running">准备开始跑步!</string>
   <string name="Searching_for_GPS">搜索GPS中</string>
-  <string name="Activity_ongoing">运动开始</string>
-  <string name="RunnerUp_activity_started">RunnerUp运动已经开始</string>
+    <string name="RunnerUp_activity_started">RunnerUp运动已经开始</string>
   <string name="Low_HRM_battery_level">心率设备低电量</string>
   <string name="High_HRM_battery_level">心率设备高电量</string>
   <string name="Warning">警告</string>
@@ -304,7 +301,6 @@
   <string name="No_feed_to_show">No feed show</string>
   <string name="Unused_currently">当前没有用</string>
   <string name="Unknown">未知</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: Use the \"secret key\" as password set on website under Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">记录</string>
   <string name="Sensors">传感器</string>
   <string name="Maintenance">维护</string>

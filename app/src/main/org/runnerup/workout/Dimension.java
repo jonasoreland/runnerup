@@ -38,8 +38,8 @@ public enum Dimension {
     // TODO
     public static final boolean SPEED_CUE_ENABLED = true;
 
-    int value = 0;
-    int textId = 0;
+    final int value;
+    final int textId;
 
     Dimension(int val, int textId) {
         this.value = val;

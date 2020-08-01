@@ -22,7 +22,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.Pair;
@@ -30,12 +30,10 @@ import android.util.Pair;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -202,13 +200,9 @@ public class TrackerWear extends DefaultTrackerComponent
                         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).
 
                                 setResultCallback(
-                                        new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-
-                                            @Override
-                                            public void onResult (@NonNull NodeApi.GetConnectedNodesResult nodes){
-                                                for (Node node : nodes.getNodes()) {
-                                                    onPeerConnected(node);
-                                                }
+                                        nodes -> {
+                                            for (Node node : nodes.getNodes()) {
+                                                onPeerConnected(node);
                                             }
                                         }
 
@@ -219,12 +213,7 @@ public class TrackerWear extends DefaultTrackerComponent
                     public void onConnectionSuspended(int cause) {
                     }
                 })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult result) {
-                        callback.run(TrackerWear.this, ResultCode.RESULT_ERROR);
-                    }
-                })
+                .addOnConnectionFailedListener(result -> callback.run(TrackerWear.this, ResultCode.RESULT_ERROR))
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
@@ -235,15 +224,12 @@ public class TrackerWear extends DefaultTrackerComponent
         Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
                 .scheme(WEAR_URI_SCHEME).path(Wear.Path.WEAR_NODE_ID).build())
                 .setResultCallback(
-                        new ResultCallback<DataItemBuffer>() {
-                            @Override
-                            public void onResult(@NonNull DataItemBuffer dataItems) {
-                                for (DataItem dataItem : dataItems) {
-                                    wearNode = dataItem.getUri().getHost();
-                                    Log.e(getName(), "getDataItem => wearNode:" + wearNode);
-                                }
-                                dataItems.release();
+                        dataItems -> {
+                            for (DataItem dataItem : dataItems) {
+                                wearNode = dataItem.getUri().getHost();
+                                Log.e(getName(), "getDataItem => wearNode:" + wearNode);
                             }
+                            dataItems.release();
                         });
     }
 
@@ -287,13 +273,10 @@ public class TrackerWear extends DefaultTrackerComponent
     private void setData(String path, Bundle b) {
         Wearable.DataApi.putDataItem(mGoogleApiClient,
                 PutDataRequest.create(path).setData(DataMap.fromBundle(b).toByteArray()))
-                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                    @Override
-                    public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
-                        if (!dataItemResult.getStatus().isSuccess()) {
-                            Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
-                                    "status code: " + dataItemResult.getStatus().getStatusCode());
-                        }
+                .setResultCallback(dataItemResult -> {
+                    if (!dataItemResult.getStatus().isSuccess()) {
+                        Log.e(getName(), "TrackerWear: ERROR: failed to putDataItem, " +
+                                "status code: " + dataItemResult.getStatus().getStatusCode());
                     }
                 });
     }
@@ -324,7 +307,7 @@ public class TrackerWear extends DefaultTrackerComponent
             int screenNo = 0;
             for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
                 int itemNo = 0;
-                String itemPrefix = Integer.toString(screenNo) + ".";
+                String itemPrefix = screenNo + ".";
                 for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
                     b.putString(Wear.RunInfo.DATA + itemPrefix + itemNo, formatter.format(item.second,
                             item.first.second, workoutInfo.get(item.first.first, item.first.second)));
@@ -429,7 +412,7 @@ public class TrackerWear extends DefaultTrackerComponent
         int screenNo = 0;
         for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
             int itemNo = 0;
-            String itemPrefix = Integer.toString(screenNo) + ".";
+            String itemPrefix = screenNo + ".";
             for (Pair<Pair<Scope, Dimension>, Formatter.Format> item : screen) {
                 b.putString(Wear.RunInfo.HEADER + itemPrefix + itemNo,
                         context.getString(item.first.second.getTextId()));

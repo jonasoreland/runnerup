@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 
+import androidx.annotation.NonNull;
+
 public class Range {
 
     public double minValue;
@@ -49,6 +51,7 @@ public class Range {
         return this.maxValue == range.maxValue && this.minValue == range.minValue;
     }
 
+    @NonNull
     public String toString() {
         return "[ " + minValue + " - " + maxValue + " ]";
     }

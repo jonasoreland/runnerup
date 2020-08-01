@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -95,6 +97,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -105,9 +108,11 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_garmin;}
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceGarmin; }
 
@@ -131,6 +136,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
         return username != null && password != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -427,8 +433,9 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(SQLiteDatabase db, long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 
@@ -448,7 +455,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
                     new StringWritable(writer.toString()));
             part2.setFilename("RunnerUp.tcx");
             part2.setContentType("application/octet-stream");
-            Part<?> parts[] = {
+            Part<?>[] parts = {
                 part2
             };
 
@@ -526,8 +533,8 @@ public class GarminSynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status listWorkouts(List<Pair<String, String>> list) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        if (s != Status.OK) {
             return s;
         }
         // s = Status.OK
@@ -630,7 +637,7 @@ public class GarminSynchronizer extends DefaultSynchronizer {
             InputStream in = new BufferedInputStream(conn.getInputStream());
             out = new FileOutputStream(dst);
             int cnt = 0;
-            byte buf[] = new byte[1024];
+            byte[] buf = new byte[1024];
             while (in.read(buf) > 0) {
                 cnt += buf.length;
                 out.write(buf);

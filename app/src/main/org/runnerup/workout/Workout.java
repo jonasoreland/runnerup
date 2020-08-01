@@ -356,7 +356,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 double d = getDistance(scope);
                 double t = getTime(scope);
                 if (t == 0)
-                    return (double) 0;
+                    return 0;
                 return d / t;
             case STEP:
             case LAP:
@@ -528,10 +528,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         if (dim == Dimension.HR) {
             return tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.HRZ) {
-            if (hrZones == null ||
-                    !hrZones.isConfigured() ||
-                    !tracker.isComponentConnected(TrackerHRM.NAME))
-                return false;
+            return hrZones != null &&
+                    hrZones.isConfigured() &&
+                    tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.CAD) {
             return tracker.isComponentConnected(TrackerCadence.NAME);
         } else if (dim == Dimension.TEMPERATURE) {
@@ -661,7 +660,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 case LAP:
                     return (/* 1* */ 60 + 5 * 60 * Math.random());
                 case CURRENT:
-                    return System.currentTimeMillis() / 1000;
+                    return System.currentTimeMillis() / 1000.0;
             }
             return 0;
         }

@@ -28,7 +28,6 @@ import org.runnerup.R;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 
 class WorkoutListAdapter extends BaseAdapter {
@@ -36,7 +35,7 @@ class WorkoutListAdapter extends BaseAdapter {
     /**
 	 * 
 	 */
-    private LayoutInflater inflater = null;
+    private final LayoutInflater inflater;
     private String[] workoutList = new String[0];
 
     public WorkoutListAdapter(LayoutInflater inflater) {
@@ -70,7 +69,7 @@ class WorkoutListAdapter extends BaseAdapter {
                     false);
         }
 
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         ret.setText(getItem(position).toString());
         return ret;
     }
@@ -99,11 +98,6 @@ class WorkoutListAdapter extends BaseAdapter {
 
     public static String[] load(Context ctx) {
         File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
-        return f.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".json");
-            }
-        });
+        return f.list((dir, filename) -> filename.endsWith(".json"));
     }
 }

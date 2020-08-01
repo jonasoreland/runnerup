@@ -69,6 +69,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     //        + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
     //        + ");";
 
+    @SuppressWarnings("SyntaxError")
     private static final String CREATE_TABLE_ACTIVITY = "create table "
             + DB.ACTIVITY.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
@@ -125,6 +126,7 @@ public class DBHelper extends SQLiteOpenHelper implements
             + (DB.LAP.AVG_CADENCE + " real ")
             + ");";
 
+    @SuppressWarnings("SyntaxError")
     private static final String CREATE_TABLE_ACCOUNT = "create table "
             + DB.ACCOUNT.TABLE + " ( "
             + ("_id integer primary key autoincrement, ")
@@ -390,8 +392,8 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     private void migrateFileSynchronizerInfo(SQLiteDatabase arg0) {
         // Migrate storage of parameters
-        String from[] = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
-        String args[] = { FileSynchronizer.NAME };
+        String[] from = { "_id", DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG };
+        String[] args = { FileSynchronizer.NAME };
         Cursor c = arg0.query(DB.ACCOUNT.TABLE, from,
                 DB.ACCOUNT.NAME + " = ? and "
                         + DB.ACCOUNT.AUTH_CONFIG + " is not null",
@@ -413,7 +415,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                 try {
                     // Check if AUTH_CONFIG contains deprecated FORMAT field
                     JSONObject authcfg = new JSONObject(oldAuthConfig);
-                    String format = authcfg.optString(DB.ACCOUNT.FORMAT, null);
+                    @SuppressWarnings("ConstantConditions") String format = authcfg.optString(DB.ACCOUNT.FORMAT, null);
                     if (format != null) {
                         // Move deprecated FORMAT field in AUTH_CONFIG to ACCOUNT.FORMAT
                         authcfg.put(DB.ACCOUNT.FORMAT, null);
@@ -505,7 +507,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         long newId = arg0.insertWithOnConflict(DB.ACCOUNT.TABLE, null, arg1, SQLiteDatabase.CONFLICT_IGNORE);
         if (newId == -1 && arg1.size() > 1) {
             //values could be updated
-            String arr[] = {
+            String[] arr = {
                     arg1.getAsString(DB.ACCOUNT.NAME)
             };
             //DBVERSION update
@@ -518,7 +520,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
     public static void deleteAccount(SQLiteDatabase db, long id) {
         Log.e("DBHelper", "deleting account: " + id);
-        String args[] = {
+        String[] args = {
                 Long.toString(id)
         };
         db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
@@ -546,12 +548,12 @@ public class DBHelper extends SQLiteOpenHelper implements
                 list.add(get(c));
             } while (c.moveToNext());
         }
-        return list.toArray(new ContentValues[list.size()]);
+        return list.toArray(new ContentValues[0]);
     }
 
     public static void deleteActivity(SQLiteDatabase db, long id) {
         Log.e("DBHelper", "deleting activity: " + id);
-        String args[] = {
+        String[] args = {
                 Long.toString(id)
         };
         db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
@@ -565,7 +567,7 @@ public class DBHelper extends SQLiteOpenHelper implements
 
         final DBHelper mDBHelper = DBHelper.getHelper(ctx);
         final SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        String from[] = { "_id" };
+        String[] from = { "_id" };
         Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0",
                 null, null, null, null, null);
         final ArrayList<Long> list = new ArrayList<>(10);
@@ -636,12 +638,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         db.close();
         mDBHelper.close();
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+        DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         if (from == null) {
             from = getDefaultBackupPath(ctx);
@@ -662,12 +659,7 @@ public class DBHelper extends SQLiteOpenHelper implements
     }
 
     public static void exportDatabase(Context ctx, String to) {
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        };
+        DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         if (to == null) {
             to = getDefaultBackupPath(ctx);

@@ -97,15 +97,12 @@ public class MockHRProvider implements HRProvider {
             return;
 
         mIsConnecting = true;
-        hrClientHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mIsConnecting) {
-                    mIsConnected = true;
-                    mIsConnecting = false;
-                    hrClient.onConnectResult(true);
-                    hrClientHandler.postDelayed(hrUpdate, 750);
-                }
+        hrClientHandler.postDelayed(() -> {
+            if (mIsConnecting) {
+                mIsConnected = true;
+                mIsConnecting = false;
+                hrClient.onConnectResult(true);
+                hrClientHandler.postDelayed(hrUpdate, 750);
             }
         }, 3000);
     }

@@ -17,7 +17,6 @@ import android.widget.RemoteViews;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.feed.FeedList;
 import org.runnerup.view.MainLayout;
 
@@ -63,12 +62,7 @@ public class FeedWidgetProvider extends AppWidgetProvider {
                 UpdateInProgress = true;
                 Set<String> set = mSyncManager.feedSynchronizersSet(context);
                 // this will trigger onUpdate automatically
-                mSyncManager.synchronizeFeed(new SyncManager.Callback() {
-                    @Override
-                    public void run(String synchronizerName, Synchronizer.Status status) {
-                        UpdateInProgress = false;
-                    }
-                }, set, feed, null);
+                mSyncManager.synchronizeFeed((synchronizerName, status) -> UpdateInProgress = false, set, feed, null);
             }
         } else {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

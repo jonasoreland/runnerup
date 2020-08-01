@@ -22,7 +22,6 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -80,7 +79,6 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.ClassicSpinner;
-import org.runnerup.widget.SpinnerInterface;
 import org.runnerup.widget.SpinnerInterface.OnCloseDialogListener;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
@@ -180,7 +178,7 @@ public class StartActivity extends AppCompatActivity
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         setContentView(R.layout.start);
 
-        ClassicSpinner sportSpinner = (ClassicSpinner) findViewById(R.id.sport_spinner);
+        ClassicSpinner sportSpinner = findViewById(R.id.sport_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sportEntries, R.layout.actionbar_spinner);
         adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
@@ -191,32 +189,27 @@ public class StartActivity extends AppCompatActivity
         startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(startButtonClick);
 
-        expandIcon = (ImageView) findViewById(R.id.expand_icon);
-        deviceStatus = (TextView) findViewById(R.id.device_status);
+        expandIcon = findViewById(R.id.expand_icon);
+        deviceStatus = findViewById(R.id.device_status);
 
-        gpsIndicator = (ImageView) findViewById(R.id.gps_indicator);
-        gpsMessage = (TextView) findViewById(R.id.gps_message);
-        gpsDetailRow = (LinearLayout) findViewById(R.id.gps_detail_row);
-        gpsDetailIndicator = (ImageView) findViewById(R.id.gps_detail_indicator);
-        gpsDetailMessage = (TextView) findViewById(R.id.gps_detail_message);
+        gpsIndicator = findViewById(R.id.gps_indicator);
+        gpsMessage = findViewById(R.id.gps_message);
+        gpsDetailRow = findViewById(R.id.gps_detail_row);
+        gpsDetailIndicator = findViewById(R.id.gps_detail_indicator);
+        gpsDetailMessage = findViewById(R.id.gps_detail_message);
 
-        gpsEnable = (Button) findViewById(R.id.gps_enable_button);
+        gpsEnable = findViewById(R.id.gps_enable_button);
         gpsEnable.setOnClickListener(gpsEnableClick);
 
-        hrMessage = (TextView) findViewById(R.id.hr_message);
-        hrIndicator = (ImageView) findViewById(R.id.hr_indicator);
+        hrMessage = findViewById(R.id.hr_message);
+        hrIndicator = findViewById(R.id.hr_indicator);
 
-        wearOsIndicator = (ImageView) findViewById(R.id.wearos_indicator);
-        wearOsMessage = (TextView) findViewById(R.id.wearos_message);
+        wearOsIndicator = findViewById(R.id.wearos_indicator);
+        wearOsMessage = findViewById(R.id.wearos_message);
 
-        findViewById(R.id.status_layout).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleStatusDetails();
-            }
-        });
+        findViewById(R.id.status_layout).setOnClickListener(view -> toggleStatusDetails());
 
-        tabHost = (TabHost) findViewById(R.id.tabhost_start);
+        tabHost = findViewById(R.id.tabhost_start);
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Basic)));
@@ -238,53 +231,50 @@ public class StartActivity extends AppCompatActivity
 
         simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         simpleAudioListAdapter.reload();
-        TitleSpinner simpleAudioSpinner = (TitleSpinner) findViewById(R.id.basic_audio_cue_spinner);
+        TitleSpinner simpleAudioSpinner = findViewById(R.id.basic_audio_cue_spinner);
         simpleAudioSpinner.setAdapter(simpleAudioListAdapter);
         simpleAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(simpleAudioListAdapter));
-        simpleTargetType = (TitleSpinner) findViewById(R.id.tab_basic_target_type);
-        simpleTargetPaceValue = (TitleSpinner) findViewById(R.id.tab_basic_target_pace_max);
+        simpleTargetType = findViewById(R.id.tab_basic_target_type);
+        simpleTargetPaceValue = findViewById(R.id.tab_basic_target_pace_max);
         hrZonesAdapter = new HRZonesListAdapter(this, inflater);
-        simpleTargetHrz = (TitleSpinner) findViewById(R.id.tab_basic_target_hrz);
+        simpleTargetHrz = findViewById(R.id.tab_basic_target_hrz);
         simpleTargetHrz.setAdapter(hrZonesAdapter);
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
 
-        intervalType = (TitleSpinner) findViewById(R.id.interval_type);
-        intervalTime = (TitleSpinner) findViewById(R.id.interval_time);
+        intervalType = findViewById(R.id.interval_type);
+        intervalTime = findViewById(R.id.interval_time);
         intervalTime.setOnSetValueListener(onSetTimeValidator);
-        intervalDistance = (TitleSpinner) findViewById(R.id.interval_distance);
+        intervalDistance = findViewById(R.id.interval_distance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
-        intervalRestType = (TitleSpinner) findViewById(R.id.interval_rest_type);
-        intervalRestTime = (TitleSpinner) findViewById(R.id.interval_rest_time);
+        intervalRestType = findViewById(R.id.interval_rest_type);
+        intervalRestTime = findViewById(R.id.interval_rest_time);
         intervalRestTime.setOnSetValueListener(onSetTimeValidator);
-        intervalRestDistance = (TitleSpinner) findViewById(R.id.interval_rest_distance);
+        intervalRestDistance = findViewById(R.id.interval_rest_distance);
         intervalRestType.setOnSetValueListener(intervalRestTypeSetValue);
         intervalAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         intervalAudioListAdapter.reload();
-        TitleSpinner intervalAudioSpinner = (TitleSpinner) findViewById(R.id.interval_audio_cue_spinner);
+        TitleSpinner intervalAudioSpinner = findViewById(R.id.interval_audio_cue_spinner);
         intervalAudioSpinner.setAdapter(intervalAudioListAdapter);
         intervalAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(intervalAudioListAdapter));
 
         advancedAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
         advancedAudioListAdapter.reload();
-        TitleSpinner advancedAudioSpinner = (TitleSpinner) findViewById(R.id.advanced_audio_cue_spinner);
+        TitleSpinner advancedAudioSpinner = findViewById(R.id.advanced_audio_cue_spinner);
         advancedAudioSpinner.setAdapter(advancedAudioListAdapter);
         advancedAudioSpinner.setOnSetValueListener(new OnConfigureAudioListener(advancedAudioListAdapter));
 
-        advancedWorkoutSpinner = (TitleSpinner) findViewById(R.id.advanced_workout_spinner);
+        advancedWorkoutSpinner = findViewById(R.id.advanced_workout_spinner);
         advancedWorkoutListAdapter = new WorkoutListAdapter(inflater);
         advancedWorkoutListAdapter.reload();
         advancedWorkoutSpinner.setAdapter(advancedWorkoutListAdapter);
         advancedWorkoutSpinner.setOnSetValueListener(new OnConfigureWorkoutsListener(advancedWorkoutListAdapter));
-        advancedStepList = (ListView) findViewById(R.id.advanced_step_list);
+        advancedStepList = findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
-        advancedDownloadWorkoutButton = (Button) findViewById(R.id.advanced_download_button);
-        advancedDownloadWorkoutButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
-                StartActivity.this.startActivityForResult(intent, 113);
-            }
+        advancedDownloadWorkoutButton = findViewById(R.id.advanced_download_button);
+        advancedDownloadWorkoutButton.setOnClickListener(v -> {
+            Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
+            StartActivity.this.startActivityForResult(intent, 113);
         });
 
         if (getParent() != null && getParent().getIntent() != null) {
@@ -301,7 +291,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     private class OnConfigureAudioListener implements OnSetValueListener {
-        AudioSchemeListAdapter adapter;
+        final AudioSchemeListAdapter adapter;
 
         OnConfigureAudioListener(AudioSchemeListAdapter adapter) {
             this.adapter = adapter;
@@ -324,7 +314,7 @@ public class StartActivity extends AppCompatActivity
     }
 
     private class OnConfigureWorkoutsListener implements OnSetValueListener {
-        WorkoutListAdapter adapter;
+        final WorkoutListAdapter adapter;
 
         OnConfigureWorkoutsListener(WorkoutListAdapter adapter) {
             this.adapter = adapter;
@@ -428,17 +418,14 @@ public class StartActivity extends AppCompatActivity
     private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mTracker == null || startButton.getVisibility() != View.VISIBLE)
-                        return;
+            runOnUiThread(() -> {
+                if (mTracker == null || startButton.getVisibility() != View.VISIBLE)
+                    return;
 
-                    if (mTracker.getState() == TrackerState.INIT /* this will start gps */ ||
-                            mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
-                            mTracker.getState() == TrackerState.CONNECTED) {
-                        startButton.performClick();
-                    }
+                if (mTracker.getState() == TrackerState.INIT /* this will start gps */ ||
+                        mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/ ||
+                        mTracker.getState() == TrackerState.CONNECTED) {
+                    startButton.performClick();
                 }
             });
         }
@@ -578,15 +565,11 @@ public class StartActivity extends AppCompatActivity
                 .show();
     }
 
-    private final OnTabChangeListener onTabChangeListener = new OnTabChangeListener() {
-
-        @Override
-        public void onTabChanged(String tabId) {
-            if (tabId.contentEquals(TAB_ADVANCED)) {
-                loadAdvanced(null);
-            }
-            updateView();
+    private final OnTabChangeListener onTabChangeListener = tabId -> {
+        if (tabId.contentEquals(TAB_ADVANCED)) {
+            loadAdvanced(null);
         }
+        updateView();
     };
 
     private Workout prepareWorkout() {
@@ -714,9 +697,7 @@ public class StartActivity extends AppCompatActivity
                                 : getString(R.string.GPS_permission_text_pre_Android10))
                         .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
-                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> {
-                        ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
-                    });
+                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
                     builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
@@ -1071,13 +1052,9 @@ public class StartActivity extends AppCompatActivity
         updateView();
     }
 
-    private final OnCloseDialogListener simpleTargetTypeClick = new OnCloseDialogListener() {
-
-        @Override
-        public void onClose(SpinnerInterface spinner, boolean ok) {
-            if (ok) {
-                updateTargetView();
-            }
+    private final OnCloseDialogListener simpleTargetTypeClick = (spinner, ok) -> {
+        if (ok) {
+            updateTargetView();
         }
     };
 
@@ -1155,11 +1132,7 @@ public class StartActivity extends AppCompatActivity
             builder.setTitle(getString(R.string.Failed_to_load_workout));
             builder.setMessage("" + ex.toString());
             builder.setPositiveButton(getString(R.string.OK),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                    (dialog, which) -> dialog.dismiss());
             builder.show();
         }
     }
@@ -1197,7 +1170,7 @@ public class StartActivity extends AppCompatActivity
         public View getView(int position, View convertView, ViewGroup parent) {
             StepListEntry entry = steps.get(position);
             StepButton button =
-                    (convertView != null && convertView instanceof StepButton) ?
+                    (convertView instanceof StepButton) ?
                             (StepButton) convertView : new StepButton(StartActivity.this, null);
             button.setStep(entry.step);
 
@@ -1209,26 +1182,19 @@ public class StartActivity extends AppCompatActivity
 
     }
 
-    private final Runnable onWorkoutChanged = new Runnable() {
-        @Override
-        public void run() {
-            String name = advancedWorkoutSpinner.getValue().toString();
-            if (advancedWorkout != null) {
-                Context ctx = getApplicationContext();
-                try {
-                    WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
-                } catch (Exception ex) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                            .setTitle(getString(R.string.Failed_to_load_workout))
-                            .setMessage("" + ex.toString())
-                            .setPositiveButton(getString(R.string.OK),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    builder.show();
-                }
+    private final Runnable onWorkoutChanged = () -> {
+        String name = advancedWorkoutSpinner.getValue().toString();
+        if (advancedWorkout != null) {
+            Context ctx = getApplicationContext();
+            try {
+                WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
+            } catch (Exception ex) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                        .setTitle(getString(R.string.Failed_to_load_workout))
+                        .setMessage("" + ex.toString())
+                        .setPositiveButton(getString(R.string.OK),
+                                (dialog, which) -> dialog.dismiss());
+                builder.show();
             }
         }
     };

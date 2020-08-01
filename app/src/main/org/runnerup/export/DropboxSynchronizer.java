@@ -22,6 +22,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -53,7 +55,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
     public static final String NAME = "Dropbox";
     private static final String PUBLIC_URL = "https://dropbox.com";
-    public static int ENABLED = BuildConfig.DROPBOX_ENABLED;
+    public static final int ENABLED = BuildConfig.DROPBOX_ENABLED;
 
     private static final String UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload";
     private static final String AUTH_URL = "https://www.dropbox.com/oauth2/authorize";
@@ -63,7 +65,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
     private long id = 0;
     private String access_token = null;
     private FileFormats mFormat;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     DropboxSynchronizer(Context context, PathSimplifier simplifier) {
         if (ENABLED == 0) {
@@ -72,11 +74,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         this.simplifier = simplifier;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {
         return R.drawable.service_dropbox;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.serviceDropbox;
@@ -120,6 +124,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -145,6 +150,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -304,17 +310,11 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
                     Constants.DB.ACTIVITY.SPORT,
                     DB.ACTIVITY.START_TIME,
             };
-            Cursor c = null;
-            try {
-                c = db.query(Constants.DB.ACTIVITY.TABLE, columns, "_id = " + mID,
-                        null, null, null, null);
+            try (Cursor c = db.query(DB.ACTIVITY.TABLE, columns, "_id = " + mID,
+                    null, null, null, null)) {
                 if (c.moveToFirst()) {
                     sport = Sport.valueOf(c.getInt(0));
                     start_time = c.getLong(1);
-                }
-            } finally {
-                if (c != null) {
-                    c.close();
                 }
             }
 

@@ -164,7 +164,7 @@ public class Encryption {
         out.close();
     }
 
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         if (args.length == 2) {
             final String name = args[0];
             final String key = args[1];
@@ -181,16 +181,18 @@ public class Encryption {
     public static byte[] SHA1(String text) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
         final MessageDigest digest = MessageDigest.getInstance("SHA-1");
+        //noinspection CharsetObjectCanBeUsed
         return digest.digest(text.getBytes("UTF-8"));
     }
 
     public static byte[] md5(String text) throws NoSuchAlgorithmException,
             UnsupportedEncodingException {
         final MessageDigest digest = MessageDigest.getInstance("MD5");
+        //noinspection CharsetObjectCanBeUsed
         return digest.digest(text.getBytes("UTF-8"));
     }
 
-    public static String toHex(byte bytes[]) {
+    public static String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
             sb.append(String.format("%02X", b));

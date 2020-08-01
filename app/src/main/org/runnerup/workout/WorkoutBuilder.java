@@ -379,18 +379,14 @@ public class WorkoutBuilder {
     }
 
     private static Trigger hasEndOfLapTrigger(List<Trigger> triggers) {
-        return hasTrigger(triggers, new TriggerFilter() {
+        return hasTrigger(triggers, trigger -> {
+            if (trigger == null)
+                return false;
 
-            @Override
-            public boolean match(Trigger trigger) {
-                if (trigger == null)
-                    return false;
-
-                if (!(trigger instanceof EventTrigger))
-                    return false;
-                EventTrigger et = (EventTrigger) trigger;
-                return (et.event == Event.COMPLETED && et.scope == Scope.LAP);
-            }
+            if (!(trigger instanceof EventTrigger))
+                return false;
+            EventTrigger et = (EventTrigger) trigger;
+            return (et.event == Event.COMPLETED && et.scope == Scope.LAP);
         });
     }
 

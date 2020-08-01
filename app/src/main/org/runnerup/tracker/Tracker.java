@@ -40,9 +40,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
-import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
-import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
@@ -70,6 +68,7 @@ import org.runnerup.workout.Workout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -102,7 +101,6 @@ public class Tracker extends android.app.Service implements
     private TrackerPebble trackerPebble; // created if version is sufficient
 
     private boolean mBug23937Checked = false;
-    private long mBug23937Delta = 0;
     private long mSystemToGpsDiffTimeNanos = 0;
     private boolean mCurrentSpeedFromGpsPoints = false;
 
@@ -295,16 +293,13 @@ public class Tracker extends android.app.Service implements
         }
     }
 
-    private final TrackerComponent.Callback onConnectCallback = new TrackerComponent.Callback() {
-        @Override
-        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state.set(TrackerState.ERROR);
-            } else if (state.get() == TrackerState.CONNECTING) {
-                state.set(TrackerState.CONNECTED);
-                /* now we're connected */
-                components.onConnected();
-            }
+    private final TrackerComponent.Callback onConnectCallback = (component, resultCode) -> {
+        if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+            state.set(TrackerState.ERROR);
+        } else if (state.get() == TrackerState.CONNECTING) {
+            state.set(TrackerState.CONNECTED);
+            /* now we're connected */
+            components.onConnected();
         }
     };
 
@@ -403,7 +398,7 @@ public class Tracker extends android.app.Service implements
 
     public void saveLap(ContentValues tmp) {
         tmp.put(DB.LAP.ACTIVITY, mActivityId);
-        String key[] = {
+        String[] key = {
                 Long.toString(mLapId)
         };
         mDB.update(DB.LAP.TABLE, tmp, "_id = ?", key);
@@ -538,17 +533,14 @@ public class Tracker extends android.app.Service implements
             onEndCallback.run(components, res);
     }
 
-    private final TrackerComponent.Callback onEndCallback = new TrackerComponent.Callback() {
-        @Override
-        public void run(TrackerComponent component, TrackerComponent.ResultCode resultCode) {
-            if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
-                state.set(TrackerState.ERROR);
-            } else {
-                state.set(TrackerState.INIT);
-            }
-
-            handleNextState();
+    private final TrackerComponent.Callback onEndCallback = (component, resultCode) -> {
+        if (resultCode == TrackerComponent.ResultCode.RESULT_ERROR_FATAL) {
+            state.set(TrackerState.ERROR);
+        } else {
+            state.set(TrackerState.INIT);
         }
+
+        handleNextState();
     };
 
     public void completeActivity(boolean save) {
@@ -567,7 +559,7 @@ public class Tracker extends android.app.Service implements
         } else {
             ContentValues tmp = new ContentValues();
             tmp.put("deleted", 1);
-            String key[] = {
+            String[] key = {
                     Long.toString(mActivityId)
             };
             mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
@@ -582,7 +574,7 @@ public class Tracker extends android.app.Service implements
     private void saveActivity() {
         ContentValues tmp = new ContentValues();
         if (mHeartbeatNanos > 0) {
-            long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / (double)mHeartbeatNanos); // BPM
+            long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
             tmp.put(Constants.DB.ACTIVITY.AVG_HR, avgHR);
         }
         if (mMaxHR > 0)
@@ -600,7 +592,7 @@ public class Tracker extends android.app.Service implements
         tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
         tmp.put(Constants.DB.ACTIVITY.TIME, Math.round(getTimeMs()/1000.0d)); // time should be updated last for conditionalRecompute
 
-        String key[] = {
+        String[] key = {
                 Long.toString(mActivityId)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
@@ -671,6 +663,7 @@ public class Tracker extends android.app.Service implements
             // The GPS time stamp should normally not need to be changed,
             // but approx diff is needed to find if data is valid
 
+            long mBug23937Delta;
             if (!mBug23937Checked && gpsDiffTime < -(24 * 3600 - 120) * 1000 * NANO_IN_MILLI &&
                     Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mBug23937Delta = gpsDiffTime;
@@ -834,7 +827,7 @@ public class Tracker extends android.app.Service implements
         if (get) {
             PowerManager pm = (PowerManager) this
                     .getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+            mWakeLock = Objects.requireNonNull(pm).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                     "RunnerUp:wakeLock");
             if (mWakeLock != null) {
                 //Set a timeout, this is before activity is started

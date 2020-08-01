@@ -77,30 +77,22 @@ public class TrackerComponentCollection implements TrackerComponent {
      */
     @Override
     public ResultCode onInit(final Callback callback, Context context) {
-        return forEach("onInit", new Func1() {
-            @Override
-            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
-                                    Callback callback0, Context context0) {
-                if (currentResultCode == ResultCode.RESULT_OK)
-                    return comp0.onInit(callback0, context0);
-                else
-                    return currentResultCode;
-            }
+        return forEach("onInit", (comp0, currentResultCode, callback0, context0) -> {
+            if (currentResultCode == ResultCode.RESULT_OK)
+                return comp0.onInit(callback0, context0);
+            else
+                return currentResultCode;
         }, callback, context);
     }
 
     @Override
     public ResultCode onConnecting(final Callback callback, Context context) {
-        return forEach("onConnecting", new Func1() {
-            @Override
-            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
-                                    Callback callback0, Context context0) {
-                if (currentResultCode == ResultCode.RESULT_OK ||
-                    currentResultCode == ResultCode.RESULT_UNKNOWN)
-                    return comp0.onConnecting(callback0, context0);
-                else
-                    return currentResultCode;
-            }
+        return forEach("onConnecting", (comp0, currentResultCode, callback0, context0) -> {
+            if (currentResultCode == ResultCode.RESULT_OK ||
+                currentResultCode == ResultCode.RESULT_UNKNOWN)
+                return comp0.onConnecting(callback0, context0);
+            else
+                return currentResultCode;
         }, callback, context);
     }
 
@@ -194,13 +186,9 @@ public class TrackerComponentCollection implements TrackerComponent {
      */
     @Override
     public ResultCode onEnd(final Callback callback, Context context) {
-        return forEach("onEnd", new Func1() {
-            @Override
-            public ResultCode apply(TrackerComponent comp0, ResultCode currentResultCode,
-                                    Callback callback0, Context context0) {
-                // Ignore current result code, always run onEnd()
-                return comp0.onEnd(callback0, context0);
-            }
+        return forEach("onEnd", (comp0, currentResultCode, callback0, context0) -> {
+            // Ignore current result code, always run onEnd()
+            return comp0.onEnd(callback0, context0);
         }, callback, context);
     }
 
@@ -225,33 +213,25 @@ public class TrackerComponentCollection implements TrackerComponent {
                 final Pair<TrackerComponent, ResultCode> p = list.get(key);
                 final TrackerComponent component = p.first;
                 final ResultCode currentResultCode = p.second;
-                ResultCode res = func.apply(component, currentResultCode, new Callback() {
-                    @Override
-                    public void run(final TrackerComponent component, final ResultCode resultCode) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                synchronized (components) {
-                                    Log.e(getName(), component.getName() + " " + msg + " => " + resultCode);
-                                    if (!pending.containsKey(key))
-                                        return;
-                                    TrackerComponent check = pending.remove(key);
-                                    if (BuildConfig.DEBUG && check != component){
-                                        Log.e(getName(), component.getName() + " != " + check.getName());
-                                        throw new AssertionError();
-                                    }
-                                    components.put(key, new Pair<>(
-                                            component, resultCode));
-                                    if (pending.isEmpty()) {
-                                        Log.e(getName(), " => runCallback()");
-                                        callback.run(TrackerComponentCollection.this,
-                                                getResult(components));
-                                    }
-                                }
-                            }
-                        });
+                ResultCode res = func.apply(component, currentResultCode, (component1, resultCode) -> handler.post(() -> {
+                    synchronized (components) {
+                        Log.e(getName(), component1.getName() + " " + msg + " => " + resultCode);
+                        if (!pending.containsKey(key))
+                            return;
+                        TrackerComponent check = pending.remove(key);
+                        if (BuildConfig.DEBUG && check != component1) {
+                            Log.e(getName(), component1.getName() + " != " + check.getName());
+                            throw new AssertionError();
+                        }
+                        components.put(key, new Pair<>(
+                                component1, resultCode));
+                        if (pending.isEmpty()) {
+                            Log.e(getName(), " => runCallback()");
+                            callback.run(TrackerComponentCollection.this,
+                                    getResult(components));
+                        }
                     }
-                }, context);
+                }), context);
                 Log.e(getName(), component.getName() + " " + msg + " => " + res);
                 if (res != ResultCode.RESULT_PENDING) {
                     components.put(key, new Pair<>(component, res));

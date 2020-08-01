@@ -23,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -50,7 +52,7 @@ import java.util.Locale;
 public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
     public static final String NAME = "Runalyze";
-    public static int ENABLED = BuildConfig.RUNALYZE_ENABLED;
+    public static final int ENABLED = BuildConfig.RUNALYZE_ENABLED;
     private static final String BASE_URL = BuildConfig.RUNALYZE_ENABLED > 0 ? "https://runalyze.com" : "https://testing.runalyze.com";
     private static final String PUBLIC_URL = BASE_URL;
 
@@ -63,7 +65,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     private String access_token = null;
     private String refresh_token = null;
     private long access_expire = -1;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     RunalyzeSynchronizer(PathSimplifier simplifier) {
         if (ENABLED == 0) {
@@ -72,11 +74,13 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         this.simplifier = simplifier;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {
         return R.drawable.service_runalyze;
     }
 
+    @ColorRes
     @Override
     public int getColorId() {
         return R.color.serviceRunalyze;
@@ -120,6 +124,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -144,6 +149,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
         id = config.getAsLong("_id");
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -318,7 +324,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             filePart.setFilename(String.format(Locale.getDefault(),
                     "RunnerUp_%04d.tcx", mID));
             filePart.setContentType("application/octet-stream");
-            Part<?> parts[] = {
+            Part<?>[] parts = {
                     filePart, null
             };
             if (!TextUtils.isEmpty(desc)) {

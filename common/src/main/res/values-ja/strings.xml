@@ -59,7 +59,6 @@
   <string name="Interval">インターバル</string>
   <string name="Lap">ラップ</string>
   <string name="New_lap">新しいラップ</string>
-  <string name="Next_lap">次のラップ</string>
   <string name="Pause">一時休止</string>
   <string name="Stop">休止</string>
   <string name="Workout">ワークアウト</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">新しい音声合図スキームを作成</string>
   <string name="Yes">はい</string>
   <string name="Create">作成</string>
-  <string name="No_way">とんでもない</string>
   <string name="No">いいえ</string>
   <string name="Loading">ロード中…</string>
   <string name="Saving">保存中</string>
@@ -261,8 +259,7 @@
   <string name="Activity_ready">アクティビティ準備完了</string>
   <string name="Ready_to_start_running">ランニング準備完了</string>
   <string name="Searching_for_GPS">GPS を検索中</string>
-  <string name="Activity_ongoing">アクティビティ継続中</string>
-  <string name="RunnerUp_activity_started">RunnerUp アクティビティが開始しました</string>
+    <string name="RunnerUp_activity_started">RunnerUp アクティビティが開始しました</string>
   <string name="Low_HRM_battery_level">低 HRM バッテリーレベル</string>
   <string name="High_HRM_battery_level">高 HRM バッテリーレベル</string>
   <string name="Warning">警告</string>
@@ -303,7 +300,6 @@
   <string name="No_feed_to_show">表示するフィードはありません</string>
   <string name="Unused_currently">現在未使用です。</string>
   <string name="Unknown">不明</string>
-  <string name="RunningFreeOnlinePasswordNotice">注: ウェブサイトの 追加 &gt; トレーニングの同期 &gt; SportTracks の下で設定したパスワードとして \"秘密鍵\" を使用します。</string>
   <string name="Recording">記録中</string>
   <string name="Sensors">センサー</string>
   <string name="Maintenance">メンテナンス</string>

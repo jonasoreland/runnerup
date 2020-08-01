@@ -31,6 +31,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,6 +62,7 @@ import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -95,7 +98,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private TextView currentHr;
     private TextView activityHeaderHr;
     // A circular buffer for tap events
-    private long[] mTapArray= {0, 0, 0, 0};
+    private final long[] mTapArray= {0, 0, 0, 0};
     private int mTapIndex = 0;
 
     class WorkoutRow {
@@ -113,70 +116,66 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         setContentView(R.layout.run);
         formatter = new Formatter(this);
         //HRZones hrZones = new HRZones(this);
-        TextView velocity = (TextView)findViewById(R.id.velocity_label);
+        TextView velocity = findViewById(R.id.velocity_label);
         velocity.setText(formatter.formatVelocityLabel());
 
-        final Button stopButton = (Button) findViewById(R.id.stop_button);
+        final Button stopButton = findViewById(R.id.stop_button);
         stopButton.setOnClickListener(stopButtonClick);
-        pauseButton = (Button) findViewById(R.id.pause_button);
+        pauseButton = findViewById(R.id.pause_button);
         pauseButton.setOnClickListener(pauseButtonClick);
-        newLapButton = (Button) findViewById(R.id.new_lap_button);
-        activityHeaderHr = (TextView) findViewById(R.id.activity_header_hr);
-        activityTime = (TextView) findViewById(R.id.activity_time);
-        activityDistance = (TextView) findViewById(R.id.activity_distance);
-        activityPace = (TextView) findViewById(R.id.activity_pace);
-        activityHr = (TextView) findViewById(R.id.activity_hr);
-        lapTime = (TextView) findViewById(R.id.lap_time);
-        lapDistance = (TextView) findViewById(R.id.lap_distance);
-        lapPace = (TextView) findViewById(R.id.lap_pace);
-        lapHr = (TextView) findViewById(R.id.lap_hr);
-        intervalTime = (TextView) findViewById(R.id.interval_time);
-        intervalDistance = (TextView) findViewById(R.id.intervall_distance);
+        newLapButton = findViewById(R.id.new_lap_button);
+        activityHeaderHr = findViewById(R.id.activity_header_hr);
+        activityTime = findViewById(R.id.activity_time);
+        activityDistance = findViewById(R.id.activity_distance);
+        activityPace = findViewById(R.id.activity_pace);
+        activityHr = findViewById(R.id.activity_hr);
+        lapTime = findViewById(R.id.lap_time);
+        lapDistance = findViewById(R.id.lap_distance);
+        lapPace = findViewById(R.id.lap_pace);
+        lapHr = findViewById(R.id.lap_hr);
+        intervalTime = findViewById(R.id.interval_time);
+        intervalDistance = findViewById(R.id.intervall_distance);
         tableRowInterval = findViewById(R.id.table_row_interval);
-        intervalPace = (TextView) findViewById(R.id.interval_pace);
-        intervalHr = (TextView) findViewById(R.id.interval_hr);
-        currentPace = (TextView) findViewById(R.id.current_pace);
-        currentHr = (TextView) findViewById(R.id.current_hr);
-        countdownView = (TextView) findViewById(R.id.countdown_text_view);
-        workoutList = (ListView) findViewById(R.id.workout_list);
+        intervalPace = findViewById(R.id.interval_pace);
+        intervalHr = findViewById(R.id.interval_hr);
+        currentPace = findViewById(R.id.current_pace);
+        currentHr = findViewById(R.id.current_hr);
+        countdownView = findViewById(R.id.countdown_text_view);
+        workoutList = findViewById(R.id.workout_list);
         WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
         workoutList.setAdapter(adapter);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final Resources res = this.getResources();
-        final Boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+        final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
 
-        TableLayout t = (TableLayout) findViewById(R.id.table_layout1);
-        t.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                // Detect tapping on the header
-                int action = event.getAction();
-                if (active && action == MotionEvent.ACTION_DOWN) {
-                    final int maxTapTime = 1000;
-                    long time = event.getEventTime();
-                    if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
-                        boolean enabled = !pauseButton.isEnabled();
-                        pauseButton.setEnabled(enabled);
-                        stopButton.setEnabled(enabled);
-                        for (int i = 0; i < mTapArray.length; i++) {
-                            mTapArray[i] = 0;
-                        }
-                    } else {
-                        if (mTapIndex == 0) {
-                            Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
-                        }
-                        mTapArray[mTapIndex] = time;
-                        mTapIndex = (mTapIndex + 1) % mTapArray.length;
+        TableLayout t = findViewById(R.id.table_layout1);
+        t.setOnTouchListener((v, event) -> {
+            // Detect tapping on the header
+            int action = event.getAction();
+            if (active && action == MotionEvent.ACTION_DOWN) {
+                final int maxTapTime = 1000;
+                long time = event.getEventTime();
+                if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
+                    boolean enabled = !pauseButton.isEnabled();
+                    pauseButton.setEnabled(enabled);
+                    stopButton.setEnabled(enabled);
+                    Arrays.fill(mTapArray, 0);
+                } else {
+                    if (mTapIndex == 0) {
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
                     }
+                    mTapArray[mTapIndex] = time;
+                    mTapIndex = (mTapIndex + 1) % mTapArray.length;
                 }
-                return false;
             }
+            return false;
         });
         bindGpsTracker();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.e(getClass().getName(), "onConfigurationChange => do NOTHING!!");
     }
@@ -247,11 +246,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                RunActivity.this.handler.post(new Runnable() {
-                    public void run() {
-                        RunActivity.this.onTick();
-                    }
-                });
+                RunActivity.this.handler.post(RunActivity.this::onTick);
             }
         }, 0, 500);
     }
@@ -296,11 +291,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener stopButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            doStop();
-        }
-    };
+    private final OnClickListener stopButtonClick = v -> doStop();
 
     @Override
     public void onBackPressed() {
@@ -345,15 +336,13 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener pauseButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            if (workout.isPaused()) {
-                workout.onResume(workout);
-            } else {
-                workout.onPause(workout);
-            }
-            setPauseButtonEnabled(!workout.isPaused());
+    private final OnClickListener pauseButtonClick = v -> {
+        if (workout.isPaused()) {
+            workout.onResume(workout);
+        } else {
+            workout.onPause(workout);
         }
+        setPauseButtonEnabled(!workout.isPaused());
     };
 
     private void setPauseButtonEnabled(boolean enabled) {
@@ -368,11 +357,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         }
     }
 
-    private final OnClickListener newLapButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            workout.onNewLapOrNextStep();
-        }
-    };
+    private final OnClickListener newLapButtonClick = v -> workout.onNewLapOrNextStep();
 
     private void updateView() {
         if (mTracker.getState() == TrackerState.STOPPED){
@@ -498,7 +483,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     class WorkoutAdapter extends BaseAdapter {
 
-        ArrayList<WorkoutRow> rows = null;
+        final ArrayList<WorkoutRow> rows;
 
         WorkoutAdapter(ArrayList<WorkoutRow> workoutRows) {
             this.rows = workoutRows;
@@ -536,10 +521,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
             View view = inflater.inflate(R.layout.workout_row, parent, false);
-            TextView intensity = (TextView) view.findViewById(R.id.step_intensity);
-            TextView durationType = (TextView) view.findViewById(R.id.step_duration_type);
-            TextView durationValue = (TextView) view.findViewById(R.id.step_duration_value);
-            TextView targetPace = (TextView) view.findViewById(R.id.step_pace);
+            TextView intensity = view.findViewById(R.id.step_intensity);
+            TextView durationType = view.findViewById(R.id.step_duration_type);
+            TextView durationValue = view.findViewById(R.id.step_duration_value);
+            TextView targetPace = view.findViewById(R.id.step_pace);
             intensity.setPadding(level * 10, 0, 0, 0);
             intensity.setText(getResources().getText(step.getIntensity().getTextId()));
             if (step.getDurationType() != null) {

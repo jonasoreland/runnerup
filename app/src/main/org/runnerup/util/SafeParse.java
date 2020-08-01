@@ -67,7 +67,7 @@ public class SafeParse {
     public static int[] parseIntList(final String str) {
         try {
             String[] split = str.split(",");
-            int res[] = new int[split.length];
+            int[] res = new int[split.length];
             for (int i = 0; i < split.length; i++) {
                 res[i] = Integer.parseInt(split[i]);
             }
@@ -78,12 +78,12 @@ public class SafeParse {
         return null;
     }
 
-    public static String storeIntList(int list[]) {
+    public static String storeIntList(int[] list) {
         StringBuilder buf = new StringBuilder()
-                .append(Integer.toString(list[0]));
+                .append(list[0]);
         for (int i = 1; i < list.length; i++) {
             buf.append(',')
-                    .append(Integer.toString(list[i]));
+                    .append(list[i]);
         }
         return buf.toString();
     }

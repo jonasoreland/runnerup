@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONException;
@@ -70,7 +72,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     private String username = null;
     private String password = null;
     private boolean isConnected = false;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
 
     JoggSESynchronizer(final SyncManager syncManager, PathSimplifier simplifier) {
@@ -91,6 +93,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return id;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -101,9 +104,11 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return PUBLIC_URL;
     }
 
+    @DrawableRes
     @Override
     public int getIconId() {return R.drawable.service_jogg;}
 
+    @ColorRes
     @Override
     public int getColorId() {return R.color.serviceJogg;}
 
@@ -127,6 +132,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
         return username != null && password != null;
     }
 
+    @NonNull
     @Override
     public String getAuthConfig() {
         JSONObject tmp = new JSONObject();
@@ -190,7 +196,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             conn = null;
 
-            final String path[] = {
+            final String[] path = {
                     "soap:Envelope", "soap:Body", "SaveGpxResponse", "SaveGpxResult",
                     "ResponseStatus", "ResponseCode"
             };
@@ -277,8 +283,9 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
     @NonNull
     @Override
     public Status upload(final SQLiteDatabase db, final long mID) {
-        Status s;
-        if ((s = connect()) != Status.OK) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 
@@ -310,7 +317,7 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
             conn.disconnect();
             conn = null;
 
-            final String path[] = {
+            final String[] path = {
                     "soap:Envelope", "soap:Body",
                     "SaveGpxResponse", "SaveGpxResult", "ResponseStatus",
                     "ResponseCode"
@@ -352,11 +359,6 @@ public class JoggSESynchronizer extends DefaultSynchronizer {
 
     @Override
     public boolean checkSupport(Synchronizer.Feature f) {
-        switch (f) {
-            case UPLOAD:
-                return true;
-            default:
-                return false;
-        }
+        return f == Feature.UPLOAD;
     }
 }

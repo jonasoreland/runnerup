@@ -59,7 +59,6 @@
   <string name="Interval">Intervalli</string>
   <string name="Lap">Kierros</string>
   <string name="New_lap">Uusi kierros</string>
-  <string name="Next_lap">Seuraava kierros</string>
   <string name="Pause">Tauko</string>
   <string name="Stop">Pysäytä</string>
   <string name="Workout">Harjoitus</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">Luo uusi äänipalaute kokonaisuus</string>
   <string name="Yes">Kyllä</string>
   <string name="Create">Luo</string>
-  <string name="No_way">Voi ei</string>
   <string name="No">Ei</string>
   <string name="Loading">Ladataan...</string>
   <string name="Saving">Tallennetaan</string>
@@ -252,8 +250,7 @@
   <string name="Activity_ready">Harjoitus valmis</string>
   <string name="Ready_to_start_running">Valmistaudu juoksemaan!</string>
   <string name="Searching_for_GPS">Etsitään GPS signaalia</string>
-  <string name="Activity_ongoing">Harjoitus käynnissä</string>
-  <string name="RunnerUp_activity_started">RunnerUp harjoitus käynnissä</string>
+    <string name="RunnerUp_activity_started">RunnerUp harjoitus käynnissä</string>
   <string name="Low_HRM_battery_level">Sykemittarin akun varaus alhainen</string>
   <string name="High_HRM_battery_level">Sykemittarin akun varaus ok</string>
   <string name="Warning">Varoitus</string>
@@ -295,7 +292,6 @@ Luulen että voisit pitää tästä harjoituksesta.</string>
   <string name="No_feed_to_show">Ei näytettävää syötettä</string>
   <string name="Unused_currently">Ei käytössä</string>
   <string name="Unknown">Tuntematon</string>
-  <string name="RunningFreeOnlinePasswordNotice">Huom: salasana on \"secret key\", joka asetetaan verkkosivulla kohdassa Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Tallennetaan</string>
   <string name="Sensors">Anturit</string>
   <string name="Maintenance">Ylläpito</string>

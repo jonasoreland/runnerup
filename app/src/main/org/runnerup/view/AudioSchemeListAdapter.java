@@ -35,9 +35,9 @@ import java.util.ArrayList;
 
 class AudioSchemeListAdapter extends BaseAdapter {
 
-    private LayoutInflater inflater = null;
-    private SQLiteDatabase mDB = null;
-    private boolean createNewItem = true;
+    private final LayoutInflater inflater;
+    private final SQLiteDatabase mDB;
+    private final boolean createNewItem;
     private final ArrayList<String> audioSchemes = new ArrayList<>();
 
     public AudioSchemeListAdapter(SQLiteDatabase db, LayoutInflater inflater, boolean createNew) {
@@ -83,7 +83,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
                     false);
         }
 
-        TextView ret = (TextView) convertView.findViewById(android.R.id.text1);
+        TextView ret = convertView.findViewById(android.R.id.text1);
         ret.setText(getItem(position).toString());
         return ret;
     }

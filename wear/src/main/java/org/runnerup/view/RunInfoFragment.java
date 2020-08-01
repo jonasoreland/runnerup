@@ -86,7 +86,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        int ids[] = null;
+        int[] ids = null;
         int card = 0;
         switch (rowsOnScreen) {
             case 3:
@@ -105,12 +105,12 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         View view = inflater.inflate(card, container, false);
         for (int i = 0; i < rowsOnScreen; i++) {
             textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA +
-                    Integer.toString(screen) + "." + Integer.toString(i),
+                    screen + "." + i,
                     (TextView) view.findViewById(ids[i])));
         }
         for (int i = 0; i < rowsOnScreen; i++) {
             textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER +
-                    Integer.toString(screen) + "." + Integer.toString(i),
+                    screen + "." + i,
                     (TextView) view.findViewById(ids[rowsOnScreen + i])));
         }
         return view;

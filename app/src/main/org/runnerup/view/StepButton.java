@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;
@@ -73,10 +72,10 @@ public class StepButton extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.step_button, this);
         formatter = new Formatter(context);
-        mLayout = (ViewGroup)findViewById(R.id.step_button);
-        mIntensityIcon = (ImageView)findViewById(R.id.step_icon);
-        mDurationValue = (TextView)findViewById(R.id.step_duration_value);
-        mGoalValue = (TextView)findViewById(R.id.step_goal_value);
+        mLayout = findViewById(R.id.step_button);
+        mIntensityIcon = findViewById(R.id.step_icon);
+        mDurationValue = findViewById(R.id.step_duration_value);
+        mGoalValue = findViewById(R.id.step_goal_value);
     }
 
     @Override
@@ -177,21 +176,15 @@ public class StepButton extends LinearLayout {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
                     .setTitle(getResources().getString(R.string.repeat))
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    step.setRepeatCount(numberPicker.getValue());
-                    dialog.dismiss();
-                    setStep(step); // redraw
-                    if (mOnChangedListener != null) {
-                        mOnChangedListener.run();
-                    }
-                }
-            })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                        step.setRepeatCount(numberPicker.getValue());
+                        dialog.dismiss();
+                        setStep(step); // redraw
+                        if (mOnChangedListener != null) {
+                            mOnChangedListener.run();
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
             alert.show();
         }
     };
@@ -209,33 +202,27 @@ public class StepButton extends LinearLayout {
             AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
                     .setTitle(getResources().getString(R.string.Edit_step))
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    save.run();
-                    dialog.dismiss();
-                    setStep(step); // redraw
-                    if (mOnChangedListener != null) {
-                        mOnChangedListener.run();
-                    }
-                }
-            })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                        save.run();
+                        dialog.dismiss();
+                        setStep(step); // redraw
+                        if (mOnChangedListener != null) {
+                            mOnChangedListener.run();
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
             alert.show();
         }
     };
 
     private Runnable setupEditStep(LayoutInflater inflator, View layout) {
-        final TitleSpinner stepType = (TitleSpinner) layout.findViewById(R.id.step_intensity);
+        final TitleSpinner stepType = layout.findViewById(R.id.step_intensity);
         stepType.setValue(step.getIntensity().getValue());
 
         final HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
-        final TitleSpinner durationType = (TitleSpinner) layout.findViewById(R.id.step_duration_type);
-        final TitleSpinner durationTime = (TitleSpinner) layout.findViewById(R.id.step_duration_time);
-        final TitleSpinner durationDistance = (TitleSpinner) layout.findViewById(R.id.step_duration_distance);
+        final TitleSpinner durationType = layout.findViewById(R.id.step_duration_type);
+        final TitleSpinner durationTime = layout.findViewById(R.id.step_duration_time);
+        final TitleSpinner durationDistance = layout.findViewById(R.id.step_duration_distance);
         durationType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
             @Override
             public String preSetValue(String newValue) throws IllegalArgumentException {
@@ -272,10 +259,10 @@ public class StepButton extends LinearLayout {
             durationType.setValue(step.getDurationType().getValue());
         }
 
-        final TitleSpinner targetType = (TitleSpinner) layout.findViewById(R.id.step_target_type);
-        final TitleSpinner targetPaceLo = (TitleSpinner) layout.findViewById(R.id.step_target_pace_lo);
-        final TitleSpinner targetPaceHi = (TitleSpinner) layout.findViewById(R.id.step_target_pace_hi);
-        final TitleSpinner targetHrz = (TitleSpinner) layout.findViewById(R.id.step_target_hrz);
+        final TitleSpinner targetType = layout.findViewById(R.id.step_target_type);
+        final TitleSpinner targetPaceLo = layout.findViewById(R.id.step_target_pace_lo);
+        final TitleSpinner targetPaceHi = layout.findViewById(R.id.step_target_pace_hi);
+        final TitleSpinner targetHrz = layout.findViewById(R.id.step_target_hrz);
 
         if (!hrZonesAdapter.hrZones.isConfigured()) {
             targetType.addDisabledValue(DIMENSION.HRZ);
@@ -337,39 +324,35 @@ public class StepButton extends LinearLayout {
             targetType.setValue(step.getTargetType().getValue());
         }
 
-        return new Runnable() {
-
-            @Override
-            public void run() {
-                step.setIntensity(Intensity.valueOf(stepType.getValueInt()));
-                step.setDurationType(Dimension.valueOf(durationType.getValueInt()));
-                switch (durationType.getValueInt()) {
-                    case DIMENSION.DISTANCE:
-                        step.setDurationValue(SafeParse.parseDouble(
-                                durationDistance.getValue().toString(), 1000));
-                        break;
-                    case DIMENSION.TIME:
-                        step.setDurationValue(SafeParse.parseSeconds(
-                                durationTime.getValue().toString(), 60));
-                        break;
+        return () -> {
+            step.setIntensity(Intensity.valueOf(stepType.getValueInt()));
+            step.setDurationType(Dimension.valueOf(durationType.getValueInt()));
+            switch (durationType.getValueInt()) {
+                case DIMENSION.DISTANCE:
+                    step.setDurationValue(SafeParse.parseDouble(
+                            durationDistance.getValue().toString(), 1000));
+                    break;
+                case DIMENSION.TIME:
+                    step.setDurationValue(SafeParse.parseSeconds(
+                            durationTime.getValue().toString(), 60));
+                    break;
+            }
+            step.setTargetType(Dimension.valueOf(targetType.getValueInt()));
+            switch (targetType.getValueInt()) {
+                case DIMENSION.PACE: {
+                    double unitMeters = Formatter.getUnitMeters(mContext);
+                    double paceLo = (double) SafeParse.parseSeconds(
+                            targetPaceLo.getValue().toString(), 5 * 60);
+                    double paceHi = (double) SafeParse.parseSeconds(
+                            targetPaceHi.getValue().toString(), 5 * 60);
+                    step.setTargetValue(paceLo / unitMeters, paceHi / unitMeters);
+                    break;
                 }
-                step.setTargetType(Dimension.valueOf(targetType.getValueInt()));
-                switch (targetType.getValueInt()) {
-                    case DIMENSION.PACE: {
-                        double unitMeters = Formatter.getUnitMeters(mContext);
-                        double paceLo = (double) SafeParse.parseSeconds(
-                                targetPaceLo.getValue().toString(), 5 * 60);
-                        double paceHi = (double) SafeParse.parseSeconds(
-                                targetPaceHi.getValue().toString(), 5 * 60);
-                        step.setTargetValue(paceLo / unitMeters, paceHi / unitMeters);
-                        break;
-                    }
-                    case DIMENSION.HRZ:
-                        step.setTargetType(Dimension.HR);
-                        Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
-                                targetHrz.getValueInt() + 1);
-                        step.setTargetValue(range.first, range.second);
-                }
+                case DIMENSION.HRZ:
+                    step.setTargetType(Dimension.HR);
+                    Pair<Integer, Integer> range = hrZonesAdapter.hrZones.getHRValues(
+                            targetHrz.getValueInt() + 1);
+                    step.setTargetValue(range.first, range.second);
             }
         };
     }

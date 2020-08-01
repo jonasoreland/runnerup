@@ -18,8 +18,6 @@
 package org.runnerup.view;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -56,7 +54,6 @@ import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
-import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.FileFormats;
@@ -96,17 +93,17 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            Button btn = (Button) findViewById(R.id.ok_account_button);
+            Button btn = findViewById(R.id.ok_account_button);
             btn.setOnClickListener(okButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_upload_button);
+            Button btn = findViewById(R.id.account_upload_button);
             btn.setOnClickListener(uploadButtonClick);
         }
 
         {
-            Button btn = (Button) findViewById(R.id.account_download_button);
+            Button btn = findViewById(R.id.account_download_button);
             if (synchronizer.checkSupport(Synchronizer.Feature.ACTIVITY_LIST) &&
                 synchronizer.checkSupport(Synchronizer.Feature.GET_ACTIVITY)) {
                 btn.setOnClickListener(downloadButtonClick);
@@ -116,7 +113,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         }
 
         {
-            Button btn = (Button) findViewById(R.id.disconnect_account_button);
+            Button btn = findViewById(R.id.disconnect_account_button);
             btn.setOnClickListener(disconnectButtonClick);
         }
     }
@@ -139,7 +136,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.FLAGS, DB.ACCOUNT.FORMAT, DB.ACCOUNT.AUTH_CONFIG
         };
 
-        String args[] = {
+        String[] args = {
                 mSynchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?", args,
@@ -158,8 +155,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             }
 
             {
-                ImageView im = (ImageView) findViewById(R.id.account_list_icon);
-                TextView tv = (TextView) findViewById(R.id.account_list_name);
+                ImageView im = findViewById(R.id.account_list_icon);
+                TextView tv = findViewById(R.id.account_list_name);
                 if (synchronizer.getIconId() == 0 || mSynchronizerName.equals(FileSynchronizer.NAME)) {
                     if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                         tv.setText(synchronizer.getPublicUrl());
@@ -207,7 +204,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setMinimumWidth(48);
                 addRow(getResources().getString(R.string.Automatic_upload), cb);
             } else {
-                Button btn = (Button) findViewById(R.id.account_upload_button);
+                Button btn = findViewById(R.id.account_upload_button);
                 btn.setVisibility(View.GONE);
             }
 
@@ -253,7 +250,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     }
 
     private void addRow(String string, View btn) {
-        TableLayout table = (TableLayout) findViewById(R.id.account_table);
+        TableLayout table = findViewById(R.id.account_table);
         TableRow row = new TableRow(this);
         row.setMinimumHeight(48);
         row.setMinimumWidth(48);
@@ -297,42 +294,28 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                     .setTitle(getString(R.string.Clear_uploads))
                     .setMessage(getResources().getString(R.string.Clear_uploads_from_phone))
                     .setPositiveButton(getString(R.string.OK),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            syncManager.clearUploadsByName(callback, mSynchronizerName);
-                        }
-                    })
+                            (dialog, which) -> syncManager.clearUploadsByName(callback, mSynchronizerName))
                     .setNegativeButton(getString(R.string.Cancel),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        }
-
-                    });
+                            (dialog, which) -> {
+                                // Do nothing but close the dialog
+                                dialog.dismiss();
+                            });
             builder.show();
         }
     };
 
-    private final OnClickListener uploadButtonClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", mSynchronizerName);
-            intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
-            AccountActivity.this.startActivityForResult(intent, 113);
-        }
+    private final OnClickListener uploadButtonClick = v -> {
+        final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
+        intent.putExtra("synchronizer", mSynchronizerName);
+        intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
+        AccountActivity.this.startActivityForResult(intent, 113);
     };
 
-    private final OnClickListener downloadButtonClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
-            intent.putExtra("synchronizer", mSynchronizerName);
-            intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
-            AccountActivity.this.startActivityForResult(intent, 113);
-        }
+    private final OnClickListener downloadButtonClick = v -> {
+        final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
+        intent.putExtra("synchronizer", mSynchronizerName);
+        intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
+        AccountActivity.this.startActivityForResult(intent, 113);
     };
 
     private final OnClickListener urlButtonClick = new OnClickListener() {
@@ -381,77 +364,53 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 }
                 tmp.put(DB.ACCOUNT.FLAGS, flags);
             }
-            String args[] = {
+            String[] args = {
                     mSynchronizerName
             };
             mDB.update(DB.ACCOUNT.TABLE, tmp, "name = ?", args);
         }
     };
 
-    private final OnClickListener okButtonClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (mRunnerUpLiveApiAddress != null) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                final Resources res = getResources();
+    private final OnClickListener okButtonClick = v -> {
+        if (mRunnerUpLiveApiAddress != null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            final Resources res = getResources();
 
-                prefs.edit().putString(res.getString(R.string.pref_runneruplive_serveradress),
-                        mRunnerUpLiveApiAddress.getText().toString()).apply();
-                mRunnerUpLiveApiAddress = null;
-            }
-            finish();
+            prefs.edit().putString(res.getString(R.string.pref_runneruplive_serveradress),
+                    mRunnerUpLiveApiAddress.getText().toString()).apply();
+            mRunnerUpLiveApiAddress = null;
         }
+        finish();
     };
 
     private final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
-            final CharSequence items[] = {
+            final CharSequence[] items = {
                 getString(R.string.Clear_uploads_from_phone)
             };
-            final boolean selected[] = {
+            final boolean[] selected = {
                 true
             };
             AlertDialog.Builder builder = new AlertDialog.Builder(
                     AccountActivity.this)
                     .setTitle(getString(R.string.Disconnect_account))
                     .setPositiveButton(getString(R.string.OK),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
-                                    selected[0]);
-                        }
-                    })
+                            (dialog, which) -> syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
+                                    selected[0]))
                     .setNegativeButton(getString(R.string.Cancel),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        }
-
-                    })
+                            (dialog, which) -> {
+                                // Do nothing but close the dialog
+                                dialog.dismiss();
+                            })
                     .setMultiChoiceItems(items, selected,
-                    new OnMultiChoiceClickListener() {
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1,
-                                boolean arg2) {
-                            selected[arg1] = arg2;
-                        }
-                    });
+                            (arg0, arg1, arg2) -> selected[arg1] = arg2);
             builder.show();
         }
     };
 
-    private final SyncManager.Callback callback = new SyncManager.Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-        }
+    private final SyncManager.Callback callback = (synchronizerName, status) -> {
     };
 
-    private final SyncManager.Callback disconnectCallback = new SyncManager.Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            finish();
-        }
-    };
+    private final SyncManager.Callback disconnectCallback = (synchronizerName, status) -> finish();
 
 }

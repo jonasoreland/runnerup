@@ -60,7 +60,7 @@ public class LocationEntity extends AbstractEntity {
                     break;
                 case Constants.DB.LOCATION.TYPE_PAUSE:
                 case Constants.DB.LOCATION.TYPE_GPS:
-                    float res[] = {
+                    float[] res = {
                             0
                     };
                     Location.distanceBetween(lastLocation.getLatitude(),
@@ -87,7 +87,6 @@ public class LocationEntity extends AbstractEntity {
 
         @NonNull
         @Override
-        @SuppressWarnings("unchecked")
         public Iterator<E> iterator() {
             iter = new LocationIterator(this.mID, this.mDB);
             return iter;
@@ -119,7 +118,7 @@ public class LocationEntity extends AbstractEntity {
                     Constants.DB.LOCATION.LAP,
                     Constants.DB.LOCATION.HR
             };
-            Cursor c = null;
+            final Cursor c;
             E prev = null;
 
             public int getCount() {

@@ -58,29 +58,25 @@ public class WorkoutFileProvider extends ContentProvider {
             throws FileNotFoundException {
 
         // Check incoming Uri against the matcher
-        switch (uriMatcher.match(uri)) {
         // If it returns 1 - then it matches the Uri defined in onCreate
-            case 1:
+        if (uriMatcher.match(uri) == 1) {// The desired file name is specified by the last segment of the
+            // path
+            // E.g.
+            // 'content://com.stephendnicholas.gmailattach.provider/Test.txt'
+            // Take this and build the path to the file
+            File file = WorkoutSerializer.getFile(getContext(), uri.getLastPathSegment());
 
-                // The desired file name is specified by the last segment of the
-                // path
-                // E.g.
-                // 'content://com.stephendnicholas.gmailattach.provider/Test.txt'
-                // Take this and build the path to the file
-                File file = WorkoutSerializer.getFile(getContext(), uri.getLastPathSegment());
+            // Create & return a ParcelFileDescriptor pointing to the file
+            // Note: I don't care what mode they ask for - they're only
+            // getting
+            // read only
+            return ParcelFileDescriptor.open(file,
+                    ParcelFileDescriptor.MODE_READ_ONLY);
 
-                // Create & return a ParcelFileDescriptor pointing to the file
-                // Note: I don't care what mode they ask for - they're only
-                // getting
-                // read only
-                return ParcelFileDescriptor.open(file,
-                        ParcelFileDescriptor.MODE_READ_ONLY);
-
-                // Otherwise unrecognised Uri
-            default:
-                throw new FileNotFoundException("Unsupported uri: "
-                        + uri.toString());
+            // Otherwise unrecognised Uri
         }
+        throw new FileNotFoundException("Unsupported uri: "
+                + uri.toString());
     }
 
     // //////////////////////////////////////////////////////////////

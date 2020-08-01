@@ -42,7 +42,7 @@ public enum Sport {
     static public String textOf(Resources res, int dbValue) {
         String sportName = null;
         if (res != null) {
-            String sports[] = res.getStringArray(R.array.sportEntries);
+            String[] sports = res.getStringArray(R.array.sportEntries);
             if (0 <= dbValue && dbValue < sports.length) {
                 sportName = sports[dbValue];
             }

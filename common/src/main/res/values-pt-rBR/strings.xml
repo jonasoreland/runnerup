@@ -59,7 +59,6 @@
   <string name="Interval">Intervalo</string>
   <string name="Lap">Volta</string>
   <string name="New_lap">Nova volta</string>
-  <string name="Next_lap">Próxima volta</string>
   <string name="Pause">Pausar</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Exercício</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">Criar novo esquema de aviso de audio</string>
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
-  <string name="No_way">Nem pensar</string>
   <string name="No">Não</string>
   <string name="Loading">Carregando…</string>
   <string name="Saving">Guardar</string>
@@ -252,8 +250,7 @@
   <string name="Activity_ready">Atividade pronta</string>
   <string name="Ready_to_start_running">Pronto para começar a correr!</string>
   <string name="Searching_for_GPS">Procurando por GPS</string>
-  <string name="Activity_ongoing">Atividade em andamento</string>
-  <string name="RunnerUp_activity_started">Atividade do RunnerUp iniciada</string>
+    <string name="RunnerUp_activity_started">Atividade do RunnerUp iniciada</string>
   <string name="Low_HRM_battery_level">Nível baixo bateria do HRM</string>
   <string name="High_HRM_battery_level">Nível alto bateria do HRM</string>
   <string name="Warning">Aviso</string>
@@ -294,7 +291,6 @@
   <string name="No_feed_to_show">Nenhum feed para motrar</string>
   <string name="Unused_currently">Atualmente não utilizado.</string>
   <string name="Unknown">Desconhecido</string>
-  <string name="RunningFreeOnlinePasswordNotice">Nota: Use a \"chave secreta\" como senha definida no site web em Adicionar &gt; Sincronizar treino &gt; Trajetos de esporte.</string>
   <string name="Recording">Gravando</string>
   <string name="Sensors">Sensores</string>
   <string name="Maintenance">Manutenção</string>

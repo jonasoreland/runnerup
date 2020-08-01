@@ -33,8 +33,8 @@ import org.runnerup.workout.Workout;
 public class CoachFeedback extends AudioFeedback {
 
     private int sign = 1;
-    private Range range = null;
-    private TargetTrigger trigger = null;
+    private final Range range;
+    private final TargetTrigger trigger;
 
     public CoachFeedback(TargetTrigger trigger) {
         super(Scope.CURRENT, trigger.getDimension());

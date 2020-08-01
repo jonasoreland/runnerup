@@ -30,7 +30,7 @@ public enum Event {
     RESUMED(4, R.string.cue_resumed),
     COMPLETED(5, R.string.cue_completed);
 
-    int value = 0;
+    final int value;
     final int cueId;
 
     Event(int val, int cueId) {

@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
 
 public class ClassicSpinner extends AppCompatSpinner implements SpinnerInterface {
-    SpinnerPresenter mPresenter;
+    final SpinnerPresenter mPresenter;
 
     public ClassicSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);

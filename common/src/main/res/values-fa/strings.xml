@@ -59,7 +59,6 @@
   <string name="Interval">فاصله</string>
   <string name="Lap">دور</string>
   <string name="New_lap">دور جدید</string>
-  <string name="Next_lap">دور بعدی</string>
   <string name="Pause">توقف</string>
   <string name="Stop">ایست</string>
   <string name="Workout">تمرین</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">ساخت شمای صف صدای جدید</string>
   <string name="Yes">بلی</string>
   <string name="Create">بساز</string>
-  <string name="No_way">اصلا</string>
   <string name="No">نه</string>
   <string name="Loading">در حال بارگذاری...</string>
   <string name="Saving">در حال ذخیره سازی</string>
@@ -252,8 +250,7 @@
   <string name="Activity_ready">فعالیت آماده است</string>
   <string name="Ready_to_start_running">آماده برای شروع دویدن</string>
   <string name="Searching_for_GPS">جستجو برای GPS</string>
-  <string name="Activity_ongoing">فعالیت در حال پیشرفت</string>
-  <string name="RunnerUp_activity_started">فعالیت رانرآپ شروع شد</string>
+    <string name="RunnerUp_activity_started">فعالیت رانرآپ شروع شد</string>
   <string name="Low_HRM_battery_level">سطح باتری HRM پایین است</string>
   <string name="High_HRM_battery_level">سطح باتری HRM بالا است</string>
   <string name="Warning">هشدار</string>
@@ -294,7 +291,6 @@
   <string name="No_feed_to_show">خوراکی برای نمایش وجود ندارد</string>
   <string name="Unused_currently">موقتا بی مصرف.</string>
   <string name="Unknown">ناشناخته</string>
-  <string name="RunningFreeOnlinePasswordNotice">توجه: از \"secret key\" به عنوان رمز عبور در وبسایت در مسیر زیر استفاده کنید Add &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">ضبط کردن</string>
   <string name="Sensors">سنسور ها</string>
   <string name="Maintenance">نگه داری</string>

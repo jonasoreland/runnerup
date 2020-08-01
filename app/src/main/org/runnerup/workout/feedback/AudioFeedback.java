@@ -35,11 +35,11 @@ import java.util.HashMap;
 
 public class AudioFeedback extends Feedback {
 
-    private int msgId;
+    private final int msgId;
     private String msgTxt = null;
     final private Event event = null;
-    Scope scope;
-    Dimension dimension;
+    final Scope scope;
+    final Dimension dimension;
     private Intensity intensity;
     RUTextToSpeech textToSpeech;
     Formatter formatter;

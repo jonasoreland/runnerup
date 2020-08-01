@@ -41,20 +41,20 @@ import java.util.Locale;
 
 public class Formatter implements OnSharedPreferenceChangeListener {
 
-    private Context context = null;
-    private Resources resources = null;
-    private LocaleResources cueResources = null;
-    private SharedPreferences sharedPreferences = null;
-    private java.text.DateFormat dateFormat = null;
-    private java.text.DateFormat timeFormat = null;
-    private java.text.DateFormat monthFormat = null;
-    private java.text.DateFormat dayOfMonthFormat = null;
+    private final Context context;
+    private final Resources resources;
+    private final LocaleResources cueResources;
+    private final SharedPreferences sharedPreferences;
+    private final java.text.DateFormat dateFormat;
+    private final java.text.DateFormat timeFormat;
+    private final java.text.DateFormat monthFormat;
+    private final java.text.DateFormat dayOfMonthFormat;
     //private HRZones hrZones = null;
 
     private boolean metric = true;
     private String base_unit = "km";
     private double base_meters = km_meters;
-    private boolean unitCue = false;
+    private final boolean unitCue;
 
     public final static double km_meters = 1000.0;
     public final static double mi_meters = 1609.34;
@@ -100,7 +100,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                     !ctx.getResources().getConfiguration().getLocales().isEmpty()) {
                 defaultLocale = configuration.getLocales().get(0);
             } else {
-                //noinspection deprecation
                 defaultLocale = configuration.locale;
             }
 
@@ -115,7 +114,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             if (Build.VERSION.SDK_INT >= 17) {
                 configuration.setLocale(locale);
             } else {
-                //noinspection deprecation
                 configuration.locale = locale;
             }
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
@@ -153,8 +151,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     public String getCueString(int msgId) {
-        String s =  cueResources.getString(msgId);
-        return s;
+        return cueResources.getString(msgId);
 
     }
 
@@ -718,7 +715,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT_SHORT:
                 return formatDistance(meters, true);
             case TXT_LONG:
-                return Long.toString(meters) + " m";
+                return meters + " m";
         }
         return null;
     }

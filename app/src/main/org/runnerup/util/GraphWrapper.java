@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -34,10 +33,7 @@ import android.widget.Toast;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
-import com.jjoe64.graphview.series.Series;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -50,8 +46,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GraphWrapper implements Constants {
-    private GraphView graphView;
-    private GraphView graphView2;
+    private final GraphView graphView;
+    private final GraphView graphView2;
 
     private final LinearLayout graphTab;
     private final HRZonesBar hrzonesBar;
@@ -111,13 +107,13 @@ public class GraphWrapper implements Constants {
         final int interval;
         boolean first = true;
         int pos = 0;
-        double time[] = null;
-        double distance[] = null;
+        final double[] time;
+        final double[] distance;
         double sum_time = 0;
         double sum_distance = 0;
         double acc_time = 0;
 
-        int[] hr = null;
+        final int[] hr;
         double[] hrzHist = null;
 
         double tot_avg_hr = 0;
@@ -125,14 +121,14 @@ public class GraphWrapper implements Constants {
         double avg_velocity = 0;
         double min_velocity = Double.MAX_VALUE;
         double max_velocity = Double.MIN_VALUE;
-        List<DataPoint> velocityList = null;
-        List<DataPoint> hrList = null;
+        final List<DataPoint> velocityList;
+        final List<DataPoint> hrList;
 
         boolean showHR = false;
         boolean showHRZhist = false;
-        HRZones hrCalc = null;
+        final HRZones hrCalc;
 
-        SpeedUnit preferred_speedunit;
+        final SpeedUnit preferred_speedunit;
 
         public GraphProducer(Context context, int noPoints) {
             final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
@@ -160,9 +156,7 @@ public class GraphWrapper implements Constants {
             this.hrCalc = new HRZones(res, prefs);
             if (hrCalc.isConfigured()) {
                 this.hrzHist = new double[hrCalc.getCount() + 1];
-                for (int i = 0; i < this.hrzHist.length; i++) {
-                    this.hrzHist[i] = 0;
-                }
+                Arrays.fill(this.hrzHist, 0);
                 showHRZhist = true;
             }
             this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context);
@@ -171,7 +165,7 @@ public class GraphWrapper implements Constants {
         }
 
         void clearSmooth(double tot_distance) {
-            if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2))
+            if (pos >= (this.time.length / 2) && (acc_time >= 1000 * (interval / 2.0))
                     && sum_distance > 0) {
                 emit(tot_distance);
             }
@@ -251,7 +245,7 @@ public class GraphWrapper implements Constants {
 
         class GraphFilter {
 
-            double data[] = null;
+            final double[] data;
             final List<DataPoint> source;
 
             GraphFilter(List<DataPoint> velocityList) {
@@ -266,12 +260,12 @@ public class GraphWrapper implements Constants {
                     source.set(i, new DataPoint(source.get(i).getX(), data[i]));
             }
 
-            void init(double window[], double val) {
+            void init(double[] window, double val) {
                 for (int j = 0; j < window.length - 1; j++)
                     window[j] = val;
             }
 
-            void shiftLeft(double window[], double newVal) {
+            void shiftLeft(double[] window, double newVal) {
                 System.arraycopy(window, 1, window, 0, window.length - 1);
                 window[window.length - 1] = newVal;
             }
@@ -280,7 +274,7 @@ public class GraphWrapper implements Constants {
              * Perform in place moving average
              */
             void movingAvergage(int windowLen) {
-                double window[] = new double[windowLen];
+                double[] window = new double[windowLen];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -305,7 +299,7 @@ public class GraphWrapper implements Constants {
              * Perform in place moving average
              */
             void movingMedian(int windowLen) {
-                double window[] = new double[windowLen];
+                double[] window = new double[windowLen];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -313,7 +307,7 @@ public class GraphWrapper implements Constants {
                     window[i + mid] = data[i];
                 }
 
-                double sort[] = new double[windowLen];
+                double[] sort = new double[windowLen];
                 for (int i = 0; i < data.length; i++) {
                     System.arraycopy(window, 0, sort, 0, windowLen);
                     Arrays.sort(sort);
@@ -327,7 +321,7 @@ public class GraphWrapper implements Constants {
              */
             void SavitzkyGolay5() {
                 final int len = 5;
-                double window[] = new double[len];
+                double[] window = new double[len];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -348,7 +342,7 @@ public class GraphWrapper implements Constants {
              */
             void SavitzkyGolay7() {
                 final int len = 7;
-                double window[] = new double[len];
+                double[] window = new double[len];
                 init(window, data[0]);
 
                 final int mid = (window.length - 1) / 2;
@@ -384,10 +378,10 @@ public class GraphWrapper implements Constants {
                         graphView.getContext()).getString(
                         graphView.getContext().getResources().getString(R.string.pref_pace_graph_smoothing_filters),
                         defaultFilterList);
-                final String filters[] = filterList.split(";");
+                final String[] filters = filterList.split(";");
                 System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
                 for (String filter : filters) {
-                    int args[] = getArgs(filter);
+                    int[] args = getArgs(filter);
                     if (filter.startsWith("mm")) {
                         if (args.length == 1) {
                             f.movingMedian(args[0]);
@@ -417,37 +411,31 @@ public class GraphWrapper implements Constants {
                 f.complete();
             }
             LineGraphSeries<DataPoint> graphViewData = new LineGraphSeries<>(
-                    velocityList.toArray(new DataPoint[velocityList.size()]));
+                    velocityList.toArray(new DataPoint[0]));
             graphView.addSeries(graphViewData); // data
             graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
             graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
-            graphViewData.setOnDataPointTapListener(new OnDataPointTapListener() {
-                @Override
-                public void onTap(Series series, DataPointInterface dataPoint) {
-                    String msg = String.format("%s: %s\n%s: %s %s",
-                            graphView.getContext().getString(R.string.Distance),
-                            formatter.formatDistance(Formatter.Format.TXT_SHORT,
-                            (long) dataPoint.getX()),
-                            formatter.formatVelocityLabel(),
-                            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
-                            formatter.getVelocityUnit(graphView.getContext())
-                    );
-                    Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-                }
+            graphViewData.setOnDataPointTapListener((series, dataPoint) -> {
+                String msg = String.format("%s: %s\n%s: %s %s",
+                        graphView.getContext().getString(R.string.Distance),
+                        formatter.formatDistance(Formatter.Format.TXT_SHORT,
+                        (long) dataPoint.getX()),
+                        formatter.formatVelocityLabel(),
+                        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dataPoint.getY()),
+                        formatter.getVelocityUnit(graphView.getContext())
+                );
+                Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
             });
             if (showHR) {
                 LineGraphSeries<DataPoint> graphViewData2 = new LineGraphSeries<>(
-                        hrList.toArray(new DataPoint[hrList.size()]));
+                        hrList.toArray(new DataPoint[0]));
                 graphView2.addSeries(graphViewData2); // data
                 graphView2.getViewport().setMinX(graphView2.getViewport().getMinX(true));
                 graphView2.getViewport().setMaxX(graphView2.getViewport().getMaxX(true));
-                graphViewData2.setOnDataPointTapListener(new OnDataPointTapListener() {
-                    @Override
-                    public void onTap(Series series, DataPointInterface dataPoint) {
-                        String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
-                                graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY());
-                        Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-                    }
+                graphViewData2.setOnDataPointTapListener((series, dataPoint) -> {
+                    String msg = graphView.getContext().getString(R.string.Distance) + ": " + formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()) + "\n" +
+                            graphView.getContext().getString(R.string.Heart_rate) + ": " + formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY());
+                    Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
                 });
 
                 if (showHRZhist) {
@@ -470,8 +458,8 @@ public class GraphWrapper implements Constants {
             try {
                 s = s.substring(s.indexOf('(') + 1);
                 s = s.substring(0, s.indexOf(')'));
-                String sargs[] = s.split(",");
-                int args[] = new int[sargs.length];
+                String[] sargs = s.split(",");
+                int[] args = new int[sargs.length];
                 for (int i = 0; i < args.length; i++) {
                     args[i] = Integer.parseInt(sargs[i]);
                 }

@@ -155,7 +155,7 @@ public class Geoid {
 	 * @return bicubic spline
 	 */	
     private static double bicubicSplineInterpolation(Location target, Location[][] grid) {
-		double G [][] = new double [4][4];
+		double[][] G = new double [4][4];
 
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 4; j++) {

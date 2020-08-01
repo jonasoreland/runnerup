@@ -22,6 +22,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
@@ -101,6 +102,7 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
         return SCOPES;
     }
 
+    @NonNull
     @Override
     public String getName() {
         return NAME;
@@ -131,6 +133,7 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
         return PUBLIC_URL;
     }
 
+    @ColorRes
     @Override
     public int getColorId() { return R.color.serviceGoogleFit; }
 
@@ -178,10 +181,17 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
 
     @NonNull
     @Override
-    public Status upload(SQLiteDatabase db, long mID) {
+    public String getAuthConfig() {
+        Log.e(getName(), "getAuthConfig: stub, must be implemented");
+        return "";
+    }
 
-        Status s;
-        if ((s = connect()) != Status.OK) {
+    @NonNull
+    @Override
+    public Status upload(SQLiteDatabase db, long mID) {
+        Status s = connect();
+        s.activityId = mID;
+        if (s != Status.OK) {
             return s;
         }
 
@@ -277,12 +287,11 @@ public class GoogleFitSynchronizer extends DefaultSynchronizer implements OAuth2
                     if (code != HttpURLConnection.HTTP_OK) {
                         Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getErrorStream())).toString());
                         status = Status.ERROR;
-                        break;
                     } else {
                         Log.i(getName(), SyncHelper.parse(new GZIPInputStream(connect.getInputStream())).toString());
                         status = Status.OK;
-                        break;
                     }
+                    break;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

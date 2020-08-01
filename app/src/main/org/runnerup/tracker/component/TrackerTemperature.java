@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.*;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import java.util.Random;
@@ -76,7 +75,7 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
 
     @SuppressLint("ObsoleteSdkInt")
     private Sensor getSensor(final Context context) {
-        Sensor sensor = null;
+        Sensor sensor;
         if (sensorManager == null) {
             sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         }

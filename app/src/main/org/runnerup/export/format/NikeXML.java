@@ -43,10 +43,10 @@ public class NikeXML {
 
     private static final String DEVICE = "iPod";
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
     private KXmlSerializer mXML = null;
-    private SimpleDateFormat simpleDateFormat;
-    private PathSimplifier simplifier;
+    private final SimpleDateFormat simpleDateFormat;
+    private final PathSimplifier simplifier;
 
     public NikeXML(final SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
@@ -208,7 +208,7 @@ public class NikeXML {
 
     private boolean emitHeartrateStats(long mID) throws IllegalArgumentException,
             IllegalStateException, IOException {
-        String args[] = {
+        String[] args = {
             Long.toString(mID)
         };
         Cursor c = mDB.rawQuery("select min(" + DB.LOCATION.HR + "), max(" + DB.LOCATION.HR
@@ -241,7 +241,7 @@ public class NikeXML {
             throws IllegalArgumentException, IllegalStateException, IOException {
         long _id;
         { // 1 find a point with specified value
-            String args[] = {
+            String[] args = {
                     Long.toString(mID), Integer.toString(hrVal)
             };
             Cursor c = mDB.rawQuery(
@@ -255,11 +255,11 @@ public class NikeXML {
         }
 
         // 2 iterate to that position from start...
-        String cols[] = {
+        String[] cols = {
                 DB.LOCATION.TYPE, DB.LOCATION.LATITUDE, DB.LOCATION.LONGITUDE, DB.LOCATION.TIME,
                 DB.LOCATION.SPEED
         };
-        String args[] = {
+        String[] args = {
                 Long.toString(mID), Long.toString(_id)
         };
         Cursor c = mDB.query(DB.LOCATION.TABLE, cols,
@@ -383,7 +383,7 @@ public class NikeXML {
 
     class ExtendedData extends Emitter
     {
-        Dim d;
+        final Dim d;
         final StringBuffer buf = new StringBuffer();
 
         public ExtendedData(final Dim dim) {
@@ -394,7 +394,7 @@ public class NikeXML {
         public void emit(final Pos p, final Vector<Pos> posHist, final Vector<Location> hist) {
             if (d == Dim.DISTANCE) {
                 buf.append(' ');
-                buf.append(Double.toString(Math.round(1000.0 * p.sumDistance / 1000.0) / 1000.0d));
+                buf.append(Math.round(1000.0 * p.sumDistance / 1000.0) / 1000.0d);
             } else if (d == Dim.SPEED) {
                 double deltaTime = p.sumTime;
                 double deltaDist = p.sumDistance;
@@ -407,7 +407,7 @@ public class NikeXML {
                     speed = deltaDist / deltaTime;
                 }
                 buf.append(' ');
-                buf.append(Double.toString(speed));
+                buf.append(speed);
             } else if (d == Dim.HR) {
                 double deltaTime = p.sumTime;
                 double deltaHR = p.sumHR;
@@ -420,7 +420,7 @@ public class NikeXML {
                     avgHR = deltaHR / deltaTime;
                 }
                 buf.append(' ');
-                buf.append(Long.toString(Math.round(avgHR)));
+                buf.append(Math.round(avgHR));
             }
         }
     }

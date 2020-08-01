@@ -90,7 +90,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
                 mCurrentCadence = null;
             } else {
                 final long nanoSec = 1000000000L;
-                Float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
+                float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
                 if (mCurrentCadence == null) {
                     mCurrentCadence = val;
                 } else {

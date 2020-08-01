@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 
+import androidx.annotation.NonNull;
+
 public class IntervalTrigger extends Trigger {
 
     Scope scope = Scope.ACTIVITY;
@@ -91,6 +93,7 @@ public class IntervalTrigger extends Trigger {
     public void onComplete(Scope what, Workout s) {
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "[ IntervalTrigger: " + this.scope + " " + this.dimension + " first: " + first

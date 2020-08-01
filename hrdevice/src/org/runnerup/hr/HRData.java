@@ -1,5 +1,7 @@
 package org.runnerup.hr;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 
 /**
@@ -43,6 +45,7 @@ public class HRData {
     private boolean hasRrIntervals = false;
     private long[] rrIntervals = null;
 
+    @NonNull
     @Override
     public String toString() {
         return "HRData{" + ", hrValue=" + (hasHeartRate ? hrValue : "<no_heart_rate_data>") +

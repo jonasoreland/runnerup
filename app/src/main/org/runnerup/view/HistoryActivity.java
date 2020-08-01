@@ -69,16 +69,13 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.history);
-        ListView listView = (ListView) findViewById(R.id.history_list);
+        ListView listView = findViewById(R.id.history_list);
         fab = findViewById(R.id.history_add);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HistoryActivity.this,
-                        ManualActivity.class);
-                startActivityForResult(i, 0);
-            }
+        fab.setOnClickListener(v -> {
+            Intent i = new Intent(HistoryActivity.this,
+                    ManualActivity.class);
+            startActivityForResult(i, 0);
         });
 
         mDB = DBHelper.getReadableDatabase(this);
@@ -173,7 +170,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             Calendar cal = Calendar.getInstance();
             cal.setTime(curDate);
 
-            TextView sectionTitle = (TextView)view.findViewById(R.id.section_title);
+            TextView sectionTitle = view.findViewById(R.id.section_title);
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
             if (sameMonthAsPrevious(year, month, cursor)) {
@@ -183,12 +180,12 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
                 sectionTitle.setText(formatter.formatMonth(curDate));
             }
 
-            TextView dateText = (TextView)view.findViewById(R.id.history_list_date);
+            TextView dateText = view.findViewById(R.id.history_list_date);
             dateText.setText(formatter.formatDateTime(ae.getStartTime()));
 
             // distance
             Double d = ae.getDistance();
-            TextView distanceText = (TextView)view.findViewById(R.id.history_list_distance);
+            TextView distanceText = view.findViewById(R.id.history_list_distance);
             if (d != null) {
                 distanceText.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, d.longValue()));
             } else {
@@ -197,8 +194,8 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
 
             // sport + additional info
             Integer s = ae.getSport();
-            ImageView emblem = (ImageView)view.findViewById(R.id.history_list_emblem);
-            TextView additionalInfo = (TextView)view.findViewById(R.id.history_list_additional);
+            ImageView emblem = view.findViewById(R.id.history_list_emblem);
+            TextView additionalInfo = view.findViewById(R.id.history_list_additional);
 
             int sportColor = getResources().getColor(Sport.colorOf(s));
             Drawable sportDrawable = ContextCompat.getDrawable(context, Sport.drawableColored16Of(s));
@@ -214,7 +211,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
 
             // duration
             Long dur = ae.getTime();
-            TextView durationText = (TextView)view.findViewById(R.id.history_list_duration);
+            TextView durationText = view.findViewById(R.id.history_list_duration);
             if (dur != null) {
                 durationText.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, dur));
             } else {
@@ -222,7 +219,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             }
 
             // pace
-            TextView paceText = (TextView)view.findViewById(R.id.history_list_pace);
+            TextView paceText = view.findViewById(R.id.history_list_pace);
             String paceTextContents = "";
             if (d != null && dur != null && dur != 0) {
                 paceTextContents = formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / dur);

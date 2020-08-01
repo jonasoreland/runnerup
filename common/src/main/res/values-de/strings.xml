@@ -59,7 +59,6 @@
   <string name="Interval">Intervall</string>
   <string name="Lap">Runde</string>
   <string name="New_lap">Neue Runde</string>
-  <string name="Next_lap">Nächste Runde</string>
   <string name="Pause">Pause</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Trainingseinheit</string>
@@ -148,7 +147,6 @@
   <string name="Create_new_audio_cue_scheme">Neues Audiohinweisschema erstellen</string>
   <string name="Yes">Ja</string>
   <string name="Create">Erstellen</string>
-  <string name="No_way">Niemals</string>
   <string name="No">No</string>
   <string name="Loading">Lade…</string>
   <string name="Saving">Speichern</string>
@@ -252,8 +250,7 @@
   <string name="Activity_ready">Aktivität fertig</string>
   <string name="Ready_to_start_running">Bereit zu laufen!</string>
   <string name="Searching_for_GPS">Suche GPS</string>
-  <string name="Activity_ongoing">Aktivität laufend</string>
-  <string name="RunnerUp_activity_started">RunnerUp Aktivität gestartet</string>
+    <string name="RunnerUp_activity_started">RunnerUp Aktivität gestartet</string>
   <string name="Low_HRM_battery_level">Niedrige Akkukapazität</string>
   <string name="High_HRM_battery_level">Hohe Akkukapazität</string>
   <string name="Warning">Warnung</string>

@@ -59,7 +59,6 @@
   <string name="Interval">Intervalle</string>
   <string name="Lap">Tour</string>
   <string name="New_lap">Nouveau tour</string>
-  <string name="Next_lap">Tour suivant</string>
   <string name="Pause">Pause</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Entraînement</string>
@@ -149,7 +148,6 @@
   <string name="Create_new_audio_cue_scheme">Créer un nouveau suivi audio</string>
   <string name="Yes">Oui</string>
   <string name="Create">Créer</string>
-  <string name="No_way">Non</string>
   <string name="No">Non</string>
   <string name="Loading">Chargement</string>
   <string name="Saving">Sauvegarde</string>
@@ -262,8 +260,7 @@
   <string name="Activity_ready">Séance prête</string>
   <string name="Ready_to_start_running">Prêt à courir !</string>
   <string name="Searching_for_GPS">Recherche de signaux GPS</string>
-  <string name="Activity_ongoing">Séance en cours</string>
-  <string name="RunnerUp_activity_started">Activité RunnerUp démarrée</string>
+    <string name="RunnerUp_activity_started">Activité RunnerUp démarrée</string>
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
@@ -304,7 +301,6 @@
   <string name="No_feed_to_show">Aucun flux à afficher</string>
   <string name="Unused_currently">Inutilisé actuellement.</string>
   <string name="Unknown">Inconnu</string>
-  <string name="RunningFreeOnlinePasswordNotice">Note: Utiliser la \"clé secrète\" comme mot de passe défini sur le site web sous Ajouter &gt; Sync Training &gt; SportTracks.</string>
   <string name="Recording">Enregistrement</string>
   <string name="Sensors">Capteurs</string>
   <string name="Maintenance">Maintenance</string>

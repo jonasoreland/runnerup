@@ -8,8 +8,8 @@ public enum SpeedUnit {
     SPEED(Constants.SPEED_UNIT.SPEED, R.string.speed),
     PACE(Constants.SPEED_UNIT.PACE, R.string.pace);
 
-    String value;
-    int textId;
+    final String value;
+    final int textId;
 
     SpeedUnit(String val, int textId){
         this.value = val;

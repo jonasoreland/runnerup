@@ -23,7 +23,6 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -40,8 +39,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -147,10 +144,10 @@ public class SyncManager {
 
     @SuppressWarnings("UnusedReturnValue")
     public long load(String synchronizerName) {
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
-        String args[] = {
+        String[] args = {
                 synchronizerName
         };
         Cursor c = mDB.query(DB.ACCOUNT.TABLE, from, DB.ACCOUNT.NAME + " = ?",
@@ -213,9 +210,9 @@ public class SyncManager {
         } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
             synchronizer = new DropboxSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(WebDavSynchronizer.NAME)) {
-            synchronizer = new WebDavSynchronizer(mContext, simplifier);
+            synchronizer = new WebDavSynchronizer(simplifier);
         } else {
-            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);;
+            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
         }
 
         if (synchronizer != null) {
@@ -355,27 +352,21 @@ public class SyncManager {
 
     private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
         final View view = View.inflate(mActivity, R.layout.userpass, null);
-        final CheckBox cb = (CheckBox) view.findViewById(R.id.showpass);
-        final TextView tv1 = (TextView) view.findViewById(R.id.username);
-        final TextView tv2 = (TextView) view.findViewById(R.id.password_input);
-        final TextView urlInput = (TextView) view.findViewById(R.id.url_input);
-        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
-        final TableRow rowUrl = (TableRow) view.findViewById(R.id.table_row_url);
+        final CheckBox cb = view.findViewById(R.id.showpass);
+        final TextView tv1 = view.findViewById(R.id.username);
+        final TextView tv2 = view.findViewById(R.id.password_input);
+        final TextView urlInput = view.findViewById(R.id.url_input);
+        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
+        final TableRow rowUrl = view.findViewById(R.id.table_row_url);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
         String username = authConfig != null ? authConfig.optString("username", "") : null;
         String password = authConfig != null ? authConfig.optString("password", "") : null;
         tv1.setText(username);
         tv2.setText(password);
-        cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,
-                                         boolean isChecked) {
-                tv2.setInputType(InputType.TYPE_CLASS_TEXT
-                        | (isChecked ? 0
-                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
-            }
-        });
+        cb.setOnCheckedChangeListener((buttonView, isChecked) -> tv2.setInputType(InputType.TYPE_CLASS_TEXT
+                | (isChecked ? 0
+                : InputType.TYPE_TEXT_VARIATION_PASSWORD)));
         if (sync.getAuthNotice() != 0) {
             tvAuthNotice.setVisibility(View.VISIBLE);
             tvAuthNotice.setText(sync.getAuthNotice());
@@ -399,42 +390,26 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            //noinspection ConstantConditions
-                            authConfig.put("username", tv1.getText());
-                            authConfig.put("password", tv2.getText());
-                            if (authMethod == AuthMethod.USER_PASS_URL) {
-                                authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                    try {
+                        //noinspection ConstantConditions
+                        authConfig.put("username", tv1.getText());
+                        authConfig.put("password", tv2.getText());
+                        if (authMethod == AuthMethod.USER_PASS_URL) {
+                            authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
                         }
-                        testUserPass(sync, authConfig);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                    testUserPass(sync, authConfig);
                 })
-                .setNeutralButton("Skip", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
+                .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                    if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        handleAuthComplete(sync, Status.CANCEL);
                     }
-                })
-                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
-                    }
-                })
-                .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                            handleAuthComplete(sync, Status.CANCEL);
-                        }
-                        return false;
-                    }
+                    return false;
                 });
         builder.show();
     }
@@ -470,8 +445,8 @@ public class SyncManager {
 
     private void askFileUrl(final Synchronizer sync) {
         final View view = View.inflate(mActivity, R.layout.filepermission, null);
-        final TextView tv1 = (TextView) view.findViewById(R.id.fileuri);
-        final TextView tvAuthNotice = (TextView) view.findViewById(R.id.textViewAuthNotice);
+        final TextView tv1 = view.findViewById(R.id.fileuri);
+        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
 
         String path;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -500,43 +475,32 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //Set default values
-                        ContentValues tmp = new ContentValues();
-                        String uri = tv1.getText().toString().trim();
-                        while (uri.endsWith(File.separator)){
-                            uri = uri.substring(0, uri.length()-1);
+                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                    //Set default values
+                    ContentValues tmp = new ContentValues();
+                    String uri = tv1.getText().toString().trim();
+                    while (uri.endsWith(File.separator)){
+                        uri = uri.substring(0, uri.length()-1);
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        while (uri.startsWith(File.separator)) {
+                            uri = uri.substring(1);
                         }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            while (uri.startsWith(File.separator)) {
-                                uri = uri.substring(1);
-                            }
-                        }
-                        tmp.put(DB.ACCOUNT.URL, uri);
-                        ContentValues config = new ContentValues();
-                        config.put("_id", sync.getId());
-                        config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
-                        sync.init(config);
+                    }
+                    tmp.put(DB.ACCOUNT.URL, uri);
+                    ContentValues config = new ContentValues();
+                    config.put("_id", sync.getId());
+                    config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
+                    sync.init(config);
 
-                        handleAuthComplete(sync, sync.connect());
-                    }
+                    handleAuthComplete(sync, sync.connect());
                 })
-                .setNegativeButton(getResources().getString(R.string.Cancel), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handleAuthComplete(sync, Status.SKIP);
+                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                    if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        handleAuthComplete(sync, Status.CANCEL);
                     }
-                })
-                .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                        if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                            handleAuthComplete(sync, Status.CANCEL);
-                        }
-                        return false;
-                    }
+                    return false;
                 });
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
@@ -633,19 +597,11 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName,
-                                            Synchronizer.Status status) {
-                                switch (status) {
-                                    case OK:
-                                        doUpload(synchronizer);
-                                        break;
-
-                                    default:
-                                        nextSynchronizer();
-                                        break;
-                                }
+                        handleAuth((synchronizerName, status) -> {
+                            if (status == Synchronizer.Status.OK) {
+                                doUpload(synchronizer);
+                            } else {
+                                nextSynchronizer();
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -689,12 +645,7 @@ public class SyncManager {
         }
     }
 
-    private final Callback disableSynchronizerCallback = new Callback() {
-        @Override
-        public void run(String synchronizerName, Status status) {
-            nextSynchronizer();
-        }
-    };
+    private final Callback disableSynchronizerCallback = (synchronizerName, status) -> nextSynchronizer();
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
                         Synchronizer.Status status) {
@@ -744,7 +695,7 @@ public class SyncManager {
     }
 
     private void resetDB(final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
-        final String args[] = {
+        final String[] args = {
             Long.toString(synchronizer.getId())
         };
         ContentValues config = new ContentValues();
@@ -761,7 +712,7 @@ public class SyncManager {
 
     public void clearUploadsByName(Callback callback, String synchronizerName) {
         Synchronizer synchronizer = synchronizers.get(synchronizerName);
-        final String args[] = {
+        final String[] args = {
                 Long.toString(synchronizer.getId())
         };
         mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
@@ -771,7 +722,7 @@ public class SyncManager {
     public void clearUpload(String name, long id) {
         Synchronizer synchronizer = synchronizers.get(name);
         if (synchronizer != null) {
-            final String args[] = {
+            final String[] args = {
                     Long.toString(synchronizer.getId()), Long.toString(id)
             };
             mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ? AND " + DB.EXPORT.ACTIVITY
@@ -883,20 +834,11 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName,
-                                    Synchronizer.Status status) {
-                                switch (status) {
-                                    case OK:
-                                        doListWorkout(synchronizer);
-                                        break;
-
-                                    default:
-                                        // Unexpected result, nothing to do
-                                        nextListWorkout();
-                                        break;
-                                }
+                        handleAuth((synchronizerName, status) -> {
+                            if (status == Synchronizer.Status.OK) {
+                                doListWorkout(synchronizer);
+                            } else {// Unexpected result, nothing to do
+                                nextListWorkout();
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -987,8 +929,8 @@ public class SyncManager {
         try {
             f1 = new FileInputStream(w);
             f2 = new FileInputStream(f);
-            byte buf1[] = new byte[1024];
-            byte buf2[] = new byte[1024];
+            byte[] buf1 = new byte[1024];
+            byte[] buf2 = new byte[1024];
             do {
                 int cnt1 = f1.read(buf1);
                 int cnt2 = f2.read(buf2);
@@ -1073,16 +1015,13 @@ public class SyncManager {
         Button noButton = mSpinner.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (noButton != null) {
             noButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    v -> {
                         synchronized (cancel) {
                             cancel.append('t');
                         }
                         if (mSpinner != null)
                             mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
-                    }
-                });
+                    });
         }
         syncNextActivity(synchronizer, mode);
     }
@@ -1091,14 +1030,11 @@ public class SyncManager {
         String msg = getResources().getString(mode.getTextId(), synchronizerName);
         mSpinner.setTitle(msg);
         mSpinner.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        synchronized (cancel) {
-                            cancel.append('t');
-                        }
-                        mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
+                (dialog, which) -> {
+                    synchronized (cancel) {
+                        cancel.append('t');
                     }
+                    mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
                 });
         mSpinner.setCancelable(false);
         mSpinner.setCanceledOnTouchOutside(false);
@@ -1190,19 +1126,11 @@ public class SyncManager {
 
                         // TODO Handling of NEED_AUTH and CANCEL hangs the app
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName, Synchronizer.Status s2) {
-                                switch (s2) {
-                                    case OK:
-                                        doSyncMulti(synchronizer, mode, activityItem);
-                                        break;
-
-                                    default:
-                                        // Unexpected result, nothing to do
-                                        syncNextActivity(synchronizer, mode);
-                                        break;
-                                }
+                        handleAuth((synchronizerName, s2) -> {
+                            if (s2 == Synchronizer.Status.OK) {
+                                doSyncMulti(synchronizer, mode, activityItem);
+                            } else {// Unexpected result, nothing to do
+                                syncNextActivity(synchronizer, mode);
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -1295,14 +1223,11 @@ public class SyncManager {
                         break;
 
                     case NEED_AUTH:
-                        handleAuth(new Callback() {
-                            @Override
-                            public void run(String synchronizerName, Synchronizer.Status s2) {
-                                if (s2 == Synchronizer.Status.OK) {
-                                    syncFeed(synchronizer);
-                                } else {
-                                    nextSyncFeed();
-                                }
+                        handleAuth((synchronizerName, s2) -> {
+                            if (s2 == Synchronizer.Status.OK) {
+                                syncFeed(synchronizer);
+                            } else {
+                                nextSyncFeed();
                             }
                         }, synchronizer, result.authMethod);
                         return;
@@ -1325,15 +1250,13 @@ public class SyncManager {
             return;
         }
 
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
-        Cursor c = null;
-        try {
-            c = mDB.query(DB.ACCOUNT.TABLE, from,
-                    "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
-                    null, null, null, null, null);
+        try (Cursor c = mDB.query(DB.ACCOUNT.TABLE, from,
+                "( " + DB.ACCOUNT.FLAGS + "&" + (1 << DB.ACCOUNT.FLAG_LIVE) + ") != 0",
+                null, null, null, null, null)) {
             if (c.moveToFirst()) {
                 do {
                     ContentValues config = DBHelper.get(c);
@@ -1344,15 +1267,12 @@ public class SyncManager {
                     }
                 } while (c.moveToNext());
             }
-        } finally {
-            if (c != null)
-                c.close();
         }
     }
 
     public Set<String> feedSynchronizersSet(Context ctx) {
         Set<String> set = new HashSet<>();
-        String from[] = new String[] {
+        String[] from = new String[] {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 

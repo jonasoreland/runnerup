@@ -20,7 +20,6 @@ package org.runnerup.view;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +27,8 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -135,7 +136,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             // No MapBox key, load without mapview, do not set mapWrapper
             setContentView(R.layout.detail_nomap);
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.actionbar);
+        Toolbar toolbar = findViewById(R.id.actionbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -159,19 +160,19 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             }
         }
 
-        saveButton = (Button) findViewById(R.id.save_button);
-        Button discardButton = (Button) findViewById(R.id.discard_button);
-        resumeButton = (Button) findViewById(R.id.resume_button);
-        uploadButton = (Button) findViewById(R.id.upload_button);
-        activityTime = (TextView) findViewById(R.id.activity_time);
-        activityDistance = (TextView) findViewById(R.id.activity_distance);
-        activityPace = (TextView) findViewById(R.id.activity_pace);
+        saveButton = findViewById(R.id.save_button);
+        Button discardButton = findViewById(R.id.discard_button);
+        resumeButton = findViewById(R.id.resume_button);
+        uploadButton = findViewById(R.id.upload_button);
+        activityTime = findViewById(R.id.activity_time);
+        activityDistance = findViewById(R.id.activity_distance);
+        activityPace = findViewById(R.id.activity_pace);
         activityPaceSeparator = findViewById(R.id.activity_pace_separator);
-        sport = (TitleSpinner) findViewById(R.id.summary_sport);
-        notes = (EditText) findViewById(R.id.notes_text);
+        sport = findViewById(R.id.summary_sport);
+        notes = findViewById(R.id.notes_text);
 
         if (BuildConfig.MAPBOX_ENABLED > 0) {
-            MapView mapView = (MapView) findViewById(R.id.mapview);
+            MapView mapView = findViewById(R.id.mapview);
             mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
             mapWrapper.onCreate(savedInstanceState);
         }
@@ -192,7 +193,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         requery();
         uploadButton.setVisibility(View.GONE);
 
-        TabHost th = (TabHost) findViewById(R.id.tabhost);
+        TabHost th = findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Notes)));
@@ -216,9 +217,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_graph);
         th.addTab(tabSpec);
 
-        LinearLayout graphTab = (LinearLayout) findViewById(R.id.tab_graph);
-        LinearLayout hrzonesBarLayout = (LinearLayout) findViewById(R.id.hrzonesBarLayout);
-        //noinspection UnusedAssignment
+        LinearLayout graphTab = findViewById(R.id.tab_graph);
+        LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
         GraphWrapper graphWrapper = new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
 
         tabSpec = th.newTabSpec("share");
@@ -227,13 +227,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         th.addTab(tabSpec);
 
         {
-            ListView lv = (ListView) findViewById(R.id.laplist);
+            ListView lv = findViewById(R.id.laplist);
             LapListAdapter adapter = new LapListAdapter();
             adapters.add(adapter);
             lv.setAdapter(adapter);
         }
         {
-            ListView lv = (ListView) findViewById(R.id.report_list);
+            ListView lv = findViewById(R.id.report_list);
             ReportListAdapter adapter = new ReportListAdapter();
             adapters.add(adapter);
             lv.setAdapter(adapter);
@@ -251,7 +251,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     private void setUploadVisibility() {
-        Boolean enabled = !pendingSynchronizers.isEmpty();
+        boolean enabled = !pendingSynchronizers.isEmpty();
         if (enabled) {
             uploadButton.setVisibility(View.VISIBLE);
         } else {
@@ -294,9 +294,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
-                            dialog.dismiss();
-                        });
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
                 builderRecompute.show();
                 break;
 
@@ -314,9 +312,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> {
-                            dialog.dismiss();
-                        });
+                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
                 builderSimplify.show();
                 break;
 
@@ -360,7 +356,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if(mapWrapper != null) {
             mapWrapper.onSaveInstanceState(outState);
@@ -566,12 +562,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 viewHolder = new ViewHolderLapList();
                 LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
                 view = inflater.inflate(R.layout.laplist_row, parent, false);
-                viewHolder.tv0 = (TextView) view.findViewById(R.id.lap_list_type);
-                viewHolder.tv1 = (TextView) view.findViewById(R.id.lap_list_id);
-                viewHolder.tv2 = (TextView) view.findViewById(R.id.lap_list_distance);
-                viewHolder.tv3 = (TextView) view.findViewById(R.id.lap_list_time);
-                viewHolder.tv4 = (TextView) view.findViewById(R.id.lap_list_pace);
-                viewHolder.tvHr = (TextView) view.findViewById(R.id.lap_list_hr);
+                viewHolder.tv0 = view.findViewById(R.id.lap_list_type);
+                viewHolder.tv1 = view.findViewById(R.id.lap_list_id);
+                viewHolder.tv2 = view.findViewById(R.id.lap_list_distance);
+                viewHolder.tv3 = view.findViewById(R.id.lap_list_time);
+                viewHolder.tv4 = view.findViewById(R.id.lap_list_pace);
+                viewHolder.tvHr = view.findViewById(R.id.lap_list_hr);
 
                 view.setTag(viewHolder);
             } else {
@@ -659,17 +655,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     b.setTextColor(getResources().getColorStateList(R.color.btn_text_color, getTheme()));
                 } else {
-                    //noinspection deprecation
                     b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
                 }
-                b.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(DetailActivity.this,
-                                AccountListActivity.class);
-                        DetailActivity.this.startActivityForResult(i,
-                                SyncManager.EDIT_ACCOUNT_REQUEST);
-                    }
+                b.setOnClickListener(v -> {
+                    Intent i = new Intent(DetailActivity.this,
+                            AccountListActivity.class);
+                    DetailActivity.this.startActivityForResult(i,
+                            SyncManager.EDIT_ACCOUNT_REQUEST);
                 });
                 return b;
             }
@@ -684,9 +676,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
                 view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
-                viewHolder.tv0 = (TextView) view.findViewById(R.id.account_id);
-                viewHolder.cb = (CheckBox) view.findViewById(R.id.report_sent);
-                viewHolder.tv1 = (TextView) view.findViewById(R.id.account_name);
+                viewHolder.tv0 = view.findViewById(R.id.account_id);
+                viewHolder.cb = view.findViewById(R.id.report_sent);
+                viewHolder.tv1 = view.findViewById(R.id.account_name);
 
                 view.setTag(viewHolder);
             } else {
@@ -736,7 +728,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         ContentValues tmp = new ContentValues();
         tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
         tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
-        String whereArgs[] = {
+        String[] whereArgs = {
                 Long.toString(mID)
         };
         mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
@@ -754,34 +746,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnLongClickListener clearUploadClick = new OnLongClickListener() {
-
-        @Override
-        public boolean onLongClick(View arg0) {
-            final String name = (String) arg0.getTag();
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle("Clear upload for " + name)
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnLongClickListener clearUploadClick = arg0 -> {
+        final String name = (String) arg0.getTag();
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle("Clear upload for " + name)
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             dialog.dismiss();
                             syncManager.clearUpload(name, mID);
                             requery();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-            return false;
-        }
-
+                        });
+        builder.show();
+        return false;
     };
 
     //Note: onClick set in reportlist_row.xml
@@ -805,40 +787,30 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return;
             }
             uploading = true;
-            syncManager.startUploading(new SyncManager.Callback() {
-                @Override
-                public void run(String synchronizerName, Synchronizer.Status status) {
-                    uploading = false;
-                    DetailActivity.this.setResult(RESULT_OK);
-                    DetailActivity.this.finish();
-                }
+            syncManager.startUploading((synchronizerName, status) -> {
+                uploading = false;
+                DetailActivity.this.setResult(RESULT_OK);
+                DetailActivity.this.finish();
             }, pendingSynchronizers, mID);
         }
     };
 
-    private final OnClickListener discardButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle(getString(R.string.Discard_activity))
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnClickListener discardButtonClick = v -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(getString(R.string.Discard_activity))
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_CANCELED);
                             DetailActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-        }
+                        });
+        builder.show();
     };
 
     @Override
@@ -856,24 +828,17 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private final OnClickListener resumeButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            DetailActivity.this.setResult(RESULT_FIRST_USER);
-            DetailActivity.this.finish();
-        }
+    private final OnClickListener resumeButtonClick = v -> {
+        DetailActivity.this.setResult(RESULT_FIRST_USER);
+        DetailActivity.this.finish();
     };
 
-    private final OnClickListener uploadButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            uploading = true;
-            syncManager.startUploading(new SyncManager.Callback() {
-                @Override
-                public void run(String synchronizerName, Synchronizer.Status status) {
-                    uploading = false;
-                    requery();
-                }
-            }, pendingSynchronizers, mID);
-        }
+    private final OnClickListener uploadButtonClick = v -> {
+        uploading = true;
+        syncManager.startUploading((synchronizerName, status) -> {
+            uploading = false;
+            requery();
+        }, pendingSynchronizers, mID);
     };
 
     private final OnCheckedChangeListener onSendChecked = new OnCheckedChangeListener() {
@@ -888,6 +853,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 if (arg1) {
                     pendingSynchronizers.add((String) arg0.getTag());
                 } else {
+                    //noinspection SuspiciousMethodCalls
                     pendingSynchronizers.remove(arg0.getTag());
                 }
                 if (mode == MODE_DETAILS) {
@@ -897,30 +863,23 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    private final OnClickListener deleteButtonClick = new OnClickListener() {
-        public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                    .setTitle(getString(R.string.Delete_activity))
-                    .setMessage(getString(R.string.Are_you_sure))
-                    .setPositiveButton(getString(R.string.Yes),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+    private final OnClickListener deleteButtonClick = v -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(getString(R.string.Delete_activity))
+                .setMessage(getString(R.string.Are_you_sure))
+                .setPositiveButton(getString(R.string.Yes),
+                        (dialog, which) -> {
                             DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.No),
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                .setNegativeButton(getString(R.string.No),
+                        (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        }
-
-                    });
-            builder.show();
-        }
+                        });
+        builder.show();
     };
 
     @Override
@@ -942,47 +901,37 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))
                 .setPositiveButton(getString(R.string.OK),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int w) {
-                        if (which[0] == -1) {
-                            dialog.dismiss();
-                            return;
-                        }
+                        (dialog, w) -> {
+                            if (which[0] == -1) {
+                                dialog.dismiss();
+                                return;
+                            }
 
-                        final Context context = DetailActivity.this;
-                        final CharSequence fmt = items[which[0]];
-                        final Intent intent = new Intent(Intent.ACTION_SEND);
+                            final Context context = DetailActivity.this;
+                            final CharSequence fmt = items[which[0]];
+                            final Intent intent = new Intent(Intent.ACTION_SEND);
 
-                        if (fmt.equals("tcx")) {
-                            intent.setType(TCX_MIME);
-                        } else {
-                            intent.setType(GPX_MIME);
-                        }
+                            if (fmt.equals("tcx")) {
+                                intent.setType(TCX_MIME);
+                            } else {
+                                intent.setType(GPX_MIME);
+                            }
 
-                        //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
-                        //Solid Explorer File Manager works though
-                        String actType = Sport.textOf(sport.getValueInt());
-                        Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
-                                + "/" + mID
-                                + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
-                        intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
-                    }
-                })
+                            //Use of content:// (or STREAM?) instead of file:// is not supported in ES and other apps
+                            //Solid Explorer File Manager works though
+                            String actType = Sport.textOf(sport.getValueInt());
+                            Uri uri = Uri.parse("content://" + ActivityProvider.AUTHORITY + "/" + fmt
+                                    + "/" + mID
+                                    + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
+                            intent.putExtra(Intent.EXTRA_STREAM, uri);
+                            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
+                        })
                 .setNegativeButton(getString(R.string.Cancel),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        dialog.dismiss();
-                    }
-
-                })
-                .setSingleChoiceItems(items, which[0], new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int w) {
-                which[0] = w;
-            }
-        });
+                        (dialog, which1) -> {
+                            // Do nothing but close the dialog
+                            dialog.dismiss();
+                        })
+                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w);
         builder.show();
     }
 }

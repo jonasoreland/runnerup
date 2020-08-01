@@ -20,11 +20,11 @@ package org.runnerup.export.util;
 
 public class Part<Value extends Writable> {
 
-    private String name;
+    private final String name;
     private String filename = null;
     private String contentType = null;
     private String contentTransferEncoding = null;
-    private Value value;
+    private final Value value;
 
     public Part(String name, Value value) {
         this.name = name;

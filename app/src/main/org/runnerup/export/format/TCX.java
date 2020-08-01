@@ -47,14 +47,12 @@ import java.util.TimeZone;
 
 public class TCX {
 
-    private SQLiteDatabase mDB;
+    private final SQLiteDatabase mDB;
     private KXmlSerializer mXML = null;
     private String notes = null;
-    private SimpleDateFormat simpleDateFormat;
+    private final SimpleDateFormat simpleDateFormat;
     private Sport sport = null;
-    private PathSimplifier simplifier;
-
-    private boolean addGratuitousTrack = false;
+    private final PathSimplifier simplifier;
 
     public TCX(SQLiteDatabase mDB, PathSimplifier simplifier) {
         this.mDB = mDB;
@@ -253,7 +251,7 @@ public class TCX {
                             } else {
                                 // Only for older activities, also increases distance when pausing
                                 // Most importers do not use this info anyway
-                                float d[] = {
+                                float[] d = {
                                         0
                                 };
                                 if (last_lat != 0 || last_longi != 0) {
@@ -268,7 +266,7 @@ public class TCX {
                             if (!cLocation.isNull(7)) {
                                 long hr = cLocation.getInt(7);
                                 if (hr > 0) {
-                                    maxHR = hr > maxHR ? hr : maxHR;
+                                    maxHR = Math.max(hr, maxHR);
                                     sumHR += hr;
                                     cntHR++;
 
@@ -341,6 +339,7 @@ public class TCX {
                 }
                 // Digifit chokes if there isn't at least *1* trackpoint, but is
                 // ok even if it's empty.
+                boolean addGratuitousTrack = false;
                 if (!hasTrackpoints && addGratuitousTrack) {
                     mXML.startTag("", "Track");
                     mXML.startTag("", "Trackpoint");
@@ -378,9 +377,5 @@ public class TCX {
 
     public Sport getSport() {
         return sport;
-    }
-
-    public void setAddGratuitousTrack(boolean addGratuitousTrack) {
-        this.addGratuitousTrack = addGratuitousTrack;
     }
 }

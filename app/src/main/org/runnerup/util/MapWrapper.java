@@ -61,14 +61,14 @@ import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 public class MapWrapper implements Constants {
 
-    private MapView mapView;
+    private final MapView mapView;
     private LineManager lineManager;
     private SymbolManager symbolManager;
 
-    private long mID = 0;
-    private SQLiteDatabase mDB = null;
+    private final long mID;
+    private final SQLiteDatabase mDB;
     private final Context context;
-    private Formatter formatter = null;
+    private final Formatter formatter;
 
     public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {
         this.context = context;
@@ -189,7 +189,7 @@ public class MapWrapper implements Constants {
                         type == DB.LOCATION.TYPE_END ||
                         type == DB.LOCATION.TYPE_PAUSE ||
                         type == DB.LOCATION.TYPE_RESUME) {
-                    iconImage = ((Integer) type).toString();
+                    iconImage = type.toString();
                 } else {
                     iconImage = null;
                 }
@@ -259,7 +259,6 @@ public class MapWrapper implements Constants {
                     //A workaround is to try move the camera at view updates as long as position is 0,0
                     mapView.getViewTreeObserver().addOnGlobalLayoutListener(
                             new ViewTreeObserver.OnGlobalLayoutListener() {
-                                @SuppressWarnings("deprecation")
                                 // We check which build version we are using.
                                 @Override
                                 public void onGlobalLayout() {

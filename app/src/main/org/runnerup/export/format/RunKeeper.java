@@ -59,8 +59,8 @@ import java.util.concurrent.TimeUnit;
 
 public class RunKeeper {
 
-    private SQLiteDatabase mDB;
-    private PathSimplifier simplifier;
+    private final SQLiteDatabase mDB;
+    private final PathSimplifier simplifier;
 
     public RunKeeper(SQLiteDatabase db, PathSimplifier simplifier) {
         mDB = db;
@@ -261,7 +261,7 @@ public class RunKeeper {
                 countOverall++;
             }
 
-            meters = Float.valueOf(dist) - meters;
+            meters = Float.parseFloat(dist) - meters;
             time = timePoint.getKey() - time;
             if (time > 0) {
                 float speed = meters / (float)TimeUnit.MILLISECONDS.toSeconds(time);
@@ -272,7 +272,7 @@ public class RunKeeper {
 
             // create lap if distance greater than configured lap distance
 
-            if (Float.valueOf(dist) >= unitMeters * laps.size()) {
+            if (Float.parseFloat(dist) >= unitMeters * laps.size()) {
                 LapEntity newLap = new LapEntity();
                 newLap.setLap(laps.size());
                 newLap.setDistance(Double.valueOf(dist));
@@ -283,7 +283,7 @@ public class RunKeeper {
                 // update previous lap with duration and distance
                 if (laps.size() > 1) {
                     LapEntity previousLap = laps.get(laps.size() - 2);
-                    previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
+                    previousLap.setDistance(Float.parseFloat(dist) - previousLap.getDistance());
                     previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
 
                     if (hr != null && hr.length() > 0) {
@@ -298,7 +298,7 @@ public class RunKeeper {
             // update last lap with duration and distance
             if (!points.hasNext()) {
                 LapEntity previousLap = laps.get(laps.size() - 1);
-                previousLap.setDistance(Float.valueOf(dist) - previousLap.getDistance());
+                previousLap.setDistance(Float.parseFloat(dist) - previousLap.getDistance());
                 previousLap.setTime((int) TimeUnit.MILLISECONDS.toSeconds(timePoint.getKey()) - previousLap.getTime());
 
                 if (hr != null && hr.length() > 0) {

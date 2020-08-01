@@ -40,7 +40,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Stack;
 
 
@@ -94,12 +93,7 @@ public class WorkoutSerializer {
             }
         }
 
-        Collections.sort(list, new Comparator<jsonstep>() {
-            @Override
-            public int compare(jsonstep lhs, jsonstep rhs) {
-                return lhs.order - rhs.order;
-            }
-        });
+        Collections.sort(list, (lhs, rhs) -> lhs.order - rhs.order);
 
         for (jsonstep s : list) {
             if (s.parentStep != null) {

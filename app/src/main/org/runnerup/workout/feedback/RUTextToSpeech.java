@@ -37,7 +37,7 @@ import java.util.Locale;
 public class RUTextToSpeech {
 
     private static final String UTTERANCE_ID = "RUTextTospeech";
-    private boolean mute = false;
+    private final boolean mute;
     private final TextToSpeech textToSpeech;
     private final AudioManager audioManager;
     private long id = (long) (System.nanoTime() + (1000 * Math.random()));
@@ -87,7 +87,7 @@ public class RUTextToSpeech {
             val = this.id;
             this.id++;
         }
-        return UTTERANCE_ID + Long.toString(val);
+        return UTTERANCE_ID + val;
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -212,7 +212,6 @@ public class RUTextToSpeech {
 class UtteranceCompletion {
 
     @SuppressLint("ObsoleteSdkInt")
-    @SuppressWarnings("deprecation")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {

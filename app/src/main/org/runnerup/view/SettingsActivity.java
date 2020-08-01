@@ -88,13 +88,11 @@ public class SettingsActivity extends PreferenceActivity {
         if (simplifyOnSave.isChecked()) {
             simplifyOnExport.setChecked(true);
         }
-        simplifyOnSave.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue){
-                if ((Boolean) newValue) {
-                    simplifyOnExport.setChecked(true);
-                };
-                return true;
+        simplifyOnSave.setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                simplifyOnExport.setChecked(true);
             }
+            return true;
         });
     }
 
@@ -106,37 +104,23 @@ public class SettingsActivity extends PreferenceActivity {
         return btProviderName != null && btAddress != null;
     }
 
-    private final OnPreferenceClickListener onExportClick = new OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            // TODO Use picker with ACTION_CREATE_DOCUMENT
-            DBHelper.exportDatabase(SettingsActivity.this, null);
-            return false;
-        }
+    private final OnPreferenceClickListener onExportClick = preference -> {
+        // TODO Use picker with ACTION_CREATE_DOCUMENT
+        DBHelper.exportDatabase(SettingsActivity.this, null);
+        return false;
     };
 
-    private final OnPreferenceClickListener onImportClick = new OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            // TODO Use picker with ACTION_OPEN_DOCUMENT
-            DBHelper.importDatabase(SettingsActivity.this, null);
-            return false;
-        }
+    private final OnPreferenceClickListener onImportClick = preference -> {
+        // TODO Use picker with ACTION_OPEN_DOCUMENT
+        DBHelper.importDatabase(SettingsActivity.this, null);
+        return false;
     };
 
-    private final OnPreferenceClickListener onPruneClick = new OnPreferenceClickListener() {
-        @Override
-        public boolean onPreferenceClick(Preference preference) {
-            final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
-            dialog.setTitle(R.string.Pruning_deleted_activities_from_database);
-            dialog.show();
-            DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, new Runnable() {
-                @Override
-                public void run() {
-                    dialog.dismiss();
-                }
-            });
-            return false;
-        }
+    private final OnPreferenceClickListener onPruneClick = preference -> {
+        final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
+        dialog.setTitle(R.string.Pruning_deleted_activities_from_database);
+        dialog.show();
+        DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, dialog::dismiss);
+        return false;
     };
 }

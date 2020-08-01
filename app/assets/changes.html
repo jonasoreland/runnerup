@@ -1,609 +1,626 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
-  <head>
+<head>
     <title>What's new</title>
-  </head>
-  <body>
-    <h1>What's new</h1>
-    <h2>v2.2.0.0</h2>
-    <p>
-    <ul>
-      <li>Version changed to 2.2 for Play release, previous production is 2.1.0.0</li>
-      <li>#949 Play console crashe corrections</li>
-      <li>#948 Target Android 10, update permission handling
-        <br>Changes required to target Android 10 and prepare for Android 11/R, required to update the app in Play.
+</head>
+<body>
+<h1>What's new</h1>
+<h2>v2.2.0.0</h2>
+<p>
+<ul>
+    <li>Version changed to 2.2 for Play release, previous production is 2.1.0.0</li>
+    <li>#949 Play console crash corrections</li>
+    <li>#948 Target Android 10, update permission handling
+        <br>Changes required to target Android 10 and prepare for Android 11/R, required to update
+        the app in Play.
         <ul>
-          <li> Use SDK 29 scooped storage for external files, Google is limiting the file system use from Android 10/11
-<br>For FileSynchronizer, save exports to a subdirectory of Documents, similar to the previous defaults.
-<br>For db import/export use hardcoded getExternalFilesDir() and let the user copy files.</li>
-          <li>Permissions for activity and background for Android 10
-<br>If permissions are denied, give motivation and let the user try again
-(unless "don't ask again" is ticked)
-<br>Remove snackbar as it will not rerequest permissions if the user ticks "don't ask again".
-Instead use a popup that asks the user to go to system settings,
-without starting the workout. (Linking to system settings is not
-recommended in the Google guidelines.)
-          </li>
+            <li> Use SDK 29 scooped storage for external files, Google is limiting the file system
+                use from Android 10/11
+                <br>For FileSynchronizer, save exports to a subdirectory of Documents, similar to
+                the previous defaults.
+                <br>For db import/export use hardcoded getExternalFilesDir() and let the user copy
+                files.
+            </li>
+            <li>Permissions for activity and background for Android 10
+                <br>If permissions are denied, give motivation and let the user try again
+                (unless "don't ask again" is ticked)
+                <br>Remove snackbar as it will not rerequest permissions if the user ticks "don't
+                ask again".
+                Instead use a popup that asks the user to go to system settings,
+                without starting the workout. (Linking to system settings is not
+                recommended in the Google guidelines.)
+            </li>
         </ul>
-      </li>
-      <li>#947 AndroidX and AppCompatActivity migration
-      <br>Internal change, support libraries replaced with Google's updated libraries</li>
-    </ul>
-    <h2>v2.1.0.0</h2>
-    <p>
-    <ul>
-      <li>Minor version number changed to 2.1 for Play release, previous production is 2.0.2.1</li>
-      <li>#946 Play console feedback
+    </li>
+    <li>#947 AndroidX and AppCompatActivity migration
+        <br>Internal change, support libraries replaced with Google's updated libraries
+    </li>
+</ul>
+<h2>v2.1.0.0</h2>
+<p>
+<ul>
+    <li>Minor version number changed to 2.1 for Play release, previous production is 2.0.2.1</li>
+    <li>#946 Play console feedback
         <ul>
-          <li>Translations update: Czech cue, Romanian, Indonesian </li>
-          <li>Accessibility: Increase size of touch targets for most targets with smaller areas</li>
-          <li>Accessibility: Set content descriptions, for visually disabled users</li>
-          <li>Revert from R8 to Proguard to avoid some 4.3 crashes, improved debugging of crashes</li>
-          <li>Decrease app size</li>
-          <li>Fix a few rare crashes</li>
-          <li>See Git log for further details</li>
+            <li>Translations update: Czech cue, Romanian, Indonesian</li>
+            <li>Accessibility: Increase size of touch targets for most targets with smaller areas
+            </li>
+            <li>Accessibility: Set content descriptions, for visually disabled users</li>
+            <li>Revert from R8 to Proguard to avoid some 4.3 crashes, improved debugging of
+                crashes
+            </li>
+            <li>Decrease app size</li>
+            <li>Fix a few rare crashes</li>
+            <li>See Git log for further details</li>
         </ul>
-      </li>
-    </ul>
-    <h2>v2.0.6.4</h2>
-    <p>
+    </li>
+</ul>
+<h2>v2.0.6.4</h2>
+<p>
+<ul>
+    <li>#938 Add time info to the exported filename</li>
+    <li>#939 #937 Chinese support</li>
+    <li>#936 Disable Dropbox provider by default</li>
+    <li>#934 Audio cues for ro</li>
+</ul>
+<h2>v2.0.6.3</h2>
+<p>
+<ul>
+    <li>#930 Refresh English source texts</li>
+    <li>#931 WebDAV not synchronizing when started manually</li>
+</ul>
+<h2>v2.0.6.2</h2>
+<p>
+<ul>
+    <li>#929 Transifex ca, lt, nl</li>
+</ul>
+<h2>v2.0.6.1</h2>
+<p>
+<ul>
+    <li>#917 F-Droid build correction</li>
+    <li>#918 Transifex it, ja</li>
+</ul>
+<h2>v2.0.6.0</h2>
+<p>
+<ul>
+    <li>#894 Move simplify on save BEFORE exports</li>
+    <li>#900 Update and add missing icons for enabled accounts</li>
+    <li>#901 Fix RunnerUpLive on Android Oreo</li>
+    <li>#904 Transifex nl, de, se</li>
+</ul>
+<h2>v2.0.5.2</h2>
+<p>
+<ul>
+    <li>#890 Apply path simplification on each "segment" of the path individually</li>
+    <li>#885 GPX export: Do not export empty trkseg</li>
+    <li>#888 #891 Transifex ja, ru, de</li>
+</ul>
+<h2>v2.0.5.1</h2>
+<p>
+<ul>
+    <li>#879 GPX/TCX file formats option for File and Dropbox Synchronizers</li>
+    <li>#880 #882 Transifex sv, fr, ja, nl</li>
+</ul>
+<h2>v2.0.5.0</h2>
+<p>Superseded by 2.0.5.1
+<h2>v2.0.4.0</h2>
+<p>
+<ul>
+    <li>#876 Transifex sv,fr</li>
+    <li>#871 Simplify GPS track</li>
+</ul>
+<h2>v2.0.3.2</h2>
+<p>
+<ul>
+    <li>#870 Version formatting for F-Droid</li>
+</ul>
+<h2>v2.0.3.1</h2>
+<p>
+<ul>
+    <li>#861 Transifex jp,fr</li>
+    <li>#862 WindowsLeak when rotating add account</li>
+    <li>#863 Exception for Distance manual picker</li>
+    <li>#866 Graph: Summary was in meters</li>
+</ul>
+<h2>v2.0.3.0</h2>
+<p>
+<ul>
+    <li>#854 Total time updated in pauses</li>
+    <li>#853 Display >100 activities in UploadActivity</li>
+    <li>#850 speed (and)/or pace</li>
+</ul>
+<h2>v2.0.2.1</h2>
+<p>
+<ul>
+    <li>#838 workout feedback</li>
+    <li>#831 Spinner has duplicated arrow in Pie</li>
+</ul>
+<h2>v2.0.2.0</h2>
+<p>
     <ul>
-      <li>#938 Add time info to the exported filename</li>
-      <li>#939 #937 Chinese support</li>
-      <li>#936 Disable Dropbox provider by default</li>
-      <li>#934 Audio cues for ro</li>
-    </ul>
-    <h2>v2.0.6.3</h2>
-    <p>
+        <li>#830 Various workout improvements
+<p>The current functionality has been reviewed. A lot of the workout features
+    are implied, like that autopause and autolap only were implemented in basic workouts as well as
+    most audio cues only for Active steps.
+<p>Where documentation was sufficient, it was clarified in settings.
+    If not possible to document, the functionality was modified so it could be described.
+          <ul>
+    <li>Settings: Reorder and group related options for workout and audio cue options (some settings
+        moved from recording)
+        <br>Add summary for many options to clarify usage
+    </li>
+    <li>Autopause: Allow in warmup/cooldown steps</li>
+    <li>Periodic time/distance audio feedback: Allow in all steps</li>
+    <li>Autolap: Allow in activity last steps (not just active)</li>
+    <li>Countdown: Enable for all targets with duration.
+        <br>Previously only available for rest/recovery targets.
+        <br>Also add countdown in the GUI.
+    </li>
+    <li>Tweak to defaults for intervals</li>
+    <li>Interval: Use recovery also for Time targets, if configured.</li>
+    <li>No auto conversion for Resting steps in workouts (set Resting or Recovery)</li>
+    <li>Use recovery also for countdown steps</li>
+    <li>Step completion: Complete if current point is expected to be closer to the target.
+        <br>Previously, the target were reached only when exceeding the target.
+        So if distance was 1000 m, the step was only completed if over 1000m
+        Similar for time, so average could be 1:01.
+        Time/distance targets are now handled similar to autolap changed recently,
+        so the current point is used if it is expected to be closer to the target
+        than next point, based on the previous point.
+    </li>
+    <li>RepeatStep: Avoid exception if no steps</li>
+    <li>Target Feedback: Incorrect use of Activity</li>
+    <li>GraceTime: Reset when conditions are OK also if no feedback</li>
+    <li>ManageWorkouts: Expand list by default</li>
+          </ul>
+        </li>
+        <li>
+    #829 Notification: Add Lap and Pause/Resume buttons
     <ul>
-      <li>#930 Refresh English source texts</li>
-      <li>#931 WebDAV not synchronizing when started manually</li>
+        <li>Control activities from lockscreen</li>
+        <li>Refresh UI when workout has ended</li>
+        <li>LapButton: Keep enabled also for last step</li>
     </ul>
-    <h2>v2.0.6.2</h2>
-    <p>
+        </li>
+        <li>
+    #826 HR strap fixes
     <ul>
-      <li>#929 Transifex ca, lt, nl</li>
+        <li>Delay disconnect at HrValue 0, handle bad behaving HR straps better</li>
+        <li>HR scanning simplifications: Preselect first device when scanning etc</li>
+        <li>HRMStateChangeFeedback: Must use cue language</li>
     </ul>
-    <h2>v2.0.6.1</h2>
-    <p>
+</li>
+<li>#828 Transifex Finnish update (most of UI translated now)</li>
+<li>#825 HRM state audio cue not transmitted</li>
+<li>#824 Disable Media button control in Lollipop and later.
+    <br>Not working in Lollipop (and even earlier?), can only be used with Media applications.
+</li>
+<li>
+    #821 Workout fixes
     <ul>
-      <li>#917 F-Droid build correction</li>
-      <li>#918 Transifex it, ja</li>
+        <li>Formatting: Present >= 0.99 as km</li>
+        <li>Format of time without unit: Do not always speak minutes cue</li>
+        <li>Repeat: Default and max value tweak</li>
+        <li>Avoid exceptions for steps size==0</li>
     </ul>
-    <h2>v2.0.6.0</h2>
-    <p>
-    <ul>
-      <li>#894 Move simplify on save BEFORE exports</li>
-      <li>#900 Update and add missing icons for enabled accounts</li>
-      <li>#901 Fix RunnerUpLive on Android Oreo</li>
-      <li>#904 Transifex nl, de, se</li>
-    </ul>
-    <h2>v2.0.5.2</h2>
-    <p>
-    <ul>
-      <li>#890 Apply path simplification on each "segment" of the path individually</li>
-      <li>#885 GPX export: Do not export empty trkseg</li>
-      <li>#888 #891 Transifex ja, ru, de</li>
-    </ul>
-    <h2>v2.0.5.1</h2>
-    <p>
-    <ul>
-      <li>#879 GPX/TCX file formats option for File and Dropbox Synchronizers</li>
-      <li>#880 #882 Transifex sv, fr, ja, nl</li>
-    </ul>
-    <h2>v2.0.5.0</h2>
-    <p>Superseded by 2.0.5.1
-    <h2>v2.0.4.0</h2>
-    <p>
-    <ul>
-      <li>#876 Transifex sv,fr</li>
-      <li>#871 Simplify GPS track</li>
-    </ul>
-    <h2>v2.0.3.2</h2>
-    <p>
-    <ul>
-      <li>#870 Version formatting for F-Droid</li>
-    </ul>
-    <h2>v2.0.3.1</h2>
-    <p>
-    <ul>
-      <li>#861 Transifex jp,fr</li>
-      <li>#862 WindowsLeak when rotating add account</li>
-      <li>#863 Exception for Distance manual picker</li>
-      <li>#866 Graph: Summary was in meters</li>
-    </ul>
-    <h2>v2.0.3.0</h2>
-    <p>
-    <ul>
-        <li>#854 Total time updated in pauses</li>
-        <li>#853 Display >100 activities in UploadActivity</li>
-        <li>#850 speed (and)/or pace</li>
-    </ul>
-    <h2>v2.0.2.1</h2>
-    <p>
-    <ul>
-      <li>#838 workout feedback</li>
-      <li>#831 Spinner has duplicated arrow in Pie</li>
-    </ul>
-    <h2>v2.0.2.0</h2>
-    <p>
-    <ul>
-      <li>
-        #830 Various workout improvements
-        <p>The current functionality has been reviewed. A lot of the workout features
-          are implied, like that autopause and autolap only were implemented in basic workouts as well as
-          most audio cues only for Active steps.
-        <p>Where documentation was sufficient, it was clarified in settings.
-          If not possible to document, the functionality was modified so it could be described.
-        <ul>
-          <li>Settings: Reorder and group related options for workout and audio cue options (some settings moved from recording)
-            <br>Add summary for many options to clarify usage
-          <li>Autopause: Allow in warmup/cooldown steps
-          <li>Periodic time/distance audio feedback: Allow in all steps
-          <li>Autolap: Allow in activity last steps (not just active)
-          <li>Countdown: Enable for all targets with duration.
-            <br>Previously only available for rest/recovery targets.
-            <br>Also add countdown in the GUI.
-          <li>Tweak to defaults for intervals
-          <li>Interval: Use recovery also for Time targets, if configured.
-          <li>No auto conversion for Resting steps in workouts (set Resting or Recovery)
-          <li>Use recovery also for countdown steps
-          <li>Step completion: Complete if current point is expected to be closer to the target.
-            <br>Previously, the target were reached only when exceeding the target.
-            So if distance was 1000 m, the step was only completed if over 1000m
-            Similar for time, so average could be 1:01.
-            Time/distance targets are now handled similar to autolap changed recently,
-            so the current point is used if it is expected to be closer to the target
-            than next point, based on the previous point.
-          <li>RepeatStep: Avoid exception if no steps
-          <li>Target Feedback: Incorrect use of Activity
-          <li>GraceTime: Reset when conditions are OK also if no feedback
-          <li>ManageWorkouts: Expand list by default
-        </ul>
-      <li>
-        #829 Notification: Add Lap and Pause/Resume buttons
-        <ul>
-          <li>Control activities from lockscreen
-          <li>Refresh UI when workout has ended
-          <li>LapButton: Keep enabled also for last step
-        </ul>
-      <li>
-        #826 HR strap fixes
-        <ul>
-          <li>Delay disconnect at HrValue 0, handle bad behaving HR straps better
-          <li>HR scanning simplifications: Preselect first device when scanning etc
-          <li>HRMStateChangeFeedback: Must use cue language
-        </ul>
-      <li>#828 Transifex Finnish update (most of UI translated now)</li>
-      <li>#825 HRM state audio cue not transmitted</li>
-      <li>#824 Disable Media button control in Lollipop and later.
-        <br>Not working in Lollipop (and even earlier?), can only be used with Media applications.
-      </li>
-      <li>
-        #821 Workout fixes
-        <ul>
-          <li>Formatting: Present >= 0.99 as km
-          <li>Format of time without unit: Do not always speak minutes cue
-          <li>Repeat: Default and max value tweak
-          <li>Avoid exceptions for steps size==0
-        </ul>
-      <li>#820 Strava/Runalyze: Refresh token required delete/re-add of the account.</li>
-    </ul>
-    <h2>v2.0.1.4</h2>
-    <p>
-    <ul>
-      <li>Build fix for F-Droid</li>
-      <br>No code changes in 2.0.1.1 to 2.0.1.4
-    </ul>
-    <h2>v2.0.1.0</h2>
-    <p>
-    <ul>
-      <li>#807 MapBox upgrade to version 8</li>
-      <li>Fixed invalid MapBox license</li>
-    </ul>
-    <h2>v2.0.0.9</h2>
-    <p>
-    <ul>
-      <li>Split Froyo variant to separate branch</li>
-      <li>Prepare for F-Droid build</li>
-    </ul>
-    <h2>v2.0.0.8</h2>
-    <p>
-    <ul>
-      <li>#803 Remove Alpha builds, all release builds identify as the Play version</li>
-      <li>#801 Transifex fi updates</li>
-    </ul>
-    <h2>v2.0.0.7</h2>
-    <p>
-    <ul>
-      <li>#799 Froyo startup fix</li>
-    </ul>
-    <h2>v2.0.0.6</h2>
-    <p>
-    <ul>
-      <li>#790 Translations: Persian added, various other updates</li>
-    </ul>
-    <h2>v2.0.0.5</h2>
-    <p>
-    <ul>
-      <li>#784 Disable RunningAHEAD</li>
-      <li>#779 Prepare for Strava upload changes in Oct 2019</li>
-      <li>#782 Transifex pt_BR</li>
-      <li>#776 Endomondo cadence upload</li>
-      <li>#775 Import database</li>
-    </ul>
-    <h2>v2.0.0.4</h2>
-    <p>
-    <ul>
-      <li>#771 AntPlus: Only show if the ant+ libraries are installed</li>
-      <li>#771 Update mapbox to prevent crashes</li>
-      <li>#769 Transifex fr update</li>
-      <li>#766 Sport type was not restored when starting</li>
-      <li>#762 Periodic triggers only triggered first time</li>
-      <li>#761 12h manual offset</li>
-      <li>#759 Enable Dropbox synchronizer by default</li>
-      <li>#756 Recompute activity: time after end included</li>
-    </ul>
-    <h2>v2.0.0.3</h2>
-    <p>
-    <ul>
-      <li>#751 Text on bottom navbar could be wrapped</li>
-      <li>#752 ANT+ initialization could crash scanning</li>
-    </ul>
-    <h2>v2.0.0.2</h2>
-    <p>Second alpha for 2.0, built with release keys.
-    <h2>v1.90.1</h2>
-    <p>First alpha release for 2.0. This build appears as a separate application and should be
-      possible to use in parallel to the standard Play build.
-    <p>The major feature in 2.0 is a refreshed user interface using material design. This also
-      includes an updated app icon.
-    <p>The first 2.0 release still supports Android from Froyo. This is likely the last release for
-      older Android releases, development is expected to target 5.0 or at least 4.2 further on.
-    <p>Note: The database format is slightly changed in 2.0. There is however an experimental 1.58.1
-      on GitHub that should allow usage of the 2.0 database if reverting to 1.58 for some reason.
-    <p>There has been many larger and smaller other changes. Some references to GitHub pull
-      requests.
-    <ul>
-      <li>#689 Synchronizer for <a href="https://runalyze.com">Runalyze</a> reimplementation</li>
-      <li>#700 Synchronizer for <a href="https://dropbox.com">Dropbox</a>. Sync is done directly
+</li>
+<li>#820 Strava/Runalyze: Refresh token required delete/re-add of the account.</li>
+</ul>
+<h2>v2.0.1.4</h2>
+<p>
+<ul>
+    <li>Build fix for F-Droid</li>
+    <br>No code changes in 2.0.1.1 to 2.0.1.4
+</ul>
+<h2>v2.0.1.0</h2>
+<p>
+<ul>
+    <li>#807 MapBox upgrade to version 8</li>
+    <li>Fixed invalid MapBox license</li>
+</ul>
+<h2>v2.0.0.9</h2>
+<p>
+<ul>
+    <li>Split Froyo variant to separate branch</li>
+    <li>Prepare for F-Droid build</li>
+</ul>
+<h2>v2.0.0.8</h2>
+<p>
+<ul>
+    <li>#803 Remove Alpha builds, all release builds identify as the Play version</li>
+    <li>#801 Transifex fi updates</li>
+</ul>
+<h2>v2.0.0.7</h2>
+<p>
+<ul>
+    <li>#799 Froyo startup fix</li>
+</ul>
+<h2>v2.0.0.6</h2>
+<p>
+<ul>
+    <li>#790 Translations: Persian added, various other updates</li>
+</ul>
+<h2>v2.0.0.5</h2>
+<p>
+<ul>
+    <li>#784 Disable RunningAHEAD</li>
+    <li>#779 Prepare for Strava upload changes in Oct 2019</li>
+    <li>#782 Transifex pt_BR</li>
+    <li>#776 Endomondo cadence upload</li>
+    <li>#775 Import database</li>
+</ul>
+<h2>v2.0.0.4</h2>
+<p>
+<ul>
+    <li>#771 AntPlus: Only show if the ant+ libraries are installed</li>
+    <li>#771 Update mapbox to prevent crashes</li>
+    <li>#769 Transifex fr update</li>
+    <li>#766 Sport type was not restored when starting</li>
+    <li>#762 Periodic triggers only triggered first time</li>
+    <li>#761 12h manual offset</li>
+    <li>#759 Enable Dropbox synchronizer by default</li>
+    <li>#756 Recompute activity: time after end included</li>
+</ul>
+<h2>v2.0.0.3</h2>
+<p>
+<ul>
+    <li>#751 Text on bottom navbar could be wrapped</li>
+    <li>#752 ANT+ initialization could crash scanning</li>
+</ul>
+<h2>v2.0.0.2</h2>
+<p>Second alpha for 2.0, built with release keys.
+<h2>v1.90.1</h2>
+<p>First alpha release for 2.0. This build appears as a separate application and should be
+    possible to use in parallel to the standard Play build.
+<p>The major feature in 2.0 is a refreshed user interface using material design. This also
+    includes an updated app icon.
+<p>The first 2.0 release still supports Android from Froyo. This is likely the last release for
+    older Android releases, development is expected to target 5.0 or at least 4.2 further on.
+<p>Note: The database format is slightly changed in 2.0. There is however an experimental 1.58.1
+    on GitHub that should allow usage of the 2.0 database if reverting to 1.58 for some reason.
+<p>There has been many larger and smaller other changes. Some references to GitHub pull
+    requests.
+<ul>
+    <li>#689 Synchronizer for <a href="https://runalyze.com">Runalyze</a> reimplementation</li>
+    <li>#700 Synchronizer for <a href="https://dropbox.com">Dropbox</a>. Sync is done directly
         to dropbox.com, the Dropbox app does not have to be installed. This can be used to sync
         to many other services, instructions in <a
-          href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.
-      </li>
-      <li>#686 #674 Many synchronizers is no longer working. The current status is updated in <a
-        href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.
+                href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.
+    </li>
+    <li>#686 #674 Many synchronizers is no longer working. The current status is updated in <a
+            href="https://github.com/jonasoreland/runnerup/wiki/Synchronization-with-external-providers">wiki</a>.
         The not working synchronizers are hidden by default.
-      <li>#694 RunnerUp was removed from F-Droid as the application includes the non open source
+    <li>#694 RunnerUp was removed from F-Droid as the application includes the non open source
         lib for ANT+. It is now possible to build without ANT+ lib.
-      <li>#704 The APK is split at the build, to limit the storage size for the app.
-      <li>#716 Autopause would not trigger if system time was off</li>
-      <li>#716 Present current pace and hr in run activity</li>
-      <li>#716 Configurable current pace from GPS speed (as reported) or GPS points (from point
+    <li>#704 The APK is split at the build, to limit the storage size for the app.
+    <li>#716 Autopause would not trigger if system time was off</li>
+    <li>#716 Present current pace and hr in run activity</li>
+    <li>#716 Configurable current pace from GPS speed (as reported) or GPS points (from point
         time/distance)
-      </li>
-      <li>#722 Smoothing of current pace, this improves autopause and target pace (the latter to
+    </li>
+    <li>#722 Smoothing of current pace, this improves autopause and target pace (the latter to
         smaller extent)
-      </li>
-      <li>#723 Improved smoothing of cadence</li>
-      <li>#695 Strava synchronizer now uploads .tcx files, to allow export of laps. (uploads are
+    </li>
+    <li>#723 Improved smoothing of cadence</li>
+    <li>#695 Strava synchronizer now uploads .tcx files, to allow export of laps. (uploads are
         compressed too)
-      </li>
-      <li>#618 direct links to uploaded activities in detail activity for Strava and Endomondo
-      </li>
-      <li>#707 TCX files did not encode pauses</li>
-      <li>#702 GPX files did not include elevation data (</li>
-      <li>#705 Possibility to disable "lap started" audio cue</li>
-      <li>#699 Workouts: Share/Import did not work</li>
-      <li>#691 Autolap: Trigger at most likely point rather than always after the limit</li>
-      <li>#689 Audio cues for distance were not correct in some locales</li>
-      <li>#730 Audio cues units are optional</li>
-      <li>#730 Audio cues distances are limited to 3 digits</li>
-      <li>#730 Audio cues for pace reported as "stopped" if pace < 20 min/km</li>
-      <li>#658 Android 8 support: Notification channels, autofill hints and foreground services.
-      <li>#651 Implementing heart rate display on Pebble</li>
-      <li>#673 Adjust default values to more sensible values</li>
-      <li>#673 Workout zero repeat crash</li>
-      <li>#622 HR zones could assign infinitive time to first hr point</li>
-      <li>#574 Soumi (fi) translation</li>
-      <li>#617 Move documentation to the wiki</li>
-      <li>#657 Remove the special support for Samsung4.2 BLE</li>
-      <li>#671 Major internal changes to correct minor internal issues (Lint review)</li>
-      <li>#712 Minimum version for WearOS is increased to Android 6.0</li>
-    </ul>
-    <h2>v1.58</h2>
-    <ul>
-      <li>HRM connection audio feedback
-      <li>Support for step (cadence), tempature, pressure (elevation) sensors
-      <li>Some gui updates
-      <li>Wear improvements
-    </ul>
-    <h2>v1.56</h2>
-    <ul>
-      <li>Bug fixes, cleanups and translations</li>
-      <li>Update to GraphView 4.1</li>
-      <li>Update to MaxBox 4.1.1</li>
-      <li>Update PebbleKit</li>
-      <li>Update to Ant+ lib 3.6.0</li>
-      <li>Fix jagged map path</li>
-      <li>Fix Runalyze login</li>
-      <li></li>
-    </ul>
-    <h2>v1.54</h2>
-    <ul>
-      <li>Bug fixes, cleanups and translations</li>
-      <li>File synchronizer (gerhardol)</li>
-    </ul>
-    <h2>v1.53</h2>
-    <ul>
-      <li>Bug fixes and translations</li>
-      <li>RunningFreeOnline support (Jonas Fredriksson)</li>
-    </ul>
-    <h2>v1.51</h2>
-    <ul>
-      <li>Pebble support (from nebmo)
-      <li>Feed widget
-    </ul>
-    <h2>v1.50</h2>
-    <ul>
-      <li>Use Mapbox (instead of Google Maps)
-      <li>Walking and orienteering
-      <li>Misc bug fixes
-    </ul>
-    <h2>v1.47</h2>
-    <ul>
-      <li>Download activities from RunKeeper
-      <li>Lots of translation work
-      <li>Experimental new sports walking and orienteering (not yet for all accounts)
-      <li>Audio cues for current speed/pace/heartbeats or heartrate zone
-    </ul>
-    <h2>v1.43</h2>
-    <ul>
-      <li>Set audio language independent of phone settings
-      <li>Fix bug in pause handling, affecting e.g RunKeeper duration
-    </ul>
-    <h2>v1.42</h2>
-    <ul>
-      <li>Google Fit support (paradix)
-      <li>Garmin Connect API change
-      <li>Android Wear support, first version. Further improvements coming (from weide and jonaso)
+    </li>
+    <li>#618 direct links to uploaded activities in detail activity for Strava and Endomondo
+    </li>
+    <li>#707 TCX files did not encode pauses</li>
+    <li>#702 GPX files did not include elevation data (</li>
+    <li>#705 Possibility to disable "lap started" audio cue</li>
+    <li>#699 Workouts: Share/Import did not work</li>
+    <li>#691 Autolap: Trigger at most likely point rather than always after the limit</li>
+    <li>#689 Audio cues for distance were not correct in some locales</li>
+    <li>#730 Audio cues units are optional</li>
+    <li>#730 Audio cues distances are limited to 3 digits</li>
+    <li>#730 Audio cues for pace reported as "stopped" if pace < 20 min/km</li>
+    <li>#658 Android 8 support: Notification channels, autofill hints and foreground services.
+    <li>#651 Implementing heart rate display on Pebble</li>
+    <li>#673 Adjust default values to more sensible values</li>
+    <li>#673 Workout zero repeat crash</li>
+    <li>#622 HR zones could assign infinitive time to first hr point</li>
+    <li>#574 Soumi (fi) translation</li>
+    <li>#617 Move documentation to the wiki</li>
+    <li>#657 Remove the special support for Samsung4.2 BLE</li>
+    <li>#671 Major internal changes to correct minor internal issues (Lint review)</li>
+    <li>#712 Minimum version for WearOS is increased to Android 6.0</li>
+</ul>
+<h2>v1.58</h2>
+<ul>
+    <li>HRM connection audio feedback
+    <li>Support for step (cadence), tempature, pressure (elevation) sensors
+    <li>Some gui updates
+    <li>Wear improvements
+</ul>
+<h2>v1.56</h2>
+<ul>
+    <li>Bug fixes, cleanups and translations</li>
+    <li>Update to GraphView 4.1</li>
+    <li>Update to MaxBox 4.1.1</li>
+    <li>Update PebbleKit</li>
+    <li>Update to Ant+ lib 3.6.0</li>
+    <li>Fix jagged map path</li>
+    <li>Fix Runalyze login</li>
+    <li></li>
+</ul>
+<h2>v1.54</h2>
+<ul>
+    <li>Bug fixes, cleanups and translations</li>
+    <li>File synchronizer (gerhardol)</li>
+</ul>
+<h2>v1.53</h2>
+<ul>
+    <li>Bug fixes and translations</li>
+    <li>RunningFreeOnline support (Jonas Fredriksson)</li>
+</ul>
+<h2>v1.51</h2>
+<ul>
+    <li>Pebble support (from nebmo)
+    <li>Feed widget
+</ul>
+<h2>v1.50</h2>
+<ul>
+    <li>Use Mapbox (instead of Google Maps)
+    <li>Walking and orienteering
+    <li>Misc bug fixes
+</ul>
+<h2>v1.47</h2>
+<ul>
+    <li>Download activities from RunKeeper
+    <li>Lots of translation work
+    <li>Experimental new sports walking and orienteering (not yet for all accounts)
+    <li>Audio cues for current speed/pace/heartbeats or heartrate zone
+</ul>
+<h2>v1.43</h2>
+<ul>
+    <li>Set audio language independent of phone settings
+    <li>Fix bug in pause handling, affecting e.g RunKeeper duration
+</ul>
+<h2>v1.42</h2>
+<ul>
+    <li>Google Fit support (paradix)
+    <li>Garmin Connect API change
+    <li>Android Wear support, first version. Further improvements coming (from weide and jonaso)
         <b>Please report issue/bugs/suggestions on github!</b>
-      <li>Russian translations
-      <li>Japanese translations
-      <li>Polish translations
-      <li>Advanced workout creator (paradix)
-      <li>Heartrate zone distribution (paradix)
-      <li>Sportstracker HRM v1 (help from Lenz)
-      <li>oauth bug (affecting e.g Runkeeper)
-      <li>HRM low battery warning (from Fabien G)
-      <li>Speed formatter (from Boerde)
-      <li>Workout type for MapMyRun (from David Hilton)
-    </ul>
-    <h2>v1.37</h2>
-    <ul>
-      <li>Fix ANT+ that accidentally got broken in v1.36 :(
-    </ul>
-    <h2>v1.36</h2>
-    <ul>
-      <li>Auto reconnect for HRM (<a href="https://github.com/jonasoreland/runnerup/issues/104">bug#104)</a>
-      </li>
-      <li>More translation work
-      <li>Heartrate zone distribution
-      <li>Battery level for BLE
-      <li>Preparations for Android Wear
-      <li><a href="https://plus.google.com/u/0/communities/112040124647770742805">RunnerUp group
+    <li>Russian translations
+    <li>Japanese translations
+    <li>Polish translations
+    <li>Advanced workout creator (paradix)
+    <li>Heartrate zone distribution (paradix)
+    <li>Sportstracker HRM v1 (help from Lenz)
+    <li>oauth bug (affecting e.g Runkeeper)
+    <li>HRM low battery warning (from Fabien G)
+    <li>Speed formatter (from Boerde)
+    <li>Workout type for MapMyRun (from David Hilton)
+</ul>
+<h2>v1.37</h2>
+<ul>
+    <li>Fix ANT+ that accidentally got broken in v1.36 :(
+</ul>
+<h2>v1.36</h2>
+<ul>
+    <li>Auto reconnect for HRM (<a href="https://github.com/jonasoreland/runnerup/issues/104">bug#104)</a>
+    </li>
+    <li>More translation work
+    <li>Heartrate zone distribution
+    <li>Battery level for BLE
+    <li>Preparations for Android Wear
+    <li><a href="https://plus.google.com/u/0/communities/112040124647770742805">RunnerUp group
         for beta testers</a>
-    </ul>
-    <h2>v1.35</h2>
-    <ul>
-      <li>Edit advanced workouts.<br>
+</ul>
+<h2>v1.35</h2>
+<ul>
+    <li>Edit advanced workouts.<br>
         I think I got all aspects but havent had the time to test so much.
         So please report bugs at github or by mail
-      </li>
-      <li>Runtastic support</li>
-    </ul>
-    <h2>v1.34</h2>
-    <ul>
-      <li>Add recovery step which is like rest but gps-tracked</li>
-      <li>Translations work</li>
-      <li>Select and change sport in more places</li>
-      <li>Handle Digifit upload changes</li>
-    </ul>
-    <h2>v1.33</h2>
-    <ul>
-      <li>Build error for samsung 4.2 users :-(</li>
-    </ul>
-    <h2>v1.32</h2>
-    <ul>
-      <li>Auto-pause/resume, enable/disable from settings. (contributed by weide)</li>
-      <li>Some BLE fixes (maybe maybe it now also works on the S3)</li>
-      <li>Fix RunKeeper AM/PM bug (thx to Henrik Smedslett for fix)</li>
-      <li>Made password mandatory in RunnerUp LIVE</li>
-    </ul>
-    <h2>v1.31</h2>
-    <ul>
-      <li>Set maximum priority for media button - start RunnerUp after
+    </li>
+    <li>Runtastic support</li>
+</ul>
+<h2>v1.34</h2>
+<ul>
+    <li>Add recovery step which is like rest but gps-tracked</li>
+    <li>Translations work</li>
+    <li>Select and change sport in more places</li>
+    <li>Handle Digifit upload changes</li>
+</ul>
+<h2>v1.33</h2>
+<ul>
+    <li>Build error for samsung 4.2 users :-(</li>
+</ul>
+<h2>v1.32</h2>
+<ul>
+    <li>Auto-pause/resume, enable/disable from settings. (contributed by weide)</li>
+    <li>Some BLE fixes (maybe maybe it now also works on the S3)</li>
+    <li>Fix RunKeeper AM/PM bug (thx to Henrik Smedslett for fix)</li>
+    <li>Made password mandatory in RunnerUp LIVE</li>
+</ul>
+<h2>v1.31</h2>
+<ul>
+    <li>Set maximum priority for media button - start RunnerUp after
         spotify and headset button should work
-      </li>
-      <li>Add heart rate to activity/interval/lap information when
+    </li>
+    <li>Add heart rate to activity/interval/lap information when
         running and show average heart rate per lap in laps tab in activity
         details
-      </li>
-      <li>Fix missing avgerage hr for endomono</li>
-      <li>Fix bug with rest step wo/ duration (advanced workout)</li>
-      <li>Add Spanish audio cues</li>
-      <li>More french audio cue improvements</li>
-    </ul>
-    <h2>v1.30</h2>
-    <ul>
-      <li>Revert experimental Android &gt;= 4.3 BLE HRM changes (that
+    </li>
+    <li>Fix missing avgerage hr for endomono</li>
+    <li>Fix bug with rest step wo/ duration (advanced workout)</li>
+    <li>Add Spanish audio cues</li>
+    <li>More french audio cue improvements</li>
+</ul>
+<h2>v1.30</h2>
+<ul>
+    <li>Revert experimental Android &gt;= 4.3 BLE HRM changes (that
         ended up in release by misstake :-( (reported by Yanick
         Lantaigne)
-      </li>
-      <li>Fix start RunnerUp with HRM configured by bluetooth turned off
+    </li>
+    <li>Fix start RunnerUp with HRM configured by bluetooth turned off
         which could sometimes give crash (reported by David Golovan)
-      </li>
-      <li>Fix reporting of failed connection to PolarWearLink,
+    </li>
+    <li>Fix reporting of failed connection to PolarWearLink,
         <b>NOTE:</b> Weirdly enough uninstalling RunKeeper seems to make it
         more stable??
-      </li>
-    </ul>
-    <h2>v1.29</h2>
-    <ul>
-      <li>Adopt to Nike+ unannounced changes</li>
-      <li>BUG: mapmyrun login (thx to nick scirrotto for help)</li>
-    </ul>
-    <h2>v1.28</h2>
-    <ul>
-      <li>ANT+ HRM support<br>
+    </li>
+</ul>
+<h2>v1.29</h2>
+<ul>
+    <li>Adopt to Nike+ unannounced changes</li>
+    <li>BUG: mapmyrun login (thx to nick scirrotto for help)</li>
+</ul>
+<h2>v1.28</h2>
+<ul>
+    <li>ANT+ HRM support<br>
         (for devices that support it, I first tested that <a href=
-          "https://play.google.com/store/apps/details?id=com.dsi.ant.antplusdemo">
-        ANT+ Demo</a> worked.)
-      </li>
-      <li>BUG: suppress empty audio cues if one skipped over a step</li>
-    </ul>
-    <h2>v1.27</h2>
-    <ul>
-      <li>Fix TCX/GPX date-format bug (thx to Jang-Hwan Ahn for
+                                                                     "https://play.google.com/store/apps/details?id=com.dsi.ant.antplusdemo">
+            ANT+ Demo</a> worked.)
+    </li>
+    <li>BUG: suppress empty audio cues if one skipped over a step</li>
+</ul>
+<h2>v1.27</h2>
+<ul>
+    <li>Fix TCX/GPX date-format bug (thx to Jang-Hwan Ahn for
         report)
-      </li>
-      <li>Mark Zephyr stable</li>
-      <li>Revert "Facebook reauthorize"-fix. Still need to figure out how
+    </li>
+    <li>Mark Zephyr stable</li>
+    <li>Revert "Facebook reauthorize"-fix. Still need to figure out how
         to avoid having to enter username/password every 60 days
-      </li>
-    </ul>
-    <h2>v1.26</h2>
-    <ul>
-      <li>Fix bug: test audio cue button</li>
-      <li>Add end of lap trigger (<b>note</b>: enabled by default!)</li>
-      <li>Handled change of RunningAHEAD API</li>
-      <li>Fix Facebook reauthorize problem</li>
-      <li>Fix Zephyr HRM stability (contributed by stribb)</li>
-      <li>Add some bundled workouts and audio cues</li>
-    </ul>
-    <h2>v1.25</h2>
-    <ul>
-      <li>Fix bug with Garmin upload (that surfaced after changes on
+    </li>
+</ul>
+<h2>v1.26</h2>
+<ul>
+    <li>Fix bug: test audio cue button</li>
+    <li>Add end of lap trigger (<b>note</b>: enabled by default!)</li>
+    <li>Handled change of RunningAHEAD API</li>
+    <li>Fix Facebook reauthorize problem</li>
+    <li>Fix Zephyr HRM stability (contributed by stribb)</li>
+    <li>Add some bundled workouts and audio cues</li>
+</ul>
+<h2>v1.25</h2>
+<ul>
+    <li>Fix bug with Garmin upload (that surfaced after changes on
         their side)
-      </li>
-    </ul>
-    <h2>v1.24</h2>
-    <ul>
-      <li>Adopt to new Garmin login</li>
-    </ul>
-    <h2>v1.23</h2>
-    <ul>
-      <li>Fix bug with incorrect HR cue in interval program</li>
-      <li>French translation of audio cues (contributed by
+    </li>
+</ul>
+<h2>v1.24</h2>
+<ul>
+    <li>Adopt to new Garmin login</li>
+</ul>
+<h2>v1.23</h2>
+<ul>
+    <li>Fix bug with incorrect HR cue in interval program</li>
+    <li>French translation of audio cues (contributed by
         raver2046)
-      </li>
-      <li>Add post to Facebook (invaluable help with testing by David
+    </li>
+    <li>Add post to Facebook (invaluable help with testing by David
         Golovan)
-      </li>
-      <li>Fix PolarWearLink losing connection problem (by silently
+    </li>
+    <li>Fix PolarWearLink losing connection problem (by silently
         reconnecting)
-      </li>
-    </ul>
-    <h2>v1.22</h2>
-    <ul>
-      <li>Configure heart rate zones</li>
-      <li>Run with target heart rate zones coaching</li>
-      <li>Configurable heart rate/heart rate zone audio cues</li>
-      <li>Add Digifit integration (contributed by sean rees)</li>
-      <li>Add Strava integration</li>
-      <li>Fix export TCX bug</li>
-      <li>Fix RunKeeper feed bug (stopped working Jan 1)</li>
-    </ul>
-    <h2>v1.21</h2>
-    <ul>
-      <li>Fix embarrassing build error with v1.20 :(</li>
-    </ul>
-    <h2>v1.20</h2>
-    <ul>
-      <li>Nike+ upload bug</li>
-      <li>HRM Bluetooth SMART (BLE) for Android &gt;= 4.3</li>
-      <li>HRM Polar WearLink</li>
-    </ul>
-    <h2>v1.19</h2>
-    <ul>
-      <li>Various fixes for Android 4.4</li>
-      <li>More work on HRM Bluetooth SMART (BLE) for Android &gt;=
+    </li>
+</ul>
+<h2>v1.22</h2>
+<ul>
+    <li>Configure heart rate zones</li>
+    <li>Run with target heart rate zones coaching</li>
+    <li>Configurable heart rate/heart rate zone audio cues</li>
+    <li>Add Digifit integration (contributed by sean rees)</li>
+    <li>Add Strava integration</li>
+    <li>Fix export TCX bug</li>
+    <li>Fix RunKeeper feed bug (stopped working Jan 1)</li>
+</ul>
+<h2>v1.21</h2>
+<ul>
+    <li>Fix embarrassing build error with v1.20 :(</li>
+</ul>
+<h2>v1.20</h2>
+<ul>
+    <li>Nike+ upload bug</li>
+    <li>HRM Bluetooth SMART (BLE) for Android &gt;= 4.3</li>
+    <li>HRM Polar WearLink</li>
+</ul>
+<h2>v1.19</h2>
+<ul>
+    <li>Various fixes for Android 4.4</li>
+    <li>More work on HRM Bluetooth SMART (BLE) for Android &gt;=
         4.3
-      </li>
-    </ul>
-    <h2>v1.18</h2>
-    <ul>
-      <li>Sharing of activities (e.g mailing of a TCX/GPX file)</li>
-      <li>Fix Nike+ rare upload bug</li>
-      <li>Fix headset control bug</li>
-      <li>
+    </li>
+</ul>
+<h2>v1.18</h2>
+<ul>
+    <li>Sharing of activities (e.g mailing of a TCX/GPX file)</li>
+    <li>Fix Nike+ rare upload bug</li>
+    <li>Fix headset control bug</li>
+    <li>
         HRM Bluetooth SMART (BLE) for Samsung (Android 4.1 &amp; 4.2)
         <hr>
         <h3>Experimental due to missing hardware (enable them in advanced
-          options)
+            options)
         </h3>
-      </li>
-      <li>HRM Bluetooth SMART (BLE) for Android 4.3 (tested only
+    </li>
+    <li>HRM Bluetooth SMART (BLE) for Android 4.3 (tested only
         once)
-      </li>
-      <li>HRM Zephyr (not tested as I don't have the hw)</li>
-      <li>HRM Polar WearLink (not tested as I don't have the hw)</li>
-    </ul>
-    <h2>v1.17</h2>
-    <ul>
-      <li>Fix RunKeeper upload issue that had sneaked into v1.16 for some
+    </li>
+    <li>HRM Zephyr (not tested as I don't have the hw)</li>
+    <li>HRM Polar WearLink (not tested as I don't have the hw)</li>
+</ul>
+<h2>v1.17</h2>
+<ul>
+    <li>Fix RunKeeper upload issue that had sneaked into v1.16 for some
         android devices
-      </li>
-    </ul>
-    <h2>v1.16</h2>
-    <ul>
-      <li><b>RunnerUp LIVE</b>, connect and watch you or your friends on
+    </li>
+</ul>
+<h2>v1.16</h2>
+<ul>
+    <li><b>RunnerUp LIVE</b>, connect and watch you or your friends on
         http://weide.devsparkles.se/Demo/Map (currently no password needed)
         (contributed by weide)
-      </li>
-      <li>Aggregated news feed, currently supporting RunKeeper, Nike+,
+    </li>
+    <li>Aggregated news feed, currently supporting RunKeeper, Nike+,
         Endomondo and FunBeat
-      </li>
-      <li>Start/pause/resume workout using headset button (contributed by
+    </li>
+    <li>Start/pause/resume workout using headset button (contributed by
         weide)
-      </li>
-      <li>Fix bug with connecting to RunKeeper using Facebook login</li>
-      <li>Fix bug when doing multi upload twice =&gt;
+    </li>
+    <li>Fix bug with connecting to RunKeeper using Facebook login</li>
+    <li>Fix bug when doing multi upload twice =&gt;
         java.lang.IllegalStateException: database not open, reported Aug 25
         by unknown, thx!
-      </li>
-    </ul>
-    <h2>v1.15</h2>
-    <ul>
-      <li>Easy sharing of workouts</li>
-      <li>Fix Garmin/FunBeat connect bug (android 2.2 specific), reported
+    </li>
+</ul>
+<h2>v1.15</h2>
+<ul>
+    <li>Easy sharing of workouts</li>
+    <li>Fix Garmin/FunBeat connect bug (android 2.2 specific), reported
         by Morgan Romvall.
-      </li>
-      <li>Add ability to upload multiple activities at once (per
+    </li>
+    <li>Add ability to upload multiple activities at once (per
         account)
-      </li>
-      <li>Misc fixes</li>
-    </ul>
-    <h2>v1.14</h2>
-    <ul>
-      <li>Add RunningAHEAD integration</li>
-      <li>Add pace graph (contributed by weide)</li>
-      <li>misc bug fixes</li>
-      <li>GUI/color changes, hopefully for the better :-)</li>
-      <li>restructuring of account list</li>
-    </ul>
-    <h2>v1.13</h2>
-    <ul>
-      <li>Add Endomondo integration</li>
-      <li>Add jogg.se integration</li>
-    </ul>
-    <h2>v1.12</h2>
-    <ul>
-      <li>Fix bug in list/download workout from Garmin Connect (android
+    </li>
+    <li>Misc fixes</li>
+</ul>
+<h2>v1.14</h2>
+<ul>
+    <li>Add RunningAHEAD integration</li>
+    <li>Add pace graph (contributed by weide)</li>
+    <li>misc bug fixes</li>
+    <li>GUI/color changes, hopefully for the better :-)</li>
+    <li>restructuring of account list</li>
+</ul>
+<h2>v1.13</h2>
+<ul>
+    <li>Add Endomondo integration</li>
+    <li>Add jogg.se integration</li>
+</ul>
+<h2>v1.12</h2>
+<ul>
+    <li>Fix bug in list/download workout from Garmin Connect (android
         &gt;= 4.0)
-      </li>
-      <li>Fix bug with audio cue when pausing during rest step</li>
-      <li>Add Nike+ integration</li>
-      <li>Add audio mute feature (contributed by Calle Sollander)</li>
-    </ul>
-  </body>
+    </li>
+    <li>Fix bug with audio cue when pausing during rest step</li>
+    <li>Add Nike+ integration</li>
+    <li>Add audio mute feature (contributed by Calle Sollander)</li>
+</ul>
+</body>
 </html>

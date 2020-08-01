@@ -26,8 +26,6 @@ import java.util.Locale;
  */
 public class FileNameHelper {
 
-    private static String DATE_TIME_FORMAT_STRING = "yyyy-MM-dd-HH-mm-ss";
-
     /**
      * Generate export file name
      * @param activityStartTime  activity start time in unix timestamp
@@ -61,6 +59,7 @@ public class FileNameHelper {
      * @return converted string in 'DATE_TIME_FORMAT_STRING' format
      */
     private static String unixTimeToString(long timeStamp) {
+        String DATE_TIME_FORMAT_STRING = "yyyy-MM-dd-HH-mm-ss";
         return new SimpleDateFormat(DATE_TIME_FORMAT_STRING,
                 Locale.getDefault()).format(new Date(timeStamp * 1000L));
     }

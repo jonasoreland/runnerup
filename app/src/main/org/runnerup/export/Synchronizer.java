@@ -22,8 +22,11 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.runnerup.feed.FeedList.FeedUpdater;
@@ -89,16 +92,19 @@ public interface Synchronizer {
     /**
      * @return name of this synchronizer
      */
+    @NonNull
     String getName();
 
     /**
      * @return The icon resource id
      */
+    @DrawableRes
     int getIconId();
 
     /**
      * @return The color resource id
      */
+    @ColorRes
     int getColorId();
 
     /**
@@ -111,6 +117,7 @@ public interface Synchronizer {
     /**
      * The synchronizer specific config format
      */
+    @NonNull
     String getAuthConfig();
 
     @NonNull
@@ -216,9 +223,10 @@ public interface Synchronizer {
 
     /**
      * Get any authorization user notice to be shown when user enters username/password.
-     * @return A string resource id or null.
+     * @return A string resource id or 0.
      */
-    Integer getAuthNotice();
+    @StringRes
+    int getAuthNotice();
 
     /**
      * Get the public URL

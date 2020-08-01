@@ -104,7 +104,7 @@ public class PauseStep extends Step {
         switch (s) {
             case STEP:
             case LAP:
-                return elapsedTime / 1000;
+                return elapsedTime / 1000.0;
             case ACTIVITY:
             case CURRENT:
                 break;
