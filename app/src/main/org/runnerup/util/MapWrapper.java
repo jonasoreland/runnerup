@@ -216,18 +216,24 @@ public class MapWrapper implements Constants {
             }
             ll.close();
 
-            //Track is normally ended with a pause not always followed by an end
+            // Track is normally ended with a pause, not always followed by an end
             // Ignore the pause
-            if (!route.markers.isEmpty()) {
+            if (route.markers.size() >= 2) {
                 SymbolOptions m = route.markers.get(route.markers.size() - 2);
                 SymbolOptions me = route.markers.get(route.markers.size() - 1);
                 if (m.getIconImage().equals(((Integer) DB.LOCATION.TYPE_PAUSE).toString() )&&
                         me.getIconImage().equals(((Integer) DB.LOCATION.TYPE_END).toString())) {
                     route.markers.remove(route.markers.size() - 2);
-                } else if (me.getIconImage().equals(((Integer) DB.LOCATION.TYPE_PAUSE).toString() )) {
+                }
+            }
+
+            if (route.markers.size() >= 1) {
+                SymbolOptions me = route.markers.get(route.markers.size() - 1);
+                if (me.getIconImage().equals(((Integer) DB.LOCATION.TYPE_PAUSE).toString() )) {
                     me.withIconImage(((Integer) DB.LOCATION.TYPE_END).toString());
                 }
             }
+
             return route;
         }
 
