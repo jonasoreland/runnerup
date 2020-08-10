@@ -65,11 +65,29 @@
     <item quantity="many">%s mylios</item>
     <item quantity="other">%s mylios</item>
   </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilometras per valandą</item>
+    <item quantity="few">%s kilometrai per valandą</item>
+    <item quantity="many">%s kilometrų per valandą</item>
+    <item quantity="other">%s kilometrai per valandą</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s mylia per valandą</item>
+    <item quantity="few">%s mylios per valandą</item>
+    <item quantity="many">%s mylių per valandą</item>
+    <item quantity="other">%s mylios per valandą</item>
+  </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
     <item quantity="few">%d bpm</item>
     <item quantity="many">%d bpm</item>
     <item quantity="other">%d bpm</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d dpm</item>
+    <item quantity="few">%d dpm</item>
+    <item quantity="many">%d dpm</item>
+    <item quantity="other">%d dpm</item>
   </plurals>
   <string name="cue_activity_paused">veikla pristabdyta</string>
   <string name="cue_activity_resumed">veikla tęsiama</string>
