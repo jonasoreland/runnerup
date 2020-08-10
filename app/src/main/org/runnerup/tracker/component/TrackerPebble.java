@@ -22,6 +22,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import android.util.Log;
 import android.widget.Toast;
 
 import com.getpebble.android.kit.Constants;
@@ -98,8 +100,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
     }
 
     private void sendLocalBroadcast(String action) {
-        Intent intent = new Intent()
-                .setAction(action);
+        Intent intent = new Intent().setAction(action);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
@@ -111,7 +112,14 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
 
     @Override
     public boolean isConnected() {
-        return PebbleKit.isWatchConnected(context);
+        try {
+            return PebbleKit.isWatchConnected(context);
+        } catch (NullPointerException ex) {
+            // Occasional crashes in Play console
+            Toast.makeText(context, "Failure for isWatchConnected: " + ex.toString(), Toast.LENGTH_LONG).show();
+            Log.w(getName(), "Failure for isWatchConnected: " + ex.toString());
+        }
+        return false;
     }
 
     @Override
