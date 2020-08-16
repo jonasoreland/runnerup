@@ -75,7 +75,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        ListView listView = findViewById(R.id.account_list);
+        ListView listView = findViewById(R.id.account_list_list);
 
         // button footer
         Button showDisabledBtn = new Button(this);
