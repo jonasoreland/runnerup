@@ -83,6 +83,12 @@
     <item quantity="many">%d ударов в минуту</item>
     <item quantity="other">%d ударов в минуту</item>
   </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d оборот в минуту</item>
+    <item quantity="few">%d оборота в минуту</item>
+    <item quantity="many">%d оборотов в минуту</item>
+    <item quantity="other">%d оборотов в минуту</item>
+  </plurals>
   <string name="cue_activity_paused">Пауза</string>
   <string name="cue_activity_resumed">Продолжил движение</string>
   <string name="cue_activity_stopped">Остановился</string>

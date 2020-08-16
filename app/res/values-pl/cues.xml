@@ -18,7 +18,7 @@
   <string name="cue_interval">interwał</string>
   <string name="cue_lap">okrążenie</string>
   <string name="cue_warmup">rozgrzewka</string>
-  <string name="cue_cooldown">uspokojenie</string>
+  <string name="cue_cooldown">Uspokojenie</string>
   <string name="cue_current">aktualny</string>
   <string name="cue_perkilometer">na kilometr</string>
   <string name="cue_permile">na milę</string>

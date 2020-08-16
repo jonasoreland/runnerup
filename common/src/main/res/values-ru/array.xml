@@ -4,6 +4,10 @@
     <item>Мили</item>
     <item>Километры</item>
   </string-array>
+  <string-array name="speedUnitEntries">
+    <item>Темп</item>
+    <item>Скорость</item>
+  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Разминка</item>
@@ -16,11 +20,6 @@
     <item>До нажатия</item>
     <item>Время</item>
     <item>Дистанция</item>
-  </string-array>
-  <string-array name="target_types">
-    <item>Нет</item>
-    <item>Темп</item>
-    <item>Зона ЧСС</item>
   </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
@@ -39,4 +38,8 @@
     <item>Женский</item>
   </string-array>
   <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Радиальное расстояние (быстрое)</item>
+    <item>Алгоритм Рамера — Дугласа — Пекера (качественное)</item>
+  </string-array>
 </resources>
