@@ -155,21 +155,21 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(edit);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                    .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                         setValue(edit.getText().toString());
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(true);
                     })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(edit);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 
@@ -237,10 +237,10 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(datePicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     setValue(getValue(datePicker));
                     dialog.dismiss();
@@ -255,12 +255,12 @@ public class SpinnerPresenter {
                     return df.format(c.getTime());
                 }
             })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(datePicker);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 
@@ -282,10 +282,10 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(timePicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     setValue(getValue(timePicker));
                     dialog.dismiss();
@@ -300,12 +300,12 @@ public class SpinnerPresenter {
                     return df.format(c.getTime());
                 }
             })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(timePicker);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 
@@ -323,10 +323,10 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(picker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     setValue(getPickerValue());
                     dialog.dismiss();
@@ -338,12 +338,12 @@ public class SpinnerPresenter {
                     return DateUtils.formatElapsedTime(picker.getEpochTime());
                 }
             })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(picker);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 
@@ -362,10 +362,10 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(distancePicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     setValue(getValue(distancePicker));
                     dialog.dismiss();
@@ -377,12 +377,12 @@ public class SpinnerPresenter {
                     return Long.toString(dp.getDistance());
                 }
             })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(distancePicker);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 
@@ -401,10 +401,10 @@ public class SpinnerPresenter {
             final LinearLayout layout = createLayout(context);
             layout.addView(numberPicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(context)
+            new AlertDialog.Builder(context)
                     .setTitle(mLabel)
                     .setView(layout)
-                    .setPositiveButton(context.getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     setValue(getValue(numberPicker));
                     dialog.dismiss();
@@ -416,12 +416,12 @@ public class SpinnerPresenter {
                     return Integer.toString(dp.getValue());
                 }
             })
-                    .setNegativeButton(context.getResources().getString(R.string.Cancel), (dialog, whichButton) -> {
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> {
                         dialog.dismiss();
                         layout.removeView(numberPicker);
                         onClose(false);
-                    });
-            alert.show();
+                    })
+                    .show();
         });
     }
 

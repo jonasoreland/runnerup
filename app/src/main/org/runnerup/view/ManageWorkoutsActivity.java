@@ -140,15 +140,15 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             try {
                 importData(fileName, data);
             } catch (Exception e) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.Error))
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.Error)
                         .setMessage(getString(R.string.Failed_to_import) + ": " + fileName)
-                        .setPositiveButton(getString(R.string.OK),
+                        .setPositiveButton(R.string.OK,
                                 (dialog, which) -> {
                                     dialog.dismiss();
                                     ManageWorkoutsActivity.this.finish();
-                                });
-                builder.show();
+                                })
+                        .show();
             }
         }
         // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
@@ -193,7 +193,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Import_workout) + ": " + fileName)
-                .setPositiveButton(getString(R.string.Yes),
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             String saveName = fileName;
@@ -227,7 +227,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                             }
                             launchMain(saveName);
                         })
-                .setNegativeButton(getString(R.string.No),
+                .setNegativeButton(R.string.No,
                         (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
@@ -396,19 +396,18 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         // Set an EditText view to get user input
         final EditText input = new EditText(ManageWorkoutsActivity.this);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this)
-                .setTitle(getString(R.string.Create_new_workout))
-                .setMessage(getString(R.string.Set_workout_name))
+        new AlertDialog.Builder(ManageWorkoutsActivity.this)
+                .setTitle(R.string.Create_new_workout)
+                .setMessage(R.string.Set_workout_name)
                 .setView(input)
-                .setPositiveButton(getString(R.string.OK), (dialog, whichButton) -> {
+                .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                     String value = input.getText().toString();
                     intent.putExtra(WORKOUT_NAME, value);
                     startActivity(intent);
 
                 })
-                .setNegativeButton(getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
-
-        builder.show();
+                .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                .show();
     };
 
     private final OnClickListener downloadButtonClick = new OnClickListener() {
@@ -421,20 +420,19 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
             ArrayList<WorkoutRef> local = workouts.get(PHONE_STRING);
             if (contains(local, selected)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this)
+                new AlertDialog.Builder(ManageWorkoutsActivity.this)
                         .setTitle(getString(R.string.Downloading_1s_will_overwrite_2_workout_with_same_name, selected.workoutName, PHONE_STRING))
-                        .setMessage(getString(R.string.Are_you_sure))
-                        .setPositiveButton(getString(R.string.Yes),
+                        .setMessage(R.string.Are_you_sure)
+                        .setPositiveButton(R.string.Yes,
                                 (dialog, which) -> {
                                     dialog.dismiss();
                                     downloadWorkout(selected);
                                 })
-                        .setNegativeButton(getString(R.string.No),
-                                (dialog, which) -> {
-                                    // Do nothing but close the dialog
-                                    dialog.dismiss();
-                                });
-                builder.show();
+                        .setNegativeButton(R.string.No,
+                                // Do nothing but close the dialog
+                                (dialog, which) -> dialog.dismiss()
+                        )
+                        .show();
                 return;
             }
 
@@ -469,20 +467,18 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             return;
 
         final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
-        AlertDialog.Builder builder = new AlertDialog.Builder(ManageWorkoutsActivity.this)
+        new AlertDialog.Builder(ManageWorkoutsActivity.this)
                 .setTitle(getString(R.string.Delete_workout) + " " + selected.workoutName)
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.Yes),
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             deleteWorkout(selected);
                         })
-                .setNegativeButton(getString(R.string.No),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.No,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss())
+                .show();
     };
 
     private void deleteWorkout(WorkoutRef selected) {

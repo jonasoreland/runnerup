@@ -126,7 +126,7 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         Set<String> set = syncManager.feedSynchronizersSet(this);
         if (!set.isEmpty()) {
             feedProgress.setVisibility(View.VISIBLE);
-            feedProgressLabel.setText(getString(R.string.synchronizing_feed));
+            feedProgressLabel.setText(R.string.synchronizing_feed);
             syncManager.synchronizeFeed(syncDone, set, feed, null);
         } else {
             feedProgress.setVisibility(View.GONE);

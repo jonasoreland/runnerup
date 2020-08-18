@@ -184,19 +184,19 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             createNewAudioSchemeDialog();
             return true;
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.Yes),
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             deleteAudioScheme();
                         })
-                .setNegativeButton(getString(R.string.No),
+                .setNegativeButton(R.string.No,
                         (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
-                        });
-        builder.show();
+                        })
+                .show();
         return true;
     }
 
@@ -297,21 +297,20 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         editText.setMinimumHeight(48);
         editText.setMinimumWidth(48);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Create_new_audio_cue_scheme))
-        // Get the layout inflater
-        .setView(editText)
-        .setPositiveButton(getString(R.string.OK), (dialog, which) -> {
-            String scheme = editText.getText().toString();
-            if (!scheme.contentEquals("")) {
-                createNewAudioScheme(scheme);
-                updateSortOrder(scheme);
-                switchTo(scheme);
-            }
-        })
-        .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> {
-        });
-        builder.show();
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.Create_new_audio_cue_scheme)
+                // Get the layout inflater
+                .setView(editText)
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                    String scheme = editText.getText().toString();
+                    if (!scheme.contentEquals("")) {
+                        createNewAudioScheme(scheme);
+                        updateSortOrder(scheme);
+                        switchTo(scheme);
+                    }
+                })
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> {})
+                .show();
     }
 
     private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {

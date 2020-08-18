@@ -95,7 +95,6 @@ public class StepButton extends LinearLayout {
 
     public void setStep(Step step) {
         this.step = step;
-        Resources res = getResources();
 
         mDurationValue.setVisibility(VISIBLE);
         switch (step.getIntensity()) {
@@ -110,7 +109,7 @@ public class StepButton extends LinearLayout {
             case REPEAT:
                 mIntensityIcon.setImageResource(R.drawable.step_repeat);
                 mDurationValue.setVisibility(GONE); //todo better wording in string
-                mGoalValue.setText(String.format(Locale.getDefault(), res.getString(R.string.repeat_times), step.getRepeatCount()));
+                mGoalValue.setText(String.format(Locale.getDefault(), getResources().getString(R.string.repeat_times), step.getRepeatCount()));
                 mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepRepeat));
                 if (editRepeatCount)
                     mLayout.setOnClickListener(onRepeatClickListener);
@@ -133,7 +132,7 @@ public class StepButton extends LinearLayout {
 
         Dimension durationType = step.getDurationType();
         if (durationType == null) {
-            mDurationValue.setText(res.getString(R.string.Until_press));
+            mDurationValue.setText(R.string.Until_press);
         } else {
             mDurationValue.setText(formatter.format(Formatter.Format.TXT_LONG, durationType,
                     step.getDurationValue()));
@@ -175,10 +174,10 @@ public class StepButton extends LinearLayout {
             layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
             layout.addView(numberPicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
-                    .setTitle(getResources().getString(R.string.repeat))
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.repeat)
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                    .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                         step.setRepeatCount(numberPicker.getValue());
                         dialog.dismiss();
                         setStep(step); // redraw
@@ -186,8 +185,8 @@ public class StepButton extends LinearLayout {
                             mOnChangedListener.run();
                         }
                     })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
-            alert.show();
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                    .show();
         }
     };
 
@@ -201,10 +200,10 @@ public class StepButton extends LinearLayout {
 
             final Runnable save = setupEditStep(inflater, layout);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
-                    .setTitle(getResources().getString(R.string.Edit_step))
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.Edit_step)
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                    .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                         save.run();
                         dialog.dismiss();
                         setStep(step); // redraw
@@ -212,8 +211,8 @@ public class StepButton extends LinearLayout {
                             mOnChangedListener.run();
                         }
                     })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
-            alert.show();
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                    .show();
         }
     };
 

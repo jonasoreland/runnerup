@@ -226,7 +226,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         populateWorkoutList();
         newLapButton.setOnClickListener(newLapButtonClick);
-        newLapButton.setText(getString(R.string.New_lap));
+        newLapButton.setText(R.string.New_lap);
         mTracker.displayNotificationState();
     }
 
@@ -349,11 +349,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     private void setPauseButtonEnabled(boolean enabled) {
         if (enabled) {
-            pauseButton.setText(getString(R.string.Pause));
+            pauseButton.setText(R.string.Pause);
             ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_pause, 0);
         } else {
-            pauseButton.setText(getString(R.string.Resume));
+            pauseButton.setText(R.string.Resume);
             ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_play_arrow, 0);
         }
@@ -559,7 +559,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             }
             if (step.getIntensity() == Intensity.REPEAT){
                 if (step.getCurrentRepeat() >= step.getRepeatCount()) {
-                    durationValue.setText(getString(R.string.Finished));
+                    durationValue.setText(R.string.Finished);
                 } else {
                     durationValue.setText(String.format(Locale.getDefault(), "%d/%d",
                             (step.getCurrentRepeat() + 1), step.getRepeatCount()));

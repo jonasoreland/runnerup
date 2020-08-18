@@ -199,7 +199,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 int str = configured ?
                         R.string.accounts_category_connected :
                         R.string.accounts_category_unconnected;
-                sectionTitle.setText(getString(str));
+                sectionTitle.setText(str);
                 sectionTitle.setVisibility(View.VISIBLE);
             }
 

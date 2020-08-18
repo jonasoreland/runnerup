@@ -554,10 +554,10 @@ public class StartActivity extends AppCompatActivity
         AlertDialog prompt = new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
+                .setTitle(R.string.Warning)
                 .setMessage(getResources().getText(R.string.Low_HRM_battery_level)
-                + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
-                .setTitle(getResources().getText(R.string.Warning))
-                .setPositiveButton(getResources().getText(R.string.OK), (dialog, which) -> {
+                        + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
                     if (dontShowAgain.isChecked()) {
                         prefs.edit().putBoolean(pref_key, true).apply();
                     }
@@ -692,12 +692,9 @@ public class StartActivity extends AppCompatActivity
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
                         .setTitle(getString(R.string.GPS_permission_required))
-                        .setMessage(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                                ? getString(R.string.GPS_permission_text)
-                                : getString(R.string.GPS_permission_text_pre_Android10))
-                        .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> dialog.dismiss());
+                        .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
-                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
+                    builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
                     builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
@@ -786,11 +783,11 @@ public class StartActivity extends AppCompatActivity
             gpsEnable.setVisibility(View.VISIBLE);
 
             if (statusDetailsShown) {
-                gpsDetailMessage.setText(getString(R.string.GPS_indicator_off));
+                gpsDetailMessage.setText(R.string.GPS_indicator_off);
                 gpsDetailRow.setVisibility(View.VISIBLE);
                 gpsMessage.setVisibility(View.GONE);
             } else {
-                gpsMessage.setText(getString(R.string.GPS_indicator_off));
+                gpsMessage.setText(R.string.GPS_indicator_off);
                 gpsMessage.setVisibility(View.VISIBLE);
                 gpsDetailRow.setVisibility(View.GONE);
             }
@@ -799,9 +796,9 @@ public class StartActivity extends AppCompatActivity
             gpsDetailIndicator.setVisibility(View.GONE);
 
             if (!mGpsStatus.isLogging()) {
-                gpsEnable.setText(getString(R.string.Start_GPS));
+                gpsEnable.setText(R.string.Start_GPS);
             } else {
-                gpsEnable.setText(getString(R.string.Enable_GPS));
+                gpsEnable.setText(R.string.Enable_GPS);
             }
         } else {
             gpsDetailIndicator.setVisibility(View.VISIBLE);
@@ -825,7 +822,7 @@ public class StartActivity extends AppCompatActivity
 
                 gpsIndicator.setImageResource(R.drawable.ic_gps_0);
                 gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-                gpsMessage.setText(getString(R.string.Waiting_for_GPS));
+                gpsMessage.setText(R.string.Waiting_for_GPS);
 
                 notificationStateManager.displayNotificationState(gpsSearchingState);
             } else {
@@ -1128,12 +1125,12 @@ public class StartActivity extends AppCompatActivity
             advancedDownloadWorkoutButton.setVisibility(View.GONE);
         } catch (Exception ex) {
             ex.printStackTrace();
-            AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-            builder.setTitle(getString(R.string.Failed_to_load_workout));
-            builder.setMessage("" + ex.toString());
-            builder.setPositiveButton(getString(R.string.OK),
-                    (dialog, which) -> dialog.dismiss());
-            builder.show();
+            new AlertDialog.Builder(StartActivity.this)
+                    .setTitle(getString(R.string.Failed_to_load_workout))
+                    .setMessage("" + ex.toString())
+                    .setPositiveButton(R.string.OK,
+                    (dialog, which) -> dialog.dismiss())
+                    .show();
         }
     }
 
@@ -1190,9 +1187,9 @@ public class StartActivity extends AppCompatActivity
                 WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
             } catch (Exception ex) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(getString(R.string.Failed_to_load_workout))
+                        .setTitle(R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
-                        .setPositiveButton(getString(R.string.OK),
+                        .setPositiveButton(R.string.OK,
                                 (dialog, which) -> dialog.dismiss());
                 builder.show();
             }
