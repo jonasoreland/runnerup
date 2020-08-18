@@ -505,7 +505,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     @Override
     public void startScan() {
-        if (mIsScanning)
+        if (mIsScanning || btAdapter == null)
             return;
 
         mIsScanning = true;
@@ -539,7 +539,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     public void connect(HRDeviceRef ref) {
         stopScan();
 
-        if (!Bt20Base.isEnabledImpl()) {
+        if (!Bt20Base.isEnabledImpl() || btAdapter == null) {
             reportConnectFailed("BT is not enabled");
             return;
         }
