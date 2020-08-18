@@ -339,6 +339,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
 
     private final OnClickListener pauseButtonClick = v -> {
+        if (workout == null) {
+            // "should not happen"
+            return;
+        }
+
         if (workout.isPaused()) {
             workout.onResume(workout);
         } else {
@@ -365,6 +370,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         if (mTracker.getState() == TrackerState.STOPPED){
             doStop();
         } else {
+            if (workout == null) {
+                // "should not happen"
+                return;
+            }
+
             setPauseButtonEnabled(!workout.isPaused());
             double ad = workout.getDistance(Scope.ACTIVITY);
             double at = workout.getTime(Scope.ACTIVITY);
