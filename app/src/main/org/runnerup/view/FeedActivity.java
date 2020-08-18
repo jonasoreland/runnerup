@@ -23,10 +23,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -233,11 +235,11 @@ public class FeedActivity extends AppCompatActivity implements Constants {
 
                 // sport
                 int sportId = tmp.getAsInteger(DB.FEED.FEED_SUBTYPE);
-                Drawable sportDrawable = ContextCompat.getDrawable(context, Sport.drawableColored16Of(sportId));
+                Drawable sportDrawable = AppCompatResources.getDrawable(context, Sport.drawableColored16Of(sportId));
                 ivSport.setImageDrawable(sportDrawable);
 
                 String sportName = Sport.textOf(getResources(), sportId);
-                int sportColor = getResources().getColor(Sport.colorOf(sportId));
+                int sportColor = ContextCompat.getColor(FeedActivity.this, Sport.colorOf(sportId));
                 tvSport.setText(sportName);
                 tvSport.setTextColor(sportColor);
 

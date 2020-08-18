@@ -38,7 +38,7 @@ public class SearchingFragment extends Fragment {
         View view = inflater.inflate(R.layout.searching, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             CircledImageView button = view.findViewById(R.id.icon_searching);
             AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
             frameAnimation.start();

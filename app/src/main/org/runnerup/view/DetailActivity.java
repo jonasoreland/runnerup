@@ -31,6 +31,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -652,11 +653,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 Button b = new Button(DetailActivity.this);
                 b.setText(getString(R.string.Configure_accounts));
                 b.setBackgroundResource(R.drawable.btn_blue);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color, getTheme()));
-                } else {
-                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
-                }
+                b.setTextColor(AppCompatResources.getColorStateList(DetailActivity.this, R.color.btn_text_color));
                 b.setOnClickListener(v -> {
                     Intent i = new Intent(DetailActivity.this,
                             AccountListActivity.class);

@@ -24,8 +24,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.appcompat.app.AppCompatActivity;
@@ -197,8 +198,8 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             ImageView emblem = view.findViewById(R.id.history_list_emblem);
             TextView additionalInfo = view.findViewById(R.id.history_list_additional);
 
-            int sportColor = getResources().getColor(Sport.colorOf(s));
-            Drawable sportDrawable = ContextCompat.getDrawable(context, Sport.drawableColored16Of(s));
+            int sportColor = ContextCompat.getColor(context, Sport.colorOf(s));
+            Drawable sportDrawable = AppCompatResources.getDrawable(context, Sport.drawableColored16Of(s));
             emblem.setImageDrawable(sportDrawable);
             distanceText.setTextColor(sportColor);
             additionalInfo.setTextColor(sportColor);

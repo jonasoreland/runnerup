@@ -619,7 +619,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 row = convertView;
             }
             TextView tv = row.findViewById(android.R.id.text1);
-            //tv.setTextColor(resources.getColor(R.color.black));
+            //tv.setTextColor(ContextCompat.getColor(this, R.color.black));
 
             HRDeviceRef btDevice = deviceList.get(position);
             tv.setTag(btDevice);
@@ -628,5 +628,4 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             return tv;
         }
     }
-
 }

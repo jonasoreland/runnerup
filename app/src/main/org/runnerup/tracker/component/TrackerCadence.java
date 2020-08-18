@@ -117,7 +117,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     private Sensor getSensor(final Context context) {
         Sensor sensor = null;
-        if (Build.VERSION.SDK_INT >= 20) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (mSensorManager == null) {
                 mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
             }

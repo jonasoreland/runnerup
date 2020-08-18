@@ -23,8 +23,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,7 +133,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             } else {
                 im.setVisibility(View.VISIBLE);
                 tv.setVisibility(View.GONE);
-                im.setImageDrawable(ContextCompat.getDrawable(this, synchronizer.getIconId()));
+                im.setImageDrawable(AppCompatResources.getDrawable(this, synchronizer.getIconId()));
             }
         }
     }

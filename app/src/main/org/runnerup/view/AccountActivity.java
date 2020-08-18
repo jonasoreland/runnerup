@@ -27,7 +27,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.core.content.ContextCompat;
+
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -173,7 +174,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
-                    im.setImageDrawable(ContextCompat.getDrawable(this, synchronizer.getIconId()));
+                    im.setImageDrawable(AppCompatResources.getDrawable(this, synchronizer.getIconId()));
                     if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                         im.setTag(synchronizer.getPublicUrl());
                         im.setOnClickListener(urlButtonClick);
