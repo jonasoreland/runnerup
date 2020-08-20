@@ -27,11 +27,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -669,7 +671,9 @@ public class StartActivity extends AppCompatActivity
             if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
                 missingAnyPermission = true;
                 // Filter non essential permissions for result
-                missingEssentialPermission = missingEssentialPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
+                missingEssentialPermission = missingEssentialPermission
+                        || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                        || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
                     // A denied permission, show motivation in a popup
                     String s = "Permission " + perm + " is explicitly denied";
@@ -703,6 +707,26 @@ public class StartActivity extends AppCompatActivity
             } else if (requestPerms.size() > 0) {
                 ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
             }
+        }
+
+        // https://developer.android.com/training/monitoring-device-state/doze-standby#support_for_other_use_cases
+        // Permission REQUEST_IGNORE_BATTERY_OPTIMIZATIONS requires special approval in Play
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = this.getResources();
+        final boolean suppressOptimizeBatteryPopup = prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
+        PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+        if ((popup || getAutoStartGps()) && !suppressOptimizeBatteryPopup
+        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && !pm.isIgnoringBatteryOptimizations(this.getPackageName())) {
+            new AlertDialog.Builder(StartActivity.this)
+                    .setTitle(R.string.Battery_optimization_check)
+                    .setMessage(R.string.Battery_optimization_check_text)
+                    .setPositiveButton(R.string.OK, (dialog, which) ->
+                            this.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)))
+                    .setNeutralButton(R.string.Do_not_show_again, (dialog, which) ->
+                            prefs.edit().putBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), true).apply())
+                    .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss())
+                    .show();
         }
 
         return missingEssentialPermission;
