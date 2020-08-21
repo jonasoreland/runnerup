@@ -20,6 +20,7 @@ package org.runnerup.workout;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.util.Log;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
@@ -71,8 +72,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
             try {
                 f.emit(Workout.this, tracker.getApplicationContext());
             } catch (Exception ex) {
-                // make sure that no small misstake crashes a workout...
-                ex.printStackTrace();
+                // make sure that no small mistake crashes a workout...
+                Log.w(getClass().getName(), "PendingFeedback:add: " + ex.toString());
             }
         }
 
@@ -84,8 +85,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 try {
                     Workout.this.textToSpeech.emit();
                 } catch (Exception ex) {
-                    // make sure that no small misstake crashes a workout...
-                    ex.printStackTrace();
+                    // make sure that no small mistake crashes a workout...
+                    Log.w(getClass().getName(), "PendingFeedback:end: " + ex.toString());
                 }
                 return true;
             }
@@ -96,7 +97,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     private final PendingFeedback pendingFeedback = new PendingFeedback();
 
     Tracker tracker = null;
-    SharedPreferences audioCuePrefs;
     private HRZones hrZones = null;
     private RUTextToSpeech textToSpeech = null;
 

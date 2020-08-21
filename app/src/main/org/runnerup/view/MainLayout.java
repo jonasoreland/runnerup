@@ -44,7 +44,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -62,7 +62,7 @@ public class MainLayout extends TabActivity {
     private View getTabView(CharSequence label, int iconResource) {
         @SuppressLint("InflateParams")View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
         tabView.findViewById(R.id.icon).setContentDescription(label);
-        Drawable icon = ContextCompat.getDrawable(this, iconResource);
+        Drawable icon = AppCompatResources.getDrawable(this, iconResource);
         ((ImageView)tabView.findViewById(R.id.icon)).setImageDrawable(icon);
         return tabView;
     }
@@ -277,10 +277,10 @@ public class MainLayout extends TabActivity {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = view.findViewById(R.id.web_view1);
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Whats_new))
+                .setTitle(R.string.Whats_new)
                 .setView(view)
-                .setPositiveButton(getString(R.string.Rate_RunnerUp), (dialog, which) -> onRateClick.onClick(null))
-                .setNegativeButton(getString(R.string.OK), (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null))
+                .setNegativeButton(R.string.OK, (dialog, which) -> dialog.dismiss())
                 .show();
         wv.loadUrl("file:///android_asset/changes.html");
     }

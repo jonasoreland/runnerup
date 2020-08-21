@@ -27,7 +27,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.core.content.ContextCompat;
+
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -173,7 +174,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                     im.setVisibility(View.GONE);
                     tv.setVisibility(View.VISIBLE);
                 } else {
-                    im.setImageDrawable(ContextCompat.getDrawable(this, synchronizer.getIconId()));
+                    im.setImageDrawable(AppCompatResources.getDrawable(this, synchronizer.getIconId()));
                     if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                         im.setTag(synchronizer.getPublicUrl());
                         im.setOnClickListener(urlButtonClick);
@@ -289,18 +290,17 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     private final OnClickListener clearUploadsButtonClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(
+            new AlertDialog.Builder(
                     AccountActivity.this)
-                    .setTitle(getString(R.string.Clear_uploads))
-                    .setMessage(getResources().getString(R.string.Clear_uploads_from_phone))
-                    .setPositiveButton(getString(R.string.OK),
+                    .setTitle(R.string.Clear_uploads)
+                    .setMessage(R.string.Clear_uploads_from_phone)
+                    .setPositiveButton(R.string.OK,
                             (dialog, which) -> syncManager.clearUploadsByName(callback, mSynchronizerName))
-                    .setNegativeButton(getString(R.string.Cancel),
-                            (dialog, which) -> {
-                                // Do nothing but close the dialog
-                                dialog.dismiss();
-                            });
-            builder.show();
+                    .setNegativeButton(R.string.Cancel,
+                            // Do nothing but close the dialog
+                            (dialog, which) -> dialog.dismiss()
+                    )
+                    .show();
         }
     };
 
@@ -391,20 +391,18 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             final boolean[] selected = {
                 true
             };
-            AlertDialog.Builder builder = new AlertDialog.Builder(
+            new AlertDialog.Builder(
                     AccountActivity.this)
-                    .setTitle(getString(R.string.Disconnect_account))
-                    .setPositiveButton(getString(R.string.OK),
+                    .setTitle(R.string.Disconnect_account)
+                    .setPositiveButton(R.string.OK,
                             (dialog, which) -> syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
                                     selected[0]))
-                    .setNegativeButton(getString(R.string.Cancel),
-                            (dialog, which) -> {
-                                // Do nothing but close the dialog
-                                dialog.dismiss();
-                            })
+                    .setNegativeButton(R.string.Cancel,
+                            // Do nothing but close the dialog
+                            (dialog, which) ->  dialog.dismiss())
                     .setMultiChoiceItems(items, selected,
-                            (arg0, arg1, arg2) -> selected[arg1] = arg2);
-            builder.show();
+                            (arg0, arg1, arg2) -> selected[arg1] = arg2)
+                    .show();
         }
     };
 

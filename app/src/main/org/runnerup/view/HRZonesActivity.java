@@ -199,10 +199,10 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     }
 
     private void clearHRSettings() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Clear_heart_rate_zone_settings))
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.OK), (dialog, which) -> {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.Clear_heart_rate_zone_settings)
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
                     ageSpinner.clear();
                     sexSpinner.clear();
                     maxHRSpinner.clear();
@@ -211,12 +211,11 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     skipSave = true;
                     finish();
                 })
-                .setNegativeButton(getString(R.string.Cancel),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.Cancel,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss()
+                )
+                .show();
     }
 
     @Override

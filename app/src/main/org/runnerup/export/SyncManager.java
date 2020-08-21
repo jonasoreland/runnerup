@@ -390,7 +390,7 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
                     try {
                         //noinspection ConstantConditions
                         authConfig.put("username", tv1.getText());
@@ -404,7 +404,7 @@ public class SyncManager {
                     testUserPass(sync, authConfig);
                 })
                 .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
-                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
                         handleAuthComplete(sync, Status.CANCEL);
@@ -475,7 +475,7 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(getResources().getString(R.string.OK), (dialog, which) -> {
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
                     //Set default values
                     ContentValues tmp = new ContentValues();
                     String uri = tv1.getText().toString().trim();
@@ -495,7 +495,7 @@ public class SyncManager {
 
                     handleAuthComplete(sync, sync.connect());
                 })
-                .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
                         handleAuthComplete(sync, Status.CANCEL);

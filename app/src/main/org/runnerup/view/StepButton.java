@@ -21,6 +21,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.Gravity;
@@ -93,37 +95,36 @@ public class StepButton extends LinearLayout {
 
     public void setStep(Step step) {
         this.step = step;
-        Resources res = getResources();
 
         mDurationValue.setVisibility(VISIBLE);
         switch (step.getIntensity()) {
             case ACTIVE:
                 mIntensityIcon.setImageResource(R.drawable.step_active);
-                mGoalValue.setTextColor(res.getColor(R.color.stepActive)); //todo check if it works
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepActive)); //todo check if it works
                 break;
             case RESTING:
                 mIntensityIcon.setImageResource(R.drawable.step_resting);
-                mGoalValue.setTextColor(res.getColor(R.color.stepResting));
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepResting));
                 break;
             case REPEAT:
                 mIntensityIcon.setImageResource(R.drawable.step_repeat);
                 mDurationValue.setVisibility(GONE); //todo better wording in string
-                mGoalValue.setText(String.format(Locale.getDefault(), res.getString(R.string.repeat_times), step.getRepeatCount()));
-                mGoalValue.setTextColor(res.getColor(R.color.stepRepeat));
+                mGoalValue.setText(String.format(Locale.getDefault(), getResources().getString(R.string.repeat_times), step.getRepeatCount()));
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepRepeat));
                 if (editRepeatCount)
                     mLayout.setOnClickListener(onRepeatClickListener);
                 return;
             case WARMUP:
                 mIntensityIcon.setImageResource(R.drawable.step_warmup);
-                mGoalValue.setTextColor(res.getColor(R.color.stepWarmup));
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepWarmup));
                 break;
             case COOLDOWN:
                 mIntensityIcon.setImageResource(R.drawable.step_cooldown);
-                mGoalValue.setTextColor(res.getColor(R.color.stepCooldown));
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepCooldown));
                 break;
             case RECOVERY:
                 mIntensityIcon.setImageResource(R.drawable.step_recovery);
-                mGoalValue.setTextColor(res.getColor(R.color.stepRecovery));
+                mGoalValue.setTextColor(ContextCompat.getColor(mContext, R.color.stepRecovery));
                 break;
             default:
                 mIntensityIcon.setImageResource(0);
@@ -131,7 +132,7 @@ public class StepButton extends LinearLayout {
 
         Dimension durationType = step.getDurationType();
         if (durationType == null) {
-            mDurationValue.setText(res.getString(R.string.Until_press));
+            mDurationValue.setText(R.string.Until_press);
         } else {
             mDurationValue.setText(formatter.format(Formatter.Format.TXT_LONG, durationType,
                     step.getDurationValue()));
@@ -173,10 +174,10 @@ public class StepButton extends LinearLayout {
             layout.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
             layout.addView(numberPicker);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
-                    .setTitle(getResources().getString(R.string.repeat))
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.repeat)
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                    .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                         step.setRepeatCount(numberPicker.getValue());
                         dialog.dismiss();
                         setStep(step); // redraw
@@ -184,8 +185,8 @@ public class StepButton extends LinearLayout {
                             mOnChangedListener.run();
                         }
                     })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
-            alert.show();
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                    .show();
         }
     };
 
@@ -199,10 +200,10 @@ public class StepButton extends LinearLayout {
 
             final Runnable save = setupEditStep(inflater, layout);
 
-            AlertDialog.Builder alert = new AlertDialog.Builder(mContext)
-                    .setTitle(getResources().getString(R.string.Edit_step))
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.Edit_step)
                     .setView(layout)
-                    .setPositiveButton(getResources().getString(R.string.OK), (dialog, whichButton) -> {
+                    .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                         save.run();
                         dialog.dismiss();
                         setStep(step); // redraw
@@ -210,8 +211,8 @@ public class StepButton extends LinearLayout {
                             mOnChangedListener.run();
                         }
                     })
-                    .setNegativeButton(getResources().getString(R.string.Cancel), (dialog, whichButton) -> dialog.dismiss());
-            alert.show();
+                    .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                    .show();
         }
     };
 

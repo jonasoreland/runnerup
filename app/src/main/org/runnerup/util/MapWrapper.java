@@ -36,6 +36,8 @@ import com.mapbox.pluginscalebar.ScaleBarPlugin;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -55,6 +57,7 @@ import org.runnerup.db.entities.LocationEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
@@ -287,19 +290,24 @@ public class MapWrapper implements Constants {
 
                 // Images id from text
                 route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_START).toString(),
-                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_start)),
+                        Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                                AppCompatResources.getDrawable(context, R.drawable.ic_map_marker_start))),
                         false);
                 route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_END).toString(),
-                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_end)),
+                        Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                                AppCompatResources.getDrawable(context, R.drawable.ic_map_marker_end))),
                         false);
                 route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_PAUSE).toString(),
-                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_pause)),
+                        Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                                AppCompatResources.getDrawable(context, R.drawable.ic_map_marker_pause))),
                         false);
                 route.map.getStyle().addImage(((Integer)DB.LOCATION.TYPE_RESUME).toString(),
-                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_resume)),
+                        Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                                AppCompatResources.getDrawable(context, R.drawable.ic_map_marker_resume))),
                         false);
                 route.map.getStyle().addImage("lap",
-                        BitmapUtils.getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.ic_map_marker_lap)),
+                        Objects.requireNonNull(BitmapUtils.getBitmapFromDrawable(
+                                AppCompatResources.getDrawable(context, R.drawable.ic_map_marker_lap))),
                         false);
 
                 symbolManager.setIconAllowOverlap(true);

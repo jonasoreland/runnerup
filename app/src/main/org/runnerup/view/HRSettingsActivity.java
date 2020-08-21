@@ -232,17 +232,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void clearHRSettings() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Clear_HR_settings))
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.OK), (dialog, which) -> doClear())
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.Clear_HR_settings)
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.OK, (dialog, which) -> doClear())
 
-                .setNegativeButton(getString(R.string.Cancel),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.Cancel,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss()
+                )
+                .show();
     }
 
     private void load() {
@@ -288,10 +287,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private void notSupported() {
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Heart_rate_monitor_is_not_supported_for_your_device))
-                .setNegativeButton(getString(R.string.Cancel), listener);
-        builder.show();
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.Heart_rate_monitor_is_not_supported_for_your_device)
+                .setNegativeButton(R.string.Cancel, listener)
+                .show();
     }
 
     private void clear() {
@@ -312,7 +311,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         if (hrProvider == null) {
             scanButton.setEnabled(true);
             connectButton.setEnabled(false);
-            connectButton.setText(getString(R.string.Connect));
+            connectButton.setText(R.string.Connect);
             tvBTName.setText("");
             tvHR.setText("");
             return;
@@ -326,14 +325,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
 
         if (hrProvider.isConnected()) {
-            connectButton.setText(getString(R.string.Disconnect));
+            connectButton.setText(R.string.Disconnect);
             connectButton.setEnabled(true);
         } else if (hrProvider.isConnecting()) {
             connectButton.setEnabled(false);
-            connectButton.setText(getString(R.string.Connecting));
+            connectButton.setText(R.string.Connecting);
         } else {
             connectButton.setEnabled(btName != null);
-            connectButton.setText(getString(R.string.Connect));
+            connectButton.setText(R.string.Connect);
         }
     }
 
@@ -346,9 +345,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
         
         hrProvider = null;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Select_type_of_Bluetooth_device))
-                .setPositiveButton(getString(R.string.OK),
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.Select_type_of_Bluetooth_device)
+                .setPositiveButton(R.string.OK,
                         (dialog, which) -> {
                             if (hrProvider == null && items.length > 0) {
                                 // Select the first in the list
@@ -358,7 +357,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
                             open();
                         })
-                .setNegativeButton(getString(R.string.Cancel),
+                .setNegativeButton(R.string.Cancel,
                         (dialog, which) -> {
                             mIsScanning = false;
                             hrProvider = null;
@@ -371,8 +370,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
                                     items[arg1].toString());
                             log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
-                        });
-        builder.show();
+                        })
+                .show();
     }
 
     private void startScan() {
@@ -382,8 +381,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         hrProvider.startScan();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Scanning))
-                .setPositiveButton(getString(R.string.Connect),
+                .setTitle(R.string.Scanning)
+                .setPositiveButton(R.string.Connect,
                         (dialog, which) -> {
                             log(hrProvider.getProviderName() + ".stopScan()");
                             hrProvider.stopScan();
@@ -391,7 +390,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             updateView();
                             dialog.dismiss();
                         })
-                .setNegativeButton(getString(R.string.Cancel),
+                .setNegativeButton(R.string.Cancel,
                         (dialog, which) -> {
                             log(hrProvider.getProviderName() + ".stopScan()");
                             hrProvider.stopScan();
@@ -619,7 +618,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 row = convertView;
             }
             TextView tv = row.findViewById(android.R.id.text1);
-            //tv.setTextColor(resources.getColor(R.color.black));
+            //tv.setTextColor(ContextCompat.getColor(this, R.color.black));
 
             HRDeviceRef btDevice = deviceList.get(position);
             tv.setTag(btDevice);
@@ -628,5 +627,4 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             return tv;
         }
     }
-
 }

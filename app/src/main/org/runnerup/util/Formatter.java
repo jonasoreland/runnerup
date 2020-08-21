@@ -111,7 +111,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
 
         void setLang(Locale locale) {
-            if (Build.VERSION.SDK_INT >= 17) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 configuration.setLocale(locale);
             } else {
                 configuration.locale = locale;

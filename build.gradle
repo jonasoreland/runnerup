@@ -17,11 +17,12 @@ project.ext {
     //Common settings for all builds
     //Note that Android Studio does not know about the 'ext' module and will warn
     //minSdkVersion differs between modules
-    buildToolsVersion = '30.0.1' //Update Travis manually
+    buildToolsVersion = '30.0.2' //Update Travis manually
     compileSdkVersion = 29 //Update Travis manually
     targetSdkVersion = 29
 
-    appcompat_version = "1.1.0"
+    appcompat_version = "1.2.0"
+    annotation_version = "1.1.0"
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.3.0'
@@ -30,8 +31,8 @@ project.ext {
     mockitoVersion = '2.3.7'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.2.1.0'
-    versionCode = 254
+    versionName = '2.2.2.2'
+    versionCode = 262
     latestBaseVersionCode = 15000000
 
     travisBuild = System.getenv("TRAVIS") == "true"

@@ -27,11 +27,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
@@ -554,10 +556,10 @@ public class StartActivity extends AppCompatActivity
         AlertDialog prompt = new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
+                .setTitle(R.string.Warning)
                 .setMessage(getResources().getText(R.string.Low_HRM_battery_level)
-                + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
-                .setTitle(getResources().getText(R.string.Warning))
-                .setPositiveButton(getResources().getText(R.string.OK), (dialog, which) -> {
+                        + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
                     if (dontShowAgain.isChecked()) {
                         prefs.edit().putBoolean(pref_key, true).apply();
                     }
@@ -669,7 +671,9 @@ public class StartActivity extends AppCompatActivity
             if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
                 missingAnyPermission = true;
                 // Filter non essential permissions for result
-                missingEssentialPermission = missingEssentialPermission || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
+                missingEssentialPermission = missingEssentialPermission
+                        || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                        || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
                     // A denied permission, show motivation in a popup
                     String s = "Permission " + perm + " is explicitly denied";
@@ -692,12 +696,9 @@ public class StartActivity extends AppCompatActivity
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
                         .setTitle(getString(R.string.GPS_permission_required))
-                        .setMessage(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                                ? getString(R.string.GPS_permission_text)
-                                : getString(R.string.GPS_permission_text_pre_Android10))
-                        .setNegativeButton(getString(R.string.Cancel), (dialog, which) -> dialog.dismiss());
+                        .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
-                    builder.setPositiveButton(getString(R.string.OK), (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
+                    builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
                     builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
@@ -706,6 +707,26 @@ public class StartActivity extends AppCompatActivity
             } else if (requestPerms.size() > 0) {
                 ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
             }
+        }
+
+        // https://developer.android.com/training/monitoring-device-state/doze-standby#support_for_other_use_cases
+        // Permission REQUEST_IGNORE_BATTERY_OPTIMIZATIONS requires special approval in Play
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final Resources res = this.getResources();
+        final boolean suppressOptimizeBatteryPopup = prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
+        PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+        if ((popup || getAutoStartGps()) && !suppressOptimizeBatteryPopup
+        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && !pm.isIgnoringBatteryOptimizations(this.getPackageName())) {
+            new AlertDialog.Builder(StartActivity.this)
+                    .setTitle(R.string.Battery_optimization_check)
+                    .setMessage(R.string.Battery_optimization_check_text)
+                    .setPositiveButton(R.string.OK, (dialog, which) ->
+                            this.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)))
+                    .setNeutralButton(R.string.Do_not_show_again, (dialog, which) ->
+                            prefs.edit().putBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), true).apply())
+                    .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss())
+                    .show();
         }
 
         return missingEssentialPermission;
@@ -786,11 +807,11 @@ public class StartActivity extends AppCompatActivity
             gpsEnable.setVisibility(View.VISIBLE);
 
             if (statusDetailsShown) {
-                gpsDetailMessage.setText(getString(R.string.GPS_indicator_off));
+                gpsDetailMessage.setText(R.string.GPS_indicator_off);
                 gpsDetailRow.setVisibility(View.VISIBLE);
                 gpsMessage.setVisibility(View.GONE);
             } else {
-                gpsMessage.setText(getString(R.string.GPS_indicator_off));
+                gpsMessage.setText(R.string.GPS_indicator_off);
                 gpsMessage.setVisibility(View.VISIBLE);
                 gpsDetailRow.setVisibility(View.GONE);
             }
@@ -799,9 +820,9 @@ public class StartActivity extends AppCompatActivity
             gpsDetailIndicator.setVisibility(View.GONE);
 
             if (!mGpsStatus.isLogging()) {
-                gpsEnable.setText(getString(R.string.Start_GPS));
+                gpsEnable.setText(R.string.Start_GPS);
             } else {
-                gpsEnable.setText(getString(R.string.Enable_GPS));
+                gpsEnable.setText(R.string.Enable_GPS);
             }
         } else {
             gpsDetailIndicator.setVisibility(View.VISIBLE);
@@ -825,7 +846,7 @@ public class StartActivity extends AppCompatActivity
 
                 gpsIndicator.setImageResource(R.drawable.ic_gps_0);
                 gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-                gpsMessage.setText(getString(R.string.Waiting_for_GPS));
+                gpsMessage.setText(R.string.Waiting_for_GPS);
 
                 notificationStateManager.displayNotificationState(gpsSearchingState);
             } else {
@@ -1128,12 +1149,12 @@ public class StartActivity extends AppCompatActivity
             advancedDownloadWorkoutButton.setVisibility(View.GONE);
         } catch (Exception ex) {
             ex.printStackTrace();
-            AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this);
-            builder.setTitle(getString(R.string.Failed_to_load_workout));
-            builder.setMessage("" + ex.toString());
-            builder.setPositiveButton(getString(R.string.OK),
-                    (dialog, which) -> dialog.dismiss());
-            builder.show();
+            new AlertDialog.Builder(StartActivity.this)
+                    .setTitle(getString(R.string.Failed_to_load_workout))
+                    .setMessage("" + ex.toString())
+                    .setPositiveButton(R.string.OK,
+                    (dialog, which) -> dialog.dismiss())
+                    .show();
         }
     }
 
@@ -1190,9 +1211,9 @@ public class StartActivity extends AppCompatActivity
                 WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
             } catch (Exception ex) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(getString(R.string.Failed_to_load_workout))
+                        .setTitle(R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
-                        .setPositiveButton(getString(R.string.OK),
+                        .setPositiveButton(R.string.OK,
                                 (dialog, which) -> dialog.dismiss());
                 builder.show();
             }

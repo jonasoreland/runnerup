@@ -22,7 +22,7 @@
     <item>Distanz</item>
   </string-array>
   <string-array name="target_types">
-    <item>Kein Wert</item>
+    <item>Freies Training</item>
     <item>Tempo</item>
     <item>Herzfrequenzbereich</item>
   </string-array>

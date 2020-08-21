@@ -117,6 +117,7 @@
 
     <string name="pref_keystartstop_active">pref_keystartstop_active</string>
     <string name="pref_lock_run">pref_lock_run</string>
+    <string name="pref_suppress_battery_optimization_popup">pref_suppress_battery_optimization_popup</string>
 
     <string name="pref_bt_name">pref_bt_name</string>
     <string name="pref_bt_address">pref_bt_address</string>

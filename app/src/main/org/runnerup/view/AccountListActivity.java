@@ -27,8 +27,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.appcompat.app.AppCompatActivity;
@@ -75,7 +76,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         mDB = DBHelper.getReadableDatabase(this);
         mSyncManager = new SyncManager(this);
-        ListView listView = findViewById(R.id.account_list);
+        ListView listView = findViewById(R.id.account_list_list);
 
         // button footer
         Button showDisabledBtn = new Button(this);
@@ -198,7 +199,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 int str = configured ?
                         R.string.accounts_category_connected :
                         R.string.accounts_category_unconnected;
-                sectionTitle.setText(getString(str));
+                sectionTitle.setText(str);
                 sectionTitle.setVisibility(View.VISIBLE);
             }
 
@@ -223,12 +224,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             // service icon
             int synchronizerIcon = synchronizer.getIconId();
             if (synchronizerIcon == 0) {
-                Drawable circle = ContextCompat.getDrawable(context, R.drawable.circle_40dp);
-                circle.setColorFilter(getResources().getColor(synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
+                Drawable circle = AppCompatResources.getDrawable(context, R.drawable.circle_40dp);
+                circle.setColorFilter(ContextCompat.getColor(context, synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
                 accountIcon.setImageDrawable(circle);
                 accountIconText.setText(name.substring(0, 1));
             } else {
-                accountIcon.setImageDrawable(ContextCompat.getDrawable(context, synchronizerIcon));
+                accountIcon.setImageDrawable(AppCompatResources.getDrawable(context, synchronizerIcon));
                 accountIconText.setText(null);
             }
 
@@ -265,8 +266,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     }
 
     private void setCustomThumb(SwitchCompat switchCompat, int drawableId, Context context) {
-        switchCompat.setThumbDrawable(ContextCompat.getDrawable(context, drawableId));
-        switchCompat.setThumbTintList(ContextCompat.getColorStateList(context, R.color.switch_thumb));
+        switchCompat.setThumbDrawable(AppCompatResources.getDrawable(context, drawableId));
+        switchCompat.setThumbTintList(AppCompatResources.getColorStateList(context, R.color.switch_thumb));
         switchCompat.setThumbTintMode(PorterDuff.Mode.MULTIPLY);
     }
 

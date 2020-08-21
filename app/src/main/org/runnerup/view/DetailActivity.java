@@ -31,6 +31,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -284,25 +285,25 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 break;
 
             case R.id.menu_recompute_activity:
-                final AlertDialog.Builder builderRecompute = new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this)
                         .setTitle(R.string.Recompute_activity)
-                        .setMessage(getString(R.string.Are_you_sure))
-                        .setPositiveButton(getString(R.string.Yes), (dialog, which) -> {
+                        .setMessage(R.string.Are_you_sure)
+                        .setPositiveButton(R.string.Yes, (dialog, which) -> {
                             dialog.dismiss();
                             new ActivityCleaner().recompute(mDB, mID);
                             requery();
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
-                builderRecompute.show();
+                        .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                        .show();
                 break;
 
             case R.id.menu_simplify_path:
-                final AlertDialog.Builder builderSimplify = new AlertDialog.Builder(this)
+                new AlertDialog.Builder(this)
                         .setTitle(R.string.path_simplification_menu)
-                        .setMessage(getString(R.string.Are_you_sure))
-                        .setPositiveButton(getString(R.string.Yes), (dialog, which) -> {
+                        .setMessage(R.string.Are_you_sure)
+                        .setPositiveButton(R.string.Yes, (dialog, which) -> {
                             dialog.dismiss();
                             PathSimplifier simplifier = new PathSimplifier(this);
                             ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
@@ -312,8 +313,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             fillHeaderData();
                             finish();
                         })
-                        .setNegativeButton(getString(R.string.No),(dialog, which) -> dialog.dismiss());
-                builderSimplify.show();
+                        .setNegativeButton(R.string.No,(dialog, which) -> dialog.dismiss())
+                        .show();
                 break;
 
             case R.id.menu_share_activity:
@@ -650,13 +651,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (position == reports.size()) {
                 Button b = new Button(DetailActivity.this);
-                b.setText(getString(R.string.Configure_accounts));
+                b.setText(R.string.Configure_accounts);
                 b.setBackgroundResource(R.drawable.btn_blue);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color, getTheme()));
-                } else {
-                    b.setTextColor(getResources().getColorStateList(R.color.btn_text_color));
-                }
+                b.setTextColor(AppCompatResources.getColorStateList(DetailActivity.this, R.color.btn_text_color));
                 b.setOnClickListener(v -> {
                     Intent i = new Intent(DetailActivity.this,
                             AccountListActivity.class);
@@ -699,7 +696,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     //Indicate Clickable label
                     viewHolder.tv1.setTextColor(Color.BLUE);
                 }
-                viewHolder.cb.setText(getString(R.string.Uploaded));
+                viewHolder.cb.setText(R.string.Uploaded);
                 viewHolder.cb.setOnLongClickListener(clearUploadClick);
             } else {
                 if (pendingSynchronizers.contains(name)) {
@@ -707,7 +704,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 } else {
                     viewHolder.cb.setChecked(false);
                 }
-                viewHolder.cb.setText(getString(R.string.upload));
+                viewHolder.cb.setText(R.string.upload);
                 viewHolder.cb.setOnLongClickListener(null);
             }
             if (mode == MODE_DETAILS) {
@@ -748,21 +745,19 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnLongClickListener clearUploadClick = arg0 -> {
         final String name = (String) arg0.getTag();
-        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
+        new AlertDialog.Builder(DetailActivity.this)
                 .setTitle("Clear upload for " + name)
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.Yes),
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             syncManager.clearUpload(name, mID);
                             requery();
                         })
-                .setNegativeButton(getString(R.string.No),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.No,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss())
+                .show();
         return false;
     };
 
@@ -796,21 +791,20 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     };
 
     private final OnClickListener discardButtonClick = v -> {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(getString(R.string.Discard_activity))
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.Yes),
+        new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(R.string.Discard_activity)
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_CANCELED);
                             DetailActivity.this.finish();
                         })
-                .setNegativeButton(getString(R.string.No),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.No,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss()
+                )
+                .show();
     };
 
     @Override
@@ -864,22 +858,21 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     };
 
     private final OnClickListener deleteButtonClick = v -> {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(getString(R.string.Delete_activity))
-                .setMessage(getString(R.string.Are_you_sure))
-                .setPositiveButton(getString(R.string.Yes),
+        new AlertDialog.Builder(DetailActivity.this)
+                .setTitle(R.string.Delete_activity)
+                .setMessage(R.string.Are_you_sure)
+                .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
                         })
-                .setNegativeButton(getString(R.string.No),
-                        (dialog, which) -> {
-                            // Do nothing but close the dialog
-                            dialog.dismiss();
-                        });
-        builder.show();
+                .setNegativeButton(R.string.No,
+                        // Do nothing but close the dialog
+                        (dialog, which) -> dialog.dismiss()
+                )
+                .show();
     };
 
     @Override
@@ -900,7 +893,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         };
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))
-                .setPositiveButton(getString(R.string.OK),
+                .setPositiveButton(R.string.OK,
                         (dialog, w) -> {
                             if (which[0] == -1) {
                                 dialog.dismiss();
@@ -926,7 +919,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             intent.putExtra(Intent.EXTRA_STREAM, uri);
                             context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
                         })
-                .setNegativeButton(getString(R.string.Cancel),
+                .setNegativeButton(R.string.Cancel,
                         (dialog, which1) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();

@@ -34,6 +34,9 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.view.ViewCompat;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,7 +58,6 @@ import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
-import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
@@ -224,7 +226,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         populateWorkoutList();
         newLapButton.setOnClickListener(newLapButtonClick);
-        newLapButton.setText(getString(R.string.New_lap));
+        newLapButton.setText(R.string.New_lap);
         mTracker.displayNotificationState();
     }
 
@@ -337,6 +339,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
 
     private final OnClickListener pauseButtonClick = v -> {
+        if (workout == null) {
+            // "should not happen"
+            return;
+        }
+
         if (workout.isPaused()) {
             workout.onResume(workout);
         } else {
@@ -347,12 +354,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     private void setPauseButtonEnabled(boolean enabled) {
         if (enabled) {
-            pauseButton.setText(getString(R.string.Pause));
-            WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_blue));
+            pauseButton.setText(R.string.Pause);
+            ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_pause, 0);
         } else {
-            pauseButton.setText(getString(R.string.Resume));
-            WidgetUtil.setBackground(pauseButton, getResources().getDrawable(R.drawable.btn_green));
+            pauseButton.setText(R.string.Resume);
+            ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
             pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_play_arrow, 0);
         }
     }
@@ -363,6 +370,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         if (mTracker.getState() == TrackerState.STOPPED){
             doStop();
         } else {
+            if (workout == null) {
+                // "should not happen"
+                return;
+            }
+
             setPauseButtonEnabled(!workout.isPaused());
             double ad = workout.getDistance(Scope.ACTIVITY);
             double at = workout.getTime(Scope.ACTIVITY);
@@ -557,7 +569,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             }
             if (step.getIntensity() == Intensity.REPEAT){
                 if (step.getCurrentRepeat() >= step.getRepeatCount()) {
-                    durationValue.setText(getString(R.string.Finished));
+                    durationValue.setText(R.string.Finished);
                 } else {
                     durationValue.setText(String.format(Locale.getDefault(), "%d/%d",
                             (step.getCurrentRepeat() + 1), step.getRepeatCount()));
