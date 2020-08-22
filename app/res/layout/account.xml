@@ -61,7 +61,9 @@
         <TableRow
             android:id="@+id/account_table_row1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
 
     </TableLayout>
 
