@@ -553,7 +553,7 @@ public class StartActivity extends AppCompatActivity
         final CheckBox dontShowAgain = new CheckBox(this);
         dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
 
-        AlertDialog prompt = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
                 .setTitle(R.string.Warning)
@@ -695,7 +695,7 @@ public class StartActivity extends AppCompatActivity
                         : getString(R.string.GPS_permission_text_pre_Android10);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(getString(R.string.GPS_permission_required))
+                        .setTitle(R.string.GPS_permission_required)
                         .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
                     builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
@@ -1210,12 +1210,12 @@ public class StartActivity extends AppCompatActivity
             try {
                 WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
             } catch (Exception ex) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                new AlertDialog.Builder(StartActivity.this)
                         .setTitle(R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
                         .setPositiveButton(R.string.OK,
-                                (dialog, which) -> dialog.dismiss());
-                builder.show();
+                                (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         }
     };

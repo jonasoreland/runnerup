@@ -891,7 +891,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         final CharSequence[] items = {
                 "gpx", "tcx" /* "nike+xml" */
         };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))
                 .setPositiveButton(R.string.OK,
                         (dialog, w) -> {
@@ -924,7 +924,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             // Do nothing but close the dialog
                             dialog.dismiss();
                         })
-                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w);
-        builder.show();
+                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w)
+                .show();
     }
 }

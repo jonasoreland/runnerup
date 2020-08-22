@@ -226,12 +226,12 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
             try {
                 WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
             } catch (Exception ex) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
+                new AlertDialog.Builder(CreateAdvancedWorkout.this)
                         .setTitle(R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
                         .setPositiveButton(R.string.OK,
-                                (dialog, which) -> dialog.dismiss());
-                builder.show();
+                                (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         }
     };
@@ -268,7 +268,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     }
 
     private final View.OnClickListener discardWorkoutButtonClick = view -> {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
+        new AlertDialog.Builder(CreateAdvancedWorkout.this)
                 .setTitle(R.string.Delete_workout)
                 .setMessage(R.string.Are_you_sure)
                 .setPositiveButton(R.string.Yes,
@@ -281,7 +281,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                             finish();
                         })
                 .setNegativeButton(R.string.No,
-                        (dialog, which) -> dialog.dismiss());
-        builder.show();
+                        (dialog, which) -> dialog.dismiss())
+                .show();
     };
 }

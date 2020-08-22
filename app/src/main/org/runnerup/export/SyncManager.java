@@ -384,7 +384,7 @@ public class SyncManager {
             rowUrl.setVisibility(View.GONE);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity)
+        new AlertDialog.Builder(mActivity)
                 .setTitle(sync.getName())
 
                 // Inflate and set the layout for the dialog
@@ -410,8 +410,8 @@ public class SyncManager {
                         handleAuthComplete(sync, Status.CANCEL);
                     }
                     return false;
-                });
-        builder.show();
+                })
+                .show();
     }
 
 
