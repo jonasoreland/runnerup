@@ -19,7 +19,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/feed_widget_item"
+    android:id="@+id/feed_widget_item_layout"
     android:layout_width="fill_parent"
     android:layout_height="44dp"
     android:layout_margin="10dp"

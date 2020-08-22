@@ -15,7 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/step_button"
+    android:id="@+id/step_button_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"

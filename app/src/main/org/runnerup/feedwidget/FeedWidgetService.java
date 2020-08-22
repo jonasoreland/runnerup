@@ -71,7 +71,7 @@ public class FeedWidgetService extends RemoteViewsService {
                 if (FeedList.isActivity(tmp)) {
                     Intent fillInIntent = new Intent();
                     rv = new RemoteViews(getPackageName(), R.layout.feed_widget_item);
-                    rv.setOnClickFillInIntent(R.id.feed_widget_item, fillInIntent);
+                    rv.setOnClickFillInIntent(R.id.feed_widget_item_layout, fillInIntent);
                     String src = getSynchronizerName(tmp.getAsLong(Constants.DB.FEED.ACCOUNT_ID));
                     if (tmp.containsKey(Constants.DB.FEED.USER_IMAGE_URL)) {
                         Bitmap b = FeedImageLoader.LoadImageSync(tmp.getAsString(Constants.DB.FEED.USER_IMAGE_URL));
