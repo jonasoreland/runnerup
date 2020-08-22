@@ -70,6 +70,7 @@
             android:defaultValue="15"
             android:inputType="number"
             android:key="@string/pref_battery_level_low_threshold"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Low_HRM_battery_level" />
 
@@ -77,6 +78,7 @@
             android:defaultValue="75"
             android:inputType="number"
             android:key="@string/pref_battery_level_high_threshold"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/High_HRM_battery_level" />
 
@@ -132,6 +134,7 @@
             android:defaultValue="1000"
             android:inputType="number"
             android:key="@string/pref_pollInterval"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Poll_interval_ms" />
 
@@ -139,6 +142,7 @@
             android:defaultValue="0"
             android:inputType="number"
             android:key="@string/pref_pollDistance"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Poll_distance_m" />
 
@@ -192,6 +196,7 @@
             <org.runnerup.widget.TextPreference
                 android:key="@string/pref_path_simplification_tolerance"
                 android:defaultValue="3"
+                android:minHeight="48dp"
                 android:persistent="true"
                 android:inputType="number"
                 android:title="@string/path_simplification_tolerance"
@@ -233,6 +238,7 @@
             android:defaultValue="1000"
             android:inputType="number"
             android:key="@string/pref_autolap"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Autolap_m"
             android:enabled="true" />
@@ -256,6 +262,7 @@
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
             android:key="@string/pref_autopause_afterseconds"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Autopause_after_s"
             android:enabled="true"/>
@@ -265,6 +272,7 @@
             android:dependency="@string/pref_autopause_active"
             android:inputType="number"
             android:key="@string/pref_autopause_minpace"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Autopause_min_pace_minkm"
             android:enabled="true"/>
@@ -281,6 +289,7 @@
             android:dependency="@string/pref_countdown_active"
             android:inputType="number"
             android:key="@string/pref_countdown_time"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Countdown_time_s" />
 
@@ -296,6 +305,7 @@
             android:dependency="@string/pref_step_countdown_active"
             android:inputType="number"
             android:key="@string/pref_step_countdown_time"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Step_countdown_time_s" />
 
@@ -360,6 +370,7 @@
             android:defaultValue="@string/mapboxDefaultStyle"
             android:inputType="text"
             android:key="@string/pref_mapbox_default_style"
+            android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Mapbox_default_style" />
     </PreferenceScreen>
@@ -382,6 +393,7 @@
                 android:defaultValue="mm(31);kz(5,13);sg(5)"
                 android:dependency="@string/pref_pace_graph_smoothing"
                 android:key="@string/pref_pace_graph_smoothing_filters"
+                android:minHeight="48dp"
                 android:persistent="true"
                 android:inputType="none"
                 android:title="@string/Smooth_pace_filters" />

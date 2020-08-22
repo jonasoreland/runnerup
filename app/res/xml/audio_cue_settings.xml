@@ -46,6 +46,7 @@
 		android:defaultValue="1000"
 		android:inputType="number"
 		android:key="@string/cue_distance_intervall"
+		android:minHeight="48dp"
 		android:persistent="true"
 		android:title="@string/Cue_intervall_m" />
 
