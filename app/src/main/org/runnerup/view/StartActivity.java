@@ -215,17 +215,17 @@ public class StartActivity extends AppCompatActivity
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Basic)));
-        tabSpec.setContent(R.id.tab_basic);
+        tabSpec.setContent(R.id.start_basic_tab);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Interval)));
-        tabSpec.setContent(R.id.tab_interval);
+        tabSpec.setContent(R.id.start_interval_tab);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Advanced)));
-        tabSpec.setContent(R.id.tab_advanced);
+        tabSpec.setContent(R.id.start_advanced_tab);
         tabHost.addTab(tabSpec);
 
         tabHost.setOnTabChangedListener(onTabChangeListener);
@@ -244,7 +244,7 @@ public class StartActivity extends AppCompatActivity
         simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
 
         intervalType = findViewById(R.id.interval_type);
-        intervalTime = findViewById(R.id.interval_time);
+        intervalTime = findViewById(R.id.start_interval_time);
         intervalTime.setOnSetValueListener(onSetTimeValidator);
         intervalDistance = findViewById(R.id.interval_distance);
         intervalType.setOnSetValueListener(intervalTypeSetValue);
@@ -553,7 +553,7 @@ public class StartActivity extends AppCompatActivity
         final CheckBox dontShowAgain = new CheckBox(this);
         dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
 
-        AlertDialog prompt = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
                 .setTitle(R.string.Warning)
@@ -695,7 +695,7 @@ public class StartActivity extends AppCompatActivity
                         : getString(R.string.GPS_permission_text_pre_Android10);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(getString(R.string.GPS_permission_required))
+                        .setTitle(R.string.GPS_permission_required)
                         .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
                     builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
@@ -1210,12 +1210,12 @@ public class StartActivity extends AppCompatActivity
             try {
                 WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
             } catch (Exception ex) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
+                new AlertDialog.Builder(StartActivity.this)
                         .setTitle(R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
                         .setPositiveButton(R.string.OK,
-                                (dialog, which) -> dialog.dismiss());
-                builder.show();
+                                (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         }
     };

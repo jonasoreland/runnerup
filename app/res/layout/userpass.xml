@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/textViewAuthNotice"
+        android:id="@+id/userpass_textViewAuthNotice"
         android:layout_marginBottom="16dp" />
 
     <TableLayout
@@ -62,7 +62,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/table_row1"
+            android:id="@+id/userpass_table_row1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
@@ -88,7 +88,7 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/table_row2"
+            android:id="@+id/userpass_table_row2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 

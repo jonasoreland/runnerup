@@ -79,15 +79,15 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/activity_time"
+                    android:id="@+id/run_activity_time"
                     style="@style/RunInfo" />
 
                 <TextView
-                    android:id="@+id/activity_distance"
+                    android:id="@+id/run_activity_distance"
                     style="@style/RunInfo" />
 
                 <TextView
-                    android:id="@+id/activity_pace"
+                    android:id="@+id/run_activity_pace"
                     style="@style/RunInfo" />
 
                 <TextView
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/interval_time"
+                    android:id="@+id/run_interval_time"
                     style="@style/RunInfo" />
 
                 <TextView
@@ -256,15 +256,15 @@
         android:id="@+id/workout_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/table_row1"
+        android:layout_above="@+id/run_table_row1"
         android:layout_below="@+id/countdown_layout" >
     </ListView>
 
     <TableRow
-        android:id="@+id/table_row1"
+        android:id="@+id/run_table_row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/table_row2" >
+        android:layout_above="@+id/run_table_row2" >
 
         <Button
             android:id="@+id/new_lap_button"
@@ -292,7 +292,7 @@
     </TableRow>
 
     <TableRow
-        android:id="@+id/table_row2"
+        android:id="@+id/run_table_row2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" >

@@ -21,14 +21,14 @@
     android:orientation="horizontal" >
 
     <TextView
-        android:id="@+id/account_id"
+        android:id="@+id/reportlist_account_id"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/account_name"
+        android:id="@+id/reportlist_account_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -37,7 +37,7 @@
         android:focusable="true"/>
 
     <CheckBox
-        android:id="@+id/report_sent"
+        android:id="@+id/reportlist_sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="true"

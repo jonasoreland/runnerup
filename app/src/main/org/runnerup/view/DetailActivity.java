@@ -673,9 +673,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
                 view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
-                viewHolder.tv0 = view.findViewById(R.id.account_id);
-                viewHolder.cb = view.findViewById(R.id.report_sent);
-                viewHolder.tv1 = view.findViewById(R.id.account_name);
+                viewHolder.tv0 = view.findViewById(R.id.reportlist_account_id);
+                viewHolder.cb = view.findViewById(R.id.reportlist_sent);
+                viewHolder.tv1 = view.findViewById(R.id.reportlist_account_name);
 
                 view.setTag(viewHolder);
             } else {
@@ -891,7 +891,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         final CharSequence[] items = {
                 "gpx", "tcx" /* "nike+xml" */
         };
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))
                 .setPositiveButton(R.string.OK,
                         (dialog, w) -> {
@@ -924,7 +924,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                             // Do nothing but close the dialog
                             dialog.dismiss();
                         })
-                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w);
-        builder.show();
+                .setSingleChoiceItems(items, which[0], (dialog, w) -> which[0] = w)
+                .show();
     }
 }

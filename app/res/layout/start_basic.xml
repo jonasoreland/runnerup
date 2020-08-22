@@ -17,7 +17,7 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tab_basic"
+    android:id="@+id/start_basic_tab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/activity_margin"

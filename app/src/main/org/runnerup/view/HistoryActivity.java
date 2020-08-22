@@ -171,7 +171,7 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
             Calendar cal = Calendar.getInstance();
             cal.setTime(curDate);
 
-            TextView sectionTitle = view.findViewById(R.id.section_title);
+            TextView sectionTitle = view.findViewById(R.id.history_section_title);
             int year = cal.get(Calendar.YEAR);
             int month = cal.get(Calendar.MONTH);
             if (sameMonthAsPrevious(year, month, cursor)) {

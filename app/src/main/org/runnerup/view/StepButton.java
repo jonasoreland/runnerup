@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
@@ -217,13 +216,13 @@ public class StepButton extends LinearLayout {
     };
 
     private Runnable setupEditStep(LayoutInflater inflator, View layout) {
-        final TitleSpinner stepType = layout.findViewById(R.id.step_intensity);
+        final TitleSpinner stepType = layout.findViewById(R.id.step_dialog_intensity);
         stepType.setValue(step.getIntensity().getValue());
 
         final HRZonesListAdapter hrZonesAdapter = new HRZonesListAdapter(mContext, inflator);
-        final TitleSpinner durationType = layout.findViewById(R.id.step_duration_type);
-        final TitleSpinner durationTime = layout.findViewById(R.id.step_duration_time);
-        final TitleSpinner durationDistance = layout.findViewById(R.id.step_duration_distance);
+        final TitleSpinner durationType = layout.findViewById(R.id.step_dialog_duration_type);
+        final TitleSpinner durationTime = layout.findViewById(R.id.step_dialog_duration_time);
+        final TitleSpinner durationDistance = layout.findViewById(R.id.step_dialog_duration_distance);
         durationType.setOnSetValueListener(new TitleSpinner.OnSetValueListener() {
             @Override
             public String preSetValue(String newValue) throws IllegalArgumentException {
@@ -260,10 +259,10 @@ public class StepButton extends LinearLayout {
             durationType.setValue(step.getDurationType().getValue());
         }
 
-        final TitleSpinner targetType = layout.findViewById(R.id.step_target_type);
-        final TitleSpinner targetPaceLo = layout.findViewById(R.id.step_target_pace_lo);
-        final TitleSpinner targetPaceHi = layout.findViewById(R.id.step_target_pace_hi);
-        final TitleSpinner targetHrz = layout.findViewById(R.id.step_target_hrz);
+        final TitleSpinner targetType = layout.findViewById(R.id.step_dialog_target_type);
+        final TitleSpinner targetPaceLo = layout.findViewById(R.id.step_dialog_target_pace_lo);
+        final TitleSpinner targetPaceHi = layout.findViewById(R.id.step_dialog_target_pace_hi);
+        final TitleSpinner targetHrz = layout.findViewById(R.id.step_dialog_target_hrz);
 
         if (!hrZonesAdapter.hrZones.isConfigured()) {
             targetType.addDisabledValue(DIMENSION.HRZ);

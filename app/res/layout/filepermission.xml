@@ -26,14 +26,14 @@
               android:paddingTop="@dimen/dialog_padding_vert">
 
     <TextView
-        android:id="@+id/textViewAuthNotice"
+        android:id="@+id/filepermission_textViewAuthNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TableRow
-        android:id="@+id/table_row1"
+        android:id="@+id/filepermission_table_row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 

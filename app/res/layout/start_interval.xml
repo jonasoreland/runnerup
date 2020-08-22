@@ -16,7 +16,7 @@
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:runnerup="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tab_interval"
+    android:id="@+id/start_interval_tab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
@@ -59,7 +59,7 @@
             android:text="@string/Interval_type" />
 
         <org.runnerup.widget.TitleSpinner
-            android:id="@+id/interval_time"
+            android:id="@+id/start_interval_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="00:01:00"
