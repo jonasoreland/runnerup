@@ -269,7 +269,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
     private final View.OnClickListener discardWorkoutButtonClick = view -> {
         final AlertDialog.Builder builder = new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                .setTitle("Delete workout?")
+                .setTitle(R.string.Delete_workout)
                 .setMessage(R.string.Are_you_sure)
                 .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
