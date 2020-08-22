@@ -127,15 +127,15 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         pauseButton.setOnClickListener(pauseButtonClick);
         newLapButton = findViewById(R.id.new_lap_button);
         activityHeaderHr = findViewById(R.id.activity_header_hr);
-        activityTime = findViewById(R.id.activity_time);
-        activityDistance = findViewById(R.id.activity_distance);
-        activityPace = findViewById(R.id.activity_pace);
+        activityTime = findViewById(R.id.run_activity_time);
+        activityDistance = findViewById(R.id.run_activity_distance);
+        activityPace = findViewById(R.id.run_activity_pace);
         activityHr = findViewById(R.id.activity_hr);
         lapTime = findViewById(R.id.lap_time);
         lapDistance = findViewById(R.id.lap_distance);
         lapPace = findViewById(R.id.lap_pace);
         lapHr = findViewById(R.id.lap_hr);
-        intervalTime = findViewById(R.id.interval_time);
+        intervalTime = findViewById(R.id.run_interval_time);
         intervalDistance = findViewById(R.id.intervall_distance);
         tableRowInterval = findViewById(R.id.table_row_interval);
         intervalPace = findViewById(R.id.interval_pace);
@@ -533,10 +533,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
             View view = inflater.inflate(R.layout.workout_row, parent, false);
-            TextView intensity = view.findViewById(R.id.step_intensity);
-            TextView durationType = view.findViewById(R.id.step_duration_type);
-            TextView durationValue = view.findViewById(R.id.step_duration_value);
-            TextView targetPace = view.findViewById(R.id.step_pace);
+            TextView intensity = view.findViewById(R.id.workout_step_intensity);
+            TextView durationType = view.findViewById(R.id.workout_step_duration_type);
+            TextView durationValue = view.findViewById(R.id.workout_step_duration_value);
+            TextView targetPace = view.findViewById(R.id.workout_step_pace);
             intensity.setPadding(level * 10, 0, 0, 0);
             intensity.setText(getResources().getText(step.getIntensity().getTextId()));
             if (step.getDurationType() != null) {

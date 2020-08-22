@@ -17,7 +17,7 @@
       ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
       -->
 
-<merge android:id="@+id/tab1_layout"
+<merge android:id="@+id/history_tab1_layout"
        xmlns:android="http://schemas.android.com/apk/res/android"
        xmlns:app="http://schemas.android.com/apk/res-auto"
        xmlns:tools="http://schemas.android.com/tools"
@@ -30,7 +30,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/feed_actionbar"
+            android:id="@+id/history_actionbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"

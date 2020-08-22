@@ -17,7 +17,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/tab1_layout"
+              android:id="@+id/feed_tab1_layout"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical">

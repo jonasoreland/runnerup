@@ -20,10 +20,10 @@
     android:paddingTop="8dp"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     android:layout_below="@+id/new_workout_spinner"
-    android:layout_above="@+id/button_table"/>
+    android:layout_above="@+id/create_button_table"/>
 
   <TableLayout
-    android:id="@+id/button_table"
+    android:id="@+id/create_button_table"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"

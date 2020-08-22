@@ -24,7 +24,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/section_title"
+        android:id="@+id/account_row_section_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -42,7 +42,7 @@
             android:layout_height="40dp">
 
             <ImageView
-                android:id="@+id/account_list_icon"
+                android:id="@+id/account_row_icon"
                 app:srcCompat="@drawable/circle_40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/account_list_icon_text"
+                android:id="@+id/account_row_icon_text"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#ffffffff"
@@ -61,7 +61,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/account_list_name"
+            android:id="@+id/account_row_name"
             style="@style/AccountListText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:minHeight="48dp" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/account_list_feed"
+            android:id="@+id/account_row_feed"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"
@@ -82,7 +82,7 @@
             android:contentDescription="@string/feed" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/account_list_upload"
+            android:id="@+id/account_row_upload"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="16dp"

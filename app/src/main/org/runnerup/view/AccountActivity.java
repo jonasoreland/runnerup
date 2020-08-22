@@ -156,8 +156,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             }
 
             {
-                ImageView im = findViewById(R.id.account_list_icon);
-                TextView tv = findViewById(R.id.account_list_name);
+                ImageView im = findViewById(R.id.account_icon);
+                TextView tv = findViewById(R.id.account_name);
                 if (synchronizer.getIconId() == 0 || mSynchronizerName.equals(FileSynchronizer.NAME)) {
                     if (!TextUtils.isEmpty(synchronizer.getPublicUrl())) {
                         tv.setText(synchronizer.getPublicUrl());

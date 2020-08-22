@@ -105,7 +105,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
         {
             Button dwbtn = findViewById(R.id.account_download_button);
-            Button upbtn = findViewById(R.id.account_upload_button);
+            Button upbtn = findViewById(R.id.upload_account_button);
             if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
                 dwbtn.setOnClickListener(downloadButtonClick);
                 actionButton = dwbtn;

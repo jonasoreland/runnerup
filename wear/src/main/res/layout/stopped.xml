@@ -32,7 +32,7 @@
             android:orientation="vertical">
 
             <android.support.wearable.view.CircledImageView
-                android:id="@+id/icon_resume"
+                android:id="@+id/icon_stopped_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/open_on_phone_animation"
@@ -41,7 +41,7 @@
                 app:circle_radius="32dp" />
 
             <TextView
-                android:id="@+id/txt_resume"
+                android:id="@+id/txt_stopped_resume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Saving_on_phone"

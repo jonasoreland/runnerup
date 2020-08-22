@@ -356,7 +356,7 @@ public class SyncManager {
         final TextView tv1 = view.findViewById(R.id.username);
         final TextView tv2 = view.findViewById(R.id.password_input);
         final TextView urlInput = view.findViewById(R.id.url_input);
-        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
+        final TextView tvAuthNotice = view.findViewById(R.id.userpass_textViewAuthNotice);
         final TableRow rowUrl = view.findViewById(R.id.table_row_url);
         String authConfigStr = sync.getAuthConfig();
         final JSONObject authConfig = newObj(authConfigStr);
@@ -446,7 +446,7 @@ public class SyncManager {
     private void askFileUrl(final Synchronizer sync) {
         final View view = View.inflate(mActivity, R.layout.filepermission, null);
         final TextView tv1 = view.findViewById(R.id.fileuri);
-        final TextView tvAuthNotice = view.findViewById(R.id.textViewAuthNotice);
+        final TextView tvAuthNotice = view.findViewById(R.id.filepermission_textViewAuthNotice);
 
         String path;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

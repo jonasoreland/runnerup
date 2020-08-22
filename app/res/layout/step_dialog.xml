@@ -28,7 +28,7 @@
     android:paddingBottom="@dimen/dialog_padding_vert">
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_intensity"
+        android:id="@+id/step_dialog_intensity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/step_intensity_types"
@@ -37,7 +37,7 @@
         runnerup:values="@array/step_intensity_values"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_duration_type"
+        android:id="@+id/step_dialog_duration_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/duration_types"
@@ -46,7 +46,7 @@
         runnerup:values="@array/step_duration_values"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_duration_distance"
+        android:id="@+id/step_dialog_duration_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:defaultValue="1000"
@@ -56,7 +56,7 @@
         runnerup:type="distancepicker"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_duration_time"
+        android:id="@+id/step_dialog_duration_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:defaultValue="00:01:00"
@@ -67,7 +67,7 @@
         runnerup:type="durationpicker"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_target_type"
+        android:id="@+id/step_dialog_target_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/target_types"
@@ -76,7 +76,7 @@
         runnerup:values="@array/target_values"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_target_pace_lo"
+        android:id="@+id/step_dialog_target_pace_lo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:defaultValue="00:05:00"
@@ -86,7 +86,7 @@
         runnerup:type="durationpicker"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_target_pace_hi"
+        android:id="@+id/step_dialog_target_pace_hi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:defaultValue="00:05:30"
@@ -96,7 +96,7 @@
         runnerup:type="durationpicker"/>
 
     <org.runnerup.widget.TitleSpinner
-        android:id="@+id/step_target_hrz"
+        android:id="@+id/step_dialog_target_hrz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:prompt="@string/Type"

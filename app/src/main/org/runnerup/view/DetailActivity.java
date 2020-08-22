@@ -673,9 +673,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
                 view = inflater.inflate(R.layout.reportlist_row, parent, false);
 
-                viewHolder.tv0 = view.findViewById(R.id.account_id);
-                viewHolder.cb = view.findViewById(R.id.report_sent);
-                viewHolder.tv1 = view.findViewById(R.id.account_name);
+                viewHolder.tv0 = view.findViewById(R.id.reportlist_account_id);
+                viewHolder.cb = view.findViewById(R.id.reportlist_sent);
+                viewHolder.tv1 = view.findViewById(R.id.reportlist_account_name);
 
                 view.setTag(viewHolder);
             } else {

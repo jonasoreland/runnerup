@@ -41,7 +41,7 @@
                 app:circle_radius="32dp" />
 
             <TextView
-                android:id="@+id/txt_start"
+                android:id="@+id/txt_search_gps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/Searching_for_GPS"
