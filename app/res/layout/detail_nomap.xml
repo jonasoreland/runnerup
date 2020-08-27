@@ -88,7 +88,7 @@
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/buttons"
+        android:layout_above="@id/buttons"
         android:layout_below="@id/appbarlayout">
 
         <LinearLayout

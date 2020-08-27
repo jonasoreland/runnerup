@@ -19,8 +19,8 @@
     android:layout_height="match_parent"
     android:paddingTop="8dp"
     android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:layout_below="@+id/new_workout_spinner"
-    android:layout_above="@+id/create_button_table"/>
+    android:layout_below="@id/new_workout_spinner"
+    android:layout_above="@id/create_button_table"/>
 
   <TableLayout
     android:id="@+id/create_button_table"
