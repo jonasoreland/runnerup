@@ -234,7 +234,7 @@
         android:id="@+id/countdown_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/table_layout1"
+        android:layout_below="@id/table_layout1"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="vertical" >
 
@@ -256,15 +256,15 @@
         android:id="@+id/workout_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/run_table_row1"
-        android:layout_below="@+id/countdown_layout" >
+        android:layout_above="@id/run_table_row1"
+        android:layout_below="@id/countdown_layout" >
     </ListView>
 
     <TableRow
         android:id="@+id/run_table_row1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/run_table_row2" >
+        android:layout_above="@id/run_table_row2" >
 
         <Button
             android:id="@+id/new_lap_button"

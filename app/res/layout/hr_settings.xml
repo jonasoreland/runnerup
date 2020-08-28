@@ -35,7 +35,7 @@
         android:id="@+id/total"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_layout0"
+        android:layout_below="@id/linear_layout0"
         android:background="@drawable/countdown_background"
         android:orientation="vertical" >
 
@@ -72,8 +72,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/scan_button"
-        android:layout_below="@+id/total"
+        android:layout_above="@id/scan_button"
+        android:layout_below="@id/total"
         android:layout_margin="8dp"
         android:weightSum="2" >
 
@@ -107,7 +107,7 @@
         style="@style/ButtonText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/connect_button"
+        android:layout_above="@id/connect_button"
         android:background="@drawable/btn_blue"
         android:text="@string/Scan" />
 

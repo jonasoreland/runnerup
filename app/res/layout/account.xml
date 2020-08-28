@@ -73,7 +73,7 @@
         android:background="@drawable/btn_red"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/account_upload_button"
+        android:layout_above="@id/account_upload_button"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="@string/Disconnect" />
@@ -84,7 +84,7 @@
         android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/account_download_button"
+        android:layout_above="@id/account_download_button"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="@string/upload" />
@@ -99,7 +99,7 @@
       android:minWidth="48dp"
       android:minHeight="48dp"
       android:text="@string/Download"
-      android:layout_above="@+id/ok_account_button" />
+      android:layout_above="@id/ok_account_button" />
 
   <Button
       android:id="@+id/ok_account_button"

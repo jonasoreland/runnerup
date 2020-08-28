@@ -36,7 +36,7 @@
         android:layout_height="fill_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/settings_spinner" >
+        android:layout_below="@id/settings_spinner" >
 
     </ListView>
 

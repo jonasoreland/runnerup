@@ -89,22 +89,22 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         formatter = new Formatter(this);
         syncManager = new SyncManager(this);
 
-        listView = findViewById(R.id.upload_list);
+        listView = findViewById(R.id.upload_view);
         listView.setDividerHeight(1);
         listView.setAdapter(new UploadListAdapter(this));
 
         {
-            Button btn = findViewById(R.id.account_upload_set_all);
+            Button btn = findViewById(R.id.upload_account_set_all);
             btn.setOnClickListener(setAllButtonClick);
         }
 
         {
-            Button btn = findViewById(R.id.account_upload_clear_all);
+            Button btn = findViewById(R.id.upload_account_clear_all);
             btn.setOnClickListener(clearAllButtonClick);
         }
 
         {
-            Button dwbtn = findViewById(R.id.account_download_button);
+            Button dwbtn = findViewById(R.id.upload_account_download_button);
             Button upbtn = findViewById(R.id.upload_account_button);
             if (syncMode.equals(SyncManager.SyncMode.DOWNLOAD)) {
                 dwbtn.setOnClickListener(downloadButtonClick);
@@ -124,8 +124,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
             // synchronizer initialized in fillData() for DOWNLOAD only
             Synchronizer synchronizer = syncManager.getSynchronizerByName(mSynchronizerName);
 
-            TextView tv = findViewById(R.id.account_upload_list_name);
-            ImageView im = findViewById(R.id.account_upload_list_icon);
+            TextView tv = findViewById(R.id.upload_account_list_name);
+            ImageView im = findViewById(R.id.upload_account_list_icon);
             if (synchronizer == null || synchronizer.getIconId() == 0) {
                 im.setVisibility(View.GONE);
                 tv.setText(mSynchronizerName);
