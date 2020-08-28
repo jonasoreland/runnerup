@@ -1029,9 +1029,8 @@ public class StartActivity extends AppCompatActivity
         // class name because we want a specific service implementation that
         // we know will be running in our own process (and thus won't be
         // supporting component replacement by other applications).
-        getApplicationContext().bindService(new Intent(this, Tracker.class),
+        mIsBound = getApplicationContext().bindService(new Intent(this, Tracker.class),
                 mConnection, Context.BIND_AUTO_CREATE);
-        mIsBound = true;
     }
 
     private void unbindGpsTracker() {
