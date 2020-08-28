@@ -60,6 +60,7 @@
     <item>Suomi</item>
     <item>Svenska</item>
     <item>Türkçe</item>
+    <item>Українська мова</item>
     <item>简体中文</item>
   </string-array>
   <!--Note: keep in same order as languagesNames-->
@@ -86,6 +87,7 @@
     <item>fi</item>
     <item>sv</item>
     <item>tr</item>
+    <item>uk</item>
     <item>zh</item>
   </string-array>
 </resources>

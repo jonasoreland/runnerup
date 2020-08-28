@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>Милі</item>
+    <item>Кілометри</item>
+  </string-array>
+  <string-array name="speedUnitEntries">
+    <item>Темп</item>
+    <item>Швидкість</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Розминка</item>
+    <item>Активність</item>
+    <item>Передишка</item>
+    <item>Відновлення</item>
+    <item>Заминка</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>До натискання</item>
+    <item>Час</item>
+    <item>Дистанція</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>Нема</item>
+    <item>Темп</item>
+    <item>Пульсова зона</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Біг</item>
+    <item>Велосипед</item>
+    <item>Інше</item>
+    <item>Орієнтування</item>
+    <item>Прогулянка</item>
+  </string-array>
+  <string-array name="types">
+    <item>Час</item>
+    <item>Дистанція</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Чоловік</item>
+    <item>Жінка</item>
+  </string-array>
+  <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Опхейма (швидше)</item>
+    <item>Рамера-Дугласа-Пекера (точніше)</item>
+  </string-array>
+</resources>

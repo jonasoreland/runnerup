@@ -114,12 +114,14 @@
   <string name="Refresh">Veversen</string>
   <string name="Age">Leeftijd</string>
   <string name="Synchronizing">Bezig met synchroniseren</string>
+  <string name="synchronizing_feed">Feed aan het synchroniseren…</string>
   <string name="OK">Oké</string>
   <string name="accounts_category_connected">Verbindingen beheren</string>
   <string name="accounts_category_unconnected">Account koppelen</string>
   <string name="Show_disabled_accounts">Uitgeschakelde accounts tonen</string>
   <string name="Hide_disabled_accounts">Uitgeschakelde accounts verbergen</string>
   <string name="Clear_uploads">Uploads wissen</string>
+  <string name="Upload_missing_workouts">Ontbrekende workouts aan het uploaden</string>
   <string name="Disconnect_account">Account ontkoppelen</string>
   <string name="Edit_activity">Activiteit bewerken</string>
   <string name="Share_activity">Activiteit delen</string>
@@ -168,6 +170,7 @@
   <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen tot start van activiteit</string>
   <string name="Countdown_time_s">Afteltijd (s)</string>
+  <string name="Unit_preference_title">Eenheden</string>
   <string name="Auto_start_GPS">Start gps automatisch</string>
   <string name="Advanced_options">Geavanceerde opties</string>
   <string name="Mapbox_default_style">Kaartstijl</string>
@@ -241,7 +244,7 @@
   <string name="Activity_ready">Activiteit is gereed</string>
   <string name="Ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
   <string name="Searching_for_GPS">Naar gps aan het zoeken</string>
-    <string name="RunnerUp_activity_started">RunnerUp-activiteit gestart</string>
+  <string name="RunnerUp_activity_started">RunnerUp-activiteit gestart</string>
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
@@ -273,11 +276,13 @@
   <string name="New_audio_scheme">Nieuw audioschema</string>
   <string name="GPS_permission_required">GPS permessie noodzakelijk</string>
   <string name="Default">Standaard</string>
+  <string name="Notes_about_your_workout">Workoutaantekeningen</string>
   <string name="Downloading_from_1s">Bezig met downloaden van %1$s</string>
   <string name="Uploading_to_1s">Bezig met uploaden naar %1$s</string>
   <string name="Loading_activities">Bezig met laden van activiteiten</string>
   <string name="Fetching_activities_from_1s">Bezig met ophalen van activiteiten van %1$s</string>
   <string name="No_feed_to_show">Feed is leeg</string>
+  <string name="Unused_currently">Momenteel ongebruikt</string>
   <string name="Unknown">Onbekend</string>
   <string name="Recording">Bezig met vastleggen</string>
   <string name="Sensors">Sensors</string>
@@ -306,5 +311,6 @@
   <string name="path_simplification_tolerance">Tollerantie (m)</string>
   <string name="path_simplification_algorithm">Algoritme</string>
   <string name="path_simplification_menu">Vereenvoudig pad</string>
+  <string name="File_format">Upload bestand als:</string>
   <string name="File_need_one_format">U moet minstens 1 format specifieren</string>
 </resources>
