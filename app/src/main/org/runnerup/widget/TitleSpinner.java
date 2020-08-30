@@ -46,6 +46,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
         mLabel = findViewById(R.id.title);
         mValue = findViewById(R.id.value);
         mSpinner = findViewById(R.id.spinner);
+        mSpinner.setSaveEnabled(false);
 
         mPresenter = new SpinnerPresenter(context, attrs, this);
     }
