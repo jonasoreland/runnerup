@@ -229,12 +229,16 @@ public class GraphWrapper implements Constants {
             if (first) {
                 if(tot_distance > 0) {
                     velocityList.add(new DataPoint(0, velocity));
-                    hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                    if (avg_hr > 0) {
+                        hrList.add(new DataPoint(0, Math.round(avg_hr)));
+                    }
                 }
                 first = false;
             }
             velocityList.add(new DataPoint(tot_distance, velocity));
-            hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
+            if (avg_hr > 0) {
+                hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
+            }
             acc_time = 0;
 
             tot_avg_hr += avg_hr;

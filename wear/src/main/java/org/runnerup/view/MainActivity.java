@@ -50,6 +50,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
     private boolean pauseStep = false;
     private int scroll = 0;
     private boolean postScrollRightRunning = false;
+    private boolean mIsBound;
 
     private static final int RUN_INFO_ROW = 0;
     private static final int PAUSE_RESUME_ROW = 1;
@@ -77,7 +78,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
     @Override
     protected void onResume() {
         super.onResume();
-        getApplicationContext().bindService(new Intent(this, StateService.class),
+        mIsBound = getApplicationContext().bindService(new Intent(this, StateService.class),
                 mStateServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -88,7 +89,10 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
             mStateService.unregisterTrackerStateListener(this);
             mStateService.unregisterHeadersListener(this);
         }
-        getApplicationContext().unbindService(mStateServiceConnection);
+        if (mIsBound) {
+            getApplicationContext().unbindService(mStateServiceConnection);
+            mIsBound = false;
+        }
         mStateService = null;
     }
 

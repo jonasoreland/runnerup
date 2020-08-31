@@ -74,7 +74,7 @@ public class SpinnerPresenter {
     private long mCurrValue = -1;
     private final CharSequence mLabel;
 
-    SpinnerPresenter(Context context, AttributeSet attrs, SpinnerInterface spinnerInterface) { //todo duration + other pickers don't appear to work
+    SpinnerPresenter(Context context, AttributeSet attrs, SpinnerInterface spinnerInterface) {
         mContext = context;
         mSpin = spinnerInterface;
 
