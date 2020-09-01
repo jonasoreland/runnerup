@@ -36,6 +36,8 @@ public class TrackerTTS extends DefaultTrackerComponent {
         return NAME;
     }
 
+    private RUTextToSpeech rutts;
+
     @Override
     public ResultCode onInit(final Callback callback, final Context context) {
         tts = new TextToSpeech(context, status -> {
@@ -53,7 +55,15 @@ public class TrackerTTS extends DefaultTrackerComponent {
     public void onBind(HashMap<String, Object> bindValues) {
         Context ctx = (Context) bindValues.get(TrackerComponent.KEY_CONTEXT);
         Boolean mute = (Boolean) bindValues.get(Workout.KEY_MUTE);
-        bindValues.put(Workout.KEY_TTS, new RUTextToSpeech(tts, mute, ctx));
+
+        rutts = new RUTextToSpeech(tts, mute, ctx);
+
+        bindValues.put(Workout.KEY_TTS, rutts);
+    }
+
+    @Override
+    public boolean isConnected() {
+        return rutts != null && rutts.isAvailable();
     }
 
     @Override

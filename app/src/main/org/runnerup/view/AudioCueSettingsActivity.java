@@ -18,6 +18,7 @@
 package org.runnerup.view;
 
 import androidx.appcompat.app.AlertDialog;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -313,6 +314,14 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                 .show();
     }
 
+    private void CreateNewNoTtsAvailableDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.tts_not_available_title)
+                .setMessage(R.string.tts_not_available)
+                .setPositiveButton(R.string.OK, null)
+                .show();
+    }
+
     private final OnPreferenceClickListener onTestCueinfoClick = new OnPreferenceClickListener() {
 
         TextToSpeech tts = null;
@@ -330,6 +339,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
 
             Workout w = Workout.fakeWorkoutForTestingAudioCue();
             RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
+
+            if (!rutts.isAvailable()) {
+                CreateNewNoTtsAvailableDialog();
+                return;
+            }
+
             HashMap<String, Object> bindValues = new HashMap<>();
             bindValues.put(Workout.KEY_TTS, rutts);
             bindValues.put(Workout.KEY_FORMATTER, new Formatter(AudioCueSettingsActivity.this));
