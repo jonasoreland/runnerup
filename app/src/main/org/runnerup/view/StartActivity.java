@@ -22,6 +22,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -76,6 +77,7 @@ import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerHRM;
+import org.runnerup.tracker.component.TrackerTTS;
 import org.runnerup.tracker.component.TrackerWear;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
@@ -602,23 +604,45 @@ public class StartActivity extends AppCompatActivity
         return w;
     }
 
+    private void createNewNoTtsAvailableDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.tts_not_available_title)
+                .setMessage(R.string.tts_not_available)
+                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startWorkout();
+                    }
+                })
+                .show();
+    }
+
+    private void startWorkout() {
+        mGpsStatus.stop(StartActivity.this);
+
+        // unregister receivers
+        unregisterStartEventListener();
+
+        // This will start the advancedWorkoutSpinner!
+        mTracker.setWorkout(prepareWorkout());
+        mTracker.start();
+
+        skipStopGps = true;
+        Intent intent = new Intent(StartActivity.this,
+                RunActivity.class);
+        StartActivity.this.startActivityForResult(intent, 112);
+        notificationStateManager.cancelNotification(); // will be added by RunActivity
+    }
+
     private final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (mTracker.getState() == TrackerState.CONNECTED) {
-                mGpsStatus.stop(StartActivity.this);
+                if (!mTracker.isComponentConnected(new TrackerTTS().getName())) {
+                    createNewNoTtsAvailableDialog();
+                } else {
+                    startWorkout();
+                }
 
-                // unregister receivers
-                unregisterStartEventListener();
-
-                // This will start the advancedWorkoutSpinner!
-                mTracker.setWorkout(prepareWorkout());
-                mTracker.start();
-
-                skipStopGps = true;
-                Intent intent = new Intent(StartActivity.this,
-                        RunActivity.class);
-                StartActivity.this.startActivityForResult(intent, 112);
-                notificationStateManager.cancelNotification(); // will be added by RunActivity
                 return;
             }
             updateView();

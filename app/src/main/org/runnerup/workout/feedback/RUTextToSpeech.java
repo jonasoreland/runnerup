@@ -90,8 +90,15 @@ public class RUTextToSpeech {
         return UTTERANCE_ID + val;
     }
 
+    public Boolean isAvailable() {
+        return textToSpeech != null;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     int speak(String text, int queueMode, HashMap<String, String> params) {
+        if (!isAvailable()) {
+            return 0;
+        }
 
         final boolean trace = true;
         if (queueMode == TextToSpeech.QUEUE_FLUSH) {
@@ -135,6 +142,10 @@ public class RUTextToSpeech {
      */
     private int speakWithMute(String text, int queueMode,
             HashMap<String, String> params) {
+        if (!isAvailable()) {
+            return TextToSpeech.ERROR;
+        }
+
         if (requestFocus()) {
             final String utId = getId(text);
             outstanding.add(utId);
@@ -174,6 +185,9 @@ public class RUTextToSpeech {
     }
 
     public void emit() {
+        if (!isAvailable()) {
+            return;
+        }
         if (cueSet.isEmpty()) {
             return;
         }
