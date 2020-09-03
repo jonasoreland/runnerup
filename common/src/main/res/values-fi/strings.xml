@@ -250,7 +250,7 @@
   <string name="Activity_ready">Harjoitus valmis</string>
   <string name="Ready_to_start_running">Valmistaudu juoksemaan!</string>
   <string name="Searching_for_GPS">Etsitään GPS signaalia</string>
-    <string name="RunnerUp_activity_started">RunnerUp harjoitus käynnissä</string>
+  <string name="RunnerUp_activity_started">RunnerUp harjoitus käynnissä</string>
   <string name="Low_HRM_battery_level">Sykemittarin akun varaus alhainen</string>
   <string name="High_HRM_battery_level">Sykemittarin akun varaus ok</string>
   <string name="Warning">Varoitus</string>

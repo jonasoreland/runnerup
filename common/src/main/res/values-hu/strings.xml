@@ -231,7 +231,7 @@
   <string name="Activity_ready">Tevékenység kész</string>
   <string name="Ready_to_start_running">Készen áll a futás kezdésére!</string>
   <string name="Searching_for_GPS">GPS keresése</string>
-    <string name="RunnerUp_activity_started">RunnerUp tevékenység elkezdve</string>
+  <string name="RunnerUp_activity_started">RunnerUp tevékenység elkezdve</string>
   <string name="Low_HRM_battery_level">Alacsony pulzusmérő akkumulátor töltöttség</string>
   <string name="High_HRM_battery_level">Magas pulzusmérő akkumulátor töltöttség</string>
   <string name="Warning">Figyelem</string>

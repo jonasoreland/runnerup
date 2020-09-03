@@ -259,7 +259,7 @@
   <string name="Activity_ready">アクティビティ準備完了</string>
   <string name="Ready_to_start_running">ランニング準備完了</string>
   <string name="Searching_for_GPS">GPS を検索中</string>
-    <string name="RunnerUp_activity_started">RunnerUp アクティビティが開始しました</string>
+  <string name="RunnerUp_activity_started">RunnerUp アクティビティが開始しました</string>
   <string name="Low_HRM_battery_level">低 HRM バッテリーレベル</string>
   <string name="High_HRM_battery_level">高 HRM バッテリーレベル</string>
   <string name="Warning">警告</string>

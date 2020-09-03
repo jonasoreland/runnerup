@@ -260,7 +260,7 @@
   <string name="Activity_ready">活动准备好了</string>
   <string name="Ready_to_start_running">准备开始跑步!</string>
   <string name="Searching_for_GPS">搜索GPS中</string>
-    <string name="RunnerUp_activity_started">RunnerUp运动已经开始</string>
+  <string name="RunnerUp_activity_started">RunnerUp运动已经开始</string>
   <string name="Low_HRM_battery_level">心率设备低电量</string>
   <string name="High_HRM_battery_level">心率设备高电量</string>
   <string name="Warning">警告</string>
