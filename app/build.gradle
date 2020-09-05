@@ -122,7 +122,7 @@ dependencies {
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
 
-    latestImplementation "com.google.android.material:material:1.2.0"
+    latestImplementation "com.google.android.material:material:1.2.1"
     if (rootProject.ext.enableWear) {
         latestWearApp project(':wear')
         //noinspection GradleDependency
@@ -132,8 +132,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:3.12.3"
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     if (rootProject.ext.allowNonFree) {
-        // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
-        //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
+        // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
+        latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
 
         //noinspection GradleDependency
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
