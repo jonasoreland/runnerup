@@ -322,7 +322,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     private void requery() {
         ContentValues[] allSynchronizers;
-        {
+        try {
             /*
              * Accounts/reports
              */
@@ -337,6 +337,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             Cursor c = mDB.rawQuery(sql, null);
             allSynchronizers = DBHelper.toArray(c);
             c.close();
+        } catch (IllegalStateException e) {
+            Log.e(getClass().getName(), "requery: " + e.getMessage());
+            return;
         }
 
         providers.clear();
