@@ -73,12 +73,12 @@ public class MapWrapper implements Constants {
     private final Context context;
     private final Formatter formatter;
 
-    public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, MapView mapView) {
+    public MapWrapper(Context context, SQLiteDatabase mDB, long mID, Formatter formatter, Object mapView) {
         this.context = context;
         this.mDB = mDB;
         this.mID = mID;
         this.formatter = formatter;
-        this.mapView = mapView;
+        this.mapView = (MapView)mapView;
     }
 
     public static void start(Context context) {

@@ -29,6 +29,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
+import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
 import org.runnerup.tracker.component.TrackerCadence;
@@ -55,7 +56,11 @@ public class SettingsActivity extends PreferenceActivity {
             Preference btn = findPreference(res.getString(R.string.pref_prunedb));
             btn.setOnPreferenceClickListener(onPruneClick);
         }
-
+        
+        if (BuildConfig.MAPBOX_ENABLED == 0) {
+            Preference pref = findPreference("map_preferencescreen");
+            pref.setEnabled(false);
+        }
 
         if (!hasHR(this)) {
             getPreferenceManager().findPreference(res.getString(R.string.cue_configure_hrzones)).setEnabled(false);
