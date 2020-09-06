@@ -330,7 +330,7 @@ public class SyncManager {
             };
             try {
                 mDB.update(DB.ACCOUNT.TABLE, tmp, "_id = ?", args);
-            } catch (Exception ex) {
+            } catch (IllegalStateException ex) {
                 Log.e(getClass().getName(), "Update failed:", ex);
                 s = Status.ERROR;
             }

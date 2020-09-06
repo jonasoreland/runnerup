@@ -111,7 +111,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
                 } while (c.moveToNext());
             }
             c.close();
-        } catch (Exception ex) {
+        } catch (IllegalStateException ex) {
             Log.e(getClass().getName(), "Query failed:", ex);
         }
         this.notifyDataSetChanged();

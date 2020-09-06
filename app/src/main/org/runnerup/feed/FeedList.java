@@ -61,7 +61,7 @@ public class FeedList extends Observable implements Constants {
         try {
             c = mDB.query(DB.FEED.TABLE, null, null, null, null, null, DB.FEED.START_TIME
                     + " desc", Integer.toString(MAX_ITEMS));
-        } catch (Exception ex) {
+        } catch (IllegalStateException ex) {
             Log.e(getClass().getName(), "Query failed:", ex);
             return;
         }
