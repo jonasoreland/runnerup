@@ -164,18 +164,23 @@ public class ActivityCleaner implements Constants {
     }
 
     public void conditionalRecompute(SQLiteDatabase db){
-        // get last activity
-        long id = db.compileStatement("SELECT MAX(_id) FROM " + DB.ACTIVITY.TABLE).simpleQueryForLong();
+        try {
+            // get last activity
+            long id = db.compileStatement("SELECT MAX(_id) FROM " + DB.ACTIVITY.TABLE).simpleQueryForLong();
 
-        // check its TIME field - recompute if it isn't set
-        String[] cols = new String[]{DB.ACTIVITY.TIME};
-        Cursor c = db.query(DB.ACTIVITY.TABLE, cols, "_id = " + id, null, null, null, null);
-        if (c.moveToFirst()) {
-            if (c.isNull(0)) {
-                recompute(db, id);
+            // check its TIME field - recompute if it isn't set
+            String[] cols = new String[]{DB.ACTIVITY.TIME};
+            Cursor c = db.query(DB.ACTIVITY.TABLE, cols, "_id = " + id, null, null, null, null);
+            if (c.moveToFirst()) {
+                if (c.isNull(0)) {
+                    recompute(db, id);
+                }
             }
+            c.close();
         }
-        c.close();
+        catch (IllegalStateException e){
+            Log.e(getClass().getName(), "conditionalRecompute: " + e.getMessage());
+        }
     }
 
     public void recompute(SQLiteDatabase db, long activityId) {

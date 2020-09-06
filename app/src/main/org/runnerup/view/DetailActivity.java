@@ -25,7 +25,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,6 +32,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,8 +53,6 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
-
-import com.mapbox.mapboxsdk.maps.MapView;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
@@ -173,7 +171,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         notes = findViewById(R.id.notes_text);
 
         if (BuildConfig.MAPBOX_ENABLED > 0) {
-            MapView mapView = findViewById(R.id.mapview);
+            Object mapView = findViewById(R.id.mapview);
             mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
             mapWrapper.onCreate(savedInstanceState);
         }

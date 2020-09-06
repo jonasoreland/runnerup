@@ -26,7 +26,7 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
-            if (rootProject.ext.enableWear) {
+            if (rootProject.ext.allowNonFree) {
                 java.srcDirs += ['src/play']
             } else {
                 java.srcDirs += ['src/free']
@@ -118,26 +118,28 @@ repositories {
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
-    if (rootProject.ext.enableWear) {
-        latestWearApp project(':wear')
-    }
 
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
 
-    latestImplementation "com.google.android.material:material:1.2.0"
+    latestImplementation "com.google.android.material:material:1.2.1"
     if (rootProject.ext.enableWear) {
+        latestWearApp project(':wear')
         //noinspection GradleDependency
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     }
 
+    implementation "com.squareup.okhttp3:okhttp:3.12.3"
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
-    // MapBox uses telemetry, without Play there may be exceptions from mapbox: just ignore
-    //latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
-    //noinspection GradleDependency
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
-    latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
+    if (rootProject.ext.allowNonFree) {
+        // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
+        latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
+
+        //noinspection GradleDependency
+        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
+        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
+        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
+    }
     latestImplementation 'com.jjoe64:graphview:4.2.2'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
@@ -166,7 +168,7 @@ if (rootProject.file("release.properties").exists()) {
 
 android.applicationVariants.all {
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
-    if (rootProject.file("mapbox.properties").exists()) {
+    if (rootProject.ext.allowNonFree && rootProject.file("mapbox.properties").exists()) {
         // https://www.mapbox.com/account/
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
         buildConfigField 'int', 'MAPBOX_ENABLED', "1"

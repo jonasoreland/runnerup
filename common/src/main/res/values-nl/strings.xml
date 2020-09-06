@@ -244,7 +244,7 @@
   <string name="Activity_ready">Activiteit is gereed</string>
   <string name="Ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
   <string name="Searching_for_GPS">Zoeken naar GPS</string>
-    <string name="RunnerUp_activity_started">RunnerUp activiteit gestart</string>
+  <string name="RunnerUp_activity_started">RunnerUp activiteit gestart</string>
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>

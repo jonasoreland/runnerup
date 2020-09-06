@@ -231,7 +231,7 @@
   <string name="Activity_ready">Aktivitet klar</string>
   <string name="Ready_to_start_running">Klar til å springe!</string>
   <string name="Searching_for_GPS">Søker etter GPS</string>
-    <string name="RunnerUp_activity_started">RunnerUp-aktivitet startet</string>
+  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startet</string>
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>

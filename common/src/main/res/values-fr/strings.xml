@@ -260,7 +260,7 @@
   <string name="Activity_ready">Séance prête</string>
   <string name="Ready_to_start_running">Prêt à courir !</string>
   <string name="Searching_for_GPS">Recherche de signaux GPS</string>
-    <string name="RunnerUp_activity_started">Activité RunnerUp démarrée</string>
+  <string name="RunnerUp_activity_started">Activité RunnerUp démarrée</string>
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>

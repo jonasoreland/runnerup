@@ -260,7 +260,7 @@
   <string name="Activity_ready">Aktivitet redo</string>
   <string name="Ready_to_start_running">Redo att springa!</string>
   <string name="Searching_for_GPS">Söker efter GPS</string>
-    <string name="RunnerUp_activity_started">RunnerUp-aktivitet startad</string>
+  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startad</string>
   <string name="Low_HRM_battery_level">Låg batterinivå i pulsmätare</string>
   <string name="High_HRM_battery_level">Hög batterinivå i pulsmätare</string>
   <string name="Warning">Varning</string>
@@ -295,6 +295,8 @@
   <string name="GPS_permission_text_pre_Android10">Behörighet för Plats behövs i systeminställningar</string>
   <string name="GPS_permission_text">Behörighet för Plats behövs i systeminställningar.\nFör stegfrekvens behövs behörighet för Kroppssensorer också.</string>
   <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
+  <string name="Battery_optimization_check">Batterioptimering aktiverad</string>
+  <string name="Battery_optimization_check_text">Batterioptimering minskar noggrannheten.\nVälj OK för att gå till inställningar, välj \"Alla appar\", sök efter \"RunnerUp\", välj \"Optimera inte\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>
@@ -339,4 +341,6 @@
   <string name="path_simplification_menu">Förenkla GPS-spår</string>
   <string name="File_format">Uppladdningsformat:</string>
   <string name="File_need_one_format">Åtminstone ett format behövs</string>
+  <string name="tts_not_available_title">Text-till-tal inte tillgänglig</string>
+  <string name="tts_not_available">RunnerUp behöver en text-till-tal motor för att kunna spela upp ljudmeddelanden. Se till att du har åtminstone en fungerande text-till-tall motor installerad.</string>
 </resources>

@@ -260,7 +260,7 @@
   <string name="Activity_ready">Activitate gata</string>
   <string name="Ready_to_start_running">Gata să începi să alergi!</string>
   <string name="Searching_for_GPS">Se caută GPS</string>
-    <string name="RunnerUp_activity_started">Activitatea RunnerUp începută</string>
+  <string name="RunnerUp_activity_started">Activitatea RunnerUp începută</string>
   <string name="Low_HRM_battery_level">Nivel redus al bateriei MRC</string>
   <string name="High_HRM_battery_level">Nivel ridicat al bateriei MRC</string>
   <string name="Warning">Aviz</string>

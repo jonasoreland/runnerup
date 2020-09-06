@@ -231,7 +231,7 @@
   <string name="Activity_ready">Готово</string>
   <string name="Ready_to_start_running">Готов к старту!</string>
   <string name="Searching_for_GPS">Поиск спутников GPS</string>
-    <string name="RunnerUp_activity_started">Начал движение</string>
+  <string name="RunnerUp_activity_started">Начал движение</string>
   <string name="Low_HRM_battery_level">Низкий уровень заряда датчика HRM</string>
   <string name="High_HRM_battery_level">Высокий уровень заряда датчика HRM</string>
   <string name="Warning">Предупреждение</string>

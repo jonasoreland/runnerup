@@ -250,7 +250,7 @@
   <string name="Activity_ready">Atividade pronta</string>
   <string name="Ready_to_start_running">Pronto para começar a correr!</string>
   <string name="Searching_for_GPS">Procurando por GPS</string>
-    <string name="RunnerUp_activity_started">Atividade do RunnerUp iniciada</string>
+  <string name="RunnerUp_activity_started">Atividade do RunnerUp iniciada</string>
   <string name="Low_HRM_battery_level">Nível baixo bateria do HRM</string>
   <string name="High_HRM_battery_level">Nível alto bateria do HRM</string>
   <string name="Warning">Aviso</string>

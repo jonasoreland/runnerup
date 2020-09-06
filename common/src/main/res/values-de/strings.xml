@@ -148,7 +148,9 @@
   <string name="Yes">Ja</string>
   <string name="Create">Erstellen</string>
   <string name="No">No</string>
+  <string name="Loading">Laden</string>
   <string name="Saving">Speichern</string>
+  <string name="Cancellingplease_wait">Wird annulliert, bitte warten ...</string>
   <string name="Are_you_sure">Bist Du sicher?</string>
   <string name="Configure_audio_cues">Audiohinweise konfigurieren</string>
   <string name="Downloadeditremove_workouts">Trainingseinheiten herunterladen/bearbeiten/löschen</string>

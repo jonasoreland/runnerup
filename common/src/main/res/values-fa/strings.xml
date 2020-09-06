@@ -250,7 +250,7 @@
   <string name="Activity_ready">فعالیت آماده است</string>
   <string name="Ready_to_start_running">آماده برای شروع دویدن</string>
   <string name="Searching_for_GPS">جستجو برای GPS</string>
-    <string name="RunnerUp_activity_started">فعالیت رانرآپ شروع شد</string>
+  <string name="RunnerUp_activity_started">فعالیت رانرآپ شروع شد</string>
   <string name="Low_HRM_battery_level">سطح باتری HRM پایین است</string>
   <string name="High_HRM_battery_level">سطح باتری HRM بالا است</string>
   <string name="Warning">هشدار</string>

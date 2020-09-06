@@ -46,7 +46,7 @@ public class SimpleCursorLoader extends CursorLoader {
         try {
             cursor = mDB.query(mTable, getProjection(), getSelection(),
                     getSelectionArgs(), null, null, getSortOrder());
-        } catch (Exception ex) {
+        } catch (IllegalStateException ex) {
             Log.e(getClass().getName(), "Query failed:", ex);
             cursor = null;
         }
