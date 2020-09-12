@@ -680,8 +680,9 @@ public class SyncManager {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != CONFIGURE_REQUEST)
+        if (requestCode != CONFIGURE_REQUEST || authSynchronizer == null) {
             return;
+        }
 
         handleAuthComplete(authSynchronizer, authSynchronizer.getAuthResult(resultCode, data));
     }
