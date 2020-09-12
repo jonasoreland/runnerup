@@ -21,6 +21,11 @@
     <item>Время</item>
     <item>Дистанция</item>
   </string-array>
+  <string-array name="target_types">
+    <item>Нет</item>
+    <item>Темп</item>
+    <item>Пульсовая зона</item>
+  </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Бег</item>
