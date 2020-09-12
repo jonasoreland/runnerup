@@ -1277,23 +1277,29 @@ public class SyncManager {
                 "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
         };
 
-        SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
-        Cursor c = db.query(DB.ACCOUNT.TABLE, from, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                final ContentValues tmp = DBHelper.get(c);
-                final Synchronizer synchronizer = add(tmp);
-                @SuppressWarnings("ConstantConditions") final String name = tmp.getAsString(DB.ACCOUNT.NAME);
-                final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-                if (synchronizer != null && isConfigured(name) &&
-                        Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
-                        synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                    set.add(name);
-                }
-            } while (c.moveToNext());
+        try {
+            SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
+
+            Cursor c = db.query(DB.ACCOUNT.TABLE, from, null, null, null, null, null);
+            if (c.moveToFirst()) {
+                do {
+                    final ContentValues tmp = DBHelper.get(c);
+                    final Synchronizer synchronizer = add(tmp);
+                    @SuppressWarnings("ConstantConditions") final String name = tmp.getAsString(DB.ACCOUNT.NAME);
+                    final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
+                    if (synchronizer != null && isConfigured(name) &&
+                            Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
+                            synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
+                        set.add(name);
+                    }
+                } while (c.moveToNext());
+            }
+            c.close();
+            DBHelper.closeDB(db);
+        } catch (IllegalStateException e) {
+            Log.e(getClass().getName(), "feedSynchronizersSet: " + e.getMessage());
         }
-        c.close();
-        DBHelper.closeDB(db);
+
         return set;
     }
 }
