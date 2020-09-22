@@ -377,6 +377,12 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void startScan() {
+        if (hrProvider == null) {
+            log("hrProvider null in .startScan(), aborting");
+            updateView();
+            return;
+        }
+
         log(hrProvider.getProviderName() + ".startScan()");
         updateView();
         deviceAdapter.deviceList.clear();
