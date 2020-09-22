@@ -313,12 +313,16 @@ public class Tracker extends android.app.Service implements
         //Create an Activity instance
         ContentValues tmp = new ContentValues();
         tmp.put(DB.ACTIVITY.SPORT, sport);
-        mActivityId = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
+        try {
+            mActivityId = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
 
-        tmp.clear();
-        tmp.put(DB.LOCATION.ACTIVITY, mActivityId);
-        tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
-        mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, logGpxAccuracy);
+            tmp.clear();
+            tmp.put(DB.LOCATION.ACTIVITY, mActivityId);
+            tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
+            mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, logGpxAccuracy);
+        } catch (IllegalStateException ex) {
+            Log.e(getClass().getName(), "Query failed:", ex);
+        }
         return mActivityId;
     }
 
