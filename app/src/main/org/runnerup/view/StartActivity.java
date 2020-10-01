@@ -637,14 +637,6 @@ public class StartActivity extends AppCompatActivity
     private final OnClickListener startButtonClick = new OnClickListener() {
         public void onClick(View v) {
             if (mTracker.getState() == TrackerState.CONNECTED) {
-                /* FIXME: Triggers too often on the first run since app start even if TTS exists
-                if (!mTracker.isComponentConnected(new TrackerTTS().getName())) {
-                    createNewNoTtsAvailableDialog();
-                } else {
-                    startWorkout();
-                }
-                */
-                
                 startWorkout();
 
                 return;
