@@ -18,11 +18,11 @@
 package org.runnerup.widget;
 
 import android.content.Context;
-
-import androidx.appcompat.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
+
+import androidx.appcompat.widget.AppCompatSpinner;
 
 public class ClassicSpinner extends AppCompatSpinner implements SpinnerInterface {
     final SpinnerPresenter mPresenter;

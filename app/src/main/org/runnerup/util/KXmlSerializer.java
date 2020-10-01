@@ -23,9 +23,9 @@ package org.runnerup.util;
 
 import android.text.TextUtils;
 
-import java.io.*;
-import java.util.Locale;
 import org.xmlpull.v1.*;
+
+import java.util.Locale;
 
 
 public class KXmlSerializer implements XmlSerializer {

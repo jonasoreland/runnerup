@@ -1,9 +1,9 @@
 package org.matthiaszimmermann.location.egm96;
 
+import org.matthiaszimmermann.location.Location;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-
-import org.matthiaszimmermann.location.Location;
 
 /**
  * offline <a href="https://en.wikipedia.org/wiki/Geoid">geoid</a> implementation based on the data provided 

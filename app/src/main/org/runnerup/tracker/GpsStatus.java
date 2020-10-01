@@ -26,6 +26,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
 
 import org.runnerup.util.TickListener;

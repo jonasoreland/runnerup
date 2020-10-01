@@ -16,9 +16,7 @@
  */
 package org.runnerup.tracker.component;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
 
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;

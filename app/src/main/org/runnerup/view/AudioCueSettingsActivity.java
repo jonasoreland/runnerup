@@ -17,8 +17,6 @@
 
 package org.runnerup.view;
 
-import androidx.appcompat.app.AlertDialog;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -39,13 +37,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
+
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
-import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
+import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Workout;
