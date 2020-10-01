@@ -604,19 +604,6 @@ public class StartActivity extends AppCompatActivity
         return w;
     }
 
-    private void createNewNoTtsAvailableDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.tts_not_available_title)
-                .setMessage(R.string.tts_not_available)
-                .setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startWorkout();
-                    }
-                })
-                .show();
-    }
-
     private void startWorkout() {
         mGpsStatus.stop(StartActivity.this);
 
