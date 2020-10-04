@@ -317,7 +317,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getDistance(Scope scope) {
         switch (scope) {
             case ACTIVITY:
-                return tracker.getDistance();
+                if (tracker != null) {
+                    return tracker.getDistance();
+                }
+                break;
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -334,7 +337,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     public double getTime(Scope scope) {
         switch (scope) {
             case ACTIVITY:
-                return tracker.getTimeMs() / 1000.0d;
+                if (tracker != null) {
+                    return tracker.getTimeMs() / 1000.0d;
+                }
+                break;
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -363,10 +369,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                     return currentStep.getSpeed(this, scope);
                 break;
             case CURRENT:
-                Double s = tracker.getCurrentSpeed();
-                if (s != null)
-                    return s;
-                return 0;
+                if (tracker != null) {
+                    Double s = tracker.getCurrentSpeed();
+                    if (s != null)
+                        return s;
+                }
+                break;
         }
         return 0;
     }
@@ -401,7 +409,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     double getHeartbeats(Scope scope) {
         switch (scope) {
             case ACTIVITY:
-                return tracker.getHeartbeats();
+                if (tracker != null) {
+                    return tracker.getHeartbeats();
+                }
+                break;
             case STEP:
             case LAP:
                 if (currentStep != null)
@@ -416,12 +427,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getHeartRate(Scope scope) {
         switch (scope) {
-            case CURRENT: {
-                Integer val = tracker.getCurrentHRValue();
-                if (val == null)
-                    return 0;
-                return val;
-            }
+            case CURRENT:
+                if (tracker != null) {
+                    Integer val = tracker.getCurrentHRValue();
+                    if (val != null)
+                        return val;
+                }
+                return 0;
             case LAP:
             case STEP:
             case ACTIVITY:
@@ -441,11 +453,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getCadence(Scope scope) {
         switch (scope) {
-            case CURRENT: {
-                Float val = tracker.getCurrentCadence();
-                if (val == null)
-                    return 0; //TODO should not be used
-                return val;
+            case CURRENT:
+                if (tracker != null) {
+                    Float val = tracker.getCurrentCadence();
+                    if (val != null)
+                        return val;
+                return 0;
             }
             case LAP:
             case STEP:
@@ -467,12 +480,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getTemperature(Scope scope) {
         switch (scope) {
-            case CURRENT: {
-                Float val = tracker.getCurrentTemperature();
-                if (val == null)
-                    return -1;  //TODO should not be used
-                return val;
-            }
+            case CURRENT:
+                if (tracker != null) {
+                    Float val = tracker.getCurrentTemperature();
+                    if (val != null)
+                        return val;
+                }
+                return -1;
             case LAP:
             case STEP:
             case ACTIVITY:
@@ -487,12 +501,13 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     @Override
     public double getPressure(Scope scope) {
         switch (scope) {
-            case CURRENT: {
-                Float val = tracker.getCurrentPressure();
-                if (val == null)
-                    return -1;  //TODO should not be used
-                return val;
-            }
+            case CURRENT:
+                if (tracker != null) {
+                    Float val = tracker.getCurrentPressure();
+                    if (val != null)
+                        return val;
+                }
+                return -1;
             case LAP:
             case STEP:
             case ACTIVITY:
@@ -524,6 +539,9 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
     @Override
     public boolean isEnabled(Dimension dim, Scope scope) {
+        if (tracker == null) {
+            return false;
+        }
         if (dim == Dimension.HR) {
             return tracker.isComponentConnected(TrackerHRM.NAME);
         } else if (dim == Dimension.HRZ) {
