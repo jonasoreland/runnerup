@@ -175,31 +175,32 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_hrsettings_clear:
-                clearHRSettings();
-                return true;
-            case R.id.menu_hrzones:
-                hrZonesClick.onClick(null);
-                return true;
-            case R.id.menu_hrdevice_expermental:
-            case R.id.menu_hrdevice_mock:
-                boolean isChecked = !item.isChecked();
-                item.setChecked(isChecked);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                Resources res = getResources();
-                SharedPreferences.Editor editor = prefs.edit();
-                int key;
-                if (item.getItemId() == R.id.menu_hrdevice_expermental) {
-                    key = R.string.pref_bt_experimental;
-                } else {
-                    key = R.string.pref_bt_mock;
-                }
-                editor.putBoolean(res.getString(key), isChecked);
-                editor.apply();
-                providers = HRManager.getHRProviderList(this);
-                return true;
+        int id = item.getItemId();
+        if (id == R.id.menu_hrsettings_clear) {
+            clearHRSettings();
+            return true;
+        } else if (id == R.id.menu_hrzones) {
+            hrZonesClick.onClick(null);
+            return true;
+        } else if (id == R.id.menu_hrdevice_expermental
+                || id == R.id.menu_hrdevice_mock) {
+            boolean isChecked = !item.isChecked();
+            item.setChecked(isChecked);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Resources res = getResources();
+            Editor editor = prefs.edit();
+            int key;
+            if (id == R.id.menu_hrdevice_expermental) {
+                key = R.string.pref_bt_experimental;
+            } else {
+                key = R.string.pref_bt_mock;
+            }
+            editor.putBoolean(res.getString(key), isChecked);
+            editor.apply();
+            providers = HRManager.getHRProviderList(this);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
     
@@ -376,6 +377,12 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void startScan() {
+        if (hrProvider == null) {
+            log("hrProvider null in .startScan(), aborting");
+            updateView();
+            return;
+        }
+
         log(hrProvider.getProviderName() + ".startScan()");
         updateView();
         deviceAdapter.deviceList.clear();

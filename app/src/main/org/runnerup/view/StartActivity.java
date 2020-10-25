@@ -646,7 +646,6 @@ public class StartActivity extends AppCompatActivity
     private List<String> getPermissions() {
         List<String> requiredPerms = new ArrayList<>();
         requiredPerms.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        requiredPerms.add(Manifest.permission.ACCESS_COARSE_LOCATION);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             requiredPerms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);

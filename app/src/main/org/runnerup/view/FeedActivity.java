@@ -78,13 +78,14 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         Toolbar actionbar = findViewById(R.id.feed_actionbar);
         actionbar.inflateMenu(R.menu.feed_menu);
         actionbar.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.menu_configure_accounts:
-                    configureAccounts();
-                    return true;
-                case R.id.menu_refresh:
-                    refresh();
-                    return true;
+            int id = item.getItemId();
+            if (id == R.id.menu_configure_accounts) {
+                configureAccounts();
+                return true;
+            }
+            if (id == R.id.menu_refresh) {
+                refresh();
+                return true;
             }
             return false;
         });

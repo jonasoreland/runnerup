@@ -271,19 +271,20 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_clear_uploads:
-                clearUploadsButtonClick.onClick(null);
-                break;
-            case R.id.menu_upload_workouts:
-                uploadButtonClick.onClick(null);
-                break;
-            case R.id.menu_disconnect_account:
-                disconnectButtonClick.onClick(null);
-                break;
-            case android.R.id.home:
+        int id = item.getItemId();
+        if (id == R.id.menu_clear_uploads) {
+            clearUploadsButtonClick.onClick(null);
+        }
+        else if (id == R.id.menu_upload_workouts) {
+            uploadButtonClick.onClick(null);
+        }
+        else if (id == R.id.menu_disconnect_account) {
+            disconnectButtonClick.onClick(null);
+        }
+        else if (id == android.R.id.home) {
                 return super.onOptionsItemSelected(item);
         }
+
         return true;
     }
 

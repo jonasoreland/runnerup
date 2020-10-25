@@ -245,7 +245,7 @@
   <string name="Target_coaching">Objectif d\'entraînement</string>
   <string name="Skip_event_audio_cues">Ignorer le suivi audio</string>
   <string name="Push">Appuyer</string>
-  <string name="Android_text_to_speech_settings">Paramètres d\'Android text to speech</string>
+  <string name="Android_text_to_speech_settings">Paramètres de synthèse vocale Android.</string>
   <string name="Start">Commencer</string>
   <string name="History">Historique</string>
   <string name="Basic">Simple</string>
@@ -292,6 +292,11 @@
   <string name="Share_workout">Partager l\'entraînement</string>
   <string name="New_audio_scheme">Nouveau profile de suivi audio</string>
   <string name="GPS_permission_required">Permission GPS requise</string>
+  <string name="GPS_permission_text_pre_Android10">L\'autorisation de Localisation est requise dans les paramètres système.</string>
+  <string name="GPS_permission_text">L\'autorisation de Localisation \"Toujours autoriser\" est requise dans les paramètres système.\nPour la cadence de course, l\'autorisation \"Activité physique\" est aussi requise.</string>
+  <string name="Request_permission_text">Donnez l\'autorisation en cliquant sur \"OK\".</string>
+  <string name="Battery_optimization_check">Optimisation de la batterie activée.</string>
+  <string name="Battery_optimization_check_text">L\'optimisation de la batterie va diminuer la précision.\nAppuyez sur OK pour aller dans les Paramètres système et sélectionnez \"Toutes les applis\", cherchez \"RunnerUp\" sélectionnez \"Ne pas optimiser\".</string>
   <string name="Default">Défaut</string>
   <string name="Notes_about_your_workout">Notes sur l\'entraînement</string>
   <string name="Downloading_from_1s">Téléchargement depuis %1$s</string>
@@ -336,4 +341,6 @@
   <string name="path_simplification_menu">Simplifier la trace</string>
   <string name="File_format">Fichiers au format :</string>
   <string name="File_need_one_format">Vous devez spécifier au moins un format</string>
+  <string name="tts_not_available_title">La synthèse vocale n\'est pas disponible.</string>
+  <string name="tts_not_available">RunnerUp nécessite un moteur de synthèse vocale fonctionnel pour le suivi audio. Assurez-vous d\'avoir installé au moins un moteur de synthèse vocale fonctionnel.</string>
 </resources>
