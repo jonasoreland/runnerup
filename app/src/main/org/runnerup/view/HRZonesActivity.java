@@ -121,13 +121,14 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_hrzonessettings_clear:
-                clearHRSettings();
-                break;
-            case android.R.id.home:
+        int id = item.getItemId();
+        if (id == R.id.menu_hrzonessettings_clear) {
+            clearHRSettings();
+        }
+        else if (id == android.R.id.home) {
                 return super.onOptionsItemSelected(item);
         }
+
         return true;
     }
 

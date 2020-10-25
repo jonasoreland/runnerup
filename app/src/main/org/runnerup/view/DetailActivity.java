@@ -265,59 +265,55 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                return super.onOptionsItemSelected(item);
-
-            case R.id.menu_delete_activity:
-                deleteButtonClick.onClick(null);
-                break;
-
-            case R.id.menu_edit_activity:
-                if (!edit) {
-                    setEdit(true);
-                    notes.requestFocus();
-                    requery();
-                }
-                break;
-
-            case R.id.menu_recompute_activity:
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.Recompute_activity)
-                        .setMessage(R.string.Are_you_sure)
-                        .setPositiveButton(R.string.Yes, (dialog, which) -> {
-                            dialog.dismiss();
-                            new ActivityCleaner().recompute(mDB, mID);
-                            requery();
-                            fillHeaderData();
-                            finish();
-                        })
-                        .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
-                        .show();
-                break;
-
-            case R.id.menu_simplify_path:
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.path_simplification_menu)
-                        .setMessage(R.string.Are_you_sure)
-                        .setPositiveButton(R.string.Yes, (dialog, which) -> {
-                            dialog.dismiss();
-                            PathSimplifier simplifier = new PathSimplifier(this);
-                            ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
-                            ActivityCleaner.deleteLocations(mDB, ids);
-                            new ActivityCleaner().recompute(mDB, mID);
-                            requery();
-                            fillHeaderData();
-                            finish();
-                        })
-                        .setNegativeButton(R.string.No,(dialog, which) -> dialog.dismiss())
-                        .show();
-                break;
-
-            case R.id.menu_share_activity:
-                shareActivity();
-                break;
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            return super.onOptionsItemSelected(item);
         }
+        else if (id == R.id.menu_delete_activity) {
+            deleteButtonClick.onClick(null);
+        }
+        else if (id == R.id.menu_edit_activity) {
+            if (!edit) {
+                setEdit(true);
+                notes.requestFocus();
+                requery();
+            }
+        }
+        else if (id == R.id.menu_recompute_activity) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.Recompute_activity)
+                    .setMessage(R.string.Are_you_sure)
+                    .setPositiveButton(R.string.Yes, (dialog, which) -> {
+                        dialog.dismiss();
+                        new ActivityCleaner().recompute(mDB, mID);
+                        requery();
+                        fillHeaderData();
+                        finish();
+                    })
+                    .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
+        else if (id == R.id.menu_simplify_path) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.path_simplification_menu)
+                    .setMessage(R.string.Are_you_sure)
+                    .setPositiveButton(R.string.Yes, (dialog, which) -> {
+                        dialog.dismiss();
+                        PathSimplifier simplifier = new PathSimplifier(this);
+                        ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
+                        ActivityCleaner.deleteLocations(mDB, ids);
+                        new ActivityCleaner().recompute(mDB, mID);
+                        requery();
+                        fillHeaderData();
+                        finish();
+                    })
+                    .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
+        else if (id == R.id.menu_share_activity) {
+            shareActivity();
+        }
+
         return true;
     }
 
