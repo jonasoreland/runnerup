@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -36,6 +35,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
+
+import androidx.appcompat.app.AlertDialog;
 
 import org.runnerup.R;
 import org.runnerup.util.SafeParse;

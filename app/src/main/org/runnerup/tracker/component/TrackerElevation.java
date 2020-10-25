@@ -27,13 +27,12 @@ import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.matthiaszimmermann.location.egm96.Geoid;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.tracker.Tracker;
 
 import java.io.IOException;
-
-import org.matthiaszimmermann.location.egm96.Geoid;
 
 public class TrackerElevation extends DefaultTrackerComponent implements SensorEventListener {
 

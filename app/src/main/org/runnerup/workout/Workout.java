@@ -18,7 +18,6 @@
 package org.runnerup.workout;
 
 import android.content.ContentValues;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 
@@ -26,10 +25,10 @@ import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.tracker.Tracker;
-import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerCadence;
-import org.runnerup.tracker.component.TrackerTemperature;
+import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.tracker.component.TrackerPressure;
+import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 

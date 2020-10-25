@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
+
 import org.runnerup.BuildConfig;
 
 import java.util.HashMap;
