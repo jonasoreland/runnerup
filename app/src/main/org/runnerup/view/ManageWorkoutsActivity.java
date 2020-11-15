@@ -181,7 +181,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         return name;
     }
 
-    private void importData(final String fileName, final Uri data) throws Exception {
+    private void importData(String fileName, final Uri data) throws Exception {
         final ContentResolver cr = getContentResolver();
         InputStream is = cr.openInputStream(data);
         if (is == null) {
@@ -192,36 +192,35 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         if (w == null)
             throw new Exception("Failed to parse content");
 
+        if(fileName.endsWith(".json")) {
+            fileName = fileName.substring(0, fileName.length() - ".json".length());
+        }
+
+        final String prefix = getString(R.string.RunnerUp_workout) + ": ";
+        if (fileName.startsWith(prefix) && fileName.length() > prefix.length()) {
+            fileName = fileName.substring(prefix.length());
+        }
+
         final boolean exists = WorkoutSerializer.getFile(this, fileName).exists();
         final boolean[] selected = {
                 false
         };
 
+        final String workoutName = fileName;
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Import_workout) + ": " + fileName)
+                .setTitle(getString(R.string.Import_workout) + ": " + workoutName)
                 .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
-                            String saveName = fileName;
+                            String saveName = workoutName;
                             try {
                                 if (exists && !selected[0]) {
-                                    String name = "";
-                                    String[] tmp = fileName.split("\\.");
-                                    if (tmp.length > 0) {
-                                        for (int i = 0; i < tmp.length - 1; i++)
-                                            name = name.concat(tmp[i]);
-                                    } else {
-                                        name = fileName;
-                                    }
-                                    String ending = tmp.length > 0 ? ("." + tmp[tmp.length - 1]) : "";
-                                    String newName = fileName;
                                     for (int i = 1; i < 25; i++) {
-                                        newName = name + "-" + i + ending;
+                                        saveName = workoutName + "-" + i;
                                         if (!WorkoutSerializer.getFile(ManageWorkoutsActivity.this,
-                                                newName).exists())
+                                                saveName).exists())
                                             break;
                                     }
-                                    saveName = newName;
                                     Toast.makeText(ManageWorkoutsActivity.this,
                                             getString(R.string.Saving_as) + " " + saveName, Toast.LENGTH_SHORT).show();
                                 }
