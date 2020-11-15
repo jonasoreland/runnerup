@@ -46,6 +46,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
         Intent intent = getIntent();
         String advWorkoutName = intent.getStringExtra(ManageWorkoutsActivity.WORKOUT_NAME);
+        boolean workoutExists = intent.getBooleanExtra(ManageWorkoutsActivity.WORKOUT_EXISTS, false);
 
         advancedWorkoutSpinner = findViewById(R.id.new_workout_spinner);
         advancedWorkoutSpinner.setValue(advWorkoutName);
@@ -70,15 +71,19 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         discardWorkoutButton.setOnClickListener(discardWorkoutButtonClick);
 
         try {
-            createAdvancedWorkout(advWorkoutName);
+            createAdvancedWorkout(advWorkoutName, workoutExists);
         } catch (Exception e) {
             handleWorkoutFileException(e);
         }
     }
 
-    private void createAdvancedWorkout(String name) throws JSONException, IOException {
-        advancedWorkout = new Workout();
-        WorkoutSerializer.writeFile(getApplicationContext(), name, advancedWorkout);
+    private void createAdvancedWorkout(String name, boolean workoutExists) throws JSONException, IOException {
+        if (workoutExists) {
+            advancedWorkout = WorkoutSerializer.readFile(getApplicationContext(), name);
+        } else {
+            advancedWorkout = new Workout();
+            WorkoutSerializer.writeFile(getApplicationContext(), name, advancedWorkout);
+        }
         advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
         advancedWorkoutStepsAdapter.notifyDataSetChanged();
     }

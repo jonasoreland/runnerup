@@ -80,6 +80,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     private String PHONE_STRING = "My phone";
     public final static String WORKOUT_NAME = "";
+    public final static String WORKOUT_EXISTS = "workout_exists";
 
     private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
     private final ArrayList<ContentValues> providers = new ArrayList<>();
@@ -93,6 +94,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     private Button downloadButton = null;
     private Button deleteButton = null;
     private Button shareButton = null;
+    private Button editButton = null;
     private Button createButton = null;
 
     private SyncManager syncManager = null;
@@ -124,6 +126,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         shareButton = findViewById(R.id.share_workout_button);
         shareButton.setOnClickListener(shareButtonClick);
+
+        editButton = findViewById(R.id.edit_workout_button);
+        editButton.setOnClickListener(editButtonClick);
 
         handleButtons();
 
@@ -282,6 +287,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             downloadButton.setEnabled(false);
             deleteButton.setEnabled(false);
             shareButton.setEnabled(false);
+            editButton.setEnabled(false);
             createButton.setEnabled(true);
             return;
         }
@@ -291,10 +297,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             downloadButton.setEnabled(false);
             deleteButton.setEnabled(true);
             shareButton.setEnabled(true);
+            editButton.setEnabled(true);
         } else {
             downloadButton.setEnabled(true);
             deleteButton.setEnabled(false);
             shareButton.setEnabled(false);
+            editButton.setEnabled(false);
         }
     }
 
@@ -407,6 +415,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
                     String value = input.getText().toString();
                     intent.putExtra(WORKOUT_NAME, value);
+                    intent.putExtra(WORKOUT_EXISTS, false);
                     startActivity(intent);
 
                 })
@@ -533,6 +542,18 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name + ".json");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout)));
+    };
+
+    private final OnClickListener editButtonClick = v -> {
+        if (currentlySelectedWorkout == null)
+            return;
+
+        final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+        final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
+
+        intent.putExtra(WORKOUT_NAME, selected.workoutName);
+        intent.putExtra(WORKOUT_EXISTS, true);
+        startActivity(intent);
     };
 
     @Override
