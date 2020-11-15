@@ -56,11 +56,13 @@ public class SettingsActivity extends PreferenceActivity {
             Preference btn = findPreference(res.getString(R.string.pref_prunedb));
             btn.setOnPreferenceClickListener(onPruneClick);
         }
-        
+
+        /*
         if (BuildConfig.MAPBOX_ENABLED == 0) {
             Preference pref = findPreference("map_preferencescreen");
             pref.setEnabled(false);
         }
+        */
 
         if (!hasHR(this)) {
             getPreferenceManager().findPreference(res.getString(R.string.cue_configure_hrzones)).setEnabled(false);

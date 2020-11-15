@@ -81,8 +81,18 @@ public class MapWrapper implements Constants {
         this.mapView = (MapView)mapView;
     }
 
+    private static String getMapboxApiKey(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String customMapBoxApiKey = prefs.getString(context.getResources().getString(R.string.pref_mapbox_custom_api_key), "");
+        if ((customMapBoxApiKey != null) && customMapBoxApiKey.startsWith("pk")) {
+            return customMapBoxApiKey;
+        } else {
+            return BuildConfig.MAPBOX_ACCESS_TOKEN;
+        }
+    }
+
     public static void start(Context context) {
-        Mapbox.getInstance(context, BuildConfig.MAPBOX_ACCESS_TOKEN);
+        Mapbox.getInstance(context, getMapboxApiKey(context));
     }
 
     public void onCreate(Bundle savedInstanceState) {

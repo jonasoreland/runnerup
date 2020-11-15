@@ -185,6 +185,7 @@
   <string name="Auto_start_GPS">Autostart GPS</string>
   <string name="Advanced_options">Advanced options</string>
   <string name="Mapbox_default_style">Mapbox style</string>
+  <string name="custom_mapbox_api_key">Custom MapBox API key</string>
   <string name="RunnerUp_live_address">RunnerUp Live address</string>
   <string name="Autopause_after_s">Autopause after (s)</string>
   <string name="Autopause_min_pace_minkm">Autopause minimum pace (min/km)</string>
