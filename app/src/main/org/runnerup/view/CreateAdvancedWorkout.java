@@ -73,7 +73,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         if (workoutExists) {
             // Avoid users inadvertently deleting existing workouts while editing:
             // (discard button should only be available when creating a workout)
-            discardWorkoutButton.setVisibility(View.INVISIBLE);
+            discardWorkoutButton.setVisibility(View.GONE);
         }
 
         try {
