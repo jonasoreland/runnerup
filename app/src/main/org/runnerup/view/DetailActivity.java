@@ -882,7 +882,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             1 //TODO preselect tcx - choice should be remembered
         };
         final CharSequence[] items = {
-                "gpx", "tcx" /* "nike+xml" */
+                "gpx", "tcx"
         };
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.Share_activity))

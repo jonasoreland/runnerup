@@ -35,18 +35,11 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DropboxSynchronizer;
-import org.runnerup.export.EndomondoSynchronizer;
-import org.runnerup.export.FacebookSynchronizer;
 import org.runnerup.export.FileSynchronizer;
-import org.runnerup.export.GarminSynchronizer;
-import org.runnerup.export.GoogleFitSynchronizer;
-import org.runnerup.export.JoggSESynchronizer;
-import org.runnerup.export.MapMyRunSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunalyzeSynchronizer;
 import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
-import org.runnerup.export.RuntasticSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.util.FileUtil;
@@ -470,17 +463,10 @@ public class DBHelper extends SQLiteOpenHelper implements
         //The accounts must exist in the database, but normally the default values are sufficient
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
         //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
-        insertAccount(arg0, GarminSynchronizer.NAME, 0);
         insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
-        insertAccount(arg0, JoggSESynchronizer.NAME, 0);
-        insertAccount(arg0, MapMyRunSynchronizer.NAME, 0);
-        insertAccount(arg0, EndomondoSynchronizer.NAME, 1);
         insertAccount(arg0, RunningAHEADSynchronizer.NAME, 0);
         insertAccount(arg0, StravaSynchronizer.NAME, 1);
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
-        insertAccount(arg0, FacebookSynchronizer.NAME, 0);
-        insertAccount(arg0, RuntasticSynchronizer.NAME, 0);
-        insertAccount(arg0, GoogleFitSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
         insertAccount(arg0, DropboxSynchronizer.NAME, 0);

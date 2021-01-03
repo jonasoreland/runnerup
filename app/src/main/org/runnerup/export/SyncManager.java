@@ -183,26 +183,12 @@ public class SyncManager {
         Synchronizer synchronizer = null;
         if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
             synchronizer = new RunKeeperSynchronizer(this,simplifier);
-        } else if (synchronizerName.contentEquals(GarminSynchronizer.NAME)) {
-            synchronizer = new GarminSynchronizer(simplifier);
-        } else if (synchronizerName.contentEquals(MapMyRunSynchronizer.NAME)) {
-            synchronizer = new MapMyRunSynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(JoggSESynchronizer.NAME)) {
-            synchronizer = new JoggSESynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(EndomondoSynchronizer.NAME)) {
-            synchronizer = new EndomondoSynchronizer(simplifier);
         } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
             synchronizer = new RunningAHEADSynchronizer(this, simplifier);
         } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
             synchronizer = new RunnerUpLiveSynchronizer(mContext);
         } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
             synchronizer = new StravaSynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(FacebookSynchronizer.NAME)) {
-            synchronizer = new FacebookSynchronizer(mContext, this, simplifier);
-        } else if (synchronizerName.contentEquals(RuntasticSynchronizer.NAME)) {
-            synchronizer = new RuntasticSynchronizer(simplifier);
-        } else if (synchronizerName.contentEquals(GoogleFitSynchronizer.NAME)) {
-            synchronizer = new GoogleFitSynchronizer(mContext, this);
         } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
             synchronizer = new FileSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {

@@ -39,27 +39,25 @@ public class FeedImageLoader {
     }
 
     static public Bitmap LoadImageSync(final String url) {
-        final String fixedUrl = FixUrl(url);
-        Bitmap b = imageCache.get(fixedUrl);
+        Bitmap b = imageCache.get(url);
         if (b != null) {
             return b;
         }
         try {
-            InputStream is = (InputStream) new URL(fixedUrl).getContent();
+            InputStream is = (InputStream) new URL(url).getContent();
             b = BitmapFactory.decodeStream(is);
             if (b != null) {
-                imageCache.put(fixedUrl, b);
+                imageCache.put(url, b);
             }
             return b;
         } catch (Exception e) {
-            Log.e("FeedImageLoader", "url exception for " + fixedUrl + ": " + e.getMessage());
+            Log.e("FeedImageLoader", "url exception for " + url + ": " + e.getMessage());
         }
         return null;
     }
 
     @SuppressLint("StaticFieldLeak")
     static public void LoadImageAsync(final String url, final Callback onLoadingDone) {
-        final String fixedUrl = FixUrl(url);
         Bitmap b = imageCache.get(url);
         if (b != null) {
             Log.i("FeedImageLoader", "Found cached image for " + url);
@@ -69,19 +67,19 @@ public class FeedImageLoader {
             new AsyncTask<String, String, Bitmap>() {
                 @Override
                 protected Bitmap doInBackground(String... params) {
-                    Bitmap b = imageCache.get(fixedUrl);
+                    Bitmap b = imageCache.get(url);
                     if (b != null) {
                         return b;
                     }
                     try {
-                        InputStream is = (InputStream) new URL(fixedUrl).getContent();
+                        InputStream is = (InputStream) new URL(url).getContent();
                         b = BitmapFactory.decodeStream(is);
                         if (b != null) {
-                            imageCache.put(fixedUrl, b);
+                            imageCache.put(url, b);
                         }
                         return b;
                     } catch (Exception e) {
-                        Log.e("FeedImageLoader", "url exception for " + fixedUrl + ": " + e.getMessage());
+                        Log.e("FeedImageLoader", "url exception for " + url + ": " + e.getMessage());
                     }
                     return null;
                 }
@@ -96,12 +94,4 @@ public class FeedImageLoader {
             }.execute(url);
         }
     }
-
-    /**
-     * fb redirects from http to https which is not handled automatically by HttpUrlConnection
-     */
-    static private String FixUrl(String in) {
-        return in.replace("http://graph.facebook.com/", "https://graph.facebook.com/");
-    }
-
 }

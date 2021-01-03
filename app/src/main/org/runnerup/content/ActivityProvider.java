@@ -35,10 +35,7 @@ import androidx.annotation.NonNull;
 import org.runnerup.BuildConfig;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.PathSimplifier;
-import org.runnerup.export.format.FacebookCourse;
 import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.GoogleStaticMap;
-import org.runnerup.export.format.NikeXML;
 import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.format.TCX;
 
@@ -61,25 +58,12 @@ public class ActivityProvider extends ContentProvider {
     public static final String GPX_MIME = "application/gpx+xml";
     @SuppressWarnings("WeakerAccess")
     public static final String TCX_MIME = "application/vnd.garmin.tcx+xml";
-    @SuppressWarnings("WeakerAccess")
-    public static final String NIKE_MIME = "application/nike+xml";
-    @SuppressWarnings("WeakerAccess")
-    public static final String MAPS_MIME = "application/maps";
-    @SuppressWarnings("WeakerAccess")
-    public static final String FACEBOOK_COURSE_MIME = "application/facebook.course";
-    //public static final String RUNKEEPER_MIME = "application/runkeeper+xml";
 
     // UriMatcher used to match against incoming requests
     @SuppressWarnings("WeakerAccess")
     static final int GPX = 1;
     @SuppressWarnings("WeakerAccess")
     static final int TCX = 2;
-    @SuppressWarnings("WeakerAccess")
-    static final int NIKE = 3;
-    @SuppressWarnings("WeakerAccess")
-    static final int MAPS = 4;
-    @SuppressWarnings("WeakerAccess")
-    static final int FACEBOOK_COURSE = 5;
     @SuppressWarnings("WeakerAccess")
     static final int RUNKEEPER = 6;
     private UriMatcher uriMatcher;
@@ -89,9 +73,6 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "gpx/#/*", GPX);
         uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
-        uriMatcher.addURI(AUTHORITY, "nike+xml/#/*", NIKE);
-        uriMatcher.addURI(AUTHORITY, "maps/#/*", MAPS);
-        uriMatcher.addURI(AUTHORITY, "facebook.course/#/*", FACEBOOK_COURSE);
         uriMatcher.addURI(AUTHORITY, "runkeeper/#/*", RUNKEEPER);
         return true;
     }
@@ -136,9 +117,6 @@ public class ActivityProvider extends ContentProvider {
         switch (res) {
             case GPX:
             case TCX:
-            case NIKE:
-            case MAPS:
-            case FACEBOOK_COURSE:
             case RUNKEEPER:
                 final List<String> list = uri.getPathSegments();
                 final String id = list.get(list.size() - 2);
@@ -171,23 +149,6 @@ public class ActivityProvider extends ContentProvider {
                             gpx.export(activityId, new OutputStreamWriter(out.second));
                             Log.e(getClass().getName(), "export gpx");
                             break;
-                        case NIKE:
-                            NikeXML xml = new NikeXML(mDB, simplifier);
-                            xml.export(activityId, new OutputStreamWriter(out.second));
-                            break;
-                        case MAPS: {
-                            GoogleStaticMap map = new GoogleStaticMap(mDB, simplifier);
-                            String str = map.export(activityId, 2000);
-                            out.second.write(str.getBytes());
-                            break;
-                        }
-                        case FACEBOOK_COURSE: {
-                            FacebookCourse map = new FacebookCourse(getContext(), mDB, simplifier);
-                            final boolean includeMap = true;
-                            String str = map.export(activityId, includeMap, null).toString();
-                            out.second.write(str.getBytes());
-                            break;
-                        }
                         case RUNKEEPER: {
                             RunKeeper map = new RunKeeper(mDB, simplifier);
                             map.export(activityId, new OutputStreamWriter(out.second));
@@ -234,12 +195,6 @@ public class ActivityProvider extends ContentProvider {
                 return GPX_MIME;
             case TCX:
                 return TCX_MIME;
-            case NIKE:
-                return NIKE_MIME;
-            case MAPS:
-                return MAPS_MIME;
-            case FACEBOOK_COURSE:
-                return FACEBOOK_COURSE_MIME;
         }
         return null;
     }
