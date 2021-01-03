@@ -21,6 +21,10 @@ public class HRMStateTrigger extends Trigger {
     }
 
     private boolean getState(Workout s) {
+        if (s.tracker == null) {
+            // Taskkiller?
+            return false;
+        }
         HRProvider hrProvider = s.tracker.getHRProvider();
         if (hrProvider != null)
             return (hrProvider.isConnected());

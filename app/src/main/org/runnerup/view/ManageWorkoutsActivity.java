@@ -356,17 +356,19 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         phone.put(DB.ACCOUNT.NAME, PHONE_STRING);
         providers.add(phone);
 
-        for (ContentValues tmp : allSynchronizers) {
-            Synchronizer synchronizer = syncManager.add(tmp);
-            //There is no option to show disabled providers, so check for enable or configured
-            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST) &&
-                    (synchronizer.isConfigured() || tmp.getAsInteger(DB.ACCOUNT.ENABLED) == 1)) {
-                providers.add(tmp);
-
-                workouts.remove(synchronizer.getName());
-                workouts.put(synchronizer.getName(), new ArrayList<>());
-            }
-        }
+        // Only local phone provider is currently supported (Garmin was a remote provider a long time ago)
+        // Comment out the handling to avoid accidental activations
+//        for (ContentValues tmp : allSynchronizers) {
+//            Synchronizer synchronizer = syncManager.add(tmp);
+//            //There is no option to show disabled providers, so check for enable or configured
+//            if (synchronizer != null && synchronizer.checkSupport(Synchronizer.Feature.WORKOUT_LIST) &&
+//                    (synchronizer.isConfigured() || tmp.getAsInteger(DB.ACCOUNT.ENABLED) == 1)) {
+//                providers.add(tmp);
+//
+//                workouts.remove(synchronizer.getName());
+//                workouts.put(synchronizer.getName(), new ArrayList<>());
+//            }
+//        }
 
         adapter.notifyDataSetChanged();
     }

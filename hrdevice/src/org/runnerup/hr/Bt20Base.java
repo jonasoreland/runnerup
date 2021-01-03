@@ -233,7 +233,7 @@ public abstract class Bt20Base extends BtHRBase {
     public void connect(HRDeviceRef ref) {
         cancelThreads();
 
-        if (!isEnabledImpl()) {
+        if (ref == null || btAdapter == null || !isEnabledImpl()) {
             reportConnected(false);
             return;
         }
