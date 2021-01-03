@@ -259,6 +259,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         }
         emitFeedback();
         paused = false;
+        if (tracker == null) {
+            // Taskkiller?
+            return;
+        }
         tracker.displayNotificationState();
     }
 
@@ -273,6 +277,10 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     public void onSave() {
+        if (tracker == null) {
+            // Taskkiller?
+            return;
+        }
         tracker.completeActivity(true);
     }
 

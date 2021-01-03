@@ -672,7 +672,12 @@ public class SyncManager {
     }
 
     private void doneUploading() {
-        mSpinner.dismiss();
+        try {
+            mSpinner.dismiss();
+        } catch(IllegalArgumentException ex) {
+            // Taskkiller?
+            Log.e(getClass().getName(), "Dismissing spinner failed:", ex);
+        }
         final Callback cb = uploadCallback;
         uploadCallback = null;
         if (cb != null)
@@ -1268,6 +1273,9 @@ public class SyncManager {
                     }
                 } while (c.moveToNext());
             }
+        } catch (IllegalStateException ex) {
+            // Taskkiller?
+            Log.e(getClass().getName(), "Query for liveloggers failed:", ex);
         }
     }
 

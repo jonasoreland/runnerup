@@ -82,7 +82,8 @@ import java.util.Objects;
 
 public class Tracker extends android.app.Service implements
         LocationListener, Constants {
-    private static final int MAX_HR_AGE = 3000; // 3s
+    // Max age for current data to be considered valid
+    private static final int MAX_CURRENT_AGE = 15000;
     private static final long NANO_IN_MILLI = 1000000;
 
     private final Handler handler = new Handler();
@@ -693,10 +694,10 @@ public class Tracker extends android.app.Service implements
 
         Integer hrValue;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos(), MAX_HR_AGE);
+            hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos(), MAX_CURRENT_AGE);
         } else {
             // adjust GPS sensor time to system time
-            hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeNanos/NANO_IN_MILLI, MAX_HR_AGE);
+            hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeNanos/NANO_IN_MILLI, MAX_CURRENT_AGE);
         }
         Double eleValue = getCurrentElevation();
         Float cadValue = getCurrentCadence();
@@ -914,9 +915,9 @@ public class Tracker extends android.app.Service implements
 
     public Integer getCurrentHRValue() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            return getCurrentHRValueElapsed(SystemClock.elapsedRealtimeNanos(), MAX_HR_AGE);
+            return getCurrentHRValueElapsed(SystemClock.elapsedRealtimeNanos(), MAX_CURRENT_AGE);
         } else {
-            return getCurrentHRValue(System.currentTimeMillis(), MAX_HR_AGE);
+            return getCurrentHRValue(System.currentTimeMillis(), MAX_CURRENT_AGE);
         }
     }
 
@@ -954,12 +955,12 @@ public class Tracker extends android.app.Service implements
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if ((SystemClock.elapsedRealtimeNanos() - mLastLocation.getElapsedRealtimeNanos()) >
-                    MAX_HR_AGE * NANO_IN_MILLI) {
+                    MAX_CURRENT_AGE * NANO_IN_MILLI) {
                 return null;
             }
         } else {
             if (System.currentTimeMillis() - mLastLocation.getTime() - mSystemToGpsDiffTimeNanos / NANO_IN_MILLI >
-                    MAX_HR_AGE) {
+                    MAX_CURRENT_AGE) {
                 return null;
             }
         }
