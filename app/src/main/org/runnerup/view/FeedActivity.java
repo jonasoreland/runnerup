@@ -44,6 +44,7 @@ import org.runnerup.common.util.Constants.DB.FEED;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
+import org.runnerup.export.Synchronizer;
 import org.runnerup.feed.FeedImageLoader;
 import org.runnerup.feed.FeedList;
 import org.runnerup.util.Formatter;
@@ -231,8 +232,11 @@ public class FeedActivity extends AppCompatActivity implements Constants {
                 tvPerson.setText(name);
 
                 // source
-                String src = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID)).getName();
-                tvSource.setText(src);
+                Synchronizer sync = syncManager.getSynchronizer(tmp.getAsLong(FEED.ACCOUNT_ID));
+                if (sync != null){
+                    String src = sync.getName();
+                    tvSource.setText(src);
+                }
 
                 // sport
                 int sportId = tmp.getAsInteger(DB.FEED.FEED_SUBTYPE);

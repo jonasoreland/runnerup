@@ -28,17 +28,10 @@
 
      <color name="serviceDefault">#003366</color>
      <color name="serviceDropbox">#0D2481</color>
-     <color name="serviceEndomondo">#87AA14</color>
-     <color name="serviceFacebook">#3b5998</color>
-     <color name="serviceGarmin">#0172AD</color>
-     <color name="serviceGoogleFit">#DD5144</color>
-     <color name="serviceJogg">#29AA2D</color>
-     <color name="serviceMapMyRun">#0077C0</color>
      <color name="serviceRunalyze">#67B14C</color>
      <color name="serviceRunkeeper">#3CC2D2</color>
      <color name="serviceRunnerUpLive">#003366</color>
      <color name="serviceRunningAhead">#336699</color>
-     <color name="serviceRuntastic">#0067B0</color>
      <color name="serviceStrava">#FC4C02</color>
   
      <color name="stepActive">#ff978e</color>
