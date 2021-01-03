@@ -36,7 +36,6 @@ import org.runnerup.BuildConfig;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.GPX;
-import org.runnerup.export.format.RunKeeper;
 import org.runnerup.export.format.TCX;
 
 import java.io.BufferedOutputStream;
@@ -64,8 +63,6 @@ public class ActivityProvider extends ContentProvider {
     static final int GPX = 1;
     @SuppressWarnings("WeakerAccess")
     static final int TCX = 2;
-    @SuppressWarnings("WeakerAccess")
-    static final int RUNKEEPER = 6;
     private UriMatcher uriMatcher;
 
     @Override
@@ -73,7 +70,6 @@ public class ActivityProvider extends ContentProvider {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "gpx/#/*", GPX);
         uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
-        uriMatcher.addURI(AUTHORITY, "runkeeper/#/*", RUNKEEPER);
         return true;
     }
 
@@ -117,7 +113,6 @@ public class ActivityProvider extends ContentProvider {
         switch (res) {
             case GPX:
             case TCX:
-            case RUNKEEPER:
                 final List<String> list = uri.getPathSegments();
                 final String id = list.get(list.size() - 2);
                 final long activityId = Long.parseLong(id);
@@ -149,11 +144,6 @@ public class ActivityProvider extends ContentProvider {
                             gpx.export(activityId, new OutputStreamWriter(out.second));
                             Log.e(getClass().getName(), "export gpx");
                             break;
-                        case RUNKEEPER: {
-                            RunKeeper map = new RunKeeper(mDB, simplifier);
-                            map.export(activityId, new OutputStreamWriter(out.second));
-                            break;
-                        }
                     }
                     out.second.flush();
                     out.second.close();
