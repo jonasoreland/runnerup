@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>מיילים</item>
+    <item>קילומטרים</item>
+  </string-array>
+  <string-array name="speedUnitEntries">
+    <item>קצב</item>
+    <item>מהירות</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>חימום</item>
+    <item>פעילות</item>
+    <item>מנוחה</item>
+    <item>התאוששות</item>
+    <item>התקררות</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>עד ללחיצה</item>
+    <item>זמן</item>
+    <item>מרחק</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>ללא</item>
+    <item>קצב</item>
+    <item>אזור דופק</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>ריצה</item>
+    <item>אופניים</item>
+    <item>אחר</item>
+    <item>התמצאות</item>
+    <item>הליכה</item>
+  </string-array>
+  <string-array name="types">
+    <item>זמן</item>
+    <item>מרחק</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>זכר</item>
+    <item>נקבה</item>
+  </string-array>
+  <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>מרחק רדיאלי (מהיר)</item>
+    <item>ראמר-דאגלאס-פוקר (איכותי)</item>
+  </string-array>
+</resources>
