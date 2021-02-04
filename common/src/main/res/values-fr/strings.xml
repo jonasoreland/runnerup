@@ -114,7 +114,7 @@
   <string name="Refresh">Rafraichir</string>
   <string name="Age">Age</string>
   <string name="Synchronizing">Synchronisation en cours</string>
-  <string name="synchronizing_feed">Synchronization des actualités...</string>
+  <string name="synchronizing_feed">Synchronisation des actualités...</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Gérer les connexions</string>
   <string name="accounts_category_unconnected">Connecter un compte</string>
@@ -162,7 +162,7 @@
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporter les données sur carte SD (ex : pour mise à jour)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importer les données depuis la carte SD (ex : après mise à jour)</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">Le coach vous aide à atteindre votre objectif (si défini)</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">Silencier le suivi audio de démarrage / pause / reprise / arrêt</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">Pas de suivi audio pour démarrage / pause / reprise / arrêt</string>
   <string name="Test_audio_cue">Tester le suivi audio</string>
   <string name="Accounts">Comptes</string>
   <string name="Audio_cues">Suivi audio</string>
@@ -184,7 +184,7 @@
   <string name="Mapbox_default_style">Style MapBox</string>
   <string name="RunnerUp_live_address">Adresse RunnerUp live</string>
   <string name="Autopause_after_s">Pause auto. après (s)</string>
-  <string name="Autopause_min_pace_minkm">Pause auto. rythme min. (min/km)</string>
+  <string name="Autopause_min_pace_minkm">Rythme min. pour pause auto. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalles de repos</string>
   <string name="Convert_rest_on_Advanced_tab">Compte à rebours en tant que récupération</string>
   <string name="Target_pace_moving_average_seconds">Périodes de calcul d\'objectif en déplacement (s)</string>
@@ -197,8 +197,8 @@
   <string name="Step_countdown_time_s">Compte à rebours d\'étape (s)</string>
   <string name="Smooth_pace_graph">Lisser le graphique de rythme</string>
   <string name="Smooth_pace_filters">Filtre(s) de lissage du rythme</string>
-  <string name="Poll_interval_ms">Fréquence de raffraîchissement du GPS (ms)</string>
-  <string name="Poll_distance_m">Fréquence de raffraîchissement du GPS (m)</string>
+  <string name="Poll_interval_ms">Fréquence de rafraîchissement du GPS (ms)</string>
+  <string name="Poll_distance_m">Distance de rafraîchissement du GPS (m)</string>
   <string name="Adjust_altitude">Ajuster l\'altitude GPS à geoid (EGM96)</string>
   <string name="Export">Exporter</string>
   <string name="Import">Importer</string>
@@ -264,7 +264,7 @@
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
-  <string name="Do_not_show_again">Ne pas afficher à nouveau</string>
+  <string name="Do_not_show_again">Ne plus afficher</string>
   <string name="Waiting_for_phone" tools:ignore="UnusedResources">En attente du téléphone</string>
   <string name="Saving_on_phone" tools:ignore="UnusedResources">Sauvegarde sur téléphone</string>
   <string name="Save">Sauvegarder</string>
@@ -321,9 +321,9 @@
   <string name="use_step_sensor_summary">Utiliser pour la cadence</string>
   <string name="use_temperature_sensor">Capteur de température</string>
   <string name="use_pressure_sensor_title">Capteur de pression</string>
-  <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'élévation</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajuster l\'altitude du baromètre à l\'élévation GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une élévation barométrique moyenne</string>
+  <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'altitude</string>
+  <string name="adjust_barometer_altitude_from_gps">Ajuster l\'altitude du baromètre à l\'altitude GPS</string>
+  <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une altitude barométrique moyenne</string>
   <string name="channel_notification_ongoing">Notifications de GPS et activité RunnerUp</string>
   <string name="Lap_start">Début du tour</string>
   <string name="Lap_start_summary">Suivi audio pour démarrage d\'étapes Actives, Échauffement et Récupération</string>
@@ -334,12 +334,12 @@
   <string name="path_simplification">Simplification des traces GPS</string>
   <string name="path_simplification_info">Réduit la résolution des traces GPS (enregistrement des positions au fil du temps). Lisse la trace et réduit le poids d\'une activité dans la base de données ou dans un fichier exporté.</string>
   <string name="path_simplification_on_save">Simplifier lors de l\'enregistrement</string>
-  <string name="path_simplification_on_export">Simplifier lors du téléchargement aux comptes</string>
+  <string name="path_simplification_on_export">Simplifier lors du téléchargement vers les comptes</string>
   <string name="path_simplification_tolerance">Tolérance en mètres</string>
   <string name="path_simplification_algorithm">Algorithme</string>
-  <string name="path_simplification_algorithm_info">Choisissez entre une simplification de la trace rapide ou d\'haute qualité</string>
+  <string name="path_simplification_algorithm_info">Choisissez entre une simplification de la trace rapide ou de haute qualité</string>
   <string name="path_simplification_menu">Simplifier la trace</string>
-  <string name="File_format">Fichiers au format :</string>
+  <string name="File_format">Format de téléchargement :</string>
   <string name="File_need_one_format">Vous devez spécifier au moins un format</string>
   <string name="tts_not_available_title">La synthèse vocale n\'est pas disponible.</string>
   <string name="tts_not_available">RunnerUp nécessite un moteur de synthèse vocale fonctionnel pour le suivi audio. Assurez-vous d\'avoir installé au moins un moteur de synthèse vocale fonctionnel.</string>
