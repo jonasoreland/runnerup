@@ -171,6 +171,7 @@
   <string name="Activity_countdown">Aftellen tot start van activiteit</string>
   <string name="Countdown_time_s">Afteltijd (s)</string>
   <string name="Unit_preference_title">Eenheden</string>
+  <string name="Unit_preference">Afstandseenheid</string>
   <string name="Auto_start_GPS">Start gps automatisch</string>
   <string name="Advanced_options">Geavanceerde opties</string>
   <string name="Mapbox_default_style">Kaartstijl</string>
@@ -238,6 +239,7 @@
   <string name="Manual_activity_title">Item handmatig toevoegen</string>
   <string name="Add_manual_entry">Item handmatig toevoegen</string>
   <string name="Add_workout_notes">Trainingnotities toevoegen</string>
+  <string name="Pruning_deleted_activities_from_database">Ruim verwijderde activiteiten op</string>
   <string name="Prune">Verwijder permanent</string>
   <string name="Heartrate_zones_distribution">Distributie hartslagzones</string>
   <string name="Battery_level">Batterijniveau</string>
@@ -272,6 +274,7 @@
   <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Door %1$s te downloaden wordt %2$s overschreven met dezelfde naam</string>
   <string name="Delete_workout">Verwijder workout</string>
   <string name="RunnerUp_workout">RunnerUp-workout</string>
+  <string name="HinHere_is_a_workout_I_think_you_might_like">Hoi\nIk denk dat je deze training waarschijnlijk leuk vindt.</string>
   <string name="Share_workout">Training delen…</string>
   <string name="New_audio_scheme">Nieuw audioschema</string>
   <string name="GPS_permission_required">GPS permessie noodzakelijk</string>
@@ -297,6 +300,7 @@
   <string name="use_step_sensor_summary">Gebruik voor ritme</string>
   <string name="use_temperature_sensor">Temperatuursensor</string>
   <string name="use_pressure_sensor_title">Druksensor</string>
+  <string name="use_pressure_sensor_summary">Gebruik barometer om hoogte te berekenen</string>
   <string name="adjust_barometer_altitude_from_gps">Stel barometer af op gps-hoogte</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Gebruik de initiële gps-hoogte barometrische hoogte uit te middelen</string>
   <string name="channel_notification_ongoing">RunnerUp gps- en activiteitsmeldingen</string>

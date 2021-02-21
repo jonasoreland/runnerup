@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">פעילות</string>
+  <string name="cue_interval">מרווח</string>
+  <string name="cue_lap">הקפה</string>
+  <string name="cue_warmup">חימום</string>
+  <string name="cue_cooldown">התקררות</string>
+  <string name="cue_current">נוכחי</string>
+  <string name="cue_perkilometer">לקילומטר</string>
+  <string name="cue_permile">למייל</string>
+  <string name="cue_started">התחיל</string>
+  <string name="cue_paused">מושהה</string>
+  <string name="cue_resumed">התחדש</string>
+  <string name="cue_stopped">הופסק</string>
+  <string name="cue_completed">הושלם</string>
+  <string name="cue_speedup">האצה</string>
+  <string name="cue_slowdown">האטה</string>
+  <plurals name="cue_hour">
+    <item quantity="one">%d שעה</item>
+    <item quantity="two">%d שעות</item>
+    <item quantity="many">%d שעות</item>
+    <item quantity="other">%d שעות</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">%d דקה</item>
+    <item quantity="two">%d דקות</item>
+    <item quantity="many">%d דקות</item>
+    <item quantity="other">%d דקות</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">%d שניה</item>
+    <item quantity="two">%d שניות</item>
+    <item quantity="many">%d שניות</item>
+    <item quantity="other">%d שניות</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">%d מטר</item>
+    <item quantity="two">%d מטרים</item>
+    <item quantity="many">%d מטרים</item>
+    <item quantity="other">%d מטרים</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">%s קילומטר</item>
+    <item quantity="two">%s קילומטרים</item>
+    <item quantity="many">%s קילומטרים</item>
+    <item quantity="other">%s קילומטרים</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">%s מייל</item>
+    <item quantity="two">%s מיילים</item>
+    <item quantity="many">%s מיילים</item>
+    <item quantity="other">%s מיילים</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s קילומטר לשעה</item>
+    <item quantity="two">%s קילומטר לשעה</item>
+    <item quantity="many">%s קילומטר לשעה</item>
+    <item quantity="other">%s קילומטר לשעה</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s מייל לשעה</item>
+    <item quantity="two">%s מיילים לשעה</item>
+    <item quantity="many">%s מיילים לשעה</item>
+    <item quantity="other">%s מיילים לשעה</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">%d bpm</item>
+    <item quantity="two">%d bpm</item>
+    <item quantity="many">%d bpm</item>
+    <item quantity="other">%d bpm</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d rpm</item>
+    <item quantity="two">%d rpm</item>
+    <item quantity="many">%d rpm</item>
+    <item quantity="other">%d rpm</item>
+  </plurals>
+  <string name="cue_activity_paused">פעילות מושהית</string>
+  <string name="cue_activity_resumed">פעילות חודשה</string>
+  <string name="cue_activity_stopped">פעילות הופסקה</string>
+  <string name="cue_lap_started">הקפה החלה</string>
+  <string name="cue_lap_completed">הקפה הושלמה</string>
+  <string name="cue_warmup_started">חימום החל</string>
+  <string name="cue_cooldown_started">התקררות החלה</string>
+</resources>
