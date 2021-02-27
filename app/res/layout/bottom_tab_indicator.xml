@@ -6,7 +6,9 @@
     android:layout_height="56dp"
     android:layout_weight="1"
     android:orientation="vertical"
+    android:paddingStart="12dp"
     android:paddingLeft="12dp"
+    android:paddingEnd="12dp"
     android:paddingRight="12dp">
 
     <ImageView

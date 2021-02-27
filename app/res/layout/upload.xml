@@ -64,8 +64,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layout_alignParentEnd="true"
-    android:layout_above="@id/upload_account_action_buttons"
-    android:layout_alignParentRight="true">
+    android:layout_alignParentRight="true"
+    android:layout_above="@id/upload_account_action_buttons">
 
     <Button
       android:id="@+id/upload_account_set_all"
@@ -90,8 +90,8 @@
     android:layout_height="wrap_content"
     android:id="@+id/upload_account_action_buttons"
     android:layout_alignParentEnd="true"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true">
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true">
 
     <Button
       android:id="@+id/upload_account_button"

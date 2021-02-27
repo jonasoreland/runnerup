@@ -112,6 +112,7 @@
                             android:id="@+id/hr_indicator"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_marginRight="4dp"
                             android:contentDescription="@string/Heart_Rate_Monitor"
                             android:visibility="gone"
@@ -122,6 +123,7 @@
                             style="@style/StatusText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
                             android:layout_marginRight="8dp"
                             android:visibility="gone"
                             />
@@ -130,6 +132,7 @@
                             android:id="@+id/wearos_indicator"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_marginRight="4dp"
                             android:contentDescription="@string/Wear_OS_Device"
                             android:visibility="gone"
@@ -140,6 +143,7 @@
                             style="@style/StatusText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
                             android:layout_marginRight="8dp"
                             />
 
@@ -147,6 +151,7 @@
                             android:id="@+id/gps_indicator"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_marginRight="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
                             tools:ignore="ContentDescription"/>
@@ -173,6 +178,7 @@
                             android:id="@+id/gps_detail_indicator"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
                             android:layout_marginRight="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
                             tools:ignore="ContentDescription"/>
@@ -194,6 +200,7 @@
                     android:layout_height="16dp"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/status_frame"
+                    android:layout_toEndOf="@id/status_frame"
                     android:minWidth="48dp"
                     android:minHeight="48dp"
                     app:srcCompat="@drawable/ic_expand_up_white_24dp"
@@ -205,8 +212,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    tools:ignore="RelativeOverlap"/>
+                    tools:ignore="RelativeOverlap" />
 
             </RelativeLayout>
 
@@ -215,6 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="@dimen/activity_margin"
