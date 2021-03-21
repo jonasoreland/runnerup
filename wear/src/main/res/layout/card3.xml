@@ -99,6 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:paddingStart="40sp"
+            android:paddingEnd="40sp"
             android:paddingLeft="40sp"
             android:paddingRight="40sp">
 

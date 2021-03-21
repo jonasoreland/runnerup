@@ -40,7 +40,9 @@
             android:layout_height="48dp"
             android:gravity="center"
             android:orientation="horizontal"
+            android:paddingStart="16dp"
             android:paddingLeft="16dp"
+            android:paddingEnd="16dp"
             android:paddingRight="16dp">
 
             <TextView
@@ -204,6 +206,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
             android:drawablePadding="-32dp"
+            android:drawableEnd="@drawable/ic_av_play_arrow"
             android:drawableRight="@drawable/ic_av_play_arrow"
             android:text="@string/Resume" />
 

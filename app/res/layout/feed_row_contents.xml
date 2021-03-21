@@ -19,7 +19,9 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:layout_toStartOf="@id/feed_source"
         android:layout_toLeftOf="@id/feed_source"
+        android:layout_toEndOf="@id/feed_avatar"
         android:layout_toRightOf="@id/feed_avatar"
         android:ellipsize="end"
         android:maxLines="1"
@@ -31,8 +33,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/feed_person"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:ellipsize="end"
         android:maxLines="1" />
@@ -42,8 +46,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/feed_person"
+        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/feed_avatar"
         android:layout_toRightOf="@id/feed_avatar"
         tools:ignore="ContentDescription" />
 
@@ -53,8 +59,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/feed_person"
+        android:layout_marginStart="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/feed_sport_emblem"
         android:layout_toRightOf="@id/feed_sport_emblem" />
 
     <LinearLayout
@@ -62,9 +70,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/feed_sport"
         android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/feed_avatar"
         android:layout_toRightOf="@id/feed_avatar"
         android:orientation="horizontal">
 

@@ -22,8 +22,10 @@
     android:minWidth="48dp"
     android:minHeight="48dp"
     android:orientation="vertical"
+    android:paddingStart="16dp"
     android:paddingLeft="16dp"
     android:paddingTop="@dimen/dialog_padding_vert"
+    android:paddingEnd="16dp"
     android:paddingRight="16dp"
     android:paddingBottom="@dimen/dialog_padding_vert">
 
