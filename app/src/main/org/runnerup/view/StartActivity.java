@@ -22,7 +22,6 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -31,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -692,7 +692,7 @@ public class StartActivity extends AppCompatActivity
             final String[] permissions = new String[requestPerms.size()];
             requestPerms.toArray(permissions);
 
-            if (popup && (missingEssentialPermission || requestPerms.size() > 0)) {
+            if (popup && missingEssentialPermission || requestPerms.size() > 0) {
                 // Essential or requestable permissions missing
                 String baseMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                         ? getString(R.string.GPS_permission_text)
@@ -702,14 +702,21 @@ public class StartActivity extends AppCompatActivity
                         .setTitle(R.string.GPS_permission_required)
                         .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
+                    // Let Android request the permissions
                     builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
+                    builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
+                }
+                else if (popup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    // Open settings for the app (no direct shortcut to permissions)
+                    Intent intent = new Intent()
+                            .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            .setData(Uri.fromParts("package", getPackageName(), null));
+                    builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent));
                     builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
                 }
                 builder.show();
-            } else if (requestPerms.size() > 0) {
-                ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION);
             }
         }
 
