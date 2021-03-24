@@ -712,7 +712,7 @@ public class StartActivity extends AppCompatActivity
                             .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             .setData(Uri.fromParts("package", getPackageName(), null));
                     builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent));
-                    builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
+                    builder.setMessage(baseMessage + "\n\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
                 }
