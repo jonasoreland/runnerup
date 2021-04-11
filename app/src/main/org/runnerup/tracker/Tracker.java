@@ -892,7 +892,7 @@ public class Tracker extends android.app.Service implements
         }
 
         HRProvider hrProvider = trackerHRM.getHrProvider();
-        if (hrProvider == null)
+        if ((hrProvider == null) || !hrProvider.isConnected())
             return null;
 
         // now is elapsed nanosec, no sensor adjust needed
@@ -904,7 +904,7 @@ public class Tracker extends android.app.Service implements
 
     private Integer getCurrentHRValue(long now, long maxAge) {
         HRProvider hrProvider = trackerHRM.getHrProvider();
-        if (hrProvider == null)
+        if ((hrProvider == null) || !hrProvider.isConnected())
             return null;
 
         if (now > hrProvider.getHRValueTimestamp() + maxAge)
