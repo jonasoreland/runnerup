@@ -1009,6 +1009,8 @@ public class StartActivity extends AppCompatActivity
             Integer hrVal = mTracker.getCurrentHRValue();
             if (hrVal != null)
                 str.append(" ").append(hrVal);
+                Integer batteryLevel = mTracker.getCurrentBatteryLevel();
+                str.append(" ").append(batteryLevel).append("%");
         }
         return str.toString();
     }
