@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.ColorRes;
@@ -189,12 +190,12 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
      * @return the OkHttpClient containing basic auth
      */
     private OkHttpClient getAuthClient() {
-        return new OkHttpClient().newBuilder().authenticator((route, response) -> {
-            if (response.request().header("Authorization") != null) {
-                return null; // Give up, we've already failed to authenticate.
+        return new OkHttpClient().newBuilder().addInterceptor(chain -> {
+            if(!TextUtils.isEmpty(username) || !TextUtils.isEmpty(password)) {
+                String credentials = Credentials.basic(username, password);
+                return chain.proceed(chain.request().newBuilder().header("Authorization", credentials).build());
             }
-            String credential = Credentials.basic(username, password);
-            return response.request().newBuilder().header("Authorization", credential).build();
+            return chain.proceed(chain.request());
         }).build();
     }
 
