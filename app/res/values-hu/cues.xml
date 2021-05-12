@@ -18,7 +18,7 @@
   <string name="cue_interval">intervallum</string>
   <string name="cue_lap">kör</string>
   <string name="cue_warmup">bemelegítés</string>
-  <string name="cue_cooldown">levezetés</string>
+  <string name="cue_cooldown">regeneráció</string>
   <string name="cue_current">jelenlegi</string>
   <string name="cue_perkilometer">per kilométer</string>
   <string name="cue_permile">per mérföld</string>
@@ -62,8 +62,12 @@
     <item quantity="other">%s mérföld per óra</item>
   </plurals>
   <plurals name="cue_bpm">
-    <item quantity="one">%d ütés per perc</item>
-    <item quantity="other">%d ütés per perc</item>
+    <item quantity="one">%d szívverés percenként</item>
+    <item quantity="other">%d szívverés percenként</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d fordulat percenként</item>
+    <item quantity="other">%d fordulat percenként</item>
   </plurals>
   <string name="cue_activity_paused">tevékenység szüneteltetve</string>
   <string name="cue_activity_resumed">tevékenység folytatva</string>
