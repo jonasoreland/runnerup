@@ -373,6 +373,15 @@
             android:minHeight="48dp"
             android:persistent="true"
             android:title="@string/Mapbox_default_style" />
+
+        <org.runnerup.widget.TextPreference
+            android:defaultValue=""
+            android:inputType="text"
+            android:key="@string/pref_mapbox_custom_api_key"
+            android:minHeight="48dp"
+            android:persistent="true"
+            android:title="@string/custom_mapbox_api_key" />
+
     </PreferenceScreen>
 
     <PreferenceScreen

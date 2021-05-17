@@ -21,11 +21,13 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,6 +122,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private long mStartTime = 0; // activity start time in unix timestamp
 
+    private boolean isMapboxEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (BuildConfig.MAPBOX_ENABLED > 0) {
+            return true;
+        } else if (prefs.getString(getResources().getString(R.string.pref_mapbox_custom_api_key), "").startsWith("pk")) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Called when the activity is first created.
      */
@@ -127,7 +139,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (isMapboxEnabled()) {
             MapWrapper.start(this);
             setContentView(R.layout.detail);
         } else {
@@ -169,7 +181,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         sport = findViewById(R.id.summary_sport);
         notes = findViewById(R.id.notes_text);
 
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (isMapboxEnabled()) {
             Object mapView = findViewById(R.id.mapview);
             mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
             mapWrapper.onCreate(savedInstanceState);
@@ -203,7 +215,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (isMapboxEnabled()) {
             tabSpec = th.newTabSpec("map");
             tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
             tabSpec.setContent(R.id.tab_map);
