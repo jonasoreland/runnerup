@@ -110,6 +110,9 @@ public class OAuth2Activity extends AppCompatActivity {
         wv.setVerticalScrollBarEnabled(false);
         wv.setHorizontalScrollBarEnabled(false);
         wv.getSettings().setJavaScriptEnabled(true);
+        // https://stackoverflow.com/questions/40591090/403-error-thats-an-error-error-disallowed-useragent
+        // I think any mobile browser user-agent should work here
+        wv.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 10; Android SDK built for x86) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.185 Mobile Safari/537.36");
         setSavedPassword(wv, false);
 
         StringBuilder tmp = new StringBuilder();
