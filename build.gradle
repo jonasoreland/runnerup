@@ -20,14 +20,14 @@ project.ext {
     compileSdkVersion = 29 //Update Travis manually
     targetSdkVersion = 29
 
-    appcompat_version = "1.2.0"
-    annotation_version = "1.1.0"
+    appcompat_version = "1.3.1"
+    annotation_version = "1.2.0"
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.3.0'
 
-    junitVersion = '4.12'
-    mockitoVersion = '2.3.7'
+    junitVersion = '4.13.2'
+    mockitoVersion = '3.11.2'
 
     //The Git tag for the release must be identical for F-Droid
     versionName = '2.3.6.0'
