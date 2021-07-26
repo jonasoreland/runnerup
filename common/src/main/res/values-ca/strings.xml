@@ -292,6 +292,11 @@
   <string name="Share_workout">Comparteix l\'entrenament…</string>
   <string name="New_audio_scheme">Nou esquema d\'àudio</string>
   <string name="GPS_permission_required">Es requereix el permís del GPS</string>
+  <string name="GPS_permission_text_pre_Android10">Habiliteu el permís d\'ubicació a les opcions del sistema</string>
+  <string name="GPS_permission_text">Es requereix que permeteu l\'accés d\'ubicació a les opcions de sistema.\nTambé és necessari en l\'activitat física de córrer.</string>
+  <string name="Request_permission_text">Habiliteu el permís tocant «D\'acord».</string>
+  <string name="Battery_optimization_check">Optimització de bateria habilitada</string>
+  <string name="Battery_optimization_check_text">L\'optimització de la bateria disminueix la precisió.\nToqueu «D\'acord» o bé cerqueu el «RunnerUp» a l\'apartat «Aplicacions» de les opcions del sistema i seleccioneu «No optimitzis».</string>
   <string name="Default">Per defecte</string>
   <string name="Notes_about_your_workout">Notes d\'entrenament</string>
   <string name="Downloading_from_1s">Descarregant des de %1$s</string>
@@ -336,4 +341,6 @@
   <string name="path_simplification_menu">Simplifica la ruta</string>
   <string name="File_format">Carrega els fitxers com a:</string>
   <string name="File_need_one_format">Heu d\'especificar almenys un format.</string>
+  <string name="tts_not_available_title">Text a veu no està disponible</string>
+  <string name="tts_not_available">El RunnerUp necessita un motor Text a veu per reproduir senyals d\'àudio. Assegureu-vos que teniu almenys un instal·lat correctament per utilitzar aquesta característica.</string>
 </resources>
