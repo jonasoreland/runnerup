@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 4.1.0" client="gradle" variant="latestRelease" version="4.1.0">
-
-    <issue
-        id="ScopedStorage"
-        message="WRITE_EXTERNAL_STORAGE no longer provides write access when targeting Android 10, unless you use `requestLegacyExternalStorage`"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; android:maxSdkVersion=&quot;28&quot;/>"
-        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="AndroidManifest.xml"
-            line="30"
-            column="36"/>
-    </issue>
+<issues format="5" by="lint 4.2.2" client="gradle" variant="latestRelease" version="4.2.2">
 
     <issue
         id="UnusedAttribute"
@@ -18,7 +7,7 @@
         errorLine1="    android:importantForAccessibility=&quot;no&quot;"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res\layout\bottom_tab_indicator.xml"
+            file="res/layout/bottom_tab_indicator.xml"
             line="4"
             column="5"/>
     </issue>
@@ -29,7 +18,7 @@
         errorLine1="            android:importantForAccessibility=&quot;no&quot;"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res\layout\hr_settings.xml"
+            file="res/layout/hr_settings.xml"
             line="98"
             column="13"/>
     </issue>
@@ -40,7 +29,7 @@
         errorLine1="                android:importantForAccessibility=&quot;no&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res\layout\userpass.xml"
+            file="res/layout/userpass.xml"
             line="45"
             column="17"/>
     </issue>
@@ -51,8 +40,8 @@
         errorLine1="                android:importantForAccessibility=&quot;no&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res\layout\userpass.xml"
-            line="70"
+            file="res/layout/userpass.xml"
+            line="71"
             column="17"/>
     </issue>
 
@@ -62,8 +51,8 @@
         errorLine1="                android:importantForAccessibility=&quot;no&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res\layout\userpass.xml"
-            line="96"
+            file="res/layout/userpass.xml"
+            line="98"
             column="17"/>
     </issue>
 
@@ -73,7 +62,7 @@
         errorLine1="        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src\main\org\runnerup\view\MainLayout.java"
+            file="src/main/org/runnerup/view/MainLayout.java"
             line="77"
             column="9"/>
     </issue>
@@ -84,8 +73,19 @@
         errorLine1="        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src\main\org\runnerup\view\RunActivity.java"
+            file="src/main/org/runnerup/view/RunActivity.java"
             line="116"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="UsingOnClickInXml"
+        message="Use databinding or explicit wiring of click listener in code"
+        errorLine1="        android:onClick=&quot;onClickAccountName&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/layout/reportlist_row.xml"
+            line="35"
             column="9"/>
     </issue>
 
@@ -93,9 +93,9 @@
         id="IconDuplicates"
         message="The following unrelated icon files have identical contents: title_spinner_pressed.9.png, title_spinner_selected.9.png">
         <location
-            file="res\drawable-hdpi\title_spinner_selected.9.png"/>
+            file="res/drawable-hdpi/title_spinner_selected.9.png"/>
         <location
-            file="res\drawable-hdpi\title_spinner_pressed.9.png"/>
+            file="res/drawable-hdpi/title_spinner_pressed.9.png"/>
     </issue>
 
 </issues>
