@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -26,13 +26,11 @@
   <string name="Maximum_heart_rate_MHR">Maximální rychlost tepu (MHR)</string>
   <string name="Target_pace_HHMMSS">Cílové tempo</string>
   <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s v %2$s</string>
   <string name="Type">Typ</string>
   <string name="active">aktivní</string>
   <string name="rest">odpočinek</string>
   <string name="recovery">zotavení</string>
-  <string name="warm_up">rozehřátí</string>
-  <string name="cool_down">zklidnění</string>
-  <string name="repeat">opakování</string>
   <string name="time">čas</string>
   <string name="distance">vzdálenost</string>
   <string name="Distance">Vzdálenost</string>
@@ -55,12 +53,16 @@
   <string name="New_lap">Nové kolo</string>
   <string name="Pause">Pauza</string>
   <string name="Stop">Zastavit</string>
+  <string name="Workout">Trénink</string>
+  <string name="Download_workouts">Stáhnout tréninky</string>
+  <string name="Audio_cue_settings">Nastavení zvukových pokynů</string>
   <string name="Sport">Sport</string>
   <string name="Target">Cíl</string>
   <string name="Rest_type">Typ odpočinku</string>
   <string name="Repetitions">Opakování</string>
   <string name="Date">Datum</string>
   <string name="GPS_satellites">GPS satelity</string>
+  <string name="GPS_indicator_off">GPS vypnuto</string>
   <string name="Start_GPS">Spustit GPS</string>
   <string name="Duration">Trvání</string>
   <string name="Cancel">Zrušit</string>
@@ -85,7 +87,15 @@
   <string name="Until_press">Do stisknutí</string>
   <string name="Discard_activity">Zrušit aktivitu</string>
   <string name="Configure_accounts">Nastavit účty</string>
+  <string name="Refresh">Aktualizovat</string>
+  <string name="Age">Věk</string>
   <string name="OK">OK</string>
+  <string name="accounts_category_connected">Spravovat připojení</string>
+  <string name="accounts_category_unconnected">Připojit účet</string>
+  <string name="Show_disabled_accounts">Zobrazit deaktivované účty</string>
+  <string name="Hide_disabled_accounts">Skrýt deaktivované účty</string>
+  <string name="Upload_missing_workouts">Nahrát chybějící tréninky</string>
+  <string name="Disconnect_account">Odpojit účet</string>
   <string name="Edit_activity">Upravit aktivitu</string>
   <string name="Share_activity">Sdílet aktivitu</string>
   <string name="Delete_activity">Smazat aktivitu</string>
@@ -94,11 +104,27 @@
   <string name="Yes">Ano</string>
   <string name="Create">Vytvořit</string>
   <string name="No">Ne</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Čeká se na telefon</string>
+  <string name="my_phone">Můj telefon</string>
+  <string name="Import_workout">Importovat trénink</string>
+  <string name="Create_new_workout">Vytvořit nový trénink</string>
+  <string name="Delete_workout">Odstranit trénink</string>
+  <string name="RunnerUp_workout">RunnerUp trénink</string>
+  <string name="Share_workout">Sdílet trénink…</string>
+  <string name="Default">Výchozí</string>
   <string name="Downloading_from_1s">Stahuji z %1$s</string>
   <string name="Uploading_to_1s">Nahrávám na %1$s</string>
+  <string name="Loading_activities">Načítají se aktivity</string>
+  <string name="Unknown">Neznámé</string>
   <string name="Recording">Nahrávám</string>
   <string name="Sensors">Senzory</string>
   <string name="Maintenance">Údržba</string>
   <string name="use_step_sensor_title">Senzor kroků</string>
   <string name="use_pressure_sensor_title">Tlakový senzor</string>
+  <string name="Speed">Rychlost</string>
+  <string name="Speed_unit_preference">Jednotka rychlosti</string>
+  <string name="path_simplification_tolerance">Tolerance (m)</string>
+  <string name="path_simplification_algorithm">Algoritmus</string>
+  <string name="path_simplification_menu">Zjednodušit cestu</string>
+  <string name="File_format">Nahrát soubory jako:</string>
 </resources>
