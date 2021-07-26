@@ -110,9 +110,9 @@ android {
 
 repositories {
     google()
-    jcenter()
     mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
+    jcenter() // com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2
 }
 
 dependencies {
