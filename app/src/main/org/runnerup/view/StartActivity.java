@@ -968,10 +968,10 @@ public class StartActivity extends AppCompatActivity
     public String getGpsAccuracyString(float accuracy) {
         String res = "";
         if (accuracy > 0) {
-            String accString = formatter.formatElevation(Formatter.Format.TXT_SHORT, accuracy);
+            String accString = formatter.formatElevation(Formatter.Format.TXT_LONG, accuracy);
             if (mTracker.getCurrentElevation() != null) {
                 res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
-                        accString, formatter.formatElevation(Formatter.Format.TXT_SHORT, mTracker.getCurrentElevation()));
+                        accString, formatter.formatElevation(Formatter.Format.TXT_LONG, mTracker.getCurrentElevation()));
             } else {
                 res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
                         accString);
@@ -983,10 +983,11 @@ public class StartActivity extends AppCompatActivity
                 Location l = mTracker.getLastKnownLocation();
 
                 if (l != null) {
-                    res += " ["
-                            + l.getVerticalAccuracyMeters() + " m, "
-                            + l.getSpeedAccuracyMetersPerSecond() + " m/s, "
-                            + l.getBearingAccuracyDegrees() + " deg]";
+                    res += String.format(Locale.getDefault(), " [%1$s, %2$s/%3$s/s, %4$.1f/%5$.1f deg]",
+                            formatter.formatElevation(Formatter.Format.TXT_LONG, l.getVerticalAccuracyMeters()),
+                            formatter.formatElevation(Formatter.Format.TXT_SHORT, l.getSpeed()),
+                            formatter.formatElevation(Formatter.Format.TXT_LONG, l.getSpeedAccuracyMetersPerSecond()),
+                            l.getBearing(), l.getBearingAccuracyDegrees());
                 }
             }
         }

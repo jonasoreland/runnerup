@@ -488,7 +488,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param meters_per_second speed in m/s
      * @return display value
      */
-    public String formatVelocityByPreferredUnit(Format target, Double meters_per_second) {
+    public String formatVelocityByPreferredUnit(Format target, double meters_per_second) {
         String paceTextUnit = this.sharedPreferences
                 .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
         if(paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
@@ -520,7 +520,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param meters_per_second speed in m/s
      * @return
      */
-    public String formatPaceSpeed(Format target, Double meters_per_second) {
+    public String formatPaceSpeed(Format target, double meters_per_second) {
         switch (target) {
             case CUE:
             case CUE_SHORT:
