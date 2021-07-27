@@ -63,10 +63,41 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         TextView tv = row.findViewById(R.id.zonetext);
         EditText lo = row.findViewById(R.id.zonelo);
         EditText hi = row.findViewById(R.id.zonehi);
+        // disable setting the hi value
+        hi.setKeyListener(null);
+        hi.setEnabled(false);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
         tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
+
+        lo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            int loZone = zone;
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // When focus is lost, check that the text field has valid values.
+                if (!hasFocus) {
+                    // Validate
+                    int prevZoneRow = loZone - 2;
+                    int loHR = Integer.parseInt(lo.getText().toString());
+
+                    if (prevZoneRow >= 0) {
+                        //Check that the lo's are in increasing order
+                        int prevLoHR = Integer.parseInt(zones.get(2 * prevZoneRow).getText().toString());
+                        if (loHR <= prevLoHR) {
+                            // lo's are out of order, use some default
+                            loHR = prevLoHR +1;
+                            lo.setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                        // update the previous row's hi to the current row's lo
+                        zones.get(2 * prevZoneRow + 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+                    }
+
+                }
+            }
+        });
+
         zones.add(lo);
         zones.add(hi);
 
