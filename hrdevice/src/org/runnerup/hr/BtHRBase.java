@@ -29,8 +29,6 @@ abstract class BtHRBase implements HRProvider {
             .fromString("0000180f-0000-1000-8000-00805f9b34fb");
     static final UUID FIRMWARE_REVISON_UUID = UUID
             .fromString("00002a26-0000-1000-8000-00805f9b34fb");
-    static final UUID HARDWARE_REVISON_UUID = UUID
-            .fromString("00002a27-0000-1000-8000-00805f9b34fb");
     static final UUID DIS_UUID = UUID
             .fromString("0000180a-0000-1000-8000-00805f9b34fb");
     static final UUID HEART_RATE_MEASUREMENT_CHARAC = UUID
@@ -39,9 +37,6 @@ abstract class BtHRBase implements HRProvider {
             .fromString("00002A19-0000-1000-8000-00805f9b34fb");
     static final UUID CCC = UUID
             .fromString("00002902-0000-1000-8000-00805f9b34fb");
-
-    static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Xiomi +Mi)");
-    static boolean huamiMatcherFound = false;
 
     HRProvider.HRClient hrClient;
     Handler hrClientHandler;
