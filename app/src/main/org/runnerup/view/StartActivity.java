@@ -273,11 +273,6 @@ public class StartActivity extends AppCompatActivity
         advancedStepList = findViewById(R.id.advanced_step_list);
         advancedStepList.setDividerHeight(0);
         advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
-        advancedDownloadWorkoutButton = findViewById(R.id.advanced_download_button);
-        advancedDownloadWorkoutButton.setOnClickListener(v -> {
-            Intent intent = new Intent(StartActivity.this, ManageWorkoutsActivity.class);
-            StartActivity.this.startActivityForResult(intent, 113);
-        });
 
         if (getParent() != null && getParent().getIntent() != null) {
             Intent i = getParent().getIntent();
@@ -1161,7 +1156,6 @@ public class StartActivity extends AppCompatActivity
             advancedWorkout = WorkoutSerializer.readFile(ctx, name);
             advancedWorkoutStepsAdapter.steps = advancedWorkout.getStepList();
             advancedWorkoutStepsAdapter.notifyDataSetChanged();
-            advancedDownloadWorkoutButton.setVisibility(View.GONE);
         } catch (Exception ex) {
             ex.printStackTrace();
             new AlertDialog.Builder(StartActivity.this)
