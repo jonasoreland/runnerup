@@ -111,8 +111,6 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     int zoneCount = hrZoneCalculator.getZoneCount();
                     int zoneDiff = zoneCount - loZone;
 
-                    System.err.println("loZone="+loZone);
-
                     // each zone should have at least one HR beat
                     if (loHR > maxHR - zoneDiff) {
                         loHR = maxHR - zoneDiff;
