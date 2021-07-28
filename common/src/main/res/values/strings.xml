@@ -60,7 +60,6 @@
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Lap</string>
-  <string name="New_lap">New lap</string>
   <string name="Pause">Pause</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Workout</string>
@@ -96,7 +95,7 @@
   <string name="Low_pace">Low pace</string>
   <string name="High_pace">High pace</string>
   <string name="Sex">Sex</string>
-  <string name="upload">upload</string>
+  <string name="upload">Upload</string>
   <string name="feed">Feed</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Laps</string>
@@ -105,12 +104,9 @@
   <string name="Upload">Upload</string>
   <string name="Disconnect">Disconnect</string>
   <string name="Resume">Resume</string>
-  <string name="Save_activity">Save activity</string>
-  <string name="Upload_activity">Upload activity</string>
   <string name="Uploaded">Uploaded</string>
   <string name="Finished">Finished</string>
   <string name="Until_press">Until press</string>
-  <string name="Discard_activity">Discard activity</string>
   <string name="Configure_accounts">Edit accounts</string>
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>

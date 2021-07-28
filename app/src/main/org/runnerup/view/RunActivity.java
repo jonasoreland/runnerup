@@ -225,7 +225,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         populateWorkoutList();
         newLapButton.setOnClickListener(newLapButtonClick);
-        newLapButton.setText(R.string.New_lap);
+        newLapButton.setText(R.string.Lap);
         mTracker.displayNotificationState();
     }
 
