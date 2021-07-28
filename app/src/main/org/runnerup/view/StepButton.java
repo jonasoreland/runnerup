@@ -300,10 +300,11 @@ public class StepButton extends LinearLayout {
                         targetHrz.setEnabled(true);
                         targetHrz.setVisibility(View.VISIBLE);
                         if (target != null) {
-                            int matchedZone=hrZonesAdapter.hrZones.match(target.minValue,
-                                    target.maxValue)-2;
-                            if (matchedZone<0)
-                                matchedZone=0;
+                            int matchedZone = hrZonesAdapter.hrZones.match(target.minValue,
+                                    target.maxValue) - 2;
+                            if (matchedZone < 0) {
+                                matchedZone = 0;
+                            }
                             targetHrz.setValue(matchedZone);
                         } else {
                             targetHrz.setValue(0);
@@ -311,8 +312,7 @@ public class StepButton extends LinearLayout {
                         break;
                     default:
                         targetPaceLo.setEnabled(false);
-                        targetPaceHi
-                                .setEnabled(false);
+                        targetPaceHi.setEnabled(false);
                         targetHrz.setEnabled(false);
                         break;
                 }
