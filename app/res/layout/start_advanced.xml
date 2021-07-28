@@ -53,7 +53,7 @@
         android:id="@+id/advanced_step_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/advanced_download_button"
+        android:layout_alignParentBottom="true"
         android:layout_below="@id/advanced_workout_spinner"
         android:background="@color/subsectionBg"
         android:cacheColorHint="@color/subsectionBg"
@@ -65,16 +65,5 @@
         android:paddingTop="@dimen/activity_margin"
         android:paddingBottom="@dimen/margin_for_fab"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
-
-    <Button
-        android:id="@+id/advanced_download_button"
-        style="@style/ButtonText"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:background="@drawable/btn_blue"
-        android:text="@string/Download_workouts" />
 
 </RelativeLayout>
