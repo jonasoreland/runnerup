@@ -223,7 +223,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
             android:singleLine="false"
-            android:text="@string/Upload_activity" />
+            android:text="@string/upload" />
 
         <Button
             android:id="@+id/save_button"
@@ -231,7 +231,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_green"
-            android:text="@string/Save_activity" />
+            android:text="@string/Save" />
 
         <Button
             android:id="@+id/discard_button"
@@ -239,7 +239,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_red"
-            android:text="@string/Discard_activity" />
+            android:text="@string/Discard" />
     </LinearLayout>
 
 </RelativeLayout>

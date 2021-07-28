@@ -273,7 +273,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_blue"
-            android:text="@string/New_lap"
+            android:text="@string/Lap"
             android:drawableEnd="@drawable/ic_av_newlap"
             android:drawableRight="@drawable/ic_av_newlap"
             android:drawablePadding="-32dp" />

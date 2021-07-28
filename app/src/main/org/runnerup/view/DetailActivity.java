@@ -785,7 +785,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener discardButtonClick = v -> {
         new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(R.string.Discard_activity)
+                .setTitle(R.string.Discard)
                 .setMessage(R.string.Are_you_sure)
                 .setPositiveButton(R.string.Yes,
                         (dialog, which) -> {
