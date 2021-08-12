@@ -86,7 +86,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     @Override
     public void init(ContentValues config) {
-        //Note that only auth_config can be expected here
+        //Note that only auth_config and _id can be expected here
         //Other config can be retrieved from db in Upload()
     }
 

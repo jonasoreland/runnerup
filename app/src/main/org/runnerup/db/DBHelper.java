@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
+import org.runnerup.export.AlgorandSynchronizer;
 import org.runnerup.export.DropboxSynchronizer;
 import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
@@ -463,6 +464,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         //The accounts must exist in the database, but normally the default values are sufficient
         //ENABLED, FLAGS need to be set if ever changed (like disabled or later enabled)
         //"Minor changes" like adding a new syncher can be handled with updating DB.DBINFO.ACCOUNT_VERSION
+        insertAccount(arg0, AlgorandSynchronizer.NAME, 1);
         insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
         insertAccount(arg0, RunningAHEADSynchronizer.NAME, 0);
         insertAccount(arg0, StravaSynchronizer.NAME, 1);

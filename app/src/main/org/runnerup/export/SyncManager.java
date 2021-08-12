@@ -24,6 +24,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -41,6 +42,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.PathSimplifier;
@@ -62,6 +65,7 @@ import org.runnerup.feedwidget.FeedWidgetProvider;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Encryption;
+import org.runnerup.util.Formatter;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -181,24 +185,36 @@ public class SyncManager {
         }
 
         Synchronizer synchronizer = null;
-        if (synchronizerName.contentEquals(RunKeeperSynchronizer.NAME)) {
-            synchronizer = new RunKeeperSynchronizer(this,simplifier);
-        } else if (synchronizerName.contentEquals(RunningAHEADSynchronizer.NAME)) {
-            synchronizer = new RunningAHEADSynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(RunnerUpLiveSynchronizer.NAME)) {
-            synchronizer = new RunnerUpLiveSynchronizer(mContext);
-        } else if (synchronizerName.contentEquals(StravaSynchronizer.NAME)) {
-            synchronizer = new StravaSynchronizer(this, simplifier);
-        } else if (synchronizerName.contentEquals(FileSynchronizer.NAME)) {
-            synchronizer = new FileSynchronizer(mContext, simplifier);
-        } else if (synchronizerName.contentEquals(RunalyzeSynchronizer.NAME)) {
-            synchronizer = new RunalyzeSynchronizer(simplifier);
-        } else if (synchronizerName.contentEquals(DropboxSynchronizer.NAME)) {
-            synchronizer = new DropboxSynchronizer(mContext, simplifier);
-        } else if (synchronizerName.contentEquals(WebDavSynchronizer.NAME)) {
-            synchronizer = new WebDavSynchronizer(simplifier);
-        } else {
-            Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
+        switch(synchronizerName) {
+            case RunKeeperSynchronizer.NAME:
+                synchronizer = new RunKeeperSynchronizer(this,simplifier);
+                break;
+            case RunningAHEADSynchronizer.NAME:
+                synchronizer = new RunningAHEADSynchronizer(this, simplifier);
+                break;
+            case RunnerUpLiveSynchronizer.NAME:
+                synchronizer = new RunnerUpLiveSynchronizer(mContext);
+                break;
+            case StravaSynchronizer.NAME:
+                synchronizer = new StravaSynchronizer(this, simplifier);
+                break;
+            case FileSynchronizer.NAME:
+                synchronizer = new FileSynchronizer(mContext, simplifier);
+                break;
+            case RunalyzeSynchronizer.NAME:
+                synchronizer = new RunalyzeSynchronizer(simplifier);
+                break;
+            case DropboxSynchronizer.NAME:
+                synchronizer = new DropboxSynchronizer(mContext, simplifier);
+                break;
+            case WebDavSynchronizer.NAME:
+                synchronizer = new WebDavSynchronizer(simplifier);
+                break;
+            case AlgorandSynchronizer.NAME:
+                synchronizer = new AlgorandSynchronizer(mContext);
+                break;
+            default:
+                Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
         }
 
         if (synchronizer != null) {
@@ -259,6 +275,11 @@ public class SyncManager {
                 }, synchronizer, s.authMethod);
                 return;
 
+            case ERROR:
+                if (s.ex != null) {
+                    // TODO: Display error message if there is an atta
+                }
+
             default:
                 synchronizer.reset();
                 callback.run(name, s);
@@ -295,6 +316,9 @@ public class SyncManager {
             case USER_PASS:
             case USER_PASS_URL:
                 askUsernamePassword(l, authMethod);
+                return;
+            case ENABLE:
+                askEnable(l, authMethod);
                 return;
             case FILEPERMISSION:
                 checkStoragePermissions(mActivity);
@@ -334,6 +358,49 @@ public class SyncManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void askEnable(final Synchronizer sync, final AuthMethod authMethod) {
+        final View view = View.inflate(mActivity, R.layout.enable, null);
+        final ToggleButton tb = view.findViewById(R.id.enable_toggle_button);
+        String authConfigStr = sync.getAuthConfig();
+        final TextView tvAuthNotice = view.findViewById(R.id.enable_textViewAuthNotice);
+        final JSONObject authConfig = newObj(authConfigStr);
+        Boolean enabled = authConfig != null ? authConfig.optBoolean("enabled", false) : false;
+        tb.setChecked(enabled);
+
+        if (sync.getAuthNotice() != 0) {
+            tvAuthNotice.setVisibility(View.VISIBLE);
+            tvAuthNotice.setText(sync.getAuthNotice());
+        } else {
+            tvAuthNotice.setVisibility(View.GONE);
+        }
+
+        new AlertDialog.Builder(mActivity)
+                .setTitle(sync.getName())
+
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                .setView(view)
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                    ContentValues tmp = new ContentValues();
+                    tmp.put("enabled", tb.isChecked());
+                    ContentValues config = new ContentValues();
+                    config.put("_id", sync.getId());
+                    // TODO: Can this be part of the interface instead of a static function?
+                    config.put(DB.ACCOUNT.AUTH_CONFIG, AlgorandSynchronizer.contentValuesToAuthConfig(tmp));
+                    sync.init(config);
+                    handleAuthComplete(sync, sync.connect());
+                })
+                .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> {
+                    if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                        handleAuthComplete(sync, Status.CANCEL);
+                    }
+                    return false;
+                })
+                .show();
     }
 
     private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
@@ -476,6 +543,7 @@ public class SyncManager {
                     tmp.put(DB.ACCOUNT.URL, uri);
                     ContentValues config = new ContentValues();
                     config.put("_id", sync.getId());
+                    // TODO: Can this be part of the interface instead of a static function?
                     config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
                     sync.init(config);
 

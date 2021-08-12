@@ -106,6 +106,12 @@ android {
         textReport true
         textOutput 'stdout'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 repositories {
@@ -121,6 +127,7 @@ dependencies {
 
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
+    implementation 'androidx.test:core:1.4.0'
 
     latestImplementation "com.google.android.material:material:1.2.1"
     if (rootProject.ext.enableWear) {
@@ -144,6 +151,7 @@ dependencies {
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+    testImplementation "org.robolectric:robolectric:4.5.1"
 }
 
 allprojects {

@@ -89,6 +89,7 @@
   <string name="value">value</string>
   <string name="Select_all">Select all</string>
   <string name="Clear_all">Clear all</string>
+  <string name="Enable">Enable</string>
   <string name="Username">Username</string>
   <string name="Password">Password</string>
   <string name="Show_password">Show password</string>
@@ -346,4 +347,5 @@
   <string name="File_need_one_format">You must specify at least one format</string>
   <string name="tts_not_available_title">Text to Speech is not available</string>
   <string name="tts_not_available">RunnerUp requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
+  <string name="algorand_enable_text">During upload the Algorand Wallet is used to securely write to the blockchain.</string>
 </resources>
