@@ -31,8 +31,6 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName = version
 
         if (rootProject.ext.antPlusLib) {
             buildConfigField 'Boolean', 'ANTPLUS_ENABLED', "true"

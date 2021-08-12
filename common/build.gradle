@@ -12,8 +12,6 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName '1.0'
         // Default, needed by test
         buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '"')
     }
