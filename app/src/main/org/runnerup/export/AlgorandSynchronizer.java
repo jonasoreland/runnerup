@@ -101,7 +101,10 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
         return tmp.toString();
     }
 
-    static public String contentValuesToAuthConfig(ContentValues config) {
+
+    @NonNull
+    @Override
+    public String overrideAuthConfig(ContentValues config) {
         AlgorandSynchronizer f = new AlgorandSynchronizer();
         f.enabled = config.getAsBoolean("enabled");
         return f.getAuthConfig();

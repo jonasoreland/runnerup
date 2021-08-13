@@ -115,6 +115,14 @@ public interface Synchronizer {
     void init(ContentValues config);
 
     /**
+     * Override auth config with given values and return the new auth config string.
+     * @param config
+     * @return
+     */
+    @NonNull
+    String overrideAuthConfig(ContentValues config);
+
+    /**
      * The synchronizer specific config format
      */
     @NonNull

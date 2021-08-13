@@ -106,8 +106,14 @@ public class FileSynchronizer extends DefaultSynchronizer {
 
     static public String contentValuesToAuthConfig(ContentValues config) {
         FileSynchronizer f = new FileSynchronizer();
-        f.mPath = config.getAsString(DB.ACCOUNT.URL);
-        return f.getAuthConfig();
+        return f.overrideAuthConfig(config);
+    }
+
+    @NonNull
+    @Override
+    public String overrideAuthConfig(ContentValues config) {
+        mPath = config.getAsString(DB.ACCOUNT.URL);
+        return getAuthConfig();
     }
 
     @Override

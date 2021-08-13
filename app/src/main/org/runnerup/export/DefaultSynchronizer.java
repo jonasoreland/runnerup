@@ -92,6 +92,12 @@ public abstract class DefaultSynchronizer implements Synchronizer {
 
     @NonNull
     @Override
+    public String overrideAuthConfig(ContentValues config) {
+        throw new UnsupportedOperationException("Override not implemented for this synchronizer.");
+    }
+
+    @NonNull
+    @Override
     public abstract String getAuthConfig();
 
     /**

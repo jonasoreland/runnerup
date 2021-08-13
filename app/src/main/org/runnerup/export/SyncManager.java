@@ -277,7 +277,8 @@ public class SyncManager {
 
             case ERROR:
                 if (s.ex != null) {
-                    // TODO: Display error message if there is an atta
+                    // TODO: Display error message if there is an attached exception
+                    //       currently errors here are ignored.
                 }
 
             default:
@@ -387,8 +388,7 @@ public class SyncManager {
                     tmp.put("enabled", tb.isChecked());
                     ContentValues config = new ContentValues();
                     config.put("_id", sync.getId());
-                    // TODO: Can this be part of the interface instead of a static function?
-                    config.put(DB.ACCOUNT.AUTH_CONFIG, AlgorandSynchronizer.contentValuesToAuthConfig(tmp));
+                    config.put(DB.ACCOUNT.AUTH_CONFIG, sync.overrideAuthConfig(tmp));
                     sync.init(config);
                     handleAuthComplete(sync, sync.connect());
                 })
@@ -543,8 +543,7 @@ public class SyncManager {
                     tmp.put(DB.ACCOUNT.URL, uri);
                     ContentValues config = new ContentValues();
                     config.put("_id", sync.getId());
-                    // TODO: Can this be part of the interface instead of a static function?
-                    config.put(DB.ACCOUNT.AUTH_CONFIG, FileSynchronizer.contentValuesToAuthConfig(tmp));
+                    config.put(DB.ACCOUNT.AUTH_CONFIG, sync.overrideAuthConfig(tmp));
                     sync.init(config);
 
                     handleAuthComplete(sync, sync.connect());
