@@ -134,8 +134,9 @@ public interface Synchronizer {
 
     /**
      * Called during the auth process for additional permission checks.
+     * @throws Exception if there was a permissions problem.
      */
-    void validatePermissions(AppCompatActivity activity, Context ocntext);
+    void validatePermissions(AppCompatActivity activity, Context context) throws Exception;
 
     /**
      * Is synchronizer configured

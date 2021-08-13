@@ -121,8 +121,10 @@ public class FileSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public void validatePermissions(AppCompatActivity activity, Context context) {
-        checkStoragePermissions(activity);
+    public void validatePermissions(AppCompatActivity activity, Context context) throws Exception {
+        if (!checkStoragePermissions(activity)) {
+            throw new Exception(context.getString(R.string.filesynch_permission_required));
+        }
     }
 
     @SuppressWarnings("UnusedReturnValue")

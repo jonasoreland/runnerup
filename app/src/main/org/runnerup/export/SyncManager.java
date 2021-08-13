@@ -310,20 +310,31 @@ public class SyncManager {
     private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
         authCallback = callback;
-        l.validatePermissions(mActivity, mContext);
-        switch (authMethod) {
-            case OAUTH2:
-                mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
-                return;
-            case USER_PASS:
-            case USER_PASS_URL:
-                askUsernamePassword(l, authMethod);
-                return;
-            case ENABLE:
-                askEnable(l, authMethod);
-                return;
-            case FILEPERMISSION:
-                askFileUrl(l);
+        try {
+            l.validatePermissions(mActivity, mContext);
+
+            switch (authMethod) {
+                case OAUTH2:
+                    mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
+                    return;
+                case USER_PASS:
+                case USER_PASS_URL:
+                    askUsernamePassword(l, authMethod);
+                    return;
+                case ENABLE:
+                    askEnable(l, authMethod);
+                    return;
+                case FILEPERMISSION:
+                    askFileUrl(l);
+            }
+        } catch (Exception ex) {
+            Status s = Status.ERROR;
+            s.ex = ex;
+            handleAuthComplete(l, s);
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.Error)
+                    .setMessage(s.ex.getMessage())
+                    .show();
         }
     }
 

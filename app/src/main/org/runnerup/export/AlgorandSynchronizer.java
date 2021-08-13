@@ -20,6 +20,7 @@ package org.runnerup.export;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
@@ -139,29 +140,21 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public void validatePermissions(AppCompatActivity activity, Context context) {
-        checkWalletApp(activity, context);
+    public void validatePermissions(AppCompatActivity activity, Context context) throws Exception {
+        if (!appInstalledOrNot("com.algorand.android")) {
+            throw new Exception(mContext.getString(R.string.algorand_app_required));
+        }
     }
 
-    /**
-     * check if algorand wallet is installed.
-     * @return
-     */
-    public void checkWalletApp(AppCompatActivity activity, Context context) {
-        // TODO: How to test if the Algorand Wallet is installed
-        //       without switching to it.
-        /*
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme));
-        //intent.setDataAndType(Uri.parse(scheme), "text/plain");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+    private boolean appInstalledOrNot(String uri) {
+        PackageManager pm = mContext.getPackageManager();
         try {
-            mContext.startActivity(intent);
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
         }
-        catch (ActivityNotFoundException e) {
-            return false;
-        }
-        */
+
+        return false;
     }
 
     @NonNull
