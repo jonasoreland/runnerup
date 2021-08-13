@@ -18,6 +18,7 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -111,6 +112,9 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         Log.e(getName(), "getAuthIntent: getAuthIntent must be implemented for OAUTH2");
         return new Intent();
     }
+
+    @Override
+    public void validatePermissions(AppCompatActivity activity, Context context) { }
 
     @Override
     public boolean isConfigured() {

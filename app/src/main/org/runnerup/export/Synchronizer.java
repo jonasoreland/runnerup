@@ -18,6 +18,7 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
@@ -130,6 +131,11 @@ public interface Synchronizer {
 
     @NonNull
     Intent getAuthIntent(AppCompatActivity activity);
+
+    /**
+     * Called during the auth process for additional permission checks.
+     */
+    void validatePermissions(AppCompatActivity activity, Context ocntext);
 
     /**
      * Is synchronizer configured

@@ -34,6 +34,8 @@ import android.util.Log;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
@@ -55,6 +57,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FileSynchronizer extends DefaultSynchronizer {
@@ -114,6 +118,40 @@ public class FileSynchronizer extends DefaultSynchronizer {
     public String overrideAuthConfig(ContentValues config) {
         mPath = config.getAsString(DB.ACCOUNT.URL);
         return getAuthConfig();
+    }
+
+    @Override
+    public void validatePermissions(AppCompatActivity activity, Context context) {
+        checkStoragePermissions(activity);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    private boolean checkStoragePermissions(final AppCompatActivity activity) {
+        boolean result = true;
+        String[] requiredPerms;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            //noinspection InlinedApi
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        } else {
+            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+        List<String> defaultPerms = new ArrayList<>();
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
+                //Normally, ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)
+                //should be used here but this is needed anyway (no specific motivation)
+                defaultPerms.add(perm);
+            }
+        }
+        if (defaultPerms.size() > 0) {
+            // Request permission, dont care about the result
+            final String[] perms = new String[defaultPerms.size()];
+            defaultPerms.toArray(perms);
+            ActivityCompat.requestPermissions(activity, perms, 0);
+            result = false;
+        }
+        //TODO A popup in the AccountActivity, to prompt for storage permissions
+        return result;
     }
 
     @Override

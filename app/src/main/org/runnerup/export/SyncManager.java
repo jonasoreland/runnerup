@@ -310,6 +310,7 @@ public class SyncManager {
     private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
         authCallback = callback;
+        l.validatePermissions(mActivity, mContext);
         switch (authMethod) {
             case OAUTH2:
                 mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
@@ -322,7 +323,6 @@ public class SyncManager {
                 askEnable(l, authMethod);
                 return;
             case FILEPERMISSION:
-                checkStoragePermissions(mActivity);
                 askFileUrl(l);
         }
     }
@@ -558,35 +558,6 @@ public class SyncManager {
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    private boolean checkStoragePermissions(final AppCompatActivity activity) {
-        boolean result = true;
-        String[] requiredPerms;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            //noinspection InlinedApi
-            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-        } else {
-            requiredPerms = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        }
-        List<String> defaultPerms = new ArrayList<>();
-        for (final String perm : requiredPerms) {
-            if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
-                //Normally, ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)
-                //should be used here but this is needed anyway (no specific motivation)
-                defaultPerms.add(perm);
-            }
-        }
-        if (defaultPerms.size() > 0) {
-            // Request permission, dont care about the result
-            final String[] perms = new String[defaultPerms.size()];
-            defaultPerms.toArray(perms);
-            ActivityCompat.requestPermissions(activity, perms, 0);
-            result = false;
-        }
-        //TODO A popup in the AccountActivity, to prompt for storage permissions
-        return result;
     }
 
     private long mID = 0;

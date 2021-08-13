@@ -27,6 +27,7 @@ import android.util.Log;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -124,11 +125,6 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
     @Override
     public Status connect() {
         try {
-            if (!walletReady()) {
-                Status s = Status.ERROR;
-                s.ex = new Exception("Unable to access algorand wallet.");
-                return s;
-            }
             if (enabled != true) {
                 Status s = Status.NEED_AUTH;
                 s.authMethod = AuthMethod.ENABLE;
@@ -142,11 +138,16 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
         }
     }
 
+    @Override
+    public void validatePermissions(AppCompatActivity activity, Context context) {
+        checkWalletApp(activity, context);
+    }
+
     /**
      * check if algorand wallet is installed.
      * @return
      */
-    public Boolean walletReady() {
+    public void checkWalletApp(AppCompatActivity activity, Context context) {
         // TODO: How to test if the Algorand Wallet is installed
         //       without switching to it.
         /*
@@ -161,7 +162,6 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
             return false;
         }
         */
-        return true;
     }
 
     @NonNull
