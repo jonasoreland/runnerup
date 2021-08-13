@@ -713,6 +713,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT:
                 return formatDistanceInKmOrMiles(meters);
             case TXT_SHORT:
+                // distance + unit. Display meters when < 1 mile, otherwise display mi/km.
                 return formatDistance(meters, true);
             case TXT_LONG:
                 return meters + " m";
@@ -729,11 +730,17 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return String.format(cueResources.defaultLocale, "%.2f", getRoundedDistanceInKmOrMiles(meters));
     }
 
-    private String formatDistance(long meters, boolean txt) {
+    /**
+     * Meters when < 1 km/mi, otherwise km/mi.
+     * @param meters distance to format.
+     * @param includeUnits whether or not to include units.
+     * @return
+     */
+    private String formatDistance(long meters, boolean includeUnits) {
         String res;
         if (meters >= base_meters * 0.99) {
             double val = getRoundedDistanceInKmOrMiles(meters);
-            if (txt) {
+            if (includeUnits) {
                 res = String.format(cueResources.defaultLocale, "%.2f %s", val,
                         resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
             } else {
@@ -752,7 +759,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             }
         } else {
             // Present distance in meters if less than 0.99 km or mi (no strings for feet)
-            if (txt) {
+            if (includeUnits) {
                 res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
             }
             else {

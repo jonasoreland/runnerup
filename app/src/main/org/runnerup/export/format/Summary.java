@@ -64,8 +64,7 @@ public class Summary {
 
                 Date t = new Date(startTime * 1000);
                 String startStr = simpleDateFormat.format(t);
-                String distStr = formatter.format(Formatter.Format.TXT, Dimension.DISTANCE, distance);
-                distStr += " " + formatter.getUnitString();
+                String distStr = formatter.format(Formatter.Format.TXT_SHORT, Dimension.DISTANCE, distance);
                 String durStr = formatter.format(Formatter.Format.TXT_LONG, Dimension.TIME, durationTime);
                 String paceStr = formatter.formatPaceSpeed(Formatter.Format.TXT_LONG, Double.valueOf(distance) / durationTime);
 
