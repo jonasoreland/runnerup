@@ -30,19 +30,14 @@ import org.runnerup.R;
 //
 public class SearchingFragment extends Fragment {
 
-    public SearchingFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.searching, container, false);
         super.onViewCreated(view, savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            CircledImageView button = view.findViewById(R.id.icon_searching);
-            AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
-            frameAnimation.start();
-        }
+        CircledImageView button = view.findViewById(R.id.icon_searching);
+        AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
+        frameAnimation.start();
 
         return view;
     }

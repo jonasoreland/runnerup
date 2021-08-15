@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.RemoteViews;
@@ -84,7 +85,10 @@ public class FeedWidgetProvider extends AppWidgetProvider {
 
             // when we click on Runner Up logo, we launch it
             Intent mainActivity = new Intent(context, MainLayout.class);
-            views.setOnClickPendingIntent(R.id.widget_app_icon, PendingIntent.getActivity(context, 0, mainActivity, 0));
+            int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    ? PendingIntent.FLAG_IMMUTABLE
+                    : 0;
+            views.setOnClickPendingIntent(R.id.widget_app_icon, PendingIntent.getActivity(context, 0, mainActivity, intentFlags));
 
             // on any other click (including on any item of the list), we will retrieve latest feed
             // and update widget with it
@@ -92,7 +96,7 @@ public class FeedWidgetProvider extends AppWidgetProvider {
                     .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                     .putExtra("reload_feed", true);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
             views.setOnClickPendingIntent(R.id.widget_layout, pendingIntent);
             views.setPendingIntentTemplate(R.id.widget_list, pendingIntent);
 

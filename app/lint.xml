@@ -15,6 +15,9 @@
     <!-- icon with all densities are not included - don't bother -->
     <issue id="IconMissingDensityFolder" severity="ignore" />
 
+    <!-- Lint failure with AGP 7.0.0 -->
+    <issue id="UsingOnClickInXml" severity="ignore" />
+
     <issue id="ResourceType">
         <ignore path="src/org/runnerup/view/MainLayout.java" />
     </issue>

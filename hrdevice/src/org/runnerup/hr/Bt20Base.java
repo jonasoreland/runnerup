@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
@@ -68,13 +69,13 @@ public abstract class Bt20Base extends BtHRBase {
         return true;
     }
 
+    @ChecksSdkIntAtLeast(api=Build.VERSION_CODES.GINGERBREAD_MR1)
     @SuppressLint("ObsoleteSdkInt")
     public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
 
         // Don't bother if createInsecureRfcommSocketToServiceRecord isn't
         // available
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
-
     }
 
     // UUID

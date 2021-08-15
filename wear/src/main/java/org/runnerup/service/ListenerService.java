@@ -106,7 +106,7 @@ public class ListenerService extends WearableListenerService {
     private void showNotification() {
         // this intent will open the activity when the user taps the "open" action on the notification
         Intent viewIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingViewIntent = PendingIntent.getActivity(this, 0, viewIntent, 0);
+        PendingIntent pendingViewIntent = PendingIntent.getActivity(this, 0, viewIntent, PendingIntent.FLAG_IMMUTABLE);
         String chanId = getChannelId(this);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_launcher)
