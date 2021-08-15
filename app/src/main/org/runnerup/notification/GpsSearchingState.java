@@ -29,7 +29,10 @@ public class GpsSearchingState implements NotificationState {
         Intent i = new Intent(context, MainLayout.class)
                 .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
-        PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
+        int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                ? PendingIntent.FLAG_IMMUTABLE
+                : 0;
+        PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
 
         builder = new NotificationCompat.Builder(context, chanId)
                 .setContentIntent(pi)

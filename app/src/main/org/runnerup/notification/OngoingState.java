@@ -33,17 +33,20 @@ public class OngoingState implements NotificationState {
         Intent i = new Intent(context, RunActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
-        PendingIntent pi = PendingIntent.getActivity(context, 0, i, 0);
+        int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                ? PendingIntent.FLAG_IMMUTABLE
+                : 0;
+        PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
 
         Intent lapIntent = new Intent()
                 .setAction(Constants.Intents.NEW_LAP);
         PendingIntent pendingLap = PendingIntent.getBroadcast(
-                context, 0, lapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                context, 0, lapIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
 
         Intent pauseIntent = new Intent()
                 .setAction(Constants.Intents.PAUSE_RESUME);
         PendingIntent pendingPause = PendingIntent.getBroadcast(
-                context, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                context, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
 
         builder = new NotificationCompat.Builder(context, chanId)
                 .setTicker(context.getString(R.string.RunnerUp_activity_started))

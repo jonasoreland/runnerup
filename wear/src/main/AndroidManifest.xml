@@ -33,6 +33,7 @@
         <meta-data android:name="com.google.android.wearable.standalone" android:value="false"/>
 
         <activity
+            android:exported="true"
             android:name=".view.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,7 +46,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.ListenerService">
+        <service
+            android:exported="true"
+            android:name=".service.ListenerService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
                 <data android:host="*" android:pathPrefix="/org.runnerup" android:scheme="wear" />
