@@ -132,11 +132,16 @@ public interface Synchronizer {
     @NonNull
     Intent getAuthIntent(AppCompatActivity activity);
 
+    interface ValidateCallback {
+        void run(Status status);
+    }
+
     /**
      * Called during the auth process for additional permission checks.
+     * Execute the callback with status when finished.
      * @throws Exception if there was a permissions problem.
      */
-    void validatePermissions(AppCompatActivity activity, Context context) throws Exception;
+    void validatePermissions(ValidateCallback callback, AppCompatActivity activity, Context context);
 
     /**
      * Is synchronizer configured

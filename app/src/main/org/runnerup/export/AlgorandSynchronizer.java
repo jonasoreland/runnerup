@@ -17,10 +17,10 @@
 
 package org.runnerup.export;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
@@ -28,6 +28,7 @@ import android.util.Log;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
@@ -140,26 +141,39 @@ public class AlgorandSynchronizer extends DefaultSynchronizer {
     }
 
     @Override
-    public void validatePermissions(AppCompatActivity activity, Context context) throws Exception {
-        if (!appInstalledOrNot("com.algorand.android")) {
-            throw new Exception(mContext.getString(R.string.algorand_app_required));
-        }
+    public void validatePermissions(ValidateCallback callback, AppCompatActivity activity, Context context) {
+        new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getString(R.string.test_configuration))
+                .setMessage(mContext.getString(R.string.algorand_app_test))
+                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                    // Send transaction to Algorand Wallet application.
+                    String query = scheme + "?amount=0&note=If you see this text the test is a success, return to RunnerUp!";
+                    Uri uri = Uri.parse(query);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    try {
+                        mContext.startActivity(intent);
+                        callback.run(Status.OK);
+                    }
+                    catch (ActivityNotFoundException e) {
+                        Status s = Status.ERROR;
+                        s.ex = new Exception(mContext.getString(R.string.algorand_app_required));
+                        callback.run(s);
+                    }
+                })
+                .setNeutralButton(R.string.Skip, (dialog, which) -> callback.run(Status.SKIP))
+                .show();
     }
 
-    private boolean appInstalledOrNot(String uri) {
-        PackageManager pm = mContext.getPackageManager();
-        try {
-            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-        }
-
-        return false;
-    }
-
+    /**
+     * This is synchronized because the user must authenticate each transaction and the wallet
+     * program may not correctly deal with many concurrent requests.
+     * @param db
+     * @param mID
+     * @return
+     */
     @NonNull
     @Override
-    public Status upload(SQLiteDatabase db, final long mID) {
+    public synchronized Status upload(SQLiteDatabase db, final long mID) {
         Status s  = Status.OK;
         s.activityId = mID;
         if (s != Status.OK) {

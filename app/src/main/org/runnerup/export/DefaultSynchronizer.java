@@ -114,7 +114,9 @@ public abstract class DefaultSynchronizer implements Synchronizer {
     }
 
     @Override
-    public void validatePermissions(AppCompatActivity activity, Context context) throws Exception { }
+    public void validatePermissions(ValidateCallback callback, AppCompatActivity activity, Context context) {
+        callback.run(Status.OK);
+    }
 
     @Override
     public boolean isConfigured() {

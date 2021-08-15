@@ -86,6 +86,7 @@
   <string name="Start_GPS">Start GPS</string>
   <string name="Duration">Duration</string>
   <string name="Cancel">Cancel</string>
+  <string name="Skip">Skip</string>
   <string name="value">value</string>
   <string name="Select_all">Select all</string>
   <string name="Clear_all">Clear all</string>
@@ -347,7 +348,9 @@
   <string name="File_need_one_format">You must specify at least one format</string>
   <string name="tts_not_available_title">Text to Speech is not available</string>
   <string name="tts_not_available">RunnerUp requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
+  <string name="test_configuration">Test configuration</string>
   <string name="algorand_enable_text">During upload the Algorand Wallet is used to securely write to the blockchain.</string>
   <string name="algorand_app_required">Could not find Algorand Wallet application. It must be installed for uploading to Algorand.</string>
+  <string name="algorand_app_test">Press OK to send a test transaction. This is to ensure the wallet app is available and able to communicate with RunnerUp.</string>
   <string name="filesynch_permission_required">Filesystem permissions are required.</string>
 </resources>

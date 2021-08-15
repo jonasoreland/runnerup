@@ -17,15 +17,12 @@
 
 package org.runnerup.export;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -47,14 +44,11 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
-import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.PathSimplifier;
@@ -65,7 +59,6 @@ import org.runnerup.feedwidget.FeedWidgetProvider;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Encryption;
-import org.runnerup.util.Formatter;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -310,9 +303,19 @@ public class SyncManager {
     private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
         authSynchronizer = l;
         authCallback = callback;
-        try {
-            l.validatePermissions(mActivity, mContext);
 
+        l.validatePermissions((status) -> {
+            // Check for permission failure.
+            if (status == Status.ERROR) {
+                handleAuthComplete(l, status);
+                new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.Error)
+                        .setMessage(status.ex != null ? status.ex.getMessage() : "")
+                        .show();
+                return;
+            }
+
+            // Permissions are validated, continue with authentication.
             switch (authMethod) {
                 case OAUTH2:
                     mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
@@ -327,15 +330,8 @@ public class SyncManager {
                 case FILEPERMISSION:
                     askFileUrl(l);
             }
-        } catch (Exception ex) {
-            Status s = Status.ERROR;
-            s.ex = ex;
-            handleAuthComplete(l, s);
-            new AlertDialog.Builder(mContext)
-                    .setTitle(R.string.Error)
-                    .setMessage(s.ex.getMessage())
-                    .show();
-        }
+        },
+        mActivity, mContext);
     }
 
     private void handleAuthComplete(Synchronizer synchronizer, Status s) {
@@ -403,7 +399,7 @@ public class SyncManager {
                     sync.init(config);
                     handleAuthComplete(sync, sync.connect());
                 })
-                .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNeutralButton(R.string.Skip, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
@@ -467,7 +463,7 @@ public class SyncManager {
                     }
                     testUserPass(sync, authConfig);
                 })
-                .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNeutralButton(R.string.Skip, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
