@@ -106,6 +106,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                 if (!hasFocus) {
                     // Validate
                     int prevZone = loZone - 1;
+                    int nextZone = loZone + 1;
                     int loHR = Integer.parseInt(lo.getText().toString());
                     int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
                     int zoneCount = hrZoneCalculator.getZoneCount();
@@ -115,6 +116,20 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     if (loHR > maxHR - zoneDiff) {
                         loHR = maxHR - zoneDiff;
                         zones.get(2*loZone).setText(String.format(Locale.getDefault(), "%d", loHR));
+                    }
+
+                    if (nextZone < zoneCount) {
+                        // check that the lo is less than the next lo
+                        int nextLoHR = Integer.parseInt(zones.get(2*nextZone).getText().toString());
+                        if (loHR >= nextLoHR) {
+                            // lo's are out of order, use some default
+                            loHR = nextLoHR -1;
+                            lo.setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                        // update the previous row's hi to the current row's lo
+                        if (loZone > 0) {
+                            zones.get(2 * prevZone + 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
                     }
 
                     if (prevZone >= 0) {
