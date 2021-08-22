@@ -23,11 +23,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -63,10 +65,88 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         TextView tv = row.findViewById(R.id.zonetext);
         EditText lo = row.findViewById(R.id.zonelo);
         EditText hi = row.findViewById(R.id.zonehi);
+        // disable setting the hi value
+        hi.setKeyListener(null);
+        hi.setEnabled(false);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
         tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
+        int zoneCount = hrZoneCalculator.getZoneCount();
+
+        // The last zone never loses focus, so needs this ugly hack
+        // This is triggered when the done key is pressed i.e. on the last zone
+        if (zone == zoneCount) {
+            lo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                        int loZone = hrZoneCalculator.getZoneCount() - 1; /*  base 0 offset */
+                        int loHR = Integer.parseInt(lo.getText().toString());
+                        int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                        // each zone needs a range of at least 1 HR beat
+                        if (loHR > maxHR - 1) {
+                            loHR = maxHR - 1;
+                            zones.get(2*loZone).setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                        // update the previous row's hi to the current row's lo
+                        zones.get(2*loZone - 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+                    }
+                    return false;
+                }
+            });
+        }
+
+        lo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            int loZone = zone - 1; /* base 0 offset */
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // When focus is lost, check that the text field has valid values.
+                if (!hasFocus) {
+                    // Validate
+                    int prevZone = loZone - 1;
+                    int nextZone = loZone + 1;
+                    int loHR = Integer.parseInt(lo.getText().toString());
+                    int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                    int zoneCount = hrZoneCalculator.getZoneCount();
+                    int zoneDiff = zoneCount - loZone;
+
+                    // each zone should have at least one HR beat
+                    if (loHR > maxHR - zoneDiff) {
+                        loHR = maxHR - zoneDiff;
+                        zones.get(2*loZone).setText(String.format(Locale.getDefault(), "%d", loHR));
+                    }
+
+                    if (nextZone < zoneCount) {
+                        // check that the lo is less than the next lo
+                        int nextLoHR = Integer.parseInt(zones.get(2*nextZone).getText().toString());
+                        if (loHR >= nextLoHR) {
+                            // lo's are out of order, use some default
+                            loHR = nextLoHR -1;
+                            lo.setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                        // update the previous row's hi to the current row's lo
+                        if (loZone > 0) {
+                            zones.get(2 * prevZone + 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                    }
+
+                    if (prevZone >= 0) {
+                        //Check that the lo's are in increasing order
+                        int prevLoHR = Integer.parseInt(zones.get(2*prevZone).getText().toString());
+                        if (loHR <= prevLoHR) {
+                            // lo's are out of order, use some default
+                            loHR = prevLoHR +1;
+                            lo.setText(String.format(Locale.getDefault(), "%d", loHR));
+                        }
+                        // update the previous row's hi to the current row's lo
+                        zones.get(2*prevZone + 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+                    }
+                }
+            }
+        });
+
         zones.add(lo);
         zones.add(hi);
 
