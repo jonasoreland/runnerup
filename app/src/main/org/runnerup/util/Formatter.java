@@ -713,7 +713,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case TXT:
                 return formatDistanceInKmOrMiles(meters);
             case TXT_SHORT:
-                // distance + unit. Display meters when < 1 mile, otherwise display mi/km.
+                // distance + unit. Display meters when < 1 km/mi, otherwise display km/mi.
+
                 return formatDistance(meters, true);
             case TXT_LONG:
                 return meters + " m";
