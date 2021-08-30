@@ -107,7 +107,23 @@ repositories {
     google()
     mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
-    jcenter() // com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2
+    if (rootProject.ext.allowNonFree && rootProject.file("mapbox.properties").exists()) {
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                // Do not change the username below.
+                // This should always be `mapbox` (not your username).
+                username = 'mapbox'
+                // Use the secret token you stored in gradle.properties as the password
+                def props = new Properties()
+                props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+                password = props.mapboxDownloadToken
+            }
+        }
+    }
 }
 
 dependencies {
@@ -131,8 +147,8 @@ dependencies {
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
 
         //noinspection GradleDependency
-        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.2'
-        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v8:0.7.0'
+        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2'
+        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
     }
     latestImplementation 'com.jjoe64:graphview:4.2.2'
