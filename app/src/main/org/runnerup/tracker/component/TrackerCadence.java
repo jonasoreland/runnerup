@@ -83,25 +83,32 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.values != null && event.values.length > 0) {
-            float latestVal = event.values[0];
-            long latestTime = event.timestamp;
-            if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null) {
-                mCurrentCadence = null;
-            } else {
-                final long nanoSec = 1000000000L;
-                float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
-                if (mCurrentCadence == null) {
-                    mCurrentCadence = val;
-                } else {
-                    //Low pass filter
-                    final float alpha = 0.4f;
-                    mCurrentCadence = val * alpha + (1 - alpha) * mCurrentCadence;
-                }
-            }
-            mPrevTime = latestTime;
-            mPrevVal = latestVal;
+        if (event.values == null || event.values.length < 1) {
+            return;
         }
+
+        float latestVal = event.values[0];
+        long latestTime = event.timestamp;
+
+        if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null) {
+            mCurrentCadence = null;
+        } else {
+            if (latestVal <= mPrevVal) {
+                return;
+            }
+
+            final long nanoSec = 1000000000L;
+            float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
+            if (mCurrentCadence == null) {
+                mCurrentCadence = val;
+            } else {
+                //Low pass filter
+                final float alpha = 0.4f;
+                mCurrentCadence = val * alpha + (1 - alpha) * mCurrentCadence;
+            }
+        }
+        mPrevTime = latestTime;
+        mPrevVal = latestVal;
     }
 
     @Override
