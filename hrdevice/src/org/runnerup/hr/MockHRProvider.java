@@ -110,7 +110,7 @@ public class MockHRProvider implements HRProvider {
     private final Runnable hrUpdate = new Runnable() {
         @Override
         public void run() {
-            hrValue = (int) (150 + 40 * Math.random());
+            hrValue = (int) (120 + SystemClock.elapsedRealtime() / 1000.0 % 40 + 3 * Math.random());
             hrTimestamp = System.currentTimeMillis();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
