@@ -48,6 +48,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     private Float mPrevVal = null;
     private long mPrevTime = -1;
     private Float mCurrentCadence = null;
+    final int cutOffTime = 3;
 
     public Float getValue() {
         if (!isSportEnabled) {
@@ -63,7 +64,6 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
         // It can take seconds between sensor updates
         // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
-        final int cutOffTime = 3;
         final long nanoSec = 1000000000L;
         long now;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -84,21 +84,24 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.values == null || event.values.length < 1) {
+            mCurrentCadence = null;
             return;
         }
 
         float latestVal = event.values[0];
         long latestTime = event.timestamp;
+        long timeDiff = latestTime - mPrevTime;
+        final long nanoSec = 1000000000L;
 
-        if (mPrevTime == latestTime || mPrevTime < 0 || mPrevVal == null) {
+        if (timeDiff > cutOffTime * nanoSec || mPrevTime < 0 || mPrevVal == null || latestVal <= mPrevVal) {
             mCurrentCadence = null;
         } else {
-            if (latestVal <= mPrevVal) {
+            float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / timeDiff;
+            if (val > 300) {
+                // ignore this reading, use previous point next time
                 return;
             }
 
-            final long nanoSec = 1000000000L;
-            float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / (latestTime - mPrevTime);
             if (mCurrentCadence == null) {
                 mCurrentCadence = val;
             } else {
@@ -113,6 +116,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        mCurrentCadence = null;
     }
 
     /**
@@ -123,19 +127,18 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     }
 
     private Sensor getSensor(final Context context) {
-        Sensor sensor = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (mSensorManager == null) {
-                mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-            }
-            //noinspection InlinedApi
-            sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-            if (sensor == null) {
-                mSensorManager = null;
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return null;
         }
 
+        if (mSensorManager == null) {
+            mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        }
+        //noinspection InlinedApi
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if (sensor == null) {
+            mSensorManager = null;
+
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
         }
