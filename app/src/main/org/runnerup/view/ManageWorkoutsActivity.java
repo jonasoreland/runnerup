@@ -91,7 +91,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     private boolean uploading = false;
     private CompoundButton currentlySelectedWorkout = null;
-    private Button downloadButton = null;
     private Button deleteButton = null;
     private Button shareButton = null;
     private Button editButton = null;
@@ -115,10 +114,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         ExpandableListView list = findViewById(R.id.expandable_list_view);
         list.setAdapter(adapter);
 
-        downloadButton = findViewById(R.id.download_workout_button);
-        downloadButton.setOnClickListener(downloadButtonClick);
-        // No download provider currently exists
-        downloadButton.setVisibility(View.GONE);
         deleteButton = findViewById(R.id.delete_workout_button);
         deleteButton.setOnClickListener(deleteButtonClick);
         createButton = findViewById(R.id.create_workout_button);
@@ -283,7 +278,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     private void handleButtons() {
         if (currentlySelectedWorkout == null) {
-            downloadButton.setEnabled(false);
             deleteButton.setEnabled(false);
             shareButton.setEnabled(false);
             editButton.setEnabled(false);
@@ -293,12 +287,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
         if (PHONE_STRING.contentEquals(selected.synchronizer)) {
-            downloadButton.setEnabled(false);
             deleteButton.setEnabled(true);
             shareButton.setEnabled(true);
             editButton.setEnabled(true);
         } else {
-            downloadButton.setEnabled(true);
             deleteButton.setEnabled(false);
             shareButton.setEnabled(false);
             editButton.setEnabled(false);
@@ -422,58 +414,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 })
                 .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
                 .show();
-    };
-
-    private final OnClickListener downloadButtonClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (currentlySelectedWorkout == null)
-                return;
-
-            final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
-            ArrayList<WorkoutRef> local = workouts.get(PHONE_STRING);
-            if (contains(local, selected)) {
-                new AlertDialog.Builder(ManageWorkoutsActivity.this)
-                        .setTitle(getString(R.string.Downloading_1s_will_overwrite_2_workout_with_same_name, selected.workoutName, PHONE_STRING))
-                        .setMessage(R.string.Are_you_sure)
-                        .setPositiveButton(R.string.Yes,
-                                (dialog, which) -> {
-                                    dialog.dismiss();
-                                    downloadWorkout(selected);
-                                })
-                        .setNegativeButton(R.string.No,
-                                // Do nothing but close the dialog
-                                (dialog, which) -> dialog.dismiss()
-                        )
-                        .show();
-                return;
-            }
-
-            downloadWorkout(selected);
-        }
-
-        private void downloadWorkout(WorkoutRef selected) {
-            uploading = true;
-            HashSet<WorkoutRef> list = new HashSet<>();
-            list.add((WorkoutRef) currentlySelectedWorkout.getTag());
-            syncManager.loadWorkouts(list, (synchronizerName, status) -> {
-                uploading = false;
-                currentlySelectedWorkout = null;
-                listLocal();
-                handleButtons();
-            });
-        }
-
-        private boolean contains(ArrayList<WorkoutRef> local,
-                                 WorkoutRef selected) {
-            for (WorkoutRef w : local) {
-                if (selected.workoutName.contentEquals(w.workoutName)) {
-                    return true;
-                }
-            }
-            return false;
-        }
     };
 
     private final OnClickListener deleteButtonClick = v -> {
