@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 abstract class BtHRBase implements HRProvider {
     static final UUID HRP_SERVICE = UUID

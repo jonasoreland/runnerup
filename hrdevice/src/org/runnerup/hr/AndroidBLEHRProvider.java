@@ -37,7 +37,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
