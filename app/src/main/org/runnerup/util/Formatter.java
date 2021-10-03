@@ -193,21 +193,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         boolean _km;
         String unit = prefs.getString(res.getString(R.string.pref_unit), null);
         if (unit == null)
-            _km = guessDefaultUnit(res, prefs, editor);
+            _km = guessDefaultUnit(res, editor);
         else if (unit.contentEquals("km"))
             _km = true;
         else if (unit.contentEquals("mi"))
             _km = false;
         else
-            _km = guessDefaultUnit(res, prefs, editor);
+            _km = guessDefaultUnit(res, editor);
 
         return _km;
     }
 
-    private static boolean guessDefaultUnit(Resources res, SharedPreferences prefs, Editor editor) {
+    private static boolean guessDefaultUnit(Resources res, Editor editor) {
         String countryCode = Locale.getDefault().getCountry();
         Log.e("Formatter", "guessDefaultUnit: countryCode: " + countryCode);
-        if (countryCode == null)
+        if (countryCode.equals(""))
             return true; // km;
         String key = res.getString(R.string.pref_unit);
         if ("US".contentEquals(countryCode) ||
@@ -309,7 +309,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
         if (seconds >= 60) {
             minutes = (int) (seconds / 60);
-            seconds -= minutes * 60;
+            seconds -= minutes * 60L;
         }
 
         StringBuilder s = new StringBuilder();
@@ -475,8 +475,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return
      */
     public String formatPace(Format target, double seconds_per_meter) {
-        Double meters_per_second = (seconds_per_meter == 0 || Double.isNaN(seconds_per_meter)) ?
-                null : 1/seconds_per_meter;
+        double meters_per_second = (seconds_per_meter == 0 || Double.isNaN(seconds_per_meter)) ?
+                Double.NaN : 1/seconds_per_meter;
         return formatPaceSpeed(target, meters_per_second);
     }
 
@@ -491,6 +491,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public String formatVelocityByPreferredUnit(Format target, double meters_per_second) {
         String paceTextUnit = this.sharedPreferences
                 .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        assert paceTextUnit != null;
         if(paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
             return this.formatPaceSpeed(target, meters_per_second);
         } else {
@@ -506,6 +507,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     public String formatVelocityLabel() {
         String paceTextUnit = this.sharedPreferences
                 .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
+        assert paceTextUnit != null;
         if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
             return this.context.getString(R.string.Pace);
         } else {
@@ -553,10 +555,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @param meters_per_second
      * @return string suitable for printing according to settings
      */
-    private String txtPace(Double meters_per_second, boolean includeUnit) {
+    private String txtPace(double meters_per_second, boolean includeUnit) {
         String str;
         final double txtStoppedPace = km_meters / 60 / 60;
-        if (meters_per_second == null || Double.isNaN(meters_per_second) || meters_per_second <= txtStoppedPace) {
+        if (Double.isNaN(meters_per_second) || meters_per_second <= txtStoppedPace) {
             str = "--:--";
         } else {
             long val = Math.round(base_meters / meters_per_second);
@@ -568,10 +570,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         return str;
     }
 
-    private String cuePace(Double meters_per_second) {
+    private String cuePace(double meters_per_second) {
         // Cue cut-off for stopped is set to some minimal meaningful reportable pace
         final double cueStoppedPace = km_meters / 20 / 60;
-        if (meters_per_second == null || Double.isNaN(meters_per_second) || meters_per_second <= cueStoppedPace) {
+        if (Double.isNaN(meters_per_second) || meters_per_second <= cueStoppedPace) {
             return cueResources.getString(R.string.cue_stopped);
         }
         int seconds_per_unit = (int) Math.round(base_meters / meters_per_second);
@@ -629,6 +631,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return string suitable for printing according to settings
      */
     private String txtSpeed(double meters_per_second, boolean includeUnit) {
+        if (Double.isNaN(meters_per_second)) {
+            return "-";
+        }
+
         double distance_per_hour = meters_per_second * 3600 / base_meters;
         String str = String.format(cueResources.defaultLocale, "%.1f", distance_per_hour);
         if (!includeUnit)
@@ -644,6 +650,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     }
 
     private String cueSpeed(double meters_per_second) {
+        if (Double.isNaN(meters_per_second)) {
+            return cueResources.getString(R.string.cue_stopped);
+        }
+
         double distance_per_hour = meters_per_second  * 3600 / base_meters;
         String str = String.format(cueResources.audioLocale, "%.1f", distance_per_hour);
         if (unitCue) {
