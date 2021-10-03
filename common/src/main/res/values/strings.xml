@@ -340,4 +340,29 @@
   <string name="File_need_one_format">You must specify at least one format</string>
   <string name="tts_not_available_title">Text to Speech is not available</string>
   <string name="tts_not_available">RunnerUp requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
+  <!--Preference categories & summaries -->
+  <string name="GPS_category">GPS startup</string>
+  <string name="HRM_category">HRM settings</string>
+  <string name="Headset_category">Remote control</string>
+  <string name="Lock_activity_buttons_category">Lock buttons</string>
+  <string name="Other_sensors_category">Setup other sensors</string>
+  <string name="GPS_recording_category">GPS recording settings</string>
+  <string name="RunnerUp_live_category">RunnerUp Live</string>
+  <string name="Database_category">DB maintenance</string>
+  <string name="Maintenance_summary">Import/Export/Clean DB</string>
+  <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be im-/exported from/to its home directory\n/storage/emulated/0/Android/data/org.runnerup…</string>
+  <string name="Map_pref_summary">Set mapstyle</string>
+  <string name="Workout_pref_summary">Manage workouts, laps, rest, target coaching</string>
+  <string name="Manage_workouts_category">Manage advanced workouts</string>
+  <string name="Autolap_category">Autolaps</string>
+  <string name="Autopause_category">Autopause</string>
+  <string name="Countdown_category">Countdown</string>
+  <string name="Recovery_category">Recovery</string>
+  <string name="Target_category">Target coaching</string>
+  <string name="Sensors_summary">Setup internal &amp; external sensors</string>
+  <string name="use_temperature_sensor_summary">Record temperature</string>
+  <string name="Recording_summary">GPS precision, path simplification, RU-Live</string>
+  <string name="Adjust_altitude_summary">EGM96</string>
+  <string name="Current_speed_from_GPS_points_summary">Get speed from GPS instead of calculating from distance and time</string>
+  <string name="Target_coaching_summary">Set period for calculating moving average for target feedback and its grace period for audio cues</string>
 </resources>
