@@ -154,8 +154,13 @@ public class TCX {
             mXML.startTag("", "VersionMinor");
             mXML.text("4.1");
             mXML.endTag("", "VersionMinor");
+            mXML.startTag("", "BuildMajor");
+            mXML.text("2");
+            mXML.endTag("", "BuildMajor");
+            mXML.startTag("", "BuildMinor");
+            mXML.text("4.1");
+            mXML.endTag("", "BuildMinor");
             mXML.endTag("", "Version");
-
             mXML.endTag("", "Creator");
             mXML.endTag("", "Activity");
             mXML.endTag("", "Activities");
