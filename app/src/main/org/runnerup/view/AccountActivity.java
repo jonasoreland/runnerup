@@ -187,11 +187,12 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             if (synchronizer.getName().equals(RunnerUpLiveSynchronizer.NAME)) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
                 final Resources res = this.getResources();
-                final String POST_URL = "http://weide.devsparkles.se/api/Resource/";
+                final String POST_URL = "No URL available atm";
                 String postUrl = prefs.getString(res.getString(R.string.pref_runneruplive_serveradress), POST_URL);
 
                 mRunnerUpLiveApiAddress = new EditText(this.getApplicationContext());
-                mRunnerUpLiveApiAddress.setSingleLine();
+                mRunnerUpLiveApiAddress.setSingleLine(false);
+                mRunnerUpLiveApiAddress.setTextColor(getResources().getColor(R.color.colorText));
                 mRunnerUpLiveApiAddress.setText(postUrl, TextView.BufferType.EDITABLE);
                 addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }

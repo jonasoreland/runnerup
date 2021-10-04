@@ -50,8 +50,8 @@ import java.net.URL;
 public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements WorkoutObserver {
 
     public static final String NAME = "RunnerUp LIVE";
-    private static final String PUBLIC_URL = "https://weide.devsparkles.se/Demo/Map";
-    private static final String POST_URL = "https://weide.devsparkles.se/api/Resource/";
+    private static final String PUBLIC_URL = "No service available atm";
+    private static final String POST_URL = "Enter URL";
     private final Context context;
 
     private long id = 0;
