@@ -89,17 +89,18 @@ public class TCX {
         long startTime = cursor.getLong(2); // epoch
         try {
             mXML = new KXmlSerializer();
+            mXML.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);
             mXML.startTag("", "TrainingCenterDatabase");
+            mXML.attribute("", "xmlns",
+                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
             mXML.attribute("", "xmlns:xsi",
                     "http://www.w3.org/2001/XMLSchema-instance");
             mXML.attribute("", "xmlns:xsd",
                     "http://www.w3.org/2001/XMLSchema");
-            mXML.attribute("", "xmlns:ext",
+            mXML.attribute("", "xmlns:ae",
                     "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
-            mXML.attribute("", "xmlns",
-                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
             mXML.startTag("", "Activities");
             mXML.startTag("", "Activity");
             if (cursor.isNull(3)) {
@@ -140,9 +141,40 @@ public class TCX {
             }
             mXML.text(creator);
             mXML.endTag("", "Name");
+            mXML.startTag("", "UnitId");
+            mXML.text("0");
+            mXML.endTag("", "UnitId");
+            mXML.startTag("", "ProductID");
+            mXML.text("0");
+            mXML.endTag("", "ProductID");
+            mXML.startTag("", "Version");
+            mXML.startTag("", "VersionMajor");
+            mXML.text("2");
+            mXML.endTag("", "VersionMajor");
+            mXML.startTag("", "VersionMinor");
+            mXML.text("4.1");
+            mXML.endTag("", "VersionMinor");
+            mXML.endTag("", "Version");
+
             mXML.endTag("", "Creator");
             mXML.endTag("", "Activity");
             mXML.endTag("", "Activities");
+            mXML.startTag("", "Author");
+            mXML.attribute("", "xsi:type", "Author_t");
+            mXML.startTag("", "Name");
+            mXML.text("RunnerUp");
+            mXML.endTag("", "Name");
+            mXML.startTag("", "Build");
+            mXML.startTag("", "Version");
+            mXML.startTag("", "VersionMajor");
+            mXML.text("2");
+            mXML.endTag("", "VersionMajor");
+            mXML.startTag("", "VersionMinor");
+            mXML.text("4.1");
+            mXML.endTag("", "VersionMinor");
+            mXML.endTag("", "Version");
+            mXML.endTag("", "Build");
+            mXML.endTag("", "Author");
             mXML.endTag("", "TrainingCenterDatabase");
             mXML.flush();
             mXML.endDocument();
@@ -295,17 +327,17 @@ public class TCX {
                             }
                             if (isRunCad) {
                                 mXML.startTag("", "Extensions");
-                                mXML.startTag("", "TPX");
-                                mXML.attribute("", "xmlns",
-                                        "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+                                mXML.startTag("", "ae:TPX");
+                                //mXML.attribute("", "xmlns",
+                                //        "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
                                 //"standard" extensions: RunCadence, Speed, Watts
                             }
                             if (isRunCad) {
                                 int val = cLocation.getInt(8);
-                                mXML.startTag("", "RunCadence");
+                                mXML.startTag("", "ae:RunCadence");
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
-                                mXML.endTag("", "RunCadence");
+                                mXML.endTag("", "ae:RunCadence");
                                 // Not including "CadenceSensor Footpod" etc
                             }
                             //if (isTemp || isPres) {
@@ -325,7 +357,7 @@ public class TCX {
                             //    }
                             //}
                             if (isRunCad) {
-                                mXML.endTag("", "TPX");
+                                mXML.endTag("", "ae:TPX");
                                 mXML.endTag("", "Extensions");
                             }
 
