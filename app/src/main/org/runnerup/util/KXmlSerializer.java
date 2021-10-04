@@ -21,27 +21,14 @@
 
 package org.runnerup.util;
 
-import android.text.TextUtils;
-
-import org.xmlpull.v1.*;
-
 import java.io.*;
-import java.util.Locale;
-
+import org.xmlpull.v1.*;
 
 public class KXmlSerializer implements XmlSerializer {
 
     //    static final String UNDEFINED = ":";
 
-    // BEGIN android-added
-    /** size (in characters) for the write buffer */
-    private static final int WRITE_BUFFER_SIZE = 500;
-    // END android-added
-
-    // BEGIN android-changed
-    // (Guarantee that the writer is always buffered.)
-    private BufferedWriter writer;
-    // END android-changed
+    private Writer writer;
 
     private boolean pending;
     private int auto;
@@ -56,7 +43,7 @@ public class KXmlSerializer implements XmlSerializer {
     private boolean unicode;
     private String encoding;
 
-    private void check(boolean close) throws IOException {
+    private final void check(boolean close) throws IOException {
         if (!pending)
             return;
 
@@ -70,14 +57,16 @@ public class KXmlSerializer implements XmlSerializer {
         }
         indent[depth] = indent[depth - 1];
 
-        for (int i = nspCounts[depth - 1]; i < nspCounts[depth]; i++) {
+        for (int i = nspCounts[depth - 1];
+             i < nspCounts[depth];
+             i++) {
             writer.write(' ');
             writer.write("xmlns");
-            if (!TextUtils.isEmpty(nspStack[i * 2])) {
+            if (!"".equals(nspStack[i * 2])) {
                 writer.write(':');
                 writer.write(nspStack[i * 2]);
             }
-            else if (TextUtils.isEmpty(getNamespace()) && !TextUtils.isEmpty(nspStack[i * 2 + 1]))
+            else if (getNamespace().equals(""))
                 throw new IllegalStateException("Cannot set default namespace for elements in no namespace");
             writer.write("=\"");
             writeEscaped(nspStack[i * 2 + 1], '"');
@@ -96,18 +85,12 @@ public class KXmlSerializer implements XmlSerializer {
         writer.write(close ? " />" : ">");
     }
 
-    private void writeEscaped(String s, int quot) throws IOException {
+    private final void writeEscaped(String s, int quot)
+            throws IOException {
+
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             switch (c) {
-                case '\n':
-                case '\r':
-                case '\t':
-                    if(quot == -1)
-                        writer.write(c);
-                    else
-                        writer.write("&#"+((int) c)+';');
-                    break;
                 case '&' :
                     writer.write("&amp;");
                     break;
@@ -117,55 +100,29 @@ public class KXmlSerializer implements XmlSerializer {
                 case '<' :
                     writer.write("&lt;");
                     break;
-                default:
+                case '"' :
+                case '\'' :
                     if (c == quot) {
-                        writer.write(c == '"' ? "&quot;" : "&apos;");
+                        writer.write(
+                                c == '"' ? "&quot;" : "&apos;");
                         break;
                     }
-                    // BEGIN android-changed: refuse to output invalid characters
-                    // See http://www.w3.org/TR/REC-xml/#charsets for definition.
-                    // Corrected for c:geo to handle utf-16 codepoint surrogates correctly
-                    // See http://en.wikipedia.org/wiki/UTF-16#Code_points_U.2B10000_to_U.2B10FFFF
-                    // otherwise generate.
-                    // Note: tab, newline, and carriage return have already been
-                    // handled above.
-                    // Check for lead surrogate
-                    if (c >= 0xd800 && c <= 0xdbff) {
-
-                        if (i + 1 < s.length()) {
-                            writer.write(s.substring(i, i + 1));
-                            i++;
-                            break;
-                        }
-                        // if the lead surrogate is at the string end, it's not valid utf-16
-                        reportInvalidCharacter(c);
-                    }
-                    boolean valid = (c >= 0x20 && c <= 0xd7ff) || (c >= 0xe000 && c <= 0xfffd);
-                    if (!valid) {
-                        reportInvalidCharacter(c);
-                    }
-                    if (unicode || c < 127) {
+                default :
+                    if (c < 127 || unicode)
                         writer.write(c);
-                    } else {
+                    else
                         writer.write("&#" + ((int) c) + ";");
-                    }
-                    // END android-changed
+
             }
         }
     }
 
-    // BEGIN android-added
-    private static void reportInvalidCharacter(char ch) {
-        throw new IllegalArgumentException("Illegal character (" + Integer.toHexString(ch) + ")");
-    }
-    // END android-added
-
     /*
-        private final void writeIndent() throws IOException {
-            writer.write("\r\n");
-            for (int i = 0; i < depth; i++)
-                writer.write(' ');
-        }*/
+    	private final void writeIndent() throws IOException {
+    		writer.write("\r\n");
+    		for (int i = 0; i < depth; i++)
+    			writer.write(' ');
+    	}*/
 
     public void docdecl(String dd) throws IOException {
         writer.write("<!DOCTYPE");
@@ -175,7 +132,9 @@ public class KXmlSerializer implements XmlSerializer {
 
     public void endDocument() throws IOException {
         while (depth > 0) {
-            endTag(elementStack[depth * 3 - 3], elementStack[depth * 3 - 1]);
+            endTag(
+                    elementStack[depth * 3 - 3],
+                    elementStack[depth * 3 - 1]);
         }
         flush();
     }
@@ -191,7 +150,10 @@ public class KXmlSerializer implements XmlSerializer {
         //return false;
         return (
                 "http://xmlpull.org/v1/doc/features.html#indent-output"
-                        .equals(name)) && indent[depth];
+                        .equals(
+                                name))
+                ? indent[depth]
+                : false;
     }
 
     public String getPrefix(String namespace, boolean create) {
@@ -203,21 +165,21 @@ public class KXmlSerializer implements XmlSerializer {
         }
     }
 
-    private String getPrefix(
-        String namespace,
-        boolean includeDefault,
-        boolean create)
-        throws IOException {
+    private final String getPrefix(
+            String namespace,
+            boolean includeDefault,
+            boolean create)
+            throws IOException {
 
         for (int i = nspCounts[depth + 1] * 2 - 2;
-            i >= 0;
-            i -= 2) {
+             i >= 0;
+             i -= 2) {
             if (nspStack[i + 1].equals(namespace)
-                && (includeDefault || !TextUtils.isEmpty(nspStack[i]))) {
+                    && (includeDefault || !nspStack[i].equals(""))) {
                 String cand = nspStack[i];
                 for (int j = i + 2;
-                    j < nspCounts[depth + 1] * 2;
-                    j++) {
+                     j < nspCounts[depth + 1] * 2;
+                     j++) {
                     if (nspStack[j].equals(cand)) {
                         cand = null;
                         break;
@@ -233,14 +195,14 @@ public class KXmlSerializer implements XmlSerializer {
 
         String prefix;
 
-        if (TextUtils.isEmpty(namespace))
+        if ("".equals(namespace))
             prefix = "";
         else {
             do {
                 prefix = "n" + (auto++);
                 for (int i = nspCounts[depth + 1] * 2 - 2;
-                    i >= 0;
-                    i -= 2) {
+                     i >= 0;
+                     i -= 2) {
                     if (prefix.equals(nspStack[i])) {
                         prefix = null;
                         break;
@@ -262,13 +224,13 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public void ignorableWhitespace(String s)
-        throws IOException {
+            throws IOException {
         text(s);
     }
 
     public void setFeature(String name, boolean value) {
         if ("http://xmlpull.org/v1/doc/features.html#indent-output"
-            .equals(name)) {
+                .equals(name)) {
             indent[depth] = value;
         }
         else
@@ -277,11 +239,11 @@ public class KXmlSerializer implements XmlSerializer {
 
     public void setProperty(String name, Object value) {
         throw new RuntimeException(
-            "Unsupported Property:" + value);
+                "Unsupported Property:" + value);
     }
 
     public void setPrefix(String prefix, String namespace)
-        throws IOException {
+            throws IOException {
 
         check(false);
         if (prefix == null)
@@ -309,14 +271,7 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public void setOutput(Writer writer) {
-        // BEGIN android-changed
-        // Guarantee that the writer is always buffered.
-        if (writer instanceof BufferedWriter) {
-            this.writer = (BufferedWriter) writer;
-        } else {
-            this.writer = new BufferedWriter(writer, WRITE_BUFFER_SIZE);
-        }
-        // END android-changed
+        this.writer = writer;
 
         // elementStack = new String[12]; //nsp/prefix/name
         //nspCounts = new int[4];
@@ -337,27 +292,29 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public void setOutput(OutputStream os, String encoding)
-        throws IOException {
+            throws IOException {
         if (os == null)
-            throw new IllegalArgumentException("os == null");
+            throw new IllegalArgumentException();
         setOutput(
-            encoding == null
-                ? new OutputStreamWriter(os)
-                : new OutputStreamWriter(os, encoding));
+                encoding == null
+                        ? new OutputStreamWriter(os)
+                        : new OutputStreamWriter(os, encoding));
         this.encoding = encoding;
-        if (encoding != null && encoding.toLowerCase(Locale.US).startsWith("utf")) {
+        if (encoding != null
+                && encoding.toLowerCase().startsWith("utf"))
             unicode = true;
-        }
     }
 
-    public void startDocument(String encoding, Boolean standalone) throws IOException {
+    public void startDocument(
+            String encoding,
+            Boolean standalone)
+            throws IOException {
         writer.write("<?xml version='1.0' ");
 
         if (encoding != null) {
             this.encoding = encoding;
-            if (encoding.toLowerCase(Locale.US).startsWith("utf")) {
+            if (encoding.toLowerCase().startsWith("utf"))
                 unicode = true;
-            }
         }
 
         if (this.encoding != null) {
@@ -369,14 +326,14 @@ public class KXmlSerializer implements XmlSerializer {
         if (standalone != null) {
             writer.write("standalone='");
             writer.write(
-                    standalone ? "yes" : "no");
+                    standalone.booleanValue() ? "yes" : "no");
             writer.write("' ");
         }
         writer.write("?>");
     }
 
     public XmlSerializer startTag(String namespace, String name)
-        throws IOException {
+            throws IOException {
         check(false);
 
         //        if (namespace == null)
@@ -397,15 +354,15 @@ public class KXmlSerializer implements XmlSerializer {
         }
 
         String prefix =
-            namespace == null
-                ? ""
-                : getPrefix(namespace, true, true);
+                namespace == null
+                        ? ""
+                        : getPrefix(namespace, true, true);
 
-        if (namespace != null && TextUtils.isEmpty(namespace)) {
+        if ("".equals(namespace)) {
             for (int i = nspCounts[depth];
-                i < nspCounts[depth + 1];
-                i++) {
-                if (TextUtils.isEmpty(nspStack[i * 2]) && !TextUtils.isEmpty(nspStack[i * 2 + 1])) {
+                 i < nspCounts[depth + 1];
+                 i++) {
+                if ("".equals(nspStack[i * 2])) {
                     throw new IllegalStateException("Cannot set default namespace for elements in no namespace");
                 }
             }
@@ -416,7 +373,7 @@ public class KXmlSerializer implements XmlSerializer {
         elementStack[esp] = name;
 
         writer.write('<');
-        if (!TextUtils.isEmpty(prefix)) {
+        if (!"".equals(prefix)) {
             writer.write(prefix);
             writer.write(':');
         }
@@ -429,10 +386,10 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public XmlSerializer attribute(
-        String namespace,
-        String name,
-        String value)
-        throws IOException {
+            String namespace,
+            String name,
+            String value)
+            throws IOException {
         if (!pending)
             throw new IllegalStateException("illegal position for attribute");
 
@@ -441,16 +398,16 @@ public class KXmlSerializer implements XmlSerializer {
         if (namespace == null)
             namespace = "";
 
-        //        depth--;
-        //        pending = false;
+        //		depth--;
+        //		pending = false;
 
         String prefix =
-                TextUtils.isEmpty(namespace)
-                ? ""
-                : getPrefix(namespace, false, true);
+                "".equals(namespace)
+                        ? ""
+                        : getPrefix(namespace, false, true);
 
-        //        pending = true;
-        //        depth++;
+        //		pending = true;
+        //		depth++;
 
         /*        if (cnt != nspCounts[depth]) {
                     writer.write(' ');
@@ -466,7 +423,7 @@ public class KXmlSerializer implements XmlSerializer {
                 */
 
         writer.write(' ');
-        if (!TextUtils.isEmpty(prefix)) {
+        if (!"".equals(prefix)) {
             writer.write(prefix);
             writer.write(':');
         }
@@ -485,13 +442,13 @@ public class KXmlSerializer implements XmlSerializer {
         writer.flush();
     }
     /*
-        public void close() throws IOException {
-            check();
-            writer.close();
-        }
+    	public void close() throws IOException {
+    		check();
+    		writer.close();
+    	}
     */
     public XmlSerializer endTag(String namespace, String name)
-        throws IOException {
+            throws IOException {
 
         if (!pending)
             depth--;
@@ -499,11 +456,11 @@ public class KXmlSerializer implements XmlSerializer {
         //          namespace = "";
 
         if ((namespace == null
-            && elementStack[depth * 3] != null)
-            || (namespace != null
+                && elementStack[depth * 3] != null)
+                || (namespace != null
                 && !namespace.equals(elementStack[depth * 3]))
-            || !elementStack[depth * 3 + 2].equals(name))
-            throw new IllegalArgumentException("</{"+namespace+"}"+name+"> does not match start");
+                || !elementStack[depth * 3 + 2].equals(name))
+            throw new IllegalArgumentException("start/end tag mismatch");
 
         if (pending) {
             check(true);
@@ -518,7 +475,7 @@ public class KXmlSerializer implements XmlSerializer {
 
             writer.write("</");
             String prefix = elementStack[depth * 3 + 1];
-            if (!TextUtils.isEmpty(prefix)) {
+            if (!"".equals(prefix)) {
                 writer.write(prefix);
                 writer.write(':');
             }
@@ -550,30 +507,16 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public XmlSerializer text(char[] text, int start, int len)
-        throws IOException {
+            throws IOException {
         text(new String(text, start, len));
         return this;
     }
 
     public void cdsect(String data) throws IOException {
         check(false);
-        // BEGIN android-changed: ]]> is not allowed within a CDATA,
-        // so break and start a new one when necessary.
-        data = data.replace("]]>", "]]]]><![CDATA[>");
-        char[] chars = data.toCharArray();
-        // We also aren't allowed any invalid characters.
-        for (char ch : chars) {
-            boolean valid = (ch >= 0x20 && ch <= 0xd7ff) ||
-                    (ch == '\t' || ch == '\n' || ch == '\r') ||
-                    (ch >= 0xe000 && ch <= 0xfffd);
-            if (!valid) {
-                reportInvalidCharacter(ch);
-            }
-        }
         writer.write("<![CDATA[");
-        writer.write(chars, 0, chars.length);
+        writer.write(data);
         writer.write("]]>");
-        // END android-changed
     }
 
     public void comment(String comment) throws IOException {
@@ -584,7 +527,7 @@ public class KXmlSerializer implements XmlSerializer {
     }
 
     public void processingInstruction(String pi)
-        throws IOException {
+            throws IOException {
         check(false);
         writer.write("<?");
         writer.write(pi);
