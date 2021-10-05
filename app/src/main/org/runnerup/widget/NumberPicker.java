@@ -152,7 +152,7 @@ public class NumberPicker extends LinearLayout {
             } else {
                 return;
             }
-            long longSpeed = 300;
+            long longSpeed = 50;
             longHandler.postDelayed(this, longSpeed);
         }
     };
