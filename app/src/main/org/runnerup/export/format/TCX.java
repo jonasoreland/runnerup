@@ -102,6 +102,8 @@ public class TCX {
                     "http://www.w3.org/2001/XMLSchema");
             mXML.attribute("", "xmlns:ae",
                     "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+            mXML.attribute("", "xsi:schemaLocation",
+                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd");
             mXML.startTag("", "Activities");
             mXML.startTag("", "Activity");
             if (cursor.isNull(3)) {
