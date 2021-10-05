@@ -27,6 +27,7 @@ import org.runnerup.db.PathCursor;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.util.KXmlSerializer;
 import org.runnerup.workout.Sport;
+import org.runnerup.BuildConfig;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -37,8 +38,8 @@ import java.util.TimeZone;
 /**
  * TCX - export an activity in TCX format
  *
- * @todo Handle pauses
- * @todo Other sports than running
+ * TODO Handle pauses
+ * TODO Other sports than running
  *
  * @author jonas.oreland@gmail.com
  *
@@ -149,36 +150,43 @@ public class TCX {
             mXML.endTag("", "ProductID");
             mXML.startTag("", "Version");
             mXML.startTag("", "VersionMajor");
-            mXML.text("2");
+            mXML.text("0");
             mXML.endTag("", "VersionMajor");
             mXML.startTag("", "VersionMinor");
-            mXML.text("4.1");
+            mXML.text("0");
             mXML.endTag("", "VersionMinor");
             mXML.startTag("", "BuildMajor");
-            mXML.text("2");
+            mXML.text("0");
             mXML.endTag("", "BuildMajor");
             mXML.startTag("", "BuildMinor");
-            mXML.text("4.1");
+            mXML.text("0");
             mXML.endTag("", "BuildMinor");
             mXML.endTag("", "Version");
             mXML.endTag("", "Creator");
             mXML.endTag("", "Activity");
             mXML.endTag("", "Activities");
             mXML.startTag("", "Author");
-            mXML.attribute("", "xsi:type", "Author_t");
+            mXML.attribute("", "xsi:type", "Application_t");
             mXML.startTag("", "Name");
-            mXML.text("RunnerUp");
+            String application = BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME + " - " + String.valueOf(BuildConfig.VERSION_CODE);
+            mXML.text(application);
             mXML.endTag("", "Name");
             mXML.startTag("", "Build");
             mXML.startTag("", "Version");
             mXML.startTag("", "VersionMajor");
-            mXML.text("2");
+            mXML.text("1");
             mXML.endTag("", "VersionMajor");
             mXML.startTag("", "VersionMinor");
-            mXML.text("4.1");
+            mXML.text("0");
             mXML.endTag("", "VersionMinor");
             mXML.endTag("", "Version");
             mXML.endTag("", "Build");
+            mXML.startTag("", "LangID");
+            mXML.text("en");
+            mXML.endTag("", "LangID");
+            mXML.startTag("", "PartNumber");
+            mXML.text("000-00000-00");
+            mXML.endTag("", "PartNumber");
             mXML.endTag("", "Author");
             mXML.endTag("", "TrainingCenterDatabase");
             mXML.flush();
