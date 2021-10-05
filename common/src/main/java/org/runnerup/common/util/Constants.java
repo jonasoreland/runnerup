@@ -41,8 +41,8 @@ public interface Constants {
             String NAME = "name";
             String COMMENT = "comment";
             String SPORT = "type";
-            String MAX_HR = "avg_hr";
-            String AVG_HR = "max_hr";
+            String MAX_HR = "max_hr";
+            String AVG_HR = "avg_hr";
             String AVG_CADENCE = "avg_cadence";
             String META_DATA = "meta_data";
             String DELETED = "deleted";
