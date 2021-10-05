@@ -49,6 +49,8 @@ public class DistancePicker extends LinearLayout {
         unitStringLayout.addView(unitString);
         meters = new NumberPicker(context, attrs);
 
+        unitMeters.setDigits(3);
+        unitMeters.setRange(0,999,true);
         unitMeters.setOrientation(VERTICAL);
         meters.setDigits(4);
         meters.setOrientation(VERTICAL);
