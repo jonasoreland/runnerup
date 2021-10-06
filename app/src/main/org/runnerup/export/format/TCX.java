@@ -152,7 +152,7 @@ public class TCX {
             mXML.endTag("", "ProductID");
             mXML.startTag("", "Version");
             mXML.startTag("", "VersionMajor");
-            mXML.text("0");
+            mXML.text("1");
             mXML.endTag("", "VersionMajor");
             mXML.startTag("", "VersionMinor");
             mXML.text("0");
