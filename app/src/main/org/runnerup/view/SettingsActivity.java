@@ -19,17 +19,16 @@ package org.runnerup.view;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
@@ -131,23 +130,9 @@ public class SettingsActivity extends PreferenceActivity {
         return false;
     };
 
-    private Boolean exit = false;
-    @Override
     public void onBackPressed() {
-        if (exit) {
-            finish(); // finish activity
-        } else {
-            Toast.makeText(this, "Press Back again to Exit.",
-                    Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
-
-        }
-
-    };
+        Intent intent = new Intent(this, MainLayout.class);
+        startActivity(intent);
+        finish();
+    }
 }

@@ -99,6 +99,12 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         getSupportLoaderManager().restartLoader(0, null, this);
     }
 
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainLayout.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

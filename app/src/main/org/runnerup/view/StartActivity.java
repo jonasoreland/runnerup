@@ -33,6 +33,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -53,6 +54,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -402,15 +404,23 @@ public class StartActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    @Override
     public void onBackPressed() {
         if (!getAutoStartGps() && mGpsStatus.isLogging()) {
             stopGps();
             updateView();
-        } else {
-            super.onBackPressed();
+        } else if (exit) {
+            super.onBackPressed(); // finish activity
+            }
+            else {
+                Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show(); //TODO translate
+                exit = true;
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                    exit = false;
+                    }
+                }, 3 * 1000);
+            }
         }
-    }
 
     private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -1248,4 +1258,20 @@ public class StartActivity extends AppCompatActivity
         }
 
     };
+
+    private Boolean exit = false;
+    public void onRomanPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+        }
+    }
 }
