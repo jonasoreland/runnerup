@@ -23,7 +23,9 @@ import android.database.sqlite.SQLiteDatabase;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathCursor;
 import org.runnerup.db.PathSimplifier;
-import org.runnerup.util.KXmlSerializer;
+//import org.runnerup.util.KXmlSerializer;
+import org.kxml2.io.KXmlSerializer;
+
 import org.runnerup.workout.Sport;
 
 import java.io.IOException;
