@@ -19,6 +19,7 @@ package org.runnerup.view;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
@@ -128,4 +129,10 @@ public class SettingsActivity extends PreferenceActivity {
         DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, dialog::dismiss);
         return false;
     };
+
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainLayout.class);
+        startActivity(intent);
+        finish();
+    }
 }
