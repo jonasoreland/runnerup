@@ -100,7 +100,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsDisconnecting = false;
 
     static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Mi +.*Band)");
-    static boolean huamiMatcherFound = false;
+    //static boolean huamiMatcherFound = false;
 
     public AndroidBLEHRProvider(Context ctx) {
         context = ctx;
@@ -235,9 +235,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("firmware => startHR()");
                     // triggered from DummyReadForSecLevelCheck
                     startHR();
-                } else if (huamiMatcherFound && charUuid.equals(HARDWARE_REVISON_UUID)) {
+                } else if (charUuid.equals(HARDWARE_REVISON_UUID)) {
                     // triggered from DummyReadForSecLevelCheck
-                    log("Huami hardware => startHR()");
+                    log("BLE hardware => startHR()");
                     startHR();
                 } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                     log("batterylevel: " + arg0);
@@ -366,11 +366,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             BluetoothGattCharacteristic firmwareIdCharc = disService
                     .getCharacteristic(FIRMWARE_REVISON_UUID);
             if (firmwareIdCharc == null) {
-                huamiMatcherFound = huamiPattern.matcher(btDevice.getName()).find();
-                if (huamiMatcherFound) {
+                //huamiMatcherFound = huamiPattern.matcher(btDevice.getName()).find();
+                //if (huamiMatcherFound) {
                     firmwareIdCharc = disService
                             .getCharacteristic(HARDWARE_REVISON_UUID);
-                }
+                //}
             }
             if (firmwareIdCharc == null) {
                 reportConnectFailed("firmware revison charateristic not found!");
@@ -538,11 +538,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     continue;
                 }
                 // Bonded device detected :Amazfit Bip S
-                huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
-                if (huamiMatcherFound) {
-                    log("Bonded Huami device detected :" + btDeviceThis.getName());
+                //huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
+                //if (huamiMatcherFound) {
+                //    log("Bonded Huami device detected :" + btDeviceThis.getName());
                     mLeScanCallback.onLeScan(btDeviceThis, 0, null);
-                }
+                //}
             }
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
         }
