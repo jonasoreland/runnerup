@@ -99,7 +99,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsConnecting = false;
     private boolean mIsDisconnecting = false;
 
-    static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Mi +.*Band)");
+    //static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Mi +.*Band)");
     //static boolean huamiMatcherFound = false;
 
     public AndroidBLEHRProvider(Context ctx) {
