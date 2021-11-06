@@ -537,7 +537,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("Non BLE device detected : " + btDeviceThis.getName());
                     continue;
                 }
-                // Bonded device detected :Amazfit Bip S
+                // Bonded device detected, for instance Amazfit Bip S
                 //huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
                 //if (huamiMatcherFound) {
                 //    log("Bonded Huami device detected :" + btDeviceThis.getName());
