@@ -74,7 +74,12 @@ public class FeedList extends Observable implements Constants {
     }
 
     public void reset() {
-        mDB.execSQL("DELETE FROM " + DB.FEED.TABLE);
+        try {
+            mDB.execSQL("DELETE FROM " + DB.FEED.TABLE);
+        } catch (IllegalStateException ex) {
+            Log.e(getClass().getName(), "Delete feed in db failed:", ex);
+            return;
+        }
     }
 
     private void prune() {

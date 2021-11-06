@@ -1051,7 +1051,13 @@ public class SyncManager {
         }
 
         if (syncActivitiesList.size() == 0) {
-            mSpinner.cancel();
+            try {
+                mSpinner.cancel();
+            } catch (IllegalStateException ex) {
+                Log.i(getClass().getName(), "Failed to dismiss dialog:", ex);
+                return;
+            }
+            
             syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.OK);
             return;
         }
