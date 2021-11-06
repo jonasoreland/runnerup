@@ -67,9 +67,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private final static boolean AVOID_SCAN_WITH_UUID;
     private final static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN;
 
-    static final UUID HARDWARE_REVISON_UUID = UUID
-            .fromString("00002a27-0000-1000-8000-00805f9b34fb");
-
     static {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // 4.3
