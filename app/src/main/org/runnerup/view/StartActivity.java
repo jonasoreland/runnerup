@@ -33,6 +33,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -53,6 +54,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -130,6 +132,7 @@ public class StartActivity extends AppCompatActivity
     private TextView wearOsMessage = null;
 
     boolean batteryLevelMessageShown = false;
+    private Boolean exit = false;
 
     TitleSpinner simpleTargetType = null;
     TitleSpinner simpleTargetPaceValue = null;
@@ -402,13 +405,21 @@ public class StartActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    @Override
     public void onBackPressed() {
         if (!getAutoStartGps() && mGpsStatus.isLogging()) {
             stopGps();
             updateView();
+        } else if (exit) {
+            super.onBackPressed(); // finish activity
         } else {
-            super.onBackPressed();
+            final Resources res = this.getResources();
+            Toast.makeText(getApplicationContext(), res.getString(R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
         }
     }
 
@@ -1246,6 +1257,5 @@ public class StartActivity extends AppCompatActivity
         public int preSetValue(int newValue) throws IllegalArgumentException {
             return newValue;
         }
-
     };
 }

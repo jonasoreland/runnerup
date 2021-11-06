@@ -145,6 +145,12 @@ public class FeedActivity extends AppCompatActivity implements Constants {
         feedAdapter.close();
     }
 
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainLayout.class);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
