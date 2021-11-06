@@ -37,7 +37,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Connects to a Bluetooth Low Energy module for Android versions >= 4.3
@@ -68,9 +67,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private final static boolean AVOID_SCAN_WITH_UUID;
     private final static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN;
 
-    static final UUID HARDWARE_REVISON_UUID = UUID
-            .fromString("00002a27-0000-1000-8000-00805f9b34fb");
-
     static {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             // 4.3
@@ -98,9 +94,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
     private boolean mIsDisconnecting = false;
-
-    static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Mi +.*Band)");
-    static boolean huamiMatcherFound = false;
 
     public AndroidBLEHRProvider(Context ctx) {
         context = ctx;
@@ -235,9 +228,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("firmware => startHR()");
                     // triggered from DummyReadForSecLevelCheck
                     startHR();
-                } else if (huamiMatcherFound && charUuid.equals(HARDWARE_REVISON_UUID)) {
+                } else if (charUuid.equals(HARDWARE_REVISON_UUID)) {
                     // triggered from DummyReadForSecLevelCheck
-                    log("Huami hardware => startHR()");
+                    log("BLE hardware => startHR()");
                     startHR();
                 } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                     log("batterylevel: " + arg0);
@@ -366,11 +359,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             BluetoothGattCharacteristic firmwareIdCharc = disService
                     .getCharacteristic(FIRMWARE_REVISON_UUID);
             if (firmwareIdCharc == null) {
-                huamiMatcherFound = huamiPattern.matcher(btDevice.getName()).find();
-                if (huamiMatcherFound) {
                     firmwareIdCharc = disService
                             .getCharacteristic(HARDWARE_REVISON_UUID);
-                }
             }
             if (firmwareIdCharc == null) {
                 reportConnectFailed("firmware revison charateristic not found!");
@@ -537,12 +527,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("Non BLE device detected : " + btDeviceThis.getName());
                     continue;
                 }
-                // Bonded device detected :Amazfit Bip S
-                huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
-                if (huamiMatcherFound) {
-                    log("Bonded Huami device detected :" + btDeviceThis.getName());
-                    mLeScanCallback.onLeScan(btDeviceThis, 0, null);
-                }
+                // Bonded device detected, for instance Amazfit Bip S
+                log("Trying paired generic BLE device: " + btDeviceThis.getName());
+                mLeScanCallback.onLeScan(btDeviceThis, 0, null);
             }
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
         }

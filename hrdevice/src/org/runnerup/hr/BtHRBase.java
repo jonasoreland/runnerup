@@ -36,6 +36,8 @@ abstract class BtHRBase implements HRProvider {
             .fromString("00002A19-0000-1000-8000-00805f9b34fb");
     static final UUID CCC = UUID
             .fromString("00002902-0000-1000-8000-00805f9b34fb");
+    static final UUID HARDWARE_REVISON_UUID = UUID
+            .fromString("00002a27-0000-1000-8000-00805f9b34fb");
 
     HRProvider.HRClient hrClient;
     Handler hrClientHandler;
