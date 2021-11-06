@@ -127,12 +127,13 @@ repositories {
         }
     }
     maven {
-        url "https://jitpack.io" // maven repo where the current library resides
+        // com.github.stefanhaustein:kxml2
+        url "https://jitpack.io"
     }
     maven {
+        // org.xmlpull:xmlpull
         url 'https://gitlab.com/api/v4/projects/26729549/packages/maven'
     }
-
 }
 
 dependencies {
