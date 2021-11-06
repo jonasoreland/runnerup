@@ -59,7 +59,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     }
 
     static final String NAME = "AndroidBLE";
-    private static final String DISPLAY_NAME = "Bluetooth SMART (BLE)";
+    private static final String DISPLAY_NAME = "Bluetooth LE";
 
     private static final UUID[] SCAN_UUIDS = {
         HRP_SERVICE
@@ -524,10 +524,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         else {
             for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
                 if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
-                    log("Non BLE device detected : " + btDeviceThis.getName());
+                    log("Ignoring paired non BLE device: " + btDeviceThis.getName());
                     continue;
                 }
                 // Bonded device detected, for instance Amazfit Bip S
+                // TODO this should be handled in a separate adapter, to not confuse the scanning
                 log("Trying paired generic BLE device: " + btDeviceThis.getName());
                 mLeScanCallback.onLeScan(btDeviceThis, 0, null);
             }
