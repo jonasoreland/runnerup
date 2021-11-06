@@ -541,6 +541,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 //huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
                 //if (huamiMatcherFound) {
                 //    log("Bonded Huami device detected :" + btDeviceThis.getName());
+                    log("Trying paired generic BLE device: " + btDeviceThis.getName());
                     mLeScanCallback.onLeScan(btDeviceThis, 0, null);
                 //}
             }
