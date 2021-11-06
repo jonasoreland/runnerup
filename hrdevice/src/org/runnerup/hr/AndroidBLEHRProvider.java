@@ -37,7 +37,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 /**
  * Connects to a Bluetooth Low Energy module for Android versions >= 4.3
@@ -98,9 +97,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
     private boolean mIsDisconnecting = false;
-
-    //static final Pattern huamiPattern = Pattern.compile("(Amazfit +Bip|Mi +.*Band)");
-    //static boolean huamiMatcherFound = false;
 
     public AndroidBLEHRProvider(Context ctx) {
         context = ctx;
@@ -366,11 +362,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             BluetoothGattCharacteristic firmwareIdCharc = disService
                     .getCharacteristic(FIRMWARE_REVISON_UUID);
             if (firmwareIdCharc == null) {
-                //huamiMatcherFound = huamiPattern.matcher(btDevice.getName()).find();
-                //if (huamiMatcherFound) {
                     firmwareIdCharc = disService
                             .getCharacteristic(HARDWARE_REVISON_UUID);
-                //}
             }
             if (firmwareIdCharc == null) {
                 reportConnectFailed("firmware revison charateristic not found!");
@@ -538,12 +531,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     continue;
                 }
                 // Bonded device detected, for instance Amazfit Bip S
-                //huamiMatcherFound = huamiPattern.matcher(btDeviceThis.getName()).find();
-                //if (huamiMatcherFound) {
-                //    log("Bonded Huami device detected :" + btDeviceThis.getName());
-                    log("Trying paired generic BLE device: " + btDeviceThis.getName());
-                    mLeScanCallback.onLeScan(btDeviceThis, 0, null);
-                //}
+                log("Trying paired generic BLE device: " + btDeviceThis.getName());
+                mLeScanCallback.onLeScan(btDeviceThis, 0, null);
             }
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
         }
