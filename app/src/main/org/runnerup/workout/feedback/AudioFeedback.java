@@ -97,6 +97,7 @@ public class AudioFeedback extends Feedback {
             }
             msg = msgTxt;
         } else {
+            // Note: currently, event is always null
             if (event != null && scope != null) {
                 msg = formatter.getCueString(event.getCueId());
             } else if (event != null && intensity != null) {

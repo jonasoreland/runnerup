@@ -41,6 +41,10 @@ public interface Constants {
             String NAME = "name";
             String COMMENT = "comment";
             String SPORT = "type";
+            // Note that the texts for MAX_HR and AVG_HR are confusing. It does not matter as the SW
+            // uses the constants, not the value.
+            // If the database need to be upgraded for other reasons, the values could be migrated too,
+            // but there is no reason to migrate just for this.
             String MAX_HR = "avg_hr";
             String AVG_HR = "max_hr";
             String AVG_CADENCE = "avg_cadence";
