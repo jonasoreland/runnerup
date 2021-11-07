@@ -4,6 +4,10 @@
     <item>Milhas</item>
     <item>Quilômetros</item>
   </string-array>
+  <string-array name="speedUnitEntries">
+    <item>Ritmo</item>
+    <item>Velocidade</item>
+  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Aquecimento</item>
@@ -39,4 +43,8 @@
     <item>Feminino</item>
   </string-array>
   <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Distância-radial (rápido)</item>
+    <item>Ramer-Douglas-Peucker (alta qualidade)</item>
+  </string-array>
 </resources>

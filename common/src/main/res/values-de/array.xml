@@ -5,8 +5,8 @@
     <item>Kilometer</item>
   </string-array>
   <string-array name="speedUnitEntries">
-    <item>Pace</item>
-    <item>Geschwindigkeit</item>
+    <item>Pace (min/km)</item>
+    <item>Geschwindigkeit (km/h)</item>
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
@@ -17,20 +17,20 @@
     <item>Abkühlen</item>
   </string-array>
   <string-array name="duration_types">
-    <item>Bis gedrückt</item>
+    <item>Lap-Taste</item>
     <item>Zeit</item>
     <item>Distanz</item>
   </string-array>
   <string-array name="target_types">
     <item>Freies Training</item>
-    <item>Tempo</item>
-    <item>Herzfrequenzbereich</item>
+    <item>Pace</item>
+    <item>HR-Zone</item>
   </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Laufen</item>
     <item>Radfahren</item>
-    <item>Anderweitig</item>
+    <item>Anderes</item>
     <item>Orientierungslauf</item>
     <item>Gehen</item>
   </string-array>
