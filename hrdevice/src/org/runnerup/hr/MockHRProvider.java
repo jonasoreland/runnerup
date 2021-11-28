@@ -164,7 +164,7 @@ public class MockHRProvider implements HRProvider {
     }
 
     @Override
-    public boolean isBondingDevice() {
+    public boolean includePairingBLE() {
         return false;
     }
 

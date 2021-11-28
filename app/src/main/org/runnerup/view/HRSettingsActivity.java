@@ -173,12 +173,19 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         getMenuInflater().inflate(R.menu.hrsettings_menu, menu);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Resources res = getResources();
-        boolean isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
-        MenuItem item = menu.findItem(R.id.menu_hrdevice_expermental);
+
+        boolean isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
+        MenuItem item = menu.findItem(R.id.menu_hrdevice_paired_ble);
         item.setChecked(isChecked);
+
+        isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
+        item = menu.findItem(R.id.menu_hrdevice_experimental);
+        item.setChecked(isChecked);
+
         isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
         item = menu.findItem(R.id.menu_hrdevice_mock);
         item.setChecked(isChecked);
+
         return true;
     }
 
@@ -191,7 +198,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         } else if (id == R.id.menu_hrzones) {
             hrZonesClick.onClick(null);
             return true;
-        } else if (id == R.id.menu_hrdevice_expermental
+        } else if (id == R.id.menu_hrdevice_paired_ble
+                || id == R.id.menu_hrdevice_experimental
                 || id == R.id.menu_hrdevice_mock) {
             boolean isChecked = !item.isChecked();
             item.setChecked(isChecked);
@@ -199,11 +207,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             Resources res = getResources();
             Editor editor = prefs.edit();
             int key;
-            if (id == R.id.menu_hrdevice_expermental) {
+            if (id == R.id.menu_hrdevice_paired_ble) {
+                key = R.string.pref_bt_paired_ble;
+            } else if (id == R.id.menu_hrdevice_experimental) {
                 key = R.string.pref_bt_experimental;
             } else {
                 key = R.string.pref_bt_mock;
             }
+
             editor.putBoolean(res.getString(key), isChecked);
             editor.apply();
             providers = HRManager.getHRProviderList(this);
@@ -421,7 +432,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             btAddress = hrDevice.getAddress();
                             btName = hrDevice.getName();
                         });
-        if (hrProvider.isBondingDevice()) {
+        if (hrProvider.includePairingBLE()) {
             builder.setNeutralButton("Pairing", (dialog, which) -> {
                 dialog.cancel();
                 Intent i = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);

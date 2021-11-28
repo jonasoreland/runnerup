@@ -151,8 +151,8 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     }
 
     @Override
-    public boolean isBondingDevice() {
-        return provider.isBondingDevice();
+    public boolean includePairingBLE() {
+        return provider.includePairingBLE();
     }
 
     @Override
