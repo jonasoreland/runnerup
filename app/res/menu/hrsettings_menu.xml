@@ -28,7 +28,13 @@
         android:title="@string/Clear_HR_settings"/>
 
     <item
-        android:id="@+id/menu_hrdevice_expermental"
+        android:id="@+id/menu_hrdevice_paired_ble"
+        android:orderInCategory="100"
+        android:title="@string/Paired_BLE_devices"
+        android:checkable="true"/>
+
+    <item
+        android:id="@+id/menu_hrdevice_experimental"
         android:orderInCategory="100"
         android:title="@string/Experimental_HRM_devices"
         android:checkable="true"/>

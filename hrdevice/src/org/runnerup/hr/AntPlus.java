@@ -114,7 +114,7 @@ public class AntPlus extends BtHRBase {
     }
 
     @Override
-    public boolean isBondingDevice() {
+    public boolean includePairingBLE() {
         return false;
     }
 

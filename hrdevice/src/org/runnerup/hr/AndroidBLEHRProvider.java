@@ -27,10 +27,13 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -94,9 +97,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
     private boolean mIsDisconnecting = false;
+    private boolean mSupportPaired;
 
     public AndroidBLEHRProvider(Context ctx) {
         context = ctx;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        Resources res = context.getResources();
+        mSupportPaired = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
     }
 
     @Override
@@ -228,9 +235,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     log("firmware => startHR()");
                     // triggered from DummyReadForSecLevelCheck
                     startHR();
-                } else if (charUuid.equals(HARDWARE_REVISON_UUID)) {
+                } else if (mSupportPaired && charUuid.equals(HARDWARE_REVISON_UUID)) {
+                    // Some paired devices like Huami (MiBand) has no firmware uuid
+                    log("BLE hardware rev => startHR()");
                     // triggered from DummyReadForSecLevelCheck
-                    log("BLE hardware => startHR()");
                     startHR();
                 } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
                     log("batterylevel: " + arg0);
@@ -358,7 +366,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
             BluetoothGattCharacteristic firmwareIdCharc = disService
                     .getCharacteristic(FIRMWARE_REVISON_UUID);
-            if (firmwareIdCharc == null) {
+            if (mSupportPaired && firmwareIdCharc == null) {
                     firmwareIdCharc = disService
                             .getCharacteristic(HARDWARE_REVISON_UUID);
             }
@@ -456,7 +464,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         return mIsScanning;
     }
 
-    // Using a derecated API - change in API 21 (Marshmallow)
+    // Using a deprecated API - change in API 21 (Marshmallow)
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
@@ -518,19 +526,22 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         mIsScanning = true;
         mScanDevices.clear();
+
         if (AVOID_SCAN_WITH_UUID)
             // Android 4.3
             btAdapter.startLeScan(mLeScanCallback);
         else {
-            for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
-                if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
-                    log("Ignoring paired non BLE device: " + btDeviceThis.getName());
-                    continue;
+            if (mSupportPaired) {
+                for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
+                    if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
+                        log("Ignoring paired non BLE device: " + btDeviceThis.getName());
+                        continue;
+                    }
+
+                    // Paired device, for instance Huami/Amazfit Bip S could be supported
+                    log("Trying paired generic BLE device: " + btDeviceThis.getName());
+                    mLeScanCallback.onLeScan(btDeviceThis, 0, null);
                 }
-                // Bonded device detected, for instance Amazfit Bip S
-                // TODO this should be handled in a separate adapter, to not confuse the scanning
-                log("Trying paired generic BLE device: " + btDeviceThis.getName());
-                mLeScanCallback.onLeScan(btDeviceThis, 0, null);
             }
             btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
         }
@@ -721,8 +732,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     }
 
     @Override
-    public boolean isBondingDevice() {
-        return true;
+    public boolean includePairingBLE() {
+        return mSupportPaired;
     }
 
     @Override

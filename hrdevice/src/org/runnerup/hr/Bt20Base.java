@@ -194,7 +194,7 @@ public abstract class Bt20Base extends BtHRBase {
     }
 
     @Override
-    public boolean isBondingDevice() {
+    public boolean includePairingBLE() {
         return true;
     }
 

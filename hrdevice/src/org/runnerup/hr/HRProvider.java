@@ -92,13 +92,13 @@ public interface HRProvider {
     void close();
 
     /**
-     * A bonding device is a wireless module that requires devices to be
-     * paired before showing up on the scan (e.g. Bluetooth)
+     * A pairing device is a wireless module that requires devices to be
+     * paired (or bonded) before showing up on the scan (e.g. Bluetooth)
+     * Most BLE devices do not require pairing
      *
-     * @return true if the wireless module is a bonding device,
-     *          false otherwise
+     * @return true if the wireless module is a pairing device
      */
-    boolean isBondingDevice();
+    boolean includePairingBLE();
 
     /**
      * @return true if this {@link HRProvider} is currently scanning for available devices,
