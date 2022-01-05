@@ -327,7 +327,12 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         TextToSpeech tts = null;
         final ArrayList<Feedback> feedback = new ArrayList<>();
 
-        private final OnInitListener mTTSOnInitListener = arg0 -> {
+        private final OnInitListener mTTSOnInitListener = status -> {
+            if (status != TextToSpeech.SUCCESS) {
+                CreateNewNoTtsAvailableDialog();
+                return;
+            }
+
             SharedPreferences prefs;
             if (settingsName == null || settingsName.contentEquals(DEFAULT))
                 prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -340,10 +345,6 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             Workout w = Workout.fakeWorkoutForTestingAudioCue();
             RUTextToSpeech rutts = new RUTextToSpeech(tts, mute, getApplicationContext());
 
-            if (!rutts.isAvailable()) {
-                CreateNewNoTtsAvailableDialog();
-                return;
-            }
 
             HashMap<String, Object> bindValues = new HashMap<>();
             bindValues.put(Workout.KEY_TTS, rutts);
