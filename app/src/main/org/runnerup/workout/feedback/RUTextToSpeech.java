@@ -60,7 +60,7 @@ public class RUTextToSpeech {
         this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         this.mute = mute_;
         Locale locale = Formatter.getAudioLocale(context);
-        if (locale != null) {
+        if (tts != null && locale != null) {
             int res;
             switch((res = tts.isLanguageAvailable(locale))) {
                 case TextToSpeech.LANG_AVAILABLE:
