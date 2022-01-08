@@ -16,7 +16,7 @@ project.ext {
     //Common settings for all builds
     //Note that Android Studio does not know about the 'ext' module and will warn
     //minSdkVersion differs between modules
-    buildToolsVersion = '30.0.3' //Update Travis manually
+    buildToolsVersion = '32.0.0' //Update Travis manually
     compileSdkVersion = 30 //Update Travis manually
     targetSdkVersion = 30
 
@@ -30,13 +30,9 @@ project.ext {
     mockitoVersion = '3.11.2'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.4.4.0'
-    versionCode = 311
+    versionName = '2.4.5.0'
+    versionCode = 312
     latestBaseVersionCode = 15000000
-
-    travisBuild = System.getenv("TRAVIS") == "true"
-    // allows for -Dpre-dex=false to be set
-    preDexEnabled = "true" == System.getProperty("pre-dex", "true")
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
