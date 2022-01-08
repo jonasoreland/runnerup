@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="5" by="lint 4.2.2" client="gradle" variant="latestRelease" version="4.2.2">
+<issues format="6" by="lint 7.0.4" type="baseline" client="gradle" name="AGP (7.0.4)" variant="all" version="7.0.4">
 
     <issue
         id="UnusedAttribute"
@@ -75,17 +75,6 @@
         <location
             file="src/main/org/runnerup/view/RunActivity.java"
             line="116"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="UsingOnClickInXml"
-        message="Use databinding or explicit wiring of click listener in code"
-        errorLine1="        android:onClick=&quot;onClickAccountName&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/layout/reportlist_row.xml"
-            line="35"
             column="9"/>
     </issue>
 
