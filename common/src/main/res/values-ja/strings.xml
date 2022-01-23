@@ -335,4 +335,5 @@
   <string name="path_simplification_menu">経路を単純化する</string>
   <string name="File_format">アップロードファイル:</string>
   <string name="File_need_one_format">少なくとも形式が１つ必要です!</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

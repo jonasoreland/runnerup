@@ -263,4 +263,5 @@
   <string name="Loading_activities">Membuka aktivitas</string>
   <string name="Fetching_activities_from_1s">Mengambil aktivitas dari %1$s</string>
   <string name="Unknown">Entah</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

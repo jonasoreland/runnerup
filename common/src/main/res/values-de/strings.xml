@@ -343,4 +343,5 @@
   <string name="File_need_one_format">Sie müssen wenigstens ein Format angeben</string>
   <string name="tts_not_available_title">\'Text zu Sprache\' ist nicht verfügbar</string>
   <string name="tts_not_available">RunnerUp benötigt eine funktionierende \'Text zu Sprache\' Ausgabe für Audiohinweise. Bitte stellen Sie sicher, dass ihre \'Text zu Sprache\' Ausgabe funktioniert. </string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

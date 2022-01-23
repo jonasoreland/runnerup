@@ -336,4 +336,5 @@
   <string name="path_simplification_menu">Simplifică calea</string>
   <string name="File_format">Încarcă fișiere ca:</string>
   <string name="File_need_one_format">Trebuie să specificați cel puțin un format</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

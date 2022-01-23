@@ -273,4 +273,5 @@
   <string name="Speed">Скорость</string>
   <string name="File_format">Загрузить файл(ы) как:</string>
   <string name="File_need_one_format">Нужен хотя бы один формат!</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

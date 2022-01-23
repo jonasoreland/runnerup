@@ -343,4 +343,5 @@
   <string name="File_need_one_format">Vous devez spécifier au moins un format</string>
   <string name="tts_not_available_title">La synthèse vocale n\'est pas disponible.</string>
   <string name="tts_not_available">RunnerUp nécessite un moteur de synthèse vocale fonctionnel pour le suivi audio. Assurez-vous d\'avoir installé au moins un moteur de synthèse vocale fonctionnel.</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

@@ -281,4 +281,5 @@
   <string name="use_pressure_sensor_summary">Koristi barometar za računanje nadmorske visine</string>
   <string name="adjust_barometer_altitude_from_gps">Prilagodi nadmorsku visinu barometra prema GPS</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Koristi početnu GPS visinu za usrednjavanje barometarske visine</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

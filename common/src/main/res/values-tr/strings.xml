@@ -54,4 +54,5 @@
   <string name="Refresh">Yenile</string>
   <string name="Age">Yaş</string>
   <string name="OK">Tamam</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

@@ -336,4 +336,5 @@
   <string name="path_simplification_menu">精简路径</string>
   <string name="File_format">上传文件为:</string>
   <string name="File_need_one_format">你必须选择至少一种格式</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>
