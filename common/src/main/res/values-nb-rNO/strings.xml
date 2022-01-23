@@ -287,5 +287,4 @@
   <string name="use_pressure_sensor_summary">Bruk barometer til å regne ut høyde</string>
   <string name="adjust_barometer_altitude_from_gps">Juster barometerhøyde til GPS-høyde</string>
   <string name="adjust_barometer_elevation_from_gps_summary">Bruk opprinnelig GPS-høyde til gjennomsnitt for barometrisk høyde</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

@@ -310,5 +310,4 @@
   <string name="adjust_barometer_elevation_from_gps_summary">از ارتفاع اولیه ی GPS برای میانگین گیری ارتفاع فشارسنج استفاده کن</string>
   <string name="channel_notification_ongoing">اعلانات GPS و فعالیت رانرآپ</string>
   <string name="Lap_start">شروع دور</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

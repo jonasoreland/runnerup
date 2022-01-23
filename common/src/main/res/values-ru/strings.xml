@@ -332,5 +332,4 @@
   <string name="File_need_one_format">Вы должны выбрать хотя бы один из форматов</string>
   <string name="tts_not_available_title">TTS не доступен</string>
   <string name="tts_not_available">RunnerUp требует работающего TTS для воспроизведения звуковых сигналов. Убедитесь, что у вас установлен хотя бы один работающий TTS.</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

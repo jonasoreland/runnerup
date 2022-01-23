@@ -280,7 +280,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             //Check network connection #1082
             if (!isNetworkAvailable(AccountListActivity.this)){
-                Toast.makeText(AccountListActivity.this, R.string.check_internet_connection, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AccountListActivity.this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
                 return;
             }
             final Synchronizer synchronizer = ((Synchronizer)view.getTag());

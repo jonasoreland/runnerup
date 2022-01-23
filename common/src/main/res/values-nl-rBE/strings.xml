@@ -31,5 +31,4 @@
   <string name="recovery">herstel</string>
   <string name="warm_up">opwarming</string>
   <string name="cool_down">afkoeling</string>
-    <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

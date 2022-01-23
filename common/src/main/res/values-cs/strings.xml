@@ -127,5 +127,4 @@
   <string name="path_simplification_algorithm">Algoritmus</string>
   <string name="path_simplification_menu">Zjednodušit cestu</string>
   <string name="File_format">Nahrát soubory jako:</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

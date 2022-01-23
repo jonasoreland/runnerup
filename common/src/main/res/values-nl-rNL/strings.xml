@@ -317,5 +317,4 @@
   <string name="path_simplification_menu">Vereenvoudig pad</string>
   <string name="File_format">Upload bestand als:</string>
   <string name="File_need_one_format">U moet minstens 1 format specifieren</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

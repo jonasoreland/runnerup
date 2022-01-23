@@ -339,5 +339,4 @@
   <string name="path_simplification_menu">Спрощення треку</string>
   <string name="File_format">Відвантажувати файли як:</string>
   <string name="File_need_one_format">Ти маєш обрати хоча б один формат</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

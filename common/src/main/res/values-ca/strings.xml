@@ -343,5 +343,4 @@
   <string name="File_need_one_format">Heu d\'especificar almenys un format.</string>
   <string name="tts_not_available_title">Text a veu no està disponible</string>
   <string name="tts_not_available">El RunnerUp necessita un motor Text a veu per reproduir senyals d\'àudio. Assegureu-vos que teniu almenys un instal·lat correctament per utilitzar aquesta característica.</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

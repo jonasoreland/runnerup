@@ -308,5 +308,4 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Użyj początkowego wzniesienia z GPS do uśrednienia wzniesienia barometrycznego</string>
   <string name="channel_notification_ongoing">Powiadomienie z RunnerUp o GPS i o treningu</string>
   <string name="Lap_start">Start okrążenia</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

@@ -339,5 +339,4 @@
   <string name="path_simplification_menu">Supaprastinti kelią</string>
   <string name="File_format">Įkelti bylą kaip:</string>
   <string name="File_need_one_format">Turite nurodyti nors vieną formatą</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

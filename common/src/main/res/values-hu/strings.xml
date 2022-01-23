@@ -285,5 +285,4 @@
   <string name="Lap_start">Kör kezdete</string>
   <string name="Speed">Sebesség</string>
   <string name="path_simplification_algorithm">Algoritmus</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

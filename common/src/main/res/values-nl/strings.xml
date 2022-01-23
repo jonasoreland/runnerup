@@ -343,5 +343,4 @@
   <string name="File_need_one_format">Je moet tenminste een formaat kiezen</string>
   <string name="tts_not_available_title">Spraakinstellingen zijn niet beschikbaar</string>
   <string name="tts_not_available">RunnerUp vereist een werkende Text naar Spraak om de audio cues af te spelen. Gelieve er voor te zorgen dat minstens één Tekst naar Spraak geïnstalleerd is.</string>
-  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>
