@@ -342,4 +342,5 @@
   <string name="tts_not_available_title">Text to Speech is not available</string>
   <string name="tts_not_available">RunnerUp requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
   <string name="Catch_backbuttonpress">Press Back again to exit</string>
+  <string name="check_internet_connection">Please check your internet connection</string>
 </resources>

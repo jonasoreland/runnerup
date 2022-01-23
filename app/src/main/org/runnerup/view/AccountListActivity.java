@@ -17,6 +17,8 @@
 
 package org.runnerup.view;
 
+import static org.runnerup.util.NetworkUtils.isNetworkAvailable;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -275,6 +278,11 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private final AdapterView.OnItemClickListener configureItemClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            //Check network connection #1082
+            if (!isNetworkAvailable(AccountListActivity.this)){
+                Toast.makeText(AccountListActivity.this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+                return;
+            }
             final Synchronizer synchronizer = ((Synchronizer)view.getTag());
             if (synchronizer == null) {
                 return;
