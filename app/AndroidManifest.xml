@@ -64,7 +64,6 @@
         <activity
             android:exported="true"
             android:name=".view.MainLayout"
-            android:label="@string/app_name"
             android:theme="@style/MainLayoutTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

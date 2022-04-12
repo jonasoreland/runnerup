@@ -25,18 +25,15 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    lintOptions {
-        //Configure checks with paths
-        lintConfig file("lint.xml")
-        baseline file("lint-baseline.xml")
+    lint {
+        baseline file('lint-baseline.xml')
         checkReleaseBuilds true
-
+        lintConfig file('lint.xml')
         showAll true
-        //debug issues in Travis
+        //textOutput 'stdout'
         textReport true
-        textOutput 'stdout'
     }
+
 }
 
 repositories {

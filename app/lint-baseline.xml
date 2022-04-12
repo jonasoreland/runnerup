@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.0.4" type="baseline" client="gradle" name="AGP (7.0.4)" variant="all" version="7.0.4">
+<issues format="6" by="lint 7.1.3" type="baseline" client="gradle" dependencies="false" name="AGP (7.1.3)" variant="all" version="7.1.3">
 
     <issue
         id="UnusedAttribute"
@@ -57,6 +57,17 @@
     </issue>
 
     <issue
+        id="AppBundleLocaleChanges"
+        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
+        errorLine1="                configuration.setLocale(locale);"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/org/runnerup/util/Formatter.java"
+            line="115"
+            column="17"/>
+    </issue>
+
+    <issue
         id="SourceLockedOrientationActivity"
         message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
         errorLine1="        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
@@ -76,6 +87,116 @@
             file="src/main/org/runnerup/view/RunActivity.java"
             line="116"
             column="9"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="32"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="36"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="40"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="44"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="48"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="52"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="56"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="60"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="64"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="68"
+            column="3"/>
     </issue>
 
     <issue

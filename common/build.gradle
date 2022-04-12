@@ -31,9 +31,9 @@ android {
             }
         }
     }
-    lintOptions {
-        warning 'MissingTranslation'
+    lint {
         showAll true
+        warning 'MissingTranslation'
     }
 }
 
