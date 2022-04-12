@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.0.4" type="baseline" client="gradle" name="AGP (7.0.4)" variant="all" version="7.0.4">
+<issues format="6" by="lint 7.1.3" type="baseline" client="gradle" dependencies="false" name="AGP (7.1.3)" variant="all" version="7.1.3">
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.support:wearable than 2.3.0 is available: 2.8.1"
+        message="A newer version of com.google.android.support:wearable than 2.3.0 is available: 2.9.0"
         errorLine1="    implementation &quot;com.google.android.support:wearable:${rootProject.ext.googleWearVersion}&quot;"
         errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="52"
+            line="49"
             column="20"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of com.google.android.wearable:wearable than 2.3.0 is available: 2.8.1"
+        message="A newer version of com.google.android.wearable:wearable than 2.3.0 is available: 2.9.0"
         errorLine1="    compileOnly &quot;com.google.android.wearable:wearable:${rootProject.ext.googleWearVersion}&quot;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="build.gradle"
-            line="53"
+            line="50"
             column="17"/>
     </issue>
 

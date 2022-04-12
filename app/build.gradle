@@ -65,7 +65,7 @@ android {
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
         //By default all AppCompat translations are included, saves 350KB
-        resConfigs "ar", "bs", "cs", "ca", "de", "en", "es", "fa", "fi", "fr", "hu", "id", "in", "it", "iw", "ja", "lt", "nb", "nl", "pl", "pt", "ro", "ru", "sv", "tr", "uk", "zh"
+        resConfigs 'ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh'
     }
 
     signingConfigs {
@@ -89,17 +89,19 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    lintOptions {
-        //Configure checks with paths
-        lintConfig file("lint.xml")
-        baseline file("lint-baseline.xml")
+    lint {
+        baseline file('lint-baseline.xml')
         checkReleaseBuilds true
-
+        lintConfig file('lint.xml')
         showAll true
-        //debug issues in Travis
+        //textOutput 'stdout'
         textReport true
-        textOutput 'stdout'
+    }
+    bundle {
+        language {
+            // Language can be set for audio cues, include all locales
+            enableSplit = false
+        }
     }
 }
 
