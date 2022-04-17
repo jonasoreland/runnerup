@@ -198,7 +198,7 @@ public class ManualActivity extends AppCompatActivity {
                 // date has no timezine/dst info, must compensate
                 Calendar c = Calendar.getInstance();
                 c.setTime(d);
-                c.add(Calendar.MILLISECOND, c.getTimeZone().getOffset((new Date()).getTime()));
+                c.add(Calendar.MILLISECOND, c.getTimeZone().getOffset(d.getTime()));
                 start_time += c.getTime().getTime() / 1000;
             } catch (ParseException e) {
             }
