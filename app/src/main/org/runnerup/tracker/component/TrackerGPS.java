@@ -24,6 +24,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import androidx.core.content.ContextCompat;
 
@@ -73,6 +74,17 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         return ResultCode.RESULT_OK;
     }
 
+    private Integer parseAndFixInteger(int resId, String def, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String s = preferences.getString(context.getString(resId), def);
+        if (TextUtils.isEmpty(s)) {
+            SharedPreferences.Editor prefedit = preferences.edit();
+            prefedit.putString(context.getString(resId), def);
+            prefedit.apply();
+            return Integer.parseInt(def);
+        }
+        return Integer.parseInt(s);
+    }
     @Override
     public ResultCode onConnecting(final Callback callback, Context context) {
         if (ContextCompat.checkSelfPermission(this.tracker,
@@ -83,14 +95,12 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         try {
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            frequency_ms = Integer.parseInt(preferences.getString(context.getString(
-                    R.string.pref_pollInterval), "1000"));
+            frequency_ms = parseAndFixInteger(R.string.pref_pollInterval, "1000", context);
             if (!mWithoutGps) {
-                String frequency_meters = preferences.getString(context.getString(
-                        R.string.pref_pollDistance), "0");
+                Integer frequency_meters = parseAndFixInteger(R.string.pref_pollDistance, "0", context);
                 lm.requestLocationUpdates(GPS_PROVIDER,
                         frequency_ms,
-                        Integer.parseInt(frequency_meters),
+                        frequency_meters,
                         tracker);
                 mGpsStatus = new GpsStatus(context);
                 mGpsStatus.start(this);
