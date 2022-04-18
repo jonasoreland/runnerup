@@ -183,23 +183,25 @@ public class ManualActivity extends AppCompatActivity {
             secs = SafeParse.parseSeconds(duration.toString(), 0);
             save.put(DB.ACTIVITY.TIME, secs);
         }
-        if (date.length() > 0) { //todo deal with parse exceptions
-            DateFormat df = android.text.format.DateFormat.getDateFormat(ManualActivity.this);
+        if (date.length() > 0 && time.length() > 0) { //todo deal with parse exceptions
+            DateFormat dfd = android.text.format.DateFormat.getDateFormat(ManualActivity.this);
+            DateFormat dft = android.text.format.DateFormat.getTimeFormat(ManualActivity.this);
             try {
-                Date d = df.parse(date.toString());
-                start_time += d.getTime() / 1000;
-            } catch (ParseException e) {
-            }
-        }
-        if (time.length() > 0) {
-            DateFormat df = android.text.format.DateFormat.getTimeFormat(ManualActivity.this);
-            try {
-                Date d = df.parse(time.toString());
-                // date has no timezine/dst info, must compensate
-                Calendar c = Calendar.getInstance();
-                c.setTime(d);
-                c.add(Calendar.MILLISECOND, c.getTimeZone().getOffset(d.getTime()));
-                start_time += c.getTime().getTime() / 1000;
+                Date d = dfd.parse(date.toString());
+                Date t = dft.parse(time.toString());
+                Calendar cd = Calendar.getInstance();
+                Calendar ct = Calendar.getInstance();
+                cd.setTime(d);
+                ct.setTime(t);
+                // We parsed day and time separately and now need to copy the time from t to d
+                // while making sure that the time zone of d keeps being used, thus we copy the
+                // individual time fields. It is not unusual that t uses a different time zone
+                // than d, e.g., during daylight savings time.
+                cd.set(Calendar.HOUR_OF_DAY, ct.get(Calendar.HOUR_OF_DAY));
+                cd.set(Calendar.MINUTE, ct.get(Calendar.MINUTE));
+                cd.set(Calendar.SECOND, ct.get(Calendar.SECOND));
+                cd.set(Calendar.MILLISECOND, ct.get(Calendar.MILLISECOND));
+                start_time = cd.getTime().getTime() / 1000;
             } catch (ParseException e) {
             }
         }
