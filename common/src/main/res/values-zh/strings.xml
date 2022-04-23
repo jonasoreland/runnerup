@@ -162,7 +162,7 @@
   <string name="Export_database_to_sdcard_eg_for_upgrade">导出数据库到SD卡</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">从SD卡中导入数据库</string>
   <string name="Coach_to_help_you_reach_target_if_having_set_target">虚拟兔子能帮你提高成绩</string>
-  <string name="Keep_silent_when_workout_startpauseresumestop">训练开始/暂停/恢复/停止是保持静音</string>
+  <string name="Keep_silent_when_workout_startpauseresumestop">训练开始/暂停/恢复/停止时保持静音</string>
   <string name="Test_audio_cue">测试语音提示</string>
   <string name="Accounts">账户</string>
   <string name="Audio_cues">语音提示</string>
@@ -171,7 +171,7 @@
   <string name="Autolap">自动分段</string>
   <string name="Autolap_m">自动分段（米）</string>
   <string name="Autopause">自动暂停</string>
-  <string name="Autopause_summary">在基础训练中想热身和冷身一样使用自动暂停</string>
+  <string name="Autopause_summary">在基础训练中像热身和冷身一样使用自动暂停</string>
   <string name="Enable_RunnerUpLive">开启RunnerUp Live</string>
   <string name="Headset_key_startstop">使用耳机开始/停止</string>
   <string name="Activity_countdown">活动倒计时</string>
@@ -187,8 +187,8 @@
   <string name="Autopause_min_pace_minkm">自动暂停配速 （分/公里）</string>
   <string name="Convert_rest_on_Interval_tab">在间歇标签页中转换休息</string>
   <string name="Convert_rest_on_Advanced_tab">在高级标签页中转换休息</string>
-  <string name="Target_pace_moving_average_seconds">目标配速平均移动</string>
-  <string name="Target_pace_grace_seconds">目标配速时间</string>
+  <string name="Target_pace_moving_average_seconds">目标反馈移动平均（秒）</string>
+  <string name="Target_pace_grace_seconds">目标反馈宽限期（秒）</string>
   <string name="Autolap_during_intervals">基于间隔来分段</string>
   <string name="Autolap_basic_summary">基本练习中自动记圈</string>
   <string name="Autolap_during_intervals_summary">在最后的步骤和活动中自动记圈s</string>
@@ -211,7 +211,7 @@
   <string name="Time_triggered_audio_cue_summary">基于时间的周期性反馈</string>
   <string name="Cue_interval_s">语音提示间隔（秒）</string>
   <string name="Distance_triggered_audio_cue">距离触发语音提示</string>
-  <string name="Distance_triggered_audio_cue_summary">基于举例的周期性反馈</string>
+  <string name="Distance_triggered_audio_cue_summary">基于距离的周期性反馈</string>
   <string name="Cue_intervall_m">语音提示间隔（米）</string>
   <string name="End_of_lap_audio_cue">分段完成语音提示</string>
   <string name="End_of_lap_audio_cue_summary">结束自动记圈和活动步骤</string>
@@ -245,7 +245,7 @@
   <string name="Target_coaching">虚拟兔子</string>
   <string name="Skip_event_audio_cues">忽略事件语音提示</string>
   <string name="Push">按下这里</string>
-  <string name="Android_text_to_speech_settings">Android语音转文字设置</string>
+  <string name="Android_text_to_speech_settings">Android文字转语音设置</string>
   <string name="Start">开始</string>
   <string name="History">历史</string>
   <string name="Basic">基本</string>
@@ -254,7 +254,7 @@
   <string name="Add_manual_entry">手动添加条目</string>
   <string name="Add_workout_notes">添加训练备注</string>
   <string name="Pruning_deleted_activities_from_database">从数据库中清理已经删除的活动</string>
-  <string name="Prune">清理</string>
+  <string name="Prune">永久删除</string>
   <string name="Heartrate_zones_distribution">心率区间分布</string>
   <string name="Battery_level">电池剩余电量</string>
   <string name="Activity_ready">活动准备好了</string>
@@ -292,14 +292,19 @@
   <string name="Share_workout">分享训练...</string>
   <string name="New_audio_scheme">新建语音模版</string>
   <string name="GPS_permission_required">需要GPS权限</string>
+  <string name="GPS_permission_text_pre_Android10">需要开启定位权限</string>
+  <string name="GPS_permission_text">需要开启“始终允许”定位权限。\n需要开启“Physical activity”权限以计算步频。</string>
+  <string name="Request_permission_text">点击“确定”以授权</string>
+  <string name="Battery_optimization_check">开启了电池优化</string>
+  <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“RunnerUp”并选择“不要优化”。</string>
   <string name="Default">默认</string>
   <string name="Notes_about_your_workout">训练备注</string>
   <string name="Downloading_from_1s">从%1$s下载中</string>
   <string name="Uploading_to_1s">上传到%1$s</string>
   <string name="Loading_activities">加载活动中</string>
   <string name="Fetching_activities_from_1s">从%1$s获取活动中</string>
-  <string name="No_feed_to_show">No feed show</string>
-  <string name="Unused_currently">当前没有用</string>
+  <string name="No_feed_to_show">没有要显示的feed</string>
+  <string name="Unused_currently">当前未使用</string>
   <string name="Unknown">未知</string>
   <string name="Recording">记录</string>
   <string name="Sensors">传感器</string>
@@ -308,10 +313,10 @@
   <string name="cue_hrm_connection_lost">心率设备连接已断开</string>
   <string name="HRM_connection_audio_cue">心率设备连接触发语音提示</string>
   <string name="Audio_cue_unit">语音提示时包含单位</string>
-  <string name="latest_feed_click_to_refresh">最新的feed （点击刷新）</string>
+  <string name="latest_feed_click_to_refresh">最新的feed（点击刷新）</string>
   <string name="log_extended_gps_summary">只导出为GPX</string>
   <string name="log_extended_gps_title">记录扩展GPS精度数据</string>
-  <string name="Current_speed_from_GPS_points">GPS点时的当前速度</string>
+  <string name="Current_speed_from_GPS_points">根据GPS坐标计算的当前速度</string>
   <string name="use_step_sensor_title">步数传感器</string>
   <string name="use_step_sensor_summary">用于步频计算</string>
   <string name="use_temperature_sensor">温度传感器</string>
@@ -327,7 +332,7 @@
   <string name="Speed">速度</string>
   <string name="Speed_unit_preference">速度单位</string>
   <string name="path_simplification">平滑/精简路径</string>
-  <string name="path_simplification_info">减少GPS路径精度（通过时间记录的位置）。通过平滑路径减少数据库和导出文件的大小。</string>
+  <string name="path_simplification_info">平滑GPS运动轨迹，减小数据库和导出文件的大小。</string>
   <string name="path_simplification_on_save">保存活动时精简</string>
   <string name="path_simplification_on_export">上传到账户的时候精简</string>
   <string name="path_simplification_tolerance">误差 (米)</string>
@@ -336,4 +341,6 @@
   <string name="path_simplification_menu">精简路径</string>
   <string name="File_format">上传文件为:</string>
   <string name="File_need_one_format">你必须选择至少一种格式</string>
+  <string name="tts_not_available_title">当前“文字转语音”TTS引擎不可用</string>
+  <string name="tts_not_available">RunnerUp需要一个“文字转语音”TTS引擎以播放语音提示。请确保你至少安装有一个可用的TTS引擎。</string>
 </resources>
