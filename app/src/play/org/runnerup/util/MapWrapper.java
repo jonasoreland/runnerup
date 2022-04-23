@@ -64,6 +64,8 @@ import static org.runnerup.util.Formatter.Format.TXT_SHORT;
 
 public class MapWrapper implements Constants {
 
+    public static final boolean USING_OSMDROID = false;
+
     private final MapView mapView;
     private LineManager lineManager;
     private SymbolManager symbolManager;

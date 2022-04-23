@@ -24,7 +24,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import org.osmdroid.api.IMapController;
-import org.osmdroid.api.IMapView;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
@@ -32,6 +31,7 @@ import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 
@@ -39,6 +39,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MapWrapper implements Constants {
+
+    public static final boolean USING_OSMDROID = true;
 
     private final Context context;
     private final SQLiteDatabase mDB;
@@ -97,6 +99,7 @@ public class MapWrapper implements Constants {
             long mID = params[0].mID;
             IMapController iMapController = params[0].iMapController;
             Polyline route = new Polyline(mapView, true);
+            route.setInfoWindow(null);
             route.getOutlinePaint().setStrokeWidth(10.f);
             LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(mDB, mID);
             List<GeoPoint> points = new LinkedList<>();
@@ -107,12 +110,17 @@ public class MapWrapper implements Constants {
             ll.close();
             route.setPoints(points);
             Marker markerStart = new Marker(mapView);
+            markerStart.setInfoWindow(null);
             Marker markerEnd = new Marker(mapView);
+            markerEnd.setInfoWindow(null);
             if (points.size() > 0) {
                 iMapController.setCenter(points.get(0));
 
                 markerStart.setPosition(points.get(0));
                 markerEnd.setPosition(points.get(points.size() - 1));
+
+                markerStart.setTextIcon(context.getString(R.string.Start));
+                markerEnd.setTextIcon(context.getString(R.string.Finished));
 
                 markerStart.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                 markerEnd.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);

@@ -81,6 +81,7 @@ import java.util.Map;
 
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
+import static org.runnerup.util.MapWrapper.USING_OSMDROID;
 
 
 public class DetailActivity extends AppCompatActivity implements Constants {
@@ -127,10 +128,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        MapWrapper.start(this);
-        setContentView(R.layout.detail);
-
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+            MapWrapper.start(this);
+            setContentView(R.layout.detail);
+        } else {
+            // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
+            setContentView(R.layout.detail_nomap);
+        }
         Toolbar toolbar = findViewById(R.id.actionbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -166,9 +170,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         sport = findViewById(R.id.summary_sport);
         notes = findViewById(R.id.notes_text);
 
-        Object mapView = findViewById(R.id.mapview);
-        mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
-        mapWrapper.onCreate(savedInstanceState);
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+            Object mapView = findViewById(R.id.mapview);
+            mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
+            mapWrapper.onCreate(savedInstanceState);
+        }
 
         saveButton.setOnClickListener(saveButtonClick);
         uploadButton.setOnClickListener(uploadButtonClick);
@@ -198,10 +204,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        tabSpec = th.newTabSpec("map");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
-        tabSpec.setContent(R.id.tab_map);
-        th.addTab(tabSpec);
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+            tabSpec = th.newTabSpec("map");
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+            tabSpec.setContent(R.id.tab_map);
+            th.addTab(tabSpec);
+        }
 
         tabSpec = th.newTabSpec("graph");
         tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
