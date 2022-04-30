@@ -79,9 +79,9 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.runnerup.BuildConfig.USING_OSMDROID;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
-import static org.runnerup.util.MapWrapper.USING_OSMDROID;
 
 
 public class DetailActivity extends AppCompatActivity implements Constants {

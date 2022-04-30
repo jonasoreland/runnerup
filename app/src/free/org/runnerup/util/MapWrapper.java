@@ -40,8 +40,6 @@ import java.util.List;
 
 public class MapWrapper implements Constants {
 
-    public static final boolean USING_OSMDROID = true;
-
     private final Context context;
     private final SQLiteDatabase mDB;
     private final long mID;
@@ -127,9 +125,10 @@ public class MapWrapper implements Constants {
 
                 mapView.getOverlays().add(markerStart);
                 mapView.getOverlays().add(markerEnd);
+
+                mapView.getOverlays().add(route);
             }
 
-            mapView.getOverlays().add(route);
             return route;
         }
     }

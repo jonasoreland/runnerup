@@ -192,6 +192,12 @@ android.applicationVariants.all {
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
     }
 
+    if (rootProject.ext.allowNonFree) {
+        buildConfigField 'boolean', 'USING_OSMDROID', "false"
+    } else {
+        buildConfigField 'boolean', 'USING_OSMDROID', "true"
+    }
+
     if (rootProject.file("runalyze.properties").exists()) {
         // Contact Runalyze team at https://forum.runalyze.com/
         props.load(new FileInputStream(rootProject.file("runalyze.properties")))
