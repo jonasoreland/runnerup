@@ -349,7 +349,9 @@ public class TCX {
                     mXML.endTag("", "Trackpoint");
                     mXML.endTag("", "Track");
                 }
-
+                else if (hasTrackpoints) {
+                    mXML.endTag("", "Track");
+                }
                 if (cntHR > 0) {
                     mXML.startTag("", "AverageHeartRateBpm");
                     mXML.startTag("", "Value");
