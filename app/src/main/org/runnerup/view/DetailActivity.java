@@ -79,6 +79,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.runnerup.BuildConfig.USING_OSMDROID;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
@@ -127,11 +128,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
             MapWrapper.start(this);
             setContentView(R.layout.detail);
         } else {
-            // No MapBox key, load without mapview, do not set mapWrapper
+            // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
             setContentView(R.layout.detail_nomap);
         }
         Toolbar toolbar = findViewById(R.id.actionbar);
@@ -169,7 +170,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         sport = findViewById(R.id.summary_sport);
         notes = findViewById(R.id.notes_text);
 
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
             Object mapView = findViewById(R.id.mapview);
             mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
             mapWrapper.onCreate(savedInstanceState);
@@ -203,7 +204,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
-        if (BuildConfig.MAPBOX_ENABLED > 0) {
+        if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
             tabSpec = th.newTabSpec("map");
             tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
             tabSpec.setContent(R.id.tab_map);
