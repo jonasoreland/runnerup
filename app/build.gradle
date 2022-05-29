@@ -28,7 +28,7 @@ android {
             }
             resources.srcDirs = java.srcDirs
             aidl.srcDirs = java.srcDirs
-            renderscript.srcDirs = java.srcDirs
+            // renderscript.srcDirs = java.srcDirs
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
@@ -64,7 +64,7 @@ android {
         // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
-        //By default all AppCompat translations are included, saves 350KB
+        // By default all AppCompat translations are included, saves 350KB
         resConfigs 'ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh'
     }
 
