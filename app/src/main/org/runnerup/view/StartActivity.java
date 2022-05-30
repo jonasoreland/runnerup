@@ -150,7 +150,6 @@ public class StartActivity extends AppCompatActivity
 
     TitleSpinner advancedWorkoutSpinner = null;
     WorkoutListAdapter advancedWorkoutListAdapter = null;
-    Button advancedDownloadWorkoutButton = null;
     Workout advancedWorkout = null;
     ListView advancedStepList = null;
     final WorkoutStepsAdapter advancedWorkoutStepsAdapter = new WorkoutStepsAdapter();
