@@ -42,17 +42,6 @@
       android:layout_height="wrap_content">
 
       <Button
-          android:id="@+id/download_workout_button"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_blue"
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:layout_height="match_parent"
-          android:text="@string/Download"
-          android:textSize="16sp"
-      />
-
-      <Button
           android:id="@+id/share_workout_button"
           style="@style/ButtonText"
           android:background="@drawable/btn_blue"
