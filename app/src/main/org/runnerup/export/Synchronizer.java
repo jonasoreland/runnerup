@@ -28,8 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.SyncActivityItem;
 
 import java.io.File;
@@ -75,10 +73,8 @@ public interface Synchronizer {
     enum Feature {
         WORKOUT_LIST, // list prepared workouts (e.g a interval program)
         GET_WORKOUT, // download prepared workout
-        FEED, // list of activities by others (and self)
         UPLOAD, // upload activity
         LIVE, // live feed of activity
-        SKIP_MAP, // skip map in upload
         ACTIVITY_LIST, //list recorded activities
         GET_ACTIVITY, //download recorded activity
         FILE_FORMAT // upload as file in different possible formats
@@ -210,13 +206,6 @@ public interface Synchronizer {
      *
      */
     void logout();
-
-    /**
-     * @param feedUpdater
-     * @return
-     */
-    @NonNull
-    Status getFeed(FeedUpdater feedUpdater);
 
     @NonNull
     Status refreshToken();

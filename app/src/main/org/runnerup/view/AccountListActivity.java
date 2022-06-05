@@ -182,7 +182,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             TextView accountIconText = view.findViewById(R.id.account_row_icon_text);
             TextView accountNameText = view.findViewById(R.id.account_row_name);
             SwitchCompat accountUploadBox = view.findViewById(R.id.account_row_upload);
-            SwitchCompat accountFeedBox = view.findViewById(R.id.account_row_feed);
 
             // category name
             int curPosition = cursor.getPosition();
@@ -211,7 +210,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
             if (synchronizer == null) {
                 accountUploadBox.setVisibility(View.GONE);
-                accountFeedBox.setVisibility(View.GONE);
                 accountIcon.setVisibility(View.GONE);
                 accountIconText.setVisibility(View.GONE);
                 accountNameText.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
@@ -221,7 +219,6 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             accountNameText.setPaintFlags(0);
             accountNameText.setEnabled(true);
             accountUploadBox.setVisibility(View.VISIBLE);
-            accountFeedBox.setVisibility(View.VISIBLE);
             accountIcon.setVisibility(View.VISIBLE);
             accountIconText.setVisibility(View.VISIBLE);
 
@@ -242,24 +239,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
             setCustomThumb(accountUploadBox, R.drawable.switch_upload, context);
             accountUploadBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_UPLOAD, arg1));
 
-            // feed box
-            accountFeedBox.setTag(synchronizer);
-            setCustomThumb(accountFeedBox, R.drawable.switch_feed, context);
-            accountFeedBox.setOnCheckedChangeListener((arg0, arg1) -> setFlag(((Synchronizer) arg0.getTag()).getName(), DB.ACCOUNT.FLAG_FEED, arg1));
-
             if (configured && synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
                 accountUploadBox.setEnabled(true);
                 accountUploadBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_UPLOAD));
                 accountUploadBox.setVisibility(View.VISIBLE);
             } else {
                 accountUploadBox.setVisibility(View.GONE);
-            }
-            if (configured && synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                accountFeedBox.setEnabled(true);
-                accountFeedBox.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
-                accountFeedBox.setVisibility(View.VISIBLE);
-            } else {
-                accountFeedBox.setVisibility(View.GONE);
             }
         }
 

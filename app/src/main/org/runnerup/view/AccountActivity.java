@@ -223,28 +223,12 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 }
             }
 
-            if (synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                CheckBox cb = new CheckBox(this);
-                cb.setTag(DB.ACCOUNT.FLAG_FEED);
-                cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED));
-                cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow("Feed", cb);
-            }
-
             if (synchronizer.checkSupport(Synchronizer.Feature.LIVE)) {
                 CheckBox cb = new CheckBox(this);
                 cb.setTag(DB.ACCOUNT.FLAG_LIVE);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 addRow(getResources().getString(R.string.Live), cb);
-            }
-
-            if (synchronizer.checkSupport(Synchronizer.Feature.SKIP_MAP)) {
-                CheckBox cb = new CheckBox(this);
-                cb.setTag(DB.ACCOUNT.FLAG_SKIP_MAP);
-                cb.setChecked(!Bitfield.test(flags, DB.ACCOUNT.FLAG_SKIP_MAP));
-                cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow(getResources().getString(R.string.Include_map_in_post), cb);
             }
         }
         mCursors.add(c);
@@ -356,12 +340,9 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             } else {
                 switch ((int) flag) {
                     case DB.ACCOUNT.FLAG_UPLOAD:
-                    case DB.ACCOUNT.FLAG_FEED:
                     case DB.ACCOUNT.FLAG_LIVE:
                         flags = Bitfield.set(flags, (Integer) flag, isChecked);
                         break;
-                    case DB.ACCOUNT.FLAG_SKIP_MAP:
-                        flags = Bitfield.set(flags, (Integer) flag, !isChecked);
                 }
                 tmp.put(DB.ACCOUNT.FLAGS, flags);
             }

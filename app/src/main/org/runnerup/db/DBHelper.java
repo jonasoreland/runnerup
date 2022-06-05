@@ -265,8 +265,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         if (oldVersion < 17) {
             arg0.execSQL(CREATE_TABLE_FEED);
             arg0.execSQL(CREATE_INDEX_FEED);
-            echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS
-                    + " + " + (1 << DB.ACCOUNT.FLAG_FEED));
+            echoDo(arg0, "update account set " + DB.ACCOUNT.FLAGS + " = " + DB.ACCOUNT.FLAGS);
         }
 
         if (oldVersion < 18) {
@@ -328,6 +327,8 @@ public class DBHelper extends SQLiteOpenHelper implements
         //    migrateFileSyncronizerInfo(arg0);
         //    recreateAccount(arg0);
         //}
+
+        // todo REMOVE CREATE_TABLE_FEED
 
         onCreateUpgrade(arg0, oldVersion, newVersion);
     }
