@@ -57,8 +57,6 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.Synchronizer.AuthMethod;
 import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.feed.FeedList;
-import org.runnerup.feedwidget.FeedWidgetProvider;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.Encryption;
@@ -1146,100 +1144,6 @@ public class SyncManager {
         }.execute(synchronizer);
     }
 
-    private Callback feedCallback = null;
-    private Set<String> feedProviders = null;
-    private FeedList feedList = null;
-    private StringBuffer feedCancel = null;
-
-    public void synchronizeFeed(Callback cb, Set<String> providers, FeedList dst, StringBuffer cancel) {
-        feedCallback = cb;
-        feedProviders = providers;
-        feedList = dst;
-        feedCancel = cancel;
-        nextSyncFeed();
-    }
-
-    private void nextSyncFeed() {
-        if (checkCancel(feedCancel)) {
-            feedProviders.clear();
-        }
-
-        if (feedProviders.isEmpty()) {
-            //update feed widgets, if any
-            Log.i(getClass().getSimpleName(), "Feed sync ended");
-            FeedWidgetProvider.RefreshWidget(getContext());
-
-            if (feedCallback != null) {
-                Callback cb = feedCallback;
-                feedCallback = null;
-                cb.run(null, Synchronizer.Status.OK);
-            }
-            return;
-        }
-
-        final String providerName = feedProviders.iterator().next();
-        feedProviders.remove(providerName);
-        final Synchronizer synchronizer = synchronizers.get(providerName);
-        syncFeed(synchronizer);
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void syncFeed(final Synchronizer synchronizer) {
-        if (synchronizer == null) {
-            nextSyncFeed();
-            return;
-        }
-
-        final FeedList.FeedUpdater feedUpdater = feedList.getUpdater();
-        feedUpdater.start(synchronizer.getName());
-        new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
-
-            @Override
-            protected Synchronizer.Status doInBackground(Synchronizer... params) {
-                try {
-                    Synchronizer.Status s2 = params[0].getFeed(feedUpdater);
-                    // See doUpload() for motivation
-                    if (s2 == Synchronizer.Status.NEED_REFRESH) {
-                        s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-                        if (s2 == Synchronizer.Status.OK) {
-                            s2 = params[0].getFeed(feedUpdater);
-                        }
-                    }
-                    return s2;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    return Synchronizer.Status.ERROR;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(Synchronizer.Status result) {
-                switch (result) {
-                    case OK:
-                        feedUpdater.complete();
-                        nextSyncFeed();
-                        break;
-
-                    case NEED_AUTH:
-                        handleAuth((synchronizerName, s2) -> {
-                            if (s2 == Synchronizer.Status.OK) {
-                                syncFeed(synchronizer);
-                            } else {
-                                nextSyncFeed();
-                            }
-                        }, synchronizer, result.authMethod);
-                        return;
-
-                    default:
-                        if (result.ex != null)
-                            result.ex.printStackTrace();
-                        nextSyncFeed();
-                        break;
-                }
-            }
-        }.execute(synchronizer);
-    }
-
     public void loadLiveLoggers(List<WorkoutObserver> liveLoggers) {
         liveLoggers.clear();
         Resources res = getResources();
@@ -1269,38 +1173,6 @@ public class SyncManager {
             // Taskkiller?
             Log.e(getClass().getName(), "Query for liveloggers failed:", ex);
         }
-    }
-
-    public Set<String> feedSynchronizersSet(Context ctx) {
-        Set<String> set = new HashSet<>();
-        String[] from = new String[] {
-                "_id", DB.ACCOUNT.NAME, DB.ACCOUNT.AUTH_CONFIG, DB.ACCOUNT.FORMAT, DB.ACCOUNT.FLAGS
-        };
-
-        try {
-            SQLiteDatabase db = DBHelper.getReadableDatabase(ctx);
-
-            Cursor c = db.query(DB.ACCOUNT.TABLE, from, null, null, null, null, null);
-            if (c.moveToFirst()) {
-                do {
-                    final ContentValues tmp = DBHelper.get(c);
-                    final Synchronizer synchronizer = add(tmp);
-                    @SuppressWarnings("ConstantConditions") final String name = tmp.getAsString(DB.ACCOUNT.NAME);
-                    final long flags = tmp.getAsLong(DB.ACCOUNT.FLAGS);
-                    if (synchronizer != null && isConfigured(name) &&
-                            Bitfield.test(flags, DB.ACCOUNT.FLAG_FEED) &&
-                            synchronizer.checkSupport(Synchronizer.Feature.FEED)) {
-                        set.add(name);
-                    }
-                } while (c.moveToNext());
-            }
-            c.close();
-            DBHelper.closeDB(db);
-        } catch (IllegalStateException e) {
-            Log.e(getClass().getName(), "feedSynchronizersSet: " + e.getMessage());
-        }
-
-        return set;
     }
 }
 

@@ -283,16 +283,6 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
 
     @Override
     public boolean checkSupport(Synchronizer.Feature f) {
-        switch (f) {
-            case LIVE:
-                return true;
-            case UPLOAD:
-            case FEED:
-            case GET_WORKOUT:
-            case WORKOUT_LIST:
-            case SKIP_MAP:
-                break;
-        }
-        return false;
+        return f == Synchronizer.Feature.LIVE;
     }
 }

@@ -96,7 +96,6 @@
   <string name="High_pace">High pace</string>
   <string name="Sex">Sex</string>
   <string name="upload">Upload</string>
-  <string name="feed">Feed</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Laps</string>
   <string name="Map">Map</string>
@@ -111,7 +110,6 @@
   <string name="Refresh">Refresh</string>
   <string name="Age">Age</string>
   <string name="Synchronizing">Synchronizing</string>
-  <string name="synchronizing_feed">Synchronizing feed…</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Manage connections</string>
   <string name="accounts_category_unconnected">Connect an account</string>
@@ -275,7 +273,6 @@
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatic upload</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Include map in post</string>
   <string name="Clear_uploads_from_phone">Clear uploads (from phone)</string>
   <string name="my_phone">My phone</string>
   <string name="Failed_to_import">Failed to import</string>
@@ -301,7 +298,6 @@
   <string name="Uploading_to_1s">Uploading to %1$s</string>
   <string name="Loading_activities">Loading activities</string>
   <string name="Fetching_activities_from_1s">Fetching activities from %1$s</string>
-  <string name="No_feed_to_show">No feed to show</string>
   <string name="Unused_currently">Currently unused</string>
   <string name="Unknown">Unknown</string>
   <string name="Recording">Recording</string>
@@ -311,7 +307,6 @@
   <string name="cue_hrm_connection_lost">Connection to heart rate monitor lost</string>
   <string name="HRM_connection_audio_cue">HRM connection audio cues</string>
   <string name="Audio_cue_unit">Include unit in audio cue</string>
-  <string name="latest_feed_click_to_refresh">Latest feed (press to refresh)</string>
   <string name="log_extended_gps_summary">Export in GPX only</string>
   <string name="log_extended_gps_title">Log extended GPS accuracy data</string>
   <string name="Current_speed_from_GPS_points">Current speed from GPS points</string>

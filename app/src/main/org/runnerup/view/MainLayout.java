@@ -137,10 +137,6 @@ public class MainLayout extends TabActivity {
                 .setIndicator(getTabView(getString(R.string.History), R.drawable.ic_tab_history_24dp))
                 .setContent(new Intent(this, HistoryActivity.class)));
 
-        tabHost.addTab(tabHost.newTabSpec("Feed")
-                .setIndicator(getTabView(getString(R.string.feed), R.drawable.ic_tab_feed_24dp))
-                .setContent(new Intent(this, FeedActivity.class)));
-
         tabHost.addTab(tabHost.newTabSpec("Settings")
                 .setIndicator(getTabView(getString(R.string.Settings), R.drawable.ic_tab_settings_24dp))
                 .setContent(new Intent(this, SettingsActivity.class)));

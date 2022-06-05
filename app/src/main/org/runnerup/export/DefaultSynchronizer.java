@@ -35,7 +35,6 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
-import org.runnerup.feed.FeedList.FeedUpdater;
 import org.runnerup.util.SyncActivityItem;
 
 import java.io.BufferedReader;
@@ -211,13 +210,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
         formValues.clear();
     }
 
-    @NonNull
-    public Status getFeed(FeedUpdater feedUpdater) {
-        return Status.OK;
-    }
-
     @Override
-
     @NonNull
     public Status refreshToken() {
         return Status.ERROR;

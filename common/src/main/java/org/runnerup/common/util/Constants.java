@@ -136,12 +136,9 @@ public interface Constants {
             String FORMAT = "format";
 
             int FLAG_UPLOAD = 0;
-            int FLAG_FEED = 1;
             int FLAG_LIVE = 2;
-            int FLAG_SKIP_MAP = 3;
             long DEFAULT_FLAGS =
                     (1 << FLAG_UPLOAD) +
-                            (1 << FLAG_FEED) +
                             (1 << FLAG_LIVE);
             //DBVERSION update
             String DESCRIPTION = "description";

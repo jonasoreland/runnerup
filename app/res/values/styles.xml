@@ -94,16 +94,6 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="CardAnnotation">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/colorTextSecondary</item>
-    </style>
-
-    <style name="CardParagraph">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/colorText</item>
-    </style>
-
     <style name="StatusText">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/colorText</item>
