@@ -103,6 +103,7 @@ public class Tracker extends android.app.Service implements
 
     private boolean mBug23937Checked = false;
     private long mSystemToGpsDiffTimeNanos = 0;
+    private boolean mTimeFromGpsPoints = false;
     private boolean mCurrentSpeedFromGpsPoints = false;
 
     private long mLapId = 0;
@@ -309,7 +310,9 @@ public class Tracker extends android.app.Service implements
         Resources res = getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean logGpxAccuracy = prefs.getBoolean(res.getString(R.string.pref_log_gpx_accuracy), false);
+        mTimeFromGpsPoints = prefs.getBoolean(res.getString(R.string.pref_time_from_gps_points), false);
         mCurrentSpeedFromGpsPoints = prefs.getBoolean(res.getString(R.string.pref_speed_from_gps_points), false);
+        mBug23937Checked = mTimeFromGpsPoints;
 
         //Create an Activity instance
         ContentValues tmp = new ContentValues();
@@ -638,16 +641,14 @@ public class Tracker extends android.app.Service implements
     }
 
     private void onLocationChangedImpl(Location arg0, boolean internal) {
-        if (internal) {
-            if (mBug23937Checked) {
-                // This point is inserted, adjust the time to GPS sensor time
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    long now = System.nanoTime();
-                    arg0.setElapsedRealtimeNanos(now - mSystemToGpsDiffTimeNanos);
-                } else {
-                    long now = System.currentTimeMillis();
-                    arg0.setTime(now - mSystemToGpsDiffTimeNanos/NANO_IN_MILLI);
-                }
+        if (!mTimeFromGpsPoints || internal) {
+            // Set internal time also if mBug23937Checked is not set
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                long now = System.nanoTime();
+                arg0.setElapsedRealtimeNanos(now - mSystemToGpsDiffTimeNanos);
+            } else {
+                long now = System.currentTimeMillis();
+                arg0.setTime(now - mSystemToGpsDiffTimeNanos / NANO_IN_MILLI);
             }
         } else {
             long gpsDiffTime;
@@ -694,7 +695,7 @@ public class Tracker extends android.app.Service implements
 
         Integer hrValue;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos(), MAX_CURRENT_AGE);
+            hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos() + mSystemToGpsDiffTimeNanos, MAX_CURRENT_AGE);
         } else {
             // adjust GPS sensor time to system time
             hrValue = getCurrentHRValue(arg0.getTime() + mSystemToGpsDiffTimeNanos/NANO_IN_MILLI, MAX_CURRENT_AGE);

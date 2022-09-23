@@ -119,6 +119,12 @@
 
             <CheckBoxPreference
                 android:defaultValue="false"
+                android:key="@string/pref_time_from_gps_points"
+                android:persistent="true"
+                android:title="@string/Time_from_GPS_points"/>
+
+            <CheckBoxPreference
+                android:defaultValue="false"
                 android:key="@string/pref_speed_from_gps_points"
                 android:persistent="true"
                 android:title="@string/Current_speed_from_GPS_points"
