@@ -150,6 +150,7 @@
 
     <string name="pref_pressure_elevation_gps_average">pref_pressure_elevation_gps_average</string>
     <string name="pref_log_gpx_accuracy">pref_log_gpx_accuracy</string>
+    <string name="pref_time_from_gps_points">pref_time_from_gps_points</string>
     <string name="pref_speed_from_gps_points">pref_speed_from_gps_points</string>
 
     <!--string name="pref_experimental_features">pref_experimental_features</string-->
