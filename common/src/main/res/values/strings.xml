@@ -284,12 +284,15 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nI think you might like this workout.</string>
   <string name="Share_workout">Share workout…</string>
   <string name="New_audio_scheme">New audio scheme</string>
+  <string name="Bluetooth_permission_required">Nearby devices permission</string>
   <string name="GPS_permission_required">Background location permission</string>
   <string name="GPS_permission_text_pre_Android10">Location permission required in system settings</string>
   <string name="GPS_permission_text">This app collects location data to enable activity tracking even when the app is closed or not in use (the app is in the background).\nThis is required to record activities when the screen is off or another app is in the foreground.\n\nYou need to explicitly set \"Allow all the time\" in system settings.\nFor running cadence \"Physical activity\" permission is required too.</string>
+  <string name="GPS_permission_text_Android12">This app collects location data to enable activity tracking even when the app is closed or not in use (the app is in the background).\nThis is required to record activities when the screen is off or another app is in the foreground.\n\nYou need to explicitly set \"Allow all the time\" in system settings.\nFor running cadence \"Physical activity\" permission is required too and BlueTooth requires \" Nearby devices\".</string>
   <string name="Request_permission_text">Allow permission by clicking \"OK\".</string>
   <string name="Battery_optimization_check">Battery optimization enabled</string>
   <string name="Battery_optimization_check_text">Battery optimization will decrease the accuracy.\nPress OK to go system settings and select \"All apps\", search for \"RunnerUp\", select \"Don\'t optimize\".</string>
+  <string name="Battery_optimization_check_text_Android9">Battery optimization will decrease the accuracy.\nPress OK to go app settings and select \"Battery usage" and select \"Unrestricted\" or \"Don\'t optimize\".</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Workout notes</string>
   <string name="Downloading_from_1s">Downloading from %1$s</string>

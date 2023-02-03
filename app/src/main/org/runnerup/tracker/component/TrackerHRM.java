@@ -16,12 +16,17 @@
  */
 package org.runnerup.tracker.component;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import org.runnerup.R;
 import org.runnerup.hr.HRDeviceRef;
@@ -57,6 +62,13 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
         hrProvider = HRManager.getHRProvider(context, btProviderName);
         if (hrProvider != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                    && ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "No permission to connect to HRM " + btDeviceName,
+                        Toast.LENGTH_SHORT).show();
+                return ResultCode.RESULT_NOT_ENABLED;
+            }
             hrProvider.open(handler, new HRProvider.HRClient() {
                 @Override
                 public void onOpenResult(boolean ok) {

@@ -17,12 +17,17 @@
 
 package org.runnerup.tracker.component;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.hardware.*;
 import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
@@ -131,12 +136,12 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             return null;
         }
 
-        if (mSensorManager == null) {
+        if (mSensorManager == null && context != null) {
             mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         }
         //noinspection InlinedApi
         Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (sensor == null) {
+        if (sensor == null && context != null) {
             mSensorManager = null;
 
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -163,6 +168,14 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (!enabled) {
             res = ResultCode.RESULT_NOT_ENABLED;
         } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                    && ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "No permission to connect to step sensor",
+                        Toast.LENGTH_SHORT).show();
+                return ResultCode.RESULT_NOT_ENABLED;
+            }
+
             Sensor sensor = getSensor(context);
             if (sensor != null) {
                 mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -174,6 +187,23 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
             }
         }
         return res;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Sensor sensor = getSensor(null);
+        if (sensor != null) {
+            mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(this);
+        }
     }
 
     @Override
