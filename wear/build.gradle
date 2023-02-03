@@ -33,6 +33,7 @@ android {
         //textOutput 'stdout'
         textReport true
     }
+    namespace 'org.runnerup'
 
 }
 
