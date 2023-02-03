@@ -11,7 +11,6 @@ Track your sport activities with RunnerUp using the GPS in your Android phone:
 * Share your favorite workouts with friends (using email)
 * Heart rate monitor: Bluetooth SMART (BLE) and ANT+ (as well as PolarWearLink and Zephyr)
 * Configure and use heart rate zones
-* WearOS app
 * Pebble support
 
 Upload your activities to a variety of external applications with a single click:
@@ -23,3 +22,5 @@ Upload your activities to a variety of external applications with a single click
 * WebDAV
 
 Note: MapBox enables tracking by default (when using the map to view activities). This can be disabled from the MapBox logo on the lower left corner of the map.
+
+The app has a companion WearOS app, it is bundled in the apk and must be installed manually.
