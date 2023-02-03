@@ -27,6 +27,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathCursor;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.workout.Sport;
+import org.runnerup.BuildConfig;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -37,8 +38,8 @@ import java.util.TimeZone;
 /**
  * TCX - export an activity in TCX format
  *
- * @todo Handle pauses
- * @todo Other sports than running
+ * TODO Handle pauses
+ * TODO Other sports than running
  *
  * @author jonas.oreland@gmail.com
  *
@@ -89,17 +90,20 @@ public class TCX {
         long startTime = cursor.getLong(2); // epoch
         try {
             mXML = new KXmlSerializer();
+            mXML.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             mXML.setOutput(writer);
             mXML.startDocument("UTF-8", true);
             mXML.startTag("", "TrainingCenterDatabase");
+            mXML.attribute("", "xmlns",
+                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
             mXML.attribute("", "xmlns:xsi",
                     "http://www.w3.org/2001/XMLSchema-instance");
             mXML.attribute("", "xmlns:xsd",
                     "http://www.w3.org/2001/XMLSchema");
-            mXML.attribute("", "xmlns:ext",
+            mXML.attribute("", "xmlns:ns3",
                     "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
-            mXML.attribute("", "xmlns",
-                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2");
+            mXML.attribute("", "xsi:schemaLocation",
+                    "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd");
             mXML.startTag("", "Activities");
             mXML.startTag("", "Activity");
             if (cursor.isNull(3)) {
@@ -140,9 +144,54 @@ public class TCX {
             }
             mXML.text(creator);
             mXML.endTag("", "Name");
+            // Add dummy data
+            mXML.startTag("", "UnitId");
+            mXML.text("0");
+            mXML.endTag("", "UnitId");
+            mXML.startTag("", "ProductID");
+            mXML.text("0");
+            mXML.endTag("", "ProductID");
+            mXML.startTag("", "Version");
+            mXML.startTag("", "VersionMajor");
+            mXML.text("1");
+            mXML.endTag("", "VersionMajor");
+            mXML.startTag("", "VersionMinor");
+            mXML.text("0");
+            mXML.endTag("", "VersionMinor");
+            mXML.startTag("", "BuildMajor");
+            mXML.text("0");
+            mXML.endTag("", "BuildMajor");
+            mXML.startTag("", "BuildMinor");
+            mXML.text("0");
+            mXML.endTag("", "BuildMinor");
+            mXML.endTag("", "Version");
             mXML.endTag("", "Creator");
             mXML.endTag("", "Activity");
             mXML.endTag("", "Activities");
+            mXML.startTag("", "Author");
+            mXML.attribute("", "xsi:type", "Application_t");
+            mXML.startTag("", "Name");
+            String application = BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME + " - " + String.valueOf(BuildConfig.VERSION_CODE);
+            mXML.text(application);
+            mXML.endTag("", "Name");
+            mXML.startTag("", "Build");
+            // Could be set to a "compatibility" version for parsers
+            mXML.startTag("", "Version");
+            mXML.startTag("", "VersionMajor");
+            mXML.text("1");
+            mXML.endTag("", "VersionMajor");
+            mXML.startTag("", "VersionMinor");
+            mXML.text("0");
+            mXML.endTag("", "VersionMinor");
+            mXML.endTag("", "Version");
+            mXML.endTag("", "Build");
+            mXML.startTag("", "LangID");
+            mXML.text("en");
+            mXML.endTag("", "LangID");
+            mXML.startTag("", "PartNumber");
+            mXML.text("000-00000-00");
+            mXML.endTag("", "PartNumber");
+            mXML.endTag("", "Author");
             mXML.endTag("", "TrainingCenterDatabase");
             mXML.flush();
             mXML.endDocument();
@@ -154,6 +203,32 @@ public class TCX {
             mXML = null;
             throw e;
         }
+    }
+
+    private void exportLapHeartRate(long activityId, long lapId) throws IOException {
+        Cursor c = mDB.rawQuery("SELECT AVG(" + DB.LOCATION.HR + "), MAX(" + DB.LOCATION.HR + ")" +
+                " FROM " + DB.LOCATION.TABLE +
+                " WHERE " + DB.LOCATION.ACTIVITY + " = " + activityId +
+                " and " + DB.LOCATION.LAP + " = " + lapId +
+                " and " + DB.LOCATION.HR + " is not null", null);
+        boolean ok = c.moveToFirst();
+        if (ok)  {
+            if (!c.isNull(0)) {
+                mXML.startTag("", "AverageHeartRateBpm");
+                mXML.startTag("", "Value");
+                mXML.text(Integer.toString(Math.round(c.getFloat(0))));
+                mXML.endTag("", "Value");
+                mXML.endTag("", "AverageHeartRateBpm");
+            }
+            if (!c.isNull(1)) {
+                mXML.startTag("", "MaximumHeartRateBpm");
+                mXML.startTag("", "Value");
+                mXML.text(Integer.toString(c.getInt(1)));
+                mXML.endTag("", "Value");
+                mXML.endTag("", "MaximumHeartRateBpm");
+            }
+        }
+        c.close();
     }
 
     private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
@@ -195,6 +270,7 @@ public class TCX {
                 mXML.startTag("", "Calories");
                 mXML.text("0");
                 mXML.endTag("", "Calories");
+                this.exportLapHeartRate(activityId, lap);
                 mXML.startTag("", "Intensity");
                 long intensity = cLap.getLong(3);
                 mXML.text(intensity == DB.INTENSITY.ACTIVE ? "Active" : "Resting");
@@ -202,9 +278,6 @@ public class TCX {
                 mXML.startTag("", "TriggerMethod");
                 mXML.text("Manual");//TODO
                 mXML.endTag("", "TriggerMethod");
-                long maxHR = 0;
-                long sumHR = 0;
-                long cntHR = 0;
                 boolean hasTrackpoints = false;
 
                 if (pok && cLocation.getLong(0) == lap) {
@@ -266,9 +339,6 @@ public class TCX {
                             if (!cLocation.isNull(7)) {
                                 long hr = cLocation.getInt(7);
                                 if (hr > 0) {
-                                    maxHR = Math.max(hr, maxHR);
-                                    sumHR += hr;
-                                    cntHR++;
 
                                     mXML.startTag("", "HeartRateBpm");
                                     mXML.startTag("", "Value");
@@ -295,37 +365,35 @@ public class TCX {
                             }
                             if (isRunCad) {
                                 mXML.startTag("", "Extensions");
-                                mXML.startTag("", "TPX");
-                                mXML.attribute("", "xmlns",
-                                        "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+                                mXML.startTag("", "ns3:TPX");
                                 //"standard" extensions: RunCadence, Speed, Watts
                             }
                             if (isRunCad) {
                                 int val = cLocation.getInt(8);
-                                mXML.startTag("", "RunCadence");
+                                mXML.startTag("", "ns3:RunCadence");
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
-                                mXML.endTag("", "RunCadence");
+                                mXML.endTag("", "ns3:RunCadence");
                                 // Not including "CadenceSensor Footpod" etc
                             }
                             //if (isTemp || isPres) {
                             //    if (isTemp) {
                             //        int val = cLocation.getInt(9);
-                            //        mXML.startTag("", "ext:Temperature");
+                            //        mXML.startTag("", "ns3:Temperature");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
-                            //        mXML.endTag("", "ext:Temperature");
+                            //        mXML.endTag("", "ns3:Temperature");
                             //    }
                             //    if (isPres) {
                             //        int val = cLocation.getInt(10);
-                            //        mXML.startTag("", "ext:Pressure");
+                            //        mXML.startTag("", "ns3:Pressure");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
-                            //        mXML.endTag("", "ext:Pressure");
+                            //        mXML.endTag("", "ns3:Pressure");
                             //    }
                             //}
                             if (isRunCad) {
-                                mXML.endTag("", "TPX");
+                                mXML.endTag("", "ns3:TPX");
                                 mXML.endTag("", "Extensions");
                             }
 
@@ -351,19 +419,6 @@ public class TCX {
                 }
                 else if (hasTrackpoints) {
                     mXML.endTag("", "Track");
-                }
-                if (cntHR > 0) {
-                    mXML.startTag("", "AverageHeartRateBpm");
-                    mXML.startTag("", "Value");
-                    mXML.text(Integer.toString((int) (sumHR / cntHR)));
-                    mXML.endTag("", "Value");
-                    mXML.endTag("", "AverageHeartRateBpm");
-
-                    mXML.startTag("", "MaximumHeartRateBpm");
-                    mXML.startTag("", "Value");
-                    mXML.text(Long.toString(maxHR));
-                    mXML.endTag("", "Value");
-                    mXML.endTag("", "MaximumHeartRateBpm");
                 }
                 mXML.endTag("", "Lap");
             }
