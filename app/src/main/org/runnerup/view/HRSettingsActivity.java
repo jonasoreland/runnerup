@@ -89,6 +89,10 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private static final int GRAPH_HISTORY_SIZE = 180;
     private static final double xInterval = 60;
 
+    private static final int REQUEST_BLUETOOTH_SETTINGS = 123;
+    private static final int REQUEST_BLUETOOTH_ENABLE = 3002;
+    private static final int REQUEST_BLUETOOTH_PERM = 3001;
+
     private DeviceAdapter deviceAdapter = null;
     private boolean mIsScanning = false;
 
@@ -227,7 +231,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0) {
+        if (requestCode == REQUEST_BLUETOOTH_ENABLE) {
             if (!hrProvider.isEnabled()) {
                 log("Bluetooth not enabled!");
                 scanButton.setEnabled(false);
@@ -238,7 +242,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             open();
             return;
         }
-        if (requestCode == 123) {
+        if (requestCode == REQUEST_BLUETOOTH_SETTINGS) {
             startScan();
         }
     }
@@ -272,9 +276,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         btName = prefs.getString(res.getString(R.string.pref_bt_name), null);
         btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
         btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
-        Log.e(getClass().getName(), "btName: " + btName);
-        Log.e(getClass().getName(), "btAddress: " + btAddress);
-        Log.e(getClass().getName(), "btProviderName: " + btProviderName);
+        Log.i(getClass().getName(), "btName: " + btName
+                + "btAddress: " + btAddress
+                + "btProviderName: " + btProviderName);
 
         if (btProviderName != null) {
             log("HRManager.get(" + btProviderName + ")");
@@ -284,7 +288,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void open() {
         if (hrProvider != null && !hrProvider.isEnabled()) {
-            if (hrProvider.startEnableIntent(this, 0)) {
+
+            if (hrProvider.startEnableIntent(this, REQUEST_BLUETOOTH_ENABLE)) {
                 return;
             }
             hrProvider = null;
@@ -436,7 +441,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             builder.setNeutralButton("Pairing", (dialog, which) -> {
                 dialog.cancel();
                 Intent i = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-                startActivityForResult(i, 123);
+                startActivity(i);
             });
         }
         builder.show();

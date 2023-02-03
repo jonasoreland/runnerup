@@ -120,6 +120,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private Formatter formatter = null;
 
     private long mStartTime = 0; // activity start time in unix timestamp
+    private static final int EDIT_ACCOUNT_REQUEST = 2;
 
     /**
      * Called when the activity is first created.
@@ -651,8 +652,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 b.setOnClickListener(v -> {
                     Intent i = new Intent(DetailActivity.this,
                             AccountListActivity.class);
-                    DetailActivity.this.startActivityForResult(i,
-                            SyncManager.EDIT_ACCOUNT_REQUEST);
+                    DetailActivity.this.startActivityForResult(i, EDIT_ACCOUNT_REQUEST);
                 });
                 return b;
             }
