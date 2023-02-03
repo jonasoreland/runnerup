@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <!--metrics stuff-->
+  <string name="metrics_distance_km">Км</string>
+  <string name="metrics_distance_mi">Майл</string>
+  <string name="metrics_distance_m">м</string>
+  <string name="metrics_elapsed_h">х</string>
+  <string name="metrics_elapsed_m">м</string>
+  <string name="metrics_elapsed_min">минут</string>
+  <string name="metrics_elapsed_s">секунд</string>
+  <string name="metrics_heartrate">нөөц</string>
+  <string name="Maximum_heart_rate_MHR">зүрхний дээд цохилт (MHR) </string>
+  <string name="Target_pace_HHMMSS">зорилтот хурд</string>
+  <!--first argument is a date, second a time, for instance: "Yesterday at 13:32"-->
+  <string name="formatting_date_at_time">%1$s-д %2$s</string>
+  <string name="Type">төрөл</string>
+  <string name="active">идэвхтэй</string>
+  <string name="rest">нөөц</string>
+  <string name="recovery">сэргээх</string>
+  <string name="speed">хурд</string>
+  <string name="Start_hour">Эхлэх цаг</string>
+  <string name="Heart_rate">Зүрхний хэмнэл</string>
+  <string name="Connect">Холбох</string>
+  <string name="Connecting">Холбож байна</string>
+  <string name="Download">Татах</string>
+  <string name="Share">Дамжуулах</string>
+  <string name="Delete">Устгах</string>
+  <string name="Total">Нийт</string>
+  <string name="Pause">Түр зогсоох</string>
+  <string name="Stop">Зогс</string>
+  <string name="Date">Өдөр</string>
+  <string name="Cancel">Цуцлах</string>
+  <string name="Select_all">Бүгдийг сонго</string>
+  <string name="Clear_all">Бүгдийг арилга</string>
+  <string name="Username">Хэрэглэгчийн нэр</string>
+  <string name="Password">Нууц үг</string>
+  <string name="Show_password">Нууц үгийг харуул</string>
+  <string name="Notes">Тэмдэглэлүүд</string>
+  <string name="Map">Газрын зураг</string>
+  <string name="Age">Нас</string>
+  <string name="OK">За</string>
+  <string name="Settings">Тохиргоонууд</string>
+  <string name="Error">Алдаа</string>
+  <string name="Yes">Тийм</string>
+  <string name="No">Үгүй</string>
+  <string name="Are_you_sure">Итгэлтэй байна уу?</string>
+  <string name="Autopause">Автоматаар түр зогсоох</string>
+  <string name="Export">Гаргах</string>
+  <string name="Import">Оруулах</string>
+  <string name="Total_time">Нийт цаг</string>
+  <string name="Total_speed">Нийт хурд</string>
+  <string name="Start">Эхлэ</string>
+  <string name="Low_HRM_battery_level">HRM батерейны түвшин бага</string>
+  <string name="High_HRM_battery_level">HRM батерейны өндөр түвшин</string>
+  <string name="Warning">Анхаар</string>
+  <string name="Do_not_show_again">Үүнийг дахиж битгий харуул</string>
+  <string name="Waiting_for_phone" tools:ignore="UnusedResources">Утсанд хүлээгдэж байна</string>
+  <string name="Saving_on_phone" tools:ignore="UnusedResources">Утсанд хадгална</string>
+  <string name="Save">Хадгал</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Зүрхний хэмнэл</string>
+  <string name="Autopause_category">Автоматаар түр зогсоох</string>
+</resources>

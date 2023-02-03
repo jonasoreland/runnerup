@@ -154,6 +154,7 @@
   <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
   <string name="Downloadeditremove_workouts">Загрузка/редактирование/удаление тренировки</string>
+  <string name="Note_you_need_to_connect_to_the_account_too">Вы должны подключиться к учетной записи RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Пользуйся кнопкой гарнитуры для пуска/остановки RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">На вкладке «Интервал» используется «Восстановление» вместо шага «Отдых» (паузы).</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
@@ -245,6 +246,8 @@
   <string name="History">Архив</string>
   <string name="Basic">Базовая</string>
   <string name="Advanced">Продвинутая</string>
+  <string name="Manual_activity_title">Добавление вручную</string>
+  <string name="Add_manual_entry">Добавление вручную</string>
   <string name="Add_workout_notes">Добавить примечание</string>
   <string name="Pruning_deleted_activities_from_database">Очистить базу данных от ранее выгруженных записей</string>
   <string name="Prune">Очистка базы</string>
@@ -288,6 +291,7 @@
   <string name="GPS_permission_text_pre_Android10">Требуется разрешение на определение местоположения через настройки системы</string>
   <string name="Request_permission_text">Нажмите \"ОК\", что бы разрешить.</string>
   <string name="Battery_optimization_check">Оптимизация батареи включена</string>
+  <string name="Battery_optimization_check_text">Экономия заряда батареи снижает точность.\nЧтобы исправить, нажмите OK для перехода к системным настройкам \"Экономия заряда батарей\", затем переключите на \"Все приложения\", в списке найдите \"RunnerUp\" и выберите его, далее выберите \"Не экономить\" и нажмите \"Готово\".</string>
   <string name="Default">Стандартная</string>
   <string name="Notes_about_your_workout">Заметка к тренировке</string>
   <string name="Downloading_from_1s">Загрузка из %1$s</string>
@@ -318,6 +322,7 @@
   <string name="Lap_start">Новый круг</string>
   <string name="Lap_start_summary">Сигнал для начала кругов и этапов Движения, Разминки и Заминки</string>
   <string name="Lock_activity_buttons">Блокировка кнопок</string>
+  <string name="Lock_activity_buttons_message">Блокировка кнопок активности при быстром нажатии на заголовок</string>
   <string name="Speed">скорость</string>
   <string name="Speed_unit_preference">Предпочтение в единиц скорости</string>
   <string name="path_simplification">Упрощение пути</string>
