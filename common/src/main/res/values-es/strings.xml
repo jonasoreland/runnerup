@@ -58,11 +58,9 @@
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
   <string name="Lap">Vuelta</string>
-  <string name="New_lap">Nueva vuelta</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Actividad</string>
-  <string name="Download_workouts">Descargar actividades</string>
   <string name="Audio_cue_settings">Configuración inidicaciones de audio</string>
   <string name="Sport">Deporte</string>
   <string name="Target">Objetivo</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Ritmo bajo</string>
   <string name="High_pace">Ritmo alto</string>
   <string name="Sex">Sexo</string>
-  <string name="upload">cargar</string>
-  <string name="feed">Fuente</string>
+  <string name="upload">Cargar</string>
   <string name="Notes">Notas</string>
   <string name="Laps">Vueltas</string>
   <string name="Map">Mapa</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Cargar</string>
   <string name="Disconnect">Desconectar</string>
   <string name="Resume">Reiniciar</string>
-  <string name="Save_activity">Guardar actividad</string>
-  <string name="Upload_activity">Subir actividad</string>
   <string name="Uploaded">Subida</string>
   <string name="Finished">Finalizada</string>
   <string name="Until_press">Hasta pulsación</string>
-  <string name="Discard_activity">Descartar actividad</string>
   <string name="Configure_accounts">Configurar cuentas</string>
   <string name="Refresh">Actualizar</string>
   <string name="Age">Edad</string>
   <string name="Synchronizing">Sincronizando</string>
-  <string name="synchronizing_feed">Sincronizando el feed...</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Gestionar conexiones</string>
   <string name="accounts_category_unconnected">Conectar una cuenta</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Cancelando, espere...</string>
   <string name="Are_you_sure">¿Estas seguro?</string>
   <string name="Configure_audio_cues">Configurar indicaciones de audio</string>
-  <string name="Downloadeditremove_workouts">Descargar/editar/eliminar actividades</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Debe conectarse a una cuenta RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa tus auriculares para iniciar/pausar/resumir RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">En la pestaña Intervalo, utilizar etapas Recuperación en vez de Descanso (pausa)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">En etapas de cuenta atrás insertadas, utilizar etapas de Recuperación en vez de Descanso (pausa)</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Vuelta automática (m)</string>
   <string name="Autopause">Pausar automáticamente</string>
   <string name="Autopause_summary">Pausa automàtica en entrenamientos básicos y etapas de Calentamiento y Enfriamiento</string>
-  <string name="Enable_RunnerUpLive">Activar Live</string>
   <string name="Headset_key_startstop">Botón del auticular comienza/termina</string>
   <string name="Activity_countdown">Cuenta atrás para el inicio de la actividad</string>
   <string name="Activity_countdown_summary">Añadir una cuenta atrás al inicio de los entrenamientos básicos</string>
@@ -276,7 +266,6 @@
   <string name="Website">Página web</string>
   <string name="Automatic_upload">Subida automática</string>
   <string name="Live">En línea</string>
-  <string name="Include_map_in_post">Incluir mapa en la entrada</string>
   <string name="Clear_uploads_from_phone">Eliminar subidas (del teléfono)</string>
   <string name="my_phone">Mi teléfono</string>
   <string name="Failed_to_import">No se ha podido importar</string>
@@ -285,20 +274,17 @@
   <string name="Overwrite_existing">Sobrescribir existentes</string>
   <string name="Create_new_workout">Crear nueva actividad</string>
   <string name="Set_workout_name">Cambiar nombre de la actividad</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descargar %1$s sobrescribirá el ejercicio  con el mismo nombre %2$s</string>
   <string name="Delete_workout">Eliminar entrenamiento</string>
   <string name="RunnerUp_workout">Entrenamiento RunnerUp</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nCreo que te podría gustar este entrenamiento.</string>
   <string name="Share_workout">Compartir actividad…</string>
   <string name="New_audio_scheme">Nuevo esquema de audio</string>
-  <string name="GPS_permission_required">Permiso GPS requerido</string>
   <string name="Default">Por defecto</string>
   <string name="Notes_about_your_workout">Notas de entrenamiento</string>
   <string name="Downloading_from_1s">Descargando desde %1$s</string>
   <string name="Uploading_to_1s">Subiendo a %1$s</string>
   <string name="Loading_activities">Cargando actividades</string>
   <string name="Fetching_activities_from_1s">Cargando actividades desde %1$s</string>
-  <string name="No_feed_to_show">No hay datos para mostrar</string>
   <string name="Unused_currently">No usado actualmente</string>
   <string name="Unknown">Desconocido</string>
   <string name="Recording">Grabando</string>
@@ -308,7 +294,6 @@
   <string name="cue_hrm_connection_lost">Conexión con monitor de frecuencia cardíaca perdida</string>
   <string name="HRM_connection_audio_cue">Pistas de audio de conexión MFC</string>
   <string name="Audio_cue_unit">Incluir unidad en pista de audio</string>
-  <string name="latest_feed_click_to_refresh">Feed reciente (pulsar para actualizar)</string>
   <string name="log_extended_gps_summary">Exportar sólo en GPX</string>
   <string name="log_extended_gps_title">Registrar datos con exactitud GPS ampliada</string>
   <string name="Current_speed_from_GPS_points">Velocidad actual de puntos GPS</string>
@@ -323,7 +308,6 @@
   <string name="Lap_start">Fin de tramo</string>
   <string name="Lap_start_summary">Pista para inicio de tramos y etapas Activas, Calentamiento y Enfriamiento</string>
   <string name="Lock_activity_buttons">Bloquear botones de actividad</string>
-  <string name="Lock_activity_buttons_message">Bloquear botones de actividad haciendo clics rápidos en el encabezado</string>
   <string name="Speed">Velocidad</string>
   <string name="Speed_unit_preference">Unidad de velocidad</string>
   <string name="path_simplification">Simplificación de ruta</string>
@@ -336,4 +320,8 @@
   <string name="path_simplification_menu">Simplificar ruta</string>
   <string name="File_format">Cargar archivos como:</string>
   <string name="File_need_one_format">Debe especificar al menos un formato</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Frecuencia cardíaca</string>
+  <string name="Autopause_category">Pausar automáticamente</string>
+  <string name="Target_category">Entrenador de objetivos</string>
 </resources>

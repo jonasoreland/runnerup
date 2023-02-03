@@ -58,11 +58,9 @@
   <string name="Total">Teljes</string>
   <string name="Interval">Intervallum</string>
   <string name="Lap">Kör</string>
-  <string name="New_lap">Új kör</string>
   <string name="Pause">Szünet</string>
   <string name="Stop">Megállítás</string>
   <string name="Workout">Edzésterv</string>
-  <string name="Download_workouts">Edzéstervek letöltése</string>
   <string name="Audio_cue_settings">Beszéd profil</string>
   <string name="Sport">Sport</string>
   <string name="Target">Kitűzött cél</string>
@@ -95,7 +93,6 @@
   <string name="High_pace">Magas tempó</string>
   <string name="Sex">Nem</string>
   <string name="upload">Feltöltés</string>
-  <string name="feed">Hírfolyam</string>
   <string name="Notes">Jegyzetek</string>
   <string name="Laps">Körök</string>
   <string name="Map">Térkép</string>
@@ -103,12 +100,9 @@
   <string name="Upload">Feltöltés</string>
   <string name="Disconnect">Leválasztás</string>
   <string name="Resume">Folytatás</string>
-  <string name="Save_activity">Tevékenység mentése</string>
-  <string name="Upload_activity">Tevékenység feltöltése</string>
   <string name="Uploaded">Feltöltve</string>
   <string name="Finished">Befejezve</string>
   <string name="Until_press">Megnyomásig</string>
-  <string name="Discard_activity">Tevékenység eldobása</string>
   <string name="Configure_accounts">Fiókok beállítása</string>
   <string name="Refresh">Frissítés</string>
   <string name="Age">Életkor</string>
@@ -152,7 +146,6 @@
   <string name="Cancellingplease_wait">Megszakítás...</string>
   <string name="Are_you_sure">Biztos vagy benne?</string>
   <string name="Configure_audio_cues">Beszédprofilok beállítása</string>
-  <string name="Downloadeditremove_workouts">Edzéstervek letöltése/szerkesztése/törlése</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Használd a fülhallgatót az indításhoz/szünethez/folytatáshoz</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Az Intervallum fülön Regenerációt használj Pihenés (szünet) helyett</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Adatbázis exportálása külső tárolóra</string>
@@ -165,7 +158,6 @@
   <string name="Autolap">Automatikus kör</string>
   <string name="Autolap_m">Automatikus kör (m)</string>
   <string name="Autopause">Automatikus szünet</string>
-  <string name="Enable_RunnerUpLive">RunnerUp Live engedélyezése</string>
   <string name="Headset_key_startstop">Fülhallgató gomb indítás/megállítás</string>
   <string name="Countdown_time_s">Visszaszámlálás ideje (s)</string>
   <string name="Unit_preference_title">Mértékegységek</string>
@@ -247,23 +239,19 @@
   <string name="Website">Weboldal</string>
   <string name="Automatic_upload">Automatikus feltöltés</string>
   <string name="Live">Élő</string>
-  <string name="Include_map_in_post">Tartalmazza a térképet a bejegyzésben</string>
   <string name="Clear_uploads_from_phone">Feltöltések törlése (telefonról)</string>
   <string name="my_phone">Ezen a telefonon</string>
   <string name="Overwrite_existing">Létező felülírása</string>
   <string name="Create_new_workout">Új edzésterv létrehozása</string>
   <string name="Set_workout_name">Edzésterv neve</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s letöltése felül fogja írni az ugyan olyan nevű %2$s .edzést.</string>
   <string name="Share_workout">Edzésterv megosztása</string>
   <string name="New_audio_scheme">Új beszédséma</string>
-  <string name="GPS_permission_required">GPS engedély szükséges</string>
   <string name="Default">Alapértelmezett</string>
   <string name="Notes_about_your_workout">Edzés jegyzetek</string>
   <string name="Downloading_from_1s">Letöltés innen: %1$s</string>
   <string name="Uploading_to_1s">Feltöltés ide: %1$s</string>
   <string name="Loading_activities">Tevékenységek betöltése</string>
   <string name="Fetching_activities_from_1s">Tevékenységek letöltése innen: %1$s</string>
-  <string name="No_feed_to_show">Nincs mit megjeleníteni</string>
   <string name="Unused_currently">Jelenleg nincs használva</string>
   <string name="Unknown">Ismeretlen</string>
   <string name="Recording">Rögzítés</string>
@@ -285,4 +273,8 @@
   <string name="Lap_start">Kör kezdete</string>
   <string name="Speed">Sebesség</string>
   <string name="path_simplification_algorithm">Algoritmus</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Pulzus</string>
+  <string name="Autopause_category">Automatikus szünet</string>
+  <string name="Target_category">Célorientált edzés</string>
 </resources>

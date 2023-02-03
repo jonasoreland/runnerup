@@ -58,11 +58,9 @@
   <string name="Total">Totaal</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Ronde</string>
-  <string name="New_lap">Nieuwe ronde</string>
   <string name="Pause">Pauzeren</string>
   <string name="Stop">Stoppen</string>
   <string name="Workout">Training</string>
-  <string name="Download_workouts">Trainingen downloaden</string>
   <string name="Audio_cue_settings">Instellingen van audiocue</string>
   <string name="Sport">Sport</string>
   <string name="Target">Doel</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Laag tempo</string>
   <string name="High_pace">Hoog tempo</string>
   <string name="Sex">Geslacht</string>
-  <string name="upload">upload</string>
-  <string name="feed">Feed</string>
+  <string name="upload">Uploaden</string>
   <string name="Notes">Notities</string>
   <string name="Laps">Rondes</string>
   <string name="Map">Kaart</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Uploaden</string>
   <string name="Disconnect">Verbinding verbreken</string>
   <string name="Resume">Doorgaan</string>
-  <string name="Save_activity">Activiteit opslaan</string>
-  <string name="Upload_activity">Activiteit uploaden</string>
   <string name="Uploaded">Geüpload</string>
   <string name="Finished">Afgelopen</string>
   <string name="Until_press">Tot aan indrukken</string>
-  <string name="Discard_activity">Activiteit verwerpen</string>
   <string name="Configure_accounts">Accounts bewerken</string>
   <string name="Refresh">Veversen</string>
   <string name="Age">Leeftijd</string>
   <string name="Synchronizing">Bezig met synchroniseren</string>
-  <string name="synchronizing_feed">Feed aan het synchroniseren…</string>
   <string name="OK">Oké</string>
   <string name="accounts_category_connected">Verbindingen beheren</string>
   <string name="accounts_category_unconnected">Account koppelen</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Annuleren, wacht even...</string>
   <string name="Are_you_sure">Weet je het zeker?</string>
   <string name="Configure_audio_cues">Configureer audiocues</string>
-  <string name="Downloadeditremove_workouts">Trainingen downloaden/bewerken/verwijderen</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Je moet verbinden met een RunnerUp Live account</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik je headset om RunnerUp te starten/pauzeren/hervatten</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Databank exporteren naar externe opslag</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Databank importeren uit externe opslag</string>
@@ -166,7 +157,6 @@
   <string name="Autolap">Automatische ronde</string>
   <string name="Autolap_m">Automatische ronde (m)</string>
   <string name="Autopause">Automatisch pauzeren</string>
-  <string name="Enable_RunnerUpLive">RunnerUp Live inschakelen</string>
   <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen tot start van activiteit</string>
   <string name="Countdown_time_s">Afteltijd (s)</string>
@@ -262,7 +252,6 @@
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatisch uploaden</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Kaart ook meenemen</string>
   <string name="Clear_uploads_from_phone">Uploads verwijderen (van de telefoon)</string>
   <string name="my_phone">Mijn telefoon</string>
   <string name="Failed_to_import">Importeren is mislukt</string>
@@ -271,20 +260,17 @@
   <string name="Overwrite_existing">Bestaande overschrijven</string>
   <string name="Create_new_workout">Nieuwe training creëren</string>
   <string name="Set_workout_name">Naam van training</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Door %1$s te downloaden wordt %2$s overschreven met dezelfde naam</string>
   <string name="Delete_workout">Verwijder workout</string>
   <string name="RunnerUp_workout">RunnerUp-workout</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hoi\nIk denk dat je deze training waarschijnlijk leuk vindt.</string>
   <string name="Share_workout">Training delen…</string>
   <string name="New_audio_scheme">Nieuw audioschema</string>
-  <string name="GPS_permission_required">GPS permessie noodzakelijk</string>
   <string name="Default">Standaard</string>
   <string name="Notes_about_your_workout">Workoutaantekeningen</string>
   <string name="Downloading_from_1s">Bezig met downloaden van %1$s</string>
   <string name="Uploading_to_1s">Bezig met uploaden naar %1$s</string>
   <string name="Loading_activities">Bezig met laden van activiteiten</string>
   <string name="Fetching_activities_from_1s">Bezig met ophalen van activiteiten van %1$s</string>
-  <string name="No_feed_to_show">Feed is leeg</string>
   <string name="Unused_currently">Momenteel ongebruikt</string>
   <string name="Unknown">Onbekend</string>
   <string name="Recording">Bezig met vastleggen</string>
@@ -306,7 +292,6 @@
   <string name="channel_notification_ongoing">RunnerUp gps- en activiteitsmeldingen</string>
   <string name="Lap_start">Ronde starten</string>
   <string name="Lock_activity_buttons">Activiteitsknoppen vergrendelen</string>
-  <string name="Lock_activity_buttons_message">Activiteitsknoppen vergrendelen door snel op de koptekst te drukken</string>
   <string name="Speed">Snelheid</string>
   <string name="Speed_unit_preference">Snelheideenheid</string>
   <string name="path_simplification">Padversimpeling</string>
@@ -317,4 +302,8 @@
   <string name="path_simplification_menu">Vereenvoudig pad</string>
   <string name="File_format">Upload bestand als:</string>
   <string name="File_need_one_format">U moet minstens 1 format specifieren</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Hartslag</string>
+  <string name="Autopause_category">Automatisch pauzeren</string>
+  <string name="Target_category">Doel coachen</string>
 </resources>

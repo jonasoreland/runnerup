@@ -58,11 +58,9 @@
   <string name="Total">Viso</string>
   <string name="Interval">Intervalas</string>
   <string name="Lap">Etapas</string>
-  <string name="New_lap">Naujas etapas</string>
   <string name="Pause">Pauzė</string>
   <string name="Stop">Baigti</string>
   <string name="Workout">Treniruotė</string>
-  <string name="Download_workouts">Atsisiųsti treniruotes</string>
   <string name="Audio_cue_settings">Garsinių nurodymų nustatymai</string>
   <string name="Sport">Sporto šaka</string>
   <string name="Target">Tikslas</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Lėtas tempas</string>
   <string name="High_pace">Greitas tempas</string>
   <string name="Sex">Lytis</string>
-  <string name="upload">įkelti</string>
-  <string name="feed">skleisti</string>
+  <string name="upload">Įkelti</string>
   <string name="Notes">Pastabos</string>
   <string name="Laps">Etapai</string>
   <string name="Map">Žemėlapis</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Įkelti</string>
   <string name="Disconnect">Atsijungti</string>
   <string name="Resume">Tęsti</string>
-  <string name="Save_activity">Išsaugoti veiklą</string>
-  <string name="Upload_activity">Įkelti veiklą</string>
   <string name="Uploaded">Įkelta</string>
   <string name="Finished">Baigta</string>
   <string name="Until_press">Iki paspaudimo</string>
-  <string name="Discard_activity">Nutraukti veiklą</string>
   <string name="Configure_accounts">Konfigūruoti sąskaitas</string>
   <string name="Refresh">Atnaujinti</string>
   <string name="Age">Amžius</string>
   <string name="Synchronizing">Sinchronizuojama</string>
-  <string name="synchronizing_feed">Sinchronizuojamas sklaidos kanalas...</string>
   <string name="OK">Gerai</string>
   <string name="accounts_category_connected">Tvarkyti ryšius</string>
   <string name="accounts_category_unconnected">Prijungti paskyrą</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Nutraukiama, prašome palaukti...</string>
   <string name="Are_you_sure">Ar tikrai?</string>
   <string name="Configure_audio_cues">Konfigūruoti garsinius nurodymus</string>
-  <string name="Downloadeditremove_workouts">Atsisiųsti/redaguoti/ištrinti treniruotes</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Jūs turite prisijungti prie RunnerUp Live sąskaitos</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Naudoti laisvų rankų įrangą RunnerUp paleidimui/stabdymui/pratęsimui</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Kortelėje \"Intervalas\" naudoti \"Atsistatymo\" žingnius,  vietoj \"Poilsis (pauzė)\".</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Įterptiems atgalinio skaičiavimo žingsniams naudoti \"Atsistaymo\" žingsnius, vietoj \"Poilsis (pauzė)\"</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Automatinis etapas (m)</string>
   <string name="Autopause">Automatinė pauzė</string>
   <string name="Autopause_summary">Automatinė pauzė įprastų treniruočių metu bei \"Apšilimo\" ir \"Atvėsimo\" etapuose</string>
-  <string name="Enable_RunnerUpLive">Leisti Live</string>
   <string name="Headset_key_startstop">Laisvų rankų įrangos start/stop mygtukas</string>
   <string name="Activity_countdown">Atgalinis skaičiavimas iki veiklos pradžios</string>
   <string name="Activity_countdown_summary">Pridėti atgalinį skaičiavimą prie įprastos treniruotės pradžios</string>
@@ -276,7 +266,6 @@
   <string name="Website">Tinklapis</string>
   <string name="Automatic_upload">Automatinis įkėlimas</string>
   <string name="Live">Gyvai</string>
-  <string name="Include_map_in_post">Įterpti žemėlapį į postą</string>
   <string name="Clear_uploads_from_phone">Išvalyti įkėlimus (iš telefono atminties)</string>
   <string name="my_phone">mano telefonas</string>
   <string name="Failed_to_import">Nepavyko importuoti</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Perrašyti esamą</string>
   <string name="Create_new_workout">Sukurti naują treniruotę</string>
   <string name="Set_workout_name">Pavadinti treniruotę</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">%1$s įkėlimas perrašys %2$s treniruotę tuo pačiu pavadinimu</string>
   <string name="Delete_workout">Ištrinti treniruotę</string>
   <string name="RunnerUp_workout">RunnerUp treniruotė</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nI mano tau gali patikti ši treniruotė.</string>
   <string name="Share_workout">Dalintis treniruote…</string>
   <string name="New_audio_scheme">Nauja audio schema</string>
-  <string name="GPS_permission_required">Reikalingas GPS leidimas</string>
   <string name="GPS_permission_text_pre_Android10">Reikalingas leidimas naudoti vietovės duomenis sistemos nustatymuose</string>
-  <string name="GPS_permission_text">Sistemos nustatymuose reikalingas leidimas \"Leisti visą laiką\".\nBėgimo ritmui taip pat reikalingas leidimas \"Fizinis aktyvumas\".</string>
   <string name="Request_permission_text">Suteikti leidimą paspaudžiant \"OK\".</string>
   <string name="Default">Numatyta</string>
   <string name="Notes_about_your_workout">Treniruotės pastabos</string>
@@ -301,7 +287,6 @@
   <string name="Uploading_to_1s">Įkeliama į %1$s</string>
   <string name="Loading_activities">Pakraunamos veiklos</string>
   <string name="Fetching_activities_from_1s">Gaunamos veiklos iš %1$s</string>
-  <string name="No_feed_to_show">Nėra galimo parodyti srauto</string>
   <string name="Unused_currently">Šiuo metu nenaudojama</string>
   <string name="Unknown">Nežinoma</string>
   <string name="Recording">Įrašymas</string>
@@ -311,7 +296,6 @@
   <string name="cue_hrm_connection_lost">Prarastas ryšys su širdies ritmo matuokliu</string>
   <string name="HRM_connection_audio_cue">ŠRM ryšio garsinės žinutės</string>
   <string name="Audio_cue_unit">Įtraukti vienetus garsiniuose nurodymuose</string>
-  <string name="latest_feed_click_to_refresh">Paskutinis srautas (spausti atnaujinimui)</string>
   <string name="log_extended_gps_summary">Eksportuoti tik į GPX</string>
   <string name="log_extended_gps_title">Išplėstinių GPS tikslumo duomenų žurnalas</string>
   <string name="Current_speed_from_GPS_points">Dabartinis greitis iš GPS taškų</string>
@@ -326,7 +310,6 @@
   <string name="Lap_start">Rato pradžia</string>
   <string name="Lap_start_summary">Nurodymai ratų pradžiai ir žingsniams \"Aktyvus\", \"Apšilimas\" bei \"Atvėsimas\"</string>
   <string name="Lock_activity_buttons">Užrakinti veiklos mygtukus</string>
-  <string name="Lock_activity_buttons_message">Užrakinti veiklos mygtukus greitai paspaudžiant antraštę</string>
   <string name="Speed">Greitis</string>
   <string name="Speed_unit_preference">Greičio vienetai</string>
   <string name="path_simplification">Kelio supaprastinimas</string>
@@ -339,4 +322,8 @@
   <string name="path_simplification_menu">Supaprastinti kelią</string>
   <string name="File_format">Įkelti bylą kaip:</string>
   <string name="File_need_one_format">Turite nurodyti nors vieną formatą</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Širdies ritmas</string>
+  <string name="Autopause_category">Automatinė pauzė</string>
+  <string name="Target_category">Tikslinis instruktavimas</string>
 </resources>

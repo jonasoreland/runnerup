@@ -58,11 +58,9 @@
   <string name="Total">Totaal</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Ronde</string>
-  <string name="New_lap">Nieuwe ronde</string>
   <string name="Pause">Pauze</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Training</string>
-  <string name="Download_workouts">Trainingen downloaden</string>
   <string name="Audio_cue_settings">Instellingen audiobegeleiding</string>
   <string name="Sport">Sport</string>
   <string name="Target">Doel</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Lage tempo</string>
   <string name="High_pace">Hoge tempo</string>
   <string name="Sex">Geslacht</string>
-  <string name="upload">upload</string>
-  <string name="feed">feed</string>
+  <string name="upload">Upload</string>
   <string name="Notes">Notities</string>
   <string name="Laps">Rondes</string>
   <string name="Map">Kaart</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Upload</string>
   <string name="Disconnect">Verbinding verbreken</string>
   <string name="Resume">Doorgaan</string>
-  <string name="Save_activity">Activiteit opslaan</string>
-  <string name="Upload_activity">Activiteit uploaden</string>
   <string name="Uploaded">Geupload</string>
   <string name="Finished">Afgelopen</string>
   <string name="Until_press">Totdat gedrukt</string>
-  <string name="Discard_activity">Activiteit verwijderen</string>
   <string name="Configure_accounts">Accounts configureren</string>
   <string name="Refresh">Veversen</string>
   <string name="Age">Leeftijd</string>
   <string name="Synchronizing">Synchroniseren</string>
-  <string name="synchronizing_feed">Synchroniseren van de feed…</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Beheer verbindingen</string>
   <string name="accounts_category_unconnected">Verbind een account</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Annuleren…even geduld aub</string>
   <string name="Are_you_sure">Weet u het zeker?</string>
   <string name="Configure_audio_cues">Auditieve signalen instellen</string>
-  <string name="Downloadeditremove_workouts">Downloaden/bewerken/verwijderen trainingen</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Je moet een verbinding met een RunnerUp Live account maken</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik uw headset om RunnerUp te starten/pauzeren/hervatten</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Op de Interval tab, gebruik Herstel in de plaats van Rust (pauze) stappen</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Voor toegevoegde aftelstappen, gebruik Herstel in plaats van Rust (pauze) stappen</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Automatische ronde (m)</string>
   <string name="Autopause">Automatische pauze</string>
   <string name="Autopause_summary">Pauzeer automatisch in basistrainingen en Warmup en Cooldown stappen</string>
-  <string name="Enable_RunnerUpLive">Aanzetten Live</string>
   <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen tot start activiteit</string>
   <string name="Activity_countdown_summary">Voeg aftellen toe aan start basistraining</string>
@@ -276,7 +266,6 @@
   <string name="Website">Website</string>
   <string name="Automatic_upload">Automatische upload</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Kaart in post toevoegen</string>
   <string name="Clear_uploads_from_phone">Wis uploads (van telefoon)</string>
   <string name="my_phone">Mijn telefoon</string>
   <string name="Failed_to_import">Import mislukt</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Bestaande overschrijven</string>
   <string name="Create_new_workout">Maak nieuwe training</string>
   <string name="Set_workout_name">Vul trainingsnaam in</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Downloaden van %1$s zal %2$s training overschrijven met dezelfde naam</string>
   <string name="Delete_workout">Verwijder training</string>
   <string name="RunnerUp_workout">RunnerUp training</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hey\nIk denk dat je deze training leuk zal vinden.</string>
   <string name="Share_workout">Deel training...</string>
   <string name="New_audio_scheme">Nieuw geluidschema</string>
-  <string name="GPS_permission_required">GPS machtiging vereist</string>
   <string name="GPS_permission_text_pre_Android10">Locatie machtiging vereist in systeeminstellingen</string>
-  <string name="GPS_permission_text">Locatie machtiging \"Altijd toestaan\" verplicht in systeeminstellingen.\nVoor loopcadans is machtiging \"Fysieke activiteit\" ook verplicht.</string>
   <string name="Request_permission_text">Sta machtiging toe door op \"OK\" te drukken.</string>
   <string name="Battery_optimization_check">Batterijoptimalisatie actief</string>
   <string name="Battery_optimization_check_text">Batterijoptimalisatie zal de nauwkeurigheid afnemen.\nDruk OK om in de systeem instellingen te gaan en selecteer \\"Alle apps\\", zoek naar \\"RunnerUp\\", selecteer \\"Niet optimaliseren\\".</string>
@@ -303,7 +289,6 @@
   <string name="Uploading_to_1s">Uploaden naar %1$s</string>
   <string name="Loading_activities">Activiteiten laden</string>
   <string name="Fetching_activities_from_1s">Ophalen activiteiten van %1$s</string>
-  <string name="No_feed_to_show">Geen feed weer te geven</string>
   <string name="Unused_currently">Momenteel ongebruikt</string>
   <string name="Unknown">Onbekend</string>
   <string name="Recording">Opnemen</string>
@@ -313,7 +298,6 @@
   <string name="cue_hrm_connection_lost">Verbinding naar hartslagmeter verbroken</string>
   <string name="HRM_connection_audio_cue">HRM verbinding audio cues</string>
   <string name="Audio_cue_unit">Voeg eenheid toe in audio cue</string>
-  <string name="latest_feed_click_to_refresh">Laatste feed (druk om te verversen)</string>
   <string name="log_extended_gps_summary">Exporteer in GPX alleen</string>
   <string name="log_extended_gps_title">Log uitgebreide GPS nauwkeurigheidsinformatie</string>
   <string name="Current_speed_from_GPS_points">Huidige snelheid van GPS punten</string>
@@ -328,7 +312,6 @@
   <string name="Lap_start">Ronde start</string>
   <string name="Lap_start_summary">Cue voor start van rondes en Actief, Warmup, en Cooldown stappen</string>
   <string name="Lock_activity_buttons">Vergrendel activiteitsknoppen</string>
-  <string name="Lock_activity_buttons_message">Vergrendel activiteitsknoppen door snel op de hoofding te drukken</string>
   <string name="Speed">Snelheid</string>
   <string name="Speed_unit_preference">Eenheid snelheid</string>
   <string name="path_simplification">Pad vereenvoudiging</string>
@@ -343,4 +326,8 @@
   <string name="File_need_one_format">Je moet minstens één formaat kiezen</string>
   <string name="tts_not_available_title">Tekst naar spraak niet beschikbaar</string>
   <string name="tts_not_available">RunnerUp vereist een werkende Tekst naar Spraak om de audio cues af te spelen. Gelieve er voor te zorgen dat minstens één Tekst naar Spraak geïnstalleerd is.</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Hartslag</string>
+  <string name="Autopause_category">Automatische pauze</string>
+  <string name="Target_category">Doel coaching</string>
 </resources>
