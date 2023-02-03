@@ -58,7 +58,8 @@
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="HardcodedDebugMode,UnusedAttribute"
+        android:dataExtractionRules="@xml/data_extraction_rules">
 
         <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="true" />
         <activity
