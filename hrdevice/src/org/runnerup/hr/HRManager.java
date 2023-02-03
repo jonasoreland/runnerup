@@ -54,7 +54,7 @@ public class HRManager {
             return false;
         }
 
-        static HRProvider createProviderByReflection(Context ctx, boolean experimental) {
+        static HRProvider createProviderByReflection(Context ctx) {
             try {
                 Class<?> classDefinition = Class.forName(Lib);
                 Constructor<?> cons = classDefinition.getConstructor(Context.class);
@@ -109,7 +109,7 @@ public class HRManager {
         if (src.contentEquals(AntPlusProxy.Name)) {
             if (!AntPlusProxy.checkAntPlusLibrary(ctx))
                 return null;
-            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx, true);
+            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx);
             if (hrprov != null && src.contentEquals(hrprov.getProviderName())) {
                 return hrprov;
             }
@@ -161,7 +161,7 @@ public class HRManager {
         }
 
         if (AntPlusProxy.checkAntPlusLibrary(ctx)) {
-            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx, experimental);
+            HRProvider hrprov = AntPlusProxy.createProviderByReflection(ctx);
             if (hrprov != null) {
                 providers.add(hrprov);
             }
