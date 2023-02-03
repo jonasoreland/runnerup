@@ -292,6 +292,11 @@
   <string name="Share_workout">Partajează antrenament...</string>
   <string name="New_audio_scheme">Nouă schemă audio</string>
   <string name="GPS_permission_required">Este nevoie de permisiunea GPS</string>
+  <string name="GPS_permission_text_pre_Android10">Permisiunea de access a locației este solicitată în setarile sistemului</string>
+  <string name="GPS_permission_text">Permisiunea de access a locației „Permite tot timpul” este solicitată în setarile sistemului.\nPentru cadența de fugă este necesară și permisiunea „Activități fizice”.</string>
+  <string name="Request_permission_text">Acceptă permisiunea făcând click pe „OK”.</string>
+  <string name="Battery_optimization_check">Optimizarea bateriei activată</string>
+  <string name="Battery_optimization_check_text">Optimizarea bateriei va scădea acuratețea.\nApasă OK pentru a merge la setările de sistem și selectează „Toate aplicațiile”, caută după „RunnerUp”, selectează „Nu optimiza”.</string>
   <string name="Default">Prestabilit</string>
   <string name="Notes_about_your_workout">Note de antrenament</string>
   <string name="Downloading_from_1s">Es descarcă de la %1$s</string>
@@ -336,4 +341,6 @@
   <string name="path_simplification_menu">Simplifică calea</string>
   <string name="File_format">Încarcă fișiere ca:</string>
   <string name="File_need_one_format">Trebuie să specificați cel puțin un format</string>
+  <string name="tts_not_available_title">Text-în-vorbire nu este disponibil</string>
+  <string name="tts_not_available">RunnerUp are nevoie de un motor Text-în-Vorbire pentru a reda indiciile audio. Te rog asigurăte că ai cel puțin un motor de Text-în-Vorbire instalat.</string>
 </resources>
