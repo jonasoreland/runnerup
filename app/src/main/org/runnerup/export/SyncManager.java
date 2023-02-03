@@ -77,10 +77,12 @@ import java.util.Set;
 
 
 public class SyncManager {
+    // Used by several activities
     public static final int CONFIGURE_REQUEST = 1;
-    public static final int EDIT_REQUEST = 1001; //Hack
-    public static final int EDIT_ACCOUNT_REQUEST = 2; //Hack
     public static final long ERROR_ACTIVITY_ID = -1L;
+    // Id to identify a permission request.
+    private static final int REQUEST_STORAGE = 3003;
+
 
     private SQLiteDatabase mDB = null;
     private AppCompatActivity mActivity = null;
@@ -513,7 +515,7 @@ public class SyncManager {
             // Request permission, dont care about the result
             final String[] perms = new String[defaultPerms.size()];
             defaultPerms.toArray(perms);
-            ActivityCompat.requestPermissions(activity, perms, 0);
+            ActivityCompat.requestPermissions(activity, perms, REQUEST_STORAGE);
             result = false;
         }
         //TODO A popup in the AccountActivity, to prompt for storage permissions

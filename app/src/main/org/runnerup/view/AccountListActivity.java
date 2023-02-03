@@ -66,6 +66,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
     private SyncManager mSyncManager = null;
     private boolean mShowDisabled = false;
     private CursorAdapter mCursorAdapter;
+    private static final int EDIT_REQUEST = 1001;
 
     /**
      * Called when the activity is first created.
@@ -304,8 +305,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
         intent.putExtra("synchronizer", synchronizerName);
         //intent.putExtra("edit", edit);
-        AccountListActivity.this.startActivityForResult(intent,
-                SyncManager.EDIT_REQUEST);
+        AccountListActivity.this.startActivityForResult(intent, EDIT_REQUEST);
     }
 
     @Override
@@ -314,7 +314,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         if (requestCode == SyncManager.CONFIGURE_REQUEST) {
             mSyncManager.onActivityResult(requestCode, resultCode, data);
             this.mCursorAdapter.notifyDataSetChanged();
-        } else if (requestCode == SyncManager.EDIT_REQUEST) {
+        } else if (requestCode == EDIT_REQUEST) {
             mSyncManager.clear();
             getSupportLoaderManager().restartLoader(0, null, this);
         }

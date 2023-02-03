@@ -96,9 +96,10 @@ import org.runnerup.workout.WorkoutSerializer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class StartActivity extends AppCompatActivity
-        implements ActivityCompat.OnRequestPermissionsResultCallback, TickListener, GpsInformation {
+        implements TickListener, GpsInformation {
 
     private enum GpsLevel {POOR, ACCEPTABLE, GOOD}
 
@@ -162,6 +163,11 @@ public class StartActivity extends AppCompatActivity
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
     private boolean headsetRegistered = false;
+    // Id to identify a permission request.
+    // Note that the result is not used, the user is dropped back to initial view when a request is done.
+    private static final int REQUEST_LOCATION = 3000;
+    private static final int START_ACTIVITY = 112;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -618,7 +624,7 @@ public class StartActivity extends AppCompatActivity
         skipStopGps = true;
         Intent intent = new Intent(StartActivity.this,
                 RunActivity.class);
-        StartActivity.this.startActivityForResult(intent, 112);
+        StartActivity.this.startActivityForResult(intent, START_ACTIVITY);
         notificationStateManager.cancelNotification(); // will be added by RunActivity
     }
 
@@ -743,36 +749,6 @@ public class StartActivity extends AppCompatActivity
         }
 
         return missingEssentialPermission;
-    }
-
-    // Id to identify a permission request.
-    // TODO When released in 1.2.0, use https://developer.android.com/reference/androidx/activity/result/contract/ActivityResultContracts.RequestPermission
-    private static final int REQUEST_LOCATION = 3000;
-
-    // TODO This callback is not called (due to requestPermissions(this.getParent()?), so onCreate() is used
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            // Check if the only required permission has been granted (could react on the response)
-            if (grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                String s = "Permission response OK";
-                Log.i(getClass().getName(), s);
-                if (mTracker.getState() != TrackerState.CONNECTED) {
-                    startGps();
-                }
-                updateView();
-
-            } else {
-                String s = "Permission was not granted: " + " ("+grantResults.length+", "+permissions.length + ")";
-                Log.i(getClass().getName(), s);
-            }
-        } else {
-            String s = "Unexpected permission request: " + requestCode;
-            Log.w(getClass().getName(), s);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
     }
 
     private void toggleStatusDetails() {
@@ -1072,7 +1048,7 @@ public class StartActivity extends AppCompatActivity
             if (data.getStringExtra("obj") != null)
                 Log.e(getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
         }
-        if (requestCode == 112) {
+        if (requestCode == START_ACTIVITY) {
             skipStopGps = false;
             if (!mIsBound || mTracker == null) {
                 bindGpsTracker();
