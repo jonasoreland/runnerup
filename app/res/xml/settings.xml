@@ -50,17 +50,6 @@
         android:summary="@string/Sensors_summary">
 
         <PreferenceCategory
-            android:key="@string/GPS_category"
-            android:title="@string/GPS_category" >
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="@string/pref_startgps"
-                android:persistent="true"
-                android:title="@string/Auto_start_GPS" />
-        </PreferenceCategory>
-
-        <PreferenceCategory
             android:key="@string/HRM_category"
             android:title="@string/HRM_category" >
 
@@ -98,72 +87,15 @@
         </PreferenceCategory>
 
         <PreferenceCategory
-            android:key="@string/Other_sensors_category"
-            android:title="@string/Other_sensors_category" >
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:persistent="true"
-                android:key="@string/pref_use_cadence_step_sensor"
-                android:title="@string/use_step_sensor_title"
-                android:summary="@string/use_step_sensor_summary" />
+            android:key="@string/GPS_category"
+            android:title="@string/GPS_category" >
 
             <CheckBoxPreference
                 android:defaultValue="false"
+                android:key="@string/pref_startgps"
                 android:persistent="true"
-                android:key="@string/pref_use_temperature_sensor"
-                android:title="@string/use_temperature_sensor"
-                android:summary="@string/use_temperature_sensor_summary"/>
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:persistent="true"
-                android:key="@string/pref_use_pressure_sensor"
-                android:title="@string/use_pressure_sensor_title"
-                android:summary="@string/use_pressure_sensor_summary" />
-
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:persistent="true"
-                android:singleLineTitle="false"
-                android:dependency="@string/pref_use_pressure_sensor"
-                android:key="@string/pref_pressure_elevation_gps_average"
-                android:title="@string/adjust_barometer_altitude_from_gps"
-                android:summary="@string/adjust_barometer_elevation_from_gps_summary" />
+                android:title="@string/Auto_start_GPS" />
         </PreferenceCategory>
-
-        <PreferenceCategory
-            android:key="@string/Lock_activity_buttons_category"
-            android:title="@string/Lock_activity_buttons_category" >
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:persistent="true"
-                android:key="@string/pref_lock_run"
-                android:title="@string/Lock_activity_buttons"
-                android:summary="@string/Lock_activity_buttons_message" />
-        </PreferenceCategory>
-
-        <PreferenceCategory
-            android:key="@string/Headset_category"
-            android:title="@string/Headset_category" >
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:persistent="true"
-                android:key="@string/pref_keystartstop_active"
-                android:title="@string/Headset_key_startstop"
-                android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp" />
-        </PreferenceCategory>
-
-    </PreferenceScreen>
-
-    <!--Recording -->
-
-    <PreferenceScreen
-        android:title="@string/Recording"
-        android:key="recording_preferencescreen"
-        android:summary="@string/Recording_summary">
 
         <PreferenceCategory
             android:key="@string/GPS_recording_category"
@@ -196,8 +128,7 @@
                 android:defaultValue="true"
                 android:persistent="true"
                 android:key="@string/pref_altitude_adjust"
-                android:title="@string/Adjust_altitude"
-                android:summary="@string/Adjust_altitude_summary"/>
+                android:title="@string/Adjust_altitude"/>
 
             <CheckBoxPreference
                 android:defaultValue="false"
@@ -248,6 +179,66 @@
         </PreferenceCategory>
 
         <PreferenceCategory
+            android:key="@string/Autopause_category"
+            android:title="@string/Autopause_category" >
+
+            <org.runnerup.widget.TextPreference
+                android:defaultValue="5"
+                android:dependency="@string/pref_autopause_active"
+                android:inputType="number"
+                android:key="@string/pref_autopause_afterseconds"
+                android:minHeight="48dp"
+                android:persistent="true"
+                android:title="@string/Autopause_after_s"
+                android:enabled="true"/>
+
+            <org.runnerup.widget.TextPreference
+                android:defaultValue="20"
+                android:dependency="@string/pref_autopause_active"
+                android:inputType="number"
+                android:key="@string/pref_autopause_minpace"
+                android:minHeight="48dp"
+                android:persistent="true"
+                android:title="@string/Autopause_min_pace_minkm"
+                android:enabled="true"/>
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="@string/Phone_sensors_category"
+            android:title="@string/Phone_sensors_category" >
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:persistent="true"
+                android:key="@string/pref_use_cadence_step_sensor"
+                android:title="@string/use_step_sensor_title"
+                android:summary="@string/use_step_sensor_summary" />
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:persistent="true"
+                android:key="@string/pref_use_temperature_sensor"
+                android:title="@string/use_temperature_sensor"
+                android:summary="@string/use_temperature_sensor_summary"/>
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:persistent="true"
+                android:key="@string/pref_use_pressure_sensor"
+                android:title="@string/use_pressure_sensor_title"
+                android:summary="@string/use_pressure_sensor_summary" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:persistent="true"
+                android:singleLineTitle="false"
+                android:dependency="@string/pref_use_pressure_sensor"
+                android:key="@string/pref_pressure_elevation_gps_average"
+                android:title="@string/adjust_barometer_altitude_from_gps"
+                android:summary="@string/adjust_barometer_elevation_from_gps_summary" />
+        </PreferenceCategory>
+
+        <PreferenceCategory
             android:key="@string/RunnerUp_live_category"
             android:title="@string/RunnerUp_live_category" >
 
@@ -258,7 +249,38 @@
                 android:title="@string/Enable_RunnerUpLive"
                 android:summary="@string/Note_you_need_to_connect_to_the_account_too"/>
         </PreferenceCategory>
+    </PreferenceScreen>
 
+    <!--Controls -->
+
+    <PreferenceScreen
+        android:key="controls_preferencescreen"
+        android:title="@string/Controls"
+        android:summary="@string/Controls_pref_summary">
+
+        <PreferenceCategory
+            android:key="@string/Lock_activity_buttons_category"
+            android:title="@string/Lock_activity_buttons_category" >
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:persistent="true"
+                android:key="@string/pref_lock_run"
+                android:title="@string/Lock_activity_buttons"
+                android:summary="@string/Lock_activity_buttons_message" />
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="@string/Headset_category"
+            android:title="@string/Headset_category" >
+
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:persistent="true"
+                android:key="@string/pref_keystartstop_active"
+                android:title="@string/Headset_key_startstop"
+                android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp" />
+        </PreferenceCategory>
     </PreferenceScreen>
 
     <!--Workout -->
@@ -318,26 +340,6 @@
                 android:persistent="true"
                 android:title="@string/Autopause"
                 android:summary="@string/Autopause_summary"/>
-
-            <org.runnerup.widget.TextPreference
-                android:defaultValue="5"
-                android:dependency="@string/pref_autopause_active"
-                android:inputType="number"
-                android:key="@string/pref_autopause_afterseconds"
-                android:minHeight="48dp"
-                android:persistent="true"
-                android:title="@string/Autopause_after_s"
-                android:enabled="true"/>
-
-            <org.runnerup.widget.TextPreference
-                android:defaultValue="20"
-                android:dependency="@string/pref_autopause_active"
-                android:inputType="number"
-                android:key="@string/pref_autopause_minpace"
-                android:minHeight="48dp"
-                android:persistent="true"
-                android:title="@string/Autopause_min_pace_minkm"
-                android:enabled="true"/>
         </PreferenceCategory>
 
         <PreferenceCategory
@@ -499,6 +501,7 @@
             android:title="@string/Database_category" >
 
             <Preference
+                android:key="@string/Maintenance_explanation_summary"
                 android:summary="@string/Maintenance_explanation_summary" />
 
             <Preference android:title="@string/Export"

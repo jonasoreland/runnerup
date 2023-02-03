@@ -348,12 +348,14 @@
   <string name="HRM_category">Heart rate</string>
   <string name="Headset_category">Remote control</string>
   <string name="Lock_activity_buttons_category">Lock buttons</string>
-  <string name="Other_sensors_category">Phone sensors</string>
   <string name="GPS_recording_category">GPS recording</string>
   <string name="RunnerUp_live_category">RunnerUp Live</string>
+  <string name="Phone_sensors_category">Phone sensors</string>
   <string name="Database_category">Database maintenance</string>
-  <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be im-/exported from/to its home directory\n/storage/emulated/0/Android/data/org.runnerup</string>
+  <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be imported and exported from/to\n%1$s</string>
   <string name="Map_pref_summary">Mapstyle</string>
+  <string name="Controls">Controls</string>
+  <string name="Controls_pref_summary">Lock buttons</string>
   <string name="Workout_pref_summary">Manage workouts, laps, rest, target coaching</string>
   <string name="Manage_workouts_category">Advanced workouts</string>
   <string name="Autolap_category">Autolaps</string>
@@ -361,10 +363,8 @@
   <string name="Countdown_category">Countdown</string>
   <string name="Recovery_category">Recovery</string>
   <string name="Target_category">Target coaching</string>
-  <string name="Sensors_summary">Internal &amp; external sensors</string>
+  <string name="Sensors_summary">Sensors and recording</string>
   <string name="use_temperature_sensor_summary">Record temperature</string>
-  <string name="Recording_summary">GPS precision, path simplification</string>
-  <string name="Adjust_altitude_summary">EGM96</string>
   <string name="Current_speed_from_GPS_points_summary">Get speed from GPS sensor instead of calculating from GPS positions</string>
-  <string name="Target_coaching_summary">Set period for calculating moving average for target feedback and its grace period for audio cues</string>
+  <string name="Target_coaching_summary">Set period for calculating moving average for target feedback and the grace period for audio cues</string>
 </resources>

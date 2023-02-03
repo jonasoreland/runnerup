@@ -37,6 +37,8 @@ import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerTemperature;
 
+import java.util.Locale;
+
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -100,6 +102,11 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return true;
         });
+
+        String path = DBHelper.getDefaultBackupPath(SettingsActivity.this);
+        getPreferenceManager()
+                .findPreference(res.getString(R.string.Maintenance_explanation_summary))
+                .setSummary(String.format(Locale.getDefault(), getResources().getString(R.string.Maintenance_explanation_summary), path));
     }
 
     public static boolean hasHR(Context ctx) {
