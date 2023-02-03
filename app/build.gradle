@@ -82,6 +82,7 @@ android {
             versionNameSuffix "-${getGitHash()}"
         }
         release {
+            debuggable false
             applicationIdSuffix ""
 
             minifyEnabled rootProject.ext.allowNonFree

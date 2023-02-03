@@ -24,6 +24,7 @@ android {
                 resValue "string", "applicationIdFull", rootProject.ext.applicationId + ".debug"
             }
             release {
+                debuggable false
                 buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '"')
                 resValue "string", "applicationIdFull", rootProject.ext.applicationId
 
