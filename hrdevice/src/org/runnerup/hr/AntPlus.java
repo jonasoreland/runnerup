@@ -109,7 +109,7 @@ public class AntPlus extends BtHRBase {
 
             // The system libraries must be installed
             return AntPluginPcc.getInstalledPluginsVersionNumber(ctx) >= 0;
-        } catch(Exception e){}
+        } catch(Exception ignored){}
         return false;
     }
 

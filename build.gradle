@@ -39,8 +39,10 @@ project.ext {
     enableWear = allowNonFree
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
-    antPlusLib = "ANT-Android-SDKs/ANT+_Android_SDK/API/antpluginlib_3-8-0.aar"
-    if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLib).exists()) {
+    // Therefore, the .aar file may not be redistributed in the RU repo
+    antPlusLibPath = "$rootDir/ANT-Android-SDKs/ANT+_Android_SDK/API"
+    antPlusLibName = "antpluginlib_3-8-0"
+    if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLibPath+'/'+antPlusLibName+'.aar').exists()) {
         antPlusLib = ""
     }
 
@@ -51,5 +53,16 @@ project.ext {
         applicationId = "org.runnerup.free"
     } else {
         applicationId = "org.runnerup"
+    }
+}
+
+// Special setup for antPlusLib, not allowed to copy the .aar and create mavenLocal
+// Raises warning:
+// AGPBI: {"kind":"warning","text":"Using flatDir should be avoided because it doesn't support any meta-data formats.","sources":[{}]}
+allprojects {
+    repositories {
+        if (rootProject.ext.antPlusLibPath) {
+            flatDir { dirs rootProject.ext.antPlusLibPath }
+        }
     }
 }
