@@ -66,6 +66,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         resConfigs 'ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'mn', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh'
         // By default all AppCompat translations are included, saves 350KB
+        // also in res/xml/locales_config.xml and .tx/config
     }
 
     signingConfigs {
