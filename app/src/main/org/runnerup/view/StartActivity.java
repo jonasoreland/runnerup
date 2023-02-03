@@ -605,8 +605,8 @@ public class StartActivity extends AppCompatActivity
             audioPref = null;
         }
         if (w != null) {
-        WorkoutBuilder.prepareWorkout(getResources(), pref, w);
-        WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
+            WorkoutBuilder.prepareWorkout(getResources(), pref, w);
+            WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
         }
         return w;
     }
@@ -629,12 +629,12 @@ public class StartActivity extends AppCompatActivity
     }
 
     private final OnClickListener startButtonClick = v -> {
-            if (mTracker.getState() == TrackerState.CONNECTED) {
-                startWorkout();
+        if (mTracker.getState() == TrackerState.CONNECTED) {
+            startWorkout();
 
-                return;
-            }
-            updateView();
+            return;
+        }
+        updateView();
     };
 
     private final OnClickListener gpsEnableClick = v -> {
@@ -665,6 +665,20 @@ public class StartActivity extends AppCompatActivity
             }
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S /* Android12, sdk31*/
+                && (getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
+                || getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH))) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final String btDeviceName = prefs.getString(getString(R.string.pref_bt_name), null);
+            if (btDeviceName != null && !btDeviceName.isEmpty()) {
+                requiredPerms.add(Manifest.permission.BLUETOOTH_CONNECT);
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requiredPerms.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+
         return requiredPerms;
     }
 
@@ -683,9 +697,13 @@ public class StartActivity extends AppCompatActivity
             if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
                 missingAnyPermission = true;
                 // Filter non essential permissions for result
-                missingEssentialPermission = missingEssentialPermission
-                        || Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
-                        || !perm.equals(Manifest.permission.ACTIVITY_RECOGNITION);
+                boolean nonEssential = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                        && perm.equals(Manifest.permission.ACTIVITY_RECOGNITION)
+                        || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                        && perm.equals(Manifest.permission.BLUETOOTH_CONNECT)
+                        || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                        && perm.equals(Manifest.permission.POST_NOTIFICATIONS));
+                missingEssentialPermission = missingEssentialPermission || !nonEssential;
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
                     // A denied permission, show motivation in a popup
                     String s = "Permission " + perm + " is explicitly denied";
@@ -702,25 +720,27 @@ public class StartActivity extends AppCompatActivity
 
             if (popup && missingEssentialPermission || requestPerms.size() > 0) {
                 // Essential or requestable permissions missing
-                String baseMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                        ? getString(R.string.GPS_permission_text)
-                        : getString(R.string.GPS_permission_text_pre_Android10);
+                String baseMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                        ? getString(R.string.GPS_permission_text_Android12)
+                        : Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                            ? getString(R.string.GPS_permission_text)
+                            : getString(R.string.GPS_permission_text_pre_Android10);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
                         .setTitle(R.string.GPS_permission_required)
                         .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
                     // Let Android request the permissions
-                    builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION));
-                    builder.setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
+                    builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION))
+                            .setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
                 }
                 else if (popup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     // Open settings for the app (no direct shortcut to permissions)
                     Intent intent = new Intent()
                             .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             .setData(Uri.fromParts("package", getPackageName(), null));
-                    builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent));
-                    builder.setMessage(baseMessage + "\n\n" + getString(R.string.Request_permission_text));
+                    builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent))
+                            .setMessage(baseMessage + "\n\n" + getString(R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
                 }
@@ -735,13 +755,27 @@ public class StartActivity extends AppCompatActivity
         final boolean suppressOptimizeBatteryPopup = prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
         PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
         if ((popup || getAutoStartGps()) && !suppressOptimizeBatteryPopup
-        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && !pm.isIgnoringBatteryOptimizations(this.getPackageName())) {
+            Intent intent;
+            int msgId;
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                // Around Android 9 the Battery usage setting is available in the app setting too, which is easier to
+                // change than in the system settings
+                intent = new Intent()
+                        .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        .setData(Uri.fromParts("package", getPackageName(), null));
+                msgId = R.string.Battery_optimization_check_text_Android9;
+            } else {
+                intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                msgId = R.string.Battery_optimization_check_text;
+            }
+
             new AlertDialog.Builder(StartActivity.this)
                     .setTitle(R.string.Battery_optimization_check)
-                    .setMessage(R.string.Battery_optimization_check_text)
+                    .setMessage(msgId)
                     .setPositiveButton(R.string.OK, (dialog, which) ->
-                            this.startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)))
+                            this.startActivity(intent))
                     .setNeutralButton(R.string.Do_not_show_again, (dialog, which) ->
                             prefs.edit().putBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), true).apply())
                     .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss())

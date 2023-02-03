@@ -17,13 +17,17 @@
 
 package org.runnerup.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -43,6 +47,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
@@ -246,7 +252,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             startScan();
         }
     }
-    
+
     private int lineNo = 0;
 
     private void log(String msg) {
@@ -288,6 +294,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void open() {
         if (hrProvider != null && !hrProvider.isEnabled()) {
+            // For at least Pixel, BLUETOOTH_CONNECT is required to request starting BT
+            if (checkPermissions(false)) {
+                // User have to click again
+                return;
+            }
 
             if (hrProvider.startEnableIntent(this, REQUEST_BLUETOOTH_ENABLE)) {
                 return;
@@ -411,6 +422,61 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 .show();
     }
 
+    private boolean checkPermissions(boolean isScan) {
+        List<String> requiredPerms = new ArrayList<>();
+        List<String> requestPerms = new ArrayList<>();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // No extra BT permissions required
+            return false;
+        }
+
+        // Always ask for Connect, Scan not always needed
+        requiredPerms.add(Manifest.permission.BLUETOOTH_CONNECT);
+        if (isScan) {
+            requiredPerms.add(Manifest.permission.BLUETOOTH_SCAN);
+        }
+        boolean isDeniedPermission = false;
+
+        for (final String perm : requiredPerms) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
+                    // A denied permission, show motivation in a popup
+                    String s = "Permission " + perm + " is explicitly denied";
+                    Log.i(getClass().getName(), s);
+                    isDeniedPermission = true;
+                } else {
+                    requestPerms.add(perm);
+                }
+            }
+        }
+
+        if (requestPerms.size() == 0 && !isDeniedPermission) {
+            return false;
+        }
+        final String[] permissions = new String[requestPerms.size()];
+        requestPerms.toArray(permissions);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(HRSettingsActivity.this)
+                .setTitle(R.string.Bluetooth_permission_required)
+                .setMessage(getString(R.string.Request_permission_text))
+                .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
+        if (requestPerms.size() > 0) {
+            // Let Android request the permissions
+            // Note that the result is not used, the user is dropped back to initial view when a request is done.
+            builder.setPositiveButton(R.string.OK, (dialog, id) ->
+                    ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERM));
+        } else if (isDeniedPermission) {
+            // Open settings for the app (no direct shortcut to permissions)
+            Intent intent = new Intent()
+                    .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    .setData(Uri.fromParts("package", getPackageName(), null));
+            builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent));
+        }
+        builder.show();
+
+        return true;
+    }
+
     private void startScan() {
         if (hrProvider == null) {
             log("hrProvider null in .startScan(), aborting");
@@ -421,6 +487,12 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         log(hrProvider.getProviderName() + ".startScan()");
         updateView();
         deviceAdapter.deviceList.clear();
+
+        if (checkPermissions(true)) {
+            // User have to click again
+            return;
+        }
+
         hrProvider.startScan();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -469,6 +541,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             hrProvider.disconnect();
             hrProvider.close();
             updateView();
+            return;
+        }
+
+        if (checkPermissions(false)) {
+            // User have to click again
             return;
         }
 
