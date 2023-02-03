@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.1.3" type="baseline" client="gradle" dependencies="false" name="AGP (7.1.3)" variant="all" version="7.1.3">
+<issues format="6" by="lint 7.4.0" type="baseline" client="gradle" dependencies="false" name="AGP (7.4.0)" variant="all" version="7.4.0">
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 15)"
+        errorLine1="        android:usesPermissionFlags=&quot;neverForLocation&quot; android:minSdkVersion=&quot;31&quot;/>"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="AndroidManifest.xml"
+            line="41"
+            column="9"/>
+    </issue>
 
     <issue
         id="UnusedAttribute"
@@ -21,6 +32,17 @@
             file="res/layout/hr_settings.xml"
             line="98"
             column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedAttribute"
+        message="Attribute `singleLineTitle` is only used in API level 26 and higher (current min is 15)"
+        errorLine1="                android:singleLineTitle=&quot;false&quot;"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/xml/settings.xml"
+            line="240"
+            column="17"/>
     </issue>
 
     <issue
@@ -63,7 +85,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/util/Formatter.java"
-            line="115"
+            line="116"
             column="17"/>
     </issue>
 
@@ -91,7 +113,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
         errorLine2="  ^">
         <location
@@ -102,7 +124,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
         errorLine2="  ^">
         <location
@@ -113,7 +135,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
         errorLine2="  ^">
         <location
@@ -124,7 +146,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
         errorLine2="  ^">
         <location
@@ -135,7 +157,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
         errorLine2="  ^">
         <location
@@ -146,7 +168,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
         errorLine2="  ^">
         <location
@@ -157,7 +179,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
         errorLine2="  ^">
         <location
@@ -168,7 +190,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
         errorLine2="  ^">
         <location
@@ -179,7 +201,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
         errorLine2="  ^">
         <location
@@ -190,7 +212,7 @@
 
     <issue
         id="MissingQuantity"
-        message="For locale &quot;fr&quot; (French) the following quantities should also be defined: `many`"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
         errorLine2="  ^">
         <location

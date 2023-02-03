@@ -35,6 +35,7 @@ android {
         showAll true
         warning 'MissingTranslation'
     }
+    namespace 'org.runnerup.common'
 }
 
 repositories {

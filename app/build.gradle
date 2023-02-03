@@ -64,8 +64,8 @@ android {
         // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
-        // By default all AppCompat translations are included, saves 350KB
         resConfigs 'ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'mn', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh'
+        // By default all AppCompat translations are included, saves 350KB
     }
 
     signingConfigs {
@@ -146,7 +146,7 @@ dependencies {
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
 
-    latestImplementation "com.google.android.material:material:1.4.0"
+    latestImplementation "com.google.android.material:material:1.8.0"
     if (rootProject.ext.enableWear) {
         latestWearApp project(':wear')
         //noinspection GradleDependency
@@ -199,8 +199,7 @@ android.applicationVariants.all {
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
         buildConfigField 'int', 'MAPBOX_ENABLED', "1"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
-    }
-    else {
+    } else {
         buildConfigField 'int', 'MAPBOX_ENABLED', "0"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
     }
@@ -217,8 +216,7 @@ android.applicationVariants.all {
         buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
         buildConfigField 'String', 'RUNALYZE_ID', props.CLIENT_ID
         buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
-    }
-    else {
+    } else {
         // Demo, connect to testing.runalyze.com
         buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
         buildConfigField 'String', 'RUNALYZE_ID', '"8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g"'
@@ -237,8 +235,7 @@ android.applicationVariants.all {
         buildConfigField 'int', 'DROPBOX_ENABLED', "1"
         buildConfigField 'String', 'DROPBOX_ID', props.CLIENT_ID
         buildConfigField 'String', 'DROPBOX_SECRET', props.CLIENT_SECRET
-    }
-    else {
+    } else {
         buildConfigField 'int', 'DROPBOX_ENABLED', "0"
         buildConfigField 'String', 'DROPBOX_ID', "null"
         buildConfigField 'String', 'DROPBOX_SECRET', "null"
@@ -249,7 +246,7 @@ android.applicationVariants.all {
 //Most comments from there removed
 
 // Map for the version code that gives each ABI a value (generic has lower value)
-ext.abiCodes = ['arm64-v8a': 8, 'armeabi':2, 'armeabi-v7a':3, 'mips':4, 'mips64':5, 'x86':6, 'x86_64':7]
+ext.abiCodes = ['arm64-v8a': 8, 'armeabi': 2, 'armeabi-v7a': 3, 'mips': 4, 'mips64': 5, 'x86': 6, 'x86_64': 7]
 
 import com.android.build.OutputFile
 
