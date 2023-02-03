@@ -151,7 +151,6 @@
   <string name="Are_you_sure">Are you sure?</string>
   <string name="Configure_audio_cues">Configure audio cues</string>
   <string name="Downloadeditremove_workouts">Edit workouts</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">You must connect to a RunnerUp Live account</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Use your headset to start/pause/resume RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">On the Interval tab, use Recovery instead of Rest (pause) steps</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">For inserted countdown steps, use Recovery instead of Rest (pause) steps</string>
@@ -168,7 +167,6 @@
   <string name="Autolap_m">Autolap (m)</string>
   <string name="Autopause">Autopause</string>
   <string name="Autopause_summary">Autopause in basic workouts and Warmup and Cooldown steps</string>
-  <string name="Enable_RunnerUpLive">Enable RunnerUp Live</string>
   <string name="Headset_key_startstop">Headset key start/stop</string>
   <string name="Activity_countdown">Countdown to activity start</string>
   <string name="Activity_countdown_summary">Add countdown to basic workout start</string>
@@ -345,7 +343,6 @@
   <string name="Headset_category">Remote control</string>
   <string name="Lock_activity_buttons_category">Lock buttons</string>
   <string name="GPS_recording_category">GPS recording</string>
-  <string name="RunnerUp_live_category">RunnerUp Live</string>
   <string name="Phone_sensors_category">Phone sensors</string>
   <string name="Database_category">Database maintenance</string>
   <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be imported and exported from/to\n%1$s</string>
