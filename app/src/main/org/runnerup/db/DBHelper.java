@@ -614,7 +614,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         return ctx.getFilesDir().getPath() + "/../databases/" + DBNAME;
     }
 
-    private static String getDefaultBackupPath(Context ctx) {
+    public static String getDefaultBackupPath(Context ctx) {
         // A path that can be used with SDK 29 scooped storage
         return ctx.getExternalFilesDir(null) + File.separator + "runnerup.db.export";
     }
