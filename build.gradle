@@ -17,8 +17,8 @@ project.ext {
     //Note that Android Studio does not know about the 'ext' module and will warn
     //minSdkVersion differs between modules
     buildToolsVersion = '33.0.1' //Update Travis manually
-    compileSdkVersion = 30 //Update Travis manually
-    targetSdkVersion = 30
+    compileSdkVersion = 33 //Update Travis manually
+    targetSdkVersion = 33
 
     appcompat_version = "1.6.0"
     annotation_version = "1.5.0"
