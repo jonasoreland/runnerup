@@ -363,6 +363,17 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     private void selectProvider() {
+        if (providers.size() == 0) {
+            return;
+        }
+
+        if (providers.size() == 1) {
+            hrProvider = HRManager.getHRProvider(HRSettingsActivity.this,
+                    providers.get(0).getProviderName());
+            open();
+            return;
+        }
+
         final CharSequence[] items = new CharSequence[providers.size()];
         final CharSequence[] itemNames = new CharSequence[providers.size()];
         for (int i = 0; i < items.length; i++) {
