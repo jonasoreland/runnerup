@@ -74,14 +74,14 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         return ResultCode.RESULT_OK;
     }
 
-    private Integer parseAndFixInteger(int resId, String def, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+    private Integer parseAndFixInteger(SharedPreferences preferences, int resId, String def, Context context) {
         String s = preferences.getString(context.getString(resId), def);
         if (TextUtils.isEmpty(s)) {
+            // Update the settings
             SharedPreferences.Editor prefedit = preferences.edit();
             prefedit.putString(context.getString(resId), def);
             prefedit.apply();
-            return Integer.parseInt(def);
+            s = def;
         }
         return Integer.parseInt(s);
     }
@@ -95,9 +95,9 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         try {
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            frequency_ms = parseAndFixInteger(R.string.pref_pollInterval, "1000", context);
+            frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
             if (!mWithoutGps) {
-                Integer frequency_meters = parseAndFixInteger(R.string.pref_pollDistance, "0", context);
+                Integer frequency_meters = parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
                 lm.requestLocationUpdates(GPS_PROVIDER,
                         frequency_ms,
                         frequency_meters,
