@@ -58,11 +58,9 @@
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Rundă</string>
-  <string name="New_lap">Runda nouă</string>
   <string name="Pause">Pauză</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Antrenament</string>
-  <string name="Download_workouts">Descarcă antrenamente</string>
   <string name="Audio_cue_settings">Setări audio cue</string>
   <string name="Sport">Exerciţiu</string>
   <string name="Target">Ţintă</string>
@@ -96,7 +94,6 @@
   <string name="High_pace">Ritm rapid</string>
   <string name="Sex">Sex</string>
   <string name="upload">Încarcă</string>
-  <string name="feed">Feed</string>
   <string name="Notes">Notițe</string>
   <string name="Laps">Runde</string>
   <string name="Map">Hartă</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Încarcă</string>
   <string name="Disconnect">Deconectează</string>
   <string name="Resume">Reluă</string>
-  <string name="Save_activity">Salvează activitatea</string>
-  <string name="Upload_activity">Încarcă activitatea</string>
   <string name="Uploaded">Încărcat</string>
   <string name="Finished">Terminat</string>
   <string name="Until_press">Până apasă</string>
-  <string name="Discard_activity">Renunță la activitatea</string>
   <string name="Configure_accounts">Editează conturile</string>
   <string name="Refresh">Reîncarcă</string>
   <string name="Age">Vârstă</string>
   <string name="Synchronizing">Se sincronizează</string>
-  <string name="synchronizing_feed">Se sincronizează feedul...</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Gestionează conexiunile</string>
   <string name="accounts_category_unconnected">Conectează un cont</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Se anulează, așteptați...</string>
   <string name="Are_you_sure">Sunteți sigur?</string>
   <string name="Configure_audio_cues">Configurează sunetele audio</string>
-  <string name="Downloadeditremove_workouts">Descarcă/edită/elimină antrenamente</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Trebuie să vă conectați la un cont RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Utilizați setul cu cască pentru a porni / întrerupe / relua RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">În fila Interval, utilizați etape Recuperare în loc de Odihnă (pauză)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Pentru etapele numărați înapoi, folosiți etape Recuperare în loc de Odihnă (pauză)</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Runda automată (m)</string>
   <string name="Autopause">Autopauză</string>
   <string name="Autopause_summary">Autopauză în antrenamentele de bază și în etapele de încălzire și relaxare</string>
-  <string name="Enable_RunnerUpLive">Activează RunnerUp Live</string>
   <string name="Headset_key_startstop">Buton cască de pornire / oprire</string>
   <string name="Activity_countdown">Numărătoarea inversă la începutul activității</string>
   <string name="Activity_countdown_summary">Adăugați numărătoarea inversă la începutul antrenamentului de bază</string>
@@ -276,7 +266,6 @@
   <string name="Website">Website</string>
   <string name="Automatic_upload">Încărcare automată</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Include hartă în postare</string>
   <string name="Clear_uploads_from_phone">Șterge încărcările (de la telefon)</string>
   <string name="my_phone">Telefonul meu</string>
   <string name="Failed_to_import">Importul nu a reușit</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Suprascriere existente</string>
   <string name="Create_new_workout">Nou antrenament</string>
   <string name="Set_workout_name">Numele antrenamentului</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Descărcarea %1$s va suprascrie antrenamente %2$s cu același nume</string>
   <string name="Delete_workout">Elimină antrenament</string>
   <string name="RunnerUp_workout">Antrenament RunnerUp</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Bună\nCred că v-ar putea să vă placă acest antrenament.</string>
   <string name="Share_workout">Partajează antrenament...</string>
   <string name="New_audio_scheme">Nouă schemă audio</string>
-  <string name="GPS_permission_required">Este nevoie de permisiunea GPS</string>
   <string name="GPS_permission_text_pre_Android10">Permisiunea de access a locației este solicitată în setarile sistemului</string>
-  <string name="GPS_permission_text">Permisiunea de access a locației „Permite tot timpul” este solicitată în setarile sistemului.\nPentru cadența de fugă este necesară și permisiunea „Activități fizice”.</string>
   <string name="Request_permission_text">Acceptă permisiunea făcând click pe „OK”.</string>
   <string name="Battery_optimization_check">Optimizarea bateriei activată</string>
   <string name="Battery_optimization_check_text">Optimizarea bateriei va scădea acuratețea.\nApasă OK pentru a merge la setările de sistem și selectează „Toate aplicațiile”, caută după „RunnerUp”, selectează „Nu optimiza”.</string>
@@ -303,7 +289,6 @@
   <string name="Uploading_to_1s">Se încărcă la %1$s</string>
   <string name="Loading_activities">Se încarcă activități</string>
   <string name="Fetching_activities_from_1s">Se obține activități de la %1$s</string>
-  <string name="No_feed_to_show">Nici un feed de afișat</string>
   <string name="Unused_currently">Neutilizat în prezent</string>
   <string name="Unknown">Necunoscut</string>
   <string name="Recording">Se înregistrează</string>
@@ -313,7 +298,6 @@
   <string name="cue_hrm_connection_lost">S-a pierdut conexiunea la monitorul de ritm cardiac</string>
   <string name="HRM_connection_audio_cue">Sunete audio de conexiune MRC</string>
   <string name="Audio_cue_unit">Include unitatea în sunetul audio</string>
-  <string name="latest_feed_click_to_refresh">Feed recent (apăsați pentru a reîmprospăta)</string>
   <string name="log_extended_gps_summary">Exportă numai în GPX</string>
   <string name="log_extended_gps_title">Înregistrează datele extinse de precizie GPS</string>
   <string name="Current_speed_from_GPS_points">Viteza actuală din punctele GPS</string>
@@ -328,7 +312,6 @@
   <string name="Lap_start">Începe runda</string>
   <string name="Lap_start_summary">Cue pentru începerea rundelor și etapele active, de încălzire și de răcire</string>
   <string name="Lock_activity_buttons">Blochează butoanele de activitate</string>
-  <string name="Lock_activity_buttons_message">Blochează butoanele de activitate făcând clic rapid pe antet</string>
   <string name="Speed">Viteză</string>
   <string name="Speed_unit_preference">Unitate de viteză</string>
   <string name="path_simplification">Simplificarea căilor</string>
@@ -343,4 +326,8 @@
   <string name="File_need_one_format">Trebuie să specificați cel puțin un format</string>
   <string name="tts_not_available_title">Text-în-vorbire nu este disponibil</string>
   <string name="tts_not_available">RunnerUp are nevoie de un motor Text-în-Vorbire pentru a reda indiciile audio. Te rog asigurăte că ai cel puțin un motor de Text-în-Vorbire instalat.</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Ritmul cardiac</string>
+  <string name="Autopause_category">Autopauză</string>
+  <string name="Target_category">Coaching pentru țintă</string>
 </resources>

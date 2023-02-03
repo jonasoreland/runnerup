@@ -58,11 +58,9 @@
   <string name="Total">Całkowity</string>
   <string name="Interval">Interwałowy</string>
   <string name="Lap">Okrążenie</string>
-  <string name="New_lap">Nowe okrążenie</string>
   <string name="Pause">Pauza</string>
   <string name="Stop">Stop</string>
   <string name="Workout">Trening</string>
-  <string name="Download_workouts">Pobierz treningi</string>
   <string name="Audio_cue_settings">Ustawienia wskazówek audio</string>
   <string name="Sport">Dyscyplina</string>
   <string name="Target">Cel</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Min. tętno</string>
   <string name="High_pace">Max. tętno</string>
   <string name="Sex">Płeć</string>
-  <string name="upload">Synchronizuj</string>
-  <string name="feed">kanał</string>
+  <string name="upload">Eksport</string>
   <string name="Notes">Notatki</string>
   <string name="Laps">Okrążenia</string>
   <string name="Map">Mapa</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Eksport</string>
   <string name="Disconnect">Rozłącz</string>
   <string name="Resume">Wznów</string>
-  <string name="Save_activity">Zapisz aktywność</string>
-  <string name="Upload_activity">Synchronizuj aktywność</string>
   <string name="Uploaded">Zsynchronizowane</string>
   <string name="Finished">Zakończone</string>
   <string name="Until_press">Do przyciśnięcia</string>
-  <string name="Discard_activity">Usuń aktywność</string>
   <string name="Configure_accounts">Konfiguruj konta</string>
   <string name="Refresh">Odśwież</string>
   <string name="Age">Wiek</string>
   <string name="Synchronizing">Synchronizowanie</string>
-  <string name="synchronizing_feed">Synchronizowanie kanałów</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Zarządzaj połączeniami</string>
   <string name="accounts_category_unconnected">Podłącz konto</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Anuluję, proszę czekać...</string>
   <string name="Are_you_sure">Jesteś pewien?</string>
   <string name="Configure_audio_cues">Konfiguruj wskazówki audio</string>
-  <string name="Downloadeditremove_workouts">Pobierz/edytuj/usuń treningi</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Musisz połączyć się z kontem RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Użyj słuchawek do rozpoczynania/wstrzymania treningu</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">W zakładce interwału użyj regeneracji zamiast odpoczynku (pauza)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuj bazę danych na kartę SD (np. przed aktualizacjią)</string>
@@ -171,7 +162,6 @@
   <string name="Autolap_m">Auto-okrążenie (m)</string>
   <string name="Autopause">Autopauza</string>
   <string name="Autopause_summary">Autopauza przy prostych treningach, rozgrzewce i uspokojeniu</string>
-  <string name="Enable_RunnerUpLive">Włącz Live</string>
   <string name="Headset_key_startstop">Sterowanie słuchawkami (start/stop/pauza)</string>
   <string name="Activity_countdown">Odliczanie do startu aktywności</string>
   <string name="Countdown_time_s">Czas odliczania (s)</string>
@@ -261,7 +251,6 @@
   <string name="Website">Witryna</string>
   <string name="Automatic_upload">Autosynchronizacja</string>
   <string name="Live">Na żywo</string>
-  <string name="Include_map_in_post">Załącz mapę</string>
   <string name="Clear_uploads_from_phone">Usuń treningi (z telefonu)</string>
   <string name="my_phone">mój telefon</string>
   <string name="Failed_to_import">Błąd przy imporcie</string>
@@ -270,14 +259,11 @@
   <string name="Overwrite_existing">Nadpisz istniejący</string>
   <string name="Create_new_workout">Utwórz nowy trening</string>
   <string name="Set_workout_name">Nazwa treningu</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Pobranie %1$s nadpisze trening %2$s z tą samą nazwą</string>
   <string name="Delete_workout">Usuń aktywność</string>
   <string name="RunnerUp_workout">Trening RunnerUp</string>
   <string name="Share_workout">Podziel się treningiem…</string>
   <string name="New_audio_scheme">Nowy schemat wskazówek</string>
-  <string name="GPS_permission_required">Wymagane uprawnienie do GPS</string>
   <string name="GPS_permission_text_pre_Android10">Wymagane uprawnienie do lokalizacji w ustawieniach systemowych</string>
-  <string name="GPS_permission_text">Uprawnienie do lokalizacji \"Zezwól zawsze\" wymagane w ustawieniach systemowych.\nDla kadencji biegu wymagane jest także uprawnienie \"Aktywność fizyczna\".</string>
   <string name="Request_permission_text">Zezwól na uprawnienie wciskając \"OK\".</string>
   <string name="Default">Domyślne</string>
   <string name="Notes_about_your_workout">Notatki treningu</string>
@@ -285,7 +271,6 @@
   <string name="Uploading_to_1s">Wysyłam do %1$s</string>
   <string name="Loading_activities">Ładuje treningi</string>
   <string name="Fetching_activities_from_1s">Pobieram treningi z %1$s</string>
-  <string name="No_feed_to_show">Brak wątku do wyświetlenia</string>
   <string name="Unused_currently">Obecnie nieużywane</string>
   <string name="Unknown">Nieznane</string>
   <string name="Recording">Nagrywanie</string>
@@ -295,7 +280,6 @@
   <string name="cue_hrm_connection_lost">Utracono połączenie z pulsometrem</string>
   <string name="HRM_connection_audio_cue">Wskazówki audio pulsometru</string>
   <string name="Audio_cue_unit">Uwzględnij jednostki we wskazówkach</string>
-  <string name="latest_feed_click_to_refresh">Najnowsze wiadomości (kliknij aby odświeżyć)</string>
   <string name="log_extended_gps_summary">Eksportuj tylko GPX</string>
   <string name="log_extended_gps_title">Zaloguj dane GPS z większą dokładnością</string>
   <string name="Current_speed_from_GPS_points">Bieżąca prędkość z punktów GPS</string>
@@ -308,4 +292,8 @@
   <string name="adjust_barometer_elevation_from_gps_summary">Użyj początkowego wzniesienia z GPS do uśrednienia wzniesienia barometrycznego</string>
   <string name="channel_notification_ongoing">Powiadomienie z RunnerUp o GPS i o treningu</string>
   <string name="Lap_start">Start okrążenia</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Tętno</string>
+  <string name="Autopause_category">Autopauza</string>
+  <string name="Target_category">Wskazówki trenera</string>
 </resources>

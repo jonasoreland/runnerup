@@ -292,7 +292,7 @@
   <string name="Request_permission_text">Allow permission by clicking \"OK\".</string>
   <string name="Battery_optimization_check">Battery optimization enabled</string>
   <string name="Battery_optimization_check_text">Battery optimization will decrease the accuracy.\nPress OK to go system settings and select \"All apps\", search for \"RunnerUp\", select \"Don\'t optimize\".</string>
-  <string name="Battery_optimization_check_text_Android9">Battery optimization will decrease the accuracy.\nPress OK to go app settings and select \"Battery usage" and select \"Unrestricted\" or \"Don\'t optimize\".</string>
+  <string name="Battery_optimization_check_text_Android9">Battery optimization may cause Android to stop workouts running in the background.\nPress OK to go app settings and select \"Battery usage" and select \"Unrestricted\" or \"Don\'t optimize\".</string>
   <string name="Default">Default</string>
   <string name="Notes_about_your_workout">Workout notes</string>
   <string name="Downloading_from_1s">Downloading from %1$s</string>

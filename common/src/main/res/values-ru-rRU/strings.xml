@@ -54,11 +54,9 @@
   <string name="Total">Общее</string>
   <string name="Interval">Интервал</string>
   <string name="Lap">Круг</string>
-  <string name="New_lap">Новый</string>
   <string name="Pause">Пауза</string>
   <string name="Stop">Остановить</string>
   <string name="Workout">Тренировка</string>
-  <string name="Download_workouts">Загрузить тренировки</string>
   <string name="Audio_cue_settings">Выбор голосовой схемы</string>
   <string name="Sport">Спорт</string>
   <string name="Target">Целевой показатель</string>
@@ -87,7 +85,6 @@
   <string name="High_pace">Высокий темп</string>
   <string name="Sex">Пол</string>
   <string name="upload">Выгрузить</string>
-  <string name="feed">Выгрузка</string>
   <string name="Notes">Описание</string>
   <string name="Laps">Круги</string>
   <string name="Map">Карта</string>
@@ -95,12 +92,9 @@
   <string name="Upload">Выгрузить</string>
   <string name="Disconnect">Отключиться</string>
   <string name="Resume">Вернуться</string>
-  <string name="Save_activity">Сохранить</string>
-  <string name="Upload_activity">Выгрузить</string>
   <string name="Uploaded">Выгружено</string>
   <string name="Finished">Завершено</string>
   <string name="Until_press">До нажатия кнопки</string>
-  <string name="Discard_activity">Не сохранять</string>
   <string name="Configure_accounts">Настройка фитнес аккаунтов</string>
   <string name="Refresh">Обновить</string>
   <string name="Age">Возраст</string>
@@ -143,8 +137,6 @@
   <string name="Cancellingplease_wait">Отмена, пожалуйста, подождите…</string>
   <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
-  <string name="Downloadeditremove_workouts">Загрузка/редактирование/удаление тренировки</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Вы должны подключиться к учетной записи RunnerUp Live.</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Пользуйся кнопкой гарнитуры для пуска/остановки RunnerUp</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Импорт базы данных с карты памяти (после обновления)</string>
@@ -155,7 +147,6 @@
   <string name="Autolap">Авто круг</string>
   <string name="Autolap_m">Авто круг (м)</string>
   <string name="Autopause">Авто пауза</string>
-  <string name="Enable_RunnerUpLive">Включить RunnerUpLive</string>
   <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
   <string name="Activity_countdown">Обратный отсчет до начала активности</string>
   <string name="Countdown_time_s">Отсчитывать время ©</string>
@@ -242,7 +233,6 @@
   <string name="Website">Вебсайт</string>
   <string name="Automatic_upload">Автоматическая выгрузка</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Добавить карту в запись</string>
   <string name="Clear_uploads_from_phone">Очистить от выгруженных (с телефона)</string>
   <string name="my_phone">Мой телефон</string>
   <string name="Failed_to_import">Не удалось импортировать</string>
@@ -251,12 +241,10 @@
   <string name="Overwrite_existing">Перезаписывать существующие</string>
   <string name="Create_new_workout">Создать новую тренировку</string>
   <string name="Set_workout_name">Называние тренировки</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Загружаемая тренировка %1$s будет перезаписана %2$s</string>
   <string name="Delete_workout">Удалить тренировку</string>
   <string name="RunnerUp_workout">Тренировка RunnerUp</string>
   <string name="Share_workout">Опубликовать</string>
   <string name="New_audio_scheme">Новая голосовая схема</string>
-  <string name="GPS_permission_required">Требуется разрешение GPS</string>
   <string name="GPS_permission_text_pre_Android10">Требуется разрешение доступа к местоположению из настроек системы</string>
   <string name="Battery_optimization_check">Оптимизация батареи включена</string>
   <string name="Battery_optimization_check_text">Оптимизация батареи снизит точность.\nНажмите OK, чтобы перейти к системным настройкам и выберите \"Все приложения\", найдите \"RunnerUp\", выберите \"Не оптимизировать\".</string>
@@ -273,7 +261,6 @@
   <string name="Maintenance">Обслуживание</string>
   <string name="cue_hrm_connection_restored">Соединение с пульсометром восстановлено</string>
   <string name="cue_hrm_connection_lost">Потеряно соединение с пульсометром</string>
-  <string name="latest_feed_click_to_refresh">Последний канал (нажмите, чтобы обновить)</string>
   <string name="log_extended_gps_summary">Экспорт только в GPX</string>
   <string name="log_extended_gps_title">Вести расширенный журнал данных о точности GPS</string>
   <string name="Current_speed_from_GPS_points">Текущая скорость по данным точек GPS</string>
@@ -282,7 +269,6 @@
   <string name="use_pressure_sensor_title">Датчик давления</string>
   <string name="Lap_start">Начало круга</string>
   <string name="Lock_activity_buttons">Блокировка кнопок активности</string>
-  <string name="Lock_activity_buttons_message">Блокировка кнопок активности при быстром нажатии на заголовок</string>
   <string name="Speed">Скорость</string>
   <string name="Speed_unit_preference">Единица скорости</string>
   <string name="path_simplification_algorithm">Алгоритм</string>
@@ -290,4 +276,8 @@
   <string name="File_need_one_format">Необходимо указать хотя бы один формат</string>
   <string name="tts_not_available_title">Синтезатор речи недоступен</string>
   <string name="tts_not_available">RunnerUp требует наличия работающего механизма Синтезатор речи для воспроизведения звуковых подсказок. Пожалуйста, убедитесь, что у вас установлен хотя бы один рабочий движок Синтезатора речи.</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Пульс</string>
+  <string name="Autopause_category">Авто пауза</string>
+  <string name="Target_category">Тренировка по показателям</string>
 </resources>

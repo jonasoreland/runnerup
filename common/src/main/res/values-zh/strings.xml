@@ -58,11 +58,9 @@
   <string name="Total">合计</string>
   <string name="Interval">间隔</string>
   <string name="Lap">分段</string>
-  <string name="New_lap">新的分段</string>
   <string name="Pause">暂停</string>
   <string name="Stop">停止</string>
   <string name="Workout">训练</string>
-  <string name="Download_workouts">下载训练</string>
   <string name="Audio_cue_settings">语音提示设置</string>
   <string name="Sport">运动</string>
   <string name="Target">目标</string>
@@ -96,7 +94,6 @@
   <string name="High_pace">高配速</string>
   <string name="Sex">性別</string>
   <string name="upload">上传</string>
-  <string name="feed">feed</string>
   <string name="Notes">备注</string>
   <string name="Laps">分段</string>
   <string name="Map">地图</string>
@@ -104,17 +101,13 @@
   <string name="Upload">上传</string>
   <string name="Disconnect">断开</string>
   <string name="Resume">恢复</string>
-  <string name="Save_activity">保存活动</string>
-  <string name="Upload_activity">上传活动</string>
   <string name="Uploaded">已上传</string>
   <string name="Finished">完成</string>
   <string name="Until_press">直到按键</string>
-  <string name="Discard_activity">移除活动</string>
   <string name="Configure_accounts">账户设定</string>
   <string name="Refresh">刷新</string>
   <string name="Age">年龄</string>
   <string name="Synchronizing">同步中:</string>
-  <string name="synchronizing_feed">Feed同步中中…</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">账户连接成功</string>
   <string name="accounts_category_unconnected">账户未连接</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">取消中请等待</string>
   <string name="Are_you_sure">你确定吗?</string>
   <string name="Configure_audio_cues">设置语音提示</string>
-  <string name="Downloadeditremove_workouts">下载/编辑/删除训练</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">请注意你必须连接上你的账户</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">使用耳机开始/暂停/恢复RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">在间隔标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">在高级标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">自动分段（米）</string>
   <string name="Autopause">自动暂停</string>
   <string name="Autopause_summary">在基础训练中像热身和冷身一样使用自动暂停</string>
-  <string name="Enable_RunnerUpLive">开启RunnerUp Live</string>
   <string name="Headset_key_startstop">使用耳机开始/停止</string>
   <string name="Activity_countdown">活动倒计时</string>
   <string name="Activity_countdown_summary">在基本练习中添加倒计时</string>
@@ -276,7 +266,6 @@
   <string name="Website">网址</string>
   <string name="Automatic_upload">自动上传</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">在post中包含地图</string>
   <string name="Clear_uploads_from_phone">从手机中清除上传</string>
   <string name="my_phone">我的手机</string>
   <string name="Failed_to_import">导入失败:</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">覆盖已经存在的</string>
   <string name="Create_new_workout">创建新的训练</string>
   <string name="Set_workout_name">设置训练的名字</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">下载 %1$s 将覆盖同名训练 %2$s</string>
   <string name="Delete_workout">删除训练</string>
   <string name="RunnerUp_workout">RunnerUp训练:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">这里有个训练，我觉得你应该会喜欢。</string>
   <string name="Share_workout">分享训练...</string>
   <string name="New_audio_scheme">新建语音模版</string>
-  <string name="GPS_permission_required">需要GPS权限</string>
   <string name="GPS_permission_text_pre_Android10">需要开启定位权限</string>
-  <string name="GPS_permission_text">需要开启“始终允许”定位权限。\n需要开启“Physical activity”权限以计算步频。</string>
   <string name="Request_permission_text">点击“确定”以授权</string>
   <string name="Battery_optimization_check">开启了电池优化</string>
   <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“RunnerUp”并选择“不要优化”。</string>
@@ -303,7 +289,6 @@
   <string name="Uploading_to_1s">上传到%1$s</string>
   <string name="Loading_activities">加载活动中</string>
   <string name="Fetching_activities_from_1s">从%1$s获取活动中</string>
-  <string name="No_feed_to_show">没有要显示的feed</string>
   <string name="Unused_currently">当前未使用</string>
   <string name="Unknown">未知</string>
   <string name="Recording">记录</string>
@@ -313,7 +298,6 @@
   <string name="cue_hrm_connection_lost">心率设备连接已断开</string>
   <string name="HRM_connection_audio_cue">心率设备连接触发语音提示</string>
   <string name="Audio_cue_unit">语音提示时包含单位</string>
-  <string name="latest_feed_click_to_refresh">最新的feed（点击刷新）</string>
   <string name="log_extended_gps_summary">只导出为GPX</string>
   <string name="log_extended_gps_title">记录扩展GPS精度数据</string>
   <string name="Current_speed_from_GPS_points">根据GPS坐标计算的当前速度</string>
@@ -328,7 +312,6 @@
   <string name="Lap_start">分段开始</string>
   <string name="Lap_start_summary">在记圈开始、开始活动、热身、冷身时语音提示</string>
   <string name="Lock_activity_buttons">锁定活动按钮</string>
-  <string name="Lock_activity_buttons_message">通过快速点击顶部锁定活动按钮</string>
   <string name="Speed">速度</string>
   <string name="Speed_unit_preference">速度单位</string>
   <string name="path_simplification">平滑/精简路径</string>
@@ -343,4 +326,8 @@
   <string name="File_need_one_format">你必须选择至少一种格式</string>
   <string name="tts_not_available_title">当前“文字转语音”TTS引擎不可用</string>
   <string name="tts_not_available">RunnerUp需要一个“文字转语音”TTS引擎以播放语音提示。请确保你至少安装有一个可用的TTS引擎。</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">心率</string>
+  <string name="Autopause_category">自动暂停</string>
+  <string name="Target_category">虚拟兔子</string>
 </resources>

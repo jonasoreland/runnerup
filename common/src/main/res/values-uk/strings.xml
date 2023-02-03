@@ -58,11 +58,9 @@
   <string name="Total">Загалом</string>
   <string name="Interval">Інтервал</string>
   <string name="Lap">Коло</string>
-  <string name="New_lap">Нове коло</string>
   <string name="Pause">Пауза</string>
   <string name="Stop">Стоп</string>
   <string name="Workout">Тренування</string>
-  <string name="Download_workouts">Завантаження тренувань</string>
   <string name="Audio_cue_settings">Налаштування аудіо супроводу</string>
   <string name="Sport">Спорт</string>
   <string name="Target">Ціль</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Низький темп</string>
   <string name="High_pace">Високий темп</string>
   <string name="Sex">Стать</string>
-  <string name="upload">відвантаження</string>
-  <string name="feed">Feed</string>
+  <string name="upload">Відвантаження</string>
   <string name="Notes">Примітки</string>
   <string name="Laps">Кола</string>
   <string name="Map">Мапа</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Відвантаження</string>
   <string name="Disconnect">Від’єднання</string>
   <string name="Resume">Продовження</string>
-  <string name="Save_activity">Зберегти активність</string>
-  <string name="Upload_activity">Відвантажити активність</string>
   <string name="Uploaded">Відвантажено</string>
   <string name="Finished">Завершено</string>
   <string name="Until_press">До натискання</string>
-  <string name="Discard_activity">Не зберігати активність</string>
   <string name="Configure_accounts">Редагувати акаунти</string>
   <string name="Refresh">Оновити</string>
   <string name="Age">Вік</string>
   <string name="Synchronizing">Синхронізація</string>
-  <string name="synchronizing_feed">Синхронізація стрічки...</string>
   <string name="OK">ТАК</string>
   <string name="accounts_category_connected">Керування акаунтами</string>
   <string name="accounts_category_unconnected">Приєднати акаунт</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Відміняємо. Чекайте, будь-ласка...</string>
   <string name="Are_you_sure">Ти впевнений?</string>
   <string name="Configure_audio_cues">Налаштовувати аудіо-супровід</string>
-  <string name="Downloadeditremove_workouts">Завантажувати/редагувати/видаляти тренування</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Ти мусиш підключитись до акаунту RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Використовуй свою гарнітуру для запуску/паузи/продовження RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">На вкладці \"Інтервал\" використовуйте \"Відновлення\" замість  \"Відпочинок\" (пауза)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Для вставлених кроків зворотного відліку використовуйте \"Відновлення\" замість \"Відпочинок\" (пауза)</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Автоколо (m)</string>
   <string name="Autopause">Автопауза</string>
   <string name="Autopause_summary">Автопауза в основних тренуваннях, розминках та заминках</string>
-  <string name="Enable_RunnerUpLive">Активувати RunnerUp Live</string>
   <string name="Headset_key_startstop">Клавіша гарнітури старт/стоп</string>
   <string name="Activity_countdown">Зворотній відлік перед початком активності</string>
   <string name="Activity_countdown_summary">Додати зворотній відлік перед початком основного тренування</string>
@@ -276,7 +266,6 @@
   <string name="Website">Web-сайт</string>
   <string name="Automatic_upload">Автоматичне відвантаження</string>
   <string name="Live">Стрічка активності</string>
-  <string name="Include_map_in_post">Додати мапу в публікацію</string>
   <string name="Clear_uploads_from_phone">Очистити відвантаження (з телефону)</string>
   <string name="my_phone">Мій телефон</string>
   <string name="Failed_to_import">Не вдалось імпортувати</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Перезаписати існуюче</string>
   <string name="Create_new_workout">Створити нове тренування</string>
   <string name="Set_workout_name">Назвати тренування</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Завантаження %1$s перезапише тренування з таким же іменем %2$s</string>
   <string name="Delete_workout">Видалити тренування</string>
   <string name="RunnerUp_workout">RunnerUp тренування</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Привіт! Я думаю тобі може сподобатись це тренування.</string>
   <string name="Share_workout">Поширити тренування...</string>
   <string name="New_audio_scheme">Нова аудіо-схема</string>
-  <string name="GPS_permission_required">Необхідно дозвіл GPS</string>
   <string name="GPS_permission_text_pre_Android10">Необхідно дозвіл локації в налаштуваннях системи</string>
-  <string name="GPS_permission_text">Дозвіл на визначення місця положення в налаштуваннях системи має бути \"Завжди\".\nТаким же має бути дозвіл для кадансу бігу \"Фізична активність\" .</string>
   <string name="Request_permission_text">Надати дозвіл натисканням \"ТАК\".</string>
   <string name="Default">За замовчуванням</string>
   <string name="Notes_about_your_workout">Примітки про тренування</string>
@@ -301,7 +287,6 @@
   <string name="Uploading_to_1s">Відвантаження до %1$s</string>
   <string name="Loading_activities">Завантаження активностей</string>
   <string name="Fetching_activities_from_1s">Збирання активностей з %1$s</string>
-  <string name="No_feed_to_show">Нема стрічки для показу</string>
   <string name="Unused_currently">Зараз не використовується</string>
   <string name="Unknown">Невідомо</string>
   <string name="Recording">Записування</string>
@@ -311,7 +296,6 @@
   <string name="cue_hrm_connection_lost">Зв\'язок з пульсометром втрачено</string>
   <string name="HRM_connection_audio_cue">Повідомлення про з\'єднання з пульсометром</string>
   <string name="Audio_cue_unit">Додати блок в аудіо-супровід</string>
-  <string name="latest_feed_click_to_refresh">Остання стрічка (натисни для оновлення)</string>
   <string name="log_extended_gps_summary">Експорт лише в GPX</string>
   <string name="log_extended_gps_title">Записувати розширені дані точності GPS</string>
   <string name="Current_speed_from_GPS_points">Поточна швидкість GPS точок</string>
@@ -326,7 +310,6 @@
   <string name="Lap_start">Початок кола</string>
   <string name="Lap_start_summary">Повідомлення про початок кола, активності, розминки, заминки</string>
   <string name="Lock_activity_buttons">Блокування кнопок активності</string>
-  <string name="Lock_activity_buttons_message">Блокування кнопок активності швидким натисканням заголовку</string>
   <string name="Speed">Швидкість</string>
   <string name="Speed_unit_preference">Одиниці швидкості</string>
   <string name="path_simplification">Спрощення треку</string>
@@ -339,4 +322,8 @@
   <string name="path_simplification_menu">Спрощення треку</string>
   <string name="File_format">Відвантажувати файли як:</string>
   <string name="File_need_one_format">Ти маєш обрати хоча б один формат</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Пульс</string>
+  <string name="Autopause_category">Автопауза</string>
+  <string name="Target_category">Ціль навчання</string>
 </resources>

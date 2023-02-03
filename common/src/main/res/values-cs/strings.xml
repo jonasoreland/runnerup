@@ -50,11 +50,9 @@
   <string name="Total">Celkem</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Kolo</string>
-  <string name="New_lap">Nové kolo</string>
   <string name="Pause">Pauza</string>
   <string name="Stop">Zastavit</string>
   <string name="Workout">Trénink</string>
-  <string name="Download_workouts">Stáhnout tréninky</string>
   <string name="Audio_cue_settings">Nastavení zvukových pokynů</string>
   <string name="Sport">Sport</string>
   <string name="Target">Cíl</string>
@@ -74,18 +72,16 @@
   <string name="Show_password">Zobrazit heslo</string>
   <string name="intensity">intenzita</string>
   <string name="Sex">Pohlaví</string>
+  <string name="upload">Nahrát</string>
   <string name="Laps">Kola</string>
   <string name="Map">Mapa</string>
   <string name="Graph">Graf</string>
   <string name="Upload">Nahrát</string>
   <string name="Disconnect">Odpojit</string>
   <string name="Resume">Obnovit</string>
-  <string name="Save_activity">Uložit aktivitu</string>
-  <string name="Upload_activity">Nahrát aktivitu</string>
   <string name="Uploaded">Nahráno</string>
   <string name="Finished">Dokončeno</string>
   <string name="Until_press">Do stisknutí</string>
-  <string name="Discard_activity">Zrušit aktivitu</string>
   <string name="Configure_accounts">Nastavit účty</string>
   <string name="Refresh">Aktualizovat</string>
   <string name="Age">Věk</string>
@@ -127,4 +123,5 @@
   <string name="path_simplification_algorithm">Algoritmus</string>
   <string name="path_simplification_menu">Zjednodušit cestu</string>
   <string name="File_format">Nahrát soubory jako:</string>
+  <!--Preference categories & summaries-->
 </resources>

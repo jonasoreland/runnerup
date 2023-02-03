@@ -27,9 +27,6 @@
   <string name="active">ativo</string>
   <string name="rest">pausa</string>
   <string name="recovery">recuperação</string>
-  <string name="warm_up">aquecer</string>
-  <string name="cool_down">descansar</string>
-  <string name="repeat">repetir</string>
   <string name="time">tempo</string>
   <string name="distance">distância</string>
   <string name="Distance">Distância</string>
@@ -46,11 +43,9 @@
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
   <string name="Lap">Volta</string>
-  <string name="New_lap">Nova volta</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Exercício</string>
-  <string name="Download_workouts">Baixar exercícios</string>
   <string name="Sport">Desporto</string>
   <string name="Target">Objetivo</string>
   <string name="Interval_type">Tipo de invervalo</string>
@@ -67,15 +62,13 @@
   <string name="Show_password">Mostrar palavra-passe</string>
   <string name="intensity">intensidade</string>
   <string name="Sex">Sexo</string>
-  <string name="upload">carregar</string>
+  <string name="upload">Carregar</string>
   <string name="Notes">Anotações</string>
   <string name="Laps">Voltas</string>
   <string name="Map">Mapa</string>
   <string name="Upload">Carregar</string>
   <string name="Disconnect">Desconetar</string>
   <string name="Resume">Reatar</string>
-  <string name="Save_activity">Gravar atividade</string>
-  <string name="Upload_activity">Carregar atividade</string>
   <string name="Uploaded">Carregado</string>
   <string name="Finished">Acabado</string>
   <string name="Refresh">Renovar</string>
@@ -91,11 +84,8 @@
   <string name="Yes">Sim</string>
   <string name="Create">Criar</string>
   <string name="No">Não</string>
-  <string name="Loading">Carregando…</string>
   <string name="Saving">Gravando</string>
   <string name="Are_you_sure">Tem certeza?</string>
-  <string name="Downloadeditremove_workouts">Baixar/editar/apagar exercícios</string>
-  <string name="Enable_RunnerUpLive">Ativar Live</string>
   <string name="Export">Exportar</string>
   <string name="Import">Importar</string>
   <string name="About_RunnerUp">Sobre RunnerUp</string>
@@ -107,7 +97,6 @@
   <string name="Advanced">Avançado</string>
   <string name="Battery_level">Nível da bateria</string>
   <string name="Searching_for_GPS">Procurando GPS</string>
-  <string name="Do_not_show_again">Não mostrar outra vez</string>
   <string name="Waiting_for_phone" tools:ignore="UnusedResources">Esperando pelo telefone</string>
   <string name="Saving_on_phone" tools:ignore="UnusedResources">Gravando no telefone</string>
   <string name="Save">Gravar</string>
@@ -117,6 +106,6 @@
   <string name="Automatic_upload">Carregar automaticamente</string>
   <string name="Live">Ao vivo</string>
   <string name="my_phone">meu telefone</string>
-  <string name="Delete_workout">Apagar exercício</string>
   <string name="Unknown">desconhecido</string>
+  <!--Preference categories & summaries-->
 </resources>

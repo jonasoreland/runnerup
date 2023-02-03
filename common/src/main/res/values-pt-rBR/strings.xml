@@ -58,11 +58,9 @@
   <string name="Total">Total</string>
   <string name="Interval">Intervalo</string>
   <string name="Lap">Volta</string>
-  <string name="New_lap">Nova volta</string>
   <string name="Pause">Pausar</string>
   <string name="Stop">Parar</string>
   <string name="Workout">Exercício</string>
-  <string name="Download_workouts">Baixar exercícios</string>
   <string name="Audio_cue_settings">Definições dos avisos de áudio</string>
   <string name="Sport">Esporte</string>
   <string name="Target">Meta</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Ritmo baixo</string>
   <string name="High_pace">Ritmo alto</string>
   <string name="Sex">Sexo</string>
-  <string name="upload">enviar</string>
-  <string name="feed">feed</string>
+  <string name="upload">Enviar</string>
   <string name="Notes">Notas</string>
   <string name="Laps">Voltas</string>
   <string name="Map">Mapa</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Enviar</string>
   <string name="Disconnect">Desconectar</string>
   <string name="Resume">Recomeçar</string>
-  <string name="Save_activity">Guardar atividade</string>
-  <string name="Upload_activity">Enviar atividade</string>
   <string name="Uploaded">Enviada</string>
   <string name="Finished">Concluída</string>
   <string name="Until_press">Até ser pressionado</string>
-  <string name="Discard_activity">Descartar atividade</string>
   <string name="Configure_accounts">Configurar contas</string>
   <string name="Refresh">Atualizar</string>
   <string name="Age">Idade</string>
   <string name="Synchronizing">Sincronizando</string>
-  <string name="synchronizing_feed">Sincronizando</string>
   <string name="OK">OK</string>
   <string name="accounts_category_connected">Gerenciar conexões</string>
   <string name="accounts_category_unconnected">Conectar uma conta</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Cancelando, por favor espere...</string>
   <string name="Are_you_sure">Você tem certeza?</string>
   <string name="Configure_audio_cues">Configurar avisos de áudio</string>
-  <string name="Downloadeditremove_workouts">Baixar/editar/remover exercícios</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Você precisa se conectar a uma conta RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usar o seu headset para iniciar/pausar/recomeçar o RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Na aba Intervalo, use passos de Recuperação ao invés de Descanso (pausa)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Para contagem de passos inseridos, use passos de Recuperação ao invés de Descanso (pausa)</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Volta automática (m)</string>
   <string name="Autopause">Pausa automática</string>
   <string name="Autopause_summary">Autopausa em exercícios básicos e passos de Aquecimento e Desaquecimento</string>
-  <string name="Enable_RunnerUpLive">Ativar Live</string>
   <string name="Headset_key_startstop">Chave do headset inicia/para</string>
   <string name="Activity_countdown">Contagem para início da atividade</string>
   <string name="Activity_countdown_summary">Adicionar contagem para o início do treino básico</string>
@@ -276,7 +266,6 @@
   <string name="Website">Site web</string>
   <string name="Automatic_upload">Envio automático</string>
   <string name="Live">Ao vivo</string>
-  <string name="Include_map_in_post">Incluir mapa na postagem</string>
   <string name="Clear_uploads_from_phone">Apagar envios (do telefone)</string>
   <string name="my_phone">Meu telefone</string>
   <string name="Failed_to_import">Falha ao importar</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Substituir existente</string>
   <string name="Create_new_workout">Criar novo exercício</string>
   <string name="Set_workout_name">Definir nome do exercício</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">Downloading %1$s will overwrite %2$s workout with same name</string>
   <string name="Delete_workout">Apagar treino</string>
   <string name="RunnerUp_workout">Exercício do RunnerUp</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Olá!\nEu acho que você pode gostar deste treino.</string>
   <string name="Share_workout">Compartilhar exercício…</string>
   <string name="New_audio_scheme">Novo esquema de áudio</string>
-  <string name="GPS_permission_required">Permissão de GPS requerida</string>
   <string name="GPS_permission_text_pre_Android10">Necessária permissão de localização nas configurações do sistema</string>
-  <string name="GPS_permission_text">Necessária permissão de localização \"Permitir todo o tempo\" nas configurações do sistema.\nPara cadencia de corrida a permissão \"Atividade física\" também é necessária. </string>
   <string name="Request_permission_text">Conceda a permissão pressionando \"OK\".</string>
   <string name="Battery_optimization_check">Otimização de bateria ativada</string>
   <string name="Battery_optimization_check_text">Otimização de bateria diminuirá a precisão.\nToque em OK para ir para as configurações do sistema e selecione \"Todos os aplicativos\", pesquise por \"RunnerUp\" e selecione \"Não optimizar\"</string>
@@ -303,7 +289,6 @@
   <string name="Uploading_to_1s">Enviando para %1$s</string>
   <string name="Loading_activities">Carregando atividades</string>
   <string name="Fetching_activities_from_1s">Obtendo atividades de %1$s</string>
-  <string name="No_feed_to_show">Nenhum feed para motrar</string>
   <string name="Unused_currently">Atualmente não utilizado</string>
   <string name="Unknown">Desconhecido</string>
   <string name="Recording">Gravando</string>
@@ -313,7 +298,6 @@
   <string name="cue_hrm_connection_lost">Conexão do monitor de frequência cardíaca perdida</string>
   <string name="HRM_connection_audio_cue">Avisos de áudios de conexão do HRM</string>
   <string name="Audio_cue_unit">Incluir unidade nos avisos de audio</string>
-  <string name="latest_feed_click_to_refresh">Último feed (toque para atualizar)</string>
   <string name="log_extended_gps_summary">Exportar apenas em GPX</string>
   <string name="log_extended_gps_title">Registrar dados de precisão estendidos do GPS</string>
   <string name="Current_speed_from_GPS_points">Velocidade atual a partir dos pontos GPS</string>
@@ -328,7 +312,6 @@
   <string name="Lap_start">Início da volta</string>
   <string name="Lap_start_summary">Avisos para início de volta e passos de Atividade, Aquecimento e Desaquecimento</string>
   <string name="Lock_activity_buttons">Bloquear botões de atividade</string>
-  <string name="Lock_activity_buttons_message">Bloquear botões de atividade com toque rápido no cabeçalho</string>
   <string name="Speed">Velocidade</string>
   <string name="Speed_unit_preference">Unidade de velocidade</string>
   <string name="path_simplification">Simplificação de caminho</string>
@@ -343,4 +326,7 @@
   <string name="File_need_one_format">Especifique pelo menos um formato</string>
   <string name="tts_not_available_title">conversão de texto para fala não disponível</string>
   <string name="tts_not_available">O RunnerUp requer um mecanismo de conversão de texto para fala funcionando para reproduzir avisos de áudio. Certifique-se de ter pelo menos um mecanismo de conversão de texto em fala em funcionamento instalado.</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Frequência cardíaca</string>
+  <string name="Autopause_category">Pausa automática</string>
 </resources>

@@ -58,11 +58,9 @@
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
   <string name="Lap">Tram</string>
-  <string name="New_lap">Nou tram</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Atura</string>
   <string name="Workout">Entrenament</string>
-  <string name="Download_workouts">Descarrega entrenaments</string>
   <string name="Audio_cue_settings">Pistes d\'àudio</string>
   <string name="Sport">Exercici</string>
   <string name="Target">Objectiu</string>
@@ -95,8 +93,7 @@
   <string name="Low_pace">Ritme baix</string>
   <string name="High_pace">Ritme alt</string>
   <string name="Sex">Sexe</string>
-  <string name="upload">carrega</string>
-  <string name="feed">Canal</string>
+  <string name="upload">Carrega</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Trams</string>
   <string name="Map">Mapa</string>
@@ -104,17 +101,13 @@
   <string name="Upload">Carrega</string>
   <string name="Disconnect">Desconnecta</string>
   <string name="Resume">Reprèn</string>
-  <string name="Save_activity">Desa l\'activitat</string>
-  <string name="Upload_activity">Carrega l\'activitat</string>
   <string name="Uploaded">Carregat</string>
   <string name="Finished">Finalitzat</string>
   <string name="Until_press">Fins a prémer</string>
-  <string name="Discard_activity">Descarta l\'activitat</string>
   <string name="Configure_accounts">Edita els comptes</string>
   <string name="Refresh">Actualitza</string>
   <string name="Age">Edat</string>
   <string name="Synchronizing">Sincronitzant</string>
-  <string name="synchronizing_feed">S\'està sincronitzant el canal...</string>
   <string name="OK">D\'acord</string>
   <string name="accounts_category_connected">Gestiona les connexions</string>
   <string name="accounts_category_unconnected">Connecta un compte</string>
@@ -154,8 +147,6 @@
   <string name="Cancellingplease_wait">Cancel·lant, espereu...</string>
   <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Configure_audio_cues">Configura les pistes d\'àudio</string>
-  <string name="Downloadeditremove_workouts">Descarregueu, editeu o suprimiu entrenaments</string>
-  <string name="Note_you_need_to_connect_to_the_account_too">Heu de connectar-vos a un compte RunnerUp Live</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Utilitzeu els auriculars per iniciar/fer una pausa/reprendre RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Utilitzeu etapes de Recuperació en lloc de Descans (pausa) a la pestanya Interval</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Utilitzeu etapes de Recuperació en lloc de Descans (pausa) amb les etapes de compte enrere inserides</string>
@@ -172,7 +163,6 @@
   <string name="Autolap_m">Tram automàtic (m)</string>
   <string name="Autopause">Pausa automàtica</string>
   <string name="Autopause_summary">Pausa automàtica en entrenaments bàsics i en etapes Escalfament i Refredament</string>
-  <string name="Enable_RunnerUpLive">Habilita RunnerUp Live</string>
   <string name="Headset_key_startstop">Botó auriculars inici/aturada</string>
   <string name="Activity_countdown">Compte enrere d\'inici d\'activitat</string>
   <string name="Activity_countdown_summary">Afegiu un compte enrere a l\'inici dels entrenaments bàsics</string>
@@ -276,7 +266,6 @@
   <string name="Website">Lloc web</string>
   <string name="Automatic_upload">Càrrega automàtica</string>
   <string name="Live">Live</string>
-  <string name="Include_map_in_post">Inclou el mapa en la publicació</string>
   <string name="Clear_uploads_from_phone">Neteja les càrregues (del telèfon)</string>
   <string name="my_phone">El meu telèfon</string>
   <string name="Failed_to_import">No s\'ha pogut importar</string>
@@ -285,15 +274,12 @@
   <string name="Overwrite_existing">Sobreescriu</string>
   <string name="Create_new_workout">Nou entrenament</string>
   <string name="Set_workout_name">Nom de l\'entrenament</string>
-  <string name="Downloading_1s_will_overwrite_2_workout_with_same_name">La descàrrega de %1$s sobreescriurà l\'entrenament homònim %2$s</string>
   <string name="Delete_workout">Suprimeix l\'entrenament</string>
   <string name="RunnerUp_workout">Entrenament RunnerUp</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nCrec que aquest entrenament podria agradar-te.</string>
   <string name="Share_workout">Comparteix l\'entrenament…</string>
   <string name="New_audio_scheme">Nou esquema d\'àudio</string>
-  <string name="GPS_permission_required">Es requereix el permís del GPS</string>
   <string name="GPS_permission_text_pre_Android10">Habiliteu el permís d\'ubicació a les opcions del sistema</string>
-  <string name="GPS_permission_text">Es requereix que permeteu l\'accés d\'ubicació a les opcions de sistema.\nTambé és necessari en l\'activitat física de córrer.</string>
   <string name="Request_permission_text">Habiliteu el permís tocant «D\'acord».</string>
   <string name="Battery_optimization_check">Optimització de bateria habilitada</string>
   <string name="Battery_optimization_check_text">L\'optimització de la bateria disminueix la precisió.\nToqueu «D\'acord» o bé cerqueu el «RunnerUp» a l\'apartat «Aplicacions» de les opcions del sistema i seleccioneu «No optimitzis».</string>
@@ -303,7 +289,6 @@
   <string name="Uploading_to_1s">Carregant a %1$s</string>
   <string name="Loading_activities">Carregant activitats</string>
   <string name="Fetching_activities_from_1s">Recuperant activitats des de %1$s</string>
-  <string name="No_feed_to_show">No hi ha res per mostrar</string>
   <string name="Unused_currently">No utilitzat actualment</string>
   <string name="Unknown">Desconegut</string>
   <string name="Recording">Enregistrament</string>
@@ -313,7 +298,6 @@
   <string name="cue_hrm_connection_lost">S\'ha perdut la connexió al monitor de freqüència cardíaca</string>
   <string name="HRM_connection_audio_cue">Pistes d\'àudio de connexió d\'MFC</string>
   <string name="Audio_cue_unit">Inclou la unitat en les pistes</string>
-  <string name="latest_feed_click_to_refresh">Feed recent (premeu per actualitzar)</string>
   <string name="log_extended_gps_summary">Exporteu només en GPX</string>
   <string name="log_extended_gps_title">Registra detalls de precisió GPS</string>
   <string name="Current_speed_from_GPS_points">Velocitat actual de punts GPS</string>
@@ -328,7 +312,6 @@
   <string name="Lap_start">Inici de tram</string>
   <string name="Lap_start_summary">Pista per a inici de trams i etapes Activitat, Escalfament i Refredament</string>
   <string name="Lock_activity_buttons">Bloqueja els botons d\'activitat</string>
-  <string name="Lock_activity_buttons_message">Bloquegeu els botons d\'activitat fent uns clics ràpids a la capçalera</string>
   <string name="Speed">Velocitat</string>
   <string name="Speed_unit_preference">Unitat de velocitat</string>
   <string name="path_simplification">Simplificació de ruta</string>
@@ -343,4 +326,8 @@
   <string name="File_need_one_format">Heu d\'especificar almenys un format.</string>
   <string name="tts_not_available_title">Text a veu no està disponible</string>
   <string name="tts_not_available">El RunnerUp necessita un motor Text a veu per reproduir senyals d\'àudio. Assegureu-vos que teniu almenys un instal·lat correctament per utilitzar aquesta característica.</string>
+  <!--Preference categories & summaries-->
+  <string name="HRM_category">Freqüència cardíaca</string>
+  <string name="Autopause_category">Pausa automàtica</string>
+  <string name="Target_category">Entrenament d\'objectius</string>
 </resources>
