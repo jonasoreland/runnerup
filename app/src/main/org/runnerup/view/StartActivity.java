@@ -279,7 +279,7 @@ public class StartActivity extends AppCompatActivity
         if (getParent() != null && getParent().getIntent() != null) {
             Intent i = getParent().getIntent();
             if (i.hasExtra("mode")) {
-                if (i.getStringExtra("mode").equals(TAB_ADVANCED)) {
+                if (Objects.equals(i.getStringExtra("mode"), TAB_ADVANCED)) {
                     tabHost.setCurrentTab(2);
                     i.removeExtra("mode");
                 }
@@ -358,7 +358,7 @@ public class StartActivity extends AppCompatActivity
             simpleTargetType.clearDisabled();
         }
 
-        if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
+        if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)) {
             loadAdvanced(null);
         }
 
@@ -414,11 +414,7 @@ public class StartActivity extends AppCompatActivity
             final Resources res = this.getResources();
             Toast.makeText(getApplicationContext(), res.getString(R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
             exit = true;
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    exit = false;
-                }
-            }, 3 * 1000);
+            new Handler().postDelayed(() -> exit = false, 3 * 1000);
         }
     }
 
@@ -456,7 +452,7 @@ public class StartActivity extends AppCompatActivity
     private void unregisterStartEventListener() {
         try {
             unregisterReceiver(startEventBroadcastReceiver);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (headsetRegistered) {
             headsetRegistered = false;
@@ -585,7 +581,7 @@ public class StartActivity extends AppCompatActivity
         SharedPreferences audioPref;
         Workout w;
 
-        if (tabHost.getCurrentTabTag().contentEquals(TAB_BASIC)) {
+        if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_BASIC)) {
             audioPref = WorkoutBuilder.getAudioCuePreferences(ctx, pref,
                     getString(R.string.pref_basic_audio));
             Dimension target = Dimension.valueOf(simpleTargetType.getValueInt());
@@ -602,8 +598,10 @@ public class StartActivity extends AppCompatActivity
             w = null;
             audioPref = null;
         }
+        if (w != null) {
         WorkoutBuilder.prepareWorkout(getResources(), pref, w);
         WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
+        }
         return w;
     }
 
@@ -624,15 +622,13 @@ public class StartActivity extends AppCompatActivity
         notificationStateManager.cancelNotification(); // will be added by RunActivity
     }
 
-    private final OnClickListener startButtonClick = new OnClickListener() {
-        public void onClick(View v) {
+    private final OnClickListener startButtonClick = v -> {
             if (mTracker.getState() == TrackerState.CONNECTED) {
                 startWorkout();
 
                 return;
             }
             updateView();
-        }
     };
 
     private final OnClickListener gpsEnableClick = v -> {
@@ -867,7 +863,7 @@ public class StartActivity extends AppCompatActivity
 
                 notificationStateManager.displayNotificationState(gpsSearchingState);
             } else {
-                if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED) && advancedWorkout == null) {
+                if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED) && advancedWorkout == null) {
                     startButton.setVisibility(View.GONE);
                 } else {
                     startButton.setVisibility(View.VISIBLE);
@@ -1171,7 +1167,7 @@ public class StartActivity extends AppCompatActivity
             ex.printStackTrace();
             new AlertDialog.Builder(StartActivity.this)
                     .setTitle(getString(R.string.Failed_to_load_workout))
-                    .setMessage("" + ex.toString())
+                    .setMessage(ex.toString())
                     .setPositiveButton(R.string.OK,
                     (dialog, which) -> dialog.dismiss())
                     .show();
@@ -1232,7 +1228,7 @@ public class StartActivity extends AppCompatActivity
             } catch (Exception ex) {
                 new AlertDialog.Builder(StartActivity.this)
                         .setTitle(R.string.Failed_to_load_workout)
-                        .setMessage("" + ex.toString())
+                        .setMessage(ex.toString())
                         .setPositiveButton(R.string.OK,
                                 (dialog, which) -> dialog.dismiss())
                         .show();
