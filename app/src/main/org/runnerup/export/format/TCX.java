@@ -100,7 +100,7 @@ public class TCX {
                     "http://www.w3.org/2001/XMLSchema-instance");
             mXML.attribute("", "xmlns:xsd",
                     "http://www.w3.org/2001/XMLSchema");
-            mXML.attribute("", "xmlns:ae",
+            mXML.attribute("", "xmlns:ns3",
                     "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
             mXML.attribute("", "xsi:schemaLocation",
                     "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd");
@@ -144,6 +144,7 @@ public class TCX {
             }
             mXML.text(creator);
             mXML.endTag("", "Name");
+            // Add dummy data
             mXML.startTag("", "UnitId");
             mXML.text("0");
             mXML.endTag("", "UnitId");
@@ -174,6 +175,7 @@ public class TCX {
             mXML.text(application);
             mXML.endTag("", "Name");
             mXML.startTag("", "Build");
+            // Could be set to a "compatibility" version for parsers
             mXML.startTag("", "Version");
             mXML.startTag("", "VersionMajor");
             mXML.text("1");
@@ -363,37 +365,35 @@ public class TCX {
                             }
                             if (isRunCad) {
                                 mXML.startTag("", "Extensions");
-                                mXML.startTag("", "ae:TPX");
-                                //mXML.attribute("", "xmlns",
-                                //        "http://www.garmin.com/xmlschemas/ActivityExtension/v2");
+                                mXML.startTag("", "ns3:TPX");
                                 //"standard" extensions: RunCadence, Speed, Watts
                             }
                             if (isRunCad) {
                                 int val = cLocation.getInt(8);
-                                mXML.startTag("", "ae:RunCadence");
+                                mXML.startTag("", "ns3:RunCadence");
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
-                                mXML.endTag("", "ae:RunCadence");
+                                mXML.endTag("", "ns3:RunCadence");
                                 // Not including "CadenceSensor Footpod" etc
                             }
                             //if (isTemp || isPres) {
                             //    if (isTemp) {
                             //        int val = cLocation.getInt(9);
-                            //        mXML.startTag("", "ext:Temperature");
+                            //        mXML.startTag("", "ns3:Temperature");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
-                            //        mXML.endTag("", "ext:Temperature");
+                            //        mXML.endTag("", "ns3:Temperature");
                             //    }
                             //    if (isPres) {
                             //        int val = cLocation.getInt(10);
-                            //        mXML.startTag("", "ext:Pressure");
+                            //        mXML.startTag("", "ns3:Pressure");
                             //        String sval = Float.toString(val);
                             //        mXML.text(sval);
-                            //        mXML.endTag("", "ext:Pressure");
+                            //        mXML.endTag("", "ns3:Pressure");
                             //    }
                             //}
                             if (isRunCad) {
-                                mXML.endTag("", "ae:TPX");
+                                mXML.endTag("", "ns3:TPX");
                                 mXML.endTag("", "Extensions");
                             }
 
