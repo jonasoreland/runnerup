@@ -245,7 +245,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
     private void requery() {
         if (listView != null)
-        ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+            ((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
         if (syncCount > 0) {
             actionButton.setText(String.format(Locale.getDefault(), "%s (%d)", actionButtonText, syncCount));
             actionButton.setEnabled(true);

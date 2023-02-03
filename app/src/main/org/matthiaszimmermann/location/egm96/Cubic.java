@@ -19,13 +19,13 @@ class Cubic
    Cubic(double[][] G) {
       double[][] t = new double[4][4];
       for (int i = 0; i < 4 ; i++)    // T = G MT
-      for (int j = 0 ; j < 4 ; j++)
-      for (int k = 0 ; k < 4 ; k++)
+         for (int j = 0 ; j < 4 ; j++)
+            for (int k = 0 ; k < 4 ; k++)
 	 t[i][j] += G[i][k] * Cubic.BEZIER[j][k];
       
       for (int i = 0 ; i < 4 ; i++)    // C = M T
-      for (int j = 0 ; j < 4 ; j++)
-      for (int k = 0 ; k < 4 ; k++)
+         for (int j = 0 ; j < 4 ; j++)
+            for (int k = 0 ; k < 4 ; k++)
 	 C[i][j] += Cubic.BEZIER[i][k] * t[k][j];
    }
 
