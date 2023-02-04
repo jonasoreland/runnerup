@@ -223,7 +223,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
             android:singleLine="false"
-            android:text="@string/upload" />
+            android:text="@string/Upload" />
 
         <Button
             android:id="@+id/save_button"

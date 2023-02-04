@@ -87,7 +87,7 @@
         android:layout_above="@id/account_download_button"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:text="@string/upload" />
+        android:text="@string/Upload" />
 
   <Button
       style="@style/ButtonText"

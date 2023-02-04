@@ -99,7 +99,7 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:background="@drawable/btn_blue"
-      android:text="@string/upload" />
+      android:text="@string/Upload" />
 
     <Button
       android:id="@+id/upload_account_download_button"
