@@ -79,7 +79,7 @@
             android:layout_marginStart="16dp"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            android:contentDescription="@string/upload" />
+            android:contentDescription="@string/Upload" />
 
     </LinearLayout>
 

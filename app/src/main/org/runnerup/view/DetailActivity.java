@@ -698,7 +698,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 } else {
                     viewHolder.cb.setChecked(false);
                 }
-                viewHolder.cb.setText(R.string.upload);
+                viewHolder.cb.setText(R.string.Upload);
                 viewHolder.cb.setOnLongClickListener(null);
             }
             if (mode == MODE_DETAILS) {
