@@ -1,0 +1,28 @@
+Track your sport activities with RunnerUp using the GPS in your Android phone:
+
+* See detailed stats around your pace, distance and time.
+* Get stats and progress with built-in highly configurable audio cues.
+* Run free runs with target pace or target heart rate zone
+* Easily configure and run effective interval workouts modeled after Garmin
+* Share your favorite workouts with friends (using email)
+* Heart rate monitor: Bluetooth SMART (BLE)
+* Configure and use heart rate zones
+
+Upload your activities to a variety of running sites with a single click:
+
+* Strava
+* RunKeeper
+* RunningAHEAD
+
+Explanation to anti-features:
+
+* NonFreeNet: Uploading to Strava and other services makes use of non free net services. (The uploading is open similar to uploading a .tcx file, but the services are not open.)
+* UpstreamNonFree: The Play version (can be installed at the same time as the F-Droid version) has additional features using non free libraries, see below
+
+Features removed compared to Play version:
+
+* Map view (OsmDroid instead of MapBox, no MapBox API key in free)
+* WearOS app (requires non-free Play services)
+* HR ANT+ connectivity (requires closed source lib)
+* Runalyze and Dropbox upload (Requires API keys. Runalyze test upload possible.)
+* Download customized apk to device (F-Droid binary is universal for all supported binaries).

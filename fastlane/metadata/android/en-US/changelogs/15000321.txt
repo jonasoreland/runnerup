@@ -1,0 +1,3 @@
+Target Android 13
+Option to ignore time in GPS points
+ANT+ HR were not detected
