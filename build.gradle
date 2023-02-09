@@ -30,7 +30,7 @@ project.ext {
     mockitoVersion = '3.11.2'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.5.0.1'
+    versionName = '2.5.0.3'
     versionCode = 321
     latestBaseVersionCode = 15000000
 
