@@ -128,20 +128,9 @@ repositories {
             }
         }
     }
-    maven {
-        // com.github.stefanhaustein:kxml2
-        url "https://jitpack.io"
-    }
-    maven {
-        // org.xmlpull:xmlpull
-        url 'https://gitlab.com/api/v4/projects/26729549/packages/maven'
-    }
 }
 
 dependencies {
-    implementation("com.github.stefanhaustein:kxml2:2.5.0")
-    implementation 'org.xmlpull:xmlpull:1.1.4.0'
-
     implementation project(':common')
     implementation project(':hrdevice')
 
