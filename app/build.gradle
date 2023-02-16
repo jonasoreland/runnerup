@@ -39,7 +39,13 @@ android {
     productFlavors {
         latest {
             dimension "all"
-            minSdkVersion 15
+            if (rootProject.ext.allowNonFree) {
+                // Not required with app bundles(?)
+                minSdkVersion 15
+            } else {
+                // multidexing support
+                minSdkVersion 21
+            }
             compileSdkVersion rootProject.ext.compileSdkVersion
             targetSdkVersion rootProject.ext.targetSdkVersion
             versionName rootProject.ext.versionName
@@ -87,7 +93,7 @@ android {
 
             minifyEnabled rootProject.ext.allowNonFree
             shrinkResources rootProject.ext.allowNonFree
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
             signingConfig signingConfigs.release
         }
     }

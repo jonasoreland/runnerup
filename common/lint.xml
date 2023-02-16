@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- All translations will not be complete -->
+    <issue id="MissingTranslation" severity="ignore" />
+    <!-- Ignore not cleaned up strings -->
+    <issue id="ExtraTranslation" severity="ignore" />
+    <issue id="PluralsCandidate,UnusedResources,TypographyEllipsis" severity="ignore" />
+</lint>

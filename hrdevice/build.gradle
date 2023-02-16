@@ -23,6 +23,14 @@ android {
             assets.srcDirs = ['assets']
         }
     }
+    lint {
+        baseline file('lint-baseline.xml')
+        checkReleaseBuilds true
+        //lintConfig file('lint.xml')
+        showAll true
+        //textOutput 'stdout'
+        textReport true
+    }
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion rootProject.ext.targetSdkVersion
