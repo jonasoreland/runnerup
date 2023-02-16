@@ -35,6 +35,12 @@ android {
     lint {
         showAll true
         warning 'MissingTranslation'
+        baseline file('lint-baseline.xml')
+        lintConfig file('lint.xml')
+        checkReleaseBuilds true
+        lintConfig file('lint.xml')
+        //textOutput 'stdout'
+        textReport true
     }
     namespace 'org.runnerup.common'
 }
