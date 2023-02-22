@@ -295,7 +295,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     private void open() {
         if (hrProvider != null && !hrProvider.isEnabled()) {
             // For at least Pixel, BLUETOOTH_CONNECT is required to request starting BT
-            if (checkPermissions(false)) {
+            if (checkPermissions()) {
                 // User have to click again
                 return;
             }
@@ -422,7 +422,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                 .show();
     }
 
-    private boolean checkPermissions(boolean isScan) {
+    private boolean checkPermissions() {
         List<String> requiredPerms = new ArrayList<>();
         List<String> requestPerms = new ArrayList<>();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -430,11 +430,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             return false;
         }
 
-        // Always ask for Connect, Scan not always needed
+        // Connect for paired, Scan for BLE
         requiredPerms.add(Manifest.permission.BLUETOOTH_CONNECT);
-        if (isScan) {
-            requiredPerms.add(Manifest.permission.BLUETOOTH_SCAN);
-        }
+        requiredPerms.add(Manifest.permission.BLUETOOTH_SCAN);
         boolean isDeniedPermission = false;
 
         for (final String perm : requiredPerms) {
@@ -488,7 +486,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         updateView();
         deviceAdapter.deviceList.clear();
 
-        if (checkPermissions(true)) {
+        if (checkPermissions()) {
             // User have to click again
             return;
         }
@@ -544,7 +542,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             return;
         }
 
-        if (checkPermissions(false)) {
+        if (checkPermissions()) {
             // User have to click again
             return;
         }

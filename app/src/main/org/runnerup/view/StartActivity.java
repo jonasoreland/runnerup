@@ -672,6 +672,7 @@ public class StartActivity extends AppCompatActivity
             final String btDeviceName = prefs.getString(getString(R.string.pref_bt_name), null);
             if (btDeviceName != null && !btDeviceName.isEmpty()) {
                 requiredPerms.add(Manifest.permission.BLUETOOTH_CONNECT);
+                requiredPerms.add(Manifest.permission.BLUETOOTH_SCAN);
             }
         }
 
@@ -698,11 +699,12 @@ public class StartActivity extends AppCompatActivity
                 missingAnyPermission = true;
                 // Filter non essential permissions for result
                 boolean nonEssential = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                        && perm.equals(Manifest.permission.ACTIVITY_RECOGNITION)
+                          && perm.equals(Manifest.permission.ACTIVITY_RECOGNITION)
                         || Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                        && perm.equals(Manifest.permission.BLUETOOTH_CONNECT)
+                          && (perm.equals(Manifest.permission.BLUETOOTH_CONNECT)
+                            || perm.equals(Manifest.permission.BLUETOOTH_SCAN))
                         || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                        && perm.equals(Manifest.permission.POST_NOTIFICATIONS));
+                          && perm.equals(Manifest.permission.POST_NOTIFICATIONS));
                 missingEssentialPermission = missingEssentialPermission || !nonEssential;
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, perm)) {
                     // A denied permission, show motivation in a popup

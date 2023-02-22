@@ -63,8 +63,11 @@ public class TrackerHRM extends DefaultTrackerComponent {
         hrProvider = HRManager.getHRProvider(context, btProviderName);
         if (hrProvider != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    && ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    && (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
+                        != PackageManager.PERMISSION_GRANTED
+                      || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN)
+                        != PackageManager.PERMISSION_GRANTED)
+                    ) {
                 Toast.makeText(context, "No permission to connect to HRM " + btDeviceName,
                         Toast.LENGTH_SHORT).show();
                 return ResultCode.RESULT_NOT_ENABLED;
