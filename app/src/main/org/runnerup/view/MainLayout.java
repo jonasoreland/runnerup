@@ -51,6 +51,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.GoogleApiHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -273,12 +274,14 @@ public class MainLayout extends TabActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = view.findViewById(R.id.web_view1);
-        new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.Whats_new)
                 .setView(view)
-                .setPositiveButton(R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null))
-                .setNegativeButton(R.string.OK, (dialog, which) -> dialog.dismiss())
-                .show();
+                .setNegativeButton(R.string.OK, (dialog, which) -> dialog.dismiss());
+        if (GoogleApiHelper.isGooglePlayServicesAvailable(this)) {
+            builder.setPositiveButton(R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
+        }
+        builder.show();
         wv.loadUrl("file:///android_asset/changes.html");
     }
 }
