@@ -49,4 +49,4 @@ Unless otherwise stated, the code for this project is under GNU GPL v3. See [LIC
 Components licensed differently are listed on the [CREDITS](CREDITS.md) page.
 
 ## Donations
-If your already donate to <a href="http://www.unhcr.org">UNHCR</a>, <a href="http://www.unicef.org/">UNICEF</a> and/or other important things, you might donate using paypal <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=runnerup%2eandroid%40gmail%2ecom&lc=US&item_name=RunnerUp&button_subtype=services&currency_code=EUR&tax_rate=25%2e000&bn=PP%2dBuyNowBF%3abtn_buynow_LG%2egif%3aNonHosted"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" alt="[paypal]" /></a>.
+Donate to something important like <a href="http://www.unhcr.org">UNHCR</a> or <a href="http://www.unicef.org/">UNICEF</a>.
