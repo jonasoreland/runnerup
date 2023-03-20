@@ -149,7 +149,7 @@ public interface HRProvider {
     int getHRValue();
 
     /**
-     * @return the unix time of the last received heart rate value
+     * @return the unix time of the last received heart rate value in ms
      */
     long getHRValueTimestamp();
 
@@ -157,7 +157,7 @@ public interface HRProvider {
      * Get the time for the sensor, comparable with other sources as getTime()
      * differs for system vs GPS time
      *
-     * @return the elapsed time sinc boot in nano sec for last received value
+     * @return the elapsed time since boot in nano sec for last received value
      */
     long getHRValueElapsedRealtime();
 
