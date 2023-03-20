@@ -99,7 +99,7 @@ public class Tracker extends android.app.Service implements
     private final TrackerElevation trackerElevation = (TrackerElevation) components.addComponent(new TrackerElevation(this, trackerGPS, trackerPressure));
     TrackerReceiver trackerReceiver = (TrackerReceiver) components.addComponent(new TrackerReceiver(this));
     private TrackerWear trackerWear; // created if version is sufficient
-    private TrackerPebble trackerPebble; // created if version is sufficient>
+    private TrackerPebble trackerPebble; // created if version is sufficient
 
     private boolean mBug23937Checked = false;
     private long mSystemToGpsDiffTimeNanos = 0;
