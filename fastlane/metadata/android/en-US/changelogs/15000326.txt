@@ -1,0 +1,1 @@
+#1139: Timers not updated when device was in deep sleep
