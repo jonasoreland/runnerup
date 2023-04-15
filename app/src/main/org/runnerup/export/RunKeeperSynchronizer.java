@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -72,7 +73,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
 
     public static final String NAME = "RunKeeper";
     private static final String PUBLIC_URL = "https://runkeeper.com";
-    private Context context;
+    private final Context context;
     /**
      * @todo register OAuth2Server
      */
@@ -89,7 +90,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
     private String access_token = null;
     private String fitnessActivitiesUrl = null;
     private String userName = null;
-    private PathSimplifier simplifier;
+    private final PathSimplifier simplifier;
 
     public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
     public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
@@ -284,7 +285,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 conn.disconnect();
                 conn = null;
                 uri = obj.getString("fitness_activities");
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | JSONException e) {
                 ex = e;
             } catch (IOException e) {
                 if (REST_URL.contains("https")) {
@@ -293,8 +294,6 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                     Log.e(Constants.LOG, " => retry with REST_URL: " + REST_URL);
                     continue; // retry
                 }
-                ex = e;
-            } catch (JSONException e) {
                 ex = e;
             }
             break;
@@ -344,11 +343,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 }
                 input.close();
                 conn.disconnect();
-            } catch (IOException e) {
-                Log.e(Constants.LOG, e.getMessage());
-                requestUrl = null;
-                s = Status.ERROR;
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 Log.e(Constants.LOG, e.getMessage());
                 requestUrl = null;
                 s = Status.ERROR;
@@ -375,7 +370,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 @SuppressWarnings("WrapperTypeMayBePrimitive") Float time = Float.parseFloat(item.getString("duration"));
                 ai.setDuration(time.longValue());
                 BigDecimal dist = BigDecimal.valueOf(Float.parseFloat(item.getString("total_distance")));
-                dist = dist.setScale(2, BigDecimal.ROUND_UP);
+                dist = dist.setScale(2, RoundingMode.UP);
                 ai.setDistance(dist.doubleValue());
                 ai.setURI(REST_URL + item.getString("uri"));
                 ai.setId((long) items.size());
@@ -533,13 +528,10 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer implements Synchr
                 activity = RunKeeper.parseToActivity(resp, getLapLength());
             }
 
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             Log.e(Constants.LOG, e.getMessage());
             return activity;
 
-        } catch (JSONException e) {
-            Log.e(Constants.LOG, e.getMessage());
-            return activity;
         }
         return activity;
     }

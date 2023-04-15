@@ -306,7 +306,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         int minutes = 0;
         if (seconds >= 3600) {
             hours = (int) (seconds / 3600);
-            seconds -= hours * 3600;
+            seconds -= hours * 3600L;
         }
         if (seconds >= 60) {
             minutes = (int) (seconds / 60);

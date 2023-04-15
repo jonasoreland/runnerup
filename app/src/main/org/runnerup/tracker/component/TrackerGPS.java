@@ -146,8 +146,6 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
             LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             try {
                 lm.removeUpdates(tracker);
-            } catch (SecurityException ex) {
-                ex.printStackTrace();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

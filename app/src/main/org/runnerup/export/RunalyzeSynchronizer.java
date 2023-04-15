@@ -278,10 +278,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             }
             return s;
 
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             s = Status.ERROR;
             s.ex = e;
         }
@@ -367,10 +364,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
             s = Status.ERROR;
             return s;
 
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             s = Status.ERROR;
             s.ex = e;
         }

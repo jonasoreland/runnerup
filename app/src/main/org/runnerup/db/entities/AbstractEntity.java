@@ -85,7 +85,7 @@ public abstract class AbstractEntity implements DBEntity {
             //noinspection AccessStaticViaInstance
             this.cursorRowToContentValues(c, values());
         } else {
-            throw new IllegalArgumentException("Cursor " + c.toString() + " is incompatible with the Entity " + this.getClass().getName());
+            throw new IllegalArgumentException("Cursor " + c + " is incompatible with the Entity " + this.getClass().getName());
         }
 
         for (String column : getValidColumns()) {

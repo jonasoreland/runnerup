@@ -327,7 +327,7 @@ public class MainActivity extends Activity implements Constants, ValueModel.Chan
                         }
                     });
                 }
-            }, scroll * 1000);
+            }, scroll * 1000L);
         }
     }
 

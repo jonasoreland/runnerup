@@ -283,12 +283,12 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
     private void setFlag(String synchronizerName, int flag, boolean val) {
         if (val) {
-            long bitval = (1 << flag);
+            long bitval = (1L << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
                     DB.ACCOUNT.FLAGS + "|" + bitval + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
                     + "'");
         } else {
-            long mask = ~(long) (1 << flag);
+            long mask = ~(long) (1L << flag);
             mDB.execSQL("update " + DB.ACCOUNT.TABLE + " set " + DB.ACCOUNT.FLAGS + " = ( " +
                     DB.ACCOUNT.FLAGS + "&" + mask + ") where " + DB.ACCOUNT.NAME + " = '" + synchronizerName
                     + "'");

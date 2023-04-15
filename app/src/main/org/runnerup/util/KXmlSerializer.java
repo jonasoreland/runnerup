@@ -176,7 +176,7 @@ public class KXmlSerializer implements XmlSerializer {
     }
     // BEGIN Android-added
     private static void reportInvalidCharacter(char ch) {
-        throw new IllegalArgumentException("Illegal character (U+" + Integer.toHexString((int) ch) + ")");
+        throw new IllegalArgumentException("Illegal character (U+" + Integer.toHexString(ch) + ")");
     }
     // END Android-added
     /*
@@ -204,12 +204,9 @@ public class KXmlSerializer implements XmlSerializer {
     }
     public boolean getFeature(String name) {
         //return false;
-        return (
-                "http://xmlpull.org/v1/doc/features.html#indent-output"
-                        .equals(
-                                name))
-                ? indent[depth]
-                : false;
+        return "http://xmlpull.org/v1/doc/features.html#indent-output"
+                .equals(
+                        name) && indent[depth];
     }
     public String getPrefix(String namespace, boolean create) {
         try {
@@ -540,8 +537,8 @@ public class KXmlSerializer implements XmlSerializer {
     // BEGIN Android-added
     private void writeSurrogate(char high, char low) throws IOException {
         if (!Character.isLowSurrogate(low)) {
-            throw new IllegalArgumentException("Bad surrogate pair (U+" + Integer.toHexString((int) high) +
-                    " U+" + Integer.toHexString((int) low) + ")");
+            throw new IllegalArgumentException("Bad surrogate pair (U+" + Integer.toHexString(high) +
+                    " U+" + Integer.toHexString(low) + ")");
         }
         // Java-style surrogate pairs aren't allowed in XML. We could use the > 3-byte encodings, but that
         // seems likely to upset anything expecting modified UTF-8 rather than "real" UTF-8. It seems more

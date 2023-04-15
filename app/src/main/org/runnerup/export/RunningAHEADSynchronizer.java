@@ -262,9 +262,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
                 return Status.OK;
             }
             ex = new Exception(amsg);
-        } catch (IOException e) {
-            ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             ex = e;
         }
 

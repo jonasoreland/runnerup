@@ -38,6 +38,7 @@ import org.runnerup.workout.Sport;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -266,7 +267,7 @@ public class RunKeeper {
             if (time > 0) {
                 float speed = meters / (float)TimeUnit.MILLISECONDS.toSeconds(time);
                 BigDecimal s = new BigDecimal(speed);
-                s = s.setScale(2, BigDecimal.ROUND_UP);
+                s = s.setScale(2, RoundingMode.UP);
                 lv.setSpeed(s.doubleValue());
             }
 

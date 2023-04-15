@@ -161,10 +161,8 @@ public final class SyncHelper {
             InputStream inS = conn.getErrorStream();
             String msg = inS == null ? "" : SyncHelper.readInputStream(inS);
             Log.i(name, "Error stream: " + msg);
-            try {
-                // The error stream is normally a JSON object too
-                obj = SyncHelper.parse(msg);
-            } finally {}
+            // The error stream is normally a JSON object too
+            obj = SyncHelper.parse(msg);
         } finally {
             conn.disconnect();
         }

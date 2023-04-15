@@ -240,7 +240,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
             } catch (Exception ex) {
                 new AlertDialog.Builder(CreateAdvancedWorkout.this)
                         .setTitle(org.runnerup.common.R.string.Failed_to_load_workout)
-                        .setMessage("" + ex.toString())
+                        .setMessage("" + ex)
                         .setPositiveButton(org.runnerup.common.R.string.OK,
                                 (dialog, which) -> dialog.dismiss())
                         .show();
@@ -279,21 +279,19 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                 .show();
     }
 
-    private final View.OnClickListener discardWorkoutButtonClick = view -> {
-        new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                .setTitle(org.runnerup.common.R.string.Delete_workout)
-                .setMessage(org.runnerup.common.R.string.Are_you_sure)
-                .setPositiveButton(org.runnerup.common.R.string.Yes,
-                        (dialog, which) -> {
-                            dialog.dismiss();
-                            String name = advancedWorkoutSpinner.getValue().toString();
-                            File f = WorkoutSerializer.getFile(getApplicationContext(), name);
-                            //noinspection ResultOfMethodCallIgnored
-                            f.delete();
-                            finish();
-                        })
-                .setNegativeButton(org.runnerup.common.R.string.No,
-                        (dialog, which) -> dialog.dismiss())
-                .show();
-    };
+    private final View.OnClickListener discardWorkoutButtonClick = view -> new AlertDialog.Builder(CreateAdvancedWorkout.this)
+            .setTitle(org.runnerup.common.R.string.Delete_workout)
+            .setMessage(org.runnerup.common.R.string.Are_you_sure)
+            .setPositiveButton(org.runnerup.common.R.string.Yes,
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        String name = advancedWorkoutSpinner.getValue().toString();
+                        File f = WorkoutSerializer.getFile(getApplicationContext(), name);
+                        //noinspection ResultOfMethodCallIgnored
+                        f.delete();
+                        finish();
+                    })
+            .setNegativeButton(org.runnerup.common.R.string.No,
+                    (dialog, which) -> dialog.dismiss())
+            .show();
 }

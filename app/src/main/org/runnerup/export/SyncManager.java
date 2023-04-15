@@ -260,7 +260,6 @@ public class SyncManager {
             default:
                 synchronizer.reset();
                 callback.run(name, s);
-                return;
         }
     }
 

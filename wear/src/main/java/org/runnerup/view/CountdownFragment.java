@@ -60,7 +60,7 @@ public class CountdownFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown, container, false);
         textViews.add(new Pair<>(Constants.Wear.RunInfo.COUNTDOWN,
-                (TextView) view.findViewById(R.id.countdown_txt)));
+                view.findViewById(R.id.countdown_txt)));
         return view;
     }
 

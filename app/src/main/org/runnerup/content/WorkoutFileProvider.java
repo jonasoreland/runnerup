@@ -77,7 +77,7 @@ public class WorkoutFileProvider extends ContentProvider {
             // Otherwise unrecognised Uri
         }
         throw new FileNotFoundException("Unsupported uri: "
-                + uri.toString());
+                + uri);
     }
 
     // //////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ package org.runnerup.util;
 public class Bitfield {
 
     public static boolean test(long flags, int bit) {
-        long val = (1 << bit);
+        long val = (1L << bit);
         return (flags & val) == val;
     }
 
@@ -33,12 +33,12 @@ public class Bitfield {
     }
 
     private static long set(long flags, int bit) {
-        long val = (1 << bit);
+        long val = (1L << bit);
         return flags | val;
     }
 
     private static long clear(long flags, int bit) {
-        long val = (1 << bit);
+        long val = (1L << bit);
         return flags & (~val);
     }
 }

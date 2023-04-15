@@ -639,7 +639,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                 "\n\nRestart to use the database")
                     .setPositiveButton(org.runnerup.common.R.string.OK, listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString() + " for " + from)
+            builder.setMessage("Exception: " + e + " for " + from)
                     .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
         }
         builder.show();
@@ -660,7 +660,7 @@ public class DBHelper extends SQLiteOpenHelper implements
                     "\n\nNote that the file will be deleted at uninstall")
                     .setPositiveButton(org.runnerup.common.R.string.OK, listener);
         } catch (IOException e) {
-            builder.setMessage("Exception: " + e.toString() + " for " + to)
+            builder.setMessage("Exception: " + e + " for " + to)
                     .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
         }
         builder.show();

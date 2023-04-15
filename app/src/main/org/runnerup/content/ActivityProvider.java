@@ -109,7 +109,7 @@ public class ActivityProvider extends ContentProvider {
             throws FileNotFoundException {
 
         final int res = uriMatcher.match(uri);
-        Log.e(getClass().getName(), "match(" + uri.toString() + "): " + res);
+        Log.e(getClass().getName(), "match(" + uri + "): " + res);
         switch (res) {
             case GPX:
             case TCX:
@@ -159,7 +159,7 @@ public class ActivityProvider extends ContentProvider {
                 return pfd;
         }
 
-        throw new FileNotFoundException("Unsupported uri: " + uri.toString());
+        throw new FileNotFoundException("Unsupported uri: " + uri);
     }
 
     @Override

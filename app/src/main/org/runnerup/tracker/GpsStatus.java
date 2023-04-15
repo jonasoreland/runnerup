@@ -29,6 +29,7 @@ import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import org.runnerup.util.TickListener;
@@ -97,7 +98,7 @@ public class GpsStatus implements LocationListener {
                 locationManager = lm;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     mGnssStatusCallback = new GnssStatus.Callback() {
-                        public void onSatelliteStatusChanged(GnssStatus status) {
+                        public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
                             mKnownSatellites = status.getSatelliteCount();
                             mUsedInLastFixSatellites = 0;
                             for (int i = 0; i < mKnownSatellites; i++) {

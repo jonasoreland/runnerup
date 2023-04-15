@@ -77,28 +77,25 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         // The last zone never loses focus, so needs this ugly hack
         // This is triggered when the done key is pressed i.e. on the last zone
         if (zone == zoneCount) {
-            lo.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                        int loZone = hrZoneCalculator.getZoneCount() - 1; /*  base 0 offset */
-                        int loHR = Integer.parseInt(lo.getText().toString());
-                        int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
-                        // each zone needs a range of at least 1 HR beat
-                        if (loHR > maxHR - 1) {
-                            loHR = maxHR - 1;
-                            zones.get(2*loZone).setText(String.format(Locale.getDefault(), "%d", loHR));
-                        }
-                        // update the previous row's hi to the current row's lo
-                        zones.get(2*loZone - 1).setText(String.format(Locale.getDefault(), "%d", loHR));
+            lo.setOnEditorActionListener((v, actionId, event) -> {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    int loZone = hrZoneCalculator.getZoneCount() - 1; /*  base 0 offset */
+                    int loHR = Integer.parseInt(lo.getText().toString());
+                    int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                    // each zone needs a range of at least 1 HR beat
+                    if (loHR > maxHR - 1) {
+                        loHR = maxHR - 1;
+                        zones.get(2*loZone).setText(String.format(Locale.getDefault(), "%d", loHR));
                     }
-                    return false;
+                    // update the previous row's hi to the current row's lo
+                    zones.get(2*loZone - 1).setText(String.format(Locale.getDefault(), "%d", loHR));
                 }
+                return false;
             });
         }
 
         lo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            int loZone = zone - 1; /* base 0 offset */
+            final int loZone = zone - 1; /* base 0 offset */
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

@@ -20,6 +20,9 @@ package org.runnerup.tracker;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+
 /**
  * Base class for writing chained LocationListener(s)
  * 
@@ -45,7 +48,7 @@ public class LocationListenerBase implements LocationListener {
     }
 
     @Override
-    public void onLocationChanged(Location arg0) {
+    public void onLocationChanged(@NonNull Location arg0) {
         synchronized (mClients) {
             for (LocationListener g : mClients) {
                 g.onLocationChanged(arg0);
@@ -54,7 +57,7 @@ public class LocationListenerBase implements LocationListener {
     }
 
     @Override
-    public void onProviderDisabled(String provider) {
+    public void onProviderDisabled(@NonNull String provider) {
         synchronized (mClients) {
             for (LocationListener g : mClients) {
                 g.onProviderDisabled(provider);
@@ -63,7 +66,7 @@ public class LocationListenerBase implements LocationListener {
     }
 
     @Override
-    public void onProviderEnabled(String provider) {
+    public void onProviderEnabled(@NonNull String provider) {
         synchronized (mClients) {
             for (LocationListener g : mClients) {
                 g.onProviderEnabled(provider);
