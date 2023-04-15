@@ -139,13 +139,15 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         if (mSensorManager == null && context != null) {
             mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         }
-        //noinspection InlinedApi
-        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if (sensor == null && context != null) {
+
+        Sensor sensor = mSensorManager != null ? mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) : null;
+        if (sensor == null) {
             mSensorManager = null;
 
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
+            if (context != null) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
+            }
         }
 
         return sensor;
