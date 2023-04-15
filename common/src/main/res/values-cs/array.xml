@@ -4,21 +4,38 @@
     <item>Míle</item>
     <item>Kilometry</item>
   </string-array>
-  <string-array name="unitValues">
-    <item>mi</item>
-    <item>km</item>
+  <string-array name="speedUnitEntries">
+    <item>Tempo</item>
+    <item>Rychlost</item>
   </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Rozehřátí</item>
+    <item>Aktivní</item>
+    <item>Odpočinek</item>
+    <item>Zotavení</item>
+    <item>Zklidnění</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>Do stisknutí</item>
+    <item>Čas</item>
+    <item>Vzdálenost</item>
+  </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Běh</item>
     <item>Cyklistika</item>
-    <item>Ostatní</item>
-    <item>Orienteering</item>
-    <item>Walking</item>
+    <item>Jiné</item>
+    <item>Orientační běh</item>
+    <item>Chůze</item>
+  </string-array>
+  <string-array name="types">
+    <item>Čas</item>
+    <item>Vzdálenost</item>
   </string-array>
   <string-array name="sexes">
     <item>Muž</item>
     <item>Žena</item>
   </string-array>
+  <!--Note: keep in same order as DB-->
 </resources>

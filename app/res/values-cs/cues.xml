@@ -18,7 +18,7 @@
   <string name="cue_interval">interval</string>
   <string name="cue_lap">kolo</string>
   <string name="cue_warmup">rozehřátí</string>
-  <string name="cue_cooldown">zklidnění</string>
+  <string name="cue_cooldown">zchlazení</string>
   <string name="cue_current">současný</string>
   <string name="cue_perkilometer">na kilometr</string>
   <string name="cue_permile">na míli</string>
@@ -29,6 +29,66 @@
   <string name="cue_completed">dokončeno</string>
   <string name="cue_speedup">zrychlit</string>
   <string name="cue_slowdown">zpomalit</string>
+  <plurals name="cue_hour">
+    <item quantity="one">%d hodina</item>
+    <item quantity="few">%d hodiny</item>
+    <item quantity="many">%d hodin</item>
+    <item quantity="other">%d hodin</item>
+  </plurals>
+  <plurals name="cue_minute">
+    <item quantity="one">%d minuta</item>
+    <item quantity="few">%d minuty</item>
+    <item quantity="many">%d minut</item>
+    <item quantity="other">%d minut</item>
+  </plurals>
+  <plurals name="cue_second">
+    <item quantity="one">%d sekunda</item>
+    <item quantity="few">%d sekundy</item>
+    <item quantity="many">%d sekund</item>
+    <item quantity="other">%d sekund</item>
+  </plurals>
+  <plurals name="cue_meter">
+    <item quantity="one">%d metr</item>
+    <item quantity="few">%d metry</item>
+    <item quantity="many">%d metrů</item>
+    <item quantity="other">%d metrů</item>
+  </plurals>
+  <plurals name="cue_kilometer">
+    <item quantity="one">%s kilometr</item>
+    <item quantity="few">%s kilometry</item>
+    <item quantity="many">%s kilometrů</item>
+    <item quantity="other">%s kilometrů</item>
+  </plurals>
+  <plurals name="cue_mile">
+    <item quantity="one">%s míle</item>
+    <item quantity="few">%s mílí</item>
+    <item quantity="many">%s mílí</item>
+    <item quantity="other">%s mílí</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s kilometr za hodinu</item>
+    <item quantity="few">%s kilometry za hodinu</item>
+    <item quantity="many">%s kilometrů za hodinu</item>
+    <item quantity="other">%s kilometrů za hodinu</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s míle za hodinu</item>
+    <item quantity="few">%s míle za hodinu</item>
+    <item quantity="many">%s mil za hodinu</item>
+    <item quantity="other">%s mil za hodinu</item>
+  </plurals>
+  <plurals name="cue_bpm">
+    <item quantity="one">%d bpm</item>
+    <item quantity="few">%d bpm</item>
+    <item quantity="many">%d bpm</item>
+    <item quantity="other">%d bpm</item>
+  </plurals>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d otáčka/min</item>
+    <item quantity="few">%d otáček/min</item>
+    <item quantity="many">%d otáček/min</item>
+    <item quantity="other">%d otáček/min</item>
+  </plurals>
   <string name="cue_activity_paused">aktivita pozastavena</string>
   <string name="cue_activity_resumed">aktivita obnovena</string>
   <string name="cue_activity_stopped">aktivita zastavena</string>

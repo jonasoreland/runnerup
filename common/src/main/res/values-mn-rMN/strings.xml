@@ -31,9 +31,12 @@
   <string name="active">идэвхтэй</string>
   <string name="rest">нөөц</string>
   <string name="recovery">сэргээх</string>
+  <string name="time">Цаг</string>
   <string name="speed">хурд</string>
+  <string name="Zone">Бүс</string>
   <string name="Start_hour">Эхлэх цаг</string>
   <string name="Heart_rate">Зүрхний хэмнэл</string>
+  <string name="Scan">Уншуулах</string>
   <string name="Connect">Холбох</string>
   <string name="Connecting">Холбож байна</string>
   <string name="Download">Татах</string>
