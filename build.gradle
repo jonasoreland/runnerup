@@ -21,7 +21,7 @@ project.ext {
     targetSdkVersion = 33
 
     appcompat_version = "1.6.1"
-    annotation_version = "1.5.0"
+    annotation_version = "1.6.0"
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
     googleWearVersion = '2.3.0'

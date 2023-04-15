@@ -17,6 +17,8 @@
 
 package org.runnerup.hr;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -36,6 +38,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +68,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private static final String DISPLAY_NAME = "Bluetooth LE";
 
     private static final UUID[] SCAN_UUIDS = {
-        HRP_SERVICE
+            HRP_SERVICE
     };
     private final static boolean AVOID_SCAN_WITH_UUID;
     private final static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN;
@@ -97,7 +100,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private boolean mIsConnected = false;
     private boolean mIsConnecting = false;
     private boolean mIsDisconnecting = false;
-    private boolean mSupportPaired;
+    private final boolean mSupportPaired;
 
     public AndroidBLEHRProvider(Context ctx) {
         context = ctx;
@@ -142,7 +145,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         disconnect();
 
         if (btGatt != null) {
-            btGatt.close();
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                btGatt.close();
+            }
+
             btGatt = null;
         }
 
@@ -276,19 +282,27 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 }
 
                 if (mIsConnecting) {
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
                         boolean res = btGatt.discoverServices();
                         log("discoverServices() => " + res);
                     } else {
                         boolean res = btGatt.connect();
                         log("reconnect while connecting => btGatt.connect() => "
-                                        + res);
+                                + res);
                     }
                     return;
                 }
 
                 if (mIsDisconnecting) {
                     log("mIsDisconnecting => notify");
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+
                     synchronized (this) {
                         btGatt.close();
                         btGatt = null;
@@ -367,14 +381,17 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             BluetoothGattCharacteristic firmwareIdCharc = disService
                     .getCharacteristic(FIRMWARE_REVISON_UUID);
             if (mSupportPaired && firmwareIdCharc == null) {
-                    firmwareIdCharc = disService
-                            .getCharacteristic(HARDWARE_REVISON_UUID);
+                firmwareIdCharc = disService
+                        .getCharacteristic(HARDWARE_REVISON_UUID);
             }
             if (firmwareIdCharc == null) {
                 reportConnectFailed("firmware revison charateristic not found!");
                 return;
             }
 
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
             if (!btGatt.readCharacteristic(firmwareIdCharc)) {
                 reportConnectFailed("firmware revison reading is failed!");
             }
@@ -403,6 +420,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
                 return;
             }
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
             if (!btGatt.readDescriptor(mHRMccc)) {
                 reportConnectFailed("readDescriptor() is failed");
             }
@@ -423,6 +443,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 return false;
             }
 
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
             if (!btGatt.readCharacteristic(mBLcharac)) {
                 log("readCharacteristic(" + mBLcharac.getUuid() + ") failed");
                 return false;
@@ -435,7 +458,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean enableNotification(boolean onoff,
                                        BluetoothGattCharacteristic charac) {
-        if (btGatt == null)
+        if (btGatt == null || ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
             return false;
 
         if (!btGatt.setCharacteristicNotification(charac, onoff)) {
@@ -466,9 +489,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     // Using a deprecated API - change in API 21 (Marshmallow)
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
-                byte[] scanRecord) {
+                             byte[] scanRecord) {
             if (hrClient == null)
                 return;
 
@@ -493,6 +517,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                         }
                     });
                 } else {
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
                     btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
                     if (btGatt == null) {
                         reportConnectFailed("connectGatt returned null");
@@ -519,6 +546,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     private final HashSet<String> mScanDevices = new HashSet<>();
 
+    @SuppressLint("MissingPermission")
     @Override
     public void startScan() {
         if (mIsScanning || btAdapter == null)
@@ -532,6 +560,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             btAdapter.startLeScan(mLeScanCallback);
         else {
             if (mSupportPaired) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
                 for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
                     if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
                         log("Ignoring paired non BLE device: " + btDeviceThis.getName());
@@ -551,6 +583,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     public void stopScan() {
         if (mIsScanning) {
             mIsScanning = false;
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
             btAdapter.stopLeScan(mLeScanCallback);
         }
     }
@@ -581,6 +617,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         mIsConnecting = true;
         btDevice = dev;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         if (ref.deviceName == null || dev.getName() == null
                 || !dev.getName().contentEquals(ref.deviceName)) {
             /*
@@ -616,6 +656,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private void reportConnectFailed(String string) {
         log("reportConnectFailed(" + string + ")");
         if (btGatt != null) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
             btGatt.disconnect();
             btGatt.close();
             btGatt = null;
@@ -661,14 +705,17 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
         } while (false);
 
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
         btGatt.disconnect();
 
         if (isConnected) {
             log("close btGatt in onConnectionState");
             // close btGatt in onConnectionState
             synchronized (this) {
-                long end = System.currentTimeMillis() + 2000; // wait max 2
-                                                              // seconds
+                long end = System.currentTimeMillis() + 2000; // wait max 2 seconds
                 while (btGatt != null && System.currentTimeMillis() < end) {
                     log("waiting for btGatt to become null");
                     try {
@@ -687,8 +734,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         } else {
             log("close btGatt here in disconnect()");
             BluetoothGatt copy = btGatt;
-            if (copy != null)
+            if (copy != null) {
                 copy.close();
+            }
+
             btGatt = null;
         }
 

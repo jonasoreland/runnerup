@@ -106,12 +106,12 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         for (int i = 0; i < rowsOnScreen; i++) {
             textViews.add(new Pair<>(Constants.Wear.RunInfo.DATA +
                     screen + "." + i,
-                    (TextView) view.findViewById(ids[i])));
+                    view.findViewById(ids[i])));
         }
         for (int i = 0; i < rowsOnScreen; i++) {
             textViews.add(new Pair<>(Constants.Wear.RunInfo.HEADER +
                     screen + "." + i,
-                    (TextView) view.findViewById(ids[rowsOnScreen + i])));
+                    view.findViewById(ids[rowsOnScreen + i])));
         }
         return view;
     }

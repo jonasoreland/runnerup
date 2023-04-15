@@ -71,7 +71,7 @@ android {
         // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
-        resConfigs 'ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'mn', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh'
+        resourceConfigurations += ['ar', 'bs', 'cs', 'ca', 'de', 'en', 'es', 'fa', 'fi', 'fr', 'hu', 'id', 'in', 'it', 'iw', 'ja', 'lt', 'mn', 'nb', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'tr', 'uk', 'zh']
         // By default all AppCompat translations are included, saves 350KB
         // also in res/xml/locales_config.xml and .tx/config
     }
@@ -136,6 +136,18 @@ repositories {
                 props.load(new FileInputStream(rootProject.file("mapbox.properties")))
                 password = props.mapboxDownloadToken
             }
+        }
+    }
+}
+
+// Duplicate class kotlin.collections.jdk8 (from MapBox?)
+dependencies {
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
         }
     }
 }

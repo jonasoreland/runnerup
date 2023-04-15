@@ -171,7 +171,7 @@ public class TCX {
             mXML.startTag("", "Author");
             mXML.attribute("", "xsi:type", "Application_t");
             mXML.startTag("", "Name");
-            String application = BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME + " - " + String.valueOf(BuildConfig.VERSION_CODE);
+            String application = BuildConfig.APPLICATION_ID + " - " + BuildConfig.VERSION_NAME + " - " + BuildConfig.VERSION_CODE;
             mXML.text(application);
             mXML.endTag("", "Name");
             mXML.startTag("", "Build");

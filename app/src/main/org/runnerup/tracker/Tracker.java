@@ -35,6 +35,8 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -634,7 +636,7 @@ public class Tracker extends android.app.Service implements
     }
 
     @Override
-    public void onLocationChanged(Location arg0) {
+    public void onLocationChanged(@NonNull Location arg0) {
         //Elevation depends on GPS updates
         trackerElevation.onLocationChanged(arg0);
         onLocationChangedImpl(arg0, false);
@@ -787,11 +789,11 @@ public class Tracker extends android.app.Service implements
     }
 
     @Override
-    public void onProviderDisabled(String arg0) {
+    public void onProviderDisabled(@NonNull String arg0) {
     }
 
     @Override
-    public void onProviderEnabled(String arg0) {
+    public void onProviderEnabled(@NonNull String arg0) {
     }
 
     @Override

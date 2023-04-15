@@ -77,10 +77,7 @@ class DisabledEntriesAdapter extends BaseAdapter {
         TextView ret = convertView.findViewById(android.R.id.text1);
         ret.setText(str);
 
-        if (disabled != null && disabled.contains(str))
-            convertView.setEnabled(false);
-        else
-            convertView.setEnabled(true);
+        convertView.setEnabled(disabled == null || !disabled.contains(str));
 
         return convertView;
     }

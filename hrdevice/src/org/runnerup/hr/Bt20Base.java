@@ -17,6 +17,7 @@
 
 package org.runnerup.hr;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
@@ -24,12 +25,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,12 +67,15 @@ public abstract class Bt20Base extends BtHRBase {
 
     @SuppressWarnings("SameReturnValue")
     public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
         activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
                 requestCode);
         return true;
     }
 
-    @ChecksSdkIntAtLeast(api=Build.VERSION_CODES.GINGERBREAD_MR1)
+    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.GINGERBREAD_MR1)
     @SuppressLint("ObsoleteSdkInt")
     public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
 
@@ -206,7 +212,7 @@ public abstract class Bt20Base extends BtHRBase {
         mIsScanning = true;
 
         hrClientHandler.post(() -> {
-            Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
+            @SuppressLint("MissingPermission") Set<BluetoothDevice> list = new HashSet<>(btAdapter.getBondedDevices());
             publishDevice(list);
         });
     }
@@ -246,8 +252,8 @@ public abstract class Bt20Base extends BtHRBase {
     }
 
     private synchronized void connected(final BluetoothSocket bluetoothSocket,
-            final BluetoothDevice bluetoothDevice,
-            final String btDeviceName) {
+                                        final BluetoothDevice bluetoothDevice,
+                                        final String btDeviceName) {
         cancelThreads();
 
         if (hrClient != null) {
@@ -310,6 +316,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private static BluetoothSocket tryConnect(BtHRBase base, final BluetoothDevice device, int i)
             throws IOException {
         BluetoothSocket sock = null;
@@ -317,9 +324,11 @@ public abstract class Bt20Base extends BtHRBase {
 
         switch (i) {
             case 0:
+                // No BLUETOOTH_CONNECT permission will throw IOException
                 sock = device.createRfcommSocketToServiceRecord(MY_UUID);
                 break;
             case 1:
+                // No BLUETOOTH_CONNECT permission will throw IOException
                 sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
                 break;
             case 2: {
@@ -332,7 +341,8 @@ public abstract class Bt20Base extends BtHRBase {
                             });
                     m.setAccessible(true);
                     sock = (BluetoothSocket) m.invoke(device, 1);
-                } catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+                } catch (NoSuchMethodException | IllegalArgumentException |
+                         InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
@@ -343,6 +353,7 @@ public abstract class Bt20Base extends BtHRBase {
         }
 
         try {
+            // No BLUETOOTH_CONNECT permission will throw IOException
             sock.connect();
             return sock;
         } catch (IOException ex) {
@@ -360,12 +371,14 @@ public abstract class Bt20Base extends BtHRBase {
         private final BluetoothDevice bluetoothDevice;
         private final String deviceName;
 
+        @SuppressLint("MissingPermission")
         public ConnectThread(BluetoothDevice device, String deviceName) {
             setName("ConnectThread-" + device.getName());
             this.bluetoothDevice = device;
             this.deviceName = deviceName;
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void run() {
             if (btAdapter == null || bluetoothDevice == null || deviceName == null) {
@@ -435,7 +448,7 @@ public abstract class Bt20Base extends BtHRBase {
         //private final String deviceName;
 
         public ConnectedThread(final BluetoothDevice device, final String deviceName,
-                final BluetoothSocket bluetoothSocket) {
+                               final BluetoothSocket bluetoothSocket) {
             //this.bluetoothDevice = device;
             this.bluetoothSocket = bluetoothSocket;
             //this.deviceName = deviceName;
@@ -800,6 +813,7 @@ public abstract class Bt20Base extends BtHRBase {
         return b & 0xFF;
     }
 
+    @SuppressLint("MissingPermission")
     public static HRDeviceRef createDeviceRef(String providerName, BluetoothDevice device) {
         return HRDeviceRef.create(providerName, device.getName(), device.getAddress());
     }

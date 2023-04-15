@@ -72,7 +72,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                 f.emit(Workout.this, tracker.getApplicationContext());
             } catch (Exception ex) {
                 // make sure that no small mistake crashes a workout...
-                Log.w(getClass().getName(), "PendingFeedback:add: " + ex.toString());
+                Log.w(getClass().getName(), "PendingFeedback:add: " + ex);
             }
         }
 
@@ -85,7 +85,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
                     Workout.this.textToSpeech.emit();
                 } catch (Exception ex) {
                     // make sure that no small mistake crashes a workout...
-                    Log.w(getClass().getName(), "PendingFeedback:end: " + ex.toString());
+                    Log.w(getClass().getName(), "PendingFeedback:end: " + ex);
                 }
                 return true;
             }

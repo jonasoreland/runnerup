@@ -300,10 +300,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             }
             return s;
 
-        } catch (IOException e) {
-            s = Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             s = Status.ERROR;
             s.ex = e;
         }
@@ -425,10 +422,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
             s = Synchronizer.Status.ERROR;
             return s;
 
-        } catch (IOException e) {
-            s = Synchronizer.Status.ERROR;
-            s.ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             s = Synchronizer.Status.ERROR;
             s.ex = e;
         }
@@ -486,9 +480,7 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
                     + " (" + remainingAttempts + ")");
             return result;
 
-        } catch (IOException e) {
-            result.ex = e;
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             result.ex = e;
         }
 

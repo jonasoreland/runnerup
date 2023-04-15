@@ -90,12 +90,10 @@ public class Geoid {
 			// top row
 			q[1][3] = getRightLocation(q[0][3]);
 			q[2][3] = getRightLocation(q[1][3]);
-			q[2][3] = getRightLocation(q[1][3]);
 			q[3][3] = getRightLocation(q[2][3]);
 			
 			// bottom row
 			q[0][0] = getLowerLocation(q[0][1]);
-			q[1][0] = getRightLocation(q[0][0]);
 			q[1][0] = getRightLocation(q[0][0]);
 			q[2][0] = getRightLocation(q[1][0]);
 

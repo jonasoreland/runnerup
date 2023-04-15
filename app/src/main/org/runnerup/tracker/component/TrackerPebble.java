@@ -116,8 +116,8 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
             return PebbleKit.isWatchConnected(context);
         } catch (NullPointerException ex) {
             // Occasional crashes in Play console
-            Toast.makeText(context, "Failure for isWatchConnected: " + ex.toString(), Toast.LENGTH_LONG).show();
-            Log.w(getName(), "Failure for isWatchConnected: " + ex.toString());
+            Toast.makeText(context, "Failure for isWatchConnected: " + ex, Toast.LENGTH_LONG).show();
+            Log.w(getName(), "Failure for isWatchConnected: " + ex);
         }
         return false;
     }

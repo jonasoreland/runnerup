@@ -222,8 +222,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                                             getString(org.runnerup.common.R.string.Saving_as) + " " + saveName, Toast.LENGTH_SHORT).show();
                                 }
                                 saveImport(saveName, cr.openInputStream(data));
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -323,7 +321,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     }
 
     private void requery() {
-        ContentValues[] allSynchronizers;
+        //ContentValues[] allSynchronizers;
         try {
             /*
              * Accounts/reports
@@ -337,7 +335,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                     + (" FROM " + DB.ACCOUNT.TABLE + " acc ");
 
             Cursor c = mDB.rawQuery(sql, null);
-            allSynchronizers = DBHelper.toArray(c);
+            //allSynchronizers = DBHelper.toArray(c);
             c.close();
         } catch (IllegalStateException e) {
             Log.e(getClass().getName(), "requery: " + e.getMessage());

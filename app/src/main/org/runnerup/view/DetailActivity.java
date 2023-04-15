@@ -693,11 +693,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 viewHolder.cb.setText(org.runnerup.common.R.string.Uploaded);
                 viewHolder.cb.setOnLongClickListener(clearUploadClick);
             } else {
-                if (pendingSynchronizers.contains(name)) {
-                    viewHolder.cb.setChecked(true);
-                } else {
-                    viewHolder.cb.setChecked(false);
-                }
+                viewHolder.cb.setChecked(pendingSynchronizers.contains(name));
                 viewHolder.cb.setText(org.runnerup.common.R.string.Upload);
                 viewHolder.cb.setOnLongClickListener(null);
             }
@@ -784,22 +780,20 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    private final OnClickListener discardButtonClick = v -> {
-        new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(org.runnerup.common.R.string.Discard)
-                .setMessage(org.runnerup.common.R.string.Are_you_sure)
-                .setPositiveButton(org.runnerup.common.R.string.Yes,
-                        (dialog, which) -> {
-                            dialog.dismiss();
-                            DetailActivity.this.setResult(RESULT_CANCELED);
-                            DetailActivity.this.finish();
-                        })
-                .setNegativeButton(org.runnerup.common.R.string.No,
-                        // Do nothing but close the dialog
-                        (dialog, which) -> dialog.dismiss()
-                )
-                .show();
-    };
+    private final OnClickListener discardButtonClick = v -> new AlertDialog.Builder(DetailActivity.this)
+            .setTitle(org.runnerup.common.R.string.Discard)
+            .setMessage(org.runnerup.common.R.string.Are_you_sure)
+            .setPositiveButton(org.runnerup.common.R.string.Yes,
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        DetailActivity.this.setResult(RESULT_CANCELED);
+                        DetailActivity.this.finish();
+                    })
+            .setNegativeButton(org.runnerup.common.R.string.No,
+                    // Do nothing but close the dialog
+                    (dialog, which) -> dialog.dismiss()
+            )
+            .show();
 
     @Override
     public void onBackPressed() {
@@ -851,23 +845,21 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
     };
 
-    private final OnClickListener deleteButtonClick = v -> {
-        new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(org.runnerup.common.R.string.Delete_activity)
-                .setMessage(org.runnerup.common.R.string.Are_you_sure)
-                .setPositiveButton(org.runnerup.common.R.string.Yes,
-                        (dialog, which) -> {
-                            DBHelper.deleteActivity(mDB, mID);
-                            dialog.dismiss();
-                            DetailActivity.this.setResult(RESULT_OK);
-                            DetailActivity.this.finish();
-                        })
-                .setNegativeButton(org.runnerup.common.R.string.No,
-                        // Do nothing but close the dialog
-                        (dialog, which) -> dialog.dismiss()
-                )
-                .show();
-    };
+    private final OnClickListener deleteButtonClick = v -> new AlertDialog.Builder(DetailActivity.this)
+            .setTitle(org.runnerup.common.R.string.Delete_activity)
+            .setMessage(org.runnerup.common.R.string.Are_you_sure)
+            .setPositiveButton(org.runnerup.common.R.string.Yes,
+                    (dialog, which) -> {
+                        DBHelper.deleteActivity(mDB, mID);
+                        dialog.dismiss();
+                        DetailActivity.this.setResult(RESULT_OK);
+                        DetailActivity.this.finish();
+                    })
+            .setNegativeButton(org.runnerup.common.R.string.No,
+                    // Do nothing but close the dialog
+                    (dialog, which) -> dialog.dismiss()
+            )
+            .show();
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

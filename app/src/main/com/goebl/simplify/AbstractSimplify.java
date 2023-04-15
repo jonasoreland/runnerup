@@ -41,7 +41,7 @@ import java.util.List;
  */
 abstract class AbstractSimplify<T> {
 
-    private T[] sampleArray;
+    private final T[] sampleArray;
 
     protected AbstractSimplify(T[] sampleArray) {
         this.sampleArray = sampleArray;
@@ -104,8 +104,8 @@ abstract class AbstractSimplify<T> {
             this.last = last;
         }
 
-        int first;
-        int last;
+        final int first;
+        final int last;
     }
 
     T[] simplifyDouglasPeucker(T[] points, double sqTolerance) {

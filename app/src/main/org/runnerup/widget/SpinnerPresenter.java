@@ -69,7 +69,7 @@ public class SpinnerPresenter {
     private final SpinnerInterface mSpin;
     private int mInputType = 0;
     private SpinnerInterface.OnSetValueListener mSetValueListener = null;
-    private Type mType;
+    private final Type mType;
     private boolean mFirstSetValue = true;
     private int[] values = null;
     private long mCurrValue = -1;
