@@ -4,6 +4,7 @@ group = "org.runnerup.hr"
 version = "1.0"
 
 android {
+    namespace 'org.runnerup.hr'
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -41,6 +42,9 @@ android {
             android.sourceSets.main.java.excludes = ['org/runnerup/hr/AntPlus.java']
             buildConfigField 'Boolean', 'ANTPLUS_ENABLED', "false"
         }
+    }
+    buildFeatures {
+        aidl true
     }
 }
 
