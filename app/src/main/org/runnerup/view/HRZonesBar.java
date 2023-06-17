@@ -112,7 +112,7 @@ public class HRZonesBar extends View {
             float percent = Math.round((float)hrzPart * 100);
 
             //calculate text and bar length
-            String zoneName = getResources().getString(R.string.Zone) + " " + i;
+            String zoneName = getResources().getString(org.runnerup.common.R.string.Zone) + " " + i;
             float textLen = fontPaint.measureText(zoneName);
             float chartWidth = (float) ((totalWidth - textLen - 4 * borderSize) * chartSize);
             float barLen = (float) (chartWidth * hrzPart);

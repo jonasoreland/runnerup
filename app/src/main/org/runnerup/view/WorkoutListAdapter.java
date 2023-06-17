@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.runnerup.R;
 import org.runnerup.workout.WorkoutSerializer;
 
 import java.io.File;
@@ -54,7 +53,7 @@ class WorkoutListAdapter extends BaseAdapter {
             return workoutList[position];
 
         Context context = inflater.getContext();
-        return String.format(context.getString(R.string.dialog_ellipsis), context.getString(R.string.Manage_workouts));
+        return String.format(context.getString(org.runnerup.common.R.string.dialog_ellipsis), context.getString(org.runnerup.common.R.string.Manage_workouts));
     }
 
     @Override

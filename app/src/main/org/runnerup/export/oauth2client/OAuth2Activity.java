@@ -34,7 +34,6 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.util.FormValues;
@@ -97,7 +96,7 @@ public class OAuth2Activity extends AppCompatActivity {
 
         mSpinner = new ProgressDialog(this);
         mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mSpinner.setMessage(getString(R.string.Loading));
+        mSpinner.setMessage(getString(org.runnerup.common.R.string.Loading));
         
         // https://stackoverflow.com/questions/41025200/android-view-inflateexception-error-inflating-class-android-webkit-webview/58131421#58131421
         WebView wvt;

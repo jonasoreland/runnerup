@@ -141,7 +141,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         formatter = new Formatter(this);
         {
             graphView = new GraphView(this);
-            graphView.setTitle(getString(R.string.Heart_rate));
+            graphView.setTitle(getString(org.runnerup.common.R.string.Heart_rate));
             DataPoint[] empty = {};
             graphViewSeries = new LineGraphSeries<>(empty);
             graphView.addSeries(graphViewSeries);
@@ -265,11 +265,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void clearHRSettings() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.Clear_HR_settings)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.OK, (dialog, which) -> doClear())
+                .setTitle(org.runnerup.common.R.string.Clear_HR_settings)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> doClear())
 
-                .setNegativeButton(R.string.Cancel,
+                .setNegativeButton(org.runnerup.common.R.string.Cancel,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss()
                 )
@@ -326,8 +326,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.Heart_rate_monitor_is_not_supported_for_your_device)
-                .setNegativeButton(R.string.Cancel, listener)
+                .setTitle(org.runnerup.common.R.string.Heart_rate_monitor_is_not_supported_for_your_device)
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, listener)
                 .show();
     }
 
@@ -348,7 +348,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         if (hrProvider == null) {
             scanButton.setEnabled(true);
             connectButton.setEnabled(false);
-            connectButton.setText(R.string.Connect);
+            connectButton.setText(org.runnerup.common.R.string.Connect);
             tvBTName.setText("");
             tvHR.setText("");
             return;
@@ -362,14 +362,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         }
 
         if (hrProvider.isConnected()) {
-            connectButton.setText(R.string.Disconnect);
+            connectButton.setText(org.runnerup.common.R.string.Disconnect);
             connectButton.setEnabled(true);
         } else if (hrProvider.isConnecting()) {
             connectButton.setEnabled(false);
-            connectButton.setText(R.string.Connecting);
+            connectButton.setText(org.runnerup.common.R.string.Connecting);
         } else {
             connectButton.setEnabled(btName != null);
-            connectButton.setText(R.string.Connect);
+            connectButton.setText(org.runnerup.common.R.string.Connect);
         }
     }
 
@@ -394,8 +394,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         
         hrProvider = null;
         new AlertDialog.Builder(this)
-                .setTitle(R.string.Select_type_of_Bluetooth_device)
-                .setPositiveButton(R.string.OK,
+                .setTitle(org.runnerup.common.R.string.Select_type_of_Bluetooth_device)
+                .setPositiveButton(org.runnerup.common.R.string.OK,
                         (dialog, which) -> {
                             if (hrProvider == null && items.length > 0) {
                                 // Select the first in the list
@@ -405,7 +405,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             log("hrProvider = " + (hrProvider == null ? "null" : hrProvider.getProviderName()));
                             open();
                         })
-                .setNegativeButton(R.string.Cancel,
+                .setNegativeButton(org.runnerup.common.R.string.Cancel,
                         (dialog, which) -> {
                             mIsScanning = false;
                             hrProvider = null;
@@ -455,20 +455,20 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         requestPerms.toArray(permissions);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(HRSettingsActivity.this)
-                .setTitle(R.string.Bluetooth_permission_required)
-                .setMessage(getString(R.string.Request_permission_text))
-                .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
+                .setTitle(org.runnerup.common.R.string.Bluetooth_permission_required)
+                .setMessage(getString(org.runnerup.common.R.string.Request_permission_text))
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
         if (requestPerms.size() > 0) {
             // Let Android request the permissions
             // Note that the result is not used, the user is dropped back to initial view when a request is done.
-            builder.setPositiveButton(R.string.OK, (dialog, id) ->
+            builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) ->
                     ActivityCompat.requestPermissions(this, permissions, REQUEST_BLUETOOTH_PERM));
         } else if (isDeniedPermission) {
             // Open settings for the app (no direct shortcut to permissions)
             Intent intent = new Intent()
                     .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     .setData(Uri.fromParts("package", getPackageName(), null));
-            builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent));
+            builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) -> startActivity(intent));
         }
         builder.show();
 
@@ -494,8 +494,8 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         hrProvider.startScan();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(R.string.Scanning)
-                .setPositiveButton(R.string.Connect,
+                .setTitle(org.runnerup.common.R.string.Scanning)
+                .setPositiveButton(org.runnerup.common.R.string.Connect,
                         (dialog, which) -> {
                             log(hrProvider.getProviderName() + ".stopScan()");
                             hrProvider.stopScan();
@@ -503,7 +503,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
                             updateView();
                             dialog.dismiss();
                         })
-                .setNegativeButton(R.string.Cancel,
+                .setNegativeButton(org.runnerup.common.R.string.Cancel,
                         (dialog, which) -> {
                             log(hrProvider.getProviderName() + ".stopScan()");
                             hrProvider.stopScan();
@@ -670,7 +670,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             if (hrProvider.getBatteryLevel() > 0) {
                 tvBatteryLevel.setVisibility(View.VISIBLE);
                 tvBatteryLevel.setText(String.format(Locale.getDefault(), "%s: %d%%",
-                        getResources().getText(R.string.Battery_level), hrProvider.getBatteryLevel()));
+                        getResources().getText(org.runnerup.common.R.string.Battery_level), hrProvider.getBatteryLevel()));
             }
             startTimer();
         }

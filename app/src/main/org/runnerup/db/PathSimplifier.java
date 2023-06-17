@@ -90,7 +90,7 @@ public class PathSimplifier {
         // squared tolerance in meters has to be transformed to tolerance in degrees
         this.toleranceDeg = tolerance / ONE_DEGREE;
 
-        String high_quality_setting = res.getStringArray(R.array.path_simplification_algorithm_values)[1];
+        String high_quality_setting = res.getStringArray(org.runnerup.common.R.array.path_simplification_algorithm_values)[1];
         String algorithm = prefs.getString(
                 res.getString(R.string.pref_path_simplification_algorithm),
                 high_quality_setting);

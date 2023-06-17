@@ -75,7 +75,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         WidgetUtil.addLegacyOverflowButton(getWindow());
 
         mDB = DBHelper.getWritableDatabase(this);
-        DEFAULT = getString(R.string.Default);
+        DEFAULT = getString(org.runnerup.common.R.string.Default);
 
         Intent intent = getIntent();
         settingsName = intent.getStringExtra("name");
@@ -186,13 +186,13 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             return true;
         }
         new AlertDialog.Builder(this)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             deleteAudioScheme();
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
@@ -257,7 +257,7 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
             if (newValue.contentEquals(DEFAULT)) {
                 prefMgr.getSharedPreferences().edit().apply();
                 switchTo(null);
-            } else if (newValue.contentEquals(getString(R.string.New_audio_scheme))) {
+            } else if (newValue.contentEquals(getString(org.runnerup.common.R.string.New_audio_scheme))) {
                 createNewAudioSchemeDialog();
             } else {
                 prefMgr.getSharedPreferences().edit().apply();
@@ -299,10 +299,10 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
         editText.setMinimumWidth(48);
 
         new AlertDialog.Builder(this)
-                .setTitle(R.string.Create_new_audio_cue_scheme)
+                .setTitle(org.runnerup.common.R.string.Create_new_audio_cue_scheme)
                 // Get the layout inflater
                 .setView(editText)
-                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
                     String scheme = editText.getText().toString();
                     if (!scheme.contentEquals("")) {
                         createNewAudioScheme(scheme);
@@ -310,15 +310,15 @@ public class AudioCueSettingsActivity extends PreferenceActivity {
                         switchTo(scheme);
                     }
                 })
-                .setNegativeButton(R.string.Cancel, (dialog, which) -> {})
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> {})
                 .show();
     }
 
     private void CreateNewNoTtsAvailableDialog() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.tts_not_available_title)
-                .setMessage(R.string.tts_not_available)
-                .setPositiveButton(R.string.OK, null)
+                .setTitle(org.runnerup.common.R.string.tts_not_available_title)
+                .setMessage(org.runnerup.common.R.string.tts_not_available)
+                .setPositiveButton(org.runnerup.common.R.string.OK, null)
                 .show();
     }
 

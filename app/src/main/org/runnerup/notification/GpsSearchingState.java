@@ -36,7 +36,7 @@ public class GpsSearchingState implements NotificationState {
 
         builder = new NotificationCompat.Builder(context, chanId)
                 .setContentIntent(pi)
-                .setContentTitle(context.getString(R.string.Searching_for_GPS))
+                .setContentTitle(context.getString(org.runnerup.common.R.string.Searching_for_GPS))
                 .setSmallIcon(R.drawable.ic_stat_notify)
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true);
@@ -49,7 +49,7 @@ public class GpsSearchingState implements NotificationState {
     @Override
     public Notification createNotification() {
         builder.setContentText(String.format(Locale.getDefault(), "%s: %d/%d (%s)",
-                context.getString(R.string.GPS_satellites),
+                context.getString(org.runnerup.common.R.string.GPS_satellites),
                 gpsInformation.getSatellitesFixed(), gpsInformation.getSatellitesAvailable(),
                 gpsInformation.getGpsAccuracy()));
 

@@ -68,14 +68,14 @@ public class AboutPreference extends DialogPreference {
     private void init(Context context) {
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            this.setDialogTitle(context.getString(R.string.About_RunnerUp) + " v" + pInfo.versionName);
+            this.setDialogTitle(context.getString(org.runnerup.common.R.string.About_RunnerUp) + " v" + pInfo.versionName);
         } catch (NameNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        setNegativeButtonText(context.getString(R.string.OK));
+        setNegativeButtonText(context.getString(org.runnerup.common.R.string.OK));
         if (GoogleApiHelper.isGooglePlayServicesAvailable(context)) {
-            setPositiveButtonText(context.getString(R.string.Rate_RunnerUp));
+            setPositiveButtonText(context.getString(org.runnerup.common.R.string.Rate_RunnerUp));
         } else {
             setPositiveButtonText(null);
         }

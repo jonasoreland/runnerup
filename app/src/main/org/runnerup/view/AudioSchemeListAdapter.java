@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ class AudioSchemeListAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         if (position == 0) {
-            return inflater.getContext().getString(R.string.Default);
+            return inflater.getContext().getString(org.runnerup.common.R.string.Default);
         }
 
         position -= 1;
@@ -66,9 +65,9 @@ class AudioSchemeListAdapter extends BaseAdapter {
         Context context = inflater.getContext();
 
         if (createNewItem)
-            return context.getString(R.string.New_audio_scheme);
+            return context.getString(org.runnerup.common.R.string.New_audio_scheme);
         else
-            return String.format(context.getString(R.string.dialog_ellipsis), context.getString(R.string.Manage_audio_cues));
+            return String.format(context.getString(org.runnerup.common.R.string.dialog_ellipsis), context.getString(org.runnerup.common.R.string.Manage_audio_cues));
     }
 
     @Override

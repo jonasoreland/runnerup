@@ -17,7 +17,6 @@
 
 package org.runnerup.workout;
 
-import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB.DIMENSION;
 
 /**
@@ -25,15 +24,15 @@ import org.runnerup.common.util.Constants.DB.DIMENSION;
  */
 public enum Dimension {
 
-    TIME(DIMENSION.TIME, R.string.time),
-    DISTANCE(DIMENSION.DISTANCE, R.string.distance),
-    SPEED(DIMENSION.SPEED, R.string.speed),
-    PACE(DIMENSION.PACE, R.string.pace),
-    HR(DIMENSION.HR, R.string.Heart_rate),
-    HRZ(DIMENSION.HRZ, R.string.heart_rate_zone),
-    CAD(DIMENSION.CAD, R.string.cadence),
-    TEMPERATURE(DIMENSION.CAD, R.string.temperature),
-    PRESSURE(DIMENSION.CAD, R.string.pressure);
+    TIME(DIMENSION.TIME, org.runnerup.common.R.string.time),
+    DISTANCE(DIMENSION.DISTANCE, org.runnerup.common.R.string.distance),
+    SPEED(DIMENSION.SPEED, org.runnerup.common.R.string.speed),
+    PACE(DIMENSION.PACE, org.runnerup.common.R.string.pace),
+    HR(DIMENSION.HR, org.runnerup.common.R.string.Heart_rate),
+    HRZ(DIMENSION.HRZ, org.runnerup.common.R.string.heart_rate_zone),
+    CAD(DIMENSION.CAD, org.runnerup.common.R.string.cadence),
+    TEMPERATURE(DIMENSION.CAD, org.runnerup.common.R.string.temperature),
+    PRESSURE(DIMENSION.CAD, org.runnerup.common.R.string.pressure);
 
     // TODO
     public static final boolean SPEED_CUE_ENABLED = true;

@@ -196,24 +196,24 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         TabHost th = findViewById(R.id.tabhost);
         th.setup();
         TabSpec tabSpec = th.newTabSpec("notes");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Notes)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Notes)));
         tabSpec.setContent(R.id.tab_main);
         th.addTab(tabSpec);
 
         tabSpec = th.newTabSpec("laps");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Laps)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Laps)));
         tabSpec.setContent(R.id.tab_lap);
         th.addTab(tabSpec);
 
         if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
             tabSpec = th.newTabSpec("map");
-            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Map)));
+            tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Map)));
             tabSpec.setContent(R.id.tab_map);
             th.addTab(tabSpec);
         }
 
         tabSpec = th.newTabSpec("graph");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Graph)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Graph)));
         tabSpec.setContent(R.id.tab_graph);
         th.addTab(tabSpec);
 
@@ -222,7 +222,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         GraphWrapper graphWrapper = new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
 
         tabSpec = th.newTabSpec("share");
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Upload)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
         tabSpec.setContent(R.id.tab_upload);
         th.addTab(tabSpec);
 
@@ -283,23 +283,23 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         }
         else if (id == R.id.menu_recompute_activity) {
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.Recompute_activity)
-                    .setMessage(R.string.Are_you_sure)
-                    .setPositiveButton(R.string.Yes, (dialog, which) -> {
+                    .setTitle(org.runnerup.common.R.string.Recompute_activity)
+                    .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                    .setPositiveButton(org.runnerup.common.R.string.Yes, (dialog, which) -> {
                         dialog.dismiss();
                         new ActivityCleaner().recompute(mDB, mID);
                         requery();
                         fillHeaderData();
                         finish();
                     })
-                    .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
                     .show();
         }
         else if (id == R.id.menu_simplify_path) {
             new AlertDialog.Builder(this)
-                    .setTitle(R.string.path_simplification_menu)
-                    .setMessage(R.string.Are_you_sure)
-                    .setPositiveButton(R.string.Yes, (dialog, which) -> {
+                    .setTitle(org.runnerup.common.R.string.path_simplification_menu)
+                    .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                    .setPositiveButton(org.runnerup.common.R.string.Yes, (dialog, which) -> {
                         dialog.dismiss();
                         PathSimplifier simplifier = new PathSimplifier(this);
                         ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
@@ -309,7 +309,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                         fillHeaderData();
                         finish();
                     })
-                    .setNegativeButton(R.string.No, (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
                     .show();
         }
         else if (id == R.id.menu_share_activity) {
@@ -646,7 +646,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (position == reports.size()) {
                 Button b = new Button(DetailActivity.this);
-                b.setText(R.string.Configure_accounts);
+                b.setText(org.runnerup.common.R.string.Configure_accounts);
                 b.setBackgroundResource(R.drawable.btn_blue);
                 b.setTextColor(AppCompatResources.getColorStateList(DetailActivity.this, R.color.btn_text_color));
                 b.setOnClickListener(v -> {
@@ -690,7 +690,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     //Indicate Clickable label
                     viewHolder.tv1.setTextColor(Color.BLUE);
                 }
-                viewHolder.cb.setText(R.string.Uploaded);
+                viewHolder.cb.setText(org.runnerup.common.R.string.Uploaded);
                 viewHolder.cb.setOnLongClickListener(clearUploadClick);
             } else {
                 if (pendingSynchronizers.contains(name)) {
@@ -698,7 +698,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 } else {
                     viewHolder.cb.setChecked(false);
                 }
-                viewHolder.cb.setText(R.string.Upload);
+                viewHolder.cb.setText(org.runnerup.common.R.string.Upload);
                 viewHolder.cb.setOnLongClickListener(null);
             }
             if (mode == MODE_DETAILS) {
@@ -741,14 +741,14 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         final String name = (String) arg0.getTag();
         new AlertDialog.Builder(DetailActivity.this)
                 .setTitle("Clear upload for " + name)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             syncManager.clearUpload(name, mID);
                             requery();
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss())
                 .show();
@@ -786,15 +786,15 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener discardButtonClick = v -> {
         new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(R.string.Discard)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setTitle(org.runnerup.common.R.string.Discard)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_CANCELED);
                             DetailActivity.this.finish();
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss()
                 )
@@ -853,16 +853,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     private final OnClickListener deleteButtonClick = v -> {
         new AlertDialog.Builder(DetailActivity.this)
-                .setTitle(R.string.Delete_activity)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setTitle(org.runnerup.common.R.string.Delete_activity)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             DBHelper.deleteActivity(mDB, mID);
                             dialog.dismiss();
                             DetailActivity.this.setResult(RESULT_OK);
                             DetailActivity.this.finish();
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss()
                 )
@@ -886,8 +886,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 "gpx", "tcx"
         };
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Share_activity))
-                .setPositiveButton(R.string.OK,
+                .setTitle(getString(org.runnerup.common.R.string.Share_activity))
+                .setPositiveButton(org.runnerup.common.R.string.OK,
                         (dialog, w) -> {
                             if (which[0] == -1) {
                                 dialog.dismiss();
@@ -911,9 +911,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                                     + "/" + mID
                                     + "/" + FileNameHelper.getExportFileName(mStartTime, actType) + fmt);
                             intent.putExtra(Intent.EXTRA_STREAM, uri);
-                            context.startActivity(Intent.createChooser(intent, getString(R.string.Share_activity)));
+                            context.startActivity(Intent.createChooser(intent, getString(org.runnerup.common.R.string.Share_activity)));
                         })
-                .setNegativeButton(R.string.Cancel,
+                .setNegativeButton(org.runnerup.common.R.string.Cancel,
                         (dialog, which1) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();

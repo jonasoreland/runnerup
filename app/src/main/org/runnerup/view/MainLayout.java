@@ -131,15 +131,15 @@ public class MainLayout extends TabActivity {
         TabHost tabHost = getTabHost(); // The activity TabHost
 
         tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator(getTabView(getString(R.string.Start), R.drawable.ic_tab_main_24dp))
+                .setIndicator(getTabView(getString(org.runnerup.common.R.string.Start), R.drawable.ic_tab_main_24dp))
                 .setContent(new Intent(this, StartActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator(getTabView(getString(R.string.History), R.drawable.ic_tab_history_24dp))
+                .setIndicator(getTabView(getString(org.runnerup.common.R.string.History), R.drawable.ic_tab_history_24dp))
                 .setContent(new Intent(this, HistoryActivity.class)));
 
         tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator(getTabView(getString(R.string.Settings), R.drawable.ic_tab_settings_24dp))
+                .setIndicator(getTabView(getString(org.runnerup.common.R.string.Settings), R.drawable.ic_tab_settings_24dp))
                 .setContent(new Intent(this, SettingsActivity.class)));
 
         tabHost.setCurrentTab(0);
@@ -275,11 +275,11 @@ public class MainLayout extends TabActivity {
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
         WebView wv = view.findViewById(R.id.web_view1);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(R.string.Whats_new)
+                .setTitle(org.runnerup.common.R.string.Whats_new)
                 .setView(view)
-                .setNegativeButton(R.string.OK, (dialog, which) -> dialog.dismiss());
+                .setNegativeButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss());
         if (GoogleApiHelper.isGooglePlayServicesAvailable(this)) {
-            builder.setPositiveButton(R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
+            builder.setPositiveButton(org.runnerup.common.R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
         }
         builder.show();
         wv.loadUrl("file:///android_asset/changes.html");

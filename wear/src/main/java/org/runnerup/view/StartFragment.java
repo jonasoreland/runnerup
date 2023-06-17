@@ -57,12 +57,12 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
             case INIT:
             case INITIALIZING:
             case INITIALIZED:
-                mTxt.setText(R.string.Start_GPS);
+                mTxt.setText(org.runnerup.common.R.string.Start_GPS);
                 break;
             case CONNECTING:
                 break;
             case CONNECTED:
-                mTxt.setText(R.string.Start_activity);
+                mTxt.setText(org.runnerup.common.R.string.Start_activity);
                 break;
             case STARTED:
                 break;

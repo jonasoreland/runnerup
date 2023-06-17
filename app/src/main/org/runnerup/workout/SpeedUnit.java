@@ -1,12 +1,11 @@
 package org.runnerup.workout;
 
-import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 
 public enum SpeedUnit {
 
-    SPEED(Constants.SPEED_UNIT.SPEED, R.string.speed),
-    PACE(Constants.SPEED_UNIT.PACE, R.string.pace);
+    SPEED(Constants.SPEED_UNIT.SPEED, org.runnerup.common.R.string.speed),
+    PACE(Constants.SPEED_UNIT.PACE, org.runnerup.common.R.string.pace);
 
     final String value;
     final int textId;
