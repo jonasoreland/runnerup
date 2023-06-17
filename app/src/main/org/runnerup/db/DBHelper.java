@@ -31,7 +31,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DropboxSynchronizer;
@@ -638,10 +637,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             int cnt = FileUtil.copyFile(to, from);
             builder.setMessage("Copied " + cnt + " bytes from " + from +
                 "\n\nRestart to use the database")
-                    .setPositiveButton(R.string.OK, listener);
+                    .setPositiveButton(org.runnerup.common.R.string.OK, listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString() + " for " + from)
-                    .setNegativeButton(R.string.Cancel, listener);
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
         }
         builder.show();
     }
@@ -659,10 +658,10 @@ public class DBHelper extends SQLiteOpenHelper implements
             int cnt = FileUtil.copyFile(to, from);
             builder.setMessage("Exported " + cnt + " bytes to " + to +
                     "\n\nNote that the file will be deleted at uninstall")
-                    .setPositiveButton(R.string.OK, listener);
+                    .setPositiveButton(org.runnerup.common.R.string.OK, listener);
         } catch (IOException e) {
             builder.setMessage("Exception: " + e.toString() + " for " + to)
-                    .setNegativeButton(R.string.Cancel, listener);
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
         }
         builder.show();
     }

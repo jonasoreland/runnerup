@@ -105,8 +105,8 @@ public class SettingsActivity extends PreferenceActivity {
 
         String path = DBHelper.getDefaultBackupPath(SettingsActivity.this);
         getPreferenceManager()
-                .findPreference(res.getString(R.string.Maintenance_explanation_summary))
-                .setSummary(String.format(Locale.getDefault(), getResources().getString(R.string.Maintenance_explanation_summary), path));
+                .findPreference(res.getString(org.runnerup.common.R.string.Maintenance_explanation_summary))
+                .setSummary(String.format(Locale.getDefault(), getResources().getString(org.runnerup.common.R.string.Maintenance_explanation_summary), path));
     }
 
     public static boolean hasHR(Context ctx) {
@@ -131,7 +131,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     private final OnPreferenceClickListener onPruneClick = preference -> {
         final ProgressDialog dialog = new ProgressDialog(SettingsActivity.this);
-        dialog.setTitle(R.string.Pruning_deleted_activities_from_database);
+        dialog.setTitle(org.runnerup.common.R.string.Pruning_deleted_activities_from_database);
         dialog.show();
         DBHelper.purgeDeletedActivities(SettingsActivity.this, dialog, dialog::dismiss);
         return false;

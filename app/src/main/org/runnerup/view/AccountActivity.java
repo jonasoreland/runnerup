@@ -193,7 +193,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 mRunnerUpLiveApiAddress = new EditText(this.getApplicationContext());
                 mRunnerUpLiveApiAddress.setSingleLine();
                 mRunnerUpLiveApiAddress.setText(postUrl, TextView.BufferType.EDITABLE);
-                addRow(getResources().getString(R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
+                addRow(getResources().getString(org.runnerup.common.R.string.RunnerUp_live_address) + ":", mRunnerUpLiveApiAddress);
             }
 
             if (synchronizer.checkSupport(Synchronizer.Feature.UPLOAD)) {
@@ -203,7 +203,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setOnCheckedChangeListener(sendCBChecked);
                 cb.setMinimumHeight(48);
                 cb.setMinimumWidth(48);
-                addRow(getResources().getString(R.string.Automatic_upload), cb);
+                addRow(getResources().getString(org.runnerup.common.R.string.Automatic_upload), cb);
             } else {
                 Button btn = findViewById(R.id.account_upload_button);
                 btn.setVisibility(View.GONE);
@@ -211,7 +211,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
 
             if (synchronizer.checkSupport(Synchronizer.Feature.FILE_FORMAT)) {
                 // Add file format checkboxes
-                addRow(getResources().getString(R.string.File_format), null);
+                addRow(getResources().getString(org.runnerup.common.R.string.File_format), null);
                 for (FileFormats.Format f: FileFormats.ALL_FORMATS) {
                     CheckBox cb = new CheckBox(this);
                     cb.setChecked(format.contains(f));
@@ -228,7 +228,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                 cb.setTag(DB.ACCOUNT.FLAG_LIVE);
                 cb.setChecked(Bitfield.test(flags, DB.ACCOUNT.FLAG_LIVE));
                 cb.setOnCheckedChangeListener(sendCBChecked);
-                addRow(getResources().getString(R.string.Live), cb);
+                addRow(getResources().getString(org.runnerup.common.R.string.Live), cb);
             }
         }
         mCursors.add(c);
@@ -277,11 +277,11 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         public void onClick(View v) {
             new AlertDialog.Builder(
                     AccountActivity.this)
-                    .setTitle(R.string.Clear_uploads)
-                    .setMessage(R.string.Clear_uploads_from_phone)
-                    .setPositiveButton(R.string.OK,
+                    .setTitle(org.runnerup.common.R.string.Clear_uploads)
+                    .setMessage(org.runnerup.common.R.string.Clear_uploads_from_phone)
+                    .setPositiveButton(org.runnerup.common.R.string.OK,
                             (dialog, which) -> syncManager.clearUploadsByName(callback, mSynchronizerName))
-                    .setNegativeButton(R.string.Cancel,
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel,
                             // Do nothing but close the dialog
                             (dialog, which) -> dialog.dismiss()
                     )
@@ -332,7 +332,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
                         format.add((FileFormats.Format) flag);
                         buttonView.setChecked(true);
                         Toast.makeText(getApplicationContext(),
-                                getResources().getString(R.string.File_need_one_format),
+                                getResources().getString(org.runnerup.common.R.string.File_need_one_format),
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -368,18 +368,18 @@ public class AccountActivity extends AppCompatActivity implements Constants {
     private final OnClickListener disconnectButtonClick = new OnClickListener() {
         public void onClick(View v) {
             final CharSequence[] items = {
-                getString(R.string.Clear_uploads_from_phone)
+                getString(org.runnerup.common.R.string.Clear_uploads_from_phone)
             };
             final boolean[] selected = {
                 true
             };
             new AlertDialog.Builder(
                     AccountActivity.this)
-                    .setTitle(R.string.Disconnect_account)
-                    .setPositiveButton(R.string.OK,
+                    .setTitle(org.runnerup.common.R.string.Disconnect_account)
+                    .setPositiveButton(org.runnerup.common.R.string.OK,
                             (dialog, which) -> syncManager.disableSynchronizer(disconnectCallback, mSynchronizerName,
                                     selected[0]))
-                    .setNegativeButton(R.string.Cancel,
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel,
                             // Do nothing but close the dialog
                             (dialog, which) ->  dialog.dismiss())
                     .setMultiChoiceItems(items, selected,

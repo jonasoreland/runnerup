@@ -164,7 +164,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                     Arrays.fill(mTapArray, 0);
                 } else {
                     if (mTapIndex == 0) {
-                        Toast.makeText(getApplicationContext(), res.getString(R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), res.getString(org.runnerup.common.R.string.Lock_activity_buttons_message), Toast.LENGTH_SHORT).show();
                     }
                     mTapArray[mTapIndex] = time;
                     mTapIndex = (mTapIndex + 1) % mTapArray.length;
@@ -225,7 +225,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
         populateWorkoutList();
         newLapButton.setOnClickListener(newLapButtonClick);
-        newLapButton.setText(R.string.Lap);
+        newLapButton.setText(org.runnerup.common.R.string.Lap);
         mTracker.displayNotificationState();
     }
 
@@ -353,13 +353,13 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     private void setPauseButtonEnabled(boolean enabled) {
         if (enabled) {
-            pauseButton.setText(R.string.Pause);
+            pauseButton.setText(org.runnerup.common.R.string.Pause);
             ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
-            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_pause, 0);
+            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
         } else {
-            pauseButton.setText(R.string.Resume);
+            pauseButton.setText(org.runnerup.common.R.string.Resume);
             ViewCompat.setBackground(pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
-            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_av_play_arrow, 0);
+            pauseButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
         }
     }
 
@@ -567,7 +567,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             }
             if (step.getIntensity() == Intensity.REPEAT){
                 if (step.getCurrentRepeat() >= step.getRepeatCount()) {
-                    durationValue.setText(R.string.Finished);
+                    durationValue.setText(org.runnerup.common.R.string.Finished);
                 } else {
                     durationValue.setText(String.format(Locale.getDefault(), "%d/%d",
                             (step.getCurrentRepeat() + 1), step.getRepeatCount()));

@@ -6,8 +6,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 
-import org.runnerup.R;
-
 
 public class NotificationStateManager {
     private static final int NOTIFICATION_ID = 1;
@@ -25,8 +23,8 @@ public class NotificationStateManager {
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 String id = "runnerup_ongoing";
-                CharSequence name = context.getString(R.string.app_name);
-                String description = context.getString(R.string.channel_notification_ongoing);
+                CharSequence name = context.getString(org.runnerup.common.R.string.app_name);
+                String description = context.getString(org.runnerup.common.R.string.channel_notification_ongoing);
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 mChannel = new NotificationChannel(id, name, importance);
                 mChannel.setDescription(description);

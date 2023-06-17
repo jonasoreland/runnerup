@@ -34,12 +34,12 @@ public class GpsBoundState implements NotificationState {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, chanId)
                 .setContentIntent(pi)
-                .setContentTitle(context.getString(R.string.Activity_ready))
-                .setContentText(context.getString(R.string.Ready_to_start_running))
+                .setContentTitle(context.getString(org.runnerup.common.R.string.Activity_ready))
+                .setContentText(context.getString(org.runnerup.common.R.string.Ready_to_start_running))
                 .setSmallIcon(R.drawable.ic_stat_notify)
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true)
-                .addAction(R.drawable.ic_av_play_arrow, context.getString(R.string.Start),
+                .addAction(org.runnerup.common.R.drawable.ic_av_play_arrow, context.getString(org.runnerup.common.R.string.Start),
                         pendingStart);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

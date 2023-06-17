@@ -58,7 +58,6 @@ import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.Synchronizer.AuthMethod;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.tracker.WorkoutObserver;
-import org.runnerup.util.Bitfield;
 import org.runnerup.util.Encryption;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.WorkoutSerializer;
@@ -73,7 +72,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class SyncManager {
@@ -94,8 +92,8 @@ public class SyncManager {
     private ProgressDialog mSpinner = null;
 
     public enum SyncMode {
-        DOWNLOAD(R.string.Downloading_from_1s),
-        UPLOAD(R.string.Uploading_to_1s);
+        DOWNLOAD(org.runnerup.common.R.string.Downloading_from_1s),
+        UPLOAD(org.runnerup.common.R.string.Uploading_to_1s);
 
         final int textId;
 
@@ -376,7 +374,7 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
                     try {
                         //noinspection ConstantConditions
                         authConfig.put("username", tv1.getText());
@@ -390,7 +388,7 @@ public class SyncManager {
                     testUserPass(sync, authConfig);
                 })
                 .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
-                .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
                         handleAuthComplete(sync, Status.CANCEL);
@@ -461,7 +459,7 @@ public class SyncManager {
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 .setView(view)
-                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
                     //Set default values
                     ContentValues tmp = new ContentValues();
                     String uri = tv1.getText().toString().trim();
@@ -481,7 +479,7 @@ public class SyncManager {
 
                     handleAuthComplete(sync, sync.connect());
                 })
-                .setNegativeButton(R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
                 .setOnKeyListener((dialogInterface, i, keyEvent) -> {
                     if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_UP) {
                         handleAuthComplete(sync, Status.CANCEL);
@@ -635,7 +633,7 @@ public class SyncManager {
 
     private void syncOK(Synchronizer synchronizer, ProgressDialog copySpinner, SQLiteDatabase copyDB,
                         Synchronizer.Status status) {
-        copySpinner.setMessage(getResources().getString(R.string.Saving));
+        copySpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Saving));
         status.activityId = mID; //Not always set
 
         ContentValues tmp = new ContentValues();
@@ -724,8 +722,8 @@ public class SyncManager {
 
     @SuppressLint("StaticFieldLeak")
     public void loadActivityList(final List<SyncActivityItem> items, final String synchronizerName, final Callback callback) {
-        mSpinner.setTitle(getResources().getString(R.string.Loading_activities));
-        mSpinner.setMessage(getResources().getString(R.string.Fetching_activities_from_1s, synchronizerName));
+        mSpinner.setTitle(getResources().getString(org.runnerup.common.R.string.Loading_activities));
+        mSpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Fetching_activities_from_1s, synchronizerName));
         mSpinner.show();
 
         new AsyncTask<Synchronizer, String, Status>() {
@@ -1012,7 +1010,7 @@ public class SyncManager {
                             cancel.append('t');
                         }
                         if (mSpinner != null)
-                            mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
+                            mSpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Cancellingplease_wait));
                     });
         }
         syncNextActivity(synchronizer, mode);
@@ -1026,7 +1024,7 @@ public class SyncManager {
                     synchronized (cancel) {
                         cancel.append('t');
                     }
-                    mSpinner.setMessage(getResources().getString(R.string.Cancellingplease_wait));
+                    mSpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Cancellingplease_wait));
                 });
         mSpinner.setCancelable(false);
         mSpinner.setCanceledOnTouchOutside(false);

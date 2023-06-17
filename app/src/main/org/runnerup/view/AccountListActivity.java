@@ -85,15 +85,15 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
 
         // button footer
         Button showDisabledBtn = new Button(this);
-        showDisabledBtn.setTextAppearance(this, R.style.TextAppearance_AppCompat_Button);
-        showDisabledBtn.setText(R.string.Show_disabled_accounts);
+        showDisabledBtn.setTextAppearance(this, androidx.appcompat.R.style.TextAppearance_AppCompat_Button);
+        showDisabledBtn.setText(org.runnerup.common.R.string.Show_disabled_accounts);
         showDisabledBtn.setBackgroundResource(0);
         showDisabledBtn.setOnClickListener(view -> {
             mShowDisabled = !mShowDisabled;
             if (mShowDisabled) {
-                ((Button) view).setText(R.string.Hide_disabled_accounts);
+                ((Button) view).setText(org.runnerup.common.R.string.Hide_disabled_accounts);
             } else {
-                ((Button) view).setText(R.string.Show_disabled_accounts);
+                ((Button) view).setText(org.runnerup.common.R.string.Show_disabled_accounts);
             }
             getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
         });
@@ -201,8 +201,8 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
                 sectionTitle.setVisibility(View.GONE);
             } else {
                 int str = configured ?
-                        R.string.accounts_category_connected :
-                        R.string.accounts_category_unconnected;
+                        org.runnerup.common.R.string.accounts_category_connected :
+                        org.runnerup.common.R.string.accounts_category_unconnected;
                 sectionTitle.setText(str);
                 sectionTitle.setVisibility(View.VISIBLE);
             }
@@ -266,7 +266,7 @@ public class AccountListActivity extends AppCompatActivity implements Constants,
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             //Check network connection #1082
             if (!isNetworkAvailable(AccountListActivity.this)){
-                Toast.makeText(AccountListActivity.this, R.string.check_internet_connection, Toast.LENGTH_LONG).show();
+                Toast.makeText(AccountListActivity.this, org.runnerup.common.R.string.check_internet_connection, Toast.LENGTH_LONG).show();
                 return;
             }
             final Synchronizer synchronizer = ((Synchronizer)view.getTag());

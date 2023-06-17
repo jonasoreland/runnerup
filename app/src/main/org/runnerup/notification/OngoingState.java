@@ -49,7 +49,7 @@ public class OngoingState implements NotificationState {
                 context, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
 
         builder = new NotificationCompat.Builder(context, chanId)
-                .setTicker(context.getString(R.string.RunnerUp_activity_started))
+                .setTicker(context.getString(org.runnerup.common.R.string.RunnerUp_activity_started))
                 .setContentIntent(pi)
                 .setContentTitle(Sport.textOf(context.getResources(), workoutInfo.getSport()))
                 .setSmallIcon(R.drawable.ic_stat_notify)
@@ -57,8 +57,8 @@ public class OngoingState implements NotificationState {
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .addAction(R.drawable.ic_av_newlap, context.getString(R.string.Lap), pendingLap)
-                .addAction(R.drawable.ic_av_pause, context.getString(R.string.Pause), pendingPause);
+                .addAction(org.runnerup.common.R.drawable.ic_av_newlap, context.getString(org.runnerup.common.R.string.Lap), pendingLap)
+                .addAction(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), pendingPause);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setCategory(NotificationCompat.CATEGORY_SERVICE);
@@ -75,17 +75,17 @@ public class OngoingState implements NotificationState {
                 workoutInfo.getSpeed(Scope.ACTIVITY));
 
         String content = String.format("%s: %s %s: %s %s: %s",
-                context.getString(R.string.distance), distance,
-                context.getString(R.string.time), time,
-                context.getString(R.string.pace), pace);
+                context.getString(org.runnerup.common.R.string.distance), distance,
+                context.getString(org.runnerup.common.R.string.time), time,
+                context.getString(org.runnerup.common.R.string.pace), pace);
         builder.setContentText(content);
 
         Notification n = builder.build();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (workoutInfo.isPaused()) {
-                n.actions[1] = new Notification.Action(R.drawable.ic_av_play_arrow, context.getString(R.string.Resume), n.actions[1].actionIntent);
+                n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_play_arrow, context.getString(org.runnerup.common.R.string.Resume), n.actions[1].actionIntent);
             } else {
-                n.actions[1] = new Notification.Action(R.drawable.ic_av_pause, context.getString(R.string.Pause), n.actions[1].actionIntent);
+                n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), n.actions[1].actionIntent);
             }
         }
         return n;

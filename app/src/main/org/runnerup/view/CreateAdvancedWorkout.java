@@ -195,13 +195,13 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                         .setMultiChoiceItems(new String[]{"Don't ask again"}, new boolean[]{dontAskAgain},
                                 (dialog, indexSelected, isChecked) -> dontAskAgain = isChecked)
 
-                        .setTitle(R.string.Are_you_sure)
-                        .setPositiveButton(R.string.Yes,
+                        .setTitle(org.runnerup.common.R.string.Are_you_sure)
+                        .setPositiveButton(org.runnerup.common.R.string.Yes,
                                 (dialog, which) -> {
                                     dialog.dismiss();
                                     deleteStep(stepButton);
                                 })
-                        .setNegativeButton(R.string.No,
+                        .setNegativeButton(org.runnerup.common.R.string.No,
                                 (dialog, which) -> dialog.dismiss())
                         .show();
             } else {
@@ -239,9 +239,9 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                 WorkoutSerializer.writeFile(ctx, advWorkoutName, advancedWorkout);
             } catch (Exception ex) {
                 new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                        .setTitle(R.string.Failed_to_load_workout)
+                        .setTitle(org.runnerup.common.R.string.Failed_to_load_workout)
                         .setMessage("" + ex.toString())
-                        .setPositiveButton(R.string.OK,
+                        .setPositiveButton(org.runnerup.common.R.string.OK,
                                 (dialog, which) -> dialog.dismiss())
                         .show();
             }
@@ -272,18 +272,18 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
     private void handleWorkoutFileException(Exception e) {
         new AlertDialog.Builder(CreateAdvancedWorkout.this)
-        .setTitle(getString(R.string.Failed_to_create_workout))
+        .setTitle(getString(org.runnerup.common.R.string.Failed_to_create_workout))
                 .setMessage("" + e.toString())
-                .setPositiveButton(R.string.OK,
+                .setPositiveButton(org.runnerup.common.R.string.OK,
                         (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
     private final View.OnClickListener discardWorkoutButtonClick = view -> {
         new AlertDialog.Builder(CreateAdvancedWorkout.this)
-                .setTitle(R.string.Delete_workout)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setTitle(org.runnerup.common.R.string.Delete_workout)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             String name = advancedWorkoutSpinner.getValue().toString();
@@ -292,7 +292,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
                             f.delete();
                             finish();
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         (dialog, which) -> dialog.dismiss())
                 .show();
     };

@@ -185,7 +185,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 // return resources.getString(km ? R.plurals.cue_kilometer : R.plurals.cue_mile);
             case TXT:
             case TXT_SHORT:
-                return resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi);
+                return resources.getString(metric ? org.runnerup.common.R.string.metrics_distance_km : org.runnerup.common.R.string.metrics_distance_mi);
         }
         return null;
     }
@@ -373,20 +373,20 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
         StringBuilder s = new StringBuilder();
         if (hours > 0) {
-            s.append(hours).append(" ").append(resources.getString(R.string.metrics_elapsed_h));
+            s.append(hours).append(" ").append(resources.getString(org.runnerup.common.R.string.metrics_elapsed_h));
         }
         if (minutes > 0) {
             if (hours > 0)
                 s.append(" ");
             if (hours > 0 || seconds > 0)
-                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_elapsed_m));
+                s.append(minutes).append(" ").append(resources.getString(org.runnerup.common.R.string.metrics_elapsed_m));
             else
-                s.append(minutes).append(" ").append(resources.getString(R.string.metrics_elapsed_min));
+                s.append(minutes).append(" ").append(resources.getString(org.runnerup.common.R.string.metrics_elapsed_min));
         }
         if (seconds > 0) {
             if (hours > 0 || minutes > 0)
                 s.append(" ");
-            s.append(seconds).append(" ").append(resources.getString(R.string.metrics_elapsed_s));
+            s.append(seconds).append(" ").append(resources.getString(org.runnerup.common.R.string.metrics_elapsed_s));
         }
         return s.toString();
     }
@@ -453,14 +453,14 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             case CUE_SHORT:
                 String s = Integer.toString((int) Math.floor(hrZone));
                 if (unitCue) {
-                    s = cueResources.getString(R.string.heart_rate_zone) + " " + s;
+                    s = cueResources.getString(org.runnerup.common.R.string.heart_rate_zone) + " " + s;
                 }
                 return s;
             case CUE:
             case CUE_LONG:
                 s = Double.toString(Math.floor(10.0 * hrZone) / 10.0);
                 if (unitCue) {
-                    s = cueResources.getString(R.string.heart_rate_zone) + " " + s;
+                    s = cueResources.getString(org.runnerup.common.R.string.heart_rate_zone) + " " + s;
                 }
                 return s;
         }
@@ -510,9 +510,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
                 .getString(context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
         assert paceTextUnit != null;
         if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
-            return this.context.getString(R.string.Pace);
+            return this.context.getString(org.runnerup.common.R.string.Pace);
         } else {
-            return this.context.getString(R.string.Speed);
+            return this.context.getString(org.runnerup.common.R.string.Speed);
         }
     }
 
@@ -542,13 +542,13 @@ public class Formatter implements OnSharedPreferenceChangeListener {
      * @return pace unit string
      */
     String getVelocityUnit(Context context) {//Resources resources, SharedPreferences sharedPreferences) {
-        int du = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+        int du = metric ? org.runnerup.common.R.string.metrics_distance_km : org.runnerup.common.R.string.metrics_distance_mi;
         switch(getPreferredSpeedUnit(context)){
             case SPEED:
-                return resources.getString(du) + "/" + resources.getString(R.string.metrics_elapsed_h);
+                return resources.getString(du) + "/" + resources.getString(org.runnerup.common.R.string.metrics_elapsed_h);
             case PACE:
             default:
-                return resources.getString(R.string.metrics_elapsed_min) + "/" + resources.getString(du);
+                return resources.getString(org.runnerup.common.R.string.metrics_elapsed_min) + "/" + resources.getString(du);
         }
     }
 
@@ -566,7 +566,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             str = DateUtils.formatElapsedTime(val);
         }
         if (includeUnit) {
-            str = str + " /" + resources.getString((metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+            str = str + " /" + resources.getString((metric ? org.runnerup.common.R.string.metrics_distance_km : org.runnerup.common.R.string.metrics_distance_mi));
         }
         return str;
     }
@@ -641,12 +641,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         if (!includeUnit)
             return str;
         else {
-            int res = metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi;
+            int res = metric ? org.runnerup.common.R.string.metrics_distance_km : org.runnerup.common.R.string.metrics_distance_mi;
             return str +
                     " " +
                     resources.getString(res) +
                     "/" +
-                    resources.getString(R.string.metrics_elapsed_h);
+                    resources.getString(org.runnerup.common.R.string.metrics_elapsed_h);
         }
     }
 
@@ -746,7 +746,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
             double val = getRoundedDistanceInKmOrMiles(meters);
             if (txt) {
                 res = String.format(cueResources.defaultLocale, "%.2f %s", val,
-                        resources.getString(metric ? R.string.metrics_distance_km : R.string.metrics_distance_mi));
+                        resources.getString(metric ? org.runnerup.common.R.string.metrics_distance_km : org.runnerup.common.R.string.metrics_distance_mi));
             } else {
                 // Get a localized presentation string, used with the localized plurals string
                 String val2;
@@ -764,7 +764,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         } else {
             // Present distance in meters if less than 0.99 km or mi (no strings for feet)
             if (txt) {
-                res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(R.string.metrics_distance_m));
+                res = String.format(cueResources.defaultLocale, "%d %s", meters, resources.getString(org.runnerup.common.R.string.metrics_distance_m));
             }
             else {
                 if (unitCue) {

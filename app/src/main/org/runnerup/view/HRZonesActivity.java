@@ -69,7 +69,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         hi.setKeyListener(null);
         hi.setEnabled(false);
         Pair<Integer, Integer> lim = hrZoneCalculator.getZoneLimits(zone);
-        tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(R.string.Zone), zone, lim.first, lim.second));
+        tv.setText(String.format(Locale.getDefault(), "%s %d %d%% - %d%%", getString(org.runnerup.common.R.string.Zone), zone, lim.first, lim.second));
         lo.setTag("zone" + zone + "lo");
         hi.setTag("zone" + zone + "hi");
         int zoneCount = hrZoneCalculator.getZoneCount();
@@ -282,9 +282,9 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
     private void clearHRSettings() {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.Clear_heart_rate_zone_settings)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                .setTitle(org.runnerup.common.R.string.Clear_heart_rate_zone_settings)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
                     ageSpinner.clear();
                     sexSpinner.clear();
                     maxHRSpinner.clear();
@@ -293,7 +293,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     skipSave = true;
                     finish();
                 })
-                .setNegativeButton(R.string.Cancel,
+                .setNegativeButton(org.runnerup.common.R.string.Cancel,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss()
                 )

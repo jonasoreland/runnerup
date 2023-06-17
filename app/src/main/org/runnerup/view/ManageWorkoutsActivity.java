@@ -106,7 +106,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         super.onCreate(savedInstanceState);
         setContentView(R.layout.manage_workouts);
 
-        PHONE_STRING = getResources().getString(R.string.my_phone);
+        PHONE_STRING = getResources().getString(org.runnerup.common.R.string.my_phone);
 
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
@@ -144,9 +144,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 importData(fileName, data);
             } catch (Exception e) {
                 new AlertDialog.Builder(this)
-                        .setTitle(R.string.Error)
-                        .setMessage(getString(R.string.Failed_to_import) + ": " + fileName)
-                        .setPositiveButton(R.string.OK,
+                        .setTitle(org.runnerup.common.R.string.Error)
+                        .setMessage(getString(org.runnerup.common.R.string.Failed_to_import) + ": " + fileName)
+                        .setPositiveButton(org.runnerup.common.R.string.OK,
                                 (dialog, which) -> {
                                     dialog.dismiss();
                                     ManageWorkoutsActivity.this.finish();
@@ -193,7 +193,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             fileName = fileName.substring(0, fileName.length() - ".json".length());
         }
 
-        final String prefix = getString(R.string.RunnerUp_workout) + ": ";
+        final String prefix = getString(org.runnerup.common.R.string.RunnerUp_workout) + ": ";
         if (fileName.startsWith(prefix) && fileName.length() > prefix.length()) {
             fileName = fileName.substring(prefix.length());
         }
@@ -205,8 +205,8 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         final String workoutName = fileName;
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.Import_workout) + ": " + workoutName)
-                .setPositiveButton(R.string.Yes,
+                .setTitle(getString(org.runnerup.common.R.string.Import_workout) + ": " + workoutName)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             String saveName = workoutName;
@@ -219,7 +219,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                                             break;
                                     }
                                     Toast.makeText(ManageWorkoutsActivity.this,
-                                            getString(R.string.Saving_as) + " " + saveName, Toast.LENGTH_SHORT).show();
+                                            getString(org.runnerup.common.R.string.Saving_as) + " " + saveName, Toast.LENGTH_SHORT).show();
                                 }
                                 saveImport(saveName, cr.openInputStream(data));
                             } catch (FileNotFoundException e) {
@@ -229,7 +229,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                             }
                             launchMain(saveName);
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         (dialog, which) -> {
                             // Do nothing but close the dialog
                             dialog.dismiss();
@@ -238,7 +238,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         if (exists) {
             String[] items = {
-                    getString(R.string.Overwrite_existing)
+                    getString(org.runnerup.common.R.string.Overwrite_existing)
             };
             builder.setMultiChoiceItems(items, selected,
                     (arg0, arg1, arg2) -> selected[arg1] = arg2);
@@ -404,17 +404,17 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         final EditText input = new EditText(ManageWorkoutsActivity.this);
 
         new AlertDialog.Builder(ManageWorkoutsActivity.this)
-                .setTitle(R.string.Create_new_workout)
-                .setMessage(R.string.Set_workout_name)
+                .setTitle(org.runnerup.common.R.string.Create_new_workout)
+                .setMessage(org.runnerup.common.R.string.Set_workout_name)
                 .setView(input)
-                .setPositiveButton(R.string.OK, (dialog, whichButton) -> {
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, whichButton) -> {
                     String value = input.getText().toString();
                     intent.putExtra(WORKOUT_NAME, value);
                     intent.putExtra(WORKOUT_EXISTS, false);
                     startActivity(intent);
 
                 })
-                .setNegativeButton(R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
+                .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, whichButton) -> dialog.dismiss())
                 .show();
     };
 
@@ -424,14 +424,14 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
         final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
         new AlertDialog.Builder(ManageWorkoutsActivity.this)
-                .setTitle(getString(R.string.Delete_workout) + " " + selected.workoutName)
-                .setMessage(R.string.Are_you_sure)
-                .setPositiveButton(R.string.Yes,
+                .setTitle(getString(org.runnerup.common.R.string.Delete_workout) + " " + selected.workoutName)
+                .setMessage(org.runnerup.common.R.string.Are_you_sure)
+                .setPositiveButton(org.runnerup.common.R.string.Yes,
                         (dialog, which) -> {
                             dialog.dismiss();
                             deleteWorkout(selected);
                         })
-                .setNegativeButton(R.string.No,
+                .setNegativeButton(org.runnerup.common.R.string.No,
                         // Do nothing but close the dialog
                         (dialog, which) -> dialog.dismiss())
                 .show();
@@ -478,13 +478,13 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         final String name = selected.workoutName;
         final Intent intent = new Intent(Intent.ACTION_SEND);
 
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.RunnerUp_workout) + ": " + name);
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.HinHere_is_a_workout_I_think_you_might_like));
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(org.runnerup.common.R.string.RunnerUp_workout) + ": " + name);
+        intent.putExtra(Intent.EXTRA_TEXT, getString(org.runnerup.common.R.string.HinHere_is_a_workout_I_think_you_might_like));
 
         intent.setType(WorkoutFileProvider.MIME);
         Uri uri = Uri.parse("content://" + WorkoutFileProvider.AUTHORITY + "/" + name + ".json");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
-        context.startActivity(Intent.createChooser(intent, getString(R.string.Share_workout)));
+        context.startActivity(Intent.createChooser(intent, getString(org.runnerup.common.R.string.Share_workout)));
     };
 
     private final OnClickListener editButtonClick = v -> {

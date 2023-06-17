@@ -56,7 +56,6 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -190,7 +189,7 @@ public class StartActivity extends AppCompatActivity
 
         ClassicSpinner sportSpinner = findViewById(R.id.sport_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.sportEntries, R.layout.actionbar_spinner);
+                org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
         adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
         sportSpinner.setAdapter(adapter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -222,17 +221,17 @@ public class StartActivity extends AppCompatActivity
         tabHost = findViewById(R.id.tabhost_start);
         tabHost.setup();
         TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Basic)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Basic)));
         tabSpec.setContent(R.id.start_basic_tab);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Interval)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Interval)));
         tabSpec.setContent(R.id.start_interval_tab);
         tabHost.addTab(tabSpec);
 
         tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
-        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(R.string.Advanced)));
+        tabSpec.setIndicator(WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Advanced)));
         tabSpec.setContent(R.id.start_advanced_tab);
         tabHost.addTab(tabSpec);
 
@@ -418,7 +417,7 @@ public class StartActivity extends AppCompatActivity
             super.onBackPressed(); // finish activity
         } else {
             final Resources res = this.getResources();
-            Toast.makeText(getApplicationContext(), res.getString(R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), res.getString(org.runnerup.common.R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
             exit = true;
             new Handler().postDelayed(() -> exit = false, 3 * 1000);
         }
@@ -558,15 +557,15 @@ public class StartActivity extends AppCompatActivity
         }
 
         final CheckBox dontShowAgain = new CheckBox(this);
-        dontShowAgain.setText(getResources().getText(R.string.Do_not_show_again));
+        dontShowAgain.setText(getResources().getText(org.runnerup.common.R.string.Do_not_show_again));
 
         new AlertDialog.Builder(this)
                 .setView(dontShowAgain)
                 .setCancelable(false)
-                .setTitle(R.string.Warning)
-                .setMessage(getResources().getText(R.string.Low_HRM_battery_level)
-                        + "\n" + getResources().getText(R.string.Battery_level) + ": " + batteryLevel + "%")
-                .setPositiveButton(R.string.OK, (dialog, which) -> {
+                .setTitle(org.runnerup.common.R.string.Warning)
+                .setMessage(getResources().getText(org.runnerup.common.R.string.Low_HRM_battery_level)
+                        + "\n" + getResources().getText(org.runnerup.common.R.string.Battery_level) + ": " + batteryLevel + "%")
+                .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
                     if (dontShowAgain.isChecked()) {
                         prefs.edit().putBoolean(pref_key, true).apply();
                     }
@@ -723,26 +722,26 @@ public class StartActivity extends AppCompatActivity
             if (popup && missingEssentialPermission || requestPerms.size() > 0) {
                 // Essential or requestable permissions missing
                 String baseMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                        ? getString(R.string.GPS_permission_text_Android12)
+                        ? getString(org.runnerup.common.R.string.GPS_permission_text_Android12)
                         : Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                            ? getString(R.string.GPS_permission_text)
-                            : getString(R.string.GPS_permission_text_pre_Android10);
+                            ? getString(org.runnerup.common.R.string.GPS_permission_text)
+                            : getString(org.runnerup.common.R.string.GPS_permission_text_pre_Android10);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(R.string.GPS_permission_required)
-                        .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss());
+                        .setTitle(org.runnerup.common.R.string.GPS_permission_required)
+                        .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
                 if (requestPerms.size() > 0) {
                     // Let Android request the permissions
-                    builder.setPositiveButton(R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION))
-                            .setMessage(baseMessage + "\n" + getString(R.string.Request_permission_text));
+                    builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION))
+                            .setMessage(baseMessage + "\n" + getString(org.runnerup.common.R.string.Request_permission_text));
                 }
                 else if (popup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     // Open settings for the app (no direct shortcut to permissions)
                     Intent intent = new Intent()
                             .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             .setData(Uri.fromParts("package", getPackageName(), null));
-                    builder.setPositiveButton(R.string.OK, (dialog, id) -> startActivity(intent))
-                            .setMessage(baseMessage + "\n\n" + getString(R.string.Request_permission_text));
+                    builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) -> startActivity(intent))
+                            .setMessage(baseMessage + "\n\n" + getString(org.runnerup.common.R.string.Request_permission_text));
                 } else {
                     builder.setMessage(baseMessage);
                 }
@@ -767,20 +766,20 @@ public class StartActivity extends AppCompatActivity
                 intent = new Intent()
                         .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                         .setData(Uri.fromParts("package", getPackageName(), null));
-                msgId = R.string.Battery_optimization_check_text_Android9;
+                msgId = org.runnerup.common.R.string.Battery_optimization_check_text_Android9;
             } else {
                 intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                msgId = R.string.Battery_optimization_check_text;
+                msgId = org.runnerup.common.R.string.Battery_optimization_check_text;
             }
 
             new AlertDialog.Builder(StartActivity.this)
-                    .setTitle(R.string.Battery_optimization_check)
+                    .setTitle(org.runnerup.common.R.string.Battery_optimization_check)
                     .setMessage(msgId)
-                    .setPositiveButton(R.string.OK, (dialog, which) ->
+                    .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) ->
                             this.startActivity(intent))
-                    .setNeutralButton(R.string.Do_not_show_again, (dialog, which) ->
+                    .setNeutralButton(org.runnerup.common.R.string.Do_not_show_again, (dialog, which) ->
                             prefs.edit().putBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), true).apply())
-                    .setNegativeButton(R.string.Cancel, (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
                     .show();
         }
 
@@ -832,11 +831,11 @@ public class StartActivity extends AppCompatActivity
             gpsEnable.setVisibility(View.VISIBLE);
 
             if (statusDetailsShown) {
-                gpsDetailMessage.setText(R.string.GPS_indicator_off);
+                gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
                 gpsDetailRow.setVisibility(View.VISIBLE);
                 gpsMessage.setVisibility(View.GONE);
             } else {
-                gpsMessage.setText(R.string.GPS_indicator_off);
+                gpsMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
                 gpsMessage.setVisibility(View.VISIBLE);
                 gpsDetailRow.setVisibility(View.GONE);
             }
@@ -845,9 +844,9 @@ public class StartActivity extends AppCompatActivity
             gpsDetailIndicator.setVisibility(View.GONE);
 
             if (!mGpsStatus.isLogging()) {
-                gpsEnable.setText(R.string.Start_GPS);
+                gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
             } else {
-                gpsEnable.setText(R.string.Enable_GPS);
+                gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
             }
         } else {
             gpsDetailIndicator.setVisibility(View.VISIBLE);
@@ -861,8 +860,8 @@ public class StartActivity extends AppCompatActivity
             // gps details
             String gpsAccuracy = getGpsAccuracyString(accuracy);
             String gpsDetail = gpsAccuracy.length() == 0 ?
-                    String.format(getString(R.string.GPS_status_no_accuracy), satFixedCount, satAvailCount)
-                    : String.format(getString(R.string.GPS_status_accuracy), satFixedCount, satAvailCount, gpsAccuracy);
+                    String.format(getString(org.runnerup.common.R.string.GPS_status_no_accuracy), satFixedCount, satAvailCount)
+                    : String.format(getString(org.runnerup.common.R.string.GPS_status_accuracy), satFixedCount, satAvailCount, gpsAccuracy);
             gpsDetailMessage.setText(gpsDetail);
 
             if (!mGpsStatus.isFixed()) {
@@ -871,7 +870,7 @@ public class StartActivity extends AppCompatActivity
 
                 gpsIndicator.setImageResource(R.drawable.ic_gps_0);
                 gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-                gpsMessage.setText(R.string.Waiting_for_GPS);
+                gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
 
                 notificationStateManager.displayNotificationState(gpsSearchingState);
             } else {
@@ -886,17 +885,17 @@ public class StartActivity extends AppCompatActivity
                     case POOR:
                         gpsIndicator.setImageResource(R.drawable.ic_gps_1);
                         gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
-                        gpsMessage.setText(R.string.GPS_level_poor);
+                        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_poor);
                         break;
                     case ACCEPTABLE:
                         gpsIndicator.setImageResource(R.drawable.ic_gps_2);
                         gpsDetailIndicator.setImageResource(R.drawable.ic_gps_2);
-                        gpsMessage.setText(R.string.GPS_level_acceptable);
+                        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_acceptable);
                         break;
                     case GOOD:
                         gpsIndicator.setImageResource(R.drawable.ic_gps_3);
                         gpsDetailIndicator.setImageResource(R.drawable.ic_gps_3);
-                        gpsMessage.setText(R.string.GPS_level_good);
+                        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_good);
                         break;
                 }
 
@@ -984,10 +983,10 @@ public class StartActivity extends AppCompatActivity
         if (accuracy > 0) {
             String accString = formatter.formatElevation(Formatter.Format.TXT_LONG, accuracy);
             if (mTracker.getCurrentElevation() != null) {
-                res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_elevation),
+                res = String.format(Locale.getDefault(), getString(org.runnerup.common.R.string.GPS_accuracy_elevation),
                         accString, formatter.formatElevation(Formatter.Format.TXT_LONG, mTracker.getCurrentElevation()));
             } else {
-                res = String.format(Locale.getDefault(), getString(R.string.GPS_accuracy_no_elevation),
+                res = String.format(Locale.getDefault(), getString(org.runnerup.common.R.string.GPS_accuracy_no_elevation),
                         accString);
             }
         }
@@ -1178,9 +1177,9 @@ public class StartActivity extends AppCompatActivity
         } catch (Exception ex) {
             ex.printStackTrace();
             new AlertDialog.Builder(StartActivity.this)
-                    .setTitle(getString(R.string.Failed_to_load_workout))
+                    .setTitle(getString(org.runnerup.common.R.string.Failed_to_load_workout))
                     .setMessage(ex.toString())
-                    .setPositiveButton(R.string.OK,
+                    .setPositiveButton(org.runnerup.common.R.string.OK,
                     (dialog, which) -> dialog.dismiss())
                     .show();
         }
@@ -1239,9 +1238,9 @@ public class StartActivity extends AppCompatActivity
                 WorkoutSerializer.writeFile(ctx, name, advancedWorkout);
             } catch (Exception ex) {
                 new AlertDialog.Builder(StartActivity.this)
-                        .setTitle(R.string.Failed_to_load_workout)
+                        .setTitle(org.runnerup.common.R.string.Failed_to_load_workout)
                         .setMessage(ex.toString())
-                        .setPositiveButton(R.string.OK,
+                        .setPositiveButton(org.runnerup.common.R.string.OK,
                                 (dialog, which) -> dialog.dismiss())
                         .show();
             }

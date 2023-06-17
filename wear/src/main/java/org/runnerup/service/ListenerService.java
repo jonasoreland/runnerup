@@ -89,8 +89,8 @@ public class ListenerService extends WearableListenerService {
                 NotificationManager notificationManager =
                         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 String id = "runnerup_ongoing";
-                CharSequence name = context.getString(R.string.app_name);
-                String description = context.getString(R.string.channel_notification_ongoing);
+                CharSequence name = context.getString(org.runnerup.common.R.string.app_name);
+                String description = context.getString(org.runnerup.common.R.string.channel_notification_ongoing);
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 mChannel = new NotificationChannel(id, name, importance);
                 mChannel.setDescription(description);
@@ -110,8 +110,8 @@ public class ListenerService extends WearableListenerService {
         String chanId = getChannelId(this);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, chanId)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.Start))
+                .setContentTitle(getString(org.runnerup.common.R.string.app_name))
+                .setContentText(getString(org.runnerup.common.R.string.Start))
                 .setContentIntent(pendingViewIntent)
                 .setOngoing(true)
                 .setLocalOnly(true);
