@@ -11,6 +11,7 @@ def getGitHash = { ->
 
 android {
     buildToolsVersion rootProject.ext.buildToolsVersion
+    namespace 'org.runnerup'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -111,6 +112,9 @@ android {
             enableSplit = false
         }
     }
+    buildFeatures {
+        aidl true
+    }
 }
 
 repositories {
@@ -143,7 +147,7 @@ dependencies {
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
 
-    latestImplementation "com.google.android.material:material:1.8.0"
+    latestImplementation "com.google.android.material:material:1.9.0"
     if (rootProject.ext.enableWear) {
         latestWearApp project(':wear')
         //noinspection GradleDependency
