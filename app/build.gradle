@@ -156,7 +156,9 @@ dependencies {
 
     latestImplementation "com.google.android.material:material:1.9.0"
     if (rootProject.ext.enableWear) {
-        latestWearApp project(':wear')
+        // Build Wear separately, do not include in phone apk
+        // latestWearApp project(':wear')
+
         //noinspection GradleDependency
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
     }

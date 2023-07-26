@@ -24,7 +24,7 @@ project.ext {
     annotation_version = "1.6.0"
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
     googlePlayServicesVersion = '11.0.4'
-    googleWearVersion = '2.3.0'
+    googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
     mockitoVersion = '3.11.2'
