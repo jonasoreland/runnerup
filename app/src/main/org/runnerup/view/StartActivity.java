@@ -161,7 +161,6 @@ public class StartActivity extends AppCompatActivity
     private NotificationStateManager notificationStateManager;
     private GpsSearchingState gpsSearchingState;
     private GpsBoundState gpsBoundState;
-    private boolean headsetRegistered = false;
     // Id to identify a permission request.
     // Note that the result is not used, the user is dropped back to initial view when a request is done.
     private static final int REQUEST_LOCATION = 3000;
@@ -446,22 +445,12 @@ public class StartActivity extends AppCompatActivity
         intentFilter.addAction(Constants.Intents.START_ACTIVITY);
         intentFilter.addAction(Constants.Intents.START_WORKOUT);
         registerReceiver(startEventBroadcastReceiver, intentFilter);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP &&
-                StartActivityHeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(this)) {
-            headsetRegistered = true;
-            StartActivityHeadsetButtonReceiver.registerHeadsetListener(this);
-        }
     }
 
     private void unregisterStartEventListener() {
         try {
             unregisterReceiver(startEventBroadcastReceiver);
         } catch (Exception ignored) {
-        }
-        if (headsetRegistered) {
-            headsetRegistered = false;
-            StartActivityHeadsetButtonReceiver.unregisterHeadsetListener(this);
         }
     }
 
@@ -735,15 +724,13 @@ public class StartActivity extends AppCompatActivity
                     builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) -> ActivityCompat.requestPermissions(this.getParent(), permissions, REQUEST_LOCATION))
                             .setMessage(baseMessage + "\n" + getString(org.runnerup.common.R.string.Request_permission_text));
                 }
-                else if (popup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                else {
                     // Open settings for the app (no direct shortcut to permissions)
                     Intent intent = new Intent()
                             .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             .setData(Uri.fromParts("package", getPackageName(), null));
                     builder.setPositiveButton(org.runnerup.common.R.string.OK, (dialog, id) -> startActivity(intent))
                             .setMessage(baseMessage + "\n\n" + getString(org.runnerup.common.R.string.Request_permission_text));
-                } else {
-                    builder.setMessage(baseMessage);
                 }
                 builder.show();
             }

@@ -276,18 +276,6 @@
                 android:summary="@string/Lock_activity_buttons_message"
                 android:title="@string/Lock_activity_buttons" />
         </PreferenceCategory>
-
-        <PreferenceCategory
-            android:key="@string/Headset_category"
-            android:title="@string/Headset_category">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="@string/pref_keystartstop_active"
-                android:persistent="true"
-                android:summary="@string/Use_your_headset_to_startpauseresume_RunnerUp"
-                android:title="@string/Headset_key_startstop" />
-        </PreferenceCategory>
     </PreferenceScreen>
 
     <!--Workout -->

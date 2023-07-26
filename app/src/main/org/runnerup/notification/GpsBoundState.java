@@ -40,11 +40,9 @@ public class GpsBoundState implements NotificationState {
                 .setOnlyAlertOnce(true)
                 .setLocalOnly(true)
                 .addAction(org.runnerup.common.R.drawable.ic_av_play_arrow, context.getString(org.runnerup.common.R.string.Start),
-                        pendingStart);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setCategory(NotificationCompat.CATEGORY_SERVICE);
-        }
+                        pendingStart)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE);
 
         notification = builder.build();
     }

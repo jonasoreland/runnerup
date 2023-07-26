@@ -70,12 +70,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
         // It can take seconds between sensor updates
         // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
         final long nanoSec = 1000000000L;
-        long now;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            now = SystemClock.elapsedRealtimeNanos();
-        } else {
-            now = SystemClock.elapsedRealtime() * nanoSec / 1000;
-        }
+        long now = SystemClock.elapsedRealtimeNanos();
         long timeDiff = now - mPrevTime;
         Float res = mCurrentCadence;
         if (timeDiff > cutOffTime * nanoSec) {
@@ -132,10 +127,6 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
     }
 
     private Sensor getSensor(final Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return null;
-        }
-
         if (mSensorManager == null && context != null) {
             mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         }

@@ -30,12 +30,7 @@ public class AutoPauseTrigger extends Trigger {
     private static final long NANO_IN_MILLI = 1000000;
 
     public AutoPauseTrigger(float autoPauseAfterSeconds, float autoPauseMinSpeed) {
-        //Scaling differs depending on version
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mAutoPauseAfter = autoPauseAfterSeconds * 1000 * NANO_IN_MILLI;
-        } else {
-            mAutoPauseAfter = autoPauseAfterSeconds * 1000;
-        }
+        mAutoPauseAfter = autoPauseAfterSeconds * 1000 * NANO_IN_MILLI;
         mAutoPauseMinSpeed = autoPauseMinSpeed;
     }
 
@@ -56,12 +51,7 @@ public class AutoPauseTrigger extends Trigger {
         if (!mIsAutoPaused) {
             Location lastLocation = workout.getLastKnownLocation();
             if (currentSpeed < mAutoPauseMinSpeed && lastLocation != null) {
-                long lastTime;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    lastTime = lastLocation.getElapsedRealtimeNanos();
-                } else {
-                    lastTime = lastLocation.getTime();
-                }
+                long lastTime = lastLocation.getElapsedRealtimeNanos();
                 if (mStoppedMovingAt == 0) {
                     mStoppedMovingAt = lastTime;
                 } else if ((lastTime - mStoppedMovingAt) >= mAutoPauseAfter) {

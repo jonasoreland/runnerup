@@ -273,13 +273,8 @@ public class MapWrapper implements Constants {
                                 public void onGlobalLayout() {
                                     if (route.map.getCameraPosition().target.getLatitude() != 0 ||
                                             route.map.getCameraPosition().target.getLongitude() != 0) {
-                                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                            mapView.getViewTreeObserver()
-                                                    .removeGlobalOnLayoutListener(this);
-                                        } else {
-                                            mapView.getViewTreeObserver()
-                                                    .removeOnGlobalLayoutListener(this);
-                                        }
+                                        mapView.getViewTreeObserver()
+                                               .removeOnGlobalLayoutListener(this);
                                     } else {
                                         route.map.moveCamera(initialCameraPosition);
                                     }

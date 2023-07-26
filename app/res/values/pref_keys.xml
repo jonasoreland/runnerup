@@ -115,7 +115,6 @@
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
 
-    <string name="pref_keystartstop_active">pref_keystartstop_active</string>
     <string name="pref_lock_run">pref_lock_run</string>
     <string name="pref_suppress_battery_optimization_popup">pref_suppress_battery_optimization_popup</string>
 
