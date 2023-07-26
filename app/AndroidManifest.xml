@@ -246,28 +246,6 @@
             android:name=".export.RunnerUpLiveSynchronizer$LiveService"
             android:foregroundServiceType="location" />
 
-        <receiver
-            android:name=".tracker.component.HeadsetButtonReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action
-                    android:name="android.intent.action.MEDIA_BUTTON"
-                    android:priority="2147483647"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".view.StartActivityHeadsetButtonReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action
-                    android:name="android.intent.action.MEDIA_BUTTON"
-                    android:priority="2147483647"/>
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".view.CreateAdvancedWorkout"/>
 
     </application>

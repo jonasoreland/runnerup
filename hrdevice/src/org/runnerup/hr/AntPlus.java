@@ -283,12 +283,7 @@ public class AntPlus extends BtHRBase {
 
             hrValue = arg2;
             hrTimestamp = System.currentTimeMillis();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            } else {
-                final int NANO_IN_MILLI = 1000000;
-                hrElapsedRealtime = SystemClock.elapsedRealtime() * NANO_IN_MILLI;
-            }
+            hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
 
             if (mIsConnecting) {
                 reportConnected(true);

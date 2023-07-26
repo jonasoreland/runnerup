@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'org.runnerup'
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     compileOptions {
@@ -11,8 +11,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.targetSdk
         // Default, needed by test
         buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '"')
     }

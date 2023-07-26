@@ -435,12 +435,10 @@ public class SyncManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // All paths are related to Environment.DIRECTORY_DOCUMENTS
             path = "";
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else {
                 //noinspection InlinedApi
                 path = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOCUMENTS).getPath() + File.separator;
-        } else {
-            path = Environment.getExternalStorageDirectory().getPath() + File.separator;
         }
         path += "RunnerUp";
         tv1.setText(path);

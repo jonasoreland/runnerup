@@ -112,12 +112,7 @@ public class MockHRProvider implements HRProvider {
         public void run() {
             hrValue = (int) (120 + SystemClock.elapsedRealtime() / 1000.0 % 40 + 3 * Math.random());
             hrTimestamp = System.currentTimeMillis();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            } else {
-                final int NANO_IN_MILLI = 1000000;
-                hrElapsedRealtime = SystemClock.elapsedRealtime() * NANO_IN_MILLI;
-            }
+            hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
             if (mIsConnected) {
                 hrClientHandler.postDelayed(hrUpdate, 750);
             }

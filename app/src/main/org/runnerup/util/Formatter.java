@@ -111,12 +111,8 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
 
         void setLang(Locale locale) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                // enableSplit = false set in build.gradle
-                configuration.setLocale(locale);
-            } else {
-                configuration.locale = locale;
-            }
+            // enableSplit = false set in build.gradle
+            configuration.setLocale(locale);
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
 

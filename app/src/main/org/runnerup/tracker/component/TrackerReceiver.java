@@ -32,7 +32,6 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
     private final Tracker tracker;
     private Context context;
-    private boolean headsetRegistered = false;
 
     private static final String NAME = "Receiver";
 
@@ -54,19 +53,11 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     @Override
     public void onStart() {
         registerReceivers();
-        if (HeadsetButtonReceiver.getAllowStartStopFromHeadsetKey(context)) {
-            headsetRegistered = true;
-            HeadsetButtonReceiver.registerHeadsetListener(context);
-        }
     }
 
     @Override
     public void onComplete(boolean discarded) {
         unregisterReceivers();
-        if (headsetRegistered) {
-            headsetRegistered = false;
-            HeadsetButtonReceiver.unregisterHeadsetListener(context);
-        }
     }
 
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {

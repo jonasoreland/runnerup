@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace 'org.runnerup'
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 23
-        targetSdkVersion rootProject.ext.compileSdkVersion
+        minSdk 23
+        targetSdk rootProject.ext.targetSdk
         versionName rootProject.ext.versionName
         versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
     }

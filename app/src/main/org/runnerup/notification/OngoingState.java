@@ -58,11 +58,9 @@ public class OngoingState implements NotificationState {
                 .setLocalOnly(true)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .addAction(org.runnerup.common.R.drawable.ic_av_newlap, context.getString(org.runnerup.common.R.string.Lap), pendingLap)
-                .addAction(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), pendingPause);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setCategory(NotificationCompat.CATEGORY_SERVICE);
-        }
+                .addAction(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), pendingPause)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE);
     }
 
     @Override
@@ -81,12 +79,10 @@ public class OngoingState implements NotificationState {
         builder.setContentText(content);
 
         Notification n = builder.build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (workoutInfo.isPaused()) {
-                n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_play_arrow, context.getString(org.runnerup.common.R.string.Resume), n.actions[1].actionIntent);
-            } else {
-                n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), n.actions[1].actionIntent);
-            }
+        if (workoutInfo.isPaused()) {
+            n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_play_arrow, context.getString(org.runnerup.common.R.string.Resume), n.actions[1].actionIntent);
+        } else {
+            n.actions[1] = new Notification.Action(org.runnerup.common.R.drawable.ic_av_pause, context.getString(org.runnerup.common.R.string.Pause), n.actions[1].actionIntent);
         }
         return n;
     }

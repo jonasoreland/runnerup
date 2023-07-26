@@ -221,11 +221,8 @@ public class RUTextToSpeech {
     }
 }
 
-//Explicit check for Android 4.3
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class UtteranceCompletion {
 
-    @SuppressLint("ObsoleteSdkInt")
     public static void setUtteranceCompletedListener(
             TextToSpeech tts, final RUTextToSpeech ruTextToSpeech) {
         tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {

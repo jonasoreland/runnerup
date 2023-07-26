@@ -18,8 +18,6 @@
 package org.runnerup.hr;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -50,15 +48,9 @@ import java.util.UUID;
  * @author jonas
  */
 
-//This class must only be used with 4.3 or later, calling checkLibrary()
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-
 public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     public static boolean checkLibrary(Context ctx) {
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
-            return false;
 
         return ctx.getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_BLUETOOTH_LE);
@@ -70,19 +62,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private static final UUID[] SCAN_UUIDS = {
             HRP_SERVICE
     };
-    private final static boolean AVOID_SCAN_WITH_UUID;
-    private final static boolean CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN;
-
-    static {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            // 4.3
-            AVOID_SCAN_WITH_UUID = true;
-            CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = true;
-        } else {
-            AVOID_SCAN_WITH_UUID = false;
-            CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN = false;
-        }
-    }
 
     private final Context context;
     private BluetoothAdapter btAdapter = null;
@@ -145,7 +124,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         disconnect();
 
         if (btGatt != null) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in close");
                 btGatt.close();
             }
 
@@ -282,7 +262,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 }
 
                 if (mIsConnecting) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                        log("No BLUETOOTH_CONNECT permission in onConnectionStateChange() when connecting");
                         return;
                     }
 
@@ -299,7 +280,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
                 if (mIsDisconnecting) {
                     log("mIsDisconnecting => notify");
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                        log("No BLUETOOTH_CONNECT permission in onConnectionStateChange() when disconnecting");
                         return;
                     }
 
@@ -389,7 +371,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 return;
             }
 
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in DummyReadForSecLevelCheck");
                 return;
             }
             if (!btGatt.readCharacteristic(firmwareIdCharc)) {
@@ -420,7 +403,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
                 return;
             }
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in startHR");
                 return;
             }
             if (!btGatt.readDescriptor(mHRMccc)) {
@@ -443,7 +427,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                 return false;
             }
 
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in readBatteryLevel");
                 return false;
             }
             if (!btGatt.readCharacteristic(mBLcharac)) {
@@ -458,8 +443,10 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean enableNotification(boolean onoff,
                                        BluetoothGattCharacteristic charac) {
-        if (btGatt == null || ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED)
+        if (btGatt == null || !checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+            log("No BLUETOOTH_CONNECT permission in enableNotification");
             return false;
+        }
 
         if (!btGatt.setCharacteristicNotification(charac, onoff)) {
             log("btGatt.setCharacteristicNotification() failed");
@@ -489,7 +476,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     // Using a deprecated API - change in API 21 (Marshmallow)
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
-        @SuppressLint("MissingPermission")
         @Override
         public void onLeScan(final BluetoothDevice device, int rssi,
                              byte[] scanRecord) {
@@ -504,28 +490,15 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     && address.equals(btDevice.getAddress())) {
                 stopScan();
 
-                if (CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN) {
-                    // Android 4.3
-                    log("CONNECT_IN_OWN_THREAD_FROM_ON_LE_SCAN");
-                    hrClientHandler.post(() -> {
-                        log("before connect");
-                        btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
-                        if (btGatt == null) {
-                            reportConnectFailed("connectGatt returned null");
-                        } else {
-                            log("connectGatt: " + btGatt);
-                        }
-                    });
+                if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                    log("No BLUETOOTH_CONNECT permission in onLeScan");
+                    return;
+                }
+                btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+                if (btGatt == null) {
+                    reportConnectFailed("connectGatt returned null");
                 } else {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
-                    if (btGatt == null) {
-                        reportConnectFailed("connectGatt returned null");
-                    } else {
-                        log("connectGatt: " + btGatt);
-                    }
+                    log("connectGatt: " + btGatt);
                 }
                 return;
             }
@@ -546,7 +519,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     private final HashSet<String> mScanDevices = new HashSet<>();
 
-    @SuppressLint("MissingPermission")
     @Override
     public void startScan() {
         if (mIsScanning || btAdapter == null)
@@ -555,35 +527,32 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         mIsScanning = true;
         mScanDevices.clear();
 
-        if (AVOID_SCAN_WITH_UUID)
-            // Android 4.3
-            btAdapter.startLeScan(mLeScanCallback);
-        else {
-            if (mSupportPaired) {
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }
-
-                for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
-                    if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
-                        log("Ignoring paired non BLE device: " + btDeviceThis.getName());
-                        continue;
-                    }
-
-                    // Paired device, for instance Huami/Amazfit Bip S could be supported
-                    log("Trying paired generic BLE device: " + btDeviceThis.getName());
-                    mLeScanCallback.onLeScan(btDeviceThis, 0, null);
-                }
+        if (mSupportPaired) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in startScan");
+                return;
             }
-            btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
+
+            for (BluetoothDevice btDeviceThis : btAdapter.getBondedDevices()) {
+                if (btDeviceThis.getType() != BluetoothDevice.DEVICE_TYPE_LE) {
+                    log("Ignoring paired non BLE device: " + btDeviceThis.getName());
+                    continue;
+                }
+
+                // Paired device, for instance Huami/Amazfit Bip S could be supported
+                log("Trying paired generic BLE device: " + btDeviceThis.getName());
+                mLeScanCallback.onLeScan(btDeviceThis, 0, null);
+            }
         }
+        btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
     }
 
     @Override
     public void stopScan() {
         if (mIsScanning) {
             mIsScanning = false;
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_SCAN)) {
+                log("No BLUETOOTH_SCAN permission in stopScan");
                 return;
             }
 
@@ -617,7 +586,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         mIsConnecting = true;
         btDevice = dev;
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+            log("No BLUETOOTH_CONNECT permission in connect()");
             return;
         }
 
@@ -656,7 +626,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     private void reportConnectFailed(String string) {
         log("reportConnectFailed(" + string + ")");
         if (btGatt != null) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+                log("No BLUETOOTH_CONNECT permission in reportConnectFailed");
                 return;
             }
 
@@ -705,7 +676,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
         } while (false);
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+            log("No BLUETOOTH_CONNECT permission in disconnect");
             return;
         }
 
@@ -744,6 +716,19 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         btDevice = null;
         mIsDisconnecting = false;
         reportDisconnected();
+    }
+
+    /***
+     * Wrapper to check permissions.
+     * These permissions should already have been checked and requested before this module,
+     * this is primary to catch unexpected uses and code inspect.
+     * @param context The context
+     * @param minCode Build version code
+     * @param perm The name of the permission
+     * @return true if permission is granted
+     */
+    private boolean checkPermission(Context context, int minCode, String perm) {
+        return Build.VERSION.SDK_INT < minCode || ActivityCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void reportDisconnectFailed(String string) {

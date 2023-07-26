@@ -47,7 +47,6 @@ import java.util.UUID;
  * bluetooth device and a thread for performing data transmission when
  * connected.
  */
-@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 public abstract class Bt20Base extends BtHRBase {
 
     public boolean isEnabled() {
@@ -67,7 +66,8 @@ public abstract class Bt20Base extends BtHRBase {
 
     @SuppressWarnings("SameReturnValue")
     public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            System.err.println("No BLUETOOTH_CONNECT permission in startEnableIntentImpl");
             return false;
         }
         activity.startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE),
@@ -75,13 +75,10 @@ public abstract class Bt20Base extends BtHRBase {
         return true;
     }
 
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.GINGERBREAD_MR1)
-    @SuppressLint("ObsoleteSdkInt")
     public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
 
-        // Don't bother if createInsecureRfcommSocketToServiceRecord isn't
-        // available
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
+        // was not possible in older minSDK
+        return true;
     }
 
     // UUID
@@ -491,12 +488,7 @@ public abstract class Bt20Base extends BtHRBase {
                     if (hr[0] != null) {
                         hrValue = hr[0];
                         hrTimestamp = System.currentTimeMillis();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                            hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-                        } else {
-                            final int NANO_IN_MILLI = 1000000;
-                            hrElapsedRealtime = SystemClock.elapsedRealtime() * NANO_IN_MILLI;
-                        }
+                        hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
 
                         if (hrValue > 0 && mIsConnecting) {
                             log("hrValue: " + hrValue + " => reportConnected");
