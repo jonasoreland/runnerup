@@ -54,6 +54,7 @@
   <string name="Connecting">连接中</string>
   <string name="Download">下载</string>
   <string name="Share">共享</string>
+  <string name="Edit">编辑</string>
   <string name="Delete">删除</string>
   <string name="Total">合计</string>
   <string name="Interval">间隔</string>
@@ -147,6 +148,7 @@
   <string name="Cancellingplease_wait">取消中请等待</string>
   <string name="Are_you_sure">你确定吗?</string>
   <string name="Configure_audio_cues">设置语音提示</string>
+  <string name="Downloadeditremove_workouts">编辑训练</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">使用耳机开始/暂停/恢复RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">在间隔标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">在高级标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
@@ -193,6 +195,7 @@
   <string name="Export">导出</string>
   <string name="Import">导入</string>
   <string name="Experimental_HRM_devices">心率设备（试验性）</string>
+  <string name="Paired_BLE_devices">已配对蓝牙设备</string>
   <string name="Experimental_features">试验性特性</string>
   <string name="Mock_HRM_devices">模拟心率设备</string>
   <string name="About_RunnerUp">关于RunnerUp</string>
@@ -279,10 +282,15 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">这里有个训练，我觉得你应该会喜欢。</string>
   <string name="Share_workout">分享训练...</string>
   <string name="New_audio_scheme">新建语音模版</string>
+  <string name="Bluetooth_permission_required">附近设备权限</string>
+  <string name="GPS_permission_required">后台定位权限</string>
   <string name="GPS_permission_text_pre_Android10">需要开启定位权限</string>
+  <string name="GPS_permission_text">本APP收集位置数据以便在APP被关闭或未使用时（APP处于后台）实现运动追踪。\n当关闭屏幕或其他APP在前台时为了记录运动需要这样做。\n\n你需要在系统设置中明确设置为“始终允许”。\n跑步节奏也需要“体育活动”权限。</string>
+  <string name="GPS_permission_text_Android12">本APP收集位置数据以便在APP被关闭或未使用时（APP处于后台）实现运动追踪。\n当关闭屏幕或其他APP在前台时为了记录运动需要这样做。\n\n你需要在系统设置中明确设置为“始终允许”。\n跑步节奏也需要“体育活动”权限，另外蓝牙功能需要获取“附近设备”权限。</string>
   <string name="Request_permission_text">点击“确定”以授权</string>
   <string name="Battery_optimization_check">开启了电池优化</string>
   <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“RunnerUp”并选择“不要优化”。</string>
+  <string name="Battery_optimization_check_text_Android9">电池优化将会降低精度。\n按OK前往设置并选择“电池优化”，然后选择“不限制”或“不优化”。</string>
   <string name="Default">默认</string>
   <string name="Notes_about_your_workout">训练备注</string>
   <string name="Downloading_from_1s">从%1$s下载中</string>
@@ -300,6 +308,7 @@
   <string name="Audio_cue_unit">语音提示时包含单位</string>
   <string name="log_extended_gps_summary">只导出为GPX</string>
   <string name="log_extended_gps_title">记录扩展GPS精度数据</string>
+  <string name="Time_from_GPS_points">从GPS数据点获取时间</string>
   <string name="Current_speed_from_GPS_points">根据GPS坐标计算的当前速度</string>
   <string name="use_step_sensor_title">步数传感器</string>
   <string name="use_step_sensor_summary">用于步频计算</string>
@@ -312,6 +321,7 @@
   <string name="Lap_start">分段开始</string>
   <string name="Lap_start_summary">在记圈开始、开始活动、热身、冷身时语音提示</string>
   <string name="Lock_activity_buttons">锁定活动按钮</string>
+  <string name="Lock_activity_buttons_message">通过快速点击顶部锁定运动按钮</string>
   <string name="Speed">速度</string>
   <string name="Speed_unit_preference">速度单位</string>
   <string name="path_simplification">平滑/精简路径</string>
@@ -326,8 +336,29 @@
   <string name="File_need_one_format">你必须选择至少一种格式</string>
   <string name="tts_not_available_title">当前“文字转语音”TTS引擎不可用</string>
   <string name="tts_not_available">RunnerUp需要一个“文字转语音”TTS引擎以播放语音提示。请确保你至少安装有一个可用的TTS引擎。</string>
+  <string name="Catch_backbuttonpress">再次点击返回以退出</string>
+  <string name="check_internet_connection">请检查你的网络连接</string>
   <!--Preference categories & summaries-->
+  <string name="GPS_category">GPS</string>
   <string name="HRM_category">心率</string>
+  <string name="Headset_category">远程控制</string>
+  <string name="Lock_activity_buttons_category">锁定按钮</string>
+  <string name="GPS_recording_category">GPS记录</string>
+  <string name="Phone_sensors_category">手机传感器</string>
+  <string name="Database_category">数据库维护</string>
+  <string name="Maintenance_explanation_summary">RunnerUp会把训练数据保存到一个SQL数据库。\n为了维护，可以把runnerup.db.export文件从\n%1$s导入/导出</string>
+  <string name="Map_pref_summary">地图风格</string>
+  <string name="Controls">控制</string>
+  <string name="Controls_pref_summary">锁定按钮</string>
+  <string name="Workout_pref_summary">管理训练、分段、休息、虚拟兔子</string>
+  <string name="Manage_workouts_category">高级训练</string>
+  <string name="Autolap_category">自动分段</string>
   <string name="Autopause_category">自动暂停</string>
+  <string name="Countdown_category">倒计时</string>
+  <string name="Recovery_category">恢复</string>
   <string name="Target_category">虚拟兔子</string>
+  <string name="Sensors_summary">传感器和记录</string>
+  <string name="use_temperature_sensor_summary">记录温度</string>
+  <string name="Current_speed_from_GPS_points_summary">使用GPS传感器获取速度而非根据GPS位置计算速度</string>
+  <string name="Target_coaching_summary">设置计算目标反馈的移动平均值的周期和音频提示的宽限期</string>
 </resources>
