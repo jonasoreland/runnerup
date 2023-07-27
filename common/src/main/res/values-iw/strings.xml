@@ -15,7 +15,7 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
-  <string name="metrics_distance_km">ק\"מ</string>
+  <string name="metrics_distance_km">ק\'\'מ</string>
   <string name="metrics_distance_mi">מייל</string>
   <string name="metrics_distance_m">מ</string>
   <string name="metrics_elapsed_h">שע</string>
@@ -54,6 +54,7 @@
   <string name="Connecting">מתחבר</string>
   <string name="Download">הורדה</string>
   <string name="Share">שיתוף</string>
+  <string name="Edit">עריכה</string>
   <string name="Delete">מחיקה</string>
   <string name="Total">כולל</string>
   <string name="Interval">מרווח</string>
@@ -147,6 +148,7 @@
   <string name="Cancellingplease_wait">מבטל, נא להמתין…</string>
   <string name="Are_you_sure">האם הינך בטוח?</string>
   <string name="Configure_audio_cues">הגדרת רמזי אודיו</string>
+  <string name="Downloadeditremove_workouts">עריכת אימונים</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">יש להשתמש באוזניה בכדי להפעיל/להשהות/לחדש את RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">בכרטיסיית מרווח, השתמש בהתאוששות במקום בשלבי מנוחה (עצירה)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">עבור שלבי ספירה לאחור שהוכנסו, השתמש בהתאוששות במקום בשלבי מנוחה (הפסקה)</string>
@@ -193,6 +195,7 @@
   <string name="Export">ייצוא</string>
   <string name="Import">ייבוא</string>
   <string name="Experimental_HRM_devices">מכשירי דופק ניסוניים</string>
+  <string name="Paired_BLE_devices">התקני BLE מותאמים</string>
   <string name="Experimental_features">תכונות ניסיוניות</string>
   <string name="Mock_HRM_devices">מכשיר דופק מדומים</string>
   <string name="About_RunnerUp">אודות RunnerUp</string>
@@ -279,6 +282,8 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">היי\nיש לי הרגשה שהאימון הזה בשבילך.</string>
   <string name="Share_workout">שיתוף אימון…</string>
   <string name="New_audio_scheme">ערכת אודיו חדשה</string>
+  <string name="Bluetooth_permission_required">הרשאת התקנים בקרבת מקום</string>
+  <string name="GPS_permission_required">הרשאת מיקום ברקע</string>
   <string name="GPS_permission_text_pre_Android10">נדרשת הרשאת מיקום בהגדרות המערכת</string>
   <string name="Request_permission_text">התר הרשאות בלחיצה על \"אישור\".</string>
   <string name="Battery_optimization_check">אופטימיזציית סוללה מופעלת</string>
@@ -327,7 +332,10 @@
   <string name="tts_not_available_title">טקסט לדיבור אינו זמין</string>
   <string name="tts_not_available">RunnerUp דורש מנוע טקסט לדיבור פועל להשמעת רמזי האודיו. נא לוודא כי התקנת מנוע טקסט לדיבור אחד לפחות.</string>
   <!--Preference categories & summaries-->
-  <string name="HRM_category">דופק</string>
+  <string name="GPS_category">GPS</string>
+  <string name="HRM_category">קצב לב</string>
   <string name="Autopause_category">הפסקה אוטומטית</string>
+  <string name="Recovery_category">התאוששות</string>
   <string name="Target_category">יעד אימון</string>
+  <string name="Sensors_summary">חיישנים והקלטה</string>
 </resources>

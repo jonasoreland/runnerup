@@ -31,42 +31,52 @@
   <string name="cue_slowdown">ralentissez</string>
   <plurals name="cue_hour">
     <item quantity="one">%d heure</item>
+    <item quantity="many">%d heures</item>
     <item quantity="other">%d heures</item>
   </plurals>
   <plurals name="cue_minute">
     <item quantity="one">%d minute</item>
+    <item quantity="many">%d minutes</item>
     <item quantity="other">%d minutes</item>
   </plurals>
   <plurals name="cue_second">
     <item quantity="one">%d seconde</item>
+    <item quantity="many">%d secondes</item>
     <item quantity="other">%d secondes</item>
   </plurals>
   <plurals name="cue_meter">
     <item quantity="one">%d mètre</item>
+    <item quantity="many">%d mètres</item>
     <item quantity="other">%d mètres</item>
   </plurals>
   <plurals name="cue_kilometer">
     <item quantity="one">%s kilomètre</item>
+    <item quantity="many">%s kilomètres</item>
     <item quantity="other">%s kilomètres</item>
   </plurals>
   <plurals name="cue_mile">
     <item quantity="one">%s mile</item>
+    <item quantity="many">%s miles</item>
     <item quantity="other">%s miles</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
     <item quantity="one">%s kilomètre par heure</item>
+    <item quantity="many">%s kilomètres par heure</item>
     <item quantity="other">%s kilomètres par heure</item>
   </plurals>
   <plurals name="cue_miles_per_hour">
     <item quantity="one">%s mile par heure</item>
+    <item quantity="many">%s miles par heure</item>
     <item quantity="other">%s miles par heure</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
+    <item quantity="many">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
   <plurals name="cue_rpm">
     <item quantity="one">%d rpm</item>
+    <item quantity="many">%d rpm</item>
     <item quantity="other">%d rpm</item>
   </plurals>
   <string name="cue_activity_paused">activité en pause</string>
