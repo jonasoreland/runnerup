@@ -41,7 +41,7 @@ project.ext {
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     // Therefore, the .aar file may not be redistributed in the RU repo
     antPlusLibPath = "$rootDir/ANT-Android-SDKs/ANT+_Android_SDK/API"
-    antPlusLibName = "antpluginlib_3-8-0"
+    antPlusLibName = "antpluginlib_3-9-0"
     if (!allowNonFree || project.hasProperty('org.runnerup.hr.disableAntPlus') || !rootProject.file(antPlusLibPath+'/'+antPlusLibName+'.aar').exists()) {
         antPlusLibName = ""
     }
