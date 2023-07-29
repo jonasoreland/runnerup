@@ -632,8 +632,10 @@ public class Tracker extends android.app.Service implements
 
     private void onLocationChangedImpl(Location arg0, boolean internal) {
         if (!mTimeFromGpsPoints || internal) {
-            long now = SystemClock.elapsedRealtimeNanos();
-            arg0.setElapsedRealtimeNanos(now);
+            long elapsedNs = SystemClock.elapsedRealtimeNanos();
+            arg0.setElapsedRealtimeNanos(elapsedNs);
+            long timeMs = System.currentTimeMillis();
+            arg0.setTime(timeMs);
         }
 
         Integer hrValue = getCurrentHRValueElapsed(arg0.getElapsedRealtimeNanos(), MAX_CURRENT_AGE);
@@ -663,7 +665,7 @@ public class Tracker extends android.app.Service implements
                     mElapsedTimeNanos += timeDiffNanos;
                     mElapsedDistance += distDiff;
                 }
-                if (hrValue != null) {
+                if (hrValue != null && hrValue > 0) {
                     mHeartbeats += (hrValue * timeDiffNanos) / (double)(60 * 1000 * NANO_IN_MILLI);
                     mHeartbeatNanos += timeDiffNanos; // TODO handle loss of HRM connection
                     mMaxHR = Math.max(hrValue, mMaxHR);
