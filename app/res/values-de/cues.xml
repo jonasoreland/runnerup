@@ -27,8 +27,8 @@
   <string name="cue_resumed">fortgeführt</string>
   <string name="cue_stopped">gestoppt</string>
   <string name="cue_completed">abgeschlossen</string>
-  <string name="cue_speedup">beschleunige</string>
-  <string name="cue_slowdown">werde langsamer</string>
+  <string name="cue_speedup">schneller</string>
+  <string name="cue_slowdown">langsamer</string>
   <plurals name="cue_hour">
     <item quantity="one">%d Stunde</item>
     <item quantity="other">%d Stunden</item>
