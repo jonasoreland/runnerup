@@ -17,7 +17,7 @@
     <item>Enfriamiento</item>
   </string-array>
   <string-array name="duration_types">
-    <item>Hasta presionado</item>
+    <item>Hasta pulsación</item>
     <item>Tiempo</item>
     <item>Distancia</item>
   </string-array>

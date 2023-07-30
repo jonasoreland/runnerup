@@ -54,6 +54,7 @@
   <string name="Connecting">verbinde</string>
   <string name="Download">Download</string>
   <string name="Share">Teilen</string>
+  <string name="Edit">Bearbeiten</string>
   <string name="Delete">Löschen</string>
   <string name="Total">Gesamt</string>
   <string name="Interval">Intervall</string>
@@ -147,6 +148,7 @@
   <string name="Cancellingplease_wait">Wird annulliert, bitte warten ...</string>
   <string name="Are_you_sure">Bist Du sicher?</string>
   <string name="Configure_audio_cues">Audiohinweise/Profile konfigurieren</string>
+  <string name="Downloadeditremove_workouts">Trainings bearbeiten</string>
   <string name="Use_your_headset_to_startpauseresume_RunnerUp">Verwende Dein Headset um RunnerUp zu starten/pausieren/fortzusetzen</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">\'Intervall\' Trainings nutzen \'Ruhe\' (wird nicht aufgezeichnet) für Pausen-Schritte. Verwende stattdessen \'Erholung\'?</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Verwenden Sie \"Erholung\" statt \"Ruhe\" (Pause) für  Countdown Schritte</string>
@@ -193,6 +195,7 @@
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimentelle HRM-Geräte</string>
+  <string name="Paired_BLE_devices">Verbundene BLE Geräte</string>
   <string name="Experimental_features">Experimentelle Funktionen</string>
   <string name="Mock_HRM_devices">Simuliertes/Mock HRM-Gerät</string>
   <string name="About_RunnerUp">Über RunnerUp</string>
@@ -279,10 +282,23 @@
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hallo\nHier ist ein Training, dass dir vielleicht gefallen könnte.</string>
   <string name="Share_workout">Trainingsvorlage teilen…</string>
   <string name="New_audio_scheme">Neues Audioschema</string>
+  <string name="Bluetooth_permission_required">Geräte in der Nähe Berechtigung</string>
+  <string name="GPS_permission_required">Standortberechtigung im Hintergrund</string>
   <string name="GPS_permission_text_pre_Android10">Standortberechtigung in den Systemeinstellungen erforderlich</string>
+  <string name="GPS_permission_text">Die App sammelt Ortungsdaten zur Aufzeichnung ihrer Aktivität, auch wenn die App im Hintergrund aktiv ist.
+Dies ist erforderlich, um Einheiten aufzunehmen, auch wenn der Bildschirm aus oder eine andere App im Vordergrund ist.
+
+Sie müssen die Standortberechtigung in den Systemeinstellungen daher explizit auf \"Immer\" setzen.
+Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusätzlich.</string>
+  <string name="GPS_permission_text_Android12">Die App sammelt Ortungsdaten zur Aufzeichnung ihrer Aktivität, auch wenn die App im Hintergrund aktiv ist.
+Dies ist erforderlich, um Einheiten aufzunehmen, auch wenn der Bildschirm aus oder eine andere App im Vordergrund ist.
+
+Sie müssen die Standortberechtigung in den Systemeinstellungen daher explizit auf \"Immer\" setzen.
+Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusätzlich. BlueTooth benötigt zudem \"Geräte in der Nähe\".</string>
   <string name="Request_permission_text">Erlaube die Berechtigung mit \"OK\".</string>
   <string name="Battery_optimization_check">Batterie-Optimierungen aktiviert</string>
   <string name="Battery_optimization_check_text">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
+  <string name="Battery_optimization_check_text_Android9">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Notizen zur Trainingseinheit hinzufügen</string>
   <string name="Downloading_from_1s">Von %1$s wird heruntergeladen</string>
@@ -300,6 +316,7 @@
   <string name="Audio_cue_unit">Einheiten (m,km,min/km,..) ansagen</string>
   <string name="log_extended_gps_summary">Nur in GPX exportieren</string>
   <string name="log_extended_gps_title">Erweiterte GPS-Genauigkeitsdaten</string>
+  <string name="Time_from_GPS_points">Zeit von GPS Punkten</string>
   <string name="Current_speed_from_GPS_points">Geschwindigkeit aus GPS-Punkten</string>
   <string name="use_step_sensor_title">Schrittsensor</string>
   <string name="use_step_sensor_summary">Für Trittfrequenz verwenden</string>
@@ -312,6 +329,7 @@
   <string name="Lap_start">Rundenstart</string>
   <string name="Lap_start_summary">Hinweis bei Rundenstart und Aktivität, Aufwärmen, Abkühlen</string>
   <string name="Lock_activity_buttons">Aktivitätsschaltflächen sperren</string>
+  <string name="Lock_activity_buttons_message">Aktivitätsschaltflächen durch schnelles Klicken auf die Kopfzeile sperren</string>
   <string name="Speed">Geschwindigkeit (km/h)</string>
   <string name="Speed_unit_preference">Pace/Geschwindigkeit</string>
   <string name="path_simplification">Track-Vereinfachung</string>
@@ -326,8 +344,30 @@
   <string name="File_need_one_format">Sie müssen wenigstens ein Format angeben</string>
   <string name="tts_not_available_title">\'Text zu Sprache\' ist nicht verfügbar</string>
   <string name="tts_not_available">RunnerUp benötigt eine funktionierende \'Text zu Sprache\' Ausgabe für Audiohinweise. Bitte stellen Sie sicher, dass ihre \'Text zu Sprache\' Ausgabe funktioniert. </string>
+  <string name="Catch_backbuttonpress">Zum Beenden, drücke \"Zurück\" nochmal</string>
+  <string name="check_internet_connection">Bitte prüfe deine Internetverbindung</string>
   <!--Preference categories & summaries-->
+  <string name="GPS_category">GPS</string>
   <string name="HRM_category">Herzfrequenz</string>
+  <string name="Headset_category">Fernbedienung</string>
+  <string name="Lock_activity_buttons_category">Sperre Tasten</string>
+  <string name="GPS_recording_category">GPS Aufnahme</string>
+  <string name="Phone_sensors_category">Handy Sensoren</string>
+  <string name="Database_category">Datenbank Wartung</string>
+  <string name="Maintenance_explanation_summary">RunnerUp speichert Trainingseinheiten in einer SQL-Datenbank.
+Für die Wartung der Daten kann die Datei runnerup.db.export von/nach %1$s im-/exportiert werden</string>
+  <string name="Map_pref_summary">Kartenstil</string>
+  <string name="Controls">Steuerungen</string>
+  <string name="Controls_pref_summary">Sperre Tasten</string>
+  <string name="Workout_pref_summary">Bearbeite Einheiten, Runden, Ruhe und Zieltraining</string>
+  <string name="Manage_workouts_category">Erweiterte Trainingsvorlagen</string>
+  <string name="Autolap_category">Rundenautomatik</string>
   <string name="Autopause_category">Pausenautomatik</string>
+  <string name="Countdown_category">Countdown</string>
+  <string name="Recovery_category">Erholen</string>
   <string name="Target_category">Zielcoaching</string>
+  <string name="Sensors_summary">Sensoren und Aufnahme</string>
+  <string name="use_temperature_sensor_summary">Temperatur aufnehmen</string>
+  <string name="Current_speed_from_GPS_points_summary">Nutze Gechwindigkeit vom GPS-Sensor, statt diese aus den GPS Positionen zu berechnen</string>
+  <string name="Target_coaching_summary">Setze das Intervall mit dem die durchschnittliche Bewegung berechnet wird. Für Ziel Rückmeldungen und Pausen bei Audio-Hinweisen</string>
 </resources>
