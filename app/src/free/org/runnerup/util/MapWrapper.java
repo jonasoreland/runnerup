@@ -31,7 +31,6 @@ import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
-import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 
@@ -117,8 +116,8 @@ public class MapWrapper implements Constants {
                 markerStart.setPosition(points.get(0));
                 markerEnd.setPosition(points.get(points.size() - 1));
 
-                markerStart.setTextIcon(context.getString(R.string.Start));
-                markerEnd.setTextIcon(context.getString(R.string.Finished));
+                markerStart.setTextIcon(context.getString(org.runnerup.common.R.string.Start));
+                markerEnd.setTextIcon(context.getString(org.runnerup.common.R.string.Finished));
 
                 markerStart.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
                 markerEnd.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
