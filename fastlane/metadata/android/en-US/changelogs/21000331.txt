@@ -1,5 +1,5 @@
-Prepare for Android 14<
+Prepare for Android 14
 Library updates and internal cleanup
 Update ANT+ library (finally with Android 13 fixes)
-Translation updates
+Translation updates for  iw, nl, zh, es, de
 Set time from system clock correction
