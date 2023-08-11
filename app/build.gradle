@@ -10,7 +10,7 @@ def getGitHash = { ->
 }
 
 android {
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
     namespace 'org.runnerup'
 
     compileOptions {
@@ -36,7 +36,7 @@ android {
         test.setRoot('test')
     }
 
-    flavorDimensions "all"
+    flavorDimensions = [ "all" ]
     productFlavors {
         latest {
             dimension "all"
@@ -183,9 +183,11 @@ dependencies {
 }
 
 allprojects {
-    tasks.withType(JavaCompile) {
-        // options.compilerArgs << "-Xlint:deprecation";
-        options.compilerArgs << "-Xlint:unchecked"
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            // options.compilerArgs << "-Xlint:deprecation";
+            options.compilerArgs << "-Xlint:unchecked"
+        }
     }
 }
 
@@ -202,7 +204,7 @@ if (rootProject.file("release.properties").exists()) {
     android.buildTypes.release.signingConfig = null
 }
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
     if (rootProject.ext.allowNonFree && rootProject.file("mapbox.properties").exists()) {
         // https://www.mapbox.com/account/
@@ -262,7 +264,7 @@ import com.android.build.OutputFile
 
 // For each APK output variant, override versionCode with a combination of
 // ext.abiCodes * 10000 + variant.versionCode. (universal gets no offset)
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     variant.outputs.each { output ->
         def baseAbiVersionCode =
                 project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
