@@ -67,7 +67,12 @@ public class TCX {
     }
 
     public String export(long activityId, Writer writer) throws IOException {
-        Pair<String,Sport> res = exportWithSport(activityId, writer);
+        Pair<String,Sport> res = exportWithSport(activityId, writer, false);
+        return res.first;
+    }
+
+    public String exportForStrava(long activityId, Writer writer) throws IOException {
+        Pair<String,Sport> res = exportWithSport(activityId, writer, true);
         return res.first;
     }
 
@@ -77,7 +82,7 @@ public class TCX {
      * @return TCX id
      * @throws IOException
      */
-    public Pair<String,Sport> exportWithSport(long activityId, Writer writer) throws IOException {
+    public Pair<String,Sport> exportWithSport(long activityId, Writer writer, boolean isStrava) throws IOException {
 
         String[] aColumns = {
                 DB.ACTIVITY.NAME, DB.ACTIVITY.COMMENT,
@@ -111,14 +116,24 @@ public class TCX {
             } else {
                 // TCX supports only these 3 sports...(cf http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
                 sport = Sport.valueOf(cursor.getInt(3));
-                if (sport.IsRunning()) {
-                    mXML.attribute("", "Sport", "Running");
-                }
-                else if (sport.IsCycling()) {
-                    mXML.attribute("", "Sport", "Biking");
-                }
-                else {
-                    mXML.attribute("", "Sport", "Other");
+                if (isStrava) {
+                    if (sport.IsCycling()) {
+                        mXML.attribute("", "Sport", "Biking");
+                    } else if (sport.IsWalking()) {
+                        mXML.attribute("", "Sport", "Walking");
+                    } else {
+                        // Default (Swimming, Hiking is supported too)
+                        mXML.attribute("", "Sport", "Running");
+                    }
+
+                } else {
+                    if (sport.IsRunning()) {
+                        mXML.attribute("", "Sport", "Running");
+                    } else if (sport.IsCycling()) {
+                        mXML.attribute("", "Sport", "Biking");
+                    } else {
+                        mXML.attribute("", "Sport", "Other");
+                    }
                 }
             }
             mXML.startTag("", "Id");
