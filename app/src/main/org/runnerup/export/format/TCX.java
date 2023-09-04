@@ -140,7 +140,7 @@ public class TCX {
             String id = formatTime(startTime * 1000);
             mXML.text(id);
             mXML.endTag("", "Id");
-            exportLaps(activityId, startTime * 1000, sport);
+            exportLaps(activityId, startTime * 1000, sport, isStrava);
             if (!cursor.isNull(1)) {
                 notes = cursor.getString(1);
                 mXML.startTag("", "Notes");
@@ -246,7 +246,7 @@ public class TCX {
         c.close();
     }
 
-    private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
+    private void exportLaps(long activityId, long startTime, Sport sport, boolean isStrava) throws IOException {
         String[] lColumns = {
                 DB.LAP.LAP, DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.INTENSITY
         };
@@ -380,15 +380,28 @@ public class TCX {
                             }
                             if (isRunCad) {
                                 mXML.startTag("", "Extensions");
-                                mXML.startTag("", "ns3:TPX");
+                                if (isStrava) {
+                                    mXML.startTag("", "TPX");
+                                    mXML.attribute("", "xmlns", "\"http://www.garmin.com/xmlschemas/ActivityExtension/v2\"");
+                                } else {
+                                    mXML.startTag("", "ns3:TPX");
+                                }
                                 //"standard" extensions: RunCadence, Speed, Watts
                             }
                             if (isRunCad) {
                                 int val = cLocation.getInt(8);
-                                mXML.startTag("", "ns3:RunCadence");
+                                if (isStrava) {
+                                    mXML.startTag("", "RunCadence");
+                                } else {
+                                    mXML.startTag("", "ns3:RunCadence");
+                                }
                                 String sval = Integer.toString(val);
                                 mXML.text(sval);
-                                mXML.endTag("", "ns3:RunCadence");
+                                if (isStrava) {
+                                    mXML.endTag("", "RunCadence");
+                                } else {
+                                    mXML.endTag("", "ns3:RunCadence");
+                                }
                                 // Not including "CadenceSensor Footpod" etc
                             }
                             //if (isTemp || isPres) {
@@ -408,7 +421,11 @@ public class TCX {
                             //    }
                             //}
                             if (isRunCad) {
-                                mXML.endTag("", "ns3:TPX");
+                                if (isStrava) {
+                                    mXML.endTag("", "TPX");
+                                } else {
+                                    mXML.endTag("", "ns3:TPX");
+                                }
                                 mXML.endTag("", "Extensions");
                             }
 
