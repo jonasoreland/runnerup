@@ -55,6 +55,7 @@ repositories {
 
 dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
+    implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
 
     if (rootProject.ext.antPlusLibName) {
         implementation(name: rootProject.ext.antPlusLibName, ext: 'aar')
