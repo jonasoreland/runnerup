@@ -37,23 +37,11 @@
 
     <!--Controls -->
 
-    <PreferenceScreen
+    <Preference
         android:key="controls_preferencescreen"
         android:summary="@string/Controls_pref_summary"
-        android:title="@string/Controls">
-
-        <PreferenceCategory
-            android:key="@string/Lock_activity_buttons_category"
-            android:title="@string/Lock_activity_buttons_category">
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="@string/pref_lock_run"
-                android:persistent="true"
-                android:summary="@string/Lock_activity_buttons_message"
-                android:title="@string/Lock_activity_buttons" />
-        </PreferenceCategory>
-    </PreferenceScreen>
+        android:title="@string/Controls"
+        app:fragment="org.runnerup.view.SettingsControlsFragment" />
 
     <!--Workout -->
 
