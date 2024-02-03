@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -14,6 +15,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerTemperature;
+import org.runnerup.widget.AboutPreference;
 
 import java.util.Locale;
 
@@ -100,4 +102,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         DBHelper.purgeDeletedActivities(requireContext(), dialog, dialog::dismiss);
         return false;
     };
+
+    @Override
+    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
+        if (preference instanceof AboutPreference) {
+            // The about preference was clicked, show the about dialog
+            AboutPreference.AboutDialogFragment aboutDialogFragment =
+                    AboutPreference.AboutDialogFragment.newInstance(preference.getKey());
+            aboutDialogFragment.setTargetFragment(this, 0);
+            aboutDialogFragment.show(getParentFragmentManager(), AboutPreference.AboutDialogFragment.TAG);
+        }
+        else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
 }

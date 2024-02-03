@@ -159,4 +159,5 @@
     <string name="pref_exportdb">pref_exportdb</string>
     <string name="pref_importdb">pref_importdb</string>
     <string name="pref_prunedb">pref_prunedb</string>
+    <string name="pref_about">pref_about</string>
 </resources>

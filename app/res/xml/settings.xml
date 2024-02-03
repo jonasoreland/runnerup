@@ -524,6 +524,8 @@
 
     <!--About -->
 
-    <org.runnerup.widget.AboutPreference android:title="@string/About_RunnerUp" />
+    <org.runnerup.widget.AboutPreference
+        android:key="@string/pref_about"
+        android:title="@string/About_RunnerUp" />
 
 </PreferenceScreen>
