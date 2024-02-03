@@ -12,9 +12,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
-import org.runnerup.tracker.component.TrackerCadence;
-import org.runnerup.tracker.component.TrackerPressure;
-import org.runnerup.tracker.component.TrackerTemperature;
 import org.runnerup.widget.AboutPreference;
 
 import java.util.Locale;
@@ -42,40 +39,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Preference pref = findPreference("map_preferencescreen");
             pref.setEnabled(false);
         }
-
-        if (!SettingsActivity.hasHR(requireContext())) {
-            getPreferenceManager().findPreference(res.getString(R.string.cue_configure_hrzones)).setEnabled(false);
-            getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_low_threshold)).setEnabled(false);
-            getPreferenceManager().findPreference(res.getString(R.string.pref_battery_level_high_threshold)).setEnabled(false);
-        }
-        {
-            //Preference pref = findPreference(this.getString(R.string.pref_experimental_features));
-            //pref.setSummary(null);
-        }
-
-        if (!TrackerCadence.isAvailable(requireContext())) {
-            Preference pref = findPreference(this.getString(R.string.pref_use_cadence_step_sensor));
-            pref.setEnabled(false);
-        }
-        if (!TrackerTemperature.isAvailable(requireContext())) {
-            Preference pref = findPreference(this.getString(R.string.pref_use_temperature_sensor));
-            pref.setEnabled(false);
-        }
-        if (!TrackerPressure.isAvailable(requireContext())) {
-            Preference pref = findPreference(this.getString(R.string.pref_use_pressure_sensor));
-            pref.setEnabled(false);
-        }
-        CheckBoxPreference simplifyOnSave = findPreference(getString(R.string.pref_path_simplification_on_save));
-        CheckBoxPreference simplifyOnExport = findPreference(getString(R.string.pref_path_simplification_on_export));
-        if (simplifyOnSave.isChecked()) {
-            simplifyOnExport.setChecked(true);
-        }
-        simplifyOnSave.setOnPreferenceChangeListener((preference, newValue) -> {
-            if ((Boolean) newValue) {
-                simplifyOnExport.setChecked(true);
-            }
-            return true;
-        });
 
         String path = DBHelper.getDefaultBackupPath(requireContext());
         getPreferenceManager()
