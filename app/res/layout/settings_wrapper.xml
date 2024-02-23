@@ -29,15 +29,13 @@
         android:layout_alignParentTop="true"
         android:visibility="gone" 
 		android:text="@string/Audio_cue_settings"/>
- 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/settings_spinner" >
 
-    </ListView>
+	<FrameLayout
+		android:id="@+id/settings_container_view"
+		android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@id/settings_spinner" />
 
 </RelativeLayout>
