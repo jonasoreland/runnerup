@@ -17,12 +17,13 @@
 
 package org.runnerup.widget;
 
+import static android.widget.LinearLayout.VERTICAL;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.TypedArray;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -37,6 +38,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.util.SafeParse;
@@ -45,8 +47,6 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import static android.widget.LinearLayout.VERTICAL;
 
 /**
  * @author Miroslav Mazel

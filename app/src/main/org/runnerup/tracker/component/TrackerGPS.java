@@ -16,6 +16,10 @@
  */
 package org.runnerup.tracker.component;
 
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
+import static android.location.LocationManager.PASSIVE_PROVIDER;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,19 +27,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.tracker.GpsStatus;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.util.TickListener;
-
-import static android.location.LocationManager.GPS_PROVIDER;
-import static android.location.LocationManager.NETWORK_PROVIDER;
-import static android.location.LocationManager.PASSIVE_PROVIDER;
 
 
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {

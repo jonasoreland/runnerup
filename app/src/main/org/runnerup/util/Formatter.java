@@ -24,9 +24,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;

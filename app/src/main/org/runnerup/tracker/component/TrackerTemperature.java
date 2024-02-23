@@ -20,8 +20,12 @@ package org.runnerup.tracker.component;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.*;
-import android.preference.PreferenceManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.Random;
 
