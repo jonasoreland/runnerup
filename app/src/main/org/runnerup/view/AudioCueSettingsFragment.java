@@ -46,7 +46,6 @@ import java.util.HashMap;
 
 public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     private boolean started = false;
-    private boolean delete = false;
     private String settingsName = null;
     private AudioSchemeListAdapter adapter = null;
     private SQLiteDatabase mDB = null;
@@ -167,10 +166,6 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        if (delete) {
-            deleteAudioSchemeImpl(settingsName);
-        }
         DBHelper.closeDB(mDB);
     }
 
@@ -212,14 +207,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void deleteAudioScheme() {
-        delete = true;
-        getPreferenceManager().getSharedPreferences().edit().clear().apply();
-
-        /*
-         * Can only delete file in "next" activity...cause on destory on this,
-         * will save file...
-         */
-
+        deleteAudioSchemeImpl(settingsName);
         switchTo(null);
     }
 
@@ -228,7 +216,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
          * Start by deleting file...then delete from table...so we don't get
          * stray files
          */
-        File a = new File(requireContext().getFilesDir().getAbsoluteFile() + "/../" + PREFS_DIR + "/" + name
+        File a = new File(requireContext().getFilesDir().getParent() + File.separator + PREFS_DIR + "/" + name
                 + SUFFIX + ".xml");
         //noinspection ResultOfMethodCallIgnored
         a.delete();
