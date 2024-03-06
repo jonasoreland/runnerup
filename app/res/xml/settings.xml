@@ -75,19 +75,11 @@
 
     <!--Map -->
 
-    <PreferenceScreen
+    <Preference
         android:key="map_preferencescreen"
         android:summary="@string/Map_pref_summary"
-        android:title="@string/Map">
-
-        <org.runnerup.widget.TextPreference
-            android:defaultValue="@string/mapboxDefaultStyle"
-            android:inputType="text"
-            android:key="@string/pref_mapbox_default_style"
-            android:minHeight="48dp"
-            android:persistent="true"
-            android:title="@string/Mapbox_default_style" />
-    </PreferenceScreen>
+        android:title="@string/Map"
+        app:fragment="org.runnerup.view.SettingsMapFragment" />
 
     <PreferenceScreen
         android:key="graph_preferencescreen"
