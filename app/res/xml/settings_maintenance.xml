@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<!--suppress AndroidDomInspection -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <PreferenceCategory
+        android:key="@string/Database_category"
+        android:title="@string/Database_category">
+
+        <Preference
+            android:key="@string/Maintenance_explanation_summary"
+            android:summary="@string/Maintenance_explanation_summary" />
+
+        <Preference
+            android:key="@string/pref_exportdb"
+            android:summary="@string/Export_database_to_sdcard_eg_for_upgrade"
+            android:title="@string/Export" />
+
+        <Preference
+            android:key="@string/pref_importdb"
+            android:summary="@string/Import_database_from_sdcard_eg_after_upgrade"
+            android:title="@string/Import" />
+
+        <Preference
+            android:key="@string/pref_prunedb"
+            android:summary="@string/Pruning_deleted_activities_from_database"
+            android:title="@string/Prune" />
+    </PreferenceCategory>
+    <!--CheckBoxPreference
+        android:defaultValue="false"
+        android:persistent="true"
+        android:key="@string/pref_experimental_features"
+        android:title="@string/Experimental_features"
+        android:summary="@string/Unused_currently" /-->
+</PreferenceScreen>

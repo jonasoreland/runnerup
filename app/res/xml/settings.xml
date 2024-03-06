@@ -90,41 +90,10 @@
 
     <!--Maintenance -->
 
-    <PreferenceScreen
+    <Preference
         android:key="advanced_preferencescreen"
-        android:title="@string/Maintenance">
-
-        <PreferenceCategory
-            android:key="@string/Database_category"
-            android:title="@string/Database_category">
-
-            <Preference
-                android:key="@string/Maintenance_explanation_summary"
-                android:summary="@string/Maintenance_explanation_summary" />
-
-            <Preference
-                android:key="@string/pref_exportdb"
-                android:summary="@string/Export_database_to_sdcard_eg_for_upgrade"
-                android:title="@string/Export" />
-
-            <Preference
-                android:key="@string/pref_importdb"
-                android:summary="@string/Import_database_from_sdcard_eg_after_upgrade"
-                android:title="@string/Import" />
-
-            <Preference
-                android:key="@string/pref_prunedb"
-                android:summary="@string/Pruning_deleted_activities_from_database"
-                android:title="@string/Prune" />
-        </PreferenceCategory>
-        <!--CheckBoxPreference
-            android:defaultValue="false"
-            android:persistent="true"
-            android:key="@string/pref_experimental_features"
-            android:title="@string/Experimental_features"
-            android:summary="@string/Unused_currently" /-->
-
-    </PreferenceScreen>
+        android:title="@string/Maintenance"
+        app:fragment="org.runnerup.view.SettingsMaintenanceFragment" />
 
     <!--About -->
 
