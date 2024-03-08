@@ -16,17 +16,20 @@
   -->
 <!--suppress AndroidDomInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
     <PreferenceCategory
         android:key="@string/Advanced_options"
-        android:title="@string/Advanced_options">
+        android:title="@string/Advanced_options"
+        app:iconSpaceReserved="false">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_pace_graph_smoothing"
             android:persistent="true"
-            android:title="@string/Smooth_pace_graph" />
+            android:title="@string/Smooth_pace_graph"
+            app:iconSpaceReserved="false" />
 
         <!--suppress AndroidDomInspection -->
         <org.runnerup.widget.TextPreference
@@ -36,6 +39,7 @@
             android:key="@string/pref_pace_graph_smoothing_filters"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Smooth_pace_filters" />
+            android:title="@string/Smooth_pace_filters"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

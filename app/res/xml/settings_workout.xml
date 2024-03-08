@@ -16,16 +16,19 @@
   -->
 <!--suppress AndroidDomInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
     <PreferenceCategory
         android:key="@string/Manage_workouts_category"
-        android:title="@string/Manage_workouts_category">
+        android:title="@string/Manage_workouts_category"
+        app:iconSpaceReserved="false">
         <Preference
             android:key="@string/pref_cue_workouts"
             android:summary="@string/Downloadeditremove_workouts"
-            android:title="@string/Manage_workouts">
+            android:title="@string/Manage_workouts"
+            app:iconSpaceReserved="false">
             <intent
                 android:targetClass="org.runnerup.view.ManageWorkoutsActivity"
                 android:targetPackage="@string/applicationIdFull" />
@@ -34,13 +37,15 @@
 
     <PreferenceCategory
         android:key="@string/Autolap_category"
-        android:title="@string/Autolap_category">
+        android:title="@string/Autolap_category"
+        app:iconSpaceReserved="false">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_autolap_active"
             android:persistent="true"
             android:summary="@string/Autolap_basic_summary"
-            android:title="@string/Autolap" />
+            android:title="@string/Autolap"
+            app:iconSpaceReserved="false" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="1000"
@@ -49,38 +54,44 @@
             android:key="@string/pref_autolap"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Autolap_m" />
+            android:title="@string/Autolap_m"
+            app:iconSpaceReserved="false" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_step_autolap_active"
             android:persistent="true"
             android:summary="@string/Autolap_during_intervals_summary"
-            android:title="@string/Autolap_during_intervals" />
+            android:title="@string/Autolap_during_intervals"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="@string/Autopause_category"
-        android:title="@string/Autopause_category">
+        android:title="@string/Autopause_category"
+        app:iconSpaceReserved="false">
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_autopause_active"
             android:persistent="true"
             android:summary="@string/Autopause_summary"
-            android:title="@string/Autopause" />
+            android:title="@string/Autopause"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="@string/Countdown_category"
-        android:title="@string/Countdown_category">
+        android:title="@string/Countdown_category"
+        app:iconSpaceReserved="false">
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_countdown_active"
             android:persistent="true"
             android:summary="@string/Activity_countdown_summary"
-            android:title="@string/Activity_countdown" />
+            android:title="@string/Activity_countdown"
+            app:iconSpaceReserved="false" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"
@@ -89,14 +100,16 @@
             android:key="@string/pref_countdown_time"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Countdown_time_s" />
+            android:title="@string/Countdown_time_s"
+            app:iconSpaceReserved="false" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_step_countdown_active"
             android:persistent="true"
             android:summary="@string/Add_countdown_after_step_that_ends_with_user_press_summary"
-            android:title="@string/Add_countdown_after_step_that_ends_with_user_press" />
+            android:title="@string/Add_countdown_after_step_that_ends_with_user_press"
+            app:iconSpaceReserved="false" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="15"
@@ -105,12 +118,14 @@
             android:key="@string/pref_step_countdown_time"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Step_countdown_time_s" />
+            android:title="@string/Step_countdown_time_s"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="@string/Recovery_category"
-        android:title="@string/Recovery_category">
+        android:title="@string/Recovery_category"
+        app:iconSpaceReserved="false">
 
         <CheckBoxPreference
             android:defaultValue="true"
@@ -118,21 +133,26 @@
             android:key="@string/pref_convert_advanced_distance_rest_to_recovery"
             android:persistent="true"
             android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab"
-            android:title="@string/Convert_rest_on_Advanced_tab" />
+            android:title="@string/Convert_rest_on_Advanced_tab"
+            app:iconSpaceReserved="false" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_convert_interval_distance_rest_to_recovery"
             android:persistent="true"
             android:summary="@string/Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab"
-            android:title="@string/Convert_rest_on_Interval_tab" />
+            android:title="@string/Convert_rest_on_Interval_tab"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="@string/Target_category"
-        android:title="@string/Target_category">
+        android:title="@string/Target_category"
+        app:iconSpaceReserved="false">
 
-        <Preference android:summary="@string/Target_coaching_summary" />
+        <Preference
+            android:summary="@string/Target_coaching_summary"
+            app:iconSpaceReserved="false" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="20"
@@ -141,7 +161,8 @@
             android:minWidth="48dp"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Target_pace_moving_average_seconds" />
+            android:title="@string/Target_pace_moving_average_seconds"
+            app:iconSpaceReserved="false" />
 
         <org.runnerup.widget.TextPreference
             android:defaultValue="30"
@@ -150,7 +171,8 @@
             android:minWidth="48dp"
             android:minHeight="48dp"
             android:persistent="true"
-            android:title="@string/Target_pace_grace_seconds" />
+            android:title="@string/Target_pace_grace_seconds"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

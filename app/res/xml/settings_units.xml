@@ -16,6 +16,7 @@
   -->
 <!--suppress AndroidDomInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -24,7 +25,8 @@
         android:entryValues="@array/unitValues"
         android:key="@string/pref_unit"
         android:persistent="true"
-        android:title="@string/Unit_preference" />
+        android:title="@string/Unit_preference"
+        app:iconSpaceReserved="false" />
 
     <ListPreference
         android:defaultValue="pace"
@@ -32,6 +34,7 @@
         android:entryValues="@array/speedUnitValues"
         android:key="@string/pref_speedunit"
         android:persistent="true"
-        android:title="@string/Speed_unit_preference" />
+        android:title="@string/Speed_unit_preference"
+        app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

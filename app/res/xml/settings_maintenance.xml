@@ -16,36 +16,43 @@
   -->
 <!--suppress AndroidDomInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
     <PreferenceCategory
         android:key="@string/Database_category"
-        android:title="@string/Database_category">
+        android:title="@string/Database_category"
+        app:iconSpaceReserved="false">
 
         <Preference
             android:key="@string/Maintenance_explanation_summary"
-            android:summary="@string/Maintenance_explanation_summary" />
+            android:summary="@string/Maintenance_explanation_summary"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="@string/pref_exportdb"
             android:summary="@string/Export_database_to_sdcard_eg_for_upgrade"
-            android:title="@string/Export" />
+            android:title="@string/Export"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="@string/pref_importdb"
             android:summary="@string/Import_database_from_sdcard_eg_after_upgrade"
-            android:title="@string/Import" />
+            android:title="@string/Import"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="@string/pref_prunedb"
             android:summary="@string/Pruning_deleted_activities_from_database"
-            android:title="@string/Prune" />
+            android:title="@string/Prune"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
     <!--CheckBoxPreference
         android:defaultValue="false"
         android:persistent="true"
         android:key="@string/pref_experimental_features"
         android:title="@string/Experimental_features"
-        android:summary="@string/Unused_currently" /-->
+        android:summary="@string/Unused_currently"
+        app:iconSpaceReserved="false" /-->
 </PreferenceScreen>

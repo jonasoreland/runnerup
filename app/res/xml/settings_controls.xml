@@ -16,19 +16,22 @@
   -->
 <!--suppress AndroidDomInspection -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
     <PreferenceCategory
         android:key="@string/Lock_activity_buttons_category"
-        android:title="@string/Lock_activity_buttons_category">
+        android:title="@string/Lock_activity_buttons_category"
+        app:iconSpaceReserved="false">
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_lock_run"
             android:persistent="true"
             android:summary="@string/Lock_activity_buttons_message"
-            android:title="@string/Lock_activity_buttons" />
+            android:title="@string/Lock_activity_buttons"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>
