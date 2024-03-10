@@ -681,7 +681,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             return;
         }
 
-        btGatt.disconnect();
+        if (btGatt != null) {
+            btGatt.disconnect();
+        }
 
         if (isConnected) {
             log("close btGatt in onConnectionState");

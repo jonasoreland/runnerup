@@ -42,6 +42,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
+import org.runnerup.util.SafeParse;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
@@ -80,8 +81,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
             lo.setOnEditorActionListener((v, actionId, event) -> {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     int loZone = hrZoneCalculator.getZoneCount() - 1; /*  base 0 offset */
-                    int loHR = Integer.parseInt(lo.getText().toString());
-                    int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                    int loHR = SafeParse.parseInt(lo.getText().toString(), 0);
+                    int maxHR = SafeParse.parseInt(maxHRSpinner.getValue().toString(), loHR);
                     // each zone needs a range of at least 1 HR beat
                     if (loHR > maxHR - 1) {
                         loHR = maxHR - 1;
@@ -104,8 +105,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
                     // Validate
                     int prevZone = loZone - 1;
                     int nextZone = loZone + 1;
-                    int loHR = Integer.parseInt(lo.getText().toString());
-                    int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                    int loHR = SafeParse.parseInt(lo.getText().toString(), 0);
+                    int maxHR = SafeParse.parseInt(maxHRSpinner.getValue().toString(), loHR);
                     int zoneCount = hrZoneCalculator.getZoneCount();
                     int zoneDiff = zoneCount - loZone;
 
@@ -117,7 +118,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
                     if (nextZone < zoneCount) {
                         // check that the lo is less than the next lo
-                        int nextLoHR = Integer.parseInt(zones.get(2*nextZone).getText().toString());
+                        int nextLoHR = SafeParse.parseInt(zones.get(2*nextZone).getText().toString(), loHR);
                         if (loHR >= nextLoHR) {
                             // lo's are out of order, use some default
                             loHR = nextLoHR -1;
@@ -131,7 +132,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
 
                     if (prevZone >= 0) {
                         //Check that the lo's are in increasing order
-                        int prevLoHR = Integer.parseInt(zones.get(2*prevZone).getText().toString());
+                        int prevLoHR = SafeParse.parseInt(zones.get(2*prevZone).getText().toString(), loHR);
                         if (loHR <= prevLoHR) {
                             // lo's are out of order, use some default
                             loHR = prevLoHR +1;
@@ -236,7 +237,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     private void recomputeMaxHR() {
         new Handler().post(() -> {
             try {
-                int age = Integer.parseInt(ageSpinner.getValue().toString());
+                int age = SafeParse.parseInt(ageSpinner.getValue().toString(), 21);
                 int maxHR = HRZoneCalculator.computeMaxHR(age,
                         "Male".contentEquals(sexSpinner.getValue()));
                 maxHRSpinner.setValue(Integer.toString(maxHR));
@@ -251,7 +252,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         new Handler().post(() -> {
             try {
                 int zoneCount = hrZoneCalculator.getZoneCount();
-                int maxHR = Integer.parseInt(maxHRSpinner.getValue().toString());
+                int maxHR = SafeParse.parseInt(maxHRSpinner.getValue().toString(), 180);
                 for (int i = 0; i < zoneCount; i++) {
                     Pair<Integer, Integer> val = hrZoneCalculator.computeHRZone(i + 1, maxHR);
                     zones.get(2 * i /*+ 0*/).setText(String.format(Locale.getDefault(), "%d", val.first));
