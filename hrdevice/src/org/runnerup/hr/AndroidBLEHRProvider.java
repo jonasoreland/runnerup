@@ -33,10 +33,10 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.HashSet;
 import java.util.List;

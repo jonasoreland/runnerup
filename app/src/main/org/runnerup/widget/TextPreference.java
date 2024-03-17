@@ -25,7 +25,7 @@ import android.util.AttributeSet;
 import org.runnerup.R;
 
 
-public class TextPreference extends android.preference.EditTextPreference {
+public class TextPreference extends androidx.preference.EditTextPreference {
 
     public TextPreference(Context context) {
         super(context);
@@ -40,34 +40,32 @@ public class TextPreference extends android.preference.EditTextPreference {
     }
 
     @Override
-    protected void onSetInitialValue(boolean restorePersistedValue,
-                                     Object defaultValue) {
-        super.onSetInitialValue(restorePersistedValue, defaultValue);
+    protected void onSetInitialValue(Object defaultValue) {
+        super.onSetInitialValue(defaultValue);
         super.setSummary(super.getPersistedString(""));
-        super.getEditText().setMinimumWidth(48);
-        super.getEditText().setMinimumHeight(48);
-    }
+        setOnBindEditTextListener(editText -> {
+            editText.setMinimumWidth(48);
+            editText.setMinimumHeight(48);
+        });
 
-    @Override
-    protected void onDialogClosed(boolean ok) {
-        super.onDialogClosed(ok);
-        if (ok) {
-            String val = super.getPersistedString("");
+        setOnPreferenceChangeListener((preference, newValue) -> {
+            String val = newValue instanceof String ? (String) newValue : "";
             if (TextUtils.isEmpty(val)) {
                 //If empty, use the default value
                 //This could be a default setting and should not be hardcoded in a widget
                 //However, getting the default value in the xml seems hard and a similar
                 //onPreferenceChange() in SettingsActivity is not much better
                 Resources res = getContext().getResources();
-                if (this.getKey().equals(res.getString(R.string.pref_mapbox_default_style))) {
+                if (preference.getKey().equals(res.getString(R.string.pref_mapbox_default_style))) {
                     val = res.getString(R.string.mapboxDefaultStyle);
                     super.setText(val);
-                } else if (this.getKey().equals(res.getString(R.string.pref_path_simplification_tolerance))) {
+                } else if (preference.getKey().equals(res.getString(R.string.pref_path_simplification_tolerance))) {
                     val = res.getString(R.string.path_simplification_default_tolerance);
                     super.setText(val);
                 }
             }
             super.setSummary(val);
-        }
+            return true;
+        });
     }
 }
