@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import org.runnerup.common.util.Constants;
@@ -119,7 +120,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.Intents.NEW_LAP);
             intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
-            context.registerReceiver(mBroadcastReceiver, intentFilter);
+            ContextCompat.registerReceiver(context, mBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
         }
 
         {

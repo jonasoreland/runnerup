@@ -449,7 +449,7 @@ public class StartActivity extends AppCompatActivity
         // START_ACTIVITY should also start GPS if not done
         intentFilter.addAction(Constants.Intents.START_ACTIVITY);
         intentFilter.addAction(Constants.Intents.START_WORKOUT);
-        registerReceiver(startEventBroadcastReceiver, intentFilter);
+        ContextCompat.registerReceiver(this, startEventBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     private void unregisterStartEventListener() {
