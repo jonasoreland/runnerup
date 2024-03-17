@@ -43,6 +43,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -173,6 +174,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             return false;
         });
         bindGpsTracker();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // ignore back while in an activity
+            }
+        });
+
     }
 
     @Override
@@ -293,14 +302,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
 
     private final OnClickListener stopButtonClick = v -> doStop();
-
-    @Override
-    public void onBackPressed() {
-        //boolean ignore_back = true; // atleast magnus belives that this is better...
-        //if (!ignore_back) {
-        //    stopButtonClick.onClick(stopButton);
-        //}
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -47,6 +47,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -90,7 +91,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     private SQLiteDatabase mDB = null;
     private final HashSet<String> pendingSynchronizers = new HashSet<>();
     private final HashSet<String> alreadySynched = new HashSet<>();
-    private final Map<String,String> synchedExternalId = new HashMap<>();
+    private final Map<String, String> synchedExternalId = new HashMap<>();
 
     private boolean lapHrPresent = false;
     private ContentValues[] laps = null;
@@ -144,15 +145,15 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         Intent intent = getIntent();
         mID = intent.getLongExtra("ID", -1);
-        String mode = intent.getStringExtra("mode");
+        String intentMode = intent.getStringExtra("mode");
 
         mDB = DBHelper.getReadableDatabase(this);
         syncManager = new SyncManager(this);
         formatter = new Formatter(this);
 
-        if (mode.contentEquals("save")) {
+        if (intentMode.contentEquals("save")) {
             this.mode = MODE_SAVE;
-        } else if (mode.contentEquals("details")) {
+        } else if (intentMode.contentEquals("details")) {
             this.mode = MODE_DETAILS;
         } else {
             if (BuildConfig.DEBUG) {
@@ -238,6 +239,21 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             adapters.add(adapter);
             lv.setAdapter(adapter);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (uploading) {
+                    // Ignore while uploading
+                    return;
+                }
+                if (mode == MODE_SAVE) {
+                    resumeButtonClick.onClick(resumeButton);
+                } else {
+                    finish();
+                }
+            }
+        });
     }
 
     private void setEdit(boolean value) {
@@ -270,18 +286,15 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             return super.onOptionsItemSelected(item);
-        }
-        else if (id == R.id.menu_delete_activity) {
+        } else if (id == R.id.menu_delete_activity) {
             deleteButtonClick.onClick(null);
-        }
-        else if (id == R.id.menu_edit_activity) {
+        } else if (id == R.id.menu_edit_activity) {
             if (!edit) {
                 setEdit(true);
                 notes.requestFocus();
                 requery();
             }
-        }
-        else if (id == R.id.menu_recompute_activity) {
+        } else if (id == R.id.menu_recompute_activity) {
             new AlertDialog.Builder(this)
                     .setTitle(org.runnerup.common.R.string.Recompute_activity)
                     .setMessage(org.runnerup.common.R.string.Are_you_sure)
@@ -294,8 +307,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     })
                     .setNegativeButton(org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
                     .show();
-        }
-        else if (id == R.id.menu_simplify_path) {
+        } else if (id == R.id.menu_simplify_path) {
             new AlertDialog.Builder(this)
                     .setTitle(org.runnerup.common.R.string.path_simplification_menu)
                     .setMessage(org.runnerup.common.R.string.Are_you_sure)
@@ -311,8 +323,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     })
                     .setNegativeButton(org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
                     .show();
-        }
-        else if (id == R.id.menu_share_activity) {
+        } else if (id == R.id.menu_share_activity) {
             shareActivity();
         }
 
@@ -322,7 +333,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onResume() {
         super.onResume();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onResume();
         }
     }
@@ -330,7 +341,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onStart() {
         super.onStart();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onStart();
         }
     }
@@ -338,7 +349,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onStop() {
         super.onStop();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onStop();
         }
     }
@@ -346,7 +357,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onPause() {
         super.onPause();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onPause();
         }
     }
@@ -354,7 +365,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onSaveInstanceState(outState);
         }
     }
@@ -362,7 +373,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onLowMemory();
         }
     }
@@ -372,7 +383,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         super.onDestroy();
         DBHelper.closeDB(mDB);
         syncManager.close();
-        if(mapWrapper != null) {
+        if (mapWrapper != null) {
             mapWrapper.onDestroy();
         }
     }
@@ -594,7 +605,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     .getAsLong(DB.LAP.TIME) : 0;
             viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
             if (t != 0) {
-                viewHolder.tv4.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d/t));
+                viewHolder.tv4.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t));
             } else {
                 viewHolder.tv4.setText("");
             }
@@ -794,21 +805,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                     (dialog, which) -> dialog.dismiss()
             )
             .show();
-
-    @Override
-    public void onBackPressed() {
-        if (uploading) {
-            /*
-             * Ignore while uploading
-             */
-            return;
-        }
-        if (mode == MODE_SAVE) {
-            resumeButtonClick.onClick(resumeButton);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     private final OnClickListener resumeButtonClick = v -> {
         DetailActivity.this.setResult(RESULT_FIRST_USER);
