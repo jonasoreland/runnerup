@@ -36,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 
@@ -136,18 +137,18 @@ public class UploadActivity extends AppCompatActivity implements Constants {
                 im.setImageDrawable(AppCompatResources.getDrawable(this, synchronizer.getIconId()));
             }
         }
-    }
 
-    @Override
-    public void onBackPressed() {
-        if (fetching) {
-            /*
-             * Cancel
-             */
-            cancelSync.append("1");
-            return;
-        }
-        super.onBackPressed();
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (fetching) {
+                    cancelSync.append("1");
+                    return;
+                }
+
+                finish();
+            }
+        });
     }
 
     @Override
