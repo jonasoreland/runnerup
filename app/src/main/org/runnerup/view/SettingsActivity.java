@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
@@ -46,7 +47,25 @@ public class SettingsActivity extends AppCompatActivity implements
                 .setReorderingAllowed(true)
                 .replace(R.id.settings_fragment_container, new SettingsFragment())
                 .commit();
-    }}
+        }
+
+        Context context = this;
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+
+                if (count == 0) {
+                    // if no more fragments to pop, navigate back
+                    Intent intent = new Intent(context, MainLayout.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    getSupportFragmentManager().popBackStack();
+                }
+            }
+        });
+    }
 
     public static boolean hasHR(Context ctx) {
         Resources res = ctx.getResources();
@@ -54,19 +73,6 @@ public class SettingsActivity extends AppCompatActivity implements
         String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
         String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
         return btProviderName != null && btAddress != null;
-    }
-
-    public void onBackPressed() {
-        int count = getSupportFragmentManager().getBackStackEntryCount();
-
-        if (count == 0) {
-            // if no more fragments to pop, navigate back
-            Intent intent = new Intent(this, MainLayout.class);
-            startActivity(intent);
-            finish();
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
     }
 
     @Override

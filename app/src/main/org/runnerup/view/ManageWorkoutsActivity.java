@@ -365,17 +365,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (uploading) {
-            /*
-             * Ignore while uploading
-             */
-            return;
-        }
-        super.onBackPressed();
-    }
-
     interface Filter<T> {
         boolean match(T t);
     }
@@ -457,14 +446,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             currentlySelectedWorkout = null;
         }
         handleButtons();
-    };
-
-    OnClickListener loadWorkoutButtonClick = v -> {
-        uploading = true;
-        syncManager.loadWorkouts(pendingWorkouts, (synchronizerName, status) -> {
-            uploading = false;
-            listLocal();
-        });
     };
 
     private final OnClickListener shareButtonClick = v -> {
@@ -609,6 +590,8 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 return;
             }
 
+            // below is not supported by any current provider, so 'uploading'
+            // is not set (back while uploading would abort)
             if (loadedProviders.contains(provider)) {
                 super.onGroupExpanded(groupPosition);
                 return;

@@ -55,6 +55,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -291,6 +292,24 @@ public class StartActivity extends AppCompatActivity
         }
 
         updateTargetView();
+
+        Context context = this;
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!getAutoStartGps() && mGpsStatus.isLogging()) {
+                    stopGps();
+                    updateView();
+                } else if (exit) {
+                    finish(); // finish activity
+                } else {
+                    final Resources res = context.getResources();
+                    Toast.makeText(getApplicationContext(), res.getString(org.runnerup.common.R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
+                    exit = true;
+                    new Handler().postDelayed(() -> exit = false, 3 * 1000);
+                }
+            }
+        });
     }
 
     private class OnConfigureAudioListener implements OnSetValueListener {
@@ -406,20 +425,6 @@ public class StartActivity extends AppCompatActivity
 
         DBHelper.closeDB(mDB);
         super.onDestroy();
-    }
-
-    public void onBackPressed() {
-        if (!getAutoStartGps() && mGpsStatus.isLogging()) {
-            stopGps();
-            updateView();
-        } else if (exit) {
-            super.onBackPressed(); // finish activity
-        } else {
-            final Resources res = this.getResources();
-            Toast.makeText(getApplicationContext(), res.getString(org.runnerup.common.R.string.Catch_backbuttonpress), Toast.LENGTH_SHORT).show();
-            exit = true;
-            new Handler().postDelayed(() -> exit = false, 3 * 1000);
-        }
     }
 
     private final BroadcastReceiver startEventBroadcastReceiver = new BroadcastReceiver() {
