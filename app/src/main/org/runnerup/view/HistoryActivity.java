@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -91,18 +92,22 @@ public class HistoryActivity extends AppCompatActivity implements Constants, OnI
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         new ActivityCleaner().conditionalRecompute(mDB);
+
+        Context context = this;
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(context, MainLayout.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         getSupportLoaderManager().restartLoader(0, null, this);
-    }
-
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MainLayout.class);
-        startActivity(intent);
-        finish();
     }
 
     @Override

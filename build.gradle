@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath 'com.android.tools.build:gradle:8.1.4'
     }
 }
 
@@ -16,8 +16,8 @@ project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
     buildToolsVersion = '34.0.0' //Update Travis manually
-    compileSdk = 33 //Update Travis manually
-    targetSdk = 33
+    compileSdk = 34 //Update Travis manually
+    targetSdk = 34
     minSdk = 21
 
     appcompat_version = "1.6.1"
