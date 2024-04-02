@@ -29,9 +29,10 @@ public class FileUtil {
     private static int copy(InputStream src, OutputStream dst) throws IOException {
         int cnt = 0;
         byte[] buf = new byte[1024];
-        while (src.read(buf) > 0) {
-            cnt += buf.length;
-            dst.write(buf);
+        int bytesRead;
+        while ((bytesRead = src.read(buf)) > 0) {
+            cnt += bytesRead;
+            dst.write(buf, 0, bytesRead);
         }
         return cnt;
     }
