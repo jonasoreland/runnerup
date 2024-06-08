@@ -253,7 +253,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     private void startTimer() {
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 RunActivity.this.handler.post(RunActivity.this::onTick);

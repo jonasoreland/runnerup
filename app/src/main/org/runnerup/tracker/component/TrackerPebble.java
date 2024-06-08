@@ -83,6 +83,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
                         if (tracker.getWorkout() == null) {
                             Intent startBroadcastIntent = new Intent()
                                     .setAction(org.runnerup.common.util.Constants.Intents.START_WORKOUT);
+                            startBroadcastIntent.setPackage(null);
                             context.sendBroadcast(startBroadcastIntent);
                         } else if (tracker.getWorkout().isPaused()) {
                             sendLocalBroadcast(org.runnerup.common.util.Constants.Intents.RESUME_WORKOUT);

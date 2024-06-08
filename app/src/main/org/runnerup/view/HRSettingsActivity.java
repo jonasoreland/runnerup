@@ -588,7 +588,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     private void startTimer() {
         hrReader = new Timer();
-        hrReader.scheduleAtFixedRate(new TimerTask() {
+        hrReader.schedule(new TimerTask() {
             @Override
             public void run() {
                 handler.post(() -> readHR());
