@@ -1,13 +1,8 @@
 apply plugin: 'com.android.application'
 
-def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
+def getGitHash = providers.exec {
+    commandLine('git', 'rev-parse', '--short', 'HEAD')
+}.standardOutput.asText.get().strip()
 
 android {
     buildToolsVersion = rootProject.ext.buildToolsVersion
@@ -78,7 +73,7 @@ android {
         debug {
             // Separate the debug build, sync with common/build.gradle
             applicationIdSuffix ".debug"
-            versionNameSuffix "-${getGitHash()}"
+            versionNameSuffix = "-${getGitHash}"
         }
         release {
             debuggable false
@@ -155,7 +150,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
 
-    latestImplementation "com.google.android.material:material:1.11.0"
+    latestImplementation "com.google.android.material:material:1.12.0"
     if (rootProject.ext.enableWear) {
         // Build Wear separately, do not include in phone apk
         // latestWearApp project(':wear')

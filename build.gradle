@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.android.tools.build:gradle:8.4.1'
     }
 }
 
@@ -20,7 +20,7 @@ project.ext {
     targetSdk = 34
     minSdk = 21
 
-    appcompat_version = "1.6.1"
+    appcompat_version = "1.7.0"
     annotation_version = "1.6.0"
     preference_version = "1.2.1"
     //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
