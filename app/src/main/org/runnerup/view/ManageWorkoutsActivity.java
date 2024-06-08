@@ -249,8 +249,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(f));
         BufferedInputStream in = new BufferedInputStream(is);
         byte[] buf = new byte[1024];
-        while (in.read(buf) > 0) {
-            out.write(buf);
+        int bytesRead;
+        while ((bytesRead = in.read(buf)) > 0) {
+            out.write(buf, 0, bytesRead);
         }
         in.close();
         out.close();
