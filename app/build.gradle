@@ -19,8 +19,15 @@ android {
             java.srcDirs = ['src/main']
             if (rootProject.ext.allowNonFree) {
                 java.srcDirs += ['src/play']
+                if (rootProject.ext.enableWear) {
+                    java.srcDirs += ['src/wear']
+                }
+                else {
+                    java.srcDirs += ['src/nonwear']
+                }
             } else {
                 java.srcDirs += ['src/free']
+                java.srcDirs += ['src/nonwear']
             }
             resources.srcDirs = java.srcDirs
             aidl.srcDirs = java.srcDirs
