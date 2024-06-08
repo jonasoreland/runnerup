@@ -1,0 +1,4 @@
+Target Android 14
+Library updates and internal cleanup
+Translation updates for pt
+#1176 Remove old Wear support, to allow Play update
