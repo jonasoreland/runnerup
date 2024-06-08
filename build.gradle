@@ -23,8 +23,8 @@ project.ext {
     appcompat_version = "1.7.0"
     annotation_version = "1.6.0"
     preference_version = "1.2.1"
-    //Note: Later Play Services will require a rewrite of NodeApi.NodeListener
-    googlePlayServicesVersion = '11.0.4'
+    //Note: Play Services later than 11.0.4 disables wear, requires a rewrite of NodeApi.NodeListener
+    googlePlayServicesVersion = '21.3.0'
     googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
@@ -37,7 +37,8 @@ project.ext {
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
-    enableWear = allowNonFree
+    // wear disabled, requires Play services migration
+    enableWear = false
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     // Therefore, the .aar file may not be redistributed in the RU repo
