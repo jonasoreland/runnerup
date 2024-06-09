@@ -487,6 +487,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
             String address = device.getAddress();
             if (mIsConnecting
+                    && btDevice != null
                     && address.equals(btDevice.getAddress())) {
                 stopScan();
 
