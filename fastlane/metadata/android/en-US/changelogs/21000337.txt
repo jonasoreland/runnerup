@@ -1,0 +1,5 @@
+Target Android 14
+Library updates and internal cleanup
+Translation updates for pt
+#1176 Remove old Wear support, to allow Play update
+Remove e-NL locale, interfered with default English in Android 14
