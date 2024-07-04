@@ -28,6 +28,7 @@ public class GpsBoundState implements NotificationState {
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
 
         Intent startIntent = new Intent()
+                .setPackage(context.getPackageName())
                 .setAction(Constants.Intents.START_ACTIVITY);
         PendingIntent pendingStart = PendingIntent.getBroadcast(
                 context, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);

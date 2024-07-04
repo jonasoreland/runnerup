@@ -39,11 +39,13 @@ public class OngoingState implements NotificationState {
         PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
 
         Intent lapIntent = new Intent()
+                .setPackage(context.getPackageName())
                 .setAction(Constants.Intents.NEW_LAP);
         PendingIntent pendingLap = PendingIntent.getBroadcast(
                 context, 0, lapIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
 
         Intent pauseIntent = new Intent()
+                .setPackage(context.getPackageName())
                 .setAction(Constants.Intents.PAUSE_RESUME);
         PendingIntent pendingPause = PendingIntent.getBroadcast(
                 context, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT | intentFlags);
