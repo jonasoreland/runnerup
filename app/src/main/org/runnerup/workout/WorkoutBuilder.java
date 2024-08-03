@@ -521,7 +521,7 @@ public class WorkoutBuilder {
             case TIME:
                 // seconds
                 Double[] tmp0 = {
-                        60d, 30d, 10d, 5d, 3d, 2d, 1d
+                        60d, 30d, 10d, 5d, 4d, 3d, 2d, 1d
                 };
                 list.addAll(Arrays.asList(tmp0));
                 break;
