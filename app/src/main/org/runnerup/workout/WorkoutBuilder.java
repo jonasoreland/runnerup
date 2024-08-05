@@ -536,6 +536,11 @@ public class WorkoutBuilder {
                 return;
         }
 
+        // Extent the feedback list with more values for longer countdowns
+        while (step.getDurationValue() / 2 > list.get(0)) {
+            list.add(0, list.get(0) * 2d);
+        }
+
         // Remove all values in list close to the step
         while (list.size() > 0 && step.getDurationValue() < list.get(0) * 1.1d) {
             list.remove(0);
