@@ -521,7 +521,7 @@ public class WorkoutBuilder {
             case TIME:
                 // seconds
                 Double[] tmp0 = {
-                        60d, 30d, 10d, 5d, 3d, 2d, 1d
+                        60d, 30d, 10d, 5d, 4d, 3d, 2d, 1d
                 };
                 list.addAll(Arrays.asList(tmp0));
                 break;
@@ -534,6 +534,11 @@ public class WorkoutBuilder {
                 break;
             default:
                 return;
+        }
+
+        // Extent the feedback list with more values for longer countdowns
+        while (step.getDurationValue() / 2 > list.get(0)) {
+            list.add(0, list.get(0) * 2d);
         }
 
         // Remove all values in list close to the step
