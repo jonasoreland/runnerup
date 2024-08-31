@@ -108,6 +108,7 @@ android {
     }
     buildFeatures {
         aidl true
+        buildConfig true
     }
     androidResources {
         generateLocaleConfig true

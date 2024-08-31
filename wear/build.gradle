@@ -36,7 +36,9 @@ android {
         textReport true
     }
     namespace 'org.runnerup'
-
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 repositories {
