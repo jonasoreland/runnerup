@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.DBEntity;
 import org.runnerup.export.DropboxSynchronizer;
+import org.runnerup.export.EndurainSynchronizer;
 import org.runnerup.export.FileSynchronizer;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.export.RunalyzeSynchronizer;
@@ -466,6 +467,7 @@ public class DBHelper extends SQLiteOpenHelper implements
         insertAccount(arg0, RunKeeperSynchronizer.NAME, 1);
         insertAccount(arg0, RunningAHEADSynchronizer.NAME, 0);
         insertAccount(arg0, StravaSynchronizer.NAME, 1);
+        insertAccount(arg0, EndurainSynchronizer.NAME, 1);
         insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
         insertAccount(arg0, FileSynchronizer.NAME, 1);
         insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);

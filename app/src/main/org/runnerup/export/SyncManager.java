@@ -195,6 +195,8 @@ public class SyncManager {
             synchronizer = new DropboxSynchronizer(mContext, simplifier);
         } else if (synchronizerName.contentEquals(WebDavSynchronizer.NAME)) {
             synchronizer = new WebDavSynchronizer(simplifier);
+        } else if (synchronizerName.contentEquals(EndurainSynchronizer.NAME)) {
+            synchronizer = new EndurainSynchronizer(simplifier);
         } else {
             Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
         }
