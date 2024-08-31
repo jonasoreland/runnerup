@@ -44,6 +44,9 @@ android {
         textReport true
     }
     namespace 'org.runnerup.common'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 repositories {
