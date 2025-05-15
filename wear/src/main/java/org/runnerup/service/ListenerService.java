@@ -29,6 +29,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import org.runnerup.R;
@@ -67,6 +68,16 @@ public class ListenerService extends WearableListenerService {
                 handleNotification(ev);
             }
         }
+    }
+
+    @Override
+    public void onPeerConnected(Node peer) {
+        System.err.println("ListenerService.onPeerConnected: " + peer.getId());
+    }
+
+    @Override
+    public void onPeerDisconnected(Node peer) {
+        System.err.println("ListenerService.onPeerDisconnected: " + peer.getId());
     }
 
     private void handleNotification(DataEvent ev) {

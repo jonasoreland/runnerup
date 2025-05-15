@@ -127,6 +127,8 @@ public class TrackerReceiver extends DefaultTrackerComponent {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
             intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
+            intentFilter.addAction(Constants.Intents.NEW_LAP);
+            intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
             LocalBroadcastManager.getInstance(context).registerReceiver(
                     mLocalBroadcastReceiver, intentFilter);
         }

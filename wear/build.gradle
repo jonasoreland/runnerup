@@ -10,6 +10,7 @@ android {
         targetSdk rootProject.ext.targetSdk
         versionName rootProject.ext.versionName
         versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
+        applicationId rootProject.ext.applicationId
     }
 
     signingConfigs {
@@ -25,6 +26,9 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
             signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix ".debug"
         }
     }
     lint {
@@ -53,9 +57,9 @@ dependencies {
 
     implementation "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
     compileOnly "com.google.android.wearable:wearable:${rootProject.ext.googleWearVersion}"
-    // Wear requires rewrite to update Play services
+
     //noinspection GradleDependency
-    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
 }
 
 def props = new Properties()

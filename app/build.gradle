@@ -18,16 +18,19 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
             if (rootProject.ext.allowNonFree) {
-                java.srcDirs += ['src/play']
-                if (rootProject.ext.enableWear) {
-                    java.srcDirs += ['src/wear']
-                }
-                else {
-                    java.srcDirs += ['src/nonwear']
-                }
+               java.srcDirs += ['src/play']
             } else {
-                java.srcDirs += ['src/free']
-                java.srcDirs += ['src/nonwear']
+               java.srcDirs += ['src/nonplay']
+            }
+            if (rootProject.ext.enableWear) {
+               java.srcDirs += ['src/wear']
+            } else {
+               java.srcDirs += ['src/nonwear']
+            }
+            if (rootProject.ext.useMapBox) {
+               java.srcDirs += ['src/mapbox']
+            } else {
+                java.srcDirs += ['src/nonmapbox']
             }
             resources.srcDirs = java.srcDirs
             aidl.srcDirs = java.srcDirs
@@ -119,7 +122,7 @@ repositories {
     google()
     mavenCentral() //MapBox GraphView
     maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
-    if (rootProject.ext.allowNonFree && rootProject.file("mapbox.properties").exists()) {
+    if (rootProject.ext.useMapBox) {
         maven {
             url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
@@ -164,7 +167,7 @@ dependencies {
         // latestWearApp project(':wear')
 
         //noinspection GradleDependency
-        latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesVersion}"
+        latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
 
     implementation "com.squareup.okhttp3:okhttp:3.12.3"
@@ -172,7 +175,8 @@ dependencies {
     if (rootProject.ext.allowNonFree) {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
-
+    }
+    if (rootProject.ext.useMapBox) {
         //noinspection GradleDependency
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2'
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
@@ -210,7 +214,7 @@ if (rootProject.file("release.properties").exists()) {
 
 android.applicationVariants.configureEach {
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
-    if (rootProject.ext.allowNonFree && rootProject.file("mapbox.properties").exists()) {
+    if (rootProject.ext.useMapBox) {
         // https://www.mapbox.com/account/
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
         buildConfigField 'int', 'MAPBOX_ENABLED', "1"
