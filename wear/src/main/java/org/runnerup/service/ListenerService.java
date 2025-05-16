@@ -72,12 +72,16 @@ public class ListenerService extends WearableListenerService {
 
     @Override
     public void onPeerConnected(Node peer) {
-        System.err.println("ListenerService.onPeerConnected: " + peer.getId());
+	if (BuildConfig.DEBUG && w != this) {
+	    System.err.println("ListenerService.onPeerConnected: " + peer.getId());
+	}
     }
 
     @Override
     public void onPeerDisconnected(Node peer) {
-        System.err.println("ListenerService.onPeerDisconnected: " + peer.getId());
+	if (BuildConfig.DEBUG && w != this) {
+	    System.err.println("ListenerService.onPeerDisconnected: " + peer.getId());
+	}
     }
 
     private void handleNotification(DataEvent ev) {
