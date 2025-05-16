@@ -33,9 +33,9 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
 
 import org.runnerup.R;
+import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
-
 
 public class ListenerService extends WearableListenerService {
 
@@ -72,14 +72,14 @@ public class ListenerService extends WearableListenerService {
 
     @Override
     public void onPeerConnected(Node peer) {
-	if (BuildConfig.DEBUG && w != this) {
+	if (BuildConfig.DEBUG) {
 	    System.err.println("ListenerService.onPeerConnected: " + peer.getId());
 	}
     }
 
     @Override
     public void onPeerDisconnected(Node peer) {
-	if (BuildConfig.DEBUG && w != this) {
+	if (BuildConfig.DEBUG) {
 	    System.err.println("ListenerService.onPeerDisconnected: " + peer.getId());
 	}
     }
