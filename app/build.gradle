@@ -9,8 +9,8 @@ android {
     namespace 'org.runnerup'
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.toVersion("17")
+        targetCompatibility JavaVersion.toVersion("17")
     }
 
     sourceSets {

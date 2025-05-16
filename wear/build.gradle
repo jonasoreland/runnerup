@@ -3,7 +3,12 @@ apply plugin: 'com.android.application'
 android {
     namespace 'org.runnerup'
     compileSdk rootProject.ext.compileSdk
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.toVersion("17")
+        targetCompatibility JavaVersion.toVersion("17")
+    }
 
     defaultConfig {
         minSdk 23

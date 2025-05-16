@@ -34,7 +34,8 @@
 
         <activity
             android:exported="true"
-            android:name=".view.MainActivity" >
+            android:name=".view.MainActivity"
+            tools:ignore="WearRecents">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
