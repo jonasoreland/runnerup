@@ -116,22 +116,16 @@ public class TrackerReceiver extends DefaultTrackerComponent {
 
 
     private void registerReceivers() {
-        {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(Constants.Intents.NEW_LAP);
-            intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
-            ContextCompat.registerReceiver(context, mBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
-        }
-
-        {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
-            intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
-            intentFilter.addAction(Constants.Intents.NEW_LAP);
-            intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
-            LocalBroadcastManager.getInstance(context).registerReceiver(
-                    mLocalBroadcastReceiver, intentFilter);
-        }
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
+        intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
+        intentFilter.addAction(Constants.Intents.NEW_LAP);
+        intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
+        LocalBroadcastManager.getInstance(context).registerReceiver
+            (mLocalBroadcastReceiver, intentFilter);
+        ContextCompat.registerReceiver
+            (context, mBroadcastReceiver, intentFilter,
+             ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     private void unregisterReceivers() {
