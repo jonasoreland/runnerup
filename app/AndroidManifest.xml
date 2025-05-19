@@ -86,7 +86,8 @@
                     android:mimeType="application/octet-stream"
                     android:scheme="http"/>
                 <data android:host="*"/>
-                <data android:pathPattern="runnerup.db.export"/>
+                <data android:pathPattern="runnerup.db.export"
+                    tools:ignore="AppLinkUrlError" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
