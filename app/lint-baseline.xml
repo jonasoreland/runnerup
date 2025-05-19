@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.7.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.7.1)" variant="all" version="8.7.1">
+<issues format="6" by="lint 8.7.3" type="baseline" client="gradle" dependencies="false" name="AGP (8.7.3)" variant="all" version="8.7.3">
+
+    <issue
+        id="NewApi"
+        message="`android:windowOptOutEdgeToEdgeEnforcement` requires API level 35 (current min is 21)"
+        errorLine1="        &lt;item name=&quot;android:windowOptOutEdgeToEdgeEnforcement&quot;>true&lt;/item>"
+        errorLine2="              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/styles.xml"
+            line="28"
+            column="15"/>
+    </issue>
 
     <issue
         id="UnusedAttribute"

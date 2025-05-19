@@ -108,9 +108,11 @@
 
         <activity
             android:name=".view.RunActivity"
-            android:configChanges="keyboardHidden|orientation"/>
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@style/AppTheme"/>
 
-        <activity android:name=".view.SettingsActivity"/>
+        <activity android:name=".view.SettingsActivity"
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".view.AudioCueSettingsActivity"
@@ -164,7 +166,8 @@
                 android:value=".view.AccountListActivity"/>
         </activity>
 
-        <activity android:name=".view.UploadActivity"/>
+        <activity android:name=".view.UploadActivity"
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:exported="true"
