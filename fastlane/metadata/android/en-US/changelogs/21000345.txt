@@ -1,0 +1,2 @@
+#1211 Resurrect WearOS companion app
+#1215 Target Android 15
