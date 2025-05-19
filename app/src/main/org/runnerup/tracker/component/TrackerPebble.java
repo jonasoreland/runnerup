@@ -81,10 +81,7 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
                     PebbleKit.sendAckToPebble(context, transactionId);
                     if (newState == Constants.SPORTS_STATE_PAUSED || newState == Constants.SPORTS_STATE_RUNNING) {
                         if (tracker.getWorkout() == null) {
-                            Intent startBroadcastIntent = new Intent()
-                                    .setAction(org.runnerup.common.util.Constants.Intents.START_WORKOUT);
-                            startBroadcastIntent.setPackage(null);
-                            context.sendBroadcast(startBroadcastIntent);
+			    sendBroadcast(org.runnerup.common.util.Constants.Intents.START_WORKOUT);
                         } else if (tracker.getWorkout().isPaused()) {
                             sendLocalBroadcast(org.runnerup.common.util.Constants.Intents.RESUME_WORKOUT);
                         } else {
@@ -103,6 +100,13 @@ public class TrackerPebble extends DefaultTrackerComponent implements WorkoutObs
     private void sendLocalBroadcast(String action) {
         Intent intent = new Intent().setAction(action);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendBroadcast(String action) {
+	Intent intent = new Intent()
+	    .setPackage(context.getPackageName())
+	    .setAction(action);
+	context.sendBroadcast(intent);
     }
 
     @Override

@@ -37,7 +37,6 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
@@ -51,14 +50,12 @@ import java.util.HashSet;
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 
-public class StateService extends Service implements NodeApi.NodeListener, MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
+public class StateService extends Service implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
 
     public static final String UPDATE_TIME = "UPDATE_TIME";
 
     private final IBinder mBinder = new LocalBinder();
     private GoogleApiClient mGoogleApiClient;
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private final HashSet<Node> connectedNodes = new HashSet<>();
 
     private String phoneNode;
 
@@ -79,24 +76,11 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
                         /* set "our" data */
                         setData();
 
-                        Wearable.NodeApi.addListener(mGoogleApiClient, StateService.this);
                         Wearable.MessageApi.addListener(mGoogleApiClient, StateService.this);
                         Wearable.DataApi.addListener(mGoogleApiClient, StateService.this);
 
                         /* read already existing data */
                         readData();
-
-                        /* get info about connected nodes in background */
-                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
-                                new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-                                    @Override
-                                    public void onResult(@NonNull NodeApi.GetConnectedNodesResult nodes) {
-                                        System.err.println("onGetConnectedNodes");
-                                        for (Node n : nodes.getNodes()) {
-                                            onPeerConnected(n);
-                                        }
-                                    }
-                                });
                     }
 
                     @Override
@@ -118,7 +102,8 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean checkConnection() {
-        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected() &&
+	    phoneNode != null;
     }
 
     private void readData() {
@@ -184,10 +169,8 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
         if (mGoogleApiClient != null) {
             if (mGoogleApiClient.isConnected()) {
                 phoneNode = null;
-                connectedNodes.clear();
 
                 clearData();
-                Wearable.NodeApi.removeListener(mGoogleApiClient, this);
                 Wearable.MessageApi.removeListener(mGoogleApiClient, this);
                 Wearable.DataApi.removeListener(mGoogleApiClient, this);
             }
@@ -234,20 +217,6 @@ public class StateService extends Service implements NodeApi.NodeListener, Messa
 
     public Bundle getData(long lastUpdateTime) {
         return getBundle(data, lastUpdateTime);
-    }
-
-    @Override
-    public void onPeerConnected(Node node) {
-        System.err.println("onPeerConnected: " + node.getDisplayName() + ", " + node.getId());
-        connectedNodes.add(node);
-    }
-
-    @Override
-    public void onPeerDisconnected(Node node) {
-        System.err.println("onPeerDisconnected: " + node.getDisplayName() + ", " + node.getId());
-        connectedNodes.remove(node);
-        if (node.getId().contentEquals(phoneNode))
-            phoneNode = null;
     }
 
     @Override

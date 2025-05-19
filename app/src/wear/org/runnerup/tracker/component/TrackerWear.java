@@ -62,9 +62,8 @@ import java.util.List;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
-
 public class TrackerWear extends DefaultTrackerComponent
-        implements Constants, TrackerComponent, WorkoutObserver, NodeApi.NodeListener,
+        implements Constants, TrackerComponent, WorkoutObserver,
         MessageApi.MessageListener, DataApi.DataListener, WorkoutStepListener, ValueModel.ChangeListener<TrackerState> {
 
     public static final String NAME = "WEAR";
@@ -72,8 +71,6 @@ public class TrackerWear extends DefaultTrackerComponent
     private Context context;
     private GoogleApiClient mGoogleApiClient;
     private Formatter formatter;
-    //@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    //private final HashSet<Node> connectedNodes = new HashSet<>();
     private String wearNode;
 
     private final Handler handler = new Handler();
@@ -171,14 +168,6 @@ public class TrackerWear extends DefaultTrackerComponent
             return ResultCode.RESULT_NOT_SUPPORTED;
         }
 
-        try {
-            context.getPackageManager().getPackageInfo("com.google.android.wearable.app",
-                    PackageManager.GET_META_DATA);
-        } catch (PackageManager.NameNotFoundException e) {
-            // android wear app is not installed => can't be paired
-            return ResultCode.RESULT_NOT_SUPPORTED;
-        }
-
         tracker.registerTrackerStateListener(this);
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -190,23 +179,12 @@ public class TrackerWear extends DefaultTrackerComponent
                         setData();
 
                         Wearable.MessageApi.addListener(mGoogleApiClient, TrackerWear.this);
-                        Wearable.NodeApi.addListener(mGoogleApiClient, TrackerWear.this);
                         Wearable.DataApi.addListener(mGoogleApiClient, TrackerWear.this);
 
                         /* read already existing data */
                         readData();
 
                         /* get info about connected nodes in background */
-                        Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).
-
-                                setResultCallback(
-                                        nodes -> {
-                                            for (Node node : nodes.getNodes()) {
-                                                onPeerConnected(node);
-                                            }
-                                        }
-
-                                );
                     }
 
                     @Override
@@ -452,18 +430,6 @@ public class TrackerWear extends DefaultTrackerComponent
     }
 
     @Override
-    public void onPeerConnected(Node node) {
-        //connectedNodes.add(node);
-    }
-
-    @Override
-    public void onPeerDisconnected(Node node) {
-        //connectedNodes.remove(node);
-        if (wearNode != null && node.getId().contentEquals(wearNode))
-            wearNode = null;
-    }
-
-    @Override
     public void onMessageReceived(final MessageEvent messageEvent) {
         Log.e(getName(), "onMessageReceived: " + messageEvent);
         //note: skip state checking, do that in receiver instead
@@ -475,16 +441,21 @@ public class TrackerWear extends DefaultTrackerComponent
             sendLocalBroadcast(Intents.NEW_LAP);
         } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
             /* send broadcast to StartActivity */
-            Intent startBroadcastIntent = new Intent()
-                    .setAction(Intents.START_WORKOUT);
-            context.sendBroadcast(startBroadcastIntent);
+            sendBroadcast(Intents.START_WORKOUT);
         }
     }
 
     private void sendLocalBroadcast(String action) {
         Intent intent = new Intent()
-                .setAction(action);
+            .setAction(action);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    private void sendBroadcast(String action) {
+        Intent intent = new Intent()
+            .setPackage(context.getPackageName())
+            .setAction(action);
+        context.sendBroadcast(intent);
     }
 
     @Override
@@ -495,7 +466,6 @@ public class TrackerWear extends DefaultTrackerComponent
                 wearNode = null;
 
                 Wearable.MessageApi.removeListener(mGoogleApiClient, this);
-                Wearable.NodeApi.removeListener(mGoogleApiClient, this);
                 Wearable.DataApi.removeListener(mGoogleApiClient, this);
                 //connectedNodes.clear();
             }
