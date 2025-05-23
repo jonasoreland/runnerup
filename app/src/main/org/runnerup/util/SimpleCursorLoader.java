@@ -21,40 +21,50 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 import androidx.loader.content.CursorLoader;
-
 
 public class SimpleCursorLoader extends CursorLoader {
 
-    private final SQLiteDatabase mDB;
-    private final String mTable;
-    private final ForceLoadContentObserver mObserver;
+  private final SQLiteDatabase mDB;
+  private final String mTable;
+  private final ForceLoadContentObserver mObserver;
 
-    public SimpleCursorLoader(final Context context, final SQLiteDatabase db, final String table,
-            final String[] projection,
-            final String selection, final String[] selectionArgs, final String sortOrder) {
-        super(context, null, projection, selection, selectionArgs, sortOrder);
-        mDB = db;
-        mTable = table;
-        mObserver = new ForceLoadContentObserver();
-    }
+  public SimpleCursorLoader(
+      final Context context,
+      final SQLiteDatabase db,
+      final String table,
+      final String[] projection,
+      final String selection,
+      final String[] selectionArgs,
+      final String sortOrder) {
+    super(context, null, projection, selection, selectionArgs, sortOrder);
+    mDB = db;
+    mTable = table;
+    mObserver = new ForceLoadContentObserver();
+  }
 
-    @Override
-    public Cursor loadInBackground() {
-        Cursor cursor;
-        try {
-            cursor = mDB.query(mTable, getProjection(), getSelection(),
-                    getSelectionArgs(), null, null, getSortOrder());
-        } catch (IllegalStateException ex) {
-            Log.e(getClass().getName(), "Query failed:", ex);
-            cursor = null;
-        }
-        if (cursor != null) {
-            // Ensure the cursor window is filled
-            cursor.getCount();
-            cursor.registerContentObserver(mObserver);
-        }
-        return cursor;
+  @Override
+  public Cursor loadInBackground() {
+    Cursor cursor;
+    try {
+      cursor =
+          mDB.query(
+              mTable,
+              getProjection(),
+              getSelection(),
+              getSelectionArgs(),
+              null,
+              null,
+              getSortOrder());
+    } catch (IllegalStateException ex) {
+      Log.e(getClass().getName(), "Query failed:", ex);
+      cursor = null;
     }
+    if (cursor != null) {
+      // Ensure the cursor window is filled
+      cursor.getCount();
+      cursor.registerContentObserver(mObserver);
+    }
+    return cursor;
+  }
 }

@@ -18,60 +18,59 @@ package org.runnerup.tracker.component;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-
+import java.util.HashMap;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.feedback.RUTextToSpeech;
 
-import java.util.HashMap;
-
-
 public class TrackerTTS extends DefaultTrackerComponent {
 
-    private TextToSpeech tts;
+  private TextToSpeech tts;
 
-    private static final String NAME = "TTS";
+  private static final String NAME = "TTS";
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+  @Override
+  public String getName() {
+    return NAME;
+  }
 
-    private RUTextToSpeech rutts;
+  private RUTextToSpeech rutts;
 
-    @Override
-    public ResultCode onInit(final Callback callback, final Context context) {
-        tts = new TextToSpeech(context, status -> {
-            if (status == TextToSpeech.SUCCESS) {
+  @Override
+  public ResultCode onInit(final Callback callback, final Context context) {
+    tts =
+        new TextToSpeech(
+            context,
+            status -> {
+              if (status == TextToSpeech.SUCCESS) {
                 callback.run(TrackerTTS.this, ResultCode.RESULT_OK);
-            }
-            else {
+              } else {
                 callback.run(TrackerTTS.this, ResultCode.RESULT_ERROR);
-            }
-        });
-        return ResultCode.RESULT_PENDING;
+              }
+            });
+    return ResultCode.RESULT_PENDING;
+  }
+
+  @Override
+  public void onBind(HashMap<String, Object> bindValues) {
+    Context ctx = (Context) bindValues.get(TrackerComponent.KEY_CONTEXT);
+    Boolean mute = (Boolean) bindValues.get(Workout.KEY_MUTE);
+
+    rutts = new RUTextToSpeech(tts, mute, ctx);
+
+    bindValues.put(Workout.KEY_TTS, rutts);
+  }
+
+  @Override
+  public boolean isConnected() {
+    return rutts != null && rutts.isAvailable();
+  }
+
+  @Override
+  public ResultCode onEnd(Callback callback, Context context) {
+    if (tts != null) {
+      tts.shutdown();
+      tts = null;
     }
-
-    @Override
-    public void onBind(HashMap<String, Object> bindValues) {
-        Context ctx = (Context) bindValues.get(TrackerComponent.KEY_CONTEXT);
-        Boolean mute = (Boolean) bindValues.get(Workout.KEY_MUTE);
-
-        rutts = new RUTextToSpeech(tts, mute, ctx);
-
-        bindValues.put(Workout.KEY_TTS, rutts);
-    }
-
-    @Override
-    public boolean isConnected() {
-        return rutts != null && rutts.isAvailable();
-    }
-
-    @Override
-    public ResultCode onEnd(Callback callback, Context context) {
-        if (tts != null) {
-            tts.shutdown();
-            tts = null;
-        }
-        return ResultCode.RESULT_OK;
-    }
+    return ResultCode.RESULT_OK;
+  }
 }

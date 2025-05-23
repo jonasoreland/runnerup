@@ -36,6 +36,7 @@ package com.goebl.simplify;
  * @since 06.07.13
  */
 public interface PointExtractor<T> {
-    double getX(T point);
-    double getY(T point);
+  double getX(T point);
+
+  double getY(T point);
 }

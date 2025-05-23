@@ -21,211 +21,213 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
-
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import org.runnerup.util.SyncActivityItem;
-
 import java.io.File;
 import java.util.List;
+import org.runnerup.util.SyncActivityItem;
 
 public interface Synchronizer {
 
-    enum RequestMethod { GET, POST, PATCH, PUT }
+  enum RequestMethod {
+    GET,
+    POST,
+    PATCH,
+    PUT
+  }
 
-    enum AuthMethod {
-        NONE, OAUTH2, USER_PASS, FILEPERMISSION, USER_PASS_URL
+  enum AuthMethod {
+    NONE,
+    OAUTH2,
+    USER_PASS,
+    FILEPERMISSION,
+    USER_PASS_URL
+  }
+
+  enum Status {
+    OK,
+    CANCEL,
+    ERROR,
+    INCORRECT_USAGE,
+    SKIP,
+    NEED_AUTH,
+    NEED_REFRESH;
+    @Nullable public Exception ex = null;
+    @NonNull public AuthMethod authMethod = AuthMethod.NONE;
+    public Long activityId = SyncManager.ERROR_ACTIVITY_ID;
+    @NonNull public ExternalIdStatus externalIdStatus = ExternalIdStatus.NONE;
+    @Nullable public String externalId = null;
+  }
+
+  enum ExternalIdStatus {
+    NONE,
+    PENDING,
+    OK;
+
+    int getInt() {
+      return getInt(this);
     }
 
-    enum Status {
-        OK, CANCEL, ERROR, INCORRECT_USAGE, SKIP, NEED_AUTH, NEED_REFRESH;
-        @Nullable
-        public Exception ex = null;
-        @NonNull
-        public AuthMethod authMethod = AuthMethod.NONE;
-        public Long activityId = SyncManager.ERROR_ACTIVITY_ID;
-        @NonNull
-        public ExternalIdStatus externalIdStatus = ExternalIdStatus.NONE;
-        @Nullable
-        public String externalId = null ;
+    public static int getInt(ExternalIdStatus s) {
+      if (s == PENDING) {
+        return 1;
+      } else if (s == OK) {
+        return 2;
+      }
+      return 0;
     }
+  }
 
-    enum ExternalIdStatus {
-        NONE, PENDING, OK;
+  enum Feature {
+    WORKOUT_LIST, // list prepared workouts (e.g a interval program)
+    GET_WORKOUT, // download prepared workout
+    UPLOAD, // upload activity
+    LIVE, // live feed of activity
+    ACTIVITY_LIST, // list recorded activities
+    GET_ACTIVITY, // download recorded activity
+    FILE_FORMAT // upload as file in different possible formats
+  }
 
-        int getInt() {
-            return getInt(this);
-        }
-        public static int getInt(ExternalIdStatus s) {
-            if (s == PENDING) {
-                return 1;
-            } else if (s == OK) {
-                return 2;
-            }
-            return 0;
-        }
-    }
+  /**
+   * @return The numeric db identifier for the synchronizer
+   */
+  long getId();
 
-    enum Feature {
-        WORKOUT_LIST, // list prepared workouts (e.g a interval program)
-        GET_WORKOUT, // download prepared workout
-        UPLOAD, // upload activity
-        LIVE, // live feed of activity
-        ACTIVITY_LIST, //list recorded activities
-        GET_ACTIVITY, //download recorded activity
-        FILE_FORMAT // upload as file in different possible formats
-    }
+  /**
+   * @return name of this synchronizer
+   */
+  @NonNull
+  String getName();
 
-    /**
-     * @return The numeric db identifier for the synchronizer
-     */
-    long getId();
+  /**
+   * @return The icon resource id
+   */
+  @DrawableRes
+  int getIconId();
 
-    /**
-     * @return name of this synchronizer
-     */
-    @NonNull
-    String getName();
+  /**
+   * @return The color resource id
+   */
+  @ColorRes
+  int getColorId();
 
-    /**
-     * @return The icon resource id
-     */
-    @DrawableRes
-    int getIconId();
+  /**
+   * Init synchronizer
+   *
+   * @param config specific for each synchronizer
+   */
+  void init(ContentValues config);
 
-    /**
-     * @return The color resource id
-     */
-    @ColorRes
-    int getColorId();
+  /** The synchronizer specific config format */
+  @NonNull
+  String getAuthConfig();
 
-    /**
-     * Init synchronizer
-     *
-     * @param config specific for each synchronizer
-     */
-    void init(ContentValues config);
+  @NonNull
+  Intent getAuthIntent(AppCompatActivity activity);
 
-    /**
-     * The synchronizer specific config format
-     */
-    @NonNull
-    String getAuthConfig();
+  /** Is synchronizer configured */
+  boolean isConfigured();
 
-    @NonNull
-    Intent getAuthIntent(AppCompatActivity activity);
+  /** Reset configuration (i.e password, oauth-token...) */
+  void reset();
 
-    /**
-     * Is synchronizer configured
-     */
-    boolean isConfigured();
+  /**
+   * Connect
+   *
+   * @return the status
+   */
+  @NonNull
+  Status connect();
 
-    /**
-     * Reset configuration (i.e password, oauth-token...)
-     */
-    void reset();
+  /** handle result from authIntent */
+  @NonNull
+  Status getAuthResult(int resultCode, Intent data);
 
-    /**
-     * Connect
-     *
-     * @return the status
-     */
-    @NonNull
-    Status connect();
+  /**
+   * @param db
+   * @param mID
+   */
+  @NonNull
+  Status upload(SQLiteDatabase db, long mID);
 
-    /**
-     * handle result from authIntent
-     */
-    @NonNull
-    Status getAuthResult(int resultCode, Intent data);
+  /**
+   * Get the external identifier for the service Done in the background, can take substantial time
+   * for some services
+   *
+   * @param db
+   * @param uploadStatus The status with the (temporary) identifier for the upload
+   * @return the external ID in Status
+   */
+  @NonNull
+  Status getExternalId(SQLiteDatabase db, Status uploadStatus);
 
-    /**
-     * @param db
-     * @param mID
-     */
-    @NonNull
-    Status upload(SQLiteDatabase db, long mID);
+  /**
+   * Check if an synchronizer supports a feature
+   *
+   * @param f
+   * @return
+   */
+  boolean checkSupport(Feature f);
 
-    /**
-     * Get the external identifier for the service
-     * Done in the background, can take substantial time for some services
-     * @param db
-     * @param uploadStatus The status with the (temporary) identifier for the upload
-     * @return the external ID in Status
-     */
-    @NonNull
-    Status getExternalId(SQLiteDatabase db, Status uploadStatus);
+  /**
+   * List workouts NOTE: this is not list of activities!
+   *
+   * @return list of Pair<synchronizerName,Workout>
+   */
+  @NonNull
+  Status listWorkouts(List<Pair<String, String>> list);
 
-    /**
-     * Check if an synchronizer supports a feature
-     *
-     * @param f
-     * @return
-     */
-    boolean checkSupport(Feature f);
+  /**
+   * Download workout with key and store it in dst NOTE: this is download activity
+   *
+   * @param dst
+   * @param key
+   */
+  void downloadWorkout(File dst, String key) throws Exception;
 
-    /**
-     * List workouts NOTE: this is not list of activities!
-     *
-     * @return list of Pair<synchronizerName,Workout>
-     */
-    @NonNull
-    Status listWorkouts(List<Pair<String, String>> list);
+  /**
+   * List all recorded and online stored activities
+   *
+   * @return Status
+   */
+  @NonNull
+  Status listActivities(List<SyncActivityItem> list);
 
-    /**
-     * Download workout with key and store it in dst NOTE: this is download
-     * activity
-     *
-     * @param dst
-     * @param key
-     */
-    void downloadWorkout(File dst, String key) throws Exception;
+  /**
+   * Download a selected activity and records in the RunnerUp database
+   *
+   * @param db
+   * @param item the ActivityItem of the activity to be downloaded
+   */
+  @NonNull
+  Status download(SQLiteDatabase db, SyncActivityItem item);
 
-    /**
-     * List all recorded and online stored activities
-     *
-     * @return Status
-     */
-    @NonNull
-    Status listActivities(List<SyncActivityItem> list);
+  /** logout */
+  void logout();
 
-    /**
-     * Download a selected activity and records in the RunnerUp database
-     *  @param db
-     * @param item the ActivityItem of the activity to be downloaded
-     */
-    @NonNull
-    Status download(SQLiteDatabase db, SyncActivityItem item);
+  @NonNull
+  Status refreshToken();
 
-    /**
-     * logout
-     *
-     */
-    void logout();
+  /**
+   * Get any authorization user notice to be shown when user enters username/password.
+   *
+   * @return A string resource id or 0.
+   */
+  @StringRes
+  int getAuthNotice();
 
-    @NonNull
-    Status refreshToken();
+  /** Get the public URL */
+  String getPublicUrl();
 
-    /**
-     * Get any authorization user notice to be shown when user enters username/password.
-     * @return A string resource id or 0.
-     */
-    @StringRes
-    int getAuthNotice();
-
-    /**
-     * Get the public URL
-     */
-    String getPublicUrl();
-
-    /**
-     * Get the external URL for the activity, to open in app or on the web
-     * @param externalId
-     * @return
-     */
-    String getActivityUrl(String externalId);
+  /**
+   * Get the external URL for the activity, to open in app or on the web
+   *
+   * @param externalId
+   * @return
+   */
+  String getActivityUrl(String externalId);
 }

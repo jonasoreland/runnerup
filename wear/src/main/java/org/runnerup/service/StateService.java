@@ -16,14 +16,14 @@
  */
 package org.runnerup.service;
 
+import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
+
 import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import androidx.annotation.NonNull;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -36,316 +36,312 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.view.MainActivity;
 
-import java.util.HashSet;
+public class StateService extends Service
+    implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
 
-import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
+  public static final String UPDATE_TIME = "UPDATE_TIME";
 
+  private final IBinder mBinder = new LocalBinder();
+  private GoogleApiClient mGoogleApiClient;
 
-public class StateService extends Service implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
+  private String phoneNode;
 
-    public static final String UPDATE_TIME = "UPDATE_TIME";
+  private Bundle data;
+  private final ValueModel<TrackerState> trackerState = new ValueModel<>();
+  private final ValueModel<Bundle> headers = new ValueModel<>();
+  private MainActivity headersListener;
 
-    private final IBinder mBinder = new LocalBinder();
-    private GoogleApiClient mGoogleApiClient;
+  @Override
+  public void onCreate() {
+    super.onCreate();
 
-    private String phoneNode;
+    mGoogleApiClient =
+        new GoogleApiClient.Builder(getApplicationContext())
+            .addConnectionCallbacks(
+                new GoogleApiClient.ConnectionCallbacks() {
+                  @Override
+                  public void onConnected(Bundle connectionHint) {
 
-    private Bundle data;
-    private final ValueModel<TrackerState> trackerState = new ValueModel<>();
-    private final ValueModel<Bundle> headers = new ValueModel<>();
-    private MainActivity headersListener;
+                    /* set "our" data */
+                    setData();
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+                    Wearable.MessageApi.addListener(mGoogleApiClient, StateService.this);
+                    Wearable.DataApi.addListener(mGoogleApiClient, StateService.this);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
+                    /* read already existing data */
+                    readData();
+                  }
 
-                        /* set "our" data */
-                        setData();
-
-                        Wearable.MessageApi.addListener(mGoogleApiClient, StateService.this);
-                        Wearable.DataApi.addListener(mGoogleApiClient, StateService.this);
-
-                        /* read already existing data */
-                        readData();
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                    }
+                  @Override
+                  public void onConnectionSuspended(int cause) {}
                 })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult result) {
-                    }
+            .addOnConnectionFailedListener(
+                new GoogleApiClient.OnConnectionFailedListener() {
+                  @Override
+                  public void onConnectionFailed(@NonNull ConnectionResult result) {}
                 })
-                .addApi(Wearable.API)
-                .build();
-        mGoogleApiClient.connect();
-        this.headers.registerChangeListener(this);
+            .addApi(Wearable.API)
+            .build();
+    mGoogleApiClient.connect();
+    this.headers.registerChangeListener(this);
 
-        System.err.println("StateService.onCreate()");
+    System.err.println("StateService.onCreate()");
+  }
+
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  private boolean checkConnection() {
+    return mGoogleApiClient != null && mGoogleApiClient.isConnected() && phoneNode != null;
+  }
+
+  private void readData() {
+    Wearable.DataApi.getDataItems(
+            mGoogleApiClient,
+            new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME)
+                .path(Constants.Wear.Path.PHONE_NODE_ID)
+                .build())
+        .setResultCallback(
+            new ResultCallback<DataItemBuffer>() {
+              @Override
+              public void onResult(@NonNull DataItemBuffer dataItems) {
+                for (DataItem dataItem : dataItems) {
+                  phoneNode = dataItem.getUri().getHost();
+                  System.err.println("getDataItem => phoneNode:" + phoneNode);
+                }
+                dataItems.release();
+              }
+            });
+    Wearable.DataApi.getDataItems(
+            mGoogleApiClient,
+            new Uri.Builder()
+                .scheme(WEAR_URI_SCHEME)
+                .path(Constants.Wear.Path.TRACKER_STATE)
+                .build())
+        .setResultCallback(
+            new ResultCallback<DataItemBuffer>() {
+              @Override
+              public void onResult(@NonNull DataItemBuffer dataItems) {
+                for (DataItem dataItem : dataItems) {
+                  TrackerState newState = getTrackerStateFromDataItem(dataItem);
+                  if (newState != null) setTrackerState(newState);
+                }
+                dataItems.release();
+              }
+            });
+    Wearable.DataApi.getDataItems(
+            mGoogleApiClient,
+            new Uri.Builder().scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.HEADERS).build())
+        .setResultCallback(
+            new ResultCallback<DataItemBuffer>() {
+              @Override
+              public void onResult(@NonNull DataItemBuffer dataItems) {
+                for (DataItem dataItem : dataItems) {
+                  Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
+                  b.putLong(UPDATE_TIME, System.currentTimeMillis());
+                  headers.set(b);
+                }
+                dataItems.release();
+              }
+            });
+  }
+
+  private void setData() {
+    Wearable.DataApi.putDataItem(
+        mGoogleApiClient, PutDataRequest.create(Constants.Wear.Path.WEAR_NODE_ID));
+  }
+
+  private void clearData() {
+    /* delete our node id */
+    Wearable.DataApi.deleteDataItems(
+        mGoogleApiClient,
+        new Uri.Builder().scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.WEAR_NODE_ID).build());
+  }
+
+  @Override
+  public void onDestroy() {
+    System.err.println("StateService.onDestroy()");
+    trackerState.clearListeners();
+    if (mGoogleApiClient != null) {
+      if (mGoogleApiClient.isConnected()) {
+        phoneNode = null;
+
+        clearData();
+        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
+        Wearable.DataApi.removeListener(mGoogleApiClient, this);
+      }
+      mGoogleApiClient.disconnect();
+      mGoogleApiClient = null;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean checkConnection() {
-        return mGoogleApiClient != null && mGoogleApiClient.isConnected() &&
-	    phoneNode != null;
+    super.onDestroy();
+  }
+
+  @Override
+  public IBinder onBind(Intent intent) {
+    return mBinder;
+  }
+
+  @Override
+  public void onValueChanged(ValueModel<Bundle> instance, Bundle oldValue, Bundle newValue) {
+    if (headersListener != null) headersListener.onValueChanged(newValue);
+  }
+
+  public class LocalBinder extends android.os.Binder {
+    public StateService getService() {
+      return StateService.this;
     }
+  }
 
-    private void readData() {
-        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
-                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.PHONE_NODE_ID).build())
-                .setResultCallback(
-                        new ResultCallback<DataItemBuffer>() {
-                            @Override
-                            public void onResult(@NonNull DataItemBuffer dataItems) {
-                                for (DataItem dataItem : dataItems) {
-                                    phoneNode = dataItem.getUri().getHost();
-                                    System.err.println("getDataItem => phoneNode:" + phoneNode);
-                                }
-                                dataItems.release();
-                            }
-                        });
-        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
-                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.TRACKER_STATE).build())
-                .setResultCallback(
-                        new ResultCallback<DataItemBuffer>() {
-                            @Override
-                            public void onResult(@NonNull DataItemBuffer dataItems) {
-                                for (DataItem dataItem : dataItems) {
-                                    TrackerState newState = getTrackerStateFromDataItem(dataItem);
-                                    if (newState != null)
-                                        setTrackerState(newState);
-                                }
-                                dataItems.release();
-                            }
-                        });
-        Wearable.DataApi.getDataItems(mGoogleApiClient, new Uri.Builder()
-                .scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.HEADERS).build())
-                .setResultCallback(
-                        new ResultCallback<DataItemBuffer>() {
-                            @Override
-                            public void onResult(@NonNull DataItemBuffer dataItems) {
-                                for (DataItem dataItem : dataItems) {
-                                    Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
-                                    b.putLong(UPDATE_TIME, System.currentTimeMillis());
-                                    headers.set(b);
-                                }
-                                dataItems.release();
-                            }
-                        });
+  private Bundle getBundle(Bundle src, long lastUpdateTime) {
+    if (src == null) return null;
+
+    long updateTime = src.getLong(UPDATE_TIME, 0);
+    if (lastUpdateTime >= updateTime) return null;
+
+    Bundle b = new Bundle();
+    b.putAll(src);
+    return b;
+  }
+
+  public Bundle getHeaders(long lastUpdateTime) {
+    return getBundle(headers.get(), lastUpdateTime);
+  }
+
+  public Bundle getData(long lastUpdateTime) {
+    return getBundle(data, lastUpdateTime);
+  }
+
+  @Override
+  public void onMessageReceived(MessageEvent messageEvent) {
+    if (Constants.Wear.Path.MSG_WORKOUT_EVENT.contentEquals(messageEvent.getPath())) {
+      data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
+      data.putLong(UPDATE_TIME, System.currentTimeMillis());
+    } else {
+      System.err.println("onMessageReceived: " + messageEvent);
     }
+  }
 
-    private void setData() {
-        Wearable.DataApi.putDataItem(mGoogleApiClient,
-                PutDataRequest.create(Constants.Wear.Path.WEAR_NODE_ID));
+  @Override
+  public void onDataChanged(DataEventBuffer dataEvents) {
+    for (DataEvent ev : dataEvents) {
+      System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+      String path = ev.getDataItem().getUri().getPath();
+      if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
+        setPhoneNode(ev);
+      } else if (Constants.Wear.Path.HEADERS.contentEquals(path)) {
+        setHeaders(ev);
+      } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
+        setTrackerState(ev);
+      }
     }
+  }
 
-    private void clearData() {
-        /* delete our node id */
-        Wearable.DataApi.deleteDataItems(mGoogleApiClient,
-                new Uri.Builder().scheme(WEAR_URI_SCHEME).path(
-                        Constants.Wear.Path.WEAR_NODE_ID).build());
+  private void setPhoneNode(DataEvent ev) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+      phoneNode = new String(ev.getDataItem().getData());
+    } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+      phoneNode = null;
+      resetState();
     }
+  }
 
-    @Override
-    public void onDestroy() {
-        System.err.println("StateService.onDestroy()");
-        trackerState.clearListeners();
-        if (mGoogleApiClient != null) {
-            if (mGoogleApiClient.isConnected()) {
-                phoneNode = null;
-
-                clearData();
-                Wearable.MessageApi.removeListener(mGoogleApiClient, this);
-                Wearable.DataApi.removeListener(mGoogleApiClient, this);
-            }
-            mGoogleApiClient.disconnect();
-            mGoogleApiClient = null;
-        }
-
-        super.onDestroy();
+  private void setHeaders(DataEvent ev) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+      Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
+      b.putLong(UPDATE_TIME, System.currentTimeMillis());
+      System.err.println("setHeaders(): b=" + b);
+      headers.set(b);
+    } else {
+      headers.set(null);
+      resetState();
     }
+  }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
+  private static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
+    if (!dataItem.isDataValid()) return null;
+
+    Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();
+    if (b.containsKey(Constants.Wear.TrackerState.STATE)) {
+      return TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
     }
+    return null;
+  }
 
-    @Override
-    public void onValueChanged(ValueModel<Bundle> instance, Bundle oldValue, Bundle newValue) {
-        if (headersListener != null)
-            headersListener.onValueChanged(newValue);
+  private void setTrackerState(DataEvent ev) {
+    TrackerState newVal = null;
+    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+      newVal = getTrackerStateFromDataItem(ev.getDataItem());
+      if (newVal == null) {
+        // This is weird. TrackerState is set to a invalid value...skip out
+        return;
+      }
+    } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+      // trackerState being deleted
+      newVal = null;
+      resetState();
     }
+    setTrackerState(newVal);
+  }
 
-    public class LocalBinder extends android.os.Binder {
-        public StateService getService() {
-            return StateService.this;
-        }
+  private void resetState() {
+    data = null;
+    headers.set(null);
+  }
+
+  private void setTrackerState(TrackerState newVal) {
+    trackerState.set(newVal);
+  }
+
+  public TrackerState getTrackerState() {
+    return trackerState.get();
+  }
+
+  public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+    trackerState.registerChangeListener(listener);
+  }
+
+  public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
+    trackerState.unregisterChangeListener(listener);
+  }
+
+  public void registerHeadersListener(MainActivity listener) {
+    this.headersListener = listener;
+  }
+
+  public void unregisterHeadersListener(MainActivity listener) {
+    this.headersListener = null;
+  }
+
+  public void sendStart() {
+    if (!checkConnection()) return;
+
+    Wearable.MessageApi.sendMessage(
+        mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_START, null);
+  }
+
+  public void sendPauseResume() {
+    if (!checkConnection()) return;
+
+    if (getTrackerState() == TrackerState.STARTED) {
+      Wearable.MessageApi.sendMessage(
+          mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_PAUSE, null);
+    } else if (getTrackerState() == TrackerState.PAUSED) {
+      Wearable.MessageApi.sendMessage(
+          mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_RESUME, null);
     }
+  }
 
-    private Bundle getBundle(Bundle src, long lastUpdateTime) {
-        if (src == null)
-            return null;
+  public void sendNewLap() {
+    if (!checkConnection()) return;
 
-        long updateTime = src.getLong(UPDATE_TIME, 0);
-        if (lastUpdateTime >= updateTime)
-            return null;
-
-        Bundle b = new Bundle();
-        b.putAll(src);
-        return b;
-    }
-
-    public Bundle getHeaders(long lastUpdateTime) {
-        return getBundle(headers.get(), lastUpdateTime);
-    }
-
-    public Bundle getData(long lastUpdateTime) {
-        return getBundle(data, lastUpdateTime);
-    }
-
-    @Override
-    public void onMessageReceived(MessageEvent messageEvent) {
-        if (Constants.Wear.Path.MSG_WORKOUT_EVENT.contentEquals(messageEvent.getPath())) {
-            data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
-            data.putLong(UPDATE_TIME, System.currentTimeMillis());
-        } else {
-            System.err.println("onMessageReceived: " + messageEvent);
-        }
-    }
-
-    @Override
-    public void onDataChanged(DataEventBuffer dataEvents) {
-        for (DataEvent ev : dataEvents) {
-            System.err.println("onDataChanged: " + ev.getDataItem().getUri());
-            String path = ev.getDataItem().getUri().getPath();
-            if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
-                setPhoneNode(ev);
-            } else if (Constants.Wear.Path.HEADERS.contentEquals(path)) {
-                setHeaders(ev);
-            } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
-                setTrackerState(ev);
-            }
-        }
-    }
-
-    private void setPhoneNode(DataEvent ev) {
-        if (ev.getType() == DataEvent.TYPE_CHANGED) {
-            phoneNode = new String(ev.getDataItem().getData());
-        } else if (ev.getType() == DataEvent.TYPE_DELETED) {
-            phoneNode = null;
-            resetState();
-        }
-    }
-
-    private void setHeaders(DataEvent ev) {
-        if (ev.getType() == DataEvent.TYPE_CHANGED) {
-            Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
-            b.putLong(UPDATE_TIME, System.currentTimeMillis());
-            System.err.println("setHeaders(): b=" + b);
-            headers.set(b);
-        } else {
-            headers.set(null);
-            resetState();
-        }
-    }
-
-    private static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
-        if (!dataItem.isDataValid())
-            return null;
-
-        Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();
-        if (b.containsKey(Constants.Wear.TrackerState.STATE)) {
-            return TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
-        }
-        return null;
-    }
-
-    private void setTrackerState(DataEvent ev) {
-        TrackerState newVal = null;
-        if (ev.getType() == DataEvent.TYPE_CHANGED) {
-            newVal = getTrackerStateFromDataItem(ev.getDataItem());
-            if (newVal == null) {
-                // This is weird. TrackerState is set to a invalid value...skip out
-                return;
-            }
-        } else if (ev.getType() == DataEvent.TYPE_DELETED) {
-            // trackerState being deleted
-            newVal = null;
-            resetState();
-        }
-        setTrackerState(newVal);
-    }
-
-    private void resetState() {
-        data = null;
-        headers.set(null);
-    }
-
-    private void setTrackerState(TrackerState newVal) {
-        trackerState.set(newVal);
-    }
-
-    public TrackerState getTrackerState() {
-        return trackerState.get();
-    }
-
-    public void registerTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
-        trackerState.registerChangeListener(listener);
-    }
-
-    public void unregisterTrackerStateListener(ValueModel.ChangeListener<TrackerState> listener) {
-        trackerState.unregisterChangeListener(listener);
-    }
-
-    public void registerHeadersListener(MainActivity listener) {
-        this.headersListener = listener;
-    }
-
-    public void unregisterHeadersListener(MainActivity listener) {
-        this.headersListener = null;
-    }
-
-    public void sendStart() {
-        if (!checkConnection())
-            return;
-
-        Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
-                Constants.Wear.Path.MSG_CMD_WORKOUT_START, null);
-    }
-
-    public void sendPauseResume() {
-        if (!checkConnection())
-            return;
-
-        if (getTrackerState() == TrackerState.STARTED) {
-            Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
-                    Constants.Wear.Path.MSG_CMD_WORKOUT_PAUSE, null);
-        } else if (getTrackerState() == TrackerState.PAUSED) {
-            Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
-                    Constants.Wear.Path.MSG_CMD_WORKOUT_RESUME, null);
-        }
-    }
-    public void sendNewLap() {
-        if (!checkConnection())
-            return;
-
-        Wearable.MessageApi.sendMessage(mGoogleApiClient, phoneNode,
-                    Constants.Wear.Path.MSG_CMD_WORKOUT_NEW_LAP, null);
-    }
+    Wearable.MessageApi.sendMessage(
+        mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_NEW_LAP, null);
+  }
 }

@@ -5,52 +5,53 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-
 import androidx.core.app.NotificationCompat;
-
+import java.util.Locale;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.view.MainLayout;
 
-import java.util.Locale;
-
-
 public class GpsSearchingState implements NotificationState {
-    private final Context context;
-    private final GpsInformation gpsInformation;
-    private final NotificationCompat.Builder builder;
+  private final Context context;
+  private final GpsInformation gpsInformation;
+  private final NotificationCompat.Builder builder;
 
-    public GpsSearchingState(Context context, GpsInformation gpsInformation) {
-        this.context = context;
-        this.gpsInformation = gpsInformation;
+  public GpsSearchingState(Context context, GpsInformation gpsInformation) {
+    this.context = context;
+    this.gpsInformation = gpsInformation;
 
-        String chanId = NotificationStateManager.getChannelId(context);
-        Intent i = new Intent(context, MainLayout.class)
-                .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
-        int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                ? PendingIntent.FLAG_IMMUTABLE
-                : 0;
-        PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
+    String chanId = NotificationStateManager.getChannelId(context);
+    Intent i =
+        new Intent(context, MainLayout.class)
+            .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            .putExtra(Constants.Intents.FROM_NOTIFICATION, true);
+    int intentFlags =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+    PendingIntent pi = PendingIntent.getActivity(context, 0, i, intentFlags);
 
-        builder = new NotificationCompat.Builder(context, chanId)
-                .setContentIntent(pi)
-                .setContentTitle(context.getString(org.runnerup.common.R.string.Searching_for_GPS))
-                .setSmallIcon(R.drawable.ic_stat_notify)
-                .setOnlyAlertOnce(true)
-                .setLocalOnly(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setCategory(NotificationCompat.CATEGORY_SERVICE);
-    }
+    builder =
+        new NotificationCompat.Builder(context, chanId)
+            .setContentIntent(pi)
+            .setContentTitle(context.getString(org.runnerup.common.R.string.Searching_for_GPS))
+            .setSmallIcon(R.drawable.ic_stat_notify)
+            .setOnlyAlertOnce(true)
+            .setLocalOnly(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE);
+  }
 
-    @Override
-    public Notification createNotification() {
-        builder.setContentText(String.format(Locale.getDefault(), "%s: %d/%d (%s)",
-                context.getString(org.runnerup.common.R.string.GPS_satellites),
-                gpsInformation.getSatellitesFixed(), gpsInformation.getSatellitesAvailable(),
-                gpsInformation.getGpsAccuracy()));
+  @Override
+  public Notification createNotification() {
+    builder.setContentText(
+        String.format(
+            Locale.getDefault(),
+            "%s: %d/%d (%s)",
+            context.getString(org.runnerup.common.R.string.GPS_satellites),
+            gpsInformation.getSatellitesFixed(),
+            gpsInformation.getSatellitesAvailable(),
+            gpsInformation.getGpsAccuracy()));
 
-        return builder.build();
-    }
+    return builder.build();
+  }
 }

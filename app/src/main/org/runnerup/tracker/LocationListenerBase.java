@@ -20,66 +20,62 @@ package org.runnerup.tracker;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 
 /**
  * Base class for writing chained LocationListener(s)
- * 
+ *
  * @author jonas
- * 
  */
-
-
 public class LocationListenerBase implements LocationListener {
 
-    private final java.util.LinkedList<LocationListener> mClients = new java.util.LinkedList<>();
+  private final java.util.LinkedList<LocationListener> mClients = new java.util.LinkedList<>();
 
-    public void register(LocationListener l) {
-        synchronized (mClients) {
-            mClients.add(l);
-        }
+  public void register(LocationListener l) {
+    synchronized (mClients) {
+      mClients.add(l);
     }
+  }
 
-    public void unregister(LocationListener l) {
-        synchronized (mClients) {
-            mClients.remove(l);
-        }
+  public void unregister(LocationListener l) {
+    synchronized (mClients) {
+      mClients.remove(l);
     }
+  }
 
-    @Override
-    public void onLocationChanged(@NonNull Location arg0) {
-        synchronized (mClients) {
-            for (LocationListener g : mClients) {
-                g.onLocationChanged(arg0);
-            }
-        }
+  @Override
+  public void onLocationChanged(@NonNull Location arg0) {
+    synchronized (mClients) {
+      for (LocationListener g : mClients) {
+        g.onLocationChanged(arg0);
+      }
     }
+  }
 
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-        synchronized (mClients) {
-            for (LocationListener g : mClients) {
-                g.onProviderDisabled(provider);
-            }
-        }
+  @Override
+  public void onProviderDisabled(@NonNull String provider) {
+    synchronized (mClients) {
+      for (LocationListener g : mClients) {
+        g.onProviderDisabled(provider);
+      }
     }
+  }
 
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-        synchronized (mClients) {
-            for (LocationListener g : mClients) {
-                g.onProviderEnabled(provider);
-            }
-        }
+  @Override
+  public void onProviderEnabled(@NonNull String provider) {
+    synchronized (mClients) {
+      for (LocationListener g : mClients) {
+        g.onProviderEnabled(provider);
+      }
     }
+  }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        synchronized (mClients) {
-            for (LocationListener g : mClients) {
-                g.onProviderEnabled(provider);
-            }
-        }
+  @Override
+  public void onStatusChanged(String provider, int status, Bundle extras) {
+    synchronized (mClients) {
+      for (LocationListener g : mClients) {
+        g.onProviderEnabled(provider);
+      }
     }
+  }
 }

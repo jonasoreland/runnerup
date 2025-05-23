@@ -18,158 +18,148 @@
 package org.runnerup.hr;
 
 import android.os.Handler;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * {@link HRProvider}'s provide an interface to a wireless connectivity module (Bluetooth, ANT+ etc)
  * and any heart rate devices than can be connected through them
  *
- * Instances of {@link HRProvider's} can be created through the {@link HRManager} class
+ * <p>Instances of {@link HRProvider's} can be created through the {@link HRManager} class
  *
  * @author jonas
  */
-
 public interface HRProvider {
 
-    /**
-     * An interface through which the client of the {@link HRProvider}
-     * is notified of changes to the state of the {@link HRProvider}
-     */
-    interface HRClient {
-        void onOpenResult(boolean ok);
+  /**
+   * An interface through which the client of the {@link HRProvider} is notified of changes to the
+   * state of the {@link HRProvider}
+   */
+  interface HRClient {
+    void onOpenResult(boolean ok);
 
-        void onScanResult(HRDeviceRef device);
+    void onScanResult(HRDeviceRef device);
 
-        void onConnectResult(boolean connectOK);
+    void onConnectResult(boolean connectOK);
 
-        void onDisconnectResult(boolean disconnectOK);
+    void onDisconnectResult(boolean disconnectOK);
 
-        void onCloseResult(boolean closeOK);
+    void onCloseResult(boolean closeOK);
 
-        void log(HRProvider src, String msg);
-    }
+    void log(HRProvider src, String msg);
+  }
 
-    /**
-     * @return A human readable name for the {@link HRProvider}
-     */
-    String getName();
+  /**
+   * @return A human readable name for the {@link HRProvider}
+   */
+  String getName();
 
-    /**
-     * @return An internal name for a specific {@link HRProvider} instantiation
-     */
-    String getProviderName(); // For internal usage
+  /**
+   * @return An internal name for a specific {@link HRProvider} instantiation
+   */
+  String getProviderName(); // For internal usage
 
+  /**
+   * @return true if the wireless module is enabled, false otherwise
+   */
+  boolean isEnabled();
 
-    /**
-     * @return true if the wireless module is enabled,
-     *          false otherwise
-     */
-    boolean isEnabled();
+  /**
+   * Presents the user if the settings screen to enable the provider's protocol. When this is done,
+   * 'activity' will have called
+   *
+   * @param activity The {@link AppCompatActivity} currently being displayed to the user
+   * @param requestCode An arbitrary code that will be given to
+   * @return true if the intent was sent
+   */
+  boolean startEnableIntent(AppCompatActivity activity, int requestCode);
 
-    /**
-     * Presents the user if the settings screen to enable the provider's protocol. When this is done,
-     * 'activity' will have  called
-     *
-     * @param activity The {@link AppCompatActivity} currently being displayed to the user
-     * @param requestCode An arbitrary code that will be given to
-     *
-     * @return true if the intent was sent
-     */
-    boolean startEnableIntent(AppCompatActivity activity, int requestCode);
+  /**
+   * Initialises the wireless module, allowing device scanning/connection
+   *
+   * @param handler The Handler in which to run the hrClient
+   * @param hrClient The object that will be notified when operations have finished
+   */
+  void open(Handler handler, HRClient hrClient);
 
-    /**
-     * Initialises the wireless module, allowing device scanning/connection
-     *
-     * @param handler The Handler in which to run the hrClient
-     * @param hrClient The object that will be notified when operations have finished
-     */
-    void open(Handler handler, HRClient hrClient);
+  /** Closes the wireless module */
+  void close();
 
-    /**
-     * Closes the wireless module
-     */
-    void close();
+  /**
+   * A pairing device is a wireless module that requires devices to be paired (or bonded) before
+   * showing up on the scan (e.g. Bluetooth) Most BLE devices do not require pairing
+   *
+   * @return true if the wireless module is a pairing device
+   */
+  boolean includePairingBLE();
 
-    /**
-     * A pairing device is a wireless module that requires devices to be
-     * paired (or bonded) before showing up on the scan (e.g. Bluetooth)
-     * Most BLE devices do not require pairing
-     *
-     * @return true if the wireless module is a pairing device
-     */
-    boolean includePairingBLE();
+  /**
+   * @return true if this {@link HRProvider} is currently scanning for available devices, false
+   *     otherwise
+   */
+  boolean isScanning();
 
-    /**
-     * @return true if this {@link HRProvider} is currently scanning for available devices,
-     *          false otherwise
-     */
-    boolean isScanning();
+  /**
+   * @return true if this {@link HRProvider} is connected to a heart rate device, false otherwise
+   */
+  boolean isConnected();
 
-    /**
-     * @return true if this {@link HRProvider} is connected to a heart rate device,
-     *          false otherwise
-     */
-    boolean isConnected();
+  /**
+   * @return true if this {@link HRProvider} is currently connecting to a heart rate device, false
+   *     otherwise
+   */
+  boolean isConnecting();
 
-    /**
-     * @return true if this {@link HRProvider} is currently connecting to a heart rate device,
-     *          false otherwise
-     */
-    boolean isConnecting();
+  /**
+   * Starts scanning for available heart rate devices. Results will be passed to the HRClient
+   * supplied in {@link #open(android.os.Handler, org.runnerup.hr.HRProvider.HRClient)}
+   */
+  void startScan();
 
-    /**
-     * Starts scanning for available heart rate devices. Results will be passed to the HRClient
-     * supplied in {@link #open(android.os.Handler, org.runnerup.hr.HRProvider.HRClient)}
-     */
-    void startScan();
+  /**
+   * Stops scanning for available heart rate devices. When done, the {@link HRClient} passed in
+   * {@link #open(android.os.Handler, org.runnerup.hr.HRProvider.HRClient)} will be notified
+   */
+  void stopScan();
 
-    /**
-     * Stops scanning for available heart rate devices. When done, the {@link HRClient} passed
-     * in {@link #open(android.os.Handler, org.runnerup.hr.HRProvider.HRClient)} will be notified
-     */
-    void stopScan();
+  /**
+   * Connects to a heart rate monitor device
+   *
+   * @param ref An object representing a heart rate device. Client code can get available device
+   *     information through startScan()
+   */
+  void connect(HRDeviceRef ref);
 
-    /**
-     * Connects to a heart rate monitor device
-     * @param ref An object representing a heart rate device. Client code can get
-     *            available device information through startScan()
-     */
-    void connect(HRDeviceRef ref);
+  /** Disconnects from a heart rate monitor device */
+  void disconnect();
 
-    /**
-     * Disconnects from a heart rate monitor device
-     */
-    void disconnect();
+  /**
+   * @return the most recent heart rate value supplied by the connected device. 0 indicates that no
+   *     device has been connected (or the user is in a very bad way)
+   */
+  int getHRValue();
 
-    /**
-     * @return the most recent heart rate value supplied by the connected device.
-     *          0 indicates that no device has been connected (or the user is in a very bad way)
-     */
-    int getHRValue();
+  /**
+   * @return the unix time of the last received heart rate value in ms
+   */
+  long getHRValueTimestamp();
 
-    /**
-     * @return the unix time of the last received heart rate value in ms
-     */
-    long getHRValueTimestamp();
+  /**
+   * Get the time for the sensor, comparable with other sources as getTime() differs for system vs
+   * GPS time
+   *
+   * @return the elapsed time since boot in nano sec for last received value
+   */
+  long getHRValueElapsedRealtime();
 
-    /**
-     * Get the time for the sensor, comparable with other sources as getTime()
-     * differs for system vs GPS time
-     *
-     * @return the elapsed time since boot in nano sec for last received value
-     */
-    long getHRValueElapsedRealtime();
+  /**
+   * @return the most recent heart rate data supplied by the device. If no device has been
+   *     connected, this will be null
+   */
+  HRData getHRData();
 
-    /**
-     * @return the most recent heart rate data supplied by the device. If no device has
-     *          been connected, this will be null
-     */
-    HRData getHRData();
-
-    /**
-     * @return The battery level, in percents, of the heart rate monitor device or 0 if
-     *          no device has been connected or the device doesn't supply battery information
-     */
-    int getBatteryLevel();
+  /**
+   * @return The battery level, in percents, of the heart rate monitor device or 0 if no device has
+   *     been connected or the device doesn't supply battery information
+   */
+  int getBatteryLevel();
 }

@@ -21,46 +21,46 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * File name helper for exporting/uploading
- */
+/** File name helper for exporting/uploading */
 public class FileNameHelper {
 
-    /**
-     * Generate export file name
-     * @param activityStartTime  activity start time in unix timestamp
-     * @param activityType activity type
-     * @return the generated filename
-     */
-    public static String getExportFileName(long activityStartTime, String activityType) {
-        return String.format(Locale.getDefault(),
-                "RunnerUp_%s_%s.",
-                unixTimeToString(activityStartTime),
-                activityType);
-    }
+  /**
+   * Generate export file name
+   *
+   * @param activityStartTime activity start time in unix timestamp
+   * @param activityType activity type
+   * @return the generated filename
+   */
+  public static String getExportFileName(long activityStartTime, String activityType) {
+    return String.format(
+        Locale.getDefault(), "RunnerUp_%s_%s.", unixTimeToString(activityStartTime), activityType);
+  }
 
-    /**
-     * Generate filename including the model name, to limit sorting in services like DropBox/WebDAV
-     * @param activityStartTime activity start time in unix timestamp
-     * @param activityType activity type
-     * @return the generated filename for DropBox/WebDAV
-     */
-    public static String getExportFileNameWithModel(long activityStartTime, String activityType) {
-        return String.format(Locale.getDefault(),
-                "/RunnerUp_%s_%s_%s.",
-                android.os.Build.MODEL.replaceAll("\\s","_"),
-                unixTimeToString(activityStartTime),
-                activityType);
-    }
+  /**
+   * Generate filename including the model name, to limit sorting in services like DropBox/WebDAV
+   *
+   * @param activityStartTime activity start time in unix timestamp
+   * @param activityType activity type
+   * @return the generated filename for DropBox/WebDAV
+   */
+  public static String getExportFileNameWithModel(long activityStartTime, String activityType) {
+    return String.format(
+        Locale.getDefault(),
+        "/RunnerUp_%s_%s_%s.",
+        android.os.Build.MODEL.replaceAll("\\s", "_"),
+        unixTimeToString(activityStartTime),
+        activityType);
+  }
 
-    /**
-     * convert unix timestamp to string
-     * @param timeStamp unix timestamp in seconds
-     * @return converted string in 'DATE_TIME_FORMAT_STRING' format
-     */
-    private static String unixTimeToString(long timeStamp) {
-        String DATE_TIME_FORMAT_STRING = "yyyy-MM-dd-HH-mm-ss";
-        return new SimpleDateFormat(DATE_TIME_FORMAT_STRING,
-                Locale.getDefault()).format(new Date(timeStamp * 1000L));
-    }
+  /**
+   * convert unix timestamp to string
+   *
+   * @param timeStamp unix timestamp in seconds
+   * @return converted string in 'DATE_TIME_FORMAT_STRING' format
+   */
+  private static String unixTimeToString(long timeStamp) {
+    String DATE_TIME_FORMAT_STRING = "yyyy-MM-dd-HH-mm-ss";
+    return new SimpleDateFormat(DATE_TIME_FORMAT_STRING, Locale.getDefault())
+        .format(new Date(timeStamp * 1000L));
+  }
 }

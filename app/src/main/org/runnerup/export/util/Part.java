@@ -17,48 +17,48 @@
 
 package org.runnerup.export.util;
 
-
 public class Part<Value extends Writable> {
 
-    private final String name;
-    private String filename = null;
-    private String contentType = null;
-    private String contentTransferEncoding = null;
-    private final Value value;
+  private final String name;
+  private String filename = null;
+  private String contentType = null;
+  private String contentTransferEncoding = null;
+  private final Value value;
 
-    public Part(String name, Value value) {
-        this.name = name;
-        this.value = value;
-    }
+  public Part(String name, Value value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    public String getName() {
-        return name;
-    }
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getFilename() {
-        return filename;
-    }
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+  public String getFilename() {
+    return filename;
+  }
 
-    public String getContentType() {
-        return contentType;
-    }
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
-    public void setContentTransferEncoding(String contentTransferEncoding) {
-        this.contentTransferEncoding = contentTransferEncoding;
-    }
+  public String getContentType() {
+    return contentType;
+  }
 
-    public String getContentTransferEncoding() {
-        return contentTransferEncoding;
-    }
+  public void setContentTransferEncoding(String contentTransferEncoding) {
+    this.contentTransferEncoding = contentTransferEncoding;
+  }
 
-    public Value getValue() {
-        return value;
-    }
+  public String getContentTransferEncoding() {
+    return contentTransferEncoding;
+  }
+
+  public Value getValue() {
+    return value;
+  }
 }

@@ -23,80 +23,75 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import org.runnerup.workout.WorkoutSerializer;
-
 import java.io.File;
-
+import org.runnerup.workout.WorkoutSerializer;
 
 class WorkoutListAdapter extends BaseAdapter {
 
-    /**
-	 * 
-	 */
-    private final LayoutInflater inflater;
-    private String[] workoutList = new String[0];
+  /** */
+  private final LayoutInflater inflater;
 
-    public WorkoutListAdapter(LayoutInflater inflater) {
-        super();
-        this.inflater = inflater;
+  private String[] workoutList = new String[0];
+
+  public WorkoutListAdapter(LayoutInflater inflater) {
+    super();
+    this.inflater = inflater;
+  }
+
+  @Override
+  public int getCount() {
+    return workoutList.length + 1;
+  }
+
+  @Override
+  public Object getItem(int position) {
+    if (position < workoutList.length) return workoutList[position];
+
+    Context context = inflater.getContext();
+    return String.format(
+        context.getString(org.runnerup.common.R.string.dialog_ellipsis),
+        context.getString(org.runnerup.common.R.string.Manage_workouts));
+  }
+
+  @Override
+  public long getItemId(int position) {
+    return 0;
+  }
+
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    if (convertView == null) {
+      convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
     }
 
-    @Override
-    public int getCount() {
-        return workoutList.length + 1;
+    TextView ret = convertView.findViewById(android.R.id.text1);
+    ret.setText(getItem(position).toString());
+    return ret;
+  }
+
+  public int find(String name) {
+    for (int i = 0; i < getCount(); i++) {
+      if (name.contentEquals(getItem(i).toString())) return i;
     }
+    return 0;
+  }
 
-    @Override
-    public Object getItem(int position) {
-        if (position < workoutList.length)
-            return workoutList[position];
-
-        Context context = inflater.getContext();
-        return String.format(context.getString(org.runnerup.common.R.string.dialog_ellipsis), context.getString(org.runnerup.common.R.string.Manage_workouts));
+  public void reload() {
+    String[] list = load(inflater.getContext());
+    if (list == null) {
+      workoutList = new String[0];
+    } else {
+      workoutList = new String[list.length];
+      int index = 0;
+      for (String s : list) {
+        workoutList[index++] = s.substring(0, s.lastIndexOf('.'));
+      }
     }
+    this.notifyDataSetChanged();
+  }
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
-                    false);
-        }
-
-        TextView ret = convertView.findViewById(android.R.id.text1);
-        ret.setText(getItem(position).toString());
-        return ret;
-    }
-
-    public int find(String name) {
-        for (int i = 0; i < getCount(); i++) {
-            if (name.contentEquals(getItem(i).toString()))
-                return i;
-        }
-        return 0;
-    }
-
-    public void reload() {
-        String[] list = load(inflater.getContext());
-        if (list == null) {
-            workoutList = new String[0];
-        } else {
-            workoutList = new String[list.length];
-            int index = 0;
-            for (String s : list) {
-                workoutList[index++] = s.substring(0, s.lastIndexOf('.'));
-            }
-        }
-        this.notifyDataSetChanged();
-    }
-
-    public static String[] load(Context ctx) {
-        File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
-        return f.list((dir, filename) -> filename.endsWith(".json"));
-    }
+  public static String[] load(Context ctx) {
+    File f = ctx.getDir(WorkoutSerializer.WORKOUTS_DIR, 0);
+    return f.list((dir, filename) -> filename.endsWith(".json"));
+  }
 }

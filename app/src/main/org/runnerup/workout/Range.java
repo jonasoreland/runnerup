@@ -17,42 +17,39 @@
 
 package org.runnerup.workout;
 
-
 import androidx.annotation.NonNull;
 
 public class Range {
 
-    public double minValue;
-    public double maxValue;
+  public double minValue;
+  public double maxValue;
 
-    public Range(double minValue, double maxValue) {
-        if (minValue <= maxValue) {
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-        } else {
-            this.minValue = maxValue;
-            this.maxValue = minValue;
-        }
+  public Range(double minValue, double maxValue) {
+    if (minValue <= maxValue) {
+      this.minValue = minValue;
+      this.maxValue = maxValue;
+    } else {
+      this.minValue = maxValue;
+      this.maxValue = minValue;
     }
+  }
 
-    public boolean inside(double d) {
-        return compare(d) == 0;
-    }
+  public boolean inside(double d) {
+    return compare(d) == 0;
+  }
 
-    public int compare(double value) {
-        if (value < minValue)
-            return -1;
-        if (value > maxValue)
-            return 1;
-        return 0;
-    }
+  public int compare(double value) {
+    if (value < minValue) return -1;
+    if (value > maxValue) return 1;
+    return 0;
+  }
 
-    public boolean contentEquals(Range range) {
-        return this.maxValue == range.maxValue && this.minValue == range.minValue;
-    }
+  public boolean contentEquals(Range range) {
+    return this.maxValue == range.maxValue && this.minValue == range.minValue;
+  }
 
-    @NonNull
-    public String toString() {
-        return "[ " + minValue + " - " + maxValue + " ]";
-    }
+  @NonNull
+  public String toString() {
+    return "[ " + minValue + " - " + maxValue + " ]";
+  }
 }

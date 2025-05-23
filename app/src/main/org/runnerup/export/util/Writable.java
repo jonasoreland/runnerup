@@ -21,5 +21,5 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 interface Writable {
-    void write(OutputStream out) throws IOException;
+  void write(OutputStream out) throws IOException;
 }

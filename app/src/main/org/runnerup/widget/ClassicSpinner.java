@@ -21,71 +21,70 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
-
 import androidx.appcompat.widget.AppCompatSpinner;
 
 public class ClassicSpinner extends AppCompatSpinner implements SpinnerInterface {
-    final SpinnerPresenter mPresenter;
+  final SpinnerPresenter mPresenter;
 
-    public ClassicSpinner(Context context, AttributeSet attrs) {
-        super(context, attrs);
+  public ClassicSpinner(Context context, AttributeSet attrs) {
+    super(context, attrs);
 
-        mPresenter = new SpinnerPresenter(context, attrs, this);
-    }
+    mPresenter = new SpinnerPresenter(context, attrs, this);
+  }
 
-    @Override
-    public void setViewPrompt(CharSequence charSequence) {
-        setPrompt(charSequence);
-    }
+  @Override
+  public void setViewPrompt(CharSequence charSequence) {
+    setPrompt(charSequence);
+  }
 
-    @Override
-    public void setViewLabel(CharSequence label) {
-        setContentDescription(label);
-    }
+  @Override
+  public void setViewLabel(CharSequence label) {
+    setContentDescription(label);
+  }
 
-    @Override
-    public void setViewValue(int itemId) {
-        setSelection(itemId);
-    }
+  @Override
+  public void setViewValue(int itemId) {
+    setSelection(itemId);
+  }
 
-    @Override
-    public void setViewText(CharSequence charSequence) { }
-    @Override
-    public CharSequence getViewValueText() {
-        return getSelectedItem().toString();
-    }
+  @Override
+  public void setViewText(CharSequence charSequence) {}
 
-    @Override
-    public void setViewOnClickListener(OnClickListener onClickListener) {
-         setOnClickListener(onClickListener);
-    }
+  @Override
+  public CharSequence getViewValueText() {
+    return getSelectedItem().toString();
+  }
 
-    @Override
-    public void setOnClickSpinnerOpen() {}
+  @Override
+  public void setViewOnClickListener(OnClickListener onClickListener) {
+    setOnClickListener(onClickListener);
+  }
 
-    @Override
-    public void setViewAdapter(DisabledEntriesAdapter adapter) {
-        setAdapter(adapter);
-    }
+  @Override
+  public void setOnClickSpinnerOpen() {}
 
-    @Override
-    public SpinnerAdapter getViewAdapter() {
-        return getAdapter();
-    }
+  @Override
+  public void setViewAdapter(DisabledEntriesAdapter adapter) {
+    setAdapter(adapter);
+  }
 
-    @Override
-    public void setViewSelection(int value) {
-        setSelection(value);
-    }
+  @Override
+  public SpinnerAdapter getViewAdapter() {
+    return getAdapter();
+  }
 
-    @Override
-    public void viewOnClose(OnCloseDialogListener listener, boolean b) {
-        listener.onClose(this, b);
-    }
+  @Override
+  public void setViewSelection(int value) {
+    setSelection(value);
+  }
 
-    @Override
-    public void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
-        setOnItemSelectedListener(listener);
-    }
+  @Override
+  public void viewOnClose(OnCloseDialogListener listener, boolean b) {
+    listener.onClose(this, b);
+  }
+
+  @Override
+  public void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
+    setOnItemSelectedListener(listener);
+  }
 }
-

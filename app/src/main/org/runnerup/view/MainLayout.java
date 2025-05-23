@@ -41,11 +41,12 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TabHost;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.preference.PreferenceManager;
-
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
@@ -53,242 +54,276 @@ import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GoogleApiHelper;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-
 public class MainLayout extends TabActivity {
 
-    private View getTabView(CharSequence label, int iconResource) {
-        @SuppressLint("InflateParams")View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
-        ImageView iconView = tabView.findViewById(R.id.icon);
-        iconView.setContentDescription(label);
-        Drawable icon = AppCompatResources.getDrawable(this, iconResource);
-        iconView.setImageDrawable(icon);
-        return tabView;
+  private View getTabView(CharSequence label, int iconResource) {
+    @SuppressLint("InflateParams")
+    View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
+    ImageView iconView = tabView.findViewById(R.id.icon);
+    iconView.setContentDescription(label);
+    Drawable icon = AppCompatResources.getDrawable(this, iconResource);
+    iconView.setImageDrawable(icon);
+    return tabView;
+  }
+
+  private enum UpgradeState {
+    UNKNOWN,
+    NEW,
+    UPGRADE,
+    DOWNGRADE,
+    SAME
+  }
+
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    setContentView(R.layout.main);
+
+    int versionCode = 0;
+    UpgradeState upgradeState = UpgradeState.UNKNOWN;
+    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+    Editor editor = pref.edit();
+    try {
+      PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+      versionCode = pInfo.versionCode;
+      int version = pref.getInt("app-version", -1);
+      if (version == -1) {
+        upgradeState = UpgradeState.NEW;
+      } else if (versionCode == version) {
+        upgradeState = UpgradeState.SAME;
+      } else if (versionCode > version) {
+        upgradeState = UpgradeState.UPGRADE;
+      } else if (versionCode < version) {
+        upgradeState = UpgradeState.DOWNGRADE;
+      }
+    } catch (NameNotFoundException e) {
+      e.printStackTrace();
     }
+    editor.putInt("app-version", versionCode);
+    boolean km = Formatter.getUseMetric(getResources(), pref, editor);
 
-    private enum UpgradeState {
-        UNKNOWN, NEW, UPGRADE, DOWNGRADE, SAME
+    if (upgradeState == UpgradeState.NEW) {
+      editor.putString(
+          getResources().getString(R.string.pref_autolap),
+          Double.toString(km ? Formatter.km_meters : Formatter.mi_meters));
     }
+    editor.apply();
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.main);
+    // clear basicTargetType between application startup/shutdown
+    pref.edit().remove(getString(R.string.pref_basic_target_type)).apply();
 
-        int versionCode = 0;
-        UpgradeState upgradeState = UpgradeState.UNKNOWN;
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        Editor editor = pref.edit();
-        try {
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionCode = pInfo.versionCode;
-            int version = pref.getInt("app-version", -1);
-            if (version == -1) {
-                upgradeState = UpgradeState.NEW;
-            } else if (versionCode == version) {
-                upgradeState = UpgradeState.SAME;
-            } else if (versionCode > version) {
-                upgradeState = UpgradeState.UPGRADE;
-            } else if (versionCode < version) {
-                upgradeState = UpgradeState.DOWNGRADE;
-            }
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        editor.putInt("app-version", versionCode);
-        boolean km = Formatter.getUseMetric(getResources(), pref, editor);
+    Log.e(
+        getClass().getName(),
+        "app-version: " + versionCode + ", upgradeState: " + upgradeState + ", km: " + km);
 
-        if (upgradeState == UpgradeState.NEW) {
-            editor.putString(getResources().getString(R.string.pref_autolap),
-                    Double.toString(km ? Formatter.km_meters : Formatter.mi_meters));
-        }
+    // Migration in 1.56: convert pref_mute to pref_mute_bool
+    Resources res = getResources();
+    try {
+      if (pref.contains(res.getString(R.string.pref_mute))) {
+        String v = pref.getString(res.getString(R.string.pref_mute), "no");
+        editor.putBoolean(res.getString(R.string.pref_mute_bool), v.equalsIgnoreCase("yes"));
+        editor.remove(res.getString(R.string.pref_mute));
         editor.apply();
-
-        // clear basicTargetType between application startup/shutdown
-        pref.edit().remove(getString(R.string.pref_basic_target_type)).apply();
-
-        Log.e(getClass().getName(), "app-version: " + versionCode + ", upgradeState: " + upgradeState
-                + ", km: " + km);
-
-        // Migration in 1.56: convert pref_mute to pref_mute_bool
-        Resources res = getResources();
-        try {
-            if (pref.contains(res.getString(R.string.pref_mute))) {
-                String v = pref.getString(res.getString(R.string.pref_mute), "no");
-                editor.putBoolean(res.getString(R.string.pref_mute_bool), v.equalsIgnoreCase("yes"));
-                editor.remove(res.getString(R.string.pref_mute));
-                editor.apply();
-            }
-        } catch (Exception e) {
-        }
-
-        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
-        PreferenceManager.setDefaultValues(this, R.xml.audio_cue_settings, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_controls, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_graph, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_maintenance, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_map, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_sensors, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_units, true);
-        PreferenceManager.setDefaultValues(this, R.xml.settings_workout, true);
-
-        TabHost tabHost = getTabHost(); // The activity TabHost
-
-        tabHost.addTab(tabHost.newTabSpec("Start")
-                .setIndicator(getTabView(getString(org.runnerup.common.R.string.Start), R.drawable.ic_tab_main_24dp))
-                .setContent(new Intent(this, StartActivity.class)));
-
-        tabHost.addTab(tabHost.newTabSpec("History")
-                .setIndicator(getTabView(getString(org.runnerup.common.R.string.History), R.drawable.ic_tab_history_24dp))
-                .setContent(new Intent(this, HistoryActivity.class)));
-
-        tabHost.addTab(tabHost.newTabSpec("Settings")
-                .setIndicator(getTabView(getString(org.runnerup.common.R.string.Settings), R.drawable.ic_tab_settings_24dp))
-                .setContent(new Intent(this, SettingsActivity.class)));
-
-        tabHost.setCurrentTab(0);
-
-        if (upgradeState == UpgradeState.UPGRADE) {
-            whatsNew();
-        }
-
-        //Import workouts/schemes. No permission needed
-        handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
-
-        // if we were called from an intent-filter because user opened "runnerup.db.export", load it
-        final String filePath;
-        final Uri data = getIntent().getData();
-        if (data != null) {
-            if ("content".equals(data.getScheme())) {
-                Cursor cursor = this.getContentResolver().query(data, new String[]{android.provider.MediaStore.Images.ImageColumns.DATA}, null, null, null);
-                cursor.moveToFirst();
-                filePath = cursor.getString(0);
-                cursor.close();
-            } else {
-                filePath = data.getPath();
-            }
-        } else {
-            filePath = null;
-        }
-
-        if (filePath != null) {
-            // No check for permissions or that this is within scooped storage (>=SDK29)
-            Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-            DBHelper.importDatabase(MainLayout.this, filePath);
-        }
+      }
+    } catch (Exception e) {
     }
 
-    private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
-        String[] list;
+    PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+    PreferenceManager.setDefaultValues(this, R.xml.audio_cue_settings, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_controls, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_graph, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_maintenance, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_map, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_sensors, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_units, true);
+    PreferenceManager.setDefaultValues(this, R.xml.settings_workout, true);
 
-        try {
-            list = mgr.list(srcBase);
-        } catch (IOException e) {
-            e.printStackTrace();
-            list = null;
-        }
-        if (list != null) {
-            for (String add : list) {
-                boolean isFile = false;
+    TabHost tabHost = getTabHost(); // The activity TabHost
 
-                String src = srcBase + File.separator + add;
-                String dst = dstBase + File.separator + add;
-                try {
-                    InputStream is = mgr.open(src);
-                    is.close();
-                    isFile = true;
-                } catch (Exception ex) {
-                    //Normal, src is directory for first call
-                }
+    tabHost.addTab(
+        tabHost
+            .newTabSpec("Start")
+            .setIndicator(
+                getTabView(
+                    getString(org.runnerup.common.R.string.Start), R.drawable.ic_tab_main_24dp))
+            .setContent(new Intent(this, StartActivity.class)));
 
-                Log.v(getClass().getName(), "Found: " + src + ", " + dst + ", isFile: " + isFile);
+    tabHost.addTab(
+        tabHost
+            .newTabSpec("History")
+            .setIndicator(
+                getTabView(
+                    getString(org.runnerup.common.R.string.History),
+                    R.drawable.ic_tab_history_24dp))
+            .setContent(new Intent(this, HistoryActivity.class)));
 
-                if (!isFile) {
-                    //The request is hierarchical, source is still on a directory level
-                    File dstDir = new File(dstBase);
-                    //noinspection ResultOfMethodCallIgnored
-                    dstDir.mkdir();
-                    if (!dstDir.isDirectory()) {
-                        Log.w(getClass().getName(), "Failed to copy " + src + " as \"" + dstBase
-                                + "\" is not a directory!");
-                        continue;
-                    }
-                    handleBundled(mgr, src, dst);
-                } else {
-                    //Source is a file, ready to copy
-                    File dstFile = new File(dst);
-                    if (dstFile.isDirectory() || dstFile.isFile()) {
-                        Log.v(getClass().getName(), "Skip: " + dst +
-                                ", isDirectory(): " + dstFile.isDirectory() +
-                                ", isFile(): " + dstFile.isFile());
-                        continue;
-                    }
+    tabHost.addTab(
+        tabHost
+            .newTabSpec("Settings")
+            .setIndicator(
+                getTabView(
+                    getString(org.runnerup.common.R.string.Settings),
+                    R.drawable.ic_tab_settings_24dp))
+            .setContent(new Intent(this, SettingsActivity.class)));
 
-                    //Only copy if the key do not exist already
-                    String key = "install_bundled_" + add;
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-                    if (pref.contains(key)) {
-                        Log.v(getClass().getName(), "Skip already existing pref: " + key);
-                        continue;
-                    }
+    tabHost.setCurrentTab(0);
 
-                    pref.edit().putBoolean(key, true).apply();
-
-                    Log.v(getClass().getName(), "Copying: " + dst);
-                    InputStream input = null;
-                    try {
-                        input = mgr.open(src);
-                        FileUtil.copy(input, dst);
-                        handleHooks(add);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        FileUtil.close(input);
-                    }
-                }
-            }
-        }
+    if (upgradeState == UpgradeState.UPGRADE) {
+      whatsNew();
     }
 
-    private void handleHooks(String key) {
-        if (key.contains("_audio_cues.xml")) {
-            String name = key.substring(0, key.indexOf("_audio_cues.xml"));
+    // Import workouts/schemes. No permission needed
+    handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
 
-            SQLiteDatabase mDB = DBHelper.getWritableDatabase(this);
-
-            ContentValues tmp = new ContentValues();
-            tmp.put(DB.AUDIO_SCHEMES.NAME, name);
-            tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
-            mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
-
-            DBHelper.closeDB(mDB);
-        }
+    // if we were called from an intent-filter because user opened "runnerup.db.export", load it
+    final String filePath;
+    final Uri data = getIntent().getData();
+    if (data != null) {
+      if ("content".equals(data.getScheme())) {
+        Cursor cursor =
+            this.getContentResolver()
+                .query(
+                    data,
+                    new String[] {android.provider.MediaStore.Images.ImageColumns.DATA},
+                    null,
+                    null,
+                    null);
+        cursor.moveToFirst();
+        filePath = cursor.getString(0);
+        cursor.close();
+      } else {
+        filePath = data.getPath();
+      }
+    } else {
+      filePath = null;
     }
 
-    private final OnClickListener onRateClick = arg0 -> {
+    if (filePath != null) {
+      // No check for permissions or that this is within scooped storage (>=SDK29)
+      Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
+      DBHelper.importDatabase(MainLayout.this, filePath);
+    }
+  }
+
+  private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
+    String[] list;
+
+    try {
+      list = mgr.list(srcBase);
+    } catch (IOException e) {
+      e.printStackTrace();
+      list = null;
+    }
+    if (list != null) {
+      for (String add : list) {
+        boolean isFile = false;
+
+        String src = srcBase + File.separator + add;
+        String dst = dstBase + File.separator + add;
         try {
-            Uri uri = Uri.parse("market://details?id=" + getPackageName());
-            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+          InputStream is = mgr.open(src);
+          is.close();
+          isFile = true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+          // Normal, src is directory for first call
         }
-    };
 
-    private void whatsNew() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.whatsnew, null);
-        WebView wv = view.findViewById(R.id.web_view1);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(org.runnerup.common.R.string.Whats_new)
-                .setView(view)
-                .setNegativeButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss());
-        if (GoogleApiHelper.isGooglePlayServicesAvailable(this)) {
-            builder.setPositiveButton(org.runnerup.common.R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
+        Log.v(getClass().getName(), "Found: " + src + ", " + dst + ", isFile: " + isFile);
+
+        if (!isFile) {
+          // The request is hierarchical, source is still on a directory level
+          File dstDir = new File(dstBase);
+          //noinspection ResultOfMethodCallIgnored
+          dstDir.mkdir();
+          if (!dstDir.isDirectory()) {
+            Log.w(
+                getClass().getName(),
+                "Failed to copy " + src + " as \"" + dstBase + "\" is not a directory!");
+            continue;
+          }
+          handleBundled(mgr, src, dst);
+        } else {
+          // Source is a file, ready to copy
+          File dstFile = new File(dst);
+          if (dstFile.isDirectory() || dstFile.isFile()) {
+            Log.v(
+                getClass().getName(),
+                "Skip: "
+                    + dst
+                    + ", isDirectory(): "
+                    + dstFile.isDirectory()
+                    + ", isFile(): "
+                    + dstFile.isFile());
+            continue;
+          }
+
+          // Only copy if the key do not exist already
+          String key = "install_bundled_" + add;
+          SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+          if (pref.contains(key)) {
+            Log.v(getClass().getName(), "Skip already existing pref: " + key);
+            continue;
+          }
+
+          pref.edit().putBoolean(key, true).apply();
+
+          Log.v(getClass().getName(), "Copying: " + dst);
+          InputStream input = null;
+          try {
+            input = mgr.open(src);
+            FileUtil.copy(input, dst);
+            handleHooks(add);
+          } catch (IOException e) {
+            e.printStackTrace();
+          } finally {
+            FileUtil.close(input);
+          }
         }
-        builder.show();
-        wv.loadUrl("file:///android_asset/changes.html");
+      }
     }
+  }
+
+  private void handleHooks(String key) {
+    if (key.contains("_audio_cues.xml")) {
+      String name = key.substring(0, key.indexOf("_audio_cues.xml"));
+
+      SQLiteDatabase mDB = DBHelper.getWritableDatabase(this);
+
+      ContentValues tmp = new ContentValues();
+      tmp.put(DB.AUDIO_SCHEMES.NAME, name);
+      tmp.put(DB.AUDIO_SCHEMES.SORT_ORDER, 0);
+      mDB.insert(DB.AUDIO_SCHEMES.TABLE, null, tmp);
+
+      DBHelper.closeDB(mDB);
+    }
+  }
+
+  private final OnClickListener onRateClick =
+      arg0 -> {
+        try {
+          Uri uri = Uri.parse("market://details?id=" + getPackageName());
+          startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      };
+
+  private void whatsNew() {
+    LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+    @SuppressLint("InflateParams")
+    View view = inflater.inflate(R.layout.whatsnew, null);
+    WebView wv = view.findViewById(R.id.web_view1);
+    AlertDialog.Builder builder =
+        new AlertDialog.Builder(this)
+            .setTitle(org.runnerup.common.R.string.Whats_new)
+            .setView(view)
+            .setNegativeButton(
+                org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss());
+    if (GoogleApiHelper.isGooglePlayServicesAvailable(this)) {
+      builder.setPositiveButton(
+          org.runnerup.common.R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
+    }
+    builder.show();
+    wv.loadUrl("file:///android_asset/changes.html");
+  }
 }
