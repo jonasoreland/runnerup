@@ -23,79 +23,70 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import java.util.HashSet;
-
 
 class DisabledEntriesAdapter extends BaseAdapter {
 
-    private final String[] entries;
-    private final LayoutInflater inflator;
-    private HashSet<String> disabled;
+  private final String[] entries;
+  private final LayoutInflater inflator;
+  private HashSet<String> disabled;
 
-    public DisabledEntriesAdapter(Context ctx, int id) {
-        inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        entries = ctx.getResources().getStringArray(id);
+  public DisabledEntriesAdapter(Context ctx, int id) {
+    inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    entries = ctx.getResources().getStringArray(id);
+  }
+
+  public void addDisabled(int i) {
+    if (disabled == null) disabled = new HashSet<>();
+    if (i < entries.length) disabled.add(entries[i]);
+  }
+
+  public void clearDisabled() {
+    if (disabled != null) disabled.clear();
+  }
+
+  @Override
+  public int getCount() {
+    return entries.length;
+  }
+
+  @Override
+  public Object getItem(int position) {
+    if (position < entries.length) return entries[position];
+    return null;
+  }
+
+  @Override
+  public long getItemId(int position) {
+    return 0;
+  }
+
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    String str = (String) getItem(position);
+    if (convertView == null) {
+      convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
     }
+    TextView ret = convertView.findViewById(android.R.id.text1);
+    ret.setText(str);
 
-    public void addDisabled(int i) {
-        if (disabled == null)
-            disabled = new HashSet<>();
-        if (i < entries.length)
-            disabled.add(entries[i]);
-    }
+    convertView.setEnabled(disabled == null || !disabled.contains(str));
 
-    public void clearDisabled() {
-        if (disabled != null)
-            disabled.clear();
-    }
+    return convertView;
+  }
 
-    @Override
-    public int getCount() {
-        return entries.length;
-    }
+  @Override
+  public boolean areAllItemsEnabled() {
+    return disabled == null || disabled.size() == 0;
+  }
 
-    @Override
-    public Object getItem(int position) {
-        if (position < entries.length)
-            return entries[position];
-        return null;
-    }
+  @Override
+  public boolean isEnabled(int position) {
+    if (disabled == null) return true;
 
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
+    String str = (String) getItem(position);
+    if (str == null) return true;
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        String str = (String) getItem(position);
-        if (convertView == null) {
-            convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent,
-                    false);
-        }
-        TextView ret = convertView.findViewById(android.R.id.text1);
-        ret.setText(str);
-
-        convertView.setEnabled(disabled == null || !disabled.contains(str));
-
-        return convertView;
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return disabled == null || disabled.size() == 0;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        if (disabled == null)
-            return true;
-
-        String str = (String) getItem(position);
-        if (str == null)
-            return true;
-
-        return !disabled.contains(str);
-    }
+    return !disabled.contains(str);
+  }
 }

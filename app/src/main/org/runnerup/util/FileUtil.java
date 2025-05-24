@@ -23,61 +23,60 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
 public class FileUtil {
 
-    private static int copy(InputStream src, OutputStream dst) throws IOException {
-        int cnt = 0;
-        byte[] buf = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = src.read(buf)) > 0) {
-            cnt += bytesRead;
-            dst.write(buf, 0, bytesRead);
-        }
-        return cnt;
+  private static int copy(InputStream src, OutputStream dst) throws IOException {
+    int cnt = 0;
+    byte[] buf = new byte[1024];
+    int bytesRead;
+    while ((bytesRead = src.read(buf)) > 0) {
+      cnt += bytesRead;
+      dst.write(buf, 0, bytesRead);
     }
+    return cnt;
+  }
 
-    public static int copyFile(String to, String from) throws IOException {
-        FileInputStream input = null;
-        FileOutputStream output = null;
+  public static int copyFile(String to, String from) throws IOException {
+    FileInputStream input = null;
+    FileOutputStream output = null;
 
-        try {
-            input = new FileInputStream(from);
-            output = new FileOutputStream(to);
+    try {
+      input = new FileInputStream(from);
+      output = new FileOutputStream(to);
 
-            return copy(input, output);
-        } finally {
-            close(input);
-            close(output);
-        }
+      return copy(input, output);
+    } finally {
+      close(input);
+      close(output);
     }
+  }
 
-    public static void close(InputStream input) {
-        if (input != null)
-            try {
-                input.close();
-            } catch (IOException ex) {
-            }
+  public static void close(InputStream input) {
+    if (input != null)
+      try {
+        input.close();
+      } catch (IOException ex) {
+      }
+  }
+
+  private static void close(OutputStream input) {
+    if (input != null)
+      try {
+        input.close();
+      } catch (IOException ex) {
+      }
+  }
+
+  @SuppressWarnings("UnusedReturnValue")
+  public static int copy(InputStream input, String dst) throws IOException {
+    FileOutputStream output = null;
+
+    try {
+      output = new FileOutputStream(dst);
+
+      return copy(input, output);
+    } finally {
+      close(output);
     }
-
-    private static void close(OutputStream input) {
-        if (input != null)
-            try {
-                input.close();
-            } catch (IOException ex) {
-            }
-    }
-
-    @SuppressWarnings("UnusedReturnValue")
-    public static int copy(InputStream input, String dst) throws IOException {
-        FileOutputStream output = null;
-
-        try {
-            output = new FileOutputStream(dst);
-
-            return copy(input, output);
-        } finally {
-            close(output);
-        }
-    }
+  }
 }

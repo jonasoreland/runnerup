@@ -21,8 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public interface DBEntity {
 
-    long insert(SQLiteDatabase db);
+  long insert(SQLiteDatabase db);
 
-    void update(SQLiteDatabase db);
-
+  void update(SQLiteDatabase db);
 }

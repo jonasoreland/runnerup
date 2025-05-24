@@ -28,183 +28,172 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.text.TextUtils;
-
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-
 import org.runnerup.R;
 import org.runnerup.tracker.GpsStatus;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.util.TickListener;
 
-
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
-    private boolean mWithoutGps = false;
-    private int frequency_ms = 0;
-    private Location mLastLocation;
-    private final Tracker tracker;
+  private boolean mWithoutGps = false;
+  private int frequency_ms = 0;
+  private Location mLastLocation;
+  private final Tracker tracker;
 
-    private static final String NAME = "GPS";
-    private GpsStatus mGpsStatus;
-    private Callback mConnectCallback;
+  private static final String NAME = "GPS";
+  private GpsStatus mGpsStatus;
+  private Callback mConnectCallback;
 
-    @Override
-    public String getName() {
-        return NAME;
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  public TrackerGPS(Tracker tracker) {
+    this.tracker = tracker;
+  }
+
+  @Override
+  public ResultCode onInit(final Callback callback, Context context) {
+    try {
+      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+      if (lm == null) {
+        return ResultCode.RESULT_NOT_SUPPORTED;
+      }
+      if (lm.getProvider(LocationManager.GPS_PROVIDER) == null) {
+        return ResultCode.RESULT_NOT_SUPPORTED;
+      }
+    } catch (Exception ex) {
+      return ResultCode.RESULT_ERROR;
     }
+    return ResultCode.RESULT_OK;
+  }
 
-    public TrackerGPS(Tracker tracker) {
-        this.tracker = tracker;
+  private Integer parseAndFixInteger(
+      SharedPreferences preferences, int resId, String def, Context context) {
+    String s = preferences.getString(context.getString(resId), def);
+    if (TextUtils.isEmpty(s)) {
+      // Update the settings
+      SharedPreferences.Editor prefedit = preferences.edit();
+      prefedit.putString(context.getString(resId), def);
+      prefedit.apply();
+      s = def;
     }
+    return Integer.parseInt(s);
+  }
 
-    @Override
-    public ResultCode onInit(final Callback callback, Context context) {
-        try {
-            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            if (lm == null) {
-                return ResultCode.RESULT_NOT_SUPPORTED;
-            }
-            if (lm.getProvider(LocationManager.GPS_PROVIDER) == null) {
-                return ResultCode.RESULT_NOT_SUPPORTED;
-            }
-        } catch (Exception ex) {
-            return ResultCode.RESULT_ERROR;
+  @Override
+  public ResultCode onConnecting(final Callback callback, Context context) {
+    if (ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
+      mWithoutGps = true;
+    }
+    try {
+      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+      SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+      frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
+      if (!mWithoutGps) {
+        Integer frequency_meters =
+            parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
+        lm.requestLocationUpdates(GPS_PROVIDER, frequency_ms, frequency_meters, tracker);
+        mGpsStatus = new GpsStatus(context);
+        mGpsStatus.start(this);
+        mConnectCallback = callback;
+        return ResultCode.RESULT_PENDING;
+      } else {
+        String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
+        mLastLocation = null;
+        for (String s : list) {
+          Location tmp = lm.getLastKnownLocation(s);
+          if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
+            mLastLocation = tmp;
+          }
         }
+        if (mLastLocation != null) {
+          mLastLocation.removeSpeed();
+          mLastLocation.removeAltitude();
+          mLastLocation.removeAccuracy();
+          mLastLocation.removeBearing();
+        }
+        gpsLessLocationProvider.run();
         return ResultCode.RESULT_OK;
+      }
+
+    } catch (Exception ex) {
+      return ResultCode.RESULT_ERROR;
     }
+  }
 
-    private Integer parseAndFixInteger(SharedPreferences preferences, int resId, String def, Context context) {
-        String s = preferences.getString(context.getString(resId), def);
-        if (TextUtils.isEmpty(s)) {
-            // Update the settings
-            SharedPreferences.Editor prefedit = preferences.edit();
-            prefedit.putString(context.getString(resId), def);
-            prefedit.apply();
-            s = def;
-        }
-        return Integer.parseInt(s);
+  @Override
+  public boolean isConnected() {
+    return (mWithoutGps) || (mGpsStatus != null) && mGpsStatus.isFixed();
+  }
+
+  @Override
+  public ResultCode onEnd(Callback callback, Context context) {
+    if (!mWithoutGps) {
+      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+      try {
+        lm.removeUpdates(tracker);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+
+      if (mGpsStatus != null) {
+        mGpsStatus.stop(this);
+      }
+      mGpsStatus = null;
+      mConnectCallback = null;
     }
-    @Override
-    public ResultCode onConnecting(final Callback callback, Context context) {
-        if (ContextCompat.checkSelfPermission(this.tracker,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            mWithoutGps = true;
-        }
-        try {
-            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
-            if (!mWithoutGps) {
-                Integer frequency_meters = parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
-                lm.requestLocationUpdates(GPS_PROVIDER,
-                        frequency_ms,
-                        frequency_meters,
-                        tracker);
-                mGpsStatus = new GpsStatus(context);
-                mGpsStatus.start(this);
-                mConnectCallback = callback;
-                return ResultCode.RESULT_PENDING;
-            } else {
-                String[] list = {
-                        GPS_PROVIDER,
-                        NETWORK_PROVIDER,
-                        PASSIVE_PROVIDER };
-                mLastLocation = null;
-                for (String s : list) {
-                    Location tmp = lm.getLastKnownLocation(s);
-                    if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
-                        mLastLocation = tmp;
-                    }
-                }
-                if (mLastLocation != null) {
-                    mLastLocation.removeSpeed();
-                    mLastLocation.removeAltitude();
-                    mLastLocation.removeAccuracy();
-                    mLastLocation.removeBearing();
-                }
-                gpsLessLocationProvider.run();
-                return ResultCode.RESULT_OK;
-            }
+    return ResultCode.RESULT_OK;
+  }
 
-
-        } catch (Exception ex) {
-            return ResultCode.RESULT_ERROR;
-        }
-    }
-
-    @Override
-    public boolean isConnected() {
-        return (mWithoutGps) ||
-                (mGpsStatus != null) && mGpsStatus.isFixed();
-    }
-
-    @Override
-    public ResultCode onEnd(Callback callback, Context context) {
-        if (!mWithoutGps) {
-            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-            try {
-                lm.removeUpdates(tracker);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            if (mGpsStatus != null) {
-                mGpsStatus.stop(this);
-            }
-            mGpsStatus = null;
-            mConnectCallback = null;
-        }
-        return ResultCode.RESULT_OK;
-    }
-
-    private final Runnable gpsLessLocationProvider = new Runnable() {
+  private final Runnable gpsLessLocationProvider =
+      new Runnable() {
 
         Location location = null;
         final Handler handler = new Handler();
 
         @Override
         public void run() {
-            if (location == null) {
-                location = new Location(mLastLocation);
-                mLastLocation = null;
-            }
-            switch (tracker.getState()) {
-                case INIT:
-                case CLEANUP:
-                case ERROR:
-                    /* end loop be returning directly here */
-                    return;
-                case INITIALIZING:
-                case INITIALIZED:
-                case STARTED:
-                case PAUSED:
-                    /* continue looping */
-                    break;
-            }
-            tracker.onLocationChanged(location);
-            handler.postDelayed(this, frequency_ms);
+          if (location == null) {
+            location = new Location(mLastLocation);
+            mLastLocation = null;
+          }
+          switch (tracker.getState()) {
+            case INIT:
+            case CLEANUP:
+            case ERROR:
+              /* end loop be returning directly here */
+              return;
+            case INITIALIZING:
+            case INITIALIZED:
+            case STARTED:
+            case PAUSED:
+              /* continue looping */
+              break;
+          }
+          tracker.onLocationChanged(location);
+          handler.postDelayed(this, frequency_ms);
         }
-    };
+      };
 
-    @Override
-    public void onTick() {
-        if (mGpsStatus == null)
-            return;
+  @Override
+  public void onTick() {
+    if (mGpsStatus == null) return;
 
-        if (!mGpsStatus.isFixed())
-            return;
+    if (!mGpsStatus.isFixed()) return;
 
-        if (mConnectCallback == null)
-            return;
+    if (mConnectCallback == null) return;
 
-        Callback tmp = mConnectCallback;
+    Callback tmp = mConnectCallback;
 
-        mConnectCallback = null;
-        mGpsStatus.stop(this);
-        //note: Don't reset mGpsStatus, it's used for isConnected()
+    mConnectCallback = null;
+    mGpsStatus.stop(this);
+    // note: Don't reset mGpsStatus, it's used for isConnected()
 
-        tmp.run(this, ResultCode.RESULT_OK);
-    }
+    tmp.run(this, ResultCode.RESULT_OK);
+  }
 }

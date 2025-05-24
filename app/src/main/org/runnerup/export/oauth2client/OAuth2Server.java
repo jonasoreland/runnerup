@@ -18,25 +18,25 @@
 package org.runnerup.export.oauth2client;
 
 public interface OAuth2Server {
-    /**
-     * Used as title when opening authorization dialog
-     * 
-     * @return
-     */
-    String getName();
+  /**
+   * Used as title when opening authorization dialog
+   *
+   * @return
+   */
+  String getName();
 
-    String getClientId();
+  String getClientId();
 
-    String getRedirectUri();
+  String getRedirectUri();
 
-    String getClientSecret();
+  String getClientSecret();
 
-    String getAuthUrl();
+  String getAuthUrl();
 
-    String getAuthExtra();
+  String getAuthExtra();
 
-    String getTokenUrl();
+  String getTokenUrl();
 
-    @SuppressWarnings("SameReturnValue")
-    String getRevokeUrl();
+  @SuppressWarnings("SameReturnValue")
+  String getRevokeUrl();
 }

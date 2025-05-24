@@ -28,213 +28,211 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.widget.Toast;
-
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-
+import java.util.HashMap;
+import java.util.Random;
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Workout;
 
-import java.util.HashMap;
-import java.util.Random;
-
 public class TrackerCadence extends DefaultTrackerComponent implements SensorEventListener {
 
-    public static final String NAME = "Cadence";
+  public static final String NAME = "Cadence";
 
-    @Override
-    public String getName() {
-        return NAME;
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  private SensorManager mSensorManager = null;
+
+  // For debug builds, use random if sensor is unavailable
+  private static boolean isMockSensor = false;
+
+  private boolean isSportEnabled = true;
+  private Float mPrevVal = null;
+  private long mPrevTime = -1;
+  private Float mCurrentCadence = null;
+  final int cutOffTime = 3;
+
+  public Float getValue() {
+    if (!isSportEnabled) {
+      return null;
+    }
+    if (isMockSensor) {
+      return (new Random()).nextFloat() * 120;
     }
 
-    private SensorManager mSensorManager = null;
-
-    //For debug builds, use random if sensor is unavailable
-    private static boolean isMockSensor = false;
-
-    private boolean isSportEnabled = true;
-    private Float mPrevVal = null;
-    private long mPrevTime = -1;
-    private Float mCurrentCadence = null;
-    final int cutOffTime = 3;
-
-    public Float getValue() {
-        if (!isSportEnabled) {
-            return null;
-        }
-        if (isMockSensor) {
-            return (new Random()).nextFloat() * 120;
-        }
-
-        if (mCurrentCadence == null) {
-            return null;
-        }
-
-        // It can take seconds between sensor updates
-        // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
-        final long nanoSec = 1000000000L;
-        long now = SystemClock.elapsedRealtimeNanos();
-        long timeDiff = now - mPrevTime;
-        Float res = mCurrentCadence;
-        if (timeDiff > cutOffTime * nanoSec) {
-            mCurrentCadence = null;
-            res = 0.0f;
-        }
-
-        return res;
+    if (mCurrentCadence == null) {
+      return null;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.values == null || event.values.length < 1) {
-            mCurrentCadence = null;
-            return;
-        }
-
-        float latestVal = event.values[0];
-        long latestTime = event.timestamp;
-        long timeDiff = latestTime - mPrevTime;
-        final long nanoSec = 1000000000L;
-
-        if (timeDiff > cutOffTime * nanoSec || mPrevTime < 0 || mPrevVal == null || latestVal <= mPrevVal) {
-            mCurrentCadence = null;
-        } else {
-            float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / timeDiff;
-            if (val > 300) {
-                // ignore this reading, use previous point next time
-                return;
-            }
-
-            if (mCurrentCadence == null) {
-                mCurrentCadence = val;
-            } else {
-                //Low pass filter
-                final float alpha = 0.4f;
-                mCurrentCadence = val * alpha + (1 - alpha) * mCurrentCadence;
-            }
-        }
-        mPrevTime = latestTime;
-        mPrevVal = latestVal;
+    // It can take seconds between sensor updates
+    // Cut-off at 3s corresponds to 60/2/3 => 10 rpm (or 20 steps per minute)
+    final long nanoSec = 1000000000L;
+    long now = SystemClock.elapsedRealtimeNanos();
+    long timeDiff = now - mPrevTime;
+    Float res = mCurrentCadence;
+    if (timeDiff > cutOffTime * nanoSec) {
+      mCurrentCadence = null;
+      res = 0.0f;
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        mCurrentCadence = null;
+    return res;
+  }
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+    if (event.values == null || event.values.length < 1) {
+      mCurrentCadence = null;
+      return;
     }
 
-    /**
-     * Sensor is available
-     */
-    public static boolean isAvailable(final Context context) {
-        return ((new TrackerCadence()).getSensor(context) != null) || isMockSensor;
+    float latestVal = event.values[0];
+    long latestTime = event.timestamp;
+    long timeDiff = latestTime - mPrevTime;
+    final long nanoSec = 1000000000L;
+
+    if (timeDiff > cutOffTime * nanoSec
+        || mPrevTime < 0
+        || mPrevVal == null
+        || latestVal <= mPrevVal) {
+      mCurrentCadence = null;
+    } else {
+      float val = (latestVal - mPrevVal) / 2 * 60 * nanoSec / timeDiff;
+      if (val > 300) {
+        // ignore this reading, use previous point next time
+        return;
+      }
+
+      if (mCurrentCadence == null) {
+        mCurrentCadence = val;
+      } else {
+        // Low pass filter
+        final float alpha = 0.4f;
+        mCurrentCadence = val * alpha + (1 - alpha) * mCurrentCadence;
+      }
+    }
+    mPrevTime = latestTime;
+    mPrevVal = latestVal;
+  }
+
+  @Override
+  public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    mCurrentCadence = null;
+  }
+
+  /** Sensor is available */
+  public static boolean isAvailable(final Context context) {
+    return ((new TrackerCadence()).getSensor(context) != null) || isMockSensor;
+  }
+
+  private Sensor getSensor(final Context context) {
+    if (mSensorManager == null && context != null) {
+      mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
-    private Sensor getSensor(final Context context) {
-        if (mSensorManager == null && context != null) {
-            mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        }
+    Sensor sensor =
+        mSensorManager != null ? mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) : null;
+    if (sensor == null) {
+      mSensorManager = null;
 
-        Sensor sensor = mSensorManager != null ? mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) : null;
-        if (sensor == null) {
-            mSensorManager = null;
-
-            if (context != null) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
-            }
-        }
-
-        return sensor;
-    }
-
-    /**
-     * Called by Tracker during initialization
-     */
-    @Override
-    public ResultCode onInit(Callback callback, Context context) {
-         return ResultCode.RESULT_OK;
-    }
-
-    @Override
-    public ResultCode onConnecting(final Callback callback, final Context context) {
-        ResultCode res;
+      if (context != null) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean enabled = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
-
-        if (!enabled) {
-            res = ResultCode.RESULT_NOT_ENABLED;
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-                    && ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(context, "No permission to connect to step sensor",
-                        Toast.LENGTH_SHORT).show();
-                return ResultCode.RESULT_NOT_ENABLED;
-            }
-
-            Sensor sensor = getSensor(context);
-            if (sensor != null) {
-                mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
-                res = ResultCode.RESULT_OK;
-            } else if (isMockSensor) {
-                res = ResultCode.RESULT_OK;
-            } else {
-                res = ResultCode.RESULT_NOT_SUPPORTED;
-            }
-        }
-        return res;
+        isMockSensor =
+            prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
+      }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Sensor sensor = getSensor(null);
-        if (sensor != null) {
-            mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
-        }
-    }
+    return sensor;
+  }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(this);
-        }
-    }
+  /** Called by Tracker during initialization */
+  @Override
+  public ResultCode onInit(Callback callback, Context context) {
+    return ResultCode.RESULT_OK;
+  }
 
-    @Override
-    public boolean isConnected() {
-        return mSensorManager != null || isMockSensor;
-    }
+  @Override
+  public ResultCode onConnecting(final Callback callback, final Context context) {
+    ResultCode res;
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    boolean enabled =
+        prefs.getBoolean(
+            context.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
 
-    /**
-     * Called by Tracker before start
-     *   Component shall populate bindValues
-     *   with objects that will then be passed
-     *   to workout
-     */
-    public void onBind(HashMap<String, Object> bindValues) {
-        int sport = (int) bindValues.get(Workout.KEY_SPORT_TYPE);
-        if (sport == Constants.DB.ACTIVITY.SPORT_BIKING) {
-            //Not used, disconnect sensor so nothing is returned
-            isSportEnabled = false;
-            mPrevVal = null;
-            mSensorManager = null;
-            isMockSensor = false;
-        } else {
-            isSportEnabled = true;
-        }
-    }
+    if (!enabled) {
+      res = ResultCode.RESULT_NOT_ENABLED;
+    } else {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+          && ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION)
+              != PackageManager.PERMISSION_GRANTED) {
+        Toast.makeText(context, "No permission to connect to step sensor", Toast.LENGTH_SHORT)
+            .show();
+        return ResultCode.RESULT_NOT_ENABLED;
+      }
 
-    /**
-     * Called by tracked after workout has ended
-     */
-    @Override
-    public ResultCode onEnd(Callback callback, Context context) {
-        if (mSensorManager != null) { mSensorManager.unregisterListener(this); }
-        mSensorManager = null;
-        isMockSensor = false;
-
-        return ResultCode.RESULT_OK;
+      Sensor sensor = getSensor(context);
+      if (sensor != null) {
+        mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        res = ResultCode.RESULT_OK;
+      } else if (isMockSensor) {
+        res = ResultCode.RESULT_OK;
+      } else {
+        res = ResultCode.RESULT_NOT_SUPPORTED;
+      }
     }
+    return res;
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Sensor sensor = getSensor(null);
+    if (sensor != null) {
+      mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    if (mSensorManager != null) {
+      mSensorManager.unregisterListener(this);
+    }
+  }
+
+  @Override
+  public boolean isConnected() {
+    return mSensorManager != null || isMockSensor;
+  }
+
+  /**
+   * Called by Tracker before start Component shall populate bindValues with objects that will then
+   * be passed to workout
+   */
+  public void onBind(HashMap<String, Object> bindValues) {
+    int sport = (int) bindValues.get(Workout.KEY_SPORT_TYPE);
+    if (sport == Constants.DB.ACTIVITY.SPORT_BIKING) {
+      // Not used, disconnect sensor so nothing is returned
+      isSportEnabled = false;
+      mPrevVal = null;
+      mSensorManager = null;
+      isMockSensor = false;
+    } else {
+      isSportEnabled = true;
+    }
+  }
+
+  /** Called by tracked after workout has ended */
+  @Override
+  public ResultCode onEnd(Callback callback, Context context) {
+    if (mSensorManager != null) {
+      mSensorManager.unregisterListener(this);
+    }
+    mSensorManager = null;
+    isMockSensor = false;
+
+    return ResultCode.RESULT_OK;
+  }
 }

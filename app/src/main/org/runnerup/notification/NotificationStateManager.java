@@ -6,49 +6,51 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 
-
 public class NotificationStateManager {
-    private static final int NOTIFICATION_ID = 1;
-    private final NotificationDisplayStrategy strategy;
+  private static final int NOTIFICATION_ID = 1;
+  private final NotificationDisplayStrategy strategy;
 
-    private static NotificationChannel mChannel;
-    /**
-     * Android 8.0 notification channel
-     * @param context
-     * @return
-     */
-    public static String getChannelId(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mChannel == null) {
-                NotificationManager notificationManager =
-                        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                String id = "runnerup_ongoing";
-                CharSequence name = context.getString(org.runnerup.common.R.string.app_name);
-                String description = context.getString(org.runnerup.common.R.string.channel_notification_ongoing);
-                int importance = NotificationManager.IMPORTANCE_HIGH;
-                mChannel = new NotificationChannel(id, name, importance);
-                mChannel.setDescription(description);
-                mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                mChannel.setBypassDnd(true);
-                notificationManager.createNotificationChannel(mChannel);
-            }
-            return mChannel.getId();
-        }
-        return "unused prior to Oreo";
+  private static NotificationChannel mChannel;
+
+  /**
+   * Android 8.0 notification channel
+   *
+   * @param context
+   * @return
+   */
+  public static String getChannelId(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      if (mChannel == null) {
+        NotificationManager notificationManager =
+            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        String id = "runnerup_ongoing";
+        CharSequence name = context.getString(org.runnerup.common.R.string.app_name);
+        String description =
+            context.getString(org.runnerup.common.R.string.channel_notification_ongoing);
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        mChannel = new NotificationChannel(id, name, importance);
+        mChannel.setDescription(description);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        mChannel.setBypassDnd(true);
+        notificationManager.createNotificationChannel(mChannel);
+      }
+      return mChannel.getId();
     }
+    return "unused prior to Oreo";
+  }
 
-    public NotificationStateManager(NotificationDisplayStrategy strategy) {
-        this.strategy = strategy;
-    }
+  public NotificationStateManager(NotificationDisplayStrategy strategy) {
+    this.strategy = strategy;
+  }
 
-    public void displayNotificationState(NotificationState state) {
-        if (state == null) throw new IllegalArgumentException("state is null");
+  public void displayNotificationState(NotificationState state) {
+    if (state == null) throw new IllegalArgumentException("state is null");
 
-        Notification notification = state.createNotification();
-        strategy.notify(NOTIFICATION_ID, notification);
-    }
+    Notification notification = state.createNotification();
+    strategy.notify(NOTIFICATION_ID, notification);
+  }
 
-    public void cancelNotification() {
-        strategy.cancel(NOTIFICATION_ID);
-    }
+  public void cancelNotification() {
+    strategy.cancel(NOTIFICATION_ID);
+  }
 }

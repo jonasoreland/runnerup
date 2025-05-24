@@ -8,36 +8,47 @@ import android.widget.SpinnerAdapter;
  * @author Miroslav Mazel
  */
 public interface SpinnerInterface {
-    void setViewPrompt(CharSequence charSequence);
-    void setViewLabel(CharSequence charSequence);
-    void setViewValue(int itemId);
-    void setViewText(CharSequence charSequence);
-    CharSequence getViewValueText();
-    void setViewOnClickListener(View.OnClickListener onClickListener);
-    void setViewAdapter(DisabledEntriesAdapter adapter);
-    SpinnerAdapter getViewAdapter();
-    void setViewSelection(int value);
-    void viewOnClose(OnCloseDialogListener listener, boolean b);
-    void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener);
-    void setOnClickSpinnerOpen();
+  void setViewPrompt(CharSequence charSequence);
 
-    interface OnCloseDialogListener {
-        void onClose(SpinnerInterface spinner, boolean ok);
-    }
+  void setViewLabel(CharSequence charSequence);
 
-    interface OnSetValueListener {
-        /**
-         * @param newValue
-         * @return
-         * @throws java.lang.IllegalArgumentException
-         */
-        String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+  void setViewValue(int itemId);
 
-        /**
-         * @param newValue
-         * @return
-         * @throws java.lang.IllegalArgumentException
-         */
-        int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
-    }
+  void setViewText(CharSequence charSequence);
+
+  CharSequence getViewValueText();
+
+  void setViewOnClickListener(View.OnClickListener onClickListener);
+
+  void setViewAdapter(DisabledEntriesAdapter adapter);
+
+  SpinnerAdapter getViewAdapter();
+
+  void setViewSelection(int value);
+
+  void viewOnClose(OnCloseDialogListener listener, boolean b);
+
+  void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener);
+
+  void setOnClickSpinnerOpen();
+
+  interface OnCloseDialogListener {
+    void onClose(SpinnerInterface spinner, boolean ok);
+  }
+
+  interface OnSetValueListener {
+    /**
+     * @param newValue
+     * @return
+     * @throws java.lang.IllegalArgumentException
+     */
+    String preSetValue(String newValue) throws java.lang.IllegalArgumentException;
+
+    /**
+     * @param newValue
+     * @return
+     * @throws java.lang.IllegalArgumentException
+     */
+    int preSetValue(int newValue) throws java.lang.IllegalArgumentException;
+  }
 }

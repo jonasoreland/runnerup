@@ -19,37 +19,34 @@ package org.runnerup.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import org.runnerup.R;
 import org.runnerup.widget.WidgetUtil;
 
-
 public class AudioCueSettingsActivity extends AppCompatActivity {
-    public static final String SUFFIX = "_audio_cues";
+  public static final String SUFFIX = "_audio_cues";
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        WidgetUtil.addLegacyOverflowButton(getWindow());
-        setContentView(R.layout.settings_activity);
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    WidgetUtil.addLegacyOverflowButton(getWindow());
+    setContentView(R.layout.settings_activity);
 
-        Intent intent = getIntent();
-        String settingsName = intent.getStringExtra("name");
+    Intent intent = getIntent();
+    String settingsName = intent.getStringExtra("name");
 
-        // Ensure that the fragment is added only once
-        if (savedInstanceState == null) {
-            Bundle bundle = new Bundle();
-            if (settingsName != null) {
-                // If the Intent that started this Activity has an audio cue name, pass it to the Fragment.
-                bundle.putString("name", settingsName);
-            }
+    // Ensure that the fragment is added only once
+    if (savedInstanceState == null) {
+      Bundle bundle = new Bundle();
+      if (settingsName != null) {
+        // If the Intent that started this Activity has an audio cue name, pass it to the Fragment.
+        bundle.putString("name", settingsName);
+      }
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.settings_fragment_container, AudioCueSettingsFragment.class, bundle)
-                    .commit();
-        }
+      getSupportFragmentManager()
+          .beginTransaction()
+          .setReorderingAllowed(true)
+          .replace(R.id.settings_fragment_container, AudioCueSettingsFragment.class, bundle)
+          .commit();
     }
+  }
 }

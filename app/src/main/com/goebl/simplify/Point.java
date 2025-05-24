@@ -36,6 +36,7 @@ package com.goebl.simplify;
  * @since 06.07.13
  */
 public interface Point {
-    double getX();
-    double getY();
+  double getX();
+
+  double getY();
 }

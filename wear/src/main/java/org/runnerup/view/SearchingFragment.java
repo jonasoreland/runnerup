@@ -23,27 +23,27 @@ import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import org.runnerup.R;
 
 //
 public class SearchingFragment extends Fragment {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.searching, container, false);
-        super.onViewCreated(view, savedInstanceState);
+  @Override
+  public View onCreateView(
+      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.searching, container, false);
+    super.onViewCreated(view, savedInstanceState);
 
-        CircledImageView button = view.findViewById(R.id.icon_searching);
-        AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
-        frameAnimation.start();
+    CircledImageView button = view.findViewById(R.id.icon_searching);
+    AnimationDrawable frameAnimation = (AnimationDrawable) button.getForeground();
+    frameAnimation.start();
 
-        return view;
-    }
+    return view;
+  }
 
-    //@Override
-    //public void onAttach(Activity activity) {
-    //    super.onAttach(activity);
-    //    //MainActivity activity1 = (MainActivity) activity;
-    //}
+  // @Override
+  // public void onAttach(Activity activity) {
+  //    super.onAttach(activity);
+  //    //MainActivity activity1 = (MainActivity) activity;
+  // }
 }

@@ -24,125 +24,119 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.widget.Toast;
-
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-
 import org.runnerup.R;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 
-
 public class TrackerHRM extends DefaultTrackerComponent {
 
-    private final Handler handler = new Handler();
-    private HRProvider hrProvider;
+  private final Handler handler = new Handler();
+  private HRProvider hrProvider;
 
-    public static final String NAME = "HRM";
+  public static final String NAME = "HRM";
 
-    @Override
-    public String getName() {
-        return NAME;
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public ResultCode onConnecting(final Callback callback, final Context context) {
+    Resources res = context.getResources();
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+    final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+    final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+
+    if (btAddress == null || btProviderName == null) {
+      /* no HRM is configured, return directly */
+      return ResultCode.RESULT_NOT_SUPPORTED;
     }
 
-    @Override
-    public ResultCode onConnecting(final Callback callback, final Context context) {
-        Resources res = context.getResources();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
-        final String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider),
-                null);
-        final String btDeviceName = prefs.getString(res.getString(R.string.pref_bt_name), null);
+    hrProvider = HRManager.getHRProvider(context, btProviderName);
+    if (hrProvider != null) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+          && (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
+                  != PackageManager.PERMISSION_GRANTED
+              || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN)
+                  != PackageManager.PERMISSION_GRANTED)) {
+        Toast.makeText(
+                context, "No permission to connect to HRM " + btDeviceName, Toast.LENGTH_SHORT)
+            .show();
+        return ResultCode.RESULT_NOT_ENABLED;
+      }
+      hrProvider.open(
+          handler,
+          new HRProvider.HRClient() {
+            @Override
+            public void onOpenResult(boolean ok) {
+              if (!hrProvider.isEnabled()) {
+                /* no functional HRM */
+                callback.run(TrackerHRM.this, ResultCode.RESULT_NOT_ENABLED);
+                return;
+              }
 
-        if (btAddress == null || btProviderName == null) {
-            /* no HRM is configured, return directly */
-            return ResultCode.RESULT_NOT_SUPPORTED;
-        }
+              if (!ok) {
+                /* no functional HRM */
+                callback.run(TrackerHRM.this, ResultCode.RESULT_ERROR);
+                return;
+              }
 
-        hrProvider = HRManager.getHRProvider(context, btProviderName);
-        if (hrProvider != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    && (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
-                        != PackageManager.PERMISSION_GRANTED
-                      || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN)
-                        != PackageManager.PERMISSION_GRANTED)
-                    ) {
-                Toast.makeText(context, "No permission to connect to HRM " + btDeviceName,
-                        Toast.LENGTH_SHORT).show();
-                return ResultCode.RESULT_NOT_ENABLED;
+              /* return RESULT_OK and connect in background */
+              // TODO: make it possible to make HRM mandatory i.e don't connect in background
+              callback.run(TrackerHRM.this, ResultCode.RESULT_OK);
+
+              hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
             }
-            hrProvider.open(handler, new HRProvider.HRClient() {
-                @Override
-                public void onOpenResult(boolean ok) {
-                    if (!hrProvider.isEnabled()) {
-                        /* no functional HRM */
-                        callback.run(TrackerHRM.this, ResultCode.RESULT_NOT_ENABLED);
-                        return;
-                    }
 
-                    if (!ok) {
-                        /* no functional HRM */
-                        callback.run(TrackerHRM.this, ResultCode.RESULT_ERROR);
-                        return;
-                    }
+            @Override
+            public void onScanResult(HRDeviceRef device) {}
 
-                    /* return RESULT_OK and connect in background */
-                    // TODO: make it possible to make HRM mandatory i.e don't connect in background
-                    callback.run(TrackerHRM.this, ResultCode.RESULT_OK);
+            @Override
+            public void onConnectResult(boolean connectOK) {
+              if (connectOK) {
+                Toast.makeText(context, "Connected to HRM " + btDeviceName, Toast.LENGTH_SHORT)
+                    .show();
+              } else {
+                Toast.makeText(
+                        context, "Failed to connect to HRM " + btDeviceName, Toast.LENGTH_SHORT)
+                    .show();
+              }
+            }
 
-                    hrProvider.connect(HRDeviceRef.create(btProviderName, btDeviceName, btAddress));
-                }
+            @Override
+            public void onDisconnectResult(boolean disconnectOK) {}
 
-                @Override
-                public void onScanResult(HRDeviceRef device) {
-                }
+            @Override
+            public void onCloseResult(boolean closeOK) {}
 
-                @Override
-                public void onConnectResult(boolean connectOK) {
-                    if (connectOK) {
-                        Toast.makeText(context, "Connected to HRM " + btDeviceName,
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Failed to connect to HRM " + btDeviceName,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onDisconnectResult(boolean disconnectOK) {
-                }
-
-                @Override
-                public void onCloseResult(boolean closeOK) {
-                }
-
-                @Override
-                public void log(HRProvider src, String msg) {
-                }
-            });
-        }
-        return ResultCode.RESULT_PENDING;
+            @Override
+            public void log(HRProvider src, String msg) {}
+          });
     }
+    return ResultCode.RESULT_PENDING;
+  }
 
-    @Override
-    public boolean isConnected() {
-        if (hrProvider == null)
-            return false;
-        return hrProvider.isConnected();
-    }
+  @Override
+  public boolean isConnected() {
+    if (hrProvider == null) return false;
+    return hrProvider.isConnected();
+  }
 
-    @Override
-    public ResultCode onEnd(Callback callback, Context context) {
-        if (hrProvider != null) {
-            hrProvider.disconnect();
-            hrProvider.close();
-            hrProvider = null;
-        }
-        return ResultCode.RESULT_OK;
+  @Override
+  public ResultCode onEnd(Callback callback, Context context) {
+    if (hrProvider != null) {
+      hrProvider.disconnect();
+      hrProvider.close();
+      hrProvider = null;
     }
+    return ResultCode.RESULT_OK;
+  }
 
-    public HRProvider getHrProvider() {
-        return hrProvider;
-    }
+  public HRProvider getHrProvider() {
+    return hrProvider;
+  }
 }

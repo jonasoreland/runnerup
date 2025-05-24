@@ -1,9 +1,9 @@
 package org.runnerup.tracker;
 
 public interface GpsInformation {
-    float getGpsAccuracy();
+  float getGpsAccuracy();
 
-    int getSatellitesAvailable();
+  int getSatellitesAvailable();
 
-    int getSatellitesFixed();
+  int getSatellitesFixed();
 }

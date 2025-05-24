@@ -27,9 +27,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-
 import androidx.appcompat.app.AppCompatActivity;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
@@ -38,186 +40,182 @@ import org.runnerup.util.SafeParse;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-
 public class ManualActivity extends AppCompatActivity {
 
-    TitleSpinner manualSport = null;
-    TitleSpinner manualDate = null;
-    TitleSpinner manualTime = null;
-    TitleSpinner manualDistance = null;
-    TitleSpinner manualDuration = null;
-    TitleSpinner manualPace = null;
-    EditText manualNotes = null;
+  TitleSpinner manualSport = null;
+  TitleSpinner manualDate = null;
+  TitleSpinner manualTime = null;
+  TitleSpinner manualDistance = null;
+  TitleSpinner manualDuration = null;
+  TitleSpinner manualPace = null;
+  EditText manualNotes = null;
 
-    SQLiteDatabase mDB = null;
+  SQLiteDatabase mDB = null;
 
-    Formatter formatter = null;
+  Formatter formatter = null;
 
-    /**
-     * Called when the activity is first created.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  /** Called when the activity is first created. */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-        mDB = DBHelper.getWritableDatabase(this);
-        formatter = new Formatter(this);
+    mDB = DBHelper.getWritableDatabase(this);
+    formatter = new Formatter(this);
 
-        setContentView(R.layout.manual);
+    setContentView(R.layout.manual);
 
-        manualSport = findViewById(R.id.manual_sport);
-        manualDate = findViewById(R.id.manual_date);
-        manualTime = findViewById(R.id.manual_time);
-        manualDistance = findViewById(R.id.manual_distance);
-        manualDistance.setOnSetValueListener(onSetManualDistance);
-        manualDuration = findViewById(R.id.manual_duration);
-        manualDuration.setOnSetValueListener(onSetManualDuration);
-        manualPace = findViewById(R.id.manual_pace);
-        manualPace.setVisibility(View.GONE);
-        manualNotes = findViewById(R.id.manual_notes);
+    manualSport = findViewById(R.id.manual_sport);
+    manualDate = findViewById(R.id.manual_date);
+    manualTime = findViewById(R.id.manual_time);
+    manualDistance = findViewById(R.id.manual_distance);
+    manualDistance.setOnSetValueListener(onSetManualDistance);
+    manualDuration = findViewById(R.id.manual_duration);
+    manualDuration.setOnSetValueListener(onSetManualDuration);
+    manualPace = findViewById(R.id.manual_pace);
+    manualPace.setVisibility(View.GONE);
+    manualNotes = findViewById(R.id.manual_notes);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.manual_menu, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.menu_save) {
+      saveEntry();
+      return true;
     }
+    return super.onOptionsItemSelected(item);
+  }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.manual_menu, menu);
-        return true;
+  @Override
+  public void onDestroy() {
+    DBHelper.closeDB(mDB);
+    super.onDestroy();
+  }
+
+  @Override
+  public void onActivityResult(
+      int requestCode, int resultCode, Intent data) { // todo is this log needed?
+    super.onActivityResult(requestCode, resultCode, data);
+    if (data != null) {
+      if (data.getStringExtra("url") != null)
+        Log.e(
+            getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
+      if (data.getStringExtra("ex") != null)
+        Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
+      if (data.getStringExtra("obj") != null)
+        Log.e(
+            getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
     }
+  }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_save) {
-            saveEntry();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+  void setManualPace(String distance, String duration) {
+    Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
+    double dist = SafeParse.parseDouble(distance, 0); // convert to meters
+    long seconds = SafeParse.parseSeconds(duration, 0);
+    if (seconds == 0) {
+      manualPace.setVisibility(View.GONE);
+      return;
     }
+    manualPace.setValue(
+        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dist / seconds));
+    manualPace.setVisibility(View.VISIBLE);
+  }
 
-    @Override
-    public void onDestroy() {
-        DBHelper.closeDB(mDB);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {//todo is this log needed?
-        super.onActivityResult(requestCode, resultCode, data);
-        if (data != null) {
-            if (data.getStringExtra("url") != null)
-                Log.e(getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
-            if (data.getStringExtra("ex") != null)
-                Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
-            if (data.getStringExtra("obj") != null)
-                Log.e(getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
-        }
-    }
-
-    void setManualPace(String distance, String duration) {
-        Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
-        double dist = SafeParse.parseDouble(distance, 0); // convert to meters
-        long seconds = SafeParse.parseSeconds(duration, 0);
-        if (seconds == 0) {
-            manualPace.setVisibility(View.GONE);
-            return;
-        }
-        manualPace.setValue(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dist/seconds));
-        manualPace.setVisibility(View.VISIBLE);
-    }
-
-    final OnSetValueListener onSetManualDistance = new OnSetValueListener() {
+  final OnSetValueListener onSetManualDistance =
+      new OnSetValueListener() {
 
         @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            setManualPace(newValue, manualDuration.getValue().toString());
-            return newValue;
-        }
-
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-            return newValue;
-        }
-
-    };
-
-    final OnSetValueListener onSetManualDuration = new OnSetValueListener() {
-
-        @Override
-        public String preSetValue(String newValue)
-                throws IllegalArgumentException {
-            setManualPace(manualDistance.getValue().toString(), newValue);
-            return newValue;
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          setManualPace(newValue, manualDuration.getValue().toString());
+          return newValue;
         }
 
         @Override
         public int preSetValue(int newValue) throws IllegalArgumentException {
-            return newValue;
+          return newValue;
         }
-    };
+      };
 
-    final void saveEntry() {
-        ContentValues save = new ContentValues();
-        int sport = manualSport.getValueInt();
-        CharSequence date = manualDate.getValue();
-        CharSequence time = manualTime.getValue();
-        CharSequence distance = manualDistance.getValue();
-        CharSequence duration = manualDuration.getValue();
-        String notes = manualNotes.getText().toString().trim();
-        long start_time = 0;
+  final OnSetValueListener onSetManualDuration =
+      new OnSetValueListener() {
 
-        if (notes.length() > 0) {
-            save.put(DB.ACTIVITY.COMMENT, notes);
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          setManualPace(manualDistance.getValue().toString(), newValue);
+          return newValue;
         }
-        double dist = 0;
-        if (distance.length() > 0) {
-            dist = Double.parseDouble(distance.toString()); // convert to
-            // meters
-            save.put(DB.ACTIVITY.DISTANCE, dist);
-        }
-        long secs = 0;
-        if (duration.length() > 0) {
-            secs = SafeParse.parseSeconds(duration.toString(), 0);
-            save.put(DB.ACTIVITY.TIME, secs);
-        }
-        if (date.length() > 0 && time.length() > 0) { //todo deal with parse exceptions
-            DateFormat dfd = android.text.format.DateFormat.getDateFormat(ManualActivity.this);
-            DateFormat dft = android.text.format.DateFormat.getTimeFormat(ManualActivity.this);
-            try {
-                Date d = dfd.parse(date.toString());
-                Date t = dft.parse(time.toString());
-                Calendar cd = Calendar.getInstance();
-                Calendar ct = Calendar.getInstance();
-                cd.setTime(d);
-                ct.setTime(t);
-                // We parsed day and time separately and now need to copy the time from t to d
-                // while making sure that the time zone of d keeps being used, thus we copy the
-                // individual time fields. It is not unusual that t uses a different time zone
-                // than d, e.g., during daylight savings time.
-                cd.set(Calendar.HOUR_OF_DAY, ct.get(Calendar.HOUR_OF_DAY));
-                cd.set(Calendar.MINUTE, ct.get(Calendar.MINUTE));
-                cd.set(Calendar.SECOND, ct.get(Calendar.SECOND));
-                cd.set(Calendar.MILLISECOND, ct.get(Calendar.MILLISECOND));
-                start_time = cd.getTime().getTime() / 1000;
-            } catch (ParseException e) {
-            }
-        }
-        save.put(DB.ACTIVITY.START_TIME, start_time);
 
-        save.put(DB.ACTIVITY.SPORT, sport);
-        long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+      };
 
-        ContentValues lap = new ContentValues();
-        lap.put(DB.LAP.ACTIVITY, id);
-        lap.put(DB.LAP.LAP, 0);
-        lap.put(DB.LAP.INTENSITY, DB.INTENSITY.ACTIVE);
-        lap.put(DB.LAP.TIME, secs);
-        lap.put(DB.LAP.DISTANCE, dist);
-        mDB.insert(DB.LAP.TABLE, null, lap);
+  final void saveEntry() {
+    ContentValues save = new ContentValues();
+    int sport = manualSport.getValueInt();
+    CharSequence date = manualDate.getValue();
+    CharSequence time = manualTime.getValue();
+    CharSequence distance = manualDistance.getValue();
+    CharSequence duration = manualDuration.getValue();
+    String notes = manualNotes.getText().toString().trim();
+    long start_time = 0;
 
-        finish();
+    if (notes.length() > 0) {
+      save.put(DB.ACTIVITY.COMMENT, notes);
     }
+    double dist = 0;
+    if (distance.length() > 0) {
+      dist = Double.parseDouble(distance.toString()); // convert to
+      // meters
+      save.put(DB.ACTIVITY.DISTANCE, dist);
+    }
+    long secs = 0;
+    if (duration.length() > 0) {
+      secs = SafeParse.parseSeconds(duration.toString(), 0);
+      save.put(DB.ACTIVITY.TIME, secs);
+    }
+    if (date.length() > 0 && time.length() > 0) { // todo deal with parse exceptions
+      DateFormat dfd = android.text.format.DateFormat.getDateFormat(ManualActivity.this);
+      DateFormat dft = android.text.format.DateFormat.getTimeFormat(ManualActivity.this);
+      try {
+        Date d = dfd.parse(date.toString());
+        Date t = dft.parse(time.toString());
+        Calendar cd = Calendar.getInstance();
+        Calendar ct = Calendar.getInstance();
+        cd.setTime(d);
+        ct.setTime(t);
+        // We parsed day and time separately and now need to copy the time from t to d
+        // while making sure that the time zone of d keeps being used, thus we copy the
+        // individual time fields. It is not unusual that t uses a different time zone
+        // than d, e.g., during daylight savings time.
+        cd.set(Calendar.HOUR_OF_DAY, ct.get(Calendar.HOUR_OF_DAY));
+        cd.set(Calendar.MINUTE, ct.get(Calendar.MINUTE));
+        cd.set(Calendar.SECOND, ct.get(Calendar.SECOND));
+        cd.set(Calendar.MILLISECOND, ct.get(Calendar.MILLISECOND));
+        start_time = cd.getTime().getTime() / 1000;
+      } catch (ParseException e) {
+      }
+    }
+    save.put(DB.ACTIVITY.START_TIME, start_time);
+
+    save.put(DB.ACTIVITY.SPORT, sport);
+    long id = mDB.insert(DB.ACTIVITY.TABLE, null, save);
+
+    ContentValues lap = new ContentValues();
+    lap.put(DB.LAP.ACTIVITY, id);
+    lap.put(DB.LAP.LAP, 0);
+    lap.put(DB.LAP.INTENSITY, DB.INTENSITY.ACTIVE);
+    lap.put(DB.LAP.TIME, secs);
+    lap.put(DB.LAP.DISTANCE, dist);
+    mDB.insert(DB.LAP.TABLE, null, lap);
+
+    finish();
+  }
 }
