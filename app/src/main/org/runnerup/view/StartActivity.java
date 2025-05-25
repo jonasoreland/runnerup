@@ -452,7 +452,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         public void onReceive(Context context, Intent intent) {
           runOnUiThread(
               () -> {
-                if (mTracker == null || startButton.getVisibility() != View.VISIBLE) return;
+                if (mTracker == null || startButton.getVisibility() != View.VISIBLE) {
+                  return;
+                }
 
                 if (mTracker.getState() == TrackerState.INIT /* this will start gps */
                     || mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/
@@ -653,7 +655,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
       v -> {
         if (mTracker.getState() == TrackerState.CONNECTED) {
           startWorkout();
-
           return;
         }
         updateView();
@@ -865,6 +866,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
   }
 
   private void updateView() {
+    updateStartButtonView();
     updateGPSView();
     boolean hrPresent = updateHRView();
     boolean wearPresent = updateWearOSView();
@@ -876,9 +878,30 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     }
   }
 
+  private void updateStartButtonView() {
+    do {
+      if (!mGpsStatus.isFixed()) {
+        break;
+      }
+
+      if (mTracker == null || mIsBound == false) {
+        break;
+      }
+
+      if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)
+          && advancedWorkout == null) {
+        break;
+      }
+
+      startButton.setVisibility(View.VISIBLE);
+      return;
+    } while (false);
+
+    startButton.setVisibility(View.GONE);
+  }
+  
   private void updateGPSView() {
     if (!mGpsStatus.isEnabled() || !mGpsStatus.isLogging()) {
-      startButton.setVisibility(View.GONE);
       gpsEnable.setVisibility(View.VISIBLE);
 
       if (statusDetailsShown) {
@@ -899,128 +922,124 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
       } else {
         gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
       }
-    } else {
-      gpsDetailIndicator.setVisibility(View.VISIBLE);
-
-      int satFixedCount = mGpsStatus.getSatellitesFixed();
-      int satAvailCount = mGpsStatus.getSatellitesAvailable();
-
-      // gps accuracy
-      float accuracy = getGpsAccuracy();
-
-      // gps details
-      String gpsAccuracy = getGpsAccuracyString(accuracy);
-      String gpsDetail =
-          gpsAccuracy.length() == 0
-              ? String.format(
-                  getString(org.runnerup.common.R.string.GPS_status_no_accuracy),
-                  satFixedCount,
-                  satAvailCount)
-              : String.format(
-                  getString(org.runnerup.common.R.string.GPS_status_accuracy),
-                  satFixedCount,
-                  satAvailCount,
-                  gpsAccuracy);
-      gpsDetailMessage.setText(gpsDetail);
-
-      if (!mGpsStatus.isFixed()) {
-        startButton.setVisibility(View.GONE);
-        gpsEnable.setVisibility(View.GONE);
-
-        gpsIndicator.setImageResource(R.drawable.ic_gps_0);
-        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-        gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
-
-        notificationStateManager.displayNotificationState(gpsSearchingState);
-      } else {
-        if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)
-            && advancedWorkout == null) {
-          startButton.setVisibility(View.GONE);
-        } else {
-          startButton.setVisibility(View.VISIBLE);
-        }
-        gpsEnable.setVisibility(View.GONE);
-
-        switch (getGpsLevel(accuracy, satFixedCount)) {
-          case POOR:
-            gpsIndicator.setImageResource(R.drawable.ic_gps_1);
-            gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
-            gpsMessage.setText(org.runnerup.common.R.string.GPS_level_poor);
-            break;
-          case ACCEPTABLE:
-            gpsIndicator.setImageResource(R.drawable.ic_gps_2);
-            gpsDetailIndicator.setImageResource(R.drawable.ic_gps_2);
-            gpsMessage.setText(org.runnerup.common.R.string.GPS_level_acceptable);
-            break;
-          case GOOD:
-            gpsIndicator.setImageResource(R.drawable.ic_gps_3);
-            gpsDetailIndicator.setImageResource(R.drawable.ic_gps_3);
-            gpsMessage.setText(org.runnerup.common.R.string.GPS_level_good);
-            break;
-        }
-
-        notificationStateManager.displayNotificationState(gpsBoundState);
-      }
-
-      if (statusDetailsShown) {
-        gpsIndicator.setVisibility(View.GONE);
-        gpsMessage.setVisibility(View.GONE);
-        gpsDetailRow.setVisibility(View.VISIBLE);
-      } else {
-        gpsIndicator.setVisibility(View.VISIBLE);
-        gpsMessage.setVisibility(View.VISIBLE);
-        gpsDetailRow.setVisibility(View.GONE);
-      }
+      return;
     }
+
+    if (statusDetailsShown) {
+      gpsIndicator.setVisibility(View.GONE);
+      gpsMessage.setVisibility(View.GONE);
+      gpsDetailRow.setVisibility(View.VISIBLE);
+    } else {
+      gpsIndicator.setVisibility(View.VISIBLE);
+      gpsMessage.setVisibility(View.VISIBLE);
+      gpsDetailRow.setVisibility(View.GONE);
+    }
+
+    gpsDetailIndicator.setVisibility(View.VISIBLE);
+
+    int satFixedCount = mGpsStatus.getSatellitesFixed();
+    int satAvailCount = mGpsStatus.getSatellitesAvailable();
+
+    // gps accuracy
+    float accuracy = getGpsAccuracy();
+
+    // gps details
+    String gpsAccuracy = getGpsAccuracyString(accuracy);
+    String gpsDetail =
+        gpsAccuracy.length() == 0
+            ? String.format(
+                getString(org.runnerup.common.R.string.GPS_status_no_accuracy),
+                satFixedCount,
+                satAvailCount)
+            : String.format(
+                getString(org.runnerup.common.R.string.GPS_status_accuracy),
+                satFixedCount,
+                satAvailCount,
+                gpsAccuracy);
+    gpsDetailMessage.setText(gpsDetail);
+
+    if (!mGpsStatus.isFixed()) {
+      gpsEnable.setVisibility(View.GONE);
+
+      gpsIndicator.setImageResource(R.drawable.ic_gps_0);
+      gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
+      gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
+
+      notificationStateManager.displayNotificationState(gpsSearchingState);
+      return;
+    }
+
+    gpsEnable.setVisibility(View.GONE);
+
+    switch (getGpsLevel(accuracy, satFixedCount)) {
+      case POOR:
+        gpsIndicator.setImageResource(R.drawable.ic_gps_1);
+        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
+        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_poor);
+        break;
+      case ACCEPTABLE:
+        gpsIndicator.setImageResource(R.drawable.ic_gps_2);
+        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_2);
+        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_acceptable);
+        break;
+      case GOOD:
+        gpsIndicator.setImageResource(R.drawable.ic_gps_3);
+        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_3);
+        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_good);
+        break;
+    }
+
+    notificationStateManager.displayNotificationState(gpsBoundState);
   }
 
   private boolean updateHRView() {
-    if (mTracker != null && mTracker.isComponentConfigured(TrackerHRM.NAME)) {
-      Integer hrVal = null;
-      if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
-        hrVal = mTracker.getCurrentHRValue();
-      }
-      if (hrVal != null) {
-        if (!batteryLevelMessageShown) {
-          batteryLevelMessageShown = true;
-          notificationBatteryLevel(mTracker.getCurrentBatteryLevel());
-        }
-      }
-
-      hrMessage.setText(getHRDetailString());
-
-      hrIndicator.setVisibility(View.VISIBLE);
-      if (statusDetailsShown) hrMessage.setVisibility(View.VISIBLE);
-      else hrMessage.setVisibility(View.GONE);
-
-      return true;
-    } else {
+    if (mTracker == null || !mTracker.isComponentConfigured(TrackerHRM.NAME)) {
       hrIndicator.setVisibility(View.GONE);
       hrMessage.setVisibility(View.GONE);
-
       return false;
     }
+    Integer hrVal = null;
+    if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
+      hrVal = mTracker.getCurrentHRValue();
+    }
+    if (hrVal != null) {
+      if (!batteryLevelMessageShown) {
+        batteryLevelMessageShown = true;
+        notificationBatteryLevel(mTracker.getCurrentBatteryLevel());
+      }
+    }
+
+    hrMessage.setText(getHRDetailString());
+    hrIndicator.setVisibility(View.VISIBLE);
+    if (statusDetailsShown) {
+      hrMessage.setVisibility(View.VISIBLE);
+    } else {
+      hrMessage.setVisibility(View.GONE);
+    }
+
+    return true;
   }
 
   private boolean updateWearOSView() {
-    if (mTracker != null && mTracker.isComponentConfigured(TrackerWear.NAME)) {
-      wearOsIndicator.setVisibility(View.VISIBLE);
-
-      if (!mTracker.isComponentConnected(TrackerWear.NAME)) {
-        wearOsMessage.setVisibility(View.VISIBLE);
-        wearOsMessage.setText("?");
-      } else if (statusDetailsShown) {
-        // wearOsMessage.setText(""); //todo show device name
-        wearOsMessage.setVisibility(View.GONE);
-      } else wearOsMessage.setVisibility(View.GONE);
-
-      return true;
-    } else {
+    if (mTracker == null || !mTracker.isComponentConfigured(TrackerWear.NAME)) {
       wearOsIndicator.setVisibility(View.GONE);
       wearOsMessage.setVisibility(View.GONE);
-
       return false;
     }
+
+    wearOsIndicator.setVisibility(View.VISIBLE);
+
+    if (!mTracker.isComponentConnected(TrackerWear.NAME)) {
+      wearOsMessage.setVisibility(View.VISIBLE);
+      wearOsMessage.setText("?");
+    } else if (statusDetailsShown) {
+      // wearOsMessage.setText(""); //todo show device name
+      wearOsMessage.setVisibility(View.GONE);
+    } else {
+      wearOsMessage.setVisibility(View.GONE);
+    }
+
+    return true;
   }
 
   @Override
