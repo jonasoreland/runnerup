@@ -311,7 +311,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             new OnBackPressedCallback(true) {
               @Override
               public void handleOnBackPressed() {
-                if (!getAutoStartGps() && mGpsStatus.isLogging()) {
+                if (!getAutoStartGps() && mGpsStatus.isStarted()) {
                   stopGps();
                   updateView();
                 } else if (exit) {
@@ -527,7 +527,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
       startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
 
-    if (mGpsStatus != null && !mGpsStatus.isLogging()) mGpsStatus.start(this);
+    if (mGpsStatus != null && !mGpsStatus.isStarted()) {
+      mGpsStatus.start(this);
+    }
 
     if (mTracker != null) {
       mTracker.connect();
@@ -889,6 +891,14 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
   private void updateStartButtonView() {
     do {
+      if (!mGpsStatus.isStarted()) {
+        break;
+      }
+
+      if (!mGpsStatus.isLogging()) {
+        break;
+      }
+
       if (!mGpsStatus.isFixed()) {
         break;
       }
@@ -911,14 +921,11 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
   private void updateStartGpsButtonView() {
     do {
-      if (mGpsStatus.isFixed()) {
+      if (mGpsStatus.isStarted()) {
         break;
       }
 
-      if (mGpsStatus.isLogging()) {
-        break;
-      }
-
+      //
       if (mGpsStatus.isEnabled()) {
         gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
       } else {
@@ -932,7 +939,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
   }
 
   private void updateGPSView() {
-    if (!mGpsStatus.isEnabled() || !mGpsStatus.isLogging()) {
+    if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted()) {
 
       if (statusDetailsShown) {
         gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);

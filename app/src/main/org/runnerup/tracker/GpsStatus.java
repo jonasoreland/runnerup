@@ -121,6 +121,10 @@ public class GpsStatus implements LocationListener {
     locationManager = null;
   }
 
+  public boolean isStarted() {
+    return listener != null;
+  }
+
   @Override
   public void onLocationChanged(Location location) {
     System.arraycopy(mHistory, 0, mHistory, 1, HIST_LEN - 1);
