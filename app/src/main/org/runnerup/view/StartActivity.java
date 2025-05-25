@@ -98,6 +98,7 @@ import org.runnerup.workout.WorkoutSerializer;
 public class StartActivity extends AppCompatActivity implements TickListener, GpsInformation {
 
   private enum GpsLevel {
+    NOT_FIXED,
     POOR,
     ACCEPTABLE,
     GOOD
@@ -860,12 +861,20 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
   }
 
   private GpsLevel getGpsLevel(double gpsAccuracyMeters, int sats) {
-    if (gpsAccuracyMeters <= 7 && sats > 7) return GpsLevel.GOOD;
-    else if (gpsAccuracyMeters <= 15 && sats > 4) return GpsLevel.ACCEPTABLE;
-    else return GpsLevel.POOR;
+    if (!mGpsStatus.isFixed()) {
+      return GpsLevel.NOT_FIXED;
+    }
+    if (gpsAccuracyMeters <= 7 && sats > 7) {
+      return GpsLevel.GOOD;
+    } else if (gpsAccuracyMeters <= 15 && sats > 4) {
+      return GpsLevel.ACCEPTABLE;
+    } else {
+      return GpsLevel.POOR;
+    }
   }
 
   private void updateView() {
+    updateStartGpsButtonView();
     updateStartButtonView();
     updateGPSView();
     boolean hrPresent = updateHRView();
@@ -899,10 +908,31 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     startButton.setVisibility(View.GONE);
   }
-  
+
+  private void updateStartGpsButtonView() {
+    do {
+      if (mGpsStatus.isFixed()) {
+        break;
+      }
+
+      if (mGpsStatus.isLogging()) {
+        break;
+      }
+
+      if (mGpsStatus.isEnabled()) {
+        gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
+      } else {
+        gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
+      }
+      gpsEnable.setVisibility(View.VISIBLE);
+      return;
+    } while (false);
+
+    gpsEnable.setVisibility(View.GONE);
+  }
+
   private void updateGPSView() {
     if (!mGpsStatus.isEnabled() || !mGpsStatus.isLogging()) {
-      gpsEnable.setVisibility(View.VISIBLE);
 
       if (statusDetailsShown) {
         gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
@@ -916,12 +946,6 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
       gpsIndicator.setVisibility(View.GONE);
       gpsDetailIndicator.setVisibility(View.GONE);
-
-      if (!mGpsStatus.isLogging()) {
-        gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
-      } else {
-        gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
-      }
       return;
     }
 
@@ -958,20 +982,13 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 gpsAccuracy);
     gpsDetailMessage.setText(gpsDetail);
 
-    if (!mGpsStatus.isFixed()) {
-      gpsEnable.setVisibility(View.GONE);
-
-      gpsIndicator.setImageResource(R.drawable.ic_gps_0);
-      gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-      gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
-
-      notificationStateManager.displayNotificationState(gpsSearchingState);
-      return;
-    }
-
-    gpsEnable.setVisibility(View.GONE);
-
-    switch (getGpsLevel(accuracy, satFixedCount)) {
+    var gpsLevel = getGpsLevel(accuracy, satFixedCount);
+    switch (gpsLevel) {
+      case NOT_FIXED:
+        gpsIndicator.setImageResource(R.drawable.ic_gps_0);
+        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
+        gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
+        break;
       case POOR:
         gpsIndicator.setImageResource(R.drawable.ic_gps_1);
         gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
@@ -988,8 +1005,11 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         gpsMessage.setText(org.runnerup.common.R.string.GPS_level_good);
         break;
     }
-
-    notificationStateManager.displayNotificationState(gpsBoundState);
+    if (gpsLevel == GpsLevel.NOT_FIXED) {
+      notificationStateManager.displayNotificationState(gpsSearchingState);
+    } else {
+      notificationStateManager.displayNotificationState(gpsBoundState);
+    }
   }
 
   private boolean updateHRView() {
