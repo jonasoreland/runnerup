@@ -206,7 +206,7 @@
   <string name="Distance_triggered_audio_cue">Acionado por distancia</string>
   <string name="Distance_triggered_audio_cue_summary">Aviso periódico</string>
   <string name="Cue_intervall_m">Intervalo do aviso (m)</string>
-  <string name="End_of_lap_audio_cue">Aviso de final de volta</string>
+  <string name="End_of_lap_audio_cue">Final de volta</string>
   <string name="End_of_lap_audio_cue_summary">Fim da volta automática e etapas Ativas</string>
   <string name="Mute_music_during_audio_cues">Silenciar música durante avisos de áudio</string>
   <string name="Cue_information">Informação do aviso</string>
