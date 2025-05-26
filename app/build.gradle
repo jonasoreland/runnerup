@@ -32,8 +32,6 @@ android {
             } else {
                 java.srcDirs += ['src/nonmapbox']
             }
-            resources.srcDirs = java.srcDirs
-            aidl.srcDirs = java.srcDirs
             // renderscript.srcDirs = java.srcDirs
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
