@@ -4,21 +4,47 @@
     <item>Milhas</item>
     <item>Quilómetros</item>
   </string-array>
+  <string-array name="speedUnitEntries">
+    <item>Ritmo</item>
+    <item>Velocidade</item>
+  </string-array>
   <!--Note: keep in same order as DB.INTENSITY-->
   <string-array name="step_intensity_types">
     <item>Aquecimento</item>
-    <item>Actividade</item>
+    <item>Atividade</item>
     <item>Descanso</item>
     <item>Recuperação</item>
     <item>Arrefecimento</item>
   </string-array>
+  <string-array name="duration_types">
+    <item>Até ser pressionado</item>
+    <item>Tempo</item>
+    <item>Distância</item>
+  </string-array>
+  <string-array name="target_types">
+    <item>Nenhum</item>
+    <item>Ritmo</item>
+    <item>Zona de freq. cardíaca</item>
+  </string-array>
   <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
   <string-array name="sportEntries">
     <item>Corrida</item>
-    <item>Bicicleta</item>
-    <item>Outra</item>
-    <item>Orienteering</item>
-    <item>Walking</item>
+    <item>Ciclismo</item>
+    <item>Outros</item>
+    <item>Orientação</item>
+    <item>Caminhada</item>
+  </string-array>
+  <string-array name="types">
+    <item>Tempo</item>
+    <item>Distância</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Masculino</item>
+    <item>Feminino</item>
   </string-array>
   <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Distância-radial (rápido)</item>
+    <item>Ramer-Douglas-Peucker (alta qualidade)</item>
+  </string-array>
 </resources>

@@ -290,7 +290,7 @@
   <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
   <string name="Battery_optimization_check">Batterioptimering aktiverad</string>
   <string name="Battery_optimization_check_text">Batterioptimering minskar noggrannheten.\nVälj OK för att gå till inställningar, välj \"Alla appar\", sök efter \"RunnerUp\", välj \"Optimera inte\".</string>
-  <string name="Battery_optimization_check_text_Android9">Batterioptimering kan få Android att stoppa inspelningar.\nVälj OK för att gå till app inställningar, välj \\"Batteri användning\\", välj \\"Optimera inte\\" eller \\"Tillåt bakgrundsaktivitet\\".</string>
+  <string name="Battery_optimization_check_text_Android9">Batterioptimering kan få Android att stoppa inspelningar.\nVälj OK för att gå till app inställningar, välj \"Batteri användning\", välj \"Optimera inte\" eller \"Tillåt bakgrundsaktivitet\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>

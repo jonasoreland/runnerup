@@ -17,56 +17,73 @@
   <string name="cue_activity">atividade</string>
   <string name="cue_interval">intervalo</string>
   <string name="cue_lap">volta</string>
-  <string name="cue_warmup">aquecer</string>
-  <string name="cue_cooldown">descansar</string>
+  <string name="cue_warmup">aquecimento</string>
+  <string name="cue_cooldown">arrefecimento</string>
   <string name="cue_current">atual</string>
-  <string name="cue_perkilometer">por quilômetro</string>
+  <string name="cue_perkilometer">por quilómetro</string>
   <string name="cue_permile">por milha</string>
   <string name="cue_started">iniciado</string>
-  <string name="cue_resumed">reatado</string>
+  <string name="cue_paused">pausado</string>
+  <string name="cue_resumed">retomado</string>
   <string name="cue_stopped">parado</string>
   <string name="cue_completed">completo</string>
-  <string name="cue_speedup">acelarar</string>
-  <string name="cue_slowdown">arrefecer</string>
+  <string name="cue_speedup">acelerar</string>
+  <string name="cue_slowdown">abarndar</string>
   <plurals name="cue_hour">
-    <item quantity="one">%d horas</item>
+    <item quantity="one">%d hora</item>
     <item quantity="many">%d horas</item>
     <item quantity="other">%d horas</item>
   </plurals>
   <plurals name="cue_minute">
-    <item quantity="one">%d minutos</item>
+    <item quantity="one">%d minuto</item>
     <item quantity="many">%d minutos</item>
     <item quantity="other">%d minutos</item>
   </plurals>
   <plurals name="cue_second">
-    <item quantity="one">%d segundos</item>
+    <item quantity="one">%d segundo</item>
     <item quantity="many">%d segundos</item>
     <item quantity="other">%d segundos</item>
   </plurals>
   <plurals name="cue_meter">
-    <item quantity="one">%d metros</item>
+    <item quantity="one">%d metro</item>
     <item quantity="many">%d metros</item>
     <item quantity="other">%d metros</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%s quilómetros</item>
+    <item quantity="one">%s quilómetro</item>
     <item quantity="many">%s quilómetros</item>
     <item quantity="other">%s quilómetros</item>
   </plurals>
   <plurals name="cue_mile">
-    <item quantity="one">%s milhas</item>
+    <item quantity="one">%s milha</item>
     <item quantity="many">%s milhas</item>
     <item quantity="other">%s milhas</item>
+  </plurals>
+  <plurals name="cue_kilometers_per_hour">
+    <item quantity="one">%s quilómetro por hora</item>
+    <item quantity="many">%s quilómetros por hora</item>
+    <item quantity="other">%s quilómetros por hora</item>
+  </plurals>
+  <plurals name="cue_miles_per_hour">
+    <item quantity="one">%s milha por hora</item>
+    <item quantity="many">%s milhas por hora</item>
+    <item quantity="other">%s milhas por hora</item>
   </plurals>
   <plurals name="cue_bpm">
     <item quantity="one">%d bpm</item>
     <item quantity="many">%d bpm</item>
     <item quantity="other">%d bpm</item>
   </plurals>
-  <string name="cue_activity_resumed">atividate reatada</string>
+  <plurals name="cue_rpm">
+    <item quantity="one">%d rpm</item>
+    <item quantity="many">%d rpm</item>
+    <item quantity="other">%d rpm</item>
+  </plurals>
+  <string name="cue_activity_paused">atividade pausada</string>
+  <string name="cue_activity_resumed">atividade retomada</string>
   <string name="cue_activity_stopped">atividade parada</string>
   <string name="cue_lap_started">volta iniciada</string>
-  <string name="cue_lap_completed">volta completada</string>
-  <string name="cue_warmup_started">aquecer iniciado</string>
+  <string name="cue_lap_completed">volta concluída</string>
+  <string name="cue_warmup_started">aquecimento iniciado</string>
   <string name="cue_cooldown_started">arrefecimento iniciado</string>
 </resources>
