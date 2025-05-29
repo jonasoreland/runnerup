@@ -28,12 +28,6 @@ public class PauseStep extends Step {
   @Override
   public void onInit(Workout s) {
     super.onInit(s);
-    if (BuildConfig.DEBUG
-        && (getIntensity() != Intensity.RESTING || getDurationType() != Dimension.TIME)) {
-      throw new AssertionError(
-          String.format(
-              "PauseStep with intensity %s and duration %s", getIntensity(), getDurationType()));
-    }
     saveDurationValue = super.durationValue;
   }
 
