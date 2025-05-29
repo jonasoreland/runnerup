@@ -10,9 +10,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableRow;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -77,6 +82,20 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     } catch (Exception e) {
       handleWorkoutFileException(e);
     }
+    View rootView = findViewById(R.id.create_advanced_workout_view);
+    ViewCompat.setOnApplyWindowInsetsListener(
+        rootView,
+        new OnApplyWindowInsetsListener() {
+          @NonNull
+          @Override
+          public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat windowInsets) {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            mlp.topMargin = insets.top;
+            return WindowInsetsCompat.CONSUMED;
+          }
+        });
   }
 
   private void createAdvancedWorkout(String name, boolean workoutExists)

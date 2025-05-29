@@ -42,8 +42,13 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -147,6 +152,24 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             .show();
       }
     }
+
+    View rootView = findViewById(R.id.manage_workouts_view);
+    ViewCompat.setOnApplyWindowInsetsListener(
+        rootView,
+        new OnApplyWindowInsetsListener() {
+          @NonNull
+          @Override
+          public WindowInsetsCompat onApplyWindowInsets(
+              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(insets.left, 0, insets.right, insets.bottom);
+
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            mlp.topMargin = insets.top;
+            return WindowInsetsCompat.CONSUMED;
+          }
+        });
+
     // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
   }
 

@@ -38,11 +38,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TabWidget;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.io.IOException;
@@ -203,6 +211,35 @@ public class MainLayout extends TabActivity {
       Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
       DBHelper.importDatabase(MainLayout.this, filePath);
     }
+
+    View rootLayout = findViewById(android.R.id.tabhost).getRootView();
+    ViewCompat.setOnApplyWindowInsetsListener(
+        rootLayout,
+        new OnApplyWindowInsetsListener() {
+          @NonNull
+          @Override
+          public WindowInsetsCompat onApplyWindowInsets(
+              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
+            Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, 0);
+            TabWidget tabWidget = getTabWidget();
+            if (tabWidget != null) {
+              ViewGroup.MarginLayoutParams tabWidgetLp =
+                  (ViewGroup.MarginLayoutParams) tabWidget.getLayoutParams();
+              tabWidgetLp.leftMargin = systemBarsInsets.left;
+              tabWidgetLp.rightMargin = systemBarsInsets.right;
+              tabWidgetLp.bottomMargin = systemBarsInsets.bottom;
+              tabWidget.setLayoutParams(tabWidgetLp);
+            }
+
+            FrameLayout tabContent =
+                getTabHost().getTabContentView(); // This is android.R.id.tabcontent
+            if (tabContent != null) {
+              tabContent.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, 0);
+            }
+            return WindowInsetsCompat.CONSUMED; // If fully handled
+          }
+        });
   }
 
   private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
