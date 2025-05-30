@@ -14,7 +14,7 @@ android {
         minSdk 23
         targetSdk rootProject.ext.targetSdk
         versionName rootProject.ext.versionName
-        versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
+        versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode + 1
         applicationId rootProject.ext.applicationId
     }
 
