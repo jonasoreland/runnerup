@@ -210,7 +210,7 @@ public class SpinnerPresenter {
                 .getViewAdapter()
                 .getItem(item)
                 .toString()); // I assume that it's called with a string because of the spinner_txt
-                              // type, but don't know for sure
+        // type, but don't know for sure
       }
     } else {
       setValue(getRealValue(item));
@@ -565,7 +565,7 @@ public class SpinnerPresenter {
         int intVal = find(mSpin.getViewAdapter(), value);
         mCurrValue =
             intVal; // here because onclicklistener doesn't react to changing to the same value
-                    // twice
+        // twice
         mSpin.setViewSelection(intVal);
       }
     }

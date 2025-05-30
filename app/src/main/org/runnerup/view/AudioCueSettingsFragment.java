@@ -21,6 +21,10 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceFragmentCompat;
@@ -150,6 +154,19 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
       }
       spinner.setOnSetValueListener(onSetValueListener);
     }
+
+    ViewCompat.setOnApplyWindowInsetsListener(
+        view,
+        new OnApplyWindowInsetsListener() {
+          @NonNull
+          @Override
+          public WindowInsetsCompat onApplyWindowInsets(
+              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
+            Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return WindowInsetsCompat.CONSUMED;
+          }
+        });
   }
 
   private void removePrefs(int[] remove) {

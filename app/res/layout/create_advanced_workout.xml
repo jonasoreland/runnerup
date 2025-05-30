@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:runnerup="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/create_advanced_workout_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:context="org.runnerup.view.CreateAdvancedWorkout">

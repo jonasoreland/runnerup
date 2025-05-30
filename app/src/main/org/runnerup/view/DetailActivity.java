@@ -56,6 +56,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,6 +114,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
   private TitleSpinner sport = null;
   private EditText notes = null;
+  private View rootView;
 
   private MapWrapper mapWrapper = null;
 
@@ -127,9 +132,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
       MapWrapper.start(this);
       setContentView(R.layout.detail);
+      rootView = findViewById(R.id.detail_view);
     } else {
       // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
       setContentView(R.layout.detail_nomap);
+      rootView = findViewById(R.id.detail_nomap_view);
     }
     Toolbar toolbar = findViewById(R.id.actionbar);
     setSupportActionBar(toolbar);
@@ -257,6 +264,27 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 }
               }
             });
+
+    ViewCompat.setOnApplyWindowInsetsListener(
+        rootView,
+        new OnApplyWindowInsetsListener() {
+          @NonNull
+          @Override
+          public WindowInsetsCompat onApplyWindowInsets(
+              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottomPadding =
+                saveButton.getVisibility() == View.VISIBLE
+                        || uploadButton.getVisibility() == View.VISIBLE
+                    ? insets.bottom
+                    : 0;
+            v.setPadding(insets.left, 0, insets.right, bottomPadding);
+
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            mlp.topMargin = insets.top;
+            return WindowInsetsCompat.CONSUMED;
+          }
+        });
   }
 
   private void setEdit(boolean value) {
@@ -265,6 +293,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     else saveButton.setVisibility(View.GONE);
     WidgetUtil.setEditable(notes, value);
     sport.setEnabled(value);
+    ViewCompat.requestApplyInsets(rootView);
   }
 
   private void setUploadVisibility() {
@@ -274,6 +303,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     } else {
       uploadButton.setVisibility(View.GONE);
     }
+    ViewCompat.requestApplyInsets(rootView);
   }
 
   @Override
