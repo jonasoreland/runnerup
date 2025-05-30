@@ -23,6 +23,7 @@ android {
                 // This must be unique to allow Notification button intents to work independently
                 buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '.debug"')
                 resValue "string", "applicationIdFull", rootProject.ext.applicationId + ".debug"
+                resValue "string", "app_name", "dRunnerUp"
             }
             release {
                 debuggable false
