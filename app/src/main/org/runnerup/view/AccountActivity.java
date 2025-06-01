@@ -42,14 +42,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import org.runnerup.R;
@@ -60,6 +55,7 @@ import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.util.Bitfield;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.FileFormats;
 
@@ -117,19 +113,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
       Button btn = findViewById(R.id.disconnect_account_button);
       btn.setOnClickListener(disconnectButtonClick);
     }
-    View yourRootView = findViewById(R.id.account_rootview);
-    ViewCompat.setOnApplyWindowInsetsListener(
-        yourRootView,
-        new OnApplyWindowInsetsListener() {
-          @NonNull
-          @Override
-          public WindowInsetsCompat onApplyWindowInsets(
-              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
-            return WindowInsetsCompat.CONSUMED;
-          }
-        });
+
+    ViewUtil.Insets(findViewById(R.id.account_rootview), false);
   }
 
   @Override

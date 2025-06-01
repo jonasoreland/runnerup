@@ -34,13 +34,8 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import java.util.Locale;
 import java.util.Vector;
 import org.runnerup.R;
@@ -48,6 +43,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.SafeParse;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
@@ -209,21 +205,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
           }
         });
 
-    View rootView = findViewById(R.id.heartratezone_view);
-    ViewCompat.setOnApplyWindowInsetsListener(
-        rootView,
-        new OnApplyWindowInsetsListener() {
-          @NonNull
-          @Override
-          public WindowInsetsCompat onApplyWindowInsets(
-              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(insets.left, 0, insets.right, insets.bottom);
-            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            mlp.topMargin = insets.top;
-            return WindowInsetsCompat.CONSUMED;
-          }
-        });
+    ViewUtil.Insets(findViewById(R.id.heartratezone_view), true);
   }
 
   @Override
