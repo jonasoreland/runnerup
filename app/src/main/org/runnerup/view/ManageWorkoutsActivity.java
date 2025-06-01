@@ -66,6 +66,7 @@ import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -147,6 +148,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             .show();
       }
     }
+
+    ViewUtil.Insets(findViewById(R.id.manage_workouts_view), true);
+
     // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
   }
 

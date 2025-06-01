@@ -55,6 +55,7 @@ import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.util.Bitfield;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.FileFormats;
 
@@ -112,6 +113,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
       Button btn = findViewById(R.id.disconnect_account_button);
       btn.setOnClickListener(disconnectButtonClick);
     }
+
+    ViewUtil.Insets(findViewById(R.id.account_rootview), false);
   }
 
   @Override

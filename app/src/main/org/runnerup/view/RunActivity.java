@@ -63,6 +63,7 @@ import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
@@ -185,6 +186,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 // ignore back while in an activity
               }
             });
+    ViewUtil.Insets(findViewById(R.id.start_view), true);
   }
 
   @Override

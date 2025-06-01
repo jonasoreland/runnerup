@@ -43,6 +43,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.util.HRZoneCalculator;
 import org.runnerup.util.HRZones;
 import org.runnerup.util.SafeParse;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 
@@ -203,6 +204,8 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
             recomputeZones();
           }
         });
+
+    ViewUtil.Insets(findViewById(R.id.heartratezone_view), true);
   }
 
   @Override

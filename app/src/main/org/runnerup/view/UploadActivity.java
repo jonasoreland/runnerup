@@ -51,6 +51,7 @@ import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SyncActivityItem;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Sport;
 
 public class UploadActivity extends AppCompatActivity implements Constants {
@@ -114,6 +115,8 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         dwbtn.setVisibility(View.GONE);
       }
     }
+
+    ViewUtil.Insets(findViewById(R.id.upload_rootview), true);
 
     fillData();
     {
