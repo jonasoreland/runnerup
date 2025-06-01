@@ -55,6 +55,7 @@ import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.SimpleCursorLoader;
+import org.runnerup.util.ViewUtil;
 
 public class AccountListActivity extends AppCompatActivity
     implements Constants, LoaderCallbacks<Cursor> {
@@ -103,6 +104,7 @@ public class AccountListActivity extends AppCompatActivity
     listView.setOnItemClickListener(configureItemClick);
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    ViewUtil.Insets(findViewById(R.id.account_list_view), true);
   }
 
   @Override

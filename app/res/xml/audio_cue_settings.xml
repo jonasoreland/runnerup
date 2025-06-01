@@ -17,6 +17,7 @@
   -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/activity_cue_settings_view"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
@@ -272,5 +273,8 @@
 		<Preference android:title="@string/Android_text_to_speech_settings"
 			android:key="tts_settings"
 			app:iconSpaceReserved="false" />
+		<!-- add padding for navigating -->
+		<Preference
+			app:minHeight="12px" />
 	</PreferenceCategory>
 </PreferenceScreen>

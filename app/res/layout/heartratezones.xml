@@ -16,10 +16,12 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/heartratezone_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="@dimen/activity_margin">
+    android:layout_margin="@dimen/activity_margin"
+    android:orientation="vertical">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/hrz_age"

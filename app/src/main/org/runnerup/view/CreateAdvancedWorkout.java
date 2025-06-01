@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONException;
 import org.runnerup.R;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.workout.RepeatStep;
 import org.runnerup.workout.Step;
@@ -77,6 +78,8 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     } catch (Exception e) {
       handleWorkoutFileException(e);
     }
+
+    ViewUtil.Insets(findViewById(R.id.create_advanced_workout_view), true);
   }
 
   private void createAdvancedWorkout(String name, boolean workoutExists)

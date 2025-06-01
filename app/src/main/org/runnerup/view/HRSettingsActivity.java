@@ -64,6 +64,7 @@ import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.WidgetUtil;
 
 public class HRSettingsActivity extends AppCompatActivity implements HRClient {
@@ -134,6 +135,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     scanButton.setOnClickListener(scanButtonClick);
     connectButton = findViewById(R.id.connect_button);
     connectButton.setOnClickListener(arg0 -> connect());
+    ViewUtil.Insets(findViewById(R.id.hr_settings_view), true);
 
     formatter = new Formatter(this);
     {
