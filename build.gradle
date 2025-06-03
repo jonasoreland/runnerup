@@ -31,8 +31,8 @@ project.ext {
     mockitoVersion = '3.11.2'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.9.0.1'
-    versionCode = 347
+    versionName = '2.9.0.2'
+    versionCode = 350
     latestBaseVersionCode = minSdk * 1000000
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
