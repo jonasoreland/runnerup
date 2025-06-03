@@ -118,7 +118,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
   private View startButton = null;
 
   private ImageView expandIcon = null;
-  private TextView deviceStatus = null;
+  private TextView noDevicesConnected = null;
 
   private Button gpsEnable = null;
   private ImageView gpsIndicator = null;
@@ -204,7 +204,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     startButton.setOnClickListener(startButtonClick);
 
     expandIcon = findViewById(R.id.expand_icon);
-    deviceStatus = findViewById(R.id.device_status);
+    noDevicesConnected = findViewById(R.id.device_status);
 
     gpsIndicator = findViewById(R.id.gps_indicator);
     gpsMessage = findViewById(R.id.gps_message);
@@ -883,9 +883,9 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
     boolean wearPresent = updateWearOSView();
 
     if (!hrPresent && !wearPresent && statusDetailsShown) {
-      deviceStatus.setVisibility(View.VISIBLE);
+      noDevicesConnected.setVisibility(View.VISIBLE);
     } else {
-      deviceStatus.setVisibility(View.GONE);
+      noDevicesConnected.setVisibility(View.GONE);
     }
   }
 
