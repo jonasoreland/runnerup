@@ -159,6 +159,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
     implementation "androidx.viewpager2:viewpager2:${rootProject.ext.viewpager2_version}"
+    implementation "androidx.constraintlayout:constraintlayout:${rootProject.ext.constraintlayout_version}"
 
     latestImplementation "com.google.android.material:material:1.12.0"
     if (rootProject.ext.enableWear) {
