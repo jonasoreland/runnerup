@@ -31,7 +31,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -42,7 +41,8 @@ import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
-
+import java.util.Calendar;
+import java.util.Date;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.ActivityCleaner;
@@ -51,9 +51,6 @@ import org.runnerup.db.entities.ActivityEntity;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SimpleCursorLoader;
 import org.runnerup.workout.Sport;
-
-import java.util.Calendar;
-import java.util.Date;
 
 public class HistoryFragment extends Fragment
     implements Constants, OnItemClickListener, LoaderCallbacks<Cursor> {
@@ -94,20 +91,6 @@ public class HistoryFragment extends Fragment
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
     new ActivityCleaner().conditionalRecompute(mDB);
-
-    // TODO: Handle back navigation between bottom tabs in MainLayout
-    /*Context context = this;
-    getOnBackPressedDispatcher()
-        .addCallback(
-            this,
-            new OnBackPressedCallback(true) {
-              @Override
-              public void handleOnBackPressed() {
-                Intent intent = new Intent(context, MainLayout.class);
-                startActivity(intent);
-                finish();
-              }
-            });*/
   }
 
   @Override

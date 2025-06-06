@@ -53,7 +53,7 @@ public class BottomNavFragmentStateAdapter extends FragmentStateAdapter {
     // FragmentStateAdapter manage the lifecycle of fragments.
     return switch (position) {
       case 1 -> new HistoryFragment();
-      case 2 -> new SettingsFragment();
+      case 2 -> new SettingsContainerFragment();
       default -> new StartFragment();
     };
   }
