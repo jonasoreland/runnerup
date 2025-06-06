@@ -41,6 +41,10 @@ import android.webkit.WebView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
@@ -128,7 +132,27 @@ public class MainLayout extends AppCompatActivity {
     PreferenceManager.setDefaultValues(this, R.xml.settings_units, true);
     PreferenceManager.setDefaultValues(this, R.xml.settings_workout, true);
 
-    // TODO: Initiate ViewPager2 and TabLayout
+    // Set up the ViewPager2 and associate it with the adapter responsible
+    // for managing the lifecycle and displaying the different fragment pages.
+    ViewPager2 pager = findViewById(R.id.pager);
+    BottomNavFragmentStateAdapter adapter = new BottomNavFragmentStateAdapter(this);
+    pager.setAdapter(adapter);
+
+    // Disable swiping on the pager to maintain the original navigation behavior from
+    // the previous TabActivity-based implementation.
+    pager.setUserInputEnabled(false); // TODO: Allow swiping between tabs?
+
+    // Attach the TabLayout to the ViewPager2 using a TabLayoutMediator.
+    // The mediator synchronizes the selected tab with the displayed page in the ViewPager2,
+    // and allows for configuring the appearance of each tab (e.g., setting icons/titles).
+    // Disable smooth scrolling between tabs to maintain the original navigation behavior
+    // from the previous TabActivity-based implementation.
+    TabLayout tabLayout = findViewById(R.id.tab_layout);
+    new TabLayoutMediator(tabLayout,
+            pager,
+            false,
+            false, // TODO: Enable smooth scrolling?
+            (tab, position) -> tab.setIcon(adapter.getIcon(position))).attach();
 
     if (upgradeState == UpgradeState.UPGRADE) {
       whatsNew();
