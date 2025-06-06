@@ -259,7 +259,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     Intent intent =
         new Intent(this, MainLayout.class)
-            .putExtra("mode", StartActivity.TAB_ADVANCED)
+            .putExtra("mode", StartFragment.TAB_ADVANCED)
             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(intent);
     finish();

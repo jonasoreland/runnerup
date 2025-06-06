@@ -77,7 +77,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     }
 
     HRZones hrZones = new HRZones(requireContext());
-    boolean hasHR = SettingsActivity.hasHR(requireContext());
+    boolean hasHR = SettingsSensorsFragment.hasHR(requireContext());
     boolean hasHRZones = hrZones.isConfigured();
 
     if (!hasHR || !hasHRZones) {

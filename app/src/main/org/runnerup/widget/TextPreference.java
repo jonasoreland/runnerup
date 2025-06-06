@@ -54,7 +54,7 @@ public class TextPreference extends androidx.preference.EditTextPreference {
             // If empty, use the default value
             // This could be a default setting and should not be hardcoded in a widget
             // However, getting the default value in the xml seems hard and a similar
-            // onPreferenceChange() in SettingsActivity is not much better
+            // onPreferenceChange() in any of the settings fragments is not much better
             Resources res = getContext().getResources();
             if (preference.getKey().equals(res.getString(R.string.pref_mapbox_default_style))) {
               val = res.getString(R.string.mapboxDefaultStyle);
