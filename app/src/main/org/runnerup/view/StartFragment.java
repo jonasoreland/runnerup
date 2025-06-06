@@ -309,32 +309,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     updateTargetView();
 
-    // TODO: Handle back navigation between bottom tabs in MainLayout
-    /*Context context = this;
-    getOnBackPressedDispatcher()
-        .addCallback(
-            this,
-            new OnBackPressedCallback(true) {
-              @Override
-              public void handleOnBackPressed() {
-                if (!getAutoStartGps() && mGpsStatus.isStarted()) {
-                  stopGps();
-                  updateView();
-                } else if (exit) {
-                  finish(); // finish activity
-                } else {
-                  final Resources res = context.getResources();
-                  Toast.makeText(
-                          getApplicationContext(),
-                          res.getString(org.runnerup.common.R.string.Catch_backbuttonpress),
-                          Toast.LENGTH_SHORT)
-                      .show();
-                  exit = true;
-                  new Handler().postDelayed(() -> exit = false, 3 * 1000);
-                }
-              }
-            });*/
-
     mWearNotifier = new TrackerWear.WearNotifier(requireActivity().getApplicationContext());
     mWearNotifier.onViewCreated();
   }
@@ -531,7 +505,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     updateView();
   }
 
-  private boolean getAutoStartGps() {
+  public boolean getAutoStartGps() {
     Context ctx = requireActivity().getApplicationContext();
     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
     return pref.getBoolean(getString(R.string.pref_startgps), false);
@@ -554,7 +528,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     notificationStateManager.displayNotificationState(gpsSearchingState);
   }
 
-  private void stopGps() {
+  public void stopGps() {
     Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.skipStopGps);
     if (skipStopGps) return;
 
@@ -563,6 +537,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     if (mTracker != null) mTracker.reset();
 
     notificationStateManager.cancelNotification();
+  }
+
+  public boolean isGpsLogging() {
+    if (mGpsStatus == null) {
+      // If mGpsStatus is null, GPS logging is not possible.
+      return false;
+    }
+    return mGpsStatus.isLogging();
   }
 
   private void notificationBatteryLevel(int batteryLevel) {
@@ -896,7 +878,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
   }
 
-  private void updateView() {
+  public void updateView() {
     updateStartGpsButtonView();
     updateStartButtonView();
     updateGPSView();
