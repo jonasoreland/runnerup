@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.app.TabActivity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,30 +30,18 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TabWidget;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
@@ -62,17 +49,11 @@ import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GoogleApiHelper;
 
-public class MainLayout extends TabActivity {
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-  private View getTabView(CharSequence label, int iconResource) {
-    @SuppressLint("InflateParams")
-    View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
-    ImageView iconView = tabView.findViewById(R.id.icon);
-    iconView.setContentDescription(label);
-    Drawable icon = AppCompatResources.getDrawable(this, iconResource);
-    iconView.setImageDrawable(icon);
-    return tabView;
-  }
+public class MainLayout extends AppCompatActivity {
 
   private enum UpgradeState {
     UNKNOWN,
@@ -82,6 +63,7 @@ public class MainLayout extends TabActivity {
     SAME
   }
 
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -146,35 +128,7 @@ public class MainLayout extends TabActivity {
     PreferenceManager.setDefaultValues(this, R.xml.settings_units, true);
     PreferenceManager.setDefaultValues(this, R.xml.settings_workout, true);
 
-    TabHost tabHost = getTabHost(); // The activity TabHost
-
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("Start")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.Start), R.drawable.ic_tab_main_24dp))
-            .setContent(new Intent(this, StartActivity.class)));
-
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("History")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.History),
-                    R.drawable.ic_tab_history_24dp))
-            .setContent(new Intent(this, HistoryActivity.class)));
-
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("Settings")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.Settings),
-                    R.drawable.ic_tab_settings_24dp))
-            .setContent(new Intent(this, SettingsActivity.class)));
-
-    tabHost.setCurrentTab(0);
+    // TODO: Initiate ViewPager2 and TabLayout
 
     if (upgradeState == UpgradeState.UPGRADE) {
       whatsNew();
@@ -212,7 +166,8 @@ public class MainLayout extends TabActivity {
       DBHelper.importDatabase(MainLayout.this, filePath);
     }
 
-    View rootLayout = findViewById(android.R.id.tabhost).getRootView();
+    // TODO: Fix after initiating ViewPager2 and TabLayout
+    /*View rootLayout = findViewById(android.R.id.tabhost).getRootView();
     ViewCompat.setOnApplyWindowInsetsListener(
         rootLayout,
         new OnApplyWindowInsetsListener() {
@@ -239,7 +194,9 @@ public class MainLayout extends TabActivity {
             }
             return WindowInsetsCompat.CONSUMED; // If fully handled
           }
-        });
+        });*/
+
+    // TODO: Handle back navigation
   }
 
   private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
