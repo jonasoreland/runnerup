@@ -32,14 +32,20 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -56,6 +62,7 @@ import org.runnerup.util.GoogleApiHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class MainLayout extends AppCompatActivity {
 
@@ -66,6 +73,8 @@ public class MainLayout extends AppCompatActivity {
     DOWNGRADE,
     SAME
   }
+
+  private ViewPager2 pager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -134,7 +143,7 @@ public class MainLayout extends AppCompatActivity {
 
     // Set up the ViewPager2 and associate it with the adapter responsible
     // for managing the lifecycle and displaying the different fragment pages.
-    ViewPager2 pager = findViewById(R.id.pager);
+    pager = findViewById(R.id.pager);
     BottomNavFragmentStateAdapter adapter = new BottomNavFragmentStateAdapter(this);
     pager.setAdapter(adapter);
 
@@ -220,7 +229,77 @@ public class MainLayout extends AppCompatActivity {
           }
         });*/
 
-    // TODO: Handle back navigation
+    // Handle back navigation
+    getOnBackPressedDispatcher().addCallback(this, onBackPressed);
+  }
+
+  /**
+   * An {@link OnBackPressedCallback} instance that provides custom handling for back navigation
+   * within the activity.
+   * <p>
+   * When on the first page ({@link StartFragment}), it implements a "press back again to exit"
+   * behavior. Otherwise, it navigates back to the first page.
+   */
+  private final OnBackPressedCallback onBackPressed = new OnBackPressedCallback(true /* enabled */) {
+    @Override
+    public void handleOnBackPressed() {
+      // If not on the first page, navigate back to the first page instead of exiting.
+      if (pager.getCurrentItem() != 0) {
+        pager.setCurrentItem(0);
+        return;
+      }
+
+      // If on the first page (StartFragment) and GPS logging is active but not auto-started,
+      // stop GPS instead of exiting the app.
+      Fragment fragment = getCurrentFragment();
+
+      if (fragment instanceof StartFragment) {
+        StartFragment startFragment = (StartFragment) fragment;
+        if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
+          startFragment.stopGps();
+          startFragment.updateView();
+          return;
+        }
+      }
+
+      // Temporarily disable this callback to allow the system to handle the next back press
+      // for exiting the app.
+      this.setEnabled(false);
+
+      // If none of the above conditions were met, show the "press back again to exit" toast,
+      // and re-enable the callback after a delay.
+      Toast.makeText(MainLayout.this,
+              getString(org.runnerup.common.R.string.Catch_backbuttonpress),
+              Toast.LENGTH_SHORT).show();
+
+      new Handler().postDelayed(() -> this.setEnabled(true),
+              3 * 1000);
+    }
+  };
+
+  /**
+   * Returns the currently resumed fragment within this activity's fragment manager.
+   *
+   * @return The Fragment that is currently in the {@link Lifecycle.State#RESUMED RESUMED}
+   * state, or {@code null} if no fragment is in the resumed state.
+   */
+  private Fragment getCurrentFragment() {
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    List<Fragment> fragments = fragmentManager.getFragments();
+
+    // There is currently no direct API in ViewPager2 or FragmentStateAdapter to reliably
+    // retrieve the fragment at a specific position or the currently active fragment based
+    // on its position alone. Instead, we iterate through all fragments managed by the
+    // FragmentManager and identify the one that is currently in the RESUMED state,
+    // which FragmentStateAdapter ensures is the current page's fragment.
+    // See: https://issuetracker.google.com/issues/210202198#comment2
+    for (Fragment fragment : fragments) {
+      if (fragment != null && fragment.isResumed()) {
+        return fragment;
+      }
+    }
+
+    return null;
   }
 
   private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
