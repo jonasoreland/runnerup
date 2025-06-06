@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.app.TabActivity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,48 +30,38 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TabHost;
-import android.widget.TabWidget;
-import androidx.annotation.NonNull;
+import android.widget.Toast;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GoogleApiHelper;
+import org.runnerup.util.ViewUtil;
 
-public class MainLayout extends TabActivity {
-
-  private View getTabView(CharSequence label, int iconResource) {
-    @SuppressLint("InflateParams")
-    View tabView = getLayoutInflater().inflate(R.layout.bottom_tab_indicator, null);
-    ImageView iconView = tabView.findViewById(R.id.icon);
-    iconView.setContentDescription(label);
-    Drawable icon = AppCompatResources.getDrawable(this, iconResource);
-    iconView.setImageDrawable(icon);
-    return tabView;
-  }
+public class MainLayout extends AppCompatActivity {
 
   private enum UpgradeState {
     UNKNOWN,
@@ -82,6 +71,9 @@ public class MainLayout extends TabActivity {
     SAME
   }
 
+  private ViewPager2 pager;
+
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -146,35 +138,26 @@ public class MainLayout extends TabActivity {
     PreferenceManager.setDefaultValues(this, R.xml.settings_units, true);
     PreferenceManager.setDefaultValues(this, R.xml.settings_workout, true);
 
-    TabHost tabHost = getTabHost(); // The activity TabHost
+    // Set up the ViewPager2 and associate it with the adapter responsible
+    // for managing the lifecycle and displaying the different fragment pages.
+    pager = findViewById(R.id.pager);
+    BottomNavFragmentStateAdapter adapter = new BottomNavFragmentStateAdapter(this);
+    pager.setAdapter(adapter);
 
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("Start")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.Start), R.drawable.ic_tab_main_24dp))
-            .setContent(new Intent(this, StartActivity.class)));
+    // Allows swiping between tabs
+    pager.setUserInputEnabled(true);
 
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("History")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.History),
-                    R.drawable.ic_tab_history_24dp))
-            .setContent(new Intent(this, HistoryActivity.class)));
-
-    tabHost.addTab(
-        tabHost
-            .newTabSpec("Settings")
-            .setIndicator(
-                getTabView(
-                    getString(org.runnerup.common.R.string.Settings),
-                    R.drawable.ic_tab_settings_24dp))
-            .setContent(new Intent(this, SettingsActivity.class)));
-
-    tabHost.setCurrentTab(0);
+    // Attach the TabLayout to the ViewPager2 using a TabLayoutMediator.
+    // The mediator synchronizes the selected tab with the displayed page in the ViewPager2,
+    // and allows for configuring the appearance of each tab (e.g., setting icons/titles).
+    TabLayout tabLayout = findViewById(R.id.tab_layout);
+    new TabLayoutMediator(
+            tabLayout,
+            pager,
+            false,
+            true, // Uses animation when switching tabs
+            (tab, position) -> tab.setIcon(adapter.getIcon(position)))
+        .attach();
 
     if (upgradeState == UpgradeState.UPGRADE) {
       whatsNew();
@@ -212,34 +195,81 @@ public class MainLayout extends TabActivity {
       DBHelper.importDatabase(MainLayout.this, filePath);
     }
 
-    View rootLayout = findViewById(android.R.id.tabhost).getRootView();
-    ViewCompat.setOnApplyWindowInsetsListener(
-        rootLayout,
-        new OnApplyWindowInsetsListener() {
-          @NonNull
-          @Override
-          public WindowInsetsCompat onApplyWindowInsets(
-              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
-            Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, 0);
-            TabWidget tabWidget = getTabWidget();
-            if (tabWidget != null) {
-              ViewGroup.MarginLayoutParams tabWidgetLp =
-                  (ViewGroup.MarginLayoutParams) tabWidget.getLayoutParams();
-              tabWidgetLp.leftMargin = systemBarsInsets.left;
-              tabWidgetLp.rightMargin = systemBarsInsets.right;
-              tabWidgetLp.bottomMargin = systemBarsInsets.bottom;
-              tabWidget.setLayoutParams(tabWidgetLp);
-            }
+    // Apply system bars insets to avoid UI overlap
+    ViewUtil.Insets(findViewById(R.id.main_root), true);
 
-            FrameLayout tabContent =
-                getTabHost().getTabContentView(); // This is android.R.id.tabcontent
-            if (tabContent != null) {
-              tabContent.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, 0);
-            }
-            return WindowInsetsCompat.CONSUMED; // If fully handled
+    // Handle back navigation
+    getOnBackPressedDispatcher().addCallback(this, onBackPressed);
+  }
+
+  /**
+   * An {@link OnBackPressedCallback} instance that provides custom handling for back navigation
+   * within the activity.
+   *
+   * <p>When on the first page ({@link StartFragment}), it implements a "press back again to exit"
+   * behavior. Otherwise, it navigates back to the first page.
+   */
+  private final OnBackPressedCallback onBackPressed =
+      new OnBackPressedCallback(true /* enabled */) {
+        @Override
+        public void handleOnBackPressed() {
+          // If not on the first page, navigate back to the first page instead of exiting.
+          if (pager.getCurrentItem() != 0) {
+            pager.setCurrentItem(0);
+            return;
           }
-        });
+
+          // If on the first page (StartFragment) and GPS logging is active but not auto-started,
+          // stop GPS instead of exiting the app.
+          Fragment fragment = getCurrentFragment();
+
+          if (fragment instanceof StartFragment startFragment) {
+            if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
+              startFragment.stopGps();
+              startFragment.updateView();
+              return;
+            }
+          }
+
+          // Temporarily disable this callback to allow the system to handle the next back press
+          // for exiting the app.
+          this.setEnabled(false);
+
+          // If none of the above conditions were met, show the "press back again to exit" toast,
+          // and re-enable the callback after a delay.
+          Toast.makeText(
+                  MainLayout.this,
+                  getString(org.runnerup.common.R.string.Catch_backbuttonpress),
+                  Toast.LENGTH_SHORT)
+              .show();
+
+          new Handler().postDelayed(() -> this.setEnabled(true), 3 * 1000);
+        }
+      };
+
+  /**
+   * Returns the currently resumed fragment within this activity's fragment manager.
+   *
+   * @return The Fragment that is currently in the {@link Lifecycle.State#RESUMED RESUMED} state, or
+   *     {@code null} if no fragment is in the resumed state.
+   */
+  private Fragment getCurrentFragment() {
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    List<Fragment> fragments = fragmentManager.getFragments();
+
+    // There is currently no direct API in ViewPager2 or FragmentStateAdapter to reliably
+    // retrieve the fragment at a specific position or the currently active fragment based
+    // on its position alone. Instead, we iterate through all fragments managed by the
+    // FragmentManager and identify the one that is currently in the RESUMED state,
+    // which FragmentStateAdapter ensures is the current page's fragment.
+    // See: https://issuetracker.google.com/issues/210202198#comment2
+    for (Fragment fragment : fragments) {
+      if (fragment != null && fragment.isResumed()) {
+        return fragment;
+      }
+    }
+
+    return null;
   }
 
   private void handleBundled(AssetManager mgr, String srcBase, String dstBase) {
