@@ -1,12 +1,15 @@
 package org.runnerup.view;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
 import org.runnerup.R;
 import org.runnerup.tracker.component.TrackerCadence;
 import org.runnerup.tracker.component.TrackerPressure;
@@ -20,7 +23,7 @@ public class SettingsSensorsFragment extends PreferenceFragmentCompat {
     Resources res = getResources();
 
     // Preference Category - Heart Rate
-    if (!SettingsActivity.hasHR(requireContext())) {
+    if (!hasHR(requireContext())) {
       getPreferenceManager()
           .findPreference(res.getString(R.string.cue_configure_hrzones))
           .setEnabled(false);
@@ -78,5 +81,13 @@ public class SettingsSensorsFragment extends PreferenceFragmentCompat {
     autoPauseAfterSeconds.setEnabled(autoPause);
     Preference autoPauseMinPace = findPreference(getString(R.string.pref_autopause_minpace));
     autoPauseMinPace.setEnabled(autoPause);
+  }
+
+  public static boolean hasHR(Context ctx) {
+    Resources res = ctx.getResources();
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+    String btAddress = prefs.getString(res.getString(R.string.pref_bt_address), null);
+    String btProviderName = prefs.getString(res.getString(R.string.pref_bt_provider), null);
+    return btProviderName != null && btAddress != null;
   }
 }

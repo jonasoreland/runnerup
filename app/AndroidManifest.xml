@@ -107,9 +107,6 @@
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/AppTheme"/>
 
-        <activity android:name=".view.SettingsActivity"
-            android:theme="@style/AppTheme"/>
-
         <activity
             android:name=".view.AudioCueSettingsActivity"
             android:theme="@style/AppTheme"/>
@@ -214,23 +211,23 @@
         <activity
             android:name=".view.HRSettingsActivity"
             android:label="@string/Heart_Rate_Monitor"
-            android:parentActivityName=".view.SettingsActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.SettingsActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
             android:name=".view.HRZonesActivity"
             android:label="@string/Heart_Rate_Zones"
-            android:parentActivityName=".view.SettingsActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.SettingsActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <service

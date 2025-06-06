@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -26,9 +27,7 @@ import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
@@ -40,6 +39,10 @@ import org.runnerup.workout.Feedback;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.feedback.RUTextToSpeech;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
   private boolean started = false;
@@ -77,7 +80,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     }
 
     HRZones hrZones = new HRZones(requireContext());
-    boolean hasHR = SettingsActivity.hasHR(requireContext());
+    boolean hasHR = SettingsSensorsFragment.hasHR(requireContext());
     boolean hasHRZones = hrZones.isConfigured();
 
     if (!hasHR || !hasHRZones) {
