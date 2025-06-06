@@ -103,10 +103,6 @@
         </activity>
 
         <activity
-            android:name=".view.StartActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity
             android:name=".view.RunActivity"
             android:configChanges="keyboardHidden|orientation"
             android:theme="@style/AppTheme"/>
