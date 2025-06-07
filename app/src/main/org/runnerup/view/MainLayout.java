@@ -58,6 +58,7 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GoogleApiHelper;
+import org.runnerup.util.ViewUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -199,35 +200,8 @@ public class MainLayout extends AppCompatActivity {
       DBHelper.importDatabase(MainLayout.this, filePath);
     }
 
-    // TODO: Fix after initiating ViewPager2 and TabLayout
-    /*View rootLayout = findViewById(android.R.id.tabhost).getRootView();
-    ViewCompat.setOnApplyWindowInsetsListener(
-        rootLayout,
-        new OnApplyWindowInsetsListener() {
-          @NonNull
-          @Override
-          public WindowInsetsCompat onApplyWindowInsets(
-              @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
-            Insets systemBarsInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBarsInsets.left, systemBarsInsets.top, systemBarsInsets.right, 0);
-            TabWidget tabWidget = getTabWidget();
-            if (tabWidget != null) {
-              ViewGroup.MarginLayoutParams tabWidgetLp =
-                  (ViewGroup.MarginLayoutParams) tabWidget.getLayoutParams();
-              tabWidgetLp.leftMargin = systemBarsInsets.left;
-              tabWidgetLp.rightMargin = systemBarsInsets.right;
-              tabWidgetLp.bottomMargin = systemBarsInsets.bottom;
-              tabWidget.setLayoutParams(tabWidgetLp);
-            }
-
-            FrameLayout tabContent =
-                getTabHost().getTabContentView(); // This is android.R.id.tabcontent
-            if (tabContent != null) {
-              tabContent.setPadding(systemBarsInsets.left, 0, systemBarsInsets.right, 0);
-            }
-            return WindowInsetsCompat.CONSUMED; // If fully handled
-          }
-        });*/
+    // Apply system bars insets to avoid UI overlap
+    ViewUtil.Insets(findViewById(R.id.main_root), true);
 
     // Handle back navigation
     getOnBackPressedDispatcher().addCallback(this, onBackPressed);
