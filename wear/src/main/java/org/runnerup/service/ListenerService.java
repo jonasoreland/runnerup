@@ -25,18 +25,23 @@ import android.content.Intent;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.wear.ongoing.OngoingActivity;
+import androidx.wear.ongoing.Status;
+import androidx.wear.ongoing.Status.TextPart;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
 
 public class ListenerService extends WearableListenerService {
 
   private final int notificationId = 10;
+  TrackerState trackerState = null;
 
   @Override
   public void onCreate() {
@@ -63,6 +68,8 @@ public class ListenerService extends WearableListenerService {
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         handleNotification(ev);
+      } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
+        handleStateNotification(ev);
       }
     }
   }
@@ -83,6 +90,15 @@ public class ListenerService extends WearableListenerService {
 
   private void handleNotification(DataEvent ev) {
     if (ev.getType() == DataEvent.TYPE_CHANGED) {
+      showNotification();
+    } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+      dismissNotification();
+    }
+  }
+
+  private void handleStateNotification(DataEvent ev) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+      trackerState = StateService.getTrackerStateFromDataItem(ev.getDataItem());
       showNotification();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       dismissNotification();
@@ -122,7 +138,9 @@ public class ListenerService extends WearableListenerService {
     // this intent will open the activity when the user taps the "open" action on the notification
     Intent viewIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingViewIntent =
-        PendingIntent.getActivity(this, 0, viewIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent.getActivity(this, 0, viewIntent,
+                                  PendingIntent.FLAG_IMMUTABLE |
+                                  PendingIntent.FLAG_UPDATE_CURRENT);
     String chanId = getChannelId(this);
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(this, chanId)
@@ -133,13 +151,62 @@ public class ListenerService extends WearableListenerService {
             .setOngoing(true)
             .setLocalOnly(true);
 
-    Notification notification = builder.build();
-    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-    notificationManagerCompat.notify(notificationId, notification);
+    var status = getStatusString();
+
+    OngoingActivity ongoingActivity =
+        new OngoingActivity.Builder(this, notificationId, builder)
+            //     // Sets the animated icon that will appear on the watch face in
+            //     // active mode.
+            //     // If it isn't set, the watch face will use the static icon in
+            //     // active mode.
+            //     .setAnimatedIcon(R.drawable.ic_walk)
+            //     // Sets the icon that will appear on the watch face in ambient mode.
+            //     // Falls back to Notification's smallIcon if not set.
+            //     // If neither is set, an Exception is thrown.
+            .setStaticIcon(R.drawable.ic_launcher)
+            //     // Sets the tap/touch event so users can re-enter your app from the
+            //     // other surfaces.
+            //     // Falls back to Notification's contentIntent if not set.
+            //     // If neither is set, an Exception is thrown.
+            .setTouchIntent(pendingViewIntent)
+            //     // Here, sets the text used for the Ongoing Activity (more
+            //     // options are available for timers and stopwatches).
+            .setStatus(new Status.Builder().addPart("Status",
+                                                    new TextPart(getStatusString())).build())
+        .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+        .build();
+
+    ongoingActivity.apply(this);
+
+    NotificationManagerCompat.from(this).notify(notificationId, builder.build());
   }
 
   private void dismissNotification() {
-    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-    notificationManagerCompat.cancel(notificationId);
+    trackerState = null;
+    NotificationManagerCompat.from(this).cancel(notificationId);
+  }
+
+  private String getStatusString() {
+    if (trackerState != null) {
+      switch (trackerState) {
+        case INIT:
+        case INITIALIZING:
+        case CLEANUP:
+        case ERROR:
+          return getString(org.runnerup.common.R.string.Waiting_for_phone);
+        case INITIALIZED:
+        case CONNECTED:
+          return getString(org.runnerup.common.R.string.Start_activity);
+        case CONNECTING:
+          return getString(org.runnerup.common.R.string.Waiting_for_GPS);
+        case STARTED:
+          return getString(org.runnerup.common.R.string.Activity_ongoing);
+        case PAUSED:
+          return getString(org.runnerup.common.R.string.Activity_paused);
+        case STOPPED:
+          return getString(org.runnerup.common.R.string.Activity_stopped);
+      }
+    }
+    return getString(org.runnerup.common.R.string.Waiting_for_phone);
   }
 }
