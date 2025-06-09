@@ -86,8 +86,8 @@ public class MainActivity extends Activity
   }
 
   @Override
-  protected void onPause() {
-    super.onPause();
+  protected void onDestroy() {
+    super.onDestroy();
     if (mStateService != null) {
       mStateService.unregisterTrackerStateListener(this);
       mStateService.unregisterHeadersListener(this);
