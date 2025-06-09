@@ -42,6 +42,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.util.ViewUtil;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Activity extends AppCompatActivity {
@@ -266,6 +267,7 @@ public class OAuth2Activity extends AppCompatActivity {
         });
 
     setContentView(wv);
+    ViewUtil.Insets(wv, true);
   }
 
   @Override
