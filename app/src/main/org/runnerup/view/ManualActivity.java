@@ -37,6 +37,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.SafeParse;
+import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
 
@@ -74,6 +75,8 @@ public class ManualActivity extends AppCompatActivity {
     manualPace = findViewById(R.id.manual_pace);
     manualPace.setVisibility(View.GONE);
     manualNotes = findViewById(R.id.manual_notes);
+
+    ViewUtil.Insets(findViewById(R.id.tab_manual), true);
   }
 
   @Override
