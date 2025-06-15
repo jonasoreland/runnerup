@@ -114,7 +114,13 @@ public class HistoryFragment extends Fragment
         };
 
     return new SimpleCursorLoader(
-        requireContext(), mDB, DB.ACTIVITY.TABLE, from, "deleted == 0", null, DB.ACTIVITY.START_TIME + " desc");
+        requireContext(),
+        mDB,
+        DB.ACTIVITY.TABLE,
+        from,
+        "deleted == 0",
+        null,
+        DB.ACTIVITY.START_TIME + " desc");
   }
 
   @Override

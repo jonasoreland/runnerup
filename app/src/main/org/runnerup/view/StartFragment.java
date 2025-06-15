@@ -52,7 +52,6 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -61,7 +60,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -91,11 +93,6 @@ import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public class StartFragment extends Fragment implements TickListener, GpsInformation {
 
@@ -172,7 +169,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   public StartFragment() {
     super(R.layout.start);
   }
-  
+
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -185,7 +182,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     bindGpsTracker();
     mGpsStatus = new org.runnerup.tracker.GpsStatus(context);
-    NotificationManager notificationManager = ContextCompat.getSystemService(context, NotificationManager.class);
+    NotificationManager notificationManager =
+        ContextCompat.getSystemService(context, NotificationManager.class);
     notificationStateManager =
         new NotificationStateManager(new NotificationManagerDisplayStrategy(notificationManager));
     gpsSearchingState = new GpsSearchingState(context, this);
@@ -194,7 +192,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
     ArrayAdapter<CharSequence> adapter =
         ArrayAdapter.createFromResource(
-                context, org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
+            context, org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
     adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
     sportSpinner.setAdapter(adapter);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -235,13 +233,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
     tabSpec.setIndicator(
-        WidgetUtil.createHoloTabIndicator(context, getString(org.runnerup.common.R.string.Interval)));
+        WidgetUtil.createHoloTabIndicator(
+            context, getString(org.runnerup.common.R.string.Interval)));
     tabSpec.setContent(R.id.start_interval_tab);
     tabHost.addTab(tabSpec);
 
     tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
     tabSpec.setIndicator(
-        WidgetUtil.createHoloTabIndicator(context, getString(org.runnerup.common.R.string.Advanced)));
+        WidgetUtil.createHoloTabIndicator(
+            context, getString(org.runnerup.common.R.string.Advanced)));
     tabSpec.setContent(R.id.start_advanced_tab);
     tabHost.addTab(tabSpec);
 
@@ -429,16 +429,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-          requireActivity().runOnUiThread(
-              () -> {
-                if (mTracker == null || startButton.getVisibility() != View.VISIBLE) return;
+          requireActivity()
+              .runOnUiThread(
+                  () -> {
+                    if (mTracker == null || startButton.getVisibility() != View.VISIBLE) return;
 
-                if (mTracker.getState() == TrackerState.INIT /* this will start gps */
-                    || mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/
-                    || mTracker.getState() == TrackerState.CONNECTED) {
-                  startButton.performClick();
-                }
-              });
+                    if (mTracker.getState() == TrackerState.INIT /* this will start gps */
+                        || mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/
+                        || mTracker.getState() == TrackerState.CONNECTED) {
+                      startButton.performClick();
+                    }
+                  });
         }
       };
 
@@ -449,7 +450,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     intentFilter.addAction(Constants.Intents.START_ACTIVITY);
     intentFilter.addAction(Constants.Intents.START_WORKOUT);
     ContextCompat.registerReceiver(
-        requireActivity(), startEventBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
+        requireActivity(),
+        startEventBroadcastReceiver,
+        intentFilter,
+        ContextCompat.RECEIVER_NOT_EXPORTED);
   }
 
   private void unregisterStartEventListener() {
@@ -1122,9 +1126,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     // class name because we want a specific service implementation that
     // we know will be running in our own process (and thus won't be
     // supporting component replacement by other applications).
-    mIsBound = requireActivity()
+    mIsBound =
+        requireActivity()
             .getApplicationContext()
-            .bindService(new Intent(requireContext(), Tracker.class), mConnection, Context.BIND_AUTO_CREATE);
+            .bindService(
+                new Intent(requireContext(), Tracker.class), mConnection, Context.BIND_AUTO_CREATE);
   }
 
   private void unbindGpsTracker() {

@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-
 import org.runnerup.R;
 
 public class TextPreference extends androidx.preference.EditTextPreference {

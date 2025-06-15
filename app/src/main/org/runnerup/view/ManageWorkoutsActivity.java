@@ -42,24 +42,9 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
-
-import org.runnerup.R;
-import org.runnerup.common.util.Constants;
-import org.runnerup.content.WorkoutFileProvider;
-import org.runnerup.db.DBHelper;
-import org.runnerup.export.SyncManager;
-import org.runnerup.export.SyncManager.Callback;
-import org.runnerup.export.SyncManager.WorkoutRef;
-import org.runnerup.export.Synchronizer;
-import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.util.ViewUtil;
-import org.runnerup.workout.Workout;
-import org.runnerup.workout.WorkoutSerializer;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -72,6 +57,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import org.runnerup.R;
+import org.runnerup.common.util.Constants;
+import org.runnerup.content.WorkoutFileProvider;
+import org.runnerup.db.DBHelper;
+import org.runnerup.export.SyncManager;
+import org.runnerup.export.SyncManager.Callback;
+import org.runnerup.export.SyncManager.WorkoutRef;
+import org.runnerup.export.Synchronizer;
+import org.runnerup.export.Synchronizer.Status;
+import org.runnerup.util.ViewUtil;
+import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutSerializer;
 
 public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
 

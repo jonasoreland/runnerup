@@ -39,7 +39,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,10 +47,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
-
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
@@ -59,11 +60,6 @@ import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GoogleApiHelper;
 import org.runnerup.util.ViewUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 public class MainLayout extends AppCompatActivity {
 
@@ -158,11 +154,13 @@ public class MainLayout extends AppCompatActivity {
     // Disable smooth scrolling between tabs to maintain the original navigation behavior
     // from the previous TabActivity-based implementation.
     TabLayout tabLayout = findViewById(R.id.tab_layout);
-    new TabLayoutMediator(tabLayout,
+    new TabLayoutMediator(
+            tabLayout,
             pager,
             false,
             false, // TODO: Enable smooth scrolling?
-            (tab, position) -> tab.setIcon(adapter.getIcon(position))).attach();
+            (tab, position) -> tab.setIcon(adapter.getIcon(position)))
+        .attach();
 
     if (upgradeState == UpgradeState.UPGRADE) {
       whatsNew();
@@ -210,52 +208,54 @@ public class MainLayout extends AppCompatActivity {
   /**
    * An {@link OnBackPressedCallback} instance that provides custom handling for back navigation
    * within the activity.
-   * <p>
-   * When on the first page ({@link StartFragment}), it implements a "press back again to exit"
+   *
+   * <p>When on the first page ({@link StartFragment}), it implements a "press back again to exit"
    * behavior. Otherwise, it navigates back to the first page.
    */
-  private final OnBackPressedCallback onBackPressed = new OnBackPressedCallback(true /* enabled */) {
-    @Override
-    public void handleOnBackPressed() {
-      // If not on the first page, navigate back to the first page instead of exiting.
-      if (pager.getCurrentItem() != 0) {
-        pager.setCurrentItem(0);
-        return;
-      }
+  private final OnBackPressedCallback onBackPressed =
+      new OnBackPressedCallback(true /* enabled */) {
+        @Override
+        public void handleOnBackPressed() {
+          // If not on the first page, navigate back to the first page instead of exiting.
+          if (pager.getCurrentItem() != 0) {
+            pager.setCurrentItem(0);
+            return;
+          }
 
-      // If on the first page (StartFragment) and GPS logging is active but not auto-started,
-      // stop GPS instead of exiting the app.
-      Fragment fragment = getCurrentFragment();
+          // If on the first page (StartFragment) and GPS logging is active but not auto-started,
+          // stop GPS instead of exiting the app.
+          Fragment fragment = getCurrentFragment();
 
-      if (fragment instanceof StartFragment) {
-        StartFragment startFragment = (StartFragment) fragment;
-        if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
-          startFragment.stopGps();
-          startFragment.updateView();
-          return;
+          if (fragment instanceof StartFragment) {
+            StartFragment startFragment = (StartFragment) fragment;
+            if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
+              startFragment.stopGps();
+              startFragment.updateView();
+              return;
+            }
+          }
+
+          // Temporarily disable this callback to allow the system to handle the next back press
+          // for exiting the app.
+          this.setEnabled(false);
+
+          // If none of the above conditions were met, show the "press back again to exit" toast,
+          // and re-enable the callback after a delay.
+          Toast.makeText(
+                  MainLayout.this,
+                  getString(org.runnerup.common.R.string.Catch_backbuttonpress),
+                  Toast.LENGTH_SHORT)
+              .show();
+
+          new Handler().postDelayed(() -> this.setEnabled(true), 3 * 1000);
         }
-      }
-
-      // Temporarily disable this callback to allow the system to handle the next back press
-      // for exiting the app.
-      this.setEnabled(false);
-
-      // If none of the above conditions were met, show the "press back again to exit" toast,
-      // and re-enable the callback after a delay.
-      Toast.makeText(MainLayout.this,
-              getString(org.runnerup.common.R.string.Catch_backbuttonpress),
-              Toast.LENGTH_SHORT).show();
-
-      new Handler().postDelayed(() -> this.setEnabled(true),
-              3 * 1000);
-    }
-  };
+      };
 
   /**
    * Returns the currently resumed fragment within this activity's fragment manager.
    *
-   * @return The Fragment that is currently in the {@link Lifecycle.State#RESUMED RESUMED}
-   * state, or {@code null} if no fragment is in the resumed state.
+   * @return The Fragment that is currently in the {@link Lifecycle.State#RESUMED RESUMED} state, or
+   *     {@code null} if no fragment is in the resumed state.
    */
   private Fragment getCurrentFragment() {
     FragmentManager fragmentManager = getSupportFragmentManager();

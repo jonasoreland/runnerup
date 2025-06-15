@@ -25,9 +25,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,7 +38,9 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
@@ -54,10 +54,6 @@ import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.WorkoutStepListener;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class TrackerWear extends DefaultTrackerComponent
     implements Constants,
