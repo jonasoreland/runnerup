@@ -264,7 +264,7 @@ public class StateService extends Service
     }
   }
 
-  private static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
+  public static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
     if (!dataItem.isDataValid()) return null;
 
     Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();

@@ -16,6 +16,8 @@
  */
 package org.runnerup.view;
 
+import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -24,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,6 +34,9 @@ import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.widget.LinearLayout;
+import com.google.android.gms.wearable.DataClient;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -43,6 +49,7 @@ public class MainActivity extends Activity
     implements Constants, ValueModel.ChangeListener<TrackerState> {
   private final Handler handler = new Handler();
   private GridViewPager pager;
+  private DataClient mGoogleApiClient = null;
   private StateService mStateService;
   private final ValueModel<TrackerState> trackerState = new ValueModel<>();
   private final ValueModel<Bundle> headers = new ValueModel<>();
@@ -72,6 +79,7 @@ public class MainActivity extends Activity
     dotsPageIndicator.setOnPageChangeListener(dot2);
     dotsPageIndicator.setOnAdapterChangeListener(dot2);
     dot2.setPager(pager);
+    mGoogleApiClient = Wearable.getDataClient(this);
   }
 
   @Override
@@ -83,11 +91,27 @@ public class MainActivity extends Activity
                 new Intent(this, StateService.class),
                 mStateServiceConnection,
                 Context.BIND_AUTO_CREATE);
+    putDataItem(Constants.Wear.Path.WEAR_APP, true);
+  }
+
+  void putDataItem(String path, boolean value) {
+    if (value) {
+      mGoogleApiClient.putDataItem(PutDataRequest.create(path));
+    } else {
+      mGoogleApiClient.deleteDataItems(
+          new Uri.Builder().scheme(WEAR_URI_SCHEME).path(path).build());
+    }
   }
 
   @Override
   protected void onPause() {
     super.onPause();
+    putDataItem(Constants.Wear.Path.WEAR_APP, false);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
     if (mStateService != null) {
       mStateService.unregisterTrackerStateListener(this);
       mStateService.unregisterHeadersListener(this);
