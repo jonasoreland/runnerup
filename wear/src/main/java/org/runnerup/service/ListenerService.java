@@ -249,7 +249,7 @@ public class ListenerService extends WearableListenerService {
     String chanId = getChannelId(this);
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(this, chanId)
-        .setSmallIcon(R.drawable.ic_launcher)
+        .setSmallIcon(R.drawable.ic_ongoing_notification)
         .setContentTitle(getString(org.runnerup.common.R.string.app_name))
         .setContentText(getString(org.runnerup.common.R.string.Start))
         .setContentIntent(pendingViewIntent)
