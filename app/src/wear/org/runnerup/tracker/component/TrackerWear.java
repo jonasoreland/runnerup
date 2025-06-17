@@ -460,7 +460,7 @@ public class TrackerWear extends DefaultTrackerComponent
     } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
       sendLocalBroadcast(Intents.NEW_LAP);
     } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
-      /* send broadcast to StartActivity */
+      /* send broadcast to start the workout */
       sendBroadcast(Intents.START_WORKOUT);
     }
   }

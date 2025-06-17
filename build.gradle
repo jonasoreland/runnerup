@@ -26,6 +26,8 @@ project.ext {
     googlePlayServicesVersion = '21.3.0'
     googlePlayServicesWearableVersion = '19.0.0'
     googleWearVersion = '2.9.0'
+    viewpager2_version = "1.1.0"
+    constraintlayout_version = "2.2.1"
 
     junitVersion = '4.13.2'
     mockitoVersion = '3.11.2'
