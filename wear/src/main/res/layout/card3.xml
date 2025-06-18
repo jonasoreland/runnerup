@@ -44,8 +44,9 @@
 
       <TextView
           android:id="@+id/textView32"
-          android:text="-.--"
           style="@style/Card3TextMedium"
+          android:text="-.--"
+          android:textAlignment="center"
           tools:ignore="HardcodedText" />
 
     </LinearLayout>
@@ -65,8 +66,9 @@
 
       <TextView
           android:id="@+id/textView31"
-          android:text="--:--"
           style="@style/Card3TextLarge"
+          android:text="--:--"
+          android:textAlignment="center"
           tools:ignore="HardcodedText" />
 
     </LinearLayout>
@@ -86,8 +88,9 @@
 
       <TextView
           android:id="@+id/textView33"
-          android:text="-:--"
           style="@style/Card3TextMedium"
+          android:text="-:--"
+          android:textAlignment="center"
           tools:ignore="HardcodedText" />
 
     </LinearLayout>
