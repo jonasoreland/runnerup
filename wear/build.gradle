@@ -69,7 +69,7 @@ dependencies {
     implementation "androidx.wear:wear:1.3.0"
     implementation "androidx.wear:wear-ongoing:1.0.0"
     // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
-    implementation "androidx.core:core:1.6.0"
+    implementation "androidx.core:core:1.16.0"
 }
 
 def props = new Properties()
