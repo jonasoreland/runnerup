@@ -268,7 +268,7 @@ public class ListenerService extends WearableListenerService {
         // Sets the icon that will appear on the watch face in ambient mode.
         // Falls back to Notification's smallIcon if not set.
         // If neither is set, an Exception is thrown.
-        .setStaticIcon(R.drawable.ic_launcher)
+        .setStaticIcon(R.drawable.ic_ongoing_notification)
         // Sets the tap/touch event so users can re-enter your app from the
         // other surfaces.
         // Falls back to Notification's contentIntent if not set.
