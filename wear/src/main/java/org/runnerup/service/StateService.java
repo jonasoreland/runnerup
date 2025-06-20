@@ -16,27 +16,22 @@
  */
 package org.runnerup.service;
 
-import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 import android.app.Service;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import androidx.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
@@ -50,7 +45,7 @@ public class StateService extends Service
 
   private final IBinder mBinder = new LocalBinder();
   private GoogleApiClient mGoogleApiClient;
-
+  private WearableClient mDataClient;
   private String phoneNode;
 
   private Bundle data;
@@ -62,6 +57,7 @@ public class StateService extends Service
   public void onCreate() {
     super.onCreate();
 
+    mDataClient = new WearableClient(getApplicationContext());
     mGoogleApiClient =
         new GoogleApiClient.Builder(getApplicationContext())
             .addConnectionCallbacks(
@@ -101,67 +97,37 @@ public class StateService extends Service
   }
 
   private void readData() {
-    Wearable.DataApi.getDataItems(
-            mGoogleApiClient,
-            new Uri.Builder()
-                .scheme(WEAR_URI_SCHEME)
-                .path(Constants.Wear.Path.PHONE_NODE_ID)
-                .build())
-        .setResultCallback(
-            new ResultCallback<DataItemBuffer>() {
-              @Override
-              public void onResult(@NonNull DataItemBuffer dataItems) {
-                for (DataItem dataItem : dataItems) {
-                  phoneNode = dataItem.getUri().getHost();
-                  System.err.println("getDataItem => phoneNode:" + phoneNode);
-                }
-                dataItems.release();
-              }
-            });
-    Wearable.DataApi.getDataItems(
-            mGoogleApiClient,
-            new Uri.Builder()
-                .scheme(WEAR_URI_SCHEME)
-                .path(Constants.Wear.Path.TRACKER_STATE)
-                .build())
-        .setResultCallback(
-            new ResultCallback<DataItemBuffer>() {
-              @Override
-              public void onResult(@NonNull DataItemBuffer dataItems) {
-                for (DataItem dataItem : dataItems) {
-                  TrackerState newState = getTrackerStateFromDataItem(dataItem);
-                  if (newState != null) setTrackerState(newState);
-                }
-                dataItems.release();
-              }
-            });
-    Wearable.DataApi.getDataItems(
-            mGoogleApiClient,
-            new Uri.Builder().scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.HEADERS).build())
-        .setResultCallback(
-            new ResultCallback<DataItemBuffer>() {
-              @Override
-              public void onResult(@NonNull DataItemBuffer dataItems) {
-                for (DataItem dataItem : dataItems) {
-                  Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
-                  b.putLong(UPDATE_TIME, System.currentTimeMillis());
-                  headers.set(b);
-                }
-                dataItems.release();
-              }
-            });
+    mDataClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
+        if (dataItem != null ) {
+          phoneNode = dataItem.getUri().getHost();
+          System.err.println("getDataItem => phoneNode:" + phoneNode);
+        }
+      });
+    mDataClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
+        if (dataItem != null) {
+          TrackerState newState = getTrackerStateFromDataItem(dataItem);
+          if (newState != null) {
+            setTrackerState(newState);
+          }
+        }
+      });
+    mDataClient.readData(Constants.Wear.Path.HEADERS, dataItem -> {
+        if (dataItem != null) {
+          Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
+          b.putLong(UPDATE_TIME, System.currentTimeMillis());
+          headers.set(b);
+        }
+      });
   }
 
   private void setData() {
-    Wearable.DataApi.putDataItem(
-        mGoogleApiClient, PutDataRequest.create(Constants.Wear.Path.WEAR_NODE_ID));
+    /* set our node id */
+    mDataClient.putData(Constants.Wear.Path.WEAR_NODE_ID);
   }
 
   private void clearData() {
     /* delete our node id */
-    Wearable.DataApi.deleteDataItems(
-        mGoogleApiClient,
-        new Uri.Builder().scheme(WEAR_URI_SCHEME).path(Constants.Wear.Path.WEAR_NODE_ID).build());
+    mDataClient.deleteData(Constants.Wear.Path.WEAR_NODE_ID);
   }
 
   @Override
