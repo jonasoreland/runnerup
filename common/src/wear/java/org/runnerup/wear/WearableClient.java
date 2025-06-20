@@ -1,4 +1,4 @@
-package org.runnerup.service;
+package org.runnerup.wear;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 

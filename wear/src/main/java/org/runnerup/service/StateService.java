@@ -37,6 +37,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.view.MainActivity;
+import org.runnerup.wear.WearableClient;
 
 public class StateService extends Service
     implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
