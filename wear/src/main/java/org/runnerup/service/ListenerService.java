@@ -142,17 +142,9 @@ public class ListenerService extends WearableListenerService {
       }
       boolean deleted = (type == DataEvent.TYPE_DELETED);
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
-        if (deleted) {
-          phoneRunning = false;
-        } else {
-          phoneRunning = true;
-        }
+          phoneRunning = !deleted;
       } else if (Constants.Wear.Path.WEAR_APP.contentEquals(path)) {
-        if (deleted) {
-          mainActivityRunning = false;
-        } else {
-          mainActivityRunning = true;
-        }
+          mainActivityRunning = !deleted;
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
         if (deleted) {
           trackerState = null;

@@ -400,8 +400,7 @@ public class WorkoutBuilder {
         trigger -> {
           if (trigger == null) return false;
 
-          if (!(trigger instanceof EventTrigger)) return false;
-          EventTrigger et = (EventTrigger) trigger;
+          if (!(trigger instanceof EventTrigger et)) return false;
           return (et.event == Event.COMPLETED && et.scope == Scope.LAP);
         });
   }
@@ -425,8 +424,7 @@ public class WorkoutBuilder {
         list.add(new EndOfLapSuppression(step.getDurationValue()));
       }
       for (Trigger t : step.triggers) {
-        if (!(t instanceof IntervalTrigger)) continue;
-        IntervalTrigger it = (IntervalTrigger) t;
+        if (!(t instanceof IntervalTrigger it)) continue;
         if (it.dimension != Dimension.DISTANCE) continue;
         it.triggerSuppression.addAll(list);
       }

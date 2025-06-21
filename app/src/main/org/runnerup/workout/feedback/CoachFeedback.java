@@ -46,9 +46,8 @@ public class CoachFeedback extends AudioFeedback {
 
   @Override
   public boolean equals(Feedback _other) {
-    if (!(_other instanceof CoachFeedback)) return false;
+    if (!(_other instanceof CoachFeedback other)) return false;
 
-    CoachFeedback other = (CoachFeedback) _other;
     if (!range.contentEquals(other.range)) return false;
 
     if (!dimension.equal(other.dimension)) return false;

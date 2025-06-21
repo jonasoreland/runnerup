@@ -72,11 +72,10 @@ public class EndOfLapSuppression extends TriggerSuppression {
   }
 
   private boolean suppressEmpty(Trigger trigger, Workout w) {
-    if (!(trigger instanceof EventTrigger)) {
+    if (!(trigger instanceof EventTrigger et)) {
       return false;
     }
 
-    EventTrigger et = (EventTrigger) trigger;
     if (et.event != Event.COMPLETED) {
       return false;
     }
@@ -91,12 +90,11 @@ public class EndOfLapSuppression extends TriggerSuppression {
 
   private boolean suppressInterval(Trigger trigger, Workout w) {
 
-    if (!(trigger instanceof IntervalTrigger)) {
+    if (!(trigger instanceof IntervalTrigger it)) {
       return false;
     }
 
-    IntervalTrigger it = (IntervalTrigger) trigger;
-    if (it.dimension != Dimension.DISTANCE) {
+      if (it.dimension != Dimension.DISTANCE) {
       return false;
     }
 
@@ -113,12 +111,11 @@ public class EndOfLapSuppression extends TriggerSuppression {
 
   private boolean suppressEndOfLap(Trigger trigger, Workout w) {
     /* suppress end of lap, if it's really end of step */
-    if (!(trigger instanceof EventTrigger)) {
+    if (!(trigger instanceof EventTrigger et)) {
       return false;
     }
 
-    EventTrigger et = (EventTrigger) trigger;
-    if (et.scope != Scope.LAP || et.event != Event.COMPLETED) return false;
+      if (et.scope != Scope.LAP || et.event != Event.COMPLETED) return false;
 
     Step s = w.getCurrentStep();
     if (s == null || s.getDurationType() == null) return false;
