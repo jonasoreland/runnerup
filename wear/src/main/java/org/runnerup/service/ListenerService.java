@@ -47,8 +47,9 @@ public class ListenerService extends WearableListenerService {
   private WearableClient mGoogleApiClient = null;
   private Notification notification = null;
   private TrackerState trackerState = null;
-  private Boolean phoneRunning = null;
+  private Boolean phoneRunning = null;  // TrackerWear
   private Boolean mainActivityRunning = null;
+  private Boolean phoneApp = null;  // StartActivity
 
   @Override
   public void onCreate() {
@@ -69,6 +70,10 @@ public class ListenerService extends WearableListenerService {
         } else {
           trackerState = null;
         }
+        maybeShowNotification();
+      });
+    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_APP, dataItem -> {
+        phoneApp = (dataItem != null);
         maybeShowNotification();
       });
   }
@@ -119,6 +124,8 @@ public class ListenerService extends WearableListenerService {
           trackerState = StateService.getTrackerStateFromDataItem(ev.getDataItem());
           phoneRunning = true;
         }
+      } else if (Constants.Wear.Path.PHONE_APP.contentEquals(path)) {
+        phoneApp = !deleted;
       } else {
         // other path
         continue;
@@ -143,14 +150,20 @@ public class ListenerService extends WearableListenerService {
 
   private void maybeShowNotification() {
     System.err.println("mainActivityRunning=" + mainActivityRunning +
+                       ", phoneApp=" + phoneApp +
                        " ,phoneRunning=" + phoneRunning +
                        " ,trackerState=" + trackerState);
     if (mainActivityRunning == Boolean.TRUE) {
       dismissNotification();
       return;
     }
-    if (phoneRunning == Boolean.FALSE) {
+    if (phoneRunning == Boolean.FALSE && phoneApp == Boolean.FALSE) {
       dismissNotification();
+      return;
+    }
+
+    if (phoneApp == Boolean.TRUE) {
+      showNotification();
       return;
     }
 
@@ -158,7 +171,6 @@ public class ListenerService extends WearableListenerService {
       System.err.println("wait for read");
       return;
     }
-
     showNotification();
   }
 

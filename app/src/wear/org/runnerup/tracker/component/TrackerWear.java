@@ -210,10 +210,14 @@ public class TrackerWear extends DefaultTrackerComponent
   }
 
   private void readData() {
-    mWearableClient.readData(Wear.Path.WEAR_NODE_ID, dataItem -> {
-        wearNode = dataItem.getUri().getHost();
-        Log.e(getName(), "getDataItem => wearNode:" + wearNode);
-      });
+    mWearableClient.readData(
+        Wear.Path.WEAR_NODE_ID,
+        dataItem -> {
+          if (dataItem != null) {
+            wearNode = dataItem.getUri().getHost();
+            Log.e(getName(), "getDataItem => wearNode:" + wearNode);
+          }
+        });
   }
 
   private void setData() {
@@ -520,4 +524,20 @@ public class TrackerWear extends DefaultTrackerComponent
       ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
     setTrackerState(newValue);
   }
+
+  static public class WearNotifier {
+    private WearableClient mWearableClient;
+
+    public WearNotifier(Context context) {
+      mWearableClient = new WearableClient(context);
+    }
+    public void onCreate() {}
+    public void onResume() {
+      mWearableClient.putData(Wear.Path.PHONE_APP);
+    }
+    public void onPause() {
+      mWearableClient.deleteData(Wear.Path.PHONE_APP);
+    }
+    public void onDestroy() {}
+  };
 }
