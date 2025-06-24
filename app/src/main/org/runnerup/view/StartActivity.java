@@ -330,7 +330,8 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
             });
 
     mWearNotifier = new TrackerWear.WearNotifier(getApplicationContext());
-    mWearNotifier.onCreate();
+    mWearNotifier.onViewCreated();
+
   }
 
   private class OnConfigureAudioListener implements OnSetValueListener {
