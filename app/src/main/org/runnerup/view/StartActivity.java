@@ -131,6 +131,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
   private View wearOsIndicator = null;
   private TextView wearOsMessage = null;
+  private TrackerWear.WearNotifier mWearNotifier = null;
 
   boolean batteryLevelMessageShown = false;
   private Boolean exit = false;
@@ -327,6 +328,10 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
                 }
               }
             });
+
+    mWearNotifier = new TrackerWear.WearNotifier(getApplicationContext());
+    mWearNotifier.onViewCreated();
+
   }
 
   private class OnConfigureAudioListener implements OnSetValueListener {
@@ -410,6 +415,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
       onGpsTrackerBound();
     }
     this.updateView();
+    mWearNotifier.onResume();
   }
 
   @Override
@@ -427,6 +433,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
         mTracker.reset();
       }
     }
+    mWearNotifier.onPause();
   }
 
   @Override
@@ -444,6 +451,7 @@ public class StartActivity extends AppCompatActivity implements TickListener, Gp
 
     DBHelper.closeDB(mDB);
     super.onDestroy();
+    mWearNotifier.onDestroy();
   }
 
   private final BroadcastReceiver startEventBroadcastReceiver =

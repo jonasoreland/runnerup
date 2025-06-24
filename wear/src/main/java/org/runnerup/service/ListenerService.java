@@ -16,7 +16,6 @@
  */
 package org.runnerup.service;
 
-import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -24,95 +23,59 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.wear.ongoing.OngoingActivity;
 import androidx.wear.ongoing.Status;
 import androidx.wear.ongoing.Status.TextPart;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataItemBuffer;
 import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
-import java.util.function.Consumer;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
+import org.runnerup.wear.WearableClient;
 
 public class ListenerService extends WearableListenerService {
 
   private final int notificationId = 10;
 
-  private DataClient mGoogleApiClient = null;
+  private WearableClient mGoogleApiClient = null;
   private Notification notification = null;
   private TrackerState trackerState = null;
-  private Boolean phoneRunning = null;
+  private Boolean phoneRunning = null;  // TrackerWear
   private Boolean mainActivityRunning = null;
+  private Boolean phoneApp = null;  // StartActivity
 
   @Override
   public void onCreate() {
     super.onCreate();
     System.err.println("ListenerService.onCreate()");
-    mGoogleApiClient = Wearable.getDataClient(this);
-    readData(Constants.Wear.Path.WEAR_APP, new Consumer<>(){
-        @Override
-        public void accept(DataItem dataItem) {
-          mainActivityRunning = (dataItem != null);
-          maybeShowNotification();
-        }
+    mGoogleApiClient = new WearableClient(getApplicationContext());
+    mGoogleApiClient.readData(Constants.Wear.Path.WEAR_APP, dataItem -> {
+        mainActivityRunning = (dataItem != null);
+        maybeShowNotification();
       });
-    readData(Constants.Wear.Path.PHONE_NODE_ID, new Consumer<>(){
-        @Override
-        public void accept(DataItem dataItem) {
-          phoneRunning = (dataItem != null);
-          maybeShowNotification();
-        }
+    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
+        phoneRunning = (dataItem != null);
+        maybeShowNotification();
       });
-    readData(Constants.Wear.Path.TRACKER_STATE, new Consumer<>(){
-        @Override
-        public void accept(DataItem dataItem) {
-          if (dataItem != null) {
-            trackerState = StateService.getTrackerStateFromDataItem(dataItem);
-          } else {
-            trackerState = null;
-          }
-          maybeShowNotification();
+    mGoogleApiClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
+        if (dataItem != null) {
+          trackerState = StateService.getTrackerStateFromDataItem(dataItem);
+        } else {
+          trackerState = null;
         }
+        maybeShowNotification();
       });
-  }
-
-  private void readData(String path, Consumer<DataItem> consumer) {
-    mGoogleApiClient.getDataItems(new Uri.Builder()
-                                  .scheme(WEAR_URI_SCHEME)
-                                  .path(path)
-                                  .build())
-        .addOnCompleteListener(new OnCompleteListener<DataItemBuffer>() {
-            @Override
-            public void onComplete(Task<DataItemBuffer> task) {
-              if (task.isSuccessful()) {
-                DataItemBuffer dataItems = task.getResult();
-                if (dataItems.getCount() == 0) {
-                  consumer.accept(null);
-                } else {
-                  for (DataItem dataItem : dataItems) {
-                    consumer.accept(dataItem);
-                  }
-                }
-                dataItems.release();
-              } else {
-                System.out.println("task.getException(): " + task.getException());
-              }
-            }
-          });
+    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_APP, dataItem -> {
+        phoneApp = (dataItem != null);
+        maybeShowNotification();
+      });
   }
 
   @Override
@@ -161,6 +124,8 @@ public class ListenerService extends WearableListenerService {
           trackerState = StateService.getTrackerStateFromDataItem(ev.getDataItem());
           phoneRunning = true;
         }
+      } else if (Constants.Wear.Path.PHONE_APP.contentEquals(path)) {
+        phoneApp = !deleted;
       } else {
         // other path
         continue;
@@ -185,14 +150,20 @@ public class ListenerService extends WearableListenerService {
 
   private void maybeShowNotification() {
     System.err.println("mainActivityRunning=" + mainActivityRunning +
+                       ", phoneApp=" + phoneApp +
                        " ,phoneRunning=" + phoneRunning +
                        " ,trackerState=" + trackerState);
     if (mainActivityRunning == Boolean.TRUE) {
       dismissNotification();
       return;
     }
-    if (phoneRunning == Boolean.FALSE) {
+    if (phoneRunning == Boolean.FALSE && phoneApp == Boolean.FALSE) {
       dismissNotification();
+      return;
+    }
+
+    if (phoneApp == Boolean.TRUE) {
+      showNotification();
       return;
     }
 
@@ -200,7 +171,6 @@ public class ListenerService extends WearableListenerService {
       System.err.println("wait for read");
       return;
     }
-
     showNotification();
   }
 
