@@ -531,7 +531,7 @@ public class TrackerWear extends DefaultTrackerComponent
     public WearNotifier(Context context) {
       mWearableClient = new WearableClient(context);
     }
-    public void onCreate() {}
+    public void onViewCreated() {}
     public void onResume() {
       mWearableClient.putData(Wear.Path.PHONE_APP);
     }

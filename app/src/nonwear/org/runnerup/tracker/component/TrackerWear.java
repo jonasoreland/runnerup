@@ -47,7 +47,7 @@ public class TrackerWear extends DefaultTrackerComponent implements WorkoutObser
 
   static public class WearNotifier {
     public WearNotifier(Context context) {}
-    public void onCreate() {}
+    public void onViewCreated() {}
     public void onResume() {}
     public void onPause() {}
     public void onDestroy() {}
