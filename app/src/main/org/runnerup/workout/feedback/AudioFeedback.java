@@ -72,9 +72,7 @@ public class AudioFeedback extends Feedback {
 
   @Override
   public boolean equals(Feedback _other) {
-    if (!(_other instanceof AudioFeedback)) return false;
-
-    AudioFeedback other = (AudioFeedback) _other;
+    if (!(_other instanceof AudioFeedback other)) return false;
 
     return this.msgId == other.msgId
         &&

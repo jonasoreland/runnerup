@@ -166,9 +166,7 @@ public class ValueModelTest {
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof TestObject)) return false;
-
-      TestObject that = (TestObject) o;
+      if (!(o instanceof TestObject that)) return false;
 
       return getRandom().equals(that.getRandom());
     }

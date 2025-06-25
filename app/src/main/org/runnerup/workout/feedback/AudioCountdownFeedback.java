@@ -49,9 +49,7 @@ public class AudioCountdownFeedback extends Feedback {
 
   @Override
   public boolean equals(Feedback _other) {
-    if (!(_other instanceof AudioCountdownFeedback)) return false;
-
-    AudioCountdownFeedback other = (AudioCountdownFeedback) _other;
+    if (!(_other instanceof AudioCountdownFeedback other)) return false;
 
     return scope == other.scope && dimension == other.dimension;
   }

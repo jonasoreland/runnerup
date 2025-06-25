@@ -87,6 +87,7 @@
                     android:scheme="http"/>
                 <data android:host="*"/>
                 <data android:pathPattern="runnerup.db.export"
+                    android:autoVerify="false"
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
             <intent-filter>

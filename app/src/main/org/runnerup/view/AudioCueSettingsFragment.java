@@ -154,7 +154,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
 
   private void removePrefs(int[] remove) {
     Resources res = getResources();
-    PreferenceGroup group = (PreferenceGroup) findPreference("cueinfo");
+    PreferenceGroup group = findPreference("cueinfo");
     if (group == null) return;
     for (int aRemove : remove) {
       String s = res.getString(aRemove);
