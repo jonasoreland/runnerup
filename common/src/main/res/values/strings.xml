@@ -359,4 +359,7 @@
   <string name="use_temperature_sensor_summary">Record temperature</string>
   <string name="Current_speed_from_GPS_points_summary">Get speed from GPS sensor instead of calculating from GPS positions</string>
   <string name="Target_coaching_summary">Set period for calculating moving average for target feedback and the grace period for audio cues</string>
+  <string name="Activity_ongoing">Activity ongoing</string>
+  <string name="Activity_paused">Activity paused</string>
+  <string name="Activity_stopped">Activity stopped</string>
 </resources>

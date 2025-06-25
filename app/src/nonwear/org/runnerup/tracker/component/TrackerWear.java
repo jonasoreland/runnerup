@@ -44,4 +44,12 @@ public class TrackerWear extends DefaultTrackerComponent implements WorkoutObser
 
   @Override
   public void workoutEvent(WorkoutInfo workoutInfo, int type) {}
+
+  static public class WearNotifier {
+    public WearNotifier(Context context) {}
+    public void onViewCreated() {}
+    public void onResume() {}
+    public void onPause() {}
+    public void onDestroy() {}
+  };
 }

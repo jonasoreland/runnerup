@@ -48,6 +48,15 @@ android {
     buildFeatures {
         buildConfig true
     }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main']
+            if (rootProject.ext.enableWear) {
+               java.srcDirs += ['src/wear']
+            }
+        }
+    }
 }
 
 repositories {
@@ -61,4 +70,11 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+
+    if (rootProject.ext.enableWear) {
+        implementation "com.google.android.support:wearable:${rootProject.ext.googleWearVersion}"
+        compileOnly "com.google.android.wearable:wearable:${rootProject.ext.googleWearVersion}"
+
+        implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
+    }
 }

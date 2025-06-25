@@ -16,6 +16,7 @@
  */
 package org.runnerup.service;
 
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,29 +26,65 @@ import android.content.Intent;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.wear.ongoing.OngoingActivity;
+import androidx.wear.ongoing.Status;
+import androidx.wear.ongoing.Status.TextPart;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
+import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.view.MainActivity;
+import org.runnerup.wear.WearableClient;
 
 public class ListenerService extends WearableListenerService {
 
   private final int notificationId = 10;
 
+  private WearableClient mGoogleApiClient = null;
+  private Notification notification = null;
+  private TrackerState trackerState = null;
+  private Boolean phoneRunning = null;  // TrackerWear
+  private Boolean mainActivityRunning = null;
+  private Boolean phoneApp = null;  // StartActivity
+
   @Override
   public void onCreate() {
     super.onCreate();
     System.err.println("ListenerService.onCreate()");
+    mGoogleApiClient = new WearableClient(getApplicationContext());
+    mGoogleApiClient.readData(Constants.Wear.Path.WEAR_APP, dataItem -> {
+        mainActivityRunning = (dataItem != null);
+        maybeShowNotification();
+      });
+    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
+        phoneRunning = (dataItem != null);
+        maybeShowNotification();
+      });
+    mGoogleApiClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
+        if (dataItem != null) {
+          trackerState = StateService.getTrackerStateFromDataItem(dataItem);
+        } else {
+          trackerState = null;
+        }
+        maybeShowNotification();
+      });
+    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_APP, dataItem -> {
+        phoneApp = (dataItem != null);
+        maybeShowNotification();
+      });
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
     System.err.println("ListenerService.onDestroy()");
+    if (mGoogleApiClient != null) {
+      mGoogleApiClient = null;
+    }
   }
 
   @Override
@@ -60,10 +97,40 @@ public class ListenerService extends WearableListenerService {
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
       System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+      var type = ev.getType();
       String path = ev.getDataItem().getUri().getPath();
-      if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
-        handleNotification(ev);
+      if (!(type == DataEvent.TYPE_DELETED || type == DataEvent.TYPE_CHANGED)) {
+        // skip
+        continue;
       }
+      boolean deleted = (type == DataEvent.TYPE_DELETED);
+      if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
+        if (deleted) {
+          phoneRunning = false;
+        } else {
+          phoneRunning = true;
+        }
+      } else if (Constants.Wear.Path.WEAR_APP.contentEquals(path)) {
+        if (deleted) {
+          mainActivityRunning = false;
+        } else {
+          mainActivityRunning = true;
+        }
+      } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
+        if (deleted) {
+          trackerState = null;
+          phoneRunning = false;
+        } else {
+          trackerState = StateService.getTrackerStateFromDataItem(ev.getDataItem());
+          phoneRunning = true;
+        }
+      } else if (Constants.Wear.Path.PHONE_APP.contentEquals(path)) {
+        phoneApp = !deleted;
+      } else {
+        // other path
+        continue;
+      }
+      maybeShowNotification();
     }
   }
 
@@ -81,12 +148,30 @@ public class ListenerService extends WearableListenerService {
     }
   }
 
-  private void handleNotification(DataEvent ev) {
-    if (ev.getType() == DataEvent.TYPE_CHANGED) {
-      showNotification();
-    } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+  private void maybeShowNotification() {
+    System.err.println("mainActivityRunning=" + mainActivityRunning +
+                       ", phoneApp=" + phoneApp +
+                       " ,phoneRunning=" + phoneRunning +
+                       " ,trackerState=" + trackerState);
+    if (mainActivityRunning == Boolean.TRUE) {
       dismissNotification();
+      return;
     }
+    if (phoneRunning == Boolean.FALSE && phoneApp == Boolean.FALSE) {
+      dismissNotification();
+      return;
+    }
+
+    if (phoneApp == Boolean.TRUE) {
+      showNotification();
+      return;
+    }
+
+    if (mainActivityRunning == null || phoneRunning == null || trackerState == null) {
+      System.err.println("wait for read");
+      return;
+    }
+    showNotification();
   }
 
   private static NotificationChannel mChannel;
@@ -120,26 +205,95 @@ public class ListenerService extends WearableListenerService {
 
   private void showNotification() {
     // this intent will open the activity when the user taps the "open" action on the notification
+    if (notification != null) {
+      updateNotification();
+      return;
+    }
+    System.out.println("create notification");
+
     Intent viewIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingViewIntent =
-        PendingIntent.getActivity(this, 0, viewIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent.getActivity(this, 0, viewIntent,
+                                  PendingIntent.FLAG_IMMUTABLE |
+                                  PendingIntent.FLAG_UPDATE_CURRENT);
     String chanId = getChannelId(this);
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(this, chanId)
-            .setSmallIcon(R.drawable.ic_launcher)
-            .setContentTitle(getString(org.runnerup.common.R.string.app_name))
-            .setContentText(getString(org.runnerup.common.R.string.Start))
-            .setContentIntent(pendingViewIntent)
-            .setOngoing(true)
-            .setLocalOnly(true);
+        .setSmallIcon(R.drawable.ic_ongoing_notification)
+        .setContentTitle(getString(org.runnerup.common.R.string.app_name))
+        .setContentText(getString(org.runnerup.common.R.string.Start))
+        .setContentIntent(pendingViewIntent)
+        .setOngoing(true)
+        .setLocalOnly(true);
 
-    Notification notification = builder.build();
-    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-    notificationManagerCompat.notify(notificationId, notification);
+    var status = getStatusString();
+
+    OngoingActivity ongoingActivity =
+        new OngoingActivity.Builder(this, notificationId, builder)
+        // Sets the animated icon that will appear on the watch face in
+        // active mode.
+        // If it isn't set, the watch face will use the static icon in
+        // active mode.
+        // .setAnimatedIcon(R.drawable.ic_walk)
+        // Sets the icon that will appear on the watch face in ambient mode.
+        // Falls back to Notification's smallIcon if not set.
+        // If neither is set, an Exception is thrown.
+        .setStaticIcon(R.drawable.ic_ongoing_notification)
+        // Sets the tap/touch event so users can re-enter your app from the
+        // other surfaces.
+        // Falls back to Notification's contentIntent if not set.
+        // If neither is set, an Exception is thrown.
+        .setTouchIntent(pendingViewIntent)
+        // Here, sets the text used for the Ongoing Activity (more
+        // options are available for timers and stopwatches).
+        .setStatus(new Status.Builder().addPart("Status",
+                                                new TextPart(getStatusString())).build())
+        .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+        .build();
+    ongoingActivity.apply(this);
+
+    this.notification = builder.build();
+    NotificationManagerCompat.from(this).notify(notificationId, this.notification);
+  }
+
+  private void updateNotification() {
+    var ongoingActivity = OngoingActivity.recoverOngoingActivity(this);
+    System.out.println("update ongoingActivity: " + ongoingActivity);
+    if (ongoingActivity == null) {
+      return;
+    }
+    ongoingActivity.update(this, new Status.Builder()
+                           .addPart("Status",
+                                    new TextPart(getStatusString())).build());
   }
 
   private void dismissNotification() {
-    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-    notificationManagerCompat.cancel(notificationId);
+    System.out.println("dismissNotification");
+    this.notification = null;
+    NotificationManagerCompat.from(this).cancel(notificationId);
+  }
+
+  private String getStatusString() {
+    if (trackerState != null) {
+      switch (trackerState) {
+        case INIT:
+        case INITIALIZING:
+        case CLEANUP:
+        case ERROR:
+          return getString(org.runnerup.common.R.string.Waiting_for_phone);
+        case INITIALIZED:
+        case CONNECTED:
+          return getString(org.runnerup.common.R.string.Start_activity);
+        case CONNECTING:
+          return getString(org.runnerup.common.R.string.Waiting_for_GPS);
+        case STARTED:
+          return getString(org.runnerup.common.R.string.Activity_ongoing);
+        case PAUSED:
+          return getString(org.runnerup.common.R.string.Activity_paused);
+        case STOPPED:
+          return getString(org.runnerup.common.R.string.Activity_stopped);
+      }
+    }
+    return getString(org.runnerup.common.R.string.Waiting_for_phone);
   }
 }

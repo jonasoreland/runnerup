@@ -229,6 +229,8 @@ public interface Constants {
       /* Data: phone/wear nodes */
       String WEAR_NODE_ID = PREFIX + "/config/wear/node_id";
       String PHONE_NODE_ID = PREFIX + "/config/phone/node_id";
+      String WEAR_APP = PREFIX + "/config/wear/app";
+      String PHONE_APP = PREFIX + "/config/phone/app";
 
       /* Data: Card headers */
       String HEADERS = PREFIX + "/config/headers";

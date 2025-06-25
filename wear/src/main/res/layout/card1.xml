@@ -38,9 +38,10 @@
 
     <TextView
         android:id="@+id/textView11"
+        style="@style/Card1TextLarge"
         android:text="--:--"
-        tools:ignore="HardcodedText"
-        style="@style/Card1TextLarge" />
+        android:textAlignment="center"
+        tools:ignore="HardcodedText" />
 
   </LinearLayout>
 
