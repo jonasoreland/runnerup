@@ -159,8 +159,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
         final StepButton stepButton = row.findViewById(R.id.workout_step_button);
 
         Step currentStep = stepButton.getStep();
-        if (currentStep instanceof RepeatStep) {
-          RepeatStep rs = (RepeatStep) currentStep;
+        if (currentStep instanceof RepeatStep rs) {
           rs.getSteps().add(new Step());
         } else {
 
@@ -277,7 +276,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
   private void handleWorkoutFileException(Exception e) {
     new AlertDialog.Builder(CreateAdvancedWorkout.this)
         .setTitle(getString(org.runnerup.common.R.string.Failed_to_create_workout))
-        .setMessage("" + e.toString())
+        .setMessage(e.toString())
         .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
         .show();
   }

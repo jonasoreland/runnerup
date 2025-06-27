@@ -354,10 +354,10 @@ public class WorkoutSerializer {
      * The below I just added for "completeness"
      */
     else if (unit.equalsIgnoreCase("metersPerMillisecond")) {
-      factor = 1000.0 / 1.0;
+      factor = 1000.0;
       unitDim = Dimension.SPEED;
     } else if (unit.equalsIgnoreCase("metersPerSecond")) {
-      factor = 1.0 / 1.0;
+      factor = 1.0;
       unitDim = Dimension.SPEED;
     } else if (unit.equalsIgnoreCase("centimetersPerSecond")) {
       factor = 1.0 / 100.0;
@@ -371,10 +371,10 @@ public class WorkoutSerializer {
       factor = 1.0 / 1000.0;
       unitDim = Dimension.PACE;
     } else if (unit.equalsIgnoreCase("secondsPerMeter")) {
-      factor = 1.0 / 1.0;
+      factor = 1.0;
       unitDim = Dimension.PACE;
     } else if (unit.equalsIgnoreCase("secondsPerCentimeters")) {
-      factor = 100.0 / 1.0;
+      factor = 100.0;
       unitDim = Dimension.PACE;
     }
 
