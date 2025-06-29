@@ -17,6 +17,8 @@
 
 package org.runnerup.util;
 
+import static org.runnerup.util.Formatter.Format.TXT_SHORT;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -120,30 +122,32 @@ public class MapWrapper implements Constants {
       route.map.getOutlinePaint().setStrokeWidth(10.f);
       LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(mDB, mID);
       List<GeoPoint> points = new LinkedList<>();
+      int lastLap = -1;
       for (LocationEntity loc : ll) {
         GeoPoint point = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         points.add(point);
+
+        int lap = loc.getLap();
+        if (lastLap != lap) {
+          Marker marker = new Marker(route.mapView);
+          marker.setPosition(point);
+          String info =
+                  "#" + loc.getLap() + " "
+                          + formatter.formatDistance(TXT_SHORT, loc.getDistance().longValue())
+                          + " "
+                          + formatter.formatElapsedTime(TXT_SHORT, Math.round(loc.getElapsed() / 1000.0));
+          lastLap = lap;
+          marker.setTextIcon(info);
+          marker.setInfoWindow(null);
+          marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+          route.markers.add(marker);
+        }
       }
       ll.close();
       route.map.setPoints(points);
 
-      Marker markerStart = new Marker(route.mapView);
-      markerStart.setInfoWindow(null);
-      Marker markerEnd = new Marker(route.mapView);
-      markerEnd.setInfoWindow(null);
-      if (points.size() > 0) {
+      if (!points.isEmpty()) {
         iMapController.setCenter(points.get(0));
-
-        markerStart.setPosition(points.get(0));
-        markerEnd.setPosition(points.get(points.size() - 1));
-
-        markerStart.setTextIcon(context.getString(org.runnerup.common.R.string.Start));
-        markerEnd.setTextIcon(context.getString(org.runnerup.common.R.string.Finished));
-
-        markerStart.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        markerEnd.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        route.markers.add(markerStart);
-        route.markers.add(markerEnd);
       }
 
       return route;
