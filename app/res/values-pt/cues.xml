@@ -20,7 +20,7 @@
   <string name="cue_warmup">aquecimento</string>
   <string name="cue_cooldown">arrefecimento</string>
   <string name="cue_current">atual</string>
-  <string name="cue_perkilometer">por quilómetro</string>
+  <string name="cue_perkilometer">por quilômetro</string>
   <string name="cue_permile">por milha</string>
   <string name="cue_started">iniciado</string>
   <string name="cue_paused">pausado</string>
@@ -50,7 +50,7 @@
     <item quantity="other">%d metros</item>
   </plurals>
   <plurals name="cue_kilometer">
-    <item quantity="one">%s quilómetro</item>
+    <item quantity="one">%s quilômetro</item>
     <item quantity="many">%s quilómetros</item>
     <item quantity="other">%s quilómetros</item>
   </plurals>
@@ -60,7 +60,7 @@
     <item quantity="other">%s milhas</item>
   </plurals>
   <plurals name="cue_kilometers_per_hour">
-    <item quantity="one">%s quilómetro por hora</item>
+    <item quantity="one">%s quilômetro por hora</item>
     <item quantity="many">%s quilómetros por hora</item>
     <item quantity="other">%s quilómetros por hora</item>
   </plurals>
