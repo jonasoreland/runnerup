@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -32,6 +33,7 @@ import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
 
@@ -71,6 +73,19 @@ public class MapWrapper implements Constants {
     new LoadRoute().execute(new LoadParam(context, mDB, mID, mapView, iMapController));
   }
 
+  class Route {
+    Route(Context context, MapView mapView) {
+      this.context = context;
+      this.mapView = mapView;
+      this.map = new Polyline(mapView, true);
+    }
+
+    final Context context;
+    final MapView mapView;
+    final Polyline map;
+    List<Marker> markers = new ArrayList<>(2);
+  }
+
   private class LoadParam {
     LoadParam(
         Context context,
@@ -93,16 +108,16 @@ public class MapWrapper implements Constants {
   }
 
   @SuppressLint("StaticFieldLeak")
-  private class LoadRoute extends AsyncTask<LoadParam, Void, Polyline> {
+  private class LoadRoute extends AsyncTask<LoadParam, Void, Route> {
     @Override
-    protected Polyline doInBackground(LoadParam... params) {
-      MapView mapView = params[0].mapView;
+    protected Route doInBackground(LoadParam... params) {
+      Route route = new Route(params[0].context, params[0].mapView);
       SQLiteDatabase mDB = params[0].mDB;
       long mID = params[0].mID;
       IMapController iMapController = params[0].iMapController;
-      Polyline route = new Polyline(mapView, true);
-      route.setInfoWindow(null);
-      route.getOutlinePaint().setStrokeWidth(10.f);
+
+      route.map.setInfoWindow(null);
+      route.map.getOutlinePaint().setStrokeWidth(10.f);
       LocationEntity.LocationList<LocationEntity> ll = new LocationEntity.LocationList<>(mDB, mID);
       List<GeoPoint> points = new LinkedList<>();
       for (LocationEntity loc : ll) {
@@ -110,10 +125,11 @@ public class MapWrapper implements Constants {
         points.add(point);
       }
       ll.close();
-      route.setPoints(points);
-      Marker markerStart = new Marker(mapView);
+      route.map.setPoints(points);
+
+      Marker markerStart = new Marker(route.mapView);
       markerStart.setInfoWindow(null);
-      Marker markerEnd = new Marker(mapView);
+      Marker markerEnd = new Marker(route.mapView);
       markerEnd.setInfoWindow(null);
       if (points.size() > 0) {
         iMapController.setCenter(points.get(0));
@@ -126,14 +142,24 @@ public class MapWrapper implements Constants {
 
         markerStart.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         markerEnd.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-
-        mapView.getOverlays().add(markerStart);
-        mapView.getOverlays().add(markerEnd);
-
-        mapView.getOverlays().add(route);
+        route.markers.add(markerStart);
+        route.markers.add(markerEnd);
       }
 
       return route;
+    }
+
+    @Override
+    protected void onPostExecute(Route route) {
+
+      if (route != null && route.map != null && route.markers != null) {
+        for (Marker marker : route.markers) {
+          route.mapView.getOverlays().add(marker);
+        }
+
+        route.mapView.getOverlays().add(route.map);
+        //Log.v(getClass().getName(), "Added " + route.markers.size() + " markers");
+      }
     }
   }
 
