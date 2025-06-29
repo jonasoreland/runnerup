@@ -18,17 +18,17 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src/main']
             if (rootProject.ext.allowNonFree) {
-               java.srcDirs += ['src/play']
+                java.srcDirs += ['src/play']
             } else {
-               java.srcDirs += ['src/nonplay']
+                java.srcDirs += ['src/nonplay']
             }
             if (rootProject.ext.enableWear) {
-               java.srcDirs += ['src/wear']
+                java.srcDirs += ['src/wear']
             } else {
-               java.srcDirs += ['src/nonwear']
+                java.srcDirs += ['src/nonwear']
             }
             if (rootProject.ext.useMapBox) {
-               java.srcDirs += ['src/mapbox']
+                java.srcDirs += ['src/mapbox']
             } else {
                 java.srcDirs += ['src/nonmapbox']
             }
@@ -217,14 +217,12 @@ android.applicationVariants.configureEach {
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
         buildConfigField 'int', 'MAPBOX_ENABLED', "1"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
+
+        buildConfigField 'boolean', 'USING_OSMDROID', "false"
     } else {
         buildConfigField 'int', 'MAPBOX_ENABLED', "0"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
-    }
 
-    if (rootProject.ext.allowNonFree) {
-        buildConfigField 'boolean', 'USING_OSMDROID', "false"
-    } else {
         buildConfigField 'boolean', 'USING_OSMDROID', "true"
     }
 
