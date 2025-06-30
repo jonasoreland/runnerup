@@ -201,6 +201,14 @@ public class ListenerService extends WearableListenerService {
       updateNotification();
       return;
     }
+
+    // check if we have permission to post notification
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+      return;
+    }
+
     System.out.println("create notification");
 
     Intent viewIntent = new Intent(this, MainActivity.class);
