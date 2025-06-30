@@ -73,34 +73,33 @@ public class GpsStatus implements LocationListener {
     clear(true);
     this.listener = listener;
     if (ContextCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION)
-        == PackageManager.PERMISSION_GRANTED) {
-      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-      try {
-        Objects.requireNonNull(lm).requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-      } catch (Exception ex) {
-        lm = null;
-      }
-      if (lm != null) {
-        locationManager = lm;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          mGnssStatusCallback =
-              new GnssStatus.Callback() {
-                public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
-                  mKnownSatellites = status.getSatelliteCount();
-                  mUsedInLastFixSatellites = 0;
-                  for (int i = 0; i < mKnownSatellites; i++) {
-                    if (status.usedInFix(i)) {
-                      mUsedInLastFixSatellites++;
-                    }
-                  }
+        != PackageManager.PERMISSION_GRANTED) {
+      return;
+    }
+    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    try {
+      Objects.requireNonNull(lm).requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+    } catch (Exception ex) {
+      return;
+    }
+    locationManager = lm;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      mGnssStatusCallback =
+          new GnssStatus.Callback() {
+            public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
+              mKnownSatellites = status.getSatelliteCount();
+              mUsedInLastFixSatellites = 0;
+              for (int i = 0; i < mKnownSatellites; i++) {
+                if (status.usedInFix(i)) {
+                  mUsedInLastFixSatellites++;
                 }
-              };
-          locationManager.registerGnssStatusCallback(mGnssStatusCallback);
-        } else {
-          mGpsStatusListener = new gpsStatusListener();
-          locationManager.addGpsStatusListener(mGpsStatusListener);
-        }
-      }
+              }
+            }
+          };
+      locationManager.registerGnssStatusCallback(mGnssStatusCallback);
+    } else {
+      mGpsStatusListener = new gpsStatusListener();
+      locationManager.addGpsStatusListener(mGpsStatusListener);
     }
   }
 
@@ -120,6 +119,10 @@ public class GpsStatus implements LocationListener {
       }
     }
     locationManager = null;
+  }
+
+  public boolean isStarted() {
+    return listener != null;
   }
 
   @Override
