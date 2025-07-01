@@ -94,7 +94,6 @@
   <string name="Low_pace">Min. Pace</string>
   <string name="High_pace">Max. Pace</string>
   <string name="Sex">Geschlecht</string>
-  <string name="upload">Upload</string>
   <string name="Notes">Notizen</string>
   <string name="Laps">Runden</string>
   <string name="Map">Karte</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">Bist Du sicher?</string>
   <string name="Configure_audio_cues">Audiohinweise/Profile konfigurieren</string>
   <string name="Downloadeditremove_workouts">Trainings bearbeiten</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Verwende Dein Headset um RunnerUp zu starten/pausieren/fortzusetzen</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">\'Intervall\' Trainings nutzen \'Ruhe\' (wird nicht aufgezeichnet) für Pausen-Schritte. Verwende stattdessen \'Erholung\'?</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Verwenden Sie \"Erholung\" statt \"Ruhe\" (Pause) für  Countdown Schritte</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Datenbank exportieren</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">Rundenautomatik (m)</string>
   <string name="Autopause">Pausenautomatik</string>
   <string name="Autopause_summary">Autopause bei \'Basic\' Trainings und während Aufwärmen/Abkühlen</string>
-  <string name="Headset_key_startstop">Headset Taste start/stop</string>
   <string name="Activity_countdown">Countdown vor Aktivität</string>
   <string name="Activity_countdown_summary">Start-Countdown für \'Basic\' Trainings</string>
   <string name="Countdown_time_s">Countdown-Zeit (s)</string>
@@ -349,7 +346,6 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Herzfrequenz</string>
-  <string name="Headset_category">Fernbedienung</string>
   <string name="Lock_activity_buttons_category">Sperre Tasten</string>
   <string name="GPS_recording_category">GPS Aufnahme</string>
   <string name="Phone_sensors_category">Handy Sensoren</string>
@@ -370,4 +366,5 @@ Für die Wartung der Daten kann die Datei runnerup.db.export von/nach %1$s im-/e
   <string name="use_temperature_sensor_summary">Temperatur aufnehmen</string>
   <string name="Current_speed_from_GPS_points_summary">Nutze Gechwindigkeit vom GPS-Sensor, statt diese aus den GPS Positionen zu berechnen</string>
   <string name="Target_coaching_summary">Setze das Intervall mit dem die durchschnittliche Bewegung berechnet wird. Für Ziel Rückmeldungen und Pausen bei Audio-Hinweisen</string>
+  <string name="Activity_ongoing">Aktivität laufend</string>
 </resources>

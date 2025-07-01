@@ -80,7 +80,6 @@
   <string name="Low_pace">Nizak tempo</string>
   <string name="High_pace">Visok tempo</string>
   <string name="Sex">Pol</string>
-  <string name="upload">Upload</string>
   <string name="Notes">Napomene</string>
   <string name="Laps">Krugovi</string>
   <string name="Map">Mapa</string>
@@ -124,7 +123,6 @@
   <string name="Saving">Snimanje</string>
   <string name="Are_you_sure">Jeste li sigurni?</string>
   <string name="Configure_audio_cues">Podesi audio napomene</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Koristite slušalice za start/pauzu/nastavljanje RunnerUp</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksport baze na SD karticu (npr. za upgrade)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Import baze sa SD kartice (npr. poslije upgradea)</string>
   <string name="Accounts">Računi</string>
@@ -134,7 +132,6 @@
   <string name="Autolap">Auto krug</string>
   <string name="Autolap_m">Auto krug (m)</string>
   <string name="Autopause">Auto pauza</string>
-  <string name="Headset_key_startstop">Start/stop tipka na slušalicama</string>
   <string name="Countdown_time_s">Vrijeme odbrojavanja (s)</string>
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Napredne opcije</string>
@@ -237,4 +234,5 @@
   <string name="HRM_category">Puls</string>
   <string name="Autopause_category">Auto pauza</string>
   <string name="Target_category">Treniranje cilja</string>
+  <string name="Activity_ongoing">Aktivnost traje</string>
 </resources>

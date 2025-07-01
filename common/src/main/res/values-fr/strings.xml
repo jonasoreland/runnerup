@@ -94,7 +94,6 @@
   <string name="Low_pace">Rythme min.</string>
   <string name="High_pace">Rythme max.</string>
   <string name="Sex">Sexe</string>
-  <string name="upload">Envoyer</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Tours</string>
   <string name="Map">Carte</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">Êtes-vous sûr ?</string>
   <string name="Configure_audio_cues">Configurer le suivi audio</string>
   <string name="Downloadeditremove_workouts">Modifier les entrainements</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Utilisez le casque pour démarrer/pauser/reprendre RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Dans l\'onglet Intervalle, utilisez des étapes de Récupération plutôt que de Repos (pause)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Utiliser des étapes Récupération plutôt que Repos (pause) pour les étapes de compte à rebours insérées</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporter les données sur carte SD (ex : pour mise à jour)</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">Tour automatique (m)</string>
   <string name="Autopause">Pause automatique</string>
   <string name="Autopause_summary">Pause automatique dans les entraînements de base et les étapes Échauffement et Récupération</string>
-  <string name="Headset_key_startstop">Touche de casque début/fin</string>
   <string name="Activity_countdown">Compte à rebours avant démarrage</string>
   <string name="Activity_countdown_summary">Ajouter un compte à rebours au démarrage d\'un entraînement de base</string>
   <string name="Countdown_time_s">Compte à rebours (s)</string>
@@ -341,7 +338,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Fréquence Cardiaque</string>
-  <string name="Headset_category">Télécommande</string>
   <string name="Lock_activity_buttons_category">Verrouiller les boutons</string>
   <string name="GPS_recording_category">Enregistrement GPS</string>
   <string name="Phone_sensors_category">Capteurs du mobile</string>
@@ -361,4 +357,5 @@
   <string name="use_temperature_sensor_summary">Enregistrer la température</string>
   <string name="Current_speed_from_GPS_points_summary">Utiliser la vitesse du capteur GPS au lieu de la calculer à partir des positions GPS</string>
   <string name="Target_coaching_summary">Définir la période de calcul de la moyenne en temps réel pour le retour sur objectif et la période de grâce pour le suivi audio</string>
+  <string name="Activity_ongoing">Séance en cours</string>
 </resources>

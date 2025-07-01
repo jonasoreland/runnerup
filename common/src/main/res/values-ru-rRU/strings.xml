@@ -84,7 +84,6 @@
   <string name="Low_pace">Низкий темп</string>
   <string name="High_pace">Высокий темп</string>
   <string name="Sex">Пол</string>
-  <string name="upload">Выгрузить</string>
   <string name="Notes">Описание</string>
   <string name="Laps">Круги</string>
   <string name="Map">Карта</string>
@@ -137,7 +136,6 @@
   <string name="Cancellingplease_wait">Отмена, пожалуйста, подождите…</string>
   <string name="Are_you_sure">Уверен?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Пользуйся кнопкой гарнитуры для пуска/остановки RunnerUp</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Импорт базы данных с карты памяти (после обновления)</string>
   <string name="Accounts">Фитнес аккаунты</string>
@@ -147,7 +145,6 @@
   <string name="Autolap">Авто круг</string>
   <string name="Autolap_m">Авто круг (м)</string>
   <string name="Autopause">Авто пауза</string>
-  <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
   <string name="Activity_countdown">Обратный отсчет до начала активности</string>
   <string name="Countdown_time_s">Отсчитывать время ©</string>
   <string name="Unit_preference_title">Единицы</string>
@@ -280,4 +277,5 @@
   <string name="HRM_category">Пульс</string>
   <string name="Autopause_category">Авто пауза</string>
   <string name="Target_category">Тренировка по показателям</string>
+  <string name="Activity_ongoing">Продолжать</string>
 </resources>

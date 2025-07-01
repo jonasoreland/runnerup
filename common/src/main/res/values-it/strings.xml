@@ -94,7 +94,6 @@
   <string name="Low_pace">Ritmo basso</string>
   <string name="High_pace">Ritmo alto</string>
   <string name="Sex">Sesso</string>
-  <string name="upload">Carica</string>
   <string name="Notes">Note</string>
   <string name="Laps">Giri</string>
   <string name="Map">Mappa</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">Ne sei sicuro?</string>
   <string name="Configure_audio_cues">Configura notifiche audio</string>
   <string name="Downloadeditremove_workouts">Gestisci allenamenti</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa gli auricolari per avviare/sospendere/riprendere RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Nella tabella Intervalli, utilizza \"Recupero\" al posto di \"Riposo\" (pausa)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Per le fasi di conto alla rovescia, utilizzare Recupero invece di Riposo (pausa)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Esporta database su sdcard (ad esempio prima di un aggiornamento di sistema)</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">Giro automatico (m)</string>
   <string name="Autopause">Pausa automatica</string>
   <string name="Autopause_summary">Pausa automatica durante allenamenti di base e le fasi di Riscaldamento e Defaticamento</string>
-  <string name="Headset_key_startstop">Usa tasti auricolari per avviare/interrompere</string>
   <string name="Activity_countdown">Conto alla rovescia per iniziare l\'attività</string>
   <string name="Activity_countdown_summary">Aggiungi conto alla rovescia a attività</string>
   <string name="Countdown_time_s">Durata countdown (s)</string>
@@ -338,7 +335,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Frequenza cardiaca</string>
-  <string name="Headset_category">Controllo remoto</string>
   <string name="Lock_activity_buttons_category">Blocca i pulsanti</string>
   <string name="GPS_recording_category">Registrazione GPS</string>
   <string name="Phone_sensors_category">Sensori telefono</string>
@@ -358,4 +354,5 @@
   <string name="use_temperature_sensor_summary">Registra temperatura</string>
   <string name="Current_speed_from_GPS_points_summary">Ottieni la velocità dal GPS invece di calcolarla dalla posizione GPS</string>
   <string name="Target_coaching_summary">Imposta l\'intervallo di calcolo della media mobile per il feedback dell\'obiettivo e il tempo di grazia per le notifiche audio</string>
+  <string name="Activity_ongoing">Attività in corso</string>
 </resources>

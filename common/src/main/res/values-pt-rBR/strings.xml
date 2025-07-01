@@ -94,7 +94,6 @@
   <string name="Low_pace">Ritmo baixo</string>
   <string name="High_pace">Ritmo alto</string>
   <string name="Sex">Sexo</string>
-  <string name="upload">Enviar</string>
   <string name="Notes">Notas</string>
   <string name="Laps">Voltas</string>
   <string name="Map">Mapa</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">Você tem certeza?</string>
   <string name="Configure_audio_cues">Configurar avisos de áudio</string>
   <string name="Downloadeditremove_workouts">Editar exercícios</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usar o seu headset para iniciar/pausar/recomeçar o RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Na aba Intervalo, use etapas de Recuperação ao invés de Descanso (pausa)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Para inserir etapas com contagem regressiva, use etapas de Recuperação ao invés de Descanso (pausa)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporta banco de dados para o cartão SD (por exemplo, para atualização)</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">Volta automática (m)</string>
   <string name="Autopause">Pausa automática</string>
   <string name="Autopause_summary">Pausa automática em exercícios básicos e etapas de Aquecimento e Desaquecimento</string>
-  <string name="Headset_key_startstop">Tecla do headset inicia/para</string>
   <string name="Activity_countdown">Contagem regressiva para início da atividade</string>
   <string name="Activity_countdown_summary">Adicionar contagem regressiva para o início do treino básico</string>
   <string name="Countdown_time_s">Tempo da contagem regressiva (s)</string>
@@ -341,7 +338,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Frequência cardíaca</string>
-  <string name="Headset_category">Controle remoto</string>
   <string name="Lock_activity_buttons_category">Travar botões</string>
   <string name="GPS_recording_category">Registro de GPS</string>
   <string name="Phone_sensors_category">Sensores do telefone</string>
@@ -361,4 +357,5 @@
   <string name="use_temperature_sensor_summary">Registrar temperatura</string>
   <string name="Current_speed_from_GPS_points_summary">Obter velocidade do sensor de GPS em vez de calcular das posições do GPS</string>
   <string name="Target_coaching_summary">Definir o período para o cálculo da média móvel para o informe da meta e o período de tolerância para os avisos de áudio</string>
+  <string name="Activity_ongoing">Atividade em andamento</string>
 </resources>

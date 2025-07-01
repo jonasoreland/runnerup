@@ -92,7 +92,6 @@
   <string name="Low_pace">Alacsony tempó</string>
   <string name="High_pace">Magas tempó</string>
   <string name="Sex">Nem</string>
-  <string name="upload">Feltöltés</string>
   <string name="Notes">Jegyzetek</string>
   <string name="Laps">Körök</string>
   <string name="Map">Térkép</string>
@@ -146,7 +145,6 @@
   <string name="Cancellingplease_wait">Megszakítás...</string>
   <string name="Are_you_sure">Biztos vagy benne?</string>
   <string name="Configure_audio_cues">Beszédprofilok beállítása</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Használd a fülhallgatót az indításhoz/szünethez/folytatáshoz</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Az Intervallum fülön Regenerációt használj Pihenés (szünet) helyett</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Adatbázis exportálása külső tárolóra</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Adatbázis importálása külső tárolóról</string>
@@ -158,7 +156,6 @@
   <string name="Autolap">Automatikus kör</string>
   <string name="Autolap_m">Automatikus kör (m)</string>
   <string name="Autopause">Automatikus szünet</string>
-  <string name="Headset_key_startstop">Fülhallgató gomb indítás/megállítás</string>
   <string name="Countdown_time_s">Visszaszámlálás ideje (s)</string>
   <string name="Unit_preference_title">Mértékegységek</string>
   <string name="Unit_preference">Távolság mértékegysége</string>
@@ -277,4 +274,5 @@
   <string name="HRM_category">Pulzus</string>
   <string name="Autopause_category">Automatikus szünet</string>
   <string name="Target_category">Célorientált edzés</string>
+  <string name="Activity_ongoing">Tevékenység folyamatban</string>
 </resources>

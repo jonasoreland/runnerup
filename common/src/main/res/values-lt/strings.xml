@@ -93,7 +93,6 @@
   <string name="Low_pace">Lėtas tempas</string>
   <string name="High_pace">Greitas tempas</string>
   <string name="Sex">Lytis</string>
-  <string name="upload">Įkelti</string>
   <string name="Notes">Pastabos</string>
   <string name="Laps">Etapai</string>
   <string name="Map">Žemėlapis</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Nutraukiama, prašome palaukti...</string>
   <string name="Are_you_sure">Ar tikrai?</string>
   <string name="Configure_audio_cues">Konfigūruoti garsinius nurodymus</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Naudoti laisvų rankų įrangą RunnerUp paleidimui/stabdymui/pratęsimui</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Kortelėje \"Intervalas\" naudoti \"Atsistatymo\" žingnius,  vietoj \"Poilsis (pauzė)\".</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Įterptiems atgalinio skaičiavimo žingsniams naudoti \"Atsistaymo\" žingsnius, vietoj \"Poilsis (pauzė)\"</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuoti duomenų bazę į SD kortelę (pvz. atnaujinimui)</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Automatinis etapas (m)</string>
   <string name="Autopause">Automatinė pauzė</string>
   <string name="Autopause_summary">Automatinė pauzė įprastų treniruočių metu bei \"Apšilimo\" ir \"Atvėsimo\" etapuose</string>
-  <string name="Headset_key_startstop">Laisvų rankų įrangos start/stop mygtukas</string>
   <string name="Activity_countdown">Atgalinis skaičiavimas iki veiklos pradžios</string>
   <string name="Activity_countdown_summary">Pridėti atgalinį skaičiavimą prie įprastos treniruotės pradžios</string>
   <string name="Countdown_time_s">Atskaitos laikas (s)</string>
@@ -326,4 +323,5 @@
   <string name="HRM_category">Širdies ritmas</string>
   <string name="Autopause_category">Automatinė pauzė</string>
   <string name="Target_category">Tikslinis instruktavimas</string>
+  <string name="Activity_ongoing">Veikla vyksta</string>
 </resources>

@@ -89,7 +89,6 @@
   <string name="Low_pace">Hidas vauhti</string>
   <string name="High_pace">Nopea vauhti</string>
   <string name="Sex">Sukupuoli</string>
-  <string name="upload">Lähetä</string>
   <string name="Notes">Muistiinpanot</string>
   <string name="Laps">Kierrokset</string>
   <string name="Map">Kartta</string>
@@ -138,7 +137,6 @@
   <string name="Saving">Tallennetaan</string>
   <string name="Are_you_sure">Oletko varma?</string>
   <string name="Configure_audio_cues">Konfiguroi äänipalaute</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Käynnistä/pysäytä/jatka kuulokkeillasi RunnerUp sovelluksen toiminta</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Tallenna tietokanta muistikortille</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Lataa tietokanta muistikortilta</string>
   <string name="Accounts">Tilit</string>
@@ -148,7 +146,6 @@
   <string name="Autolap">Automaattikierros</string>
   <string name="Autolap_m">Automaattikierros (m)</string>
   <string name="Autopause">Automaattinen pysäytys</string>
-  <string name="Headset_key_startstop">Kuulokkeiden start/stop</string>
   <string name="Countdown_time_s">Lähtölaskennan kesto (s)</string>
   <string name="Auto_start_GPS">Käynnistä GPS automaattisesti</string>
   <string name="Advanced_options">Edistykselliset vaihtoehdot</string>
@@ -260,4 +257,5 @@
   <string name="HRM_category">Syke</string>
   <string name="Autopause_category">Automaattinen pysäytys</string>
   <string name="Target_category">Tavoitteellinen valmennus</string>
+  <string name="Activity_ongoing">Harjoitus käynnissä</string>
 </resources>

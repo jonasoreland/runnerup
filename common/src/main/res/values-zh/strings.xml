@@ -94,7 +94,6 @@
   <string name="Low_pace">低配速</string>
   <string name="High_pace">高配速</string>
   <string name="Sex">性別</string>
-  <string name="upload">上传</string>
   <string name="Notes">备注</string>
   <string name="Laps">分段</string>
   <string name="Map">地图</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">你确定吗?</string>
   <string name="Configure_audio_cues">设置语音提示</string>
   <string name="Downloadeditremove_workouts">编辑训练</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">使用耳机开始/暂停/恢复RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">在间隔标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">在高级标签页中转换休息步骤 （距离 -&gt; 恢复）</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">导出数据库到SD卡</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">自动分段（米）</string>
   <string name="Autopause">自动暂停</string>
   <string name="Autopause_summary">在基础训练中像热身和冷身一样使用自动暂停</string>
-  <string name="Headset_key_startstop">使用耳机开始/停止</string>
   <string name="Activity_countdown">活动倒计时</string>
   <string name="Activity_countdown_summary">在基本练习中添加倒计时</string>
   <string name="Countdown_time_s">倒计时时间 (秒)</string>
@@ -341,7 +338,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">心率</string>
-  <string name="Headset_category">远程控制</string>
   <string name="Lock_activity_buttons_category">锁定按钮</string>
   <string name="GPS_recording_category">GPS记录</string>
   <string name="Phone_sensors_category">手机传感器</string>
@@ -361,4 +357,5 @@
   <string name="use_temperature_sensor_summary">记录温度</string>
   <string name="Current_speed_from_GPS_points_summary">使用GPS传感器获取速度而非根据GPS位置计算速度</string>
   <string name="Target_coaching_summary">设置计算目标反馈的移动平均值的周期和音频提示的宽限期</string>
+  <string name="Activity_ongoing">运动开始</string>
 </resources>

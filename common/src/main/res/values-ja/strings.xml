@@ -89,7 +89,6 @@
   <string name="Low_pace">ローペース</string>
   <string name="High_pace">ハイペース</string>
   <string name="Sex">性別</string>
-  <string name="upload">アップロード</string>
   <string name="Notes">メモ</string>
   <string name="Laps">ラップ</string>
   <string name="Map">地図</string>
@@ -139,7 +138,6 @@
   <string name="Saving">保存中</string>
   <string name="Are_you_sure">よろしいですか?</string>
   <string name="Configure_audio_cues">音声合図の設定</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">ヘッドセットを使用して RunnerUp を開始/一時休止/再開する</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">SD カードにデータベースをエクスポート (アップグレード用など)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">SD カードからデータベースをインポート (アップグレード後など)</string>
   <string name="Accounts">アカウント</string>
@@ -149,7 +147,6 @@
   <string name="Autolap">自動ラップ</string>
   <string name="Autolap_m">自動ラップ (m)</string>
   <string name="Autopause">自動一時休止</string>
-  <string name="Headset_key_startstop">ヘッドセットのキーで開始/休止</string>
   <string name="Activity_countdown">アクティビティ開始のカウントダウン</string>
   <string name="Countdown_time_s">カウントダウン時間 (s)</string>
   <string name="Auto_start_GPS">GPS 自動開始</string>
@@ -287,4 +284,5 @@
   <string name="HRM_category">心拍数</string>
   <string name="Autopause_category">自動一時休止</string>
   <string name="Target_category">目標コーチング</string>
+  <string name="Activity_ongoing">アクティビティ継続中</string>
 </resources>

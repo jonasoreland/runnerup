@@ -93,7 +93,6 @@
   <string name="Low_pace">Низкий темп</string>
   <string name="High_pace">Высокий темп</string>
   <string name="Sex">Пол</string>
-  <string name="upload">Выгрузить</string>
   <string name="Notes">Описание</string>
   <string name="Laps">Круги</string>
   <string name="Map">Карта</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Отмена, пожалуйста, подождите...</string>
   <string name="Are_you_sure">Вы уверены?</string>
   <string name="Configure_audio_cues">Настройка голосового сопровождения</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Используйте гарнитуру для запуска/паузы/возобновления RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">На вкладке «Интервал» используется «Восстановление» вместо шага «Отдых» (паузы).</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Экспорт базы данных на карту памяти (перед обновлением)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Импорт базы данных с карты памяти (после обновления)</string>
@@ -162,7 +160,6 @@
   <string name="Autolap_m">Авто круг (м)</string>
   <string name="Autopause">Авто пауза</string>
   <string name="Autopause_summary">Автопауза в основных тренировках и на этапах разминки и заминки</string>
-  <string name="Headset_key_startstop">Кнопка гарнитуры старт/стоп</string>
   <string name="Activity_countdown">Отсчёт до начала тренировки</string>
   <string name="Activity_countdown_summary">Добавить обратный отсчет до начала тренировки</string>
   <string name="Countdown_time_s">Отсчитывать время ©</string>
@@ -332,7 +329,6 @@
   <string name="check_internet_connection">Пожалуйста, проверьте ваше интернет-соединение</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Пульс</string>
-  <string name="Headset_category">Дистанционное управление</string>
   <string name="Lock_activity_buttons_category">Блокировка кнопок</string>
   <string name="GPS_recording_category">Запись GPS</string>
   <string name="Phone_sensors_category">Датчики телефона</string>
@@ -350,4 +346,5 @@
   <string name="use_temperature_sensor_summary">Запись температуры</string>
   <string name="Current_speed_from_GPS_points_summary">Получить скорость от датчика GPS вместо вычисления по GPS-положениям</string>
   <string name="Target_coaching_summary">Задать период для расчета скользящего среднего для обратной связи с целью и льготный период для звуковых сигналов</string>
+  <string name="Activity_ongoing">Продолжать</string>
 </resources>

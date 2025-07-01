@@ -93,7 +93,6 @@
   <string name="Low_pace">Ritm lent</string>
   <string name="High_pace">Ritm rapid</string>
   <string name="Sex">Sex</string>
-  <string name="upload">Încarcă</string>
   <string name="Notes">Notițe</string>
   <string name="Laps">Runde</string>
   <string name="Map">Hartă</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Se anulează, așteptați...</string>
   <string name="Are_you_sure">Sunteți sigur?</string>
   <string name="Configure_audio_cues">Configurează sunetele audio</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Utilizați setul cu cască pentru a porni / întrerupe / relua RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">În fila Interval, utilizați etape Recuperare în loc de Odihnă (pauză)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Pentru etapele numărați înapoi, folosiți etape Recuperare în loc de Odihnă (pauză)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportați baza de date în spațiu de stocare</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Runda automată (m)</string>
   <string name="Autopause">Autopauză</string>
   <string name="Autopause_summary">Autopauză în antrenamentele de bază și în etapele de încălzire și relaxare</string>
-  <string name="Headset_key_startstop">Buton cască de pornire / oprire</string>
   <string name="Activity_countdown">Numărătoarea inversă la începutul activității</string>
   <string name="Activity_countdown_summary">Adăugați numărătoarea inversă la începutul antrenamentului de bază</string>
   <string name="Countdown_time_s">Timpul de numărătoare inversă (s)</string>
@@ -330,4 +327,5 @@
   <string name="HRM_category">Ritmul cardiac</string>
   <string name="Autopause_category">Autopauză</string>
   <string name="Target_category">Coaching pentru țintă</string>
+  <string name="Activity_ongoing">Activitate în derulare</string>
 </resources>
