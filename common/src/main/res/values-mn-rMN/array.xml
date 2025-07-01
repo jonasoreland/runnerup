@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string-array name="unitEntries">
+    <item>Миль</item>
+    <item>Километерүүд</item>
+  </string-array>
+  <!--Note: keep in same order as DB.INTENSITY-->
+  <string-array name="step_intensity_types">
+    <item>Халаалт</item>
+    <item>Идэвхтэй үе</item>
+    <item>Амралт</item>
+    <item>Сэргэлт</item>
+    <item>Хөргөлт</item>
+  </string-array>
+  <string-array name="duration_types">
+    <item>Дарж дуустал</item>
+    <item>Хугацаа</item>
+    <item>Зай</item>
+  </string-array>
+  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+  <string-array name="sportEntries">
+    <item>Гүйлт</item>
+    <item>Дугуй унах</item>
+    <item>Бусад</item>
+    <item>Чиг баримжаа олох</item>
+    <item>Алхалт</item>
+  </string-array>
+  <string-array name="types">
+    <item>Цаг</item>
+    <item>Зай</item>
+  </string-array>
+  <string-array name="sexes">
+    <item>Эрэгтэй</item>
+    <item>Эмэгтэй</item>
+  </string-array>
+  <!--Note: keep in same order as DB-->
+  <string-array name="path_simplification_algorithm_titles">
+    <item>Радиалын зай (хурдан)</item>
+    <item>Рамер-Дуглас-Пойкер (өндөр чанартай)</item>
+  </string-array>
+</resources>

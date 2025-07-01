@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  (at your option) any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+  <string name="cue_activity">идэвхтэй үйл ажиллагаа</string>
+  <string name="cue_interval">завсарлага</string>
+  <string name="cue_lap">зай</string>
+  <string name="cue_warmup">халаалт</string>
+  <string name="cue_cooldown">сэрүүцэх</string>
+  <string name="cue_started">эхэлсэн</string>
+  <string name="cue_paused">түр зогссон</string>
+  <string name="cue_resumed">сэргээсэн</string>
+  <string name="cue_stopped">зогссон</string>
+  <string name="cue_completed">дууссан</string>
+  <string name="cue_speedup">хурд нэм</string>
+  <string name="cue_slowdown">хурд хас</string>
+  <string name="cue_activity_paused">идэвхтэй үйл ажиллагааг зогсоосон</string>
+  <string name="cue_activity_resumed">идэвхтэй үйл ажиллагааг сэргээсэн</string>
+  <string name="cue_activity_stopped">идэвхтэй үйл ажиллагааг зогсоосон</string>
+  <string name="cue_lap_started">зайг эхлүүлсэн</string>
+  <string name="cue_lap_completed">зай дууссан</string>
+  <string name="cue_warmup_started">халаалтыг эхлүүлсэн</string>
+  <string name="cue_cooldown_started">хөргөлтыг эхлүүлсэн</string>
+</resources>
