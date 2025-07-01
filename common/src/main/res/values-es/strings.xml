@@ -93,7 +93,6 @@
   <string name="Low_pace">Ritmo bajo</string>
   <string name="High_pace">Ritmo alto</string>
   <string name="Sex">Sexo</string>
-  <string name="upload">Cargar</string>
   <string name="Notes">Notas</string>
   <string name="Laps">Vueltas</string>
   <string name="Map">Mapa</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Cancelando, espere...</string>
   <string name="Are_you_sure">¿Estas seguro?</string>
   <string name="Configure_audio_cues">Configurar indicaciones de audio</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Usa tus auriculares para iniciar/pausar/resumir RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">En la pestaña Intervalo, utilizar etapas Recuperación en vez de Descanso (pausa)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">En etapas de cuenta atrás insertadas, utilizar etapas de Recuperación en vez de Descanso (pausa)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportar la base de datos a la tarjeta sd (ej. para actualización)</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Vuelta automática (m)</string>
   <string name="Autopause">Pausar automáticamente</string>
   <string name="Autopause_summary">Pausa automàtica en entrenamientos básicos y etapas de Calentamiento y Enfriamiento</string>
-  <string name="Headset_key_startstop">Botón del auticular comienza/termina</string>
   <string name="Activity_countdown">Cuenta atrás para el inicio de la actividad</string>
   <string name="Activity_countdown_summary">Añadir una cuenta atrás al inicio de los entrenamientos básicos</string>
   <string name="Countdown_time_s">Tiempo de cuenta atrás (s)</string>
@@ -324,4 +321,5 @@
   <string name="HRM_category">Frecuencia cardíaca</string>
   <string name="Autopause_category">Pausar automáticamente</string>
   <string name="Target_category">Entrenador de objetivos</string>
+  <string name="Activity_ongoing">Actividad en curso</string>
 </resources>

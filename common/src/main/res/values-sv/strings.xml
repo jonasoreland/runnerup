@@ -94,7 +94,6 @@
   <string name="Low_pace">Lågt tempo</string>
   <string name="High_pace">Högt tempo</string>
   <string name="Sex">Kön</string>
-  <string name="upload">Ladda upp</string>
   <string name="Notes">Noteringar</string>
   <string name="Laps">Varv</string>
   <string name="Map">Karta</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">Är du säker?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
   <string name="Downloadeditremove_workouts">Ändra träningspass</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Använd dina lurar för att starta/pausa/återuppta RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben, använd Återhämting för Vila (paus) steg</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">För inlagda nedräkningssteg, använd Återhämting för Vila (paus) steg</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exportera databas till sdkort (t.ex. före uppgradering)</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">Autovarv (m)</string>
   <string name="Autopause">Autopaus</string>
   <string name="Autopause_summary">Autopaus i standard pass samt Uppvärmning och Nedvarvning steg</string>
-  <string name="Headset_key_startstop">Hörlursknapp start/stopp</string>
   <string name="Activity_countdown">Nedräkning till aktivitet start</string>
   <string name="Activity_countdown_summary">Lägg till nedräkning till aktivitetsstart för standard pass</string>
   <string name="Countdown_time_s">Nedräkningstid (s)</string>
@@ -341,7 +338,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Puls</string>
-  <string name="Headset_category">Fjärrkontroll</string>
   <string name="Lock_activity_buttons_category">Lås aktivitetsknappar</string>
   <string name="GPS_recording_category">GPS inspelning</string>
   <string name="Phone_sensors_category">Telefon sensorer</string>
@@ -361,4 +357,5 @@
   <string name="use_temperature_sensor_summary">Spara temperatur</string>
   <string name="Current_speed_from_GPS_points_summary">Hastighet från GPS sensorn istället för att beräkna från GPS punkter</string>
   <string name="Target_coaching_summary">Set period för att beräkna rullande medelvärde för återkoppling och anståndstid för ljudmeddelanden</string>
+  <string name="Activity_ongoing">Aktivitet pågår</string>
 </resources>

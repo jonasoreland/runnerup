@@ -93,7 +93,6 @@
   <string name="Low_pace">Ritme baix</string>
   <string name="High_pace">Ritme alt</string>
   <string name="Sex">Sexe</string>
-  <string name="upload">Carrega</string>
   <string name="Notes">Notes</string>
   <string name="Laps">Trams</string>
   <string name="Map">Mapa</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Cancel·lant, espereu...</string>
   <string name="Are_you_sure">N\'esteu segur?</string>
   <string name="Configure_audio_cues">Configura les pistes d\'àudio</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Utilitzeu els auriculars per iniciar/fer una pausa/reprendre RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Utilitzeu etapes de Recuperació en lloc de Descans (pausa) a la pestanya Interval</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Utilitzeu etapes de Recuperació en lloc de Descans (pausa) amb les etapes de compte enrere inserides</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporteu la base de dades al dispositiu</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Tram automàtic (m)</string>
   <string name="Autopause">Pausa automàtica</string>
   <string name="Autopause_summary">Pausa automàtica en entrenaments bàsics i en etapes Escalfament i Refredament</string>
-  <string name="Headset_key_startstop">Botó auriculars inici/aturada</string>
   <string name="Activity_countdown">Compte enrere d\'inici d\'activitat</string>
   <string name="Activity_countdown_summary">Afegiu un compte enrere a l\'inici dels entrenaments bàsics</string>
   <string name="Countdown_time_s">Temps del compte enrere (s)</string>
@@ -330,4 +327,5 @@
   <string name="HRM_category">Freqüència cardíaca</string>
   <string name="Autopause_category">Pausa automàtica</string>
   <string name="Target_category">Entrenament d\'objectius</string>
+  <string name="Activity_ongoing">Activitat en curs</string>
 </resources>

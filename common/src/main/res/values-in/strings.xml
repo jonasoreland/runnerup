@@ -76,7 +76,6 @@
   <string name="Low_pace">Ritme pelan</string>
   <string name="High_pace">Ritme cepat</string>
   <string name="Sex">Jenis kelamin</string>
-  <string name="upload">Unggah</string>
   <string name="Notes">Catatan</string>
   <string name="Laps">Putaran</string>
   <string name="Map">Peta</string>
@@ -120,7 +119,6 @@
   <string name="Saving">Menyimpan</string>
   <string name="Are_you_sure">Anda yakin?</string>
   <string name="Configure_audio_cues">Pengaturan isyarat suara</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gunakan headset untuk memulai/menjeda/melanjutkan RunnerUp</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Ekspor data ke sdcard (sebelum upgrade)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Impor data dari sdcard (setelah upgrade)</string>
   <string name="Accounts">Akun</string>
@@ -130,7 +128,6 @@
   <string name="Autolap">Putaran otomatis</string>
   <string name="Autolap_m">Putaran otomatis (m)</string>
   <string name="Autopause">Jeda otomatis</string>
-  <string name="Headset_key_startstop">Tombol start/stop headset</string>
   <string name="Countdown_time_s">Waktu hitung mundur (d)</string>
   <string name="Auto_start_GPS">Nyalakan GPS otomatis</string>
   <string name="Advanced_options">Opsi mahir</string>
@@ -220,4 +217,5 @@
   <string name="HRM_category">Denyut jantung</string>
   <string name="Autopause_category">Jeda otomatis</string>
   <string name="Target_category">Pelatih target</string>
+  <string name="Activity_ongoing">Aktivitas berjalan</string>
 </resources>

@@ -93,7 +93,6 @@
   <string name="Low_pace">Lage tempo</string>
   <string name="High_pace">Hoge tempo</string>
   <string name="Sex">Geslacht</string>
-  <string name="upload">Upload</string>
   <string name="Notes">Notities</string>
   <string name="Laps">Rondes</string>
   <string name="Map">Kaart</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Aan het annlureren, een ogenblik a.u.b.</string>
   <string name="Are_you_sure">Weet u het zeker?</string>
   <string name="Configure_audio_cues">Configureer audiocues</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik uw headset om RunnerUp te starten/pauzeren/hervatten</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">Op de Interval tab, gebruik Herstel in plaats van Rust (pauze) stappen</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Voor toegevoegde countdown stappen, gebruik Herstel in plaats van Rust (pauze) stappen</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Exporteer de database naar sdcard (bijv. voor een upgrade)</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Automatische ronde (m)</string>
   <string name="Autopause">Automatische pauze</string>
   <string name="Autopause_summary">Automatische pauze in basis workouts en Warmup en Cooldown stappen</string>
-  <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen tot start van activiteit</string>
   <string name="Activity_countdown_summary">Voeg aftellen toe aan standaardtraining</string>
   <string name="Countdown_time_s">Aftellen tijd (s)</string>
@@ -330,4 +327,5 @@
   <string name="HRM_category">Hartslag</string>
   <string name="Autopause_category">Automatische pauze</string>
   <string name="Target_category">Doel coaching</string>
+  <string name="Activity_ongoing">Activiteit is gaande</string>
 </resources>

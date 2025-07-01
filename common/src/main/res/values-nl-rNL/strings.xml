@@ -93,7 +93,6 @@
   <string name="Low_pace">Laag tempo</string>
   <string name="High_pace">Hoog tempo</string>
   <string name="Sex">Geslacht</string>
-  <string name="upload">Uploaden</string>
   <string name="Notes">Notities</string>
   <string name="Laps">Rondes</string>
   <string name="Map">Kaart</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Annuleren, wacht even...</string>
   <string name="Are_you_sure">Weet je het zeker?</string>
   <string name="Configure_audio_cues">Configureer audiocues</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Gebruik je headset om RunnerUp te starten/pauzeren/hervatten</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Databank exporteren naar externe opslag</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Databank importeren uit externe opslag</string>
   <string name="Accounts">Accounts</string>
@@ -157,7 +155,6 @@
   <string name="Autolap">Automatische ronde</string>
   <string name="Autolap_m">Automatische ronde (m)</string>
   <string name="Autopause">Automatisch pauzeren</string>
-  <string name="Headset_key_startstop">Headset-toets start/stop</string>
   <string name="Activity_countdown">Aftellen tot start van activiteit</string>
   <string name="Countdown_time_s">Afteltijd (s)</string>
   <string name="Unit_preference_title">Eenheden</string>
@@ -306,4 +303,5 @@
   <string name="HRM_category">Hartslag</string>
   <string name="Autopause_category">Automatisch pauzeren</string>
   <string name="Target_category">Doel coachen</string>
+  <string name="Activity_ongoing">Activiteit is gaande</string>
 </resources>

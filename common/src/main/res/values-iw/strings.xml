@@ -94,7 +94,6 @@
   <string name="Low_pace">קצב נמוך</string>
   <string name="High_pace">קצב גבוה</string>
   <string name="Sex">מין</string>
-  <string name="upload">העלאה</string>
   <string name="Notes">הערות</string>
   <string name="Laps">הקפות</string>
   <string name="Map">מפה</string>
@@ -149,7 +148,6 @@
   <string name="Are_you_sure">האם הינך בטוח?</string>
   <string name="Configure_audio_cues">הגדרת רמזי אודיו</string>
   <string name="Downloadeditremove_workouts">עריכת אימונים</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">יש להשתמש באוזניה בכדי להפעיל/להשהות/לחדש את RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">בכרטיסיית מרווח, השתמש בהתאוששות במקום בשלבי מנוחה (עצירה)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">עבור שלבי ספירה לאחור שהוכנסו, השתמש בהתאוששות במקום בשלבי מנוחה (הפסקה)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">יצוא מסד נתונים לאחסון</string>
@@ -165,7 +163,6 @@
   <string name="Autolap_m">הפעלה אוטומטית (מ)</string>
   <string name="Autopause">הפסקה אוטומטית</string>
   <string name="Autopause_summary">הפסקה אוטומטית באימונים בסיסיים ובצעדים של חימום והתקררות</string>
-  <string name="Headset_key_startstop">מקש אוזניות הפעל/עצור</string>
   <string name="Activity_countdown">ספירה לאחור להתחלת הפעילות</string>
   <string name="Activity_countdown_summary">הוסף ספירה לאחור לתחילת האימון הבסיסית</string>
   <string name="Countdown_time_s">ספירה לאחור (ש)</string>

@@ -93,7 +93,6 @@
   <string name="Low_pace">Min. tętno</string>
   <string name="High_pace">Max. tętno</string>
   <string name="Sex">Płeć</string>
-  <string name="upload">Eksport</string>
   <string name="Notes">Notatki</string>
   <string name="Laps">Okrążenia</string>
   <string name="Map">Mapa</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Anuluję, proszę czekać...</string>
   <string name="Are_you_sure">Jesteś pewien?</string>
   <string name="Configure_audio_cues">Konfiguruj wskazówki audio</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Użyj słuchawek do rozpoczynania/wstrzymania treningu</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">W zakładce interwału użyj regeneracji zamiast odpoczynku (pauza)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksportuj bazę danych na kartę SD (np. przed aktualizacjią)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importuj bazę danych z karty SD (np. po aktualizacji)</string>
@@ -162,7 +160,6 @@
   <string name="Autolap_m">Auto-okrążenie (m)</string>
   <string name="Autopause">Autopauza</string>
   <string name="Autopause_summary">Autopauza przy prostych treningach, rozgrzewce i uspokojeniu</string>
-  <string name="Headset_key_startstop">Sterowanie słuchawkami (start/stop/pauza)</string>
   <string name="Activity_countdown">Odliczanie do startu aktywności</string>
   <string name="Countdown_time_s">Czas odliczania (s)</string>
   <string name="Unit_preference_title">Jednostki</string>
@@ -296,4 +293,5 @@
   <string name="HRM_category">Tętno</string>
   <string name="Autopause_category">Autopauza</string>
   <string name="Target_category">Wskazówki trenera</string>
+  <string name="Activity_ongoing">Trening w toku</string>
 </resources>

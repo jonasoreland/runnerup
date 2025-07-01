@@ -80,7 +80,6 @@
   <string name="Low_pace">Lav fart</string>
   <string name="High_pace">Høy fart</string>
   <string name="Sex">Kjønn</string>
-  <string name="upload">Last opp</string>
   <string name="Notes">Notater</string>
   <string name="Laps">Runder</string>
   <string name="Map">Kart</string>
@@ -124,7 +123,6 @@
   <string name="Saving">Lagrer</string>
   <string name="Are_you_sure">Er du sikker?</string>
   <string name="Configure_audio_cues">Sett opp lydinstrukser</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Bruk hodesettet ditt til å starte/pause/gjenoppta RunnerUp</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Eksporter database til SD-kort (f.eks. for oppdatering)</string>
   <string name="Import_database_from_sdcard_eg_after_upgrade">Importer database fra SD-kort (f.eks. etter oppdatering)</string>
   <string name="Accounts">Kontoer</string>
@@ -134,7 +132,6 @@
   <string name="Autolap">Autorunde</string>
   <string name="Autolap_m">Autorunde (m)</string>
   <string name="Autopause">Autopause</string>
-  <string name="Headset_key_startstop">Hodesettast for start/stopp</string>
   <string name="Countdown_time_s">Nedtellingstid (s)</string>
   <string name="Auto_start_GPS">Automatisk start av GPS</string>
   <string name="Advanced_options">Avanserte valg</string>
@@ -237,4 +234,5 @@
   <string name="HRM_category">Hjerterytme</string>
   <string name="Autopause_category">Autopause</string>
   <string name="Target_category">Målhjelpetrener</string>
+  <string name="Activity_ongoing">Aktivitet pågår</string>
 </resources>

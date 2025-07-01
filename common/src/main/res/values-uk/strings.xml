@@ -93,7 +93,6 @@
   <string name="Low_pace">Низький темп</string>
   <string name="High_pace">Високий темп</string>
   <string name="Sex">Стать</string>
-  <string name="upload">Відвантаження</string>
   <string name="Notes">Примітки</string>
   <string name="Laps">Кола</string>
   <string name="Map">Мапа</string>
@@ -147,7 +146,6 @@
   <string name="Cancellingplease_wait">Відміняємо. Чекайте, будь-ласка...</string>
   <string name="Are_you_sure">Ти впевнений?</string>
   <string name="Configure_audio_cues">Налаштовувати аудіо-супровід</string>
-  <string name="Use_your_headset_to_startpauseresume_RunnerUp">Використовуй свою гарнітуру для запуску/паузи/продовження RunnerUp</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">На вкладці \"Інтервал\" використовуйте \"Відновлення\" замість  \"Відпочинок\" (пауза)</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Advancedtab">Для вставлених кроків зворотного відліку використовуйте \"Відновлення\" замість \"Відпочинок\" (пауза)</string>
   <string name="Export_database_to_sdcard_eg_for_upgrade">Експорт бази даних до сховища</string>
@@ -163,7 +161,6 @@
   <string name="Autolap_m">Автоколо (m)</string>
   <string name="Autopause">Автопауза</string>
   <string name="Autopause_summary">Автопауза в основних тренуваннях, розминках та заминках</string>
-  <string name="Headset_key_startstop">Клавіша гарнітури старт/стоп</string>
   <string name="Activity_countdown">Зворотній відлік перед початком активності</string>
   <string name="Activity_countdown_summary">Додати зворотній відлік перед початком основного тренування</string>
   <string name="Countdown_time_s">Час зворотного відліку (с)</string>
