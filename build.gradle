@@ -20,7 +20,7 @@ project.ext {
     targetSdk = 35
     minSdk = 21
 
-    appcompat_version = "1.7.0"
+    appcompat_version = "1.7.1"
     annotation_version = "1.6.0"
     preference_version = "1.2.1"
     googlePlayServicesVersion = '21.3.0'
@@ -28,7 +28,7 @@ project.ext {
     googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
-    mockitoVersion = '3.11.2'
+    mockitoVersion = '5.18.0'
 
     //The Git tag for the release must be identical for F-Droid
     versionName = '2.9.0.5'
