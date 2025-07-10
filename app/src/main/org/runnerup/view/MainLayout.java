@@ -223,8 +223,7 @@ public class MainLayout extends AppCompatActivity {
           // stop GPS instead of exiting the app.
           Fragment fragment = getCurrentFragment();
 
-          if (fragment instanceof StartFragment) {
-            StartFragment startFragment = (StartFragment) fragment;
+          if (fragment instanceof StartFragment startFragment) {
             if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
               startFragment.stopGps();
               startFragment.updateView();

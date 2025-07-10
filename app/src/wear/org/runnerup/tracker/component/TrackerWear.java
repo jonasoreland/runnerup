@@ -525,7 +525,7 @@ public class TrackerWear extends DefaultTrackerComponent
   }
 
   public static class WearNotifier {
-    private WearableClient mWearableClient;
+    private final WearableClient mWearableClient;
 
     public WearNotifier(Context context) {
       mWearableClient = new WearableClient(context);
@@ -543,5 +543,4 @@ public class TrackerWear extends DefaultTrackerComponent
 
     public void onDestroy() {}
   }
-  ;
 }

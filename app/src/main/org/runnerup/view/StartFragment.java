@@ -906,7 +906,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         break;
       }
 
-      if (mTracker == null || mIsBound == false) {
+      if (mTracker == null || !mIsBound) {
         break;
       }
 
