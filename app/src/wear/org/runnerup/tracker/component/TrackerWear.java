@@ -16,7 +16,6 @@
  */
 package org.runnerup.tracker.component;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -443,7 +442,7 @@ public class TrackerWear extends DefaultTrackerComponent
     } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
       sendLocalBroadcast(Intents.NEW_LAP);
     } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
-      /* send broadcast to StartActivity */
+      /* send broadcast to start the workout */
       sendBroadcast(Intents.START_WORKOUT);
     }
   }
@@ -525,19 +524,23 @@ public class TrackerWear extends DefaultTrackerComponent
     setTrackerState(newValue);
   }
 
-  static public class WearNotifier {
-    private WearableClient mWearableClient;
+  public static class WearNotifier {
+    private final WearableClient mWearableClient;
 
     public WearNotifier(Context context) {
       mWearableClient = new WearableClient(context);
     }
+
     public void onViewCreated() {}
+
     public void onResume() {
       mWearableClient.putData(Wear.Path.PHONE_APP);
     }
+
     public void onPause() {
       mWearableClient.deleteData(Wear.Path.PHONE_APP);
     }
+
     public void onDestroy() {}
-  };
+  }
 }

@@ -64,11 +64,9 @@ public class Location {
       return false;
     }
 
-    if (!(o instanceof Location)) {
+    if (!(o instanceof Location other)) {
       return false;
     }
-
-    Location other = (Location) o;
 
     return Math.abs(getLatitude() - other.getLatitude()) <= EPSILON
         && Math.abs(getLongitude() - other.getLongitude()) <= EPSILON;

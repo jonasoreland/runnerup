@@ -93,15 +93,8 @@
         </activity>
 
         <activity
-            android:name=".view.StartActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity
             android:name=".view.RunActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@style/AppTheme"/>
-
-        <activity android:name=".view.SettingsActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
@@ -111,28 +104,23 @@
         <activity
             android:name=".view.DetailActivity"
             android:configChanges="orientation|screenSize|uiMode"
-            android:parentActivityName=".view.HistoryActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.HistoryActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
-
-        <activity
-            android:name=".view.HistoryActivity"
-            android:label="@string/History"
-            android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
             android:name=".view.ManualActivity"
             android:label="@string/Manual_activity_title"
-            android:parentActivityName=".view.HistoryActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.HistoryActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
@@ -213,23 +201,23 @@
         <activity
             android:name=".view.HRSettingsActivity"
             android:label="@string/Heart_Rate_Monitor"
-            android:parentActivityName=".view.SettingsActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.SettingsActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <activity
             android:name=".view.HRZonesActivity"
             android:label="@string/Heart_Rate_Zones"
-            android:parentActivityName=".view.SettingsActivity"
+            android:parentActivityName=".view.MainLayout"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.SettingsActivity"/>
+                android:value=".view.MainLayout"/>
         </activity>
 
         <service
