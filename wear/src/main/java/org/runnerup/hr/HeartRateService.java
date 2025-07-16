@@ -108,7 +108,14 @@ public class HeartRateService extends Service implements SensorEventListener {
   public void onSensorChanged(SensorEvent event) {
     Log.d(TAG, "onSensorChanged: sensor=" + event.sensor.getName());
 
-    // TODO: Handle the sensor event, and send heart rate data to the phone.
+    if (event.sensor.getType() == Sensor.TYPE_HEART_RATE) {
+      if (event.values.length > 0) {
+        currentHeartRate = (int) event.values[0]; // Heart rate in beats per minute (bpm)
+        Log.d(TAG, "onSensorChanged: Current Heart Rate: " + currentHeartRate + " bpm");
+
+        sendHeartRateToPhone(currentHeartRate);
+      }
+    }
   }
 
   @Override
