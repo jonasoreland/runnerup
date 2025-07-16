@@ -18,10 +18,12 @@
 package org.runnerup.hr;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -34,6 +36,8 @@ public class HeartRateService extends Service implements SensorEventListener {
   private static final String TAG = "HeartRateService";
 
   private int currentHeartRate = 0;
+  private SensorManager sensorManager;
+  private Sensor heartRateSensor;
 
   @Override
   public IBinder onBind(Intent intent) {
@@ -46,16 +50,43 @@ public class HeartRateService extends Service implements SensorEventListener {
     super.onCreate();
     Log.d(TAG, "onCreate");
 
-    // TODO: Initialize the sensor.
+    // Initialize the SensorManager and attempt to get the default heart rate sensor.
+    sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+    if (sensorManager != null) {
+      heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
+    }
+
+    if (heartRateSensor == null) {
+      Log.e(TAG, "Heart rate sensor not available.");
+      stopSelf(); // Stop the service if sensor is not found
+    }
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     Log.d(TAG, "onStartCommand: intent=" + intent);
 
-    // TODO: Start listening to the sensor.
+    // TODO: Check permission before start listening to the sensor.
+    startHeartRateMonitoring();
 
     return START_STICKY;
+  }
+
+  private void startHeartRateMonitoring() {
+    if (sensorManager != null && heartRateSensor != null) {
+      // TODO: Use SENSOR_DELAY_UI for faster updates?
+      boolean registered = sensorManager.registerListener(
+              this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+      if (registered) {
+        Log.d(TAG, "Heart rate sensor listener registered.");
+      } else {
+        Log.e(TAG, "Failed to register heart rate sensor listener.");
+        stopSelf(); // Stop if registration fails
+      }
+    } else {
+      Log.e(TAG, "SensorManager or HeartRateSensor is null in startHeartRateMonitoring.");
+      stopSelf();
+    }
   }
 
   @Override
@@ -63,7 +94,14 @@ public class HeartRateService extends Service implements SensorEventListener {
     super.onDestroy();
     Log.d(TAG, "onDestroy");
 
-    // TODO: Stop listening to the sensor.
+    stopHeartRateMonitoring();
+  }
+
+  private void stopHeartRateMonitoring() {
+    if (sensorManager != null) {
+      sensorManager.unregisterListener(this);
+      Log.d(TAG, "Heart rate sensor listener unregistered.");
+    }
   }
 
   @Override
