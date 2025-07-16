@@ -68,6 +68,7 @@
         </service>
 
         <service android:name=".service.StateService" />
+        <service android:name=".hr.HeartRateService" />
 
         <service
             android:name=".hr.HeartRateListenerService"
