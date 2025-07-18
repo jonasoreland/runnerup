@@ -37,6 +37,10 @@ public class WearHRProvider implements HRProvider {
     private HRClient hrClient;
     private Handler hrClientHandler;
     private boolean isScanning;
+    private boolean isConnecting;
+    private boolean isConnected;
+    private boolean isDisconnecting;
+    private String connectedNodeId;
 
     public WearHRProvider(Context context) {
         Log.d(TAG, "WearHRProvider: context=" + context);
@@ -88,12 +92,12 @@ public class WearHRProvider implements HRProvider {
 
     @Override
     public boolean isConnected() {
-        return false;
+        return isConnected;
     }
 
     @Override
     public boolean isConnecting() {
-        return false;
+        return isConnecting;
     }
 
     @Override
@@ -156,12 +160,93 @@ public class WearHRProvider implements HRProvider {
 
     @Override
     public void connect(HRDeviceRef ref) {
+        Log.d(TAG, "connect: device name=" + ref.getName() + ", address=" + ref.getAddress());
 
+        if (isConnecting || isConnected) {
+            Log.d(TAG, "connect: Already connecting or connected.");
+            return;
+        }
+
+        // "Connecting" means sending a message to the Wear OS app to start sending HR data
+        isConnecting = true;
+        connectedNodeId = ref.getAddress(); // Store the node ID we are trying to connect to
+
+        // Send a message to the Wear OS app to start sending HR
+        Log.d(TAG, "connect: Sending " + Constants.Wear.Path.MSG_CMD_HR_START + " message to node: " + connectedNodeId);
+        Wearable.getMessageClient(context)
+        .sendMessage(
+            connectedNodeId,
+            Constants.Wear.Path.MSG_CMD_HR_START,
+            null // No payload needed for the start command
+            )
+        .addOnSuccessListener(
+            integer -> {
+              Log.d(TAG, "connect: Start HR message sent successfully to " + connectedNodeId);
+              if (isConnecting) {
+                isConnected = true;
+                isConnecting = false;
+
+                hrClientHandler.post(
+                        () -> {
+                            if (hrClient != null) {
+                                hrClient.onConnectResult(true);
+                            }
+                        });
+              }
+            })
+                .addOnFailureListener(
+            e -> {
+              Log.e(TAG, "Failed to send Start HR message to " + connectedNodeId, e);
+
+              hrClientHandler.post(
+                      () -> {
+                          if (hrClient != null) {
+                              hrClient.onConnectResult(false);
+                              reset();
+                          }
+                      });
+            });
     }
 
     @Override
     public void disconnect() {
+        Log.d(TAG, "disconnect");
 
+        if (!isConnected || isDisconnecting) {
+            Log.d(TAG, "disconnect: Not connected or already disconnecting.");
+            return;
+        }
+
+        isDisconnecting = true;
+
+        // Send a message to the Wear OS app to stop sending HR
+        if (connectedNodeId != null) {
+            Log.d(TAG, "disconnect: Sending " + Constants.Wear.Path.MSG_CMD_HR_STOP + " message to node: " + connectedNodeId);
+            Wearable.getMessageClient(context).sendMessage(
+                            connectedNodeId,
+                            Constants.Wear.Path.MSG_CMD_HR_STOP,
+                            null // No payload needed for the stop command
+                    ).addOnCompleteListener(task -> {
+                        // Regardless of success or failure, consider us to be disconnected
+                        Log.d(TAG, "disconnect: Disconnected from " + connectedNodeId);
+
+                        if (hrClientHandler != null && hrClient != null) {
+                            hrClientHandler.post(() -> {
+                                hrClient.onDisconnectResult(true);
+                                reset();
+                            });
+                        }
+                    });
+        }
+    }
+
+    private void reset() {
+        Log.d(TAG, "reset");
+        isConnecting = false;
+        isConnected = false;
+        isDisconnecting = false;
+        isScanning = false;
+        connectedNodeId = null;
     }
 
     @Override

@@ -260,6 +260,10 @@ public interface Constants {
       String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
       String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
       String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
+
+      /* Msg: start/stop HR from phone to wear */
+      String MSG_CMD_HR_START = PREFIX + "/hr/start";
+      String MSG_CMD_HR_STOP = PREFIX + "/hr/stop";
     }
 
     interface RunInfo {
