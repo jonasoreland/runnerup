@@ -18,7 +18,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 import java.util.HashMap;
 import org.runnerup.BuildConfig;
@@ -40,6 +39,11 @@ public class AudioFeedback extends Feedback {
   private Intensity intensity;
   RUTextToSpeech textToSpeech;
   Formatter formatter;
+
+  // Higher prio will interrupt (flush) lower prio.
+  public static final int PRIO_CUE = 0;
+  public static final int PRIO_COACH = 1;
+  public static final int PRIO_COUNTDOWN = 2;
 
   public AudioFeedback(int msgId) {
     super();
@@ -121,7 +125,7 @@ public class AudioFeedback extends Feedback {
       if (BuildConfig.DEBUG) {
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
       }
-      textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+      textToSpeech.speak(msg, PRIO_CUE, /* flush= */false, null);
     }
   }
 }
