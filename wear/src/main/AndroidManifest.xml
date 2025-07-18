@@ -69,6 +69,18 @@
 
         <service android:name=".service.StateService" />
 
+        <service
+            android:name=".hr.HeartRateListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <!-- This service is only interested in messages on the 'hr' path -->
+                <data
+                    android:host="*"
+                    android:pathPrefix="/org.runnerup/hr"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
