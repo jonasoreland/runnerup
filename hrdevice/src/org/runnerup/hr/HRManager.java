@@ -79,6 +79,10 @@ public class HRManager {
       return new Bt20Base.StHRMv1(ctx);
     }
 
+    if (src.contentEquals(WearHRProvider.NAME)) {
+      return new WearHRProvider(ctx);
+    }
+
     if (src.contentEquals(MockHRProvider.NAME)) {
       return new MockHRProvider(ctx);
     }
@@ -99,6 +103,7 @@ public class HRManager {
     Resources res = ctx.getResources();
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     boolean experimental = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
+    boolean wear_os = prefs.getBoolean(res.getString(R.string.pref_bt_wear_os), false);
     boolean mock = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
 
     List<HRProvider> providers = new ArrayList<>();
@@ -123,6 +128,10 @@ public class HRManager {
       if (hrprov != null) {
         providers.add(hrprov);
       }
+    }
+
+    if (wear_os) {
+      providers.add(new WearHRProvider(ctx));
     }
 
     if (mock) {
