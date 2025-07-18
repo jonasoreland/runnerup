@@ -74,7 +74,7 @@ public class WearHRProvider implements HRProvider {
         this.hrClient = hrClient;
         this.hrClientHandler = handler;
 
-        hrClient.onOpenResult(true);
+        postToHRClient(() -> hrClient.onOpenResult(true));
     }
 
     @Override
@@ -132,15 +132,11 @@ public class WearHRProvider implements HRProvider {
                             node.getId()           // Device address (using node ID as address)
                     );
 
-                    if (hrClientHandler != null && hrClient != null) {
-                        hrClientHandler.post(() -> hrClient.onScanResult(deviceRef));
-                    }
+                    postToHRClient(() -> hrClient.onScanResult(deviceRef));
                 }
             }
             else {
-                if (hrClientHandler != null) {
-                    hrClient.log(this, "No Wear OS device found with HR capability");
-                }
+                postToHRClient(() -> hrClient.log(this, "No Wear OS device found with HR capability"));
             }
 
             stopScan();
@@ -185,26 +181,15 @@ public class WearHRProvider implements HRProvider {
               if (isConnecting) {
                 isConnected = true;
                 isConnecting = false;
-
-                hrClientHandler.post(
-                        () -> {
-                            if (hrClient != null) {
-                                hrClient.onConnectResult(true);
-                            }
-                        });
+                postToHRClient(() -> hrClient.onConnectResult(true));
               }
             })
                 .addOnFailureListener(
             e -> {
-              Log.e(TAG, "Failed to send Start HR message to " + connectedNodeId, e);
-
-              hrClientHandler.post(
-                      () -> {
-                          if (hrClient != null) {
-                              hrClient.onConnectResult(false);
-                              reset();
-                          }
-                      });
+              Log.e(TAG, "Failed to send Start HR message to " + connectedNodeId + ": " + e.getMessage());
+              isConnected = false;
+              isConnecting = false;
+              postToHRClient(() -> hrClient.onConnectResult(false));
             });
     }
 
@@ -217,9 +202,8 @@ public class WearHRProvider implements HRProvider {
             return;
         }
 
-        isDisconnecting = true;
-
         // Send a message to the Wear OS app to stop sending HR
+        isDisconnecting = true;
         if (connectedNodeId != null) {
             Log.d(TAG, "disconnect: Sending " + Constants.Wear.Path.MSG_CMD_HR_STOP + " message to node: " + connectedNodeId);
             Wearable.getMessageClient(context).sendMessage(
@@ -229,13 +213,8 @@ public class WearHRProvider implements HRProvider {
                     ).addOnCompleteListener(task -> {
                         // Regardless of success or failure, consider us to be disconnected
                         Log.d(TAG, "disconnect: Disconnected from " + connectedNodeId);
-
-                        if (hrClientHandler != null && hrClient != null) {
-                            hrClientHandler.post(() -> {
-                                hrClient.onDisconnectResult(true);
-                                reset();
-                            });
-                        }
+                        postToHRClient(() -> hrClient.onDisconnectResult(true));
+                        reset();
                     });
         }
     }
@@ -272,5 +251,25 @@ public class WearHRProvider implements HRProvider {
     @Override
     public int getBatteryLevel() {
         return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
+    }
+
+    /**
+     * Helper method to safely post actions to be executed on the {@link HRClient}'s handler thread.
+     *
+     * @param action The action to perform on the hrClient.
+     */
+    private void postToHRClient(Runnable action) {
+        if (hrClientHandler != null && hrClient != null) {
+            hrClientHandler.post(() -> {
+                // Re-check hrClient as it might have been nulled out between posting and execution
+                if (hrClient != null) {
+                    action.run();
+                } else {
+                    Log.w(TAG, "postToHRClient: hrClient became null before action execution on handler.");
+                }
+            });
+        } else {
+            Log.w(TAG, "postToHRClient: Cannot post to hrClient: hrClientHandler or hrClient is null.");
+        }
     }
 }
