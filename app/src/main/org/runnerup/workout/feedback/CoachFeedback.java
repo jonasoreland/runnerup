@@ -18,7 +18,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import org.runnerup.R;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -74,7 +73,8 @@ public class CoachFeedback extends AudioFeedback {
               + " "
               + formatter.format(Formatter.Format.CUE_LONG, dimension, val)
               + msg,
-          TextToSpeech.QUEUE_ADD,
+          AudioFeedback.PRIO_COACH,
+          /* flush= */true,
           null);
     }
   }

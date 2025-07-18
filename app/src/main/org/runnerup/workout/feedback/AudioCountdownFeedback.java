@@ -18,7 +18,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import java.util.HashMap;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -60,7 +59,7 @@ public class AudioCountdownFeedback extends Feedback {
 
     if (remaining > 0) {
       String msg = formatter.formatRemaining(Formatter.Format.CUE_SHORT, dimension, remaining);
-      textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+      textToSpeech.speak(msg, AudioFeedback.PRIO_COUNTDOWN, /* flush= */true, null);
     }
   }
 }
