@@ -274,5 +274,11 @@ public interface Constants {
     interface TrackerState {
       String STATE = "state";
     }
+
+    interface Capability {
+      // Important: The wear app must advertise this exact same capability name in its
+      // res/values/wear.xml file.
+      String HEART_RATE_PROVIDER = "runnerup_hr_provider";
+    }
   }
 }

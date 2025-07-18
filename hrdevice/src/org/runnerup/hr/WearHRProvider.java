@@ -21,6 +21,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.CapabilityClient;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+import java.util.Set;
+import org.runnerup.common.util.Constants;
 
 public class WearHRProvider implements HRProvider {
     private static final String TAG = "WearHRProvider";
@@ -33,6 +40,7 @@ public class WearHRProvider implements HRProvider {
 
     public WearHRProvider(Context context) {
         Log.d(TAG, "WearHRProvider: context=" + context);
+        this.context = context;
     }
 
     @Override
@@ -98,6 +106,46 @@ public class WearHRProvider implements HRProvider {
         }
 
         isScanning = true;
+
+        // Get nodes with capability to provide heart rate data for RunnerUp
+        CapabilityClient capabilityClient = Wearable.getCapabilityClient(context);
+        Task<CapabilityInfo> capabilityInfoTask = capabilityClient.getCapability(
+                Constants.Wear.Capability.HEART_RATE_PROVIDER,
+                CapabilityClient.FILTER_REACHABLE // Only currently connected and reachable nodes
+        );
+
+        capabilityInfoTask.addOnSuccessListener(capabilityInfo -> {
+            Set<Node> connectedNodes = capabilityInfo.getNodes();
+            Log.d(TAG, "startScan: Successfully fetched capability info. Nodes found: " + connectedNodes.size());
+
+            if (!connectedNodes.isEmpty()) {
+                for (Node node : connectedNodes) {
+                    Log.d(TAG, "startScan: Found capable node: " + node.getDisplayName() + " (" + node.getId() + ")");
+                    // Create an HRDeviceRef for each found node
+                    HRDeviceRef deviceRef = HRDeviceRef.create(
+                            NAME,                  // Provider name
+                            node.getDisplayName(), // Device name
+                            node.getId()           // Device address (using node ID as address)
+                    );
+
+                    if (hrClientHandler != null && hrClient != null) {
+                        hrClientHandler.post(() -> hrClient.onScanResult(deviceRef));
+                    }
+                }
+            }
+            else {
+                if (hrClientHandler != null) {
+                    hrClient.log(this, "No Wear OS device found with HR capability");
+                }
+            }
+
+            stopScan();
+        });
+
+        capabilityInfoTask.addOnFailureListener(e -> {
+            Log.e(TAG, "startScan: Failed to get capabilities", e);
+            stopScan();
+        });
     }
 
     @Override
