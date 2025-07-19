@@ -19,11 +19,13 @@ package org.runnerup.hr;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import java.util.Set;
@@ -41,6 +43,10 @@ public class WearHRProvider implements HRProvider {
     private boolean isConnected;
     private boolean isDisconnecting;
     private String connectedNodeId;
+
+    private int hrValue = 0;
+    private long hrTimestamp = 0;
+    private long hrElapsedRealtime = 0;
 
     public WearHRProvider(Context context) {
         Log.d(TAG, "WearHRProvider: context=" + context);
@@ -182,6 +188,10 @@ public class WearHRProvider implements HRProvider {
                 isConnected = true;
                 isConnecting = false;
                 postToHRClient(() -> hrClient.onConnectResult(true));
+
+                // Start listening for HR data
+                // Important: Don't forget to remove the listener to avoid leaking resources.
+                Wearable.getMessageClient(context).addListener(onHRMessageListener);
               }
             })
                 .addOnFailureListener(
@@ -210,12 +220,15 @@ public class WearHRProvider implements HRProvider {
                             connectedNodeId,
                             Constants.Wear.Path.MSG_CMD_HR_STOP,
                             null // No payload needed for the stop command
-                    ).addOnCompleteListener(task -> {
-                        // Regardless of success or failure, consider us to be disconnected
-                        Log.d(TAG, "disconnect: Disconnected from " + connectedNodeId);
-                        postToHRClient(() -> hrClient.onDisconnectResult(true));
-                        reset();
-                    });
+                    );
+
+            // Regardless of success or failure, consider us to be disconnected
+            Log.d(TAG, "disconnect: Disconnected from " + connectedNodeId);
+            postToHRClient(() -> hrClient.onDisconnectResult(true));
+            reset();
+
+            // Stop listening for HR data
+            Wearable.getMessageClient(context).removeListener(onHRMessageListener);
         }
     }
 
@@ -230,22 +243,26 @@ public class WearHRProvider implements HRProvider {
 
     @Override
     public int getHRValue() {
-        return 0;
+        return hrValue;
     }
 
     @Override
     public long getHRValueTimestamp() {
-        return 0;
+        return hrTimestamp;
     }
 
     @Override
     public long getHRValueElapsedRealtime() {
-        return 0;
+        return this.hrElapsedRealtime;
     }
 
     @Override
     public HRData getHRData() {
-        return null;
+        if (hrValue <= 0) {
+            return null;
+        }
+
+        return new HRData().setHeartRate(hrValue).setTimestampEstimate(hrTimestamp);
     }
 
     @Override
@@ -272,4 +289,17 @@ public class WearHRProvider implements HRProvider {
             Log.w(TAG, "postToHRClient: Cannot post to hrClient: hrClientHandler or hrClient is null.");
         }
     }
+
+    private final MessageClient.OnMessageReceivedListener onHRMessageListener = messageEvent -> {
+        String path = messageEvent.getPath();
+        Log.d(TAG, "onMessageReceived: " + path);
+
+        if (Constants.Wear.Path.MSG_HEART_RATE.equals(path)) {
+            byte[] payload = messageEvent.getData();
+            hrValue = Integer.parseInt(new String(payload));
+            hrTimestamp = System.currentTimeMillis();
+            hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+            Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
+        }
+    };
 }
