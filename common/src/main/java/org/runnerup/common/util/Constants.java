@@ -266,6 +266,9 @@ public interface Constants {
       /* Msg: start/stop HR from phone to wear */
       String MSG_CMD_HR_START = PREFIX + "/hr/start";
       String MSG_CMD_HR_STOP = PREFIX + "/hr/stop";
+
+      /* Msg: Heart rate data from wear to phone */
+      String MSG_HEART_RATE = PREFIX + "/hr/data";
     }
 
     interface RunInfo {
