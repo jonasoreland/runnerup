@@ -17,10 +17,12 @@
 
 package org.runnerup.hr;
 
+import android.content.Intent;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
+import org.runnerup.common.util.Constants;
 
 /**
  * A {@link WearableListenerService} that listens for messages from a connected phone
@@ -50,6 +52,17 @@ public class HeartRateListenerService extends WearableListenerService {
 
     @Override
     public void onMessageReceived(@NonNull MessageEvent messageEvent) {
-        Log.d(TAG, "onMessageReceived: " + messageEvent.getPath() + " from " + messageEvent.getSourceNodeId());
+        String path = messageEvent.getPath();
+        String sourceNodeId = messageEvent.getSourceNodeId(); // ID of the phone that sent the message
+        Log.d(TAG, "onMessageReceived: " + path + " from " + sourceNodeId);
+
+        Intent serviceIntent = new Intent(this, HeartRateService.class);
+
+        if (Constants.Wear.Path.MSG_CMD_HR_START.equals(path)) {
+            serviceIntent.putExtra(Constants.Intents.EXTRA_SOURCE_NODE_ID, sourceNodeId);
+            startService(serviceIntent);
+        } else if (Constants.Wear.Path.MSG_CMD_HR_STOP.equals(path)) {
+            stopService(serviceIntent);
+        }
     }
 }
