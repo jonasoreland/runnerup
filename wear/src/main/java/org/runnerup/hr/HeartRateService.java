@@ -26,6 +26,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
+import com.google.android.gms.wearable.Wearable;
+import org.runnerup.common.util.Constants;
 
 /**
  * A {@link Service} that monitors heart rate data using the device's {@link Sensor#TYPE_HEART_RATE}
@@ -35,7 +37,8 @@ import android.util.Log;
 public class HeartRateService extends Service implements SensorEventListener {
   private static final String TAG = "HeartRateService";
 
-  private int currentHeartRate = 0;
+  /** Node ID of the connected phone. */
+  private String sourceNodeId;
   private SensorManager sensorManager;
   private Sensor heartRateSensor;
 
@@ -66,10 +69,21 @@ public class HeartRateService extends Service implements SensorEventListener {
   public int onStartCommand(Intent intent, int flags, int startId) {
     Log.d(TAG, "onStartCommand: intent=" + intent);
 
+    if (intent != null) {
+      sourceNodeId = intent.getStringExtra(Constants.Intents.EXTRA_SOURCE_NODE_ID);
+    }
+
+    if (sourceNodeId == null) {
+      Log.e(TAG, "onStartCommand: sourceNodeId is null. Stopping service.");
+      stopSelf();
+      return START_NOT_STICKY;
+    }
+
     // TODO: Check permission before start listening to the sensor.
     startHeartRateMonitoring();
 
-    return START_STICKY;
+    // Ensures the Intent (with sourceNodeId) is redelivered if the service restarts
+    return START_REDELIVER_INTENT;
   }
 
   private void startHeartRateMonitoring() {
@@ -109,8 +123,17 @@ public class HeartRateService extends Service implements SensorEventListener {
     Log.d(TAG, "onSensorChanged: sensor=" + event.sensor.getName());
 
     if (event.sensor.getType() == Sensor.TYPE_HEART_RATE) {
+      // When the accuracy is SENSOR_STATUS_UNRELIABLE or SENSOR_STATUS_NO_CONTACT,
+      // the heart rate value should be discarded.
+      // https://developer.android.com/reference/android/hardware/Sensor#TYPE_HEART_RATE
+      if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
+              || event.accuracy == SensorManager.SENSOR_STATUS_NO_CONTACT) {
+        Log.d(TAG, "onSensorChanged: HR value accuracy is unreliable or no contact.");
+        return;
+      }
+
       if (event.values.length > 0) {
-        currentHeartRate = (int) event.values[0]; // Heart rate in beats per minute (bpm)
+        int currentHeartRate = Math.round(event.values[0]); // Heart rate in beats per minute (bpm)
         Log.d(TAG, "onSensorChanged: Current Heart Rate: " + currentHeartRate + " bpm");
 
         sendHeartRateToPhone(currentHeartRate);
@@ -121,16 +144,19 @@ public class HeartRateService extends Service implements SensorEventListener {
   @Override
   public void onAccuracyChanged(Sensor sensor, int accuracy) {
     Log.d(TAG, "onAccuracyChanged: sensor=" + sensor.getName() + ", accuracy=" + accuracy);
-
-    // TODO: Handle the accuracy change.
-    // When the accuracy is SENSOR_STATUS_UNRELIABLE or SENSOR_STATUS_NO_CONTACT,
-    // the heart rate value should be discarded.
-    // https://developer.android.com/reference/android/hardware/Sensor#TYPE_HEART_RATE
   }
 
   private void sendHeartRateToPhone(int bpm) {
     Log.d(TAG, "sendHeartRateToPhone: bpm=" + bpm);
 
-    // TODO: Implement sending heart rate data to the phone using the Wearable Data Layer API.
+    byte[] payload = String.valueOf(bpm).getBytes();
+
+    // Wearable API clients, such as DataClient and MessageClient, are inexpensive to create.
+    // So instead of holding onto the clients, recreate them when needed.
+    // https://developer.android.com/training/wearables/data/overview#recreate-client-instances
+    Wearable.getMessageClient(this).sendMessage(sourceNodeId, Constants.Wear.Path.MSG_HEART_RATE, payload)
+            .addOnSuccessListener(integer -> Log.d(TAG, "HR sent successfully: " + bpm))
+            .addOnFailureListener(e -> Log.e(TAG, "Error sending HR: " + e.getMessage()));
+
   }
 }
