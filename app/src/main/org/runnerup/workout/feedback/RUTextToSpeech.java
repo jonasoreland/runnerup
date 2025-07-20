@@ -46,10 +46,10 @@ public class RUTextToSpeech {
     final HashMap<String, String> params;
     final String id;
 
-    public Entry(String text, int prio, boolean flush, HashMap<String, String> params, String id) {
+    public Entry(String text, UtterancePrio prio, boolean flush, HashMap<String, String> params, String id) {
       this.text = text;
       this.flush = flush;
-      this.prio = prio;
+      this.prio = prio.value;
       this.params = params;
       this.id = id;
     }
@@ -100,12 +100,12 @@ public class RUTextToSpeech {
   }
 
   @SuppressWarnings("UnusedReturnValue")
-  int speak(String text, int prio, boolean flush, HashMap<String, String> params) {
+  int speak(String text, UtterancePrio prio, boolean flush, HashMap<String, String> params) {
     if (!isAvailable()) {
       return 0;
     }
 
-    boolean trace = true;
+    final boolean trace = true;
     if (!cueSet.contains(text)) {
       //noinspection ConstantConditions
       if (trace) {

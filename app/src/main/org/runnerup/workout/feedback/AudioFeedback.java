@@ -40,11 +40,6 @@ public class AudioFeedback extends Feedback {
   RUTextToSpeech textToSpeech;
   Formatter formatter;
 
-  // Higher prio will interrupt (flush) lower prio.
-  public static final int PRIO_CUE = 0;
-  public static final int PRIO_COACH = 1;
-  public static final int PRIO_COUNTDOWN = 2;
-
   public AudioFeedback(int msgId) {
     super();
     this.msgId = msgId;
@@ -125,7 +120,7 @@ public class AudioFeedback extends Feedback {
       if (BuildConfig.DEBUG) {
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
       }
-      textToSpeech.speak(msg, PRIO_CUE, /* flush= */false, null);
+      textToSpeech.speak(msg, UtterancePrio.PRIO_CUE, /* flush= */false, null);
     }
   }
 }

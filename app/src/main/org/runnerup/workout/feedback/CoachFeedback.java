@@ -73,8 +73,8 @@ public class CoachFeedback extends AudioFeedback {
               + " "
               + formatter.format(Formatter.Format.CUE_LONG, dimension, val)
               + msg,
-          AudioFeedback.PRIO_COACH,
-          /* flush= */true,
+          UtterancePrio.PRIO_COACH,
+          /* flush= */ true,
           null);
     }
   }
