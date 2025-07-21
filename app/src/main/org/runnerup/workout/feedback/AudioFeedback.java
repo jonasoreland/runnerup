@@ -18,7 +18,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 import java.util.HashMap;
 import org.runnerup.BuildConfig;
@@ -121,7 +120,7 @@ public class AudioFeedback extends Feedback {
       if (BuildConfig.DEBUG) {
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
       }
-      textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null);
+      textToSpeech.speak(msg, UtterancePrio.PRIO_CUE, /* flush= */false, null);
     }
   }
 }

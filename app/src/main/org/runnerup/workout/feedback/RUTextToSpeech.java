@@ -23,9 +23,11 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.runnerup.util.Formatter;
 
 public class RUTextToSpeech {
@@ -34,15 +36,22 @@ public class RUTextToSpeech {
   private final boolean mute;
   private final TextToSpeech textToSpeech;
   private final AudioManager audioManager;
+  private final AtomicBoolean hasAudioFocus = new AtomicBoolean(false);
   private long id = (long) (System.nanoTime() + (1000 * Math.random()));
 
   class Entry {
+    final int prio;
+    final boolean flush;
     final String text;
     final HashMap<String, String> params;
+    final String id;
 
-    public Entry(String text, HashMap<String, String> params) {
+    public Entry(String text, UtterancePrio prio, boolean flush, HashMap<String, String> params, String id) {
       this.text = text;
+      this.flush = flush;
+      this.prio = prio.value;
       this.params = params;
+      this.id = id;
     }
   }
 
@@ -91,92 +100,58 @@ public class RUTextToSpeech {
   }
 
   @SuppressWarnings("UnusedReturnValue")
-  int speak(String text, int queueMode, HashMap<String, String> params) {
+  int speak(String text, UtterancePrio prio, boolean flush, HashMap<String, String> params) {
     if (!isAvailable()) {
       return 0;
     }
 
     final boolean trace = true;
-    if (queueMode == TextToSpeech.QUEUE_FLUSH) {
-      // Unused in RU
+    if (!cueSet.contains(text)) {
       //noinspection ConstantConditions
       if (trace) {
-        Log.e(getClass().getName(), "speak (mute: " + mute + "): " + text);
+        Log.e(getClass().getName(), "buffer speak: " + text);
       }
-      // speak directly
-      if (mute) {
-        return speakWithMute(text, queueMode, params);
-      } else {
-        return textToSpeech.speak(text, queueMode, params);
-      }
+      cueSet.add(text);
+      cueList.add(new Entry(text, prio, flush, params, getId(text)));
     } else {
-      if (!cueSet.contains(text)) {
-        //noinspection ConstantConditions
-        if (trace) {
-          Log.e(getClass().getName(), "buffer speak: " + text);
-        }
-        cueSet.add(text);
-        cueList.add(new Entry(text, params));
-      } else {
-        //noinspection ConstantConditions
-        if (trace) {
-          Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
-        }
+      //noinspection ConstantConditions
+      if (trace) {
+        Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
       }
-      return 0;
     }
+    return 0;
   }
 
-  /**
-   * Requests audio focus before speaking, if no focus is given nothing is said.
-   *
-   * @param text
-   * @param queueMode
-   * @param params
-   * @return
-   */
-  private int speakWithMute(String text, int queueMode, HashMap<String, String> params) {
-    if (!isAvailable()) {
-      return TextToSpeech.ERROR;
-    }
-
-    if (requestFocus()) {
-      final String utId = getId(text);
-      outstanding.add(utId);
-
-      if (params == null) {
-        params = new HashMap<>();
-      }
-      params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
-      int res = textToSpeech.speak(text, queueMode, params);
-      if (res == TextToSpeech.ERROR) {
-        outstanding.remove(utId);
-      }
-      if (outstanding.isEmpty()) {
-        audioManager.abandonAudioFocus(null);
-      }
-      return res;
-    }
-    Log.e(getClass().getName(), "Could not get audio focus.");
-    return TextToSpeech.ERROR;
-  }
-
-  private final HashSet<String> outstanding = new HashSet<>();
+  private final HashMap<String, Entry> outstanding = new HashMap<>();
 
   void utteranceCompleted(String id) {
     outstanding.remove(id);
-    if (outstanding.isEmpty()) {
-      audioManager.abandonAudioFocus(null);
-    }
+    maybeAbandonAudioFocus();
   }
 
   private boolean requestFocus() {
+    if (hasAudioFocus.get()) {
+      return true;
+    }
     int result =
         audioManager.requestAudioFocus(
             null, // afChangeListener,
             AudioManager.STREAM_MUSIC,
             AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
-    return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+    var granted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+    hasAudioFocus.set(granted);
+    return granted;
+  }
+
+  private void maybeAbandonAudioFocus() {
+    if (!hasAudioFocus.get()) {
+      return;
+    }
+    if (!outstanding.isEmpty()) {
+      return;
+    }
+    hasAudioFocus.set(false);
+    audioManager.abandonAudioFocus(null);
   }
 
   public void emit() {
@@ -186,39 +161,62 @@ public class RUTextToSpeech {
     if (cueSet.isEmpty()) {
       return;
     }
-    if (mute && requestFocus()) {
-      for (Entry e : cueList) {
-        final String utId = getId(e.text);
-        outstanding.add(utId);
+    if (mute && !requestFocus()) {
+      // Log error ?
+      return;
+    }
 
-        HashMap<String, String> params = e.params;
-        if (params == null) {
-          params = new HashMap<>();
-        }
-        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utId);
-        int res = textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, params);
-        if (res == TextToSpeech.ERROR) {
-          Log.e(
-              getClass().getName(),
-              "res == ERROR emit() text: "
-                  + e.text
-                  + ", utId: "
-                  + utId
-                  + ") outstanding.size(): "
-                  + outstanding.size());
-          outstanding.remove(utId);
-        }
-      }
-      if (outstanding.isEmpty()) {
-        audioManager.abandonAudioFocus(null);
-      }
-    } else {
-      for (Entry e : cueList) {
-        textToSpeech.speak(e.text, TextToSpeech.QUEUE_ADD, e.params);
+    // Sort pending utterances accoring to prio.
+    Collections.sort(cueList, (x,y) -> -Integer.compare(x.prio, y.prio));
+
+    int mode = TextToSpeech.QUEUE_ADD;
+    int maxPrio = cueList.get(0).prio;
+
+    // Check outstanding.
+    if (!outstanding.isEmpty()) {
+      int outstandingPrio = getMaxOutstandingPrio();
+      if (maxPrio >= outstandingPrio) {
+        mode = TextToSpeech.QUEUE_FLUSH;
+        outstanding.clear();
       }
     }
+
+    for (Entry e : cueList) {
+      HashMap<String, String> params = e.params;
+      if (params == null) {
+        params = new HashMap<>();
+      }
+
+      params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, e.id);
+
+      int res = textToSpeech.speak(e.text, mode, params);
+      if (res == TextToSpeech.ERROR) {
+        Log.e(
+            getClass().getName(),
+              "res == ERROR emit() text: "
+              + e.text
+              + ", utId: "
+              + e.id
+              + ") outstanding.size(): "
+              + outstanding.size());
+      } else {
+        outstanding.put(e.id, e);
+        // Subsequent utterances will be added.
+        mode = TextToSpeech.QUEUE_ADD;
+      }
+    }
+
     cueSet.clear();
     cueList.clear();
+    maybeAbandonAudioFocus();
+  }
+
+  int getMaxOutstandingPrio() {
+    int prio = -1;
+    for (Entry e : outstanding.values()) {
+      prio = Math.max(prio, e.prio);
+    }
+    return prio;
   }
 }
 
