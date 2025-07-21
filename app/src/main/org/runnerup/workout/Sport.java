@@ -26,7 +26,8 @@ public enum Sport {
   BIKING(DB.ACTIVITY.SPORT_BIKING),
   OTHER(DB.ACTIVITY.SPORT_OTHER),
   ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING),
-  WALKING(DB.ACTIVITY.SPORT_WALKING);
+  WALKING(DB.ACTIVITY.SPORT_WALKING),
+  TREADMILL(DB.ACTIVITY.SPORT_TREADMILL);
 
   final int dbValue;
 
@@ -59,6 +60,7 @@ public enum Sport {
         case DB.ACTIVITY.SPORT_RUNNING:
         case DB.ACTIVITY.SPORT_ORIENTEERING:
         case DB.ACTIVITY.SPORT_WALKING:
+        case DB.ACTIVITY.SPORT_TREADMILL:
           sportName = "Running";
           break;
         case DB.ACTIVITY.SPORT_BIKING:
@@ -82,6 +84,8 @@ public enum Sport {
         return ORIENTEERING;
       case DB.ACTIVITY.SPORT_WALKING:
         return WALKING;
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return TREADMILL;
       default:
       case DB.ACTIVITY.SPORT_OTHER:
         return OTHER;
@@ -91,6 +95,7 @@ public enum Sport {
   public static int colorOf(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
+      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.color.sportRunning;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.color.sportBiking;
@@ -108,6 +113,7 @@ public enum Sport {
   public static int drawableColored16Of(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
+      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.drawable.sport_running;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.drawable.sport_biking;
@@ -127,7 +133,8 @@ public enum Sport {
   }
 
   public boolean IsRunning() {
-    return dbValue == DB.ACTIVITY.SPORT_RUNNING || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING;
+    return dbValue == DB.ACTIVITY.SPORT_RUNNING || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING ||
+        dbValue == DB.ACTIVITY.SPORT_TREADMILL;
   }
 
   public boolean IsCycling() {
@@ -145,5 +152,18 @@ public enum Sport {
     } else {
       return "Other";
     }
+  }
+
+  public static boolean isWithoutGps(int dbValue) {
+    switch (dbValue) {
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public boolean isWithoutGps() {
+    return isWithoutGps(dbValue);
   }
 }

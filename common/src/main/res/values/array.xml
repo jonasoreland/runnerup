@@ -57,6 +57,7 @@
     <item>Other</item>
     <item>Orienteering</item>
     <item>Walking</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Time</item>
