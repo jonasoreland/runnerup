@@ -665,6 +665,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private final OnClickListener gpsEnableClick =
       v -> {
+        if (mGpsStatus.isStarted()) {
+          stopGps();
+          updateView();
+          return;
+        }
         if (checkPermissions(true)) {
           // Handle view update etc in permission callback
           return;
@@ -922,23 +927,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     startButton.setVisibility(View.GONE);
   }
 
+  private int getStartButtonTextResId() {
+    if (mGpsStatus.isStarted()) return org.runnerup.common.R.string.Stop_GPS;
+    return mGpsStatus.isEnabled()
+        ? org.runnerup.common.R.string.Start_GPS
+        : org.runnerup.common.R.string.Enable_GPS;
+  }
+
   private void updateStartGpsButtonView() {
-    do {
-      if (mGpsStatus.isStarted()) {
-        break;
-      }
-
-      //
-      if (mGpsStatus.isEnabled()) {
-        gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
-      } else {
-        gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
-      }
-      gpsEnable.setVisibility(View.VISIBLE);
-      return;
-    } while (false);
-
-    gpsEnable.setVisibility(View.GONE);
+    gpsEnable.setText(getStartButtonTextResId());
   }
 
   private void updateGPSView() {

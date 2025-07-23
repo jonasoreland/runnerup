@@ -219,18 +219,6 @@ public class MainLayout extends AppCompatActivity {
             return;
           }
 
-          // If on the first page (StartFragment) and GPS logging is active but not auto-started,
-          // stop GPS instead of exiting the app.
-          Fragment fragment = getCurrentFragment();
-
-          if (fragment instanceof StartFragment startFragment) {
-            if (!startFragment.getAutoStartGps() && startFragment.isGpsLogging()) {
-              startFragment.stopGps();
-              startFragment.updateView();
-              return;
-            }
-          }
-
           // Temporarily disable this callback to allow the system to handle the next back press
           // for exiting the app.
           this.setEnabled(false);
