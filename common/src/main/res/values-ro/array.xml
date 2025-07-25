@@ -33,6 +33,7 @@
     <item>Alte</item>
     <item>Orienteering</item>
     <item>Umblare</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Timp</item>

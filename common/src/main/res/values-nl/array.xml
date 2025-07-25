@@ -33,6 +33,7 @@
     <item>Andere</item>
     <item>Orienteren</item>
     <item>Wandelen</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Tijd</item>

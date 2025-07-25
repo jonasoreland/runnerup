@@ -29,6 +29,7 @@
     <item>Ostalo</item>
     <item>Planinarenje</item>
     <item>Hodanje</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Vrijeme</item>

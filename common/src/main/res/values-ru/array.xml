@@ -33,6 +33,7 @@
     <item>Прочее</item>
     <item>Ориентирование</item>
     <item>Ходьба</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Время</item>

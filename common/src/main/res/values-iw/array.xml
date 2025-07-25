@@ -33,6 +33,7 @@
     <item>אחר</item>
     <item>התמצאות</item>
     <item>הליכה</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>זמן</item>

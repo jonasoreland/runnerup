@@ -29,6 +29,7 @@
     <item>Muu</item>
     <item>Suunnistus</item>
     <item>Kävely</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Aika</item>
