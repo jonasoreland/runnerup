@@ -17,17 +17,24 @@
 
 package org.runnerup.hr;
 
+import android.Manifest;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.gms.wearable.Wearable;
 import org.runnerup.common.util.Constants;
+import org.runnerup.view.RequestPermissionActivity;
 
 /**
  * A {@link Service} that monitors heart rate data using the device's {@link Sensor#TYPE_HEART_RATE}
@@ -42,6 +49,8 @@ public class HeartRateService extends Service implements SensorEventListener {
   private SensorManager sensorManager;
   private Sensor heartRateSensor;
 
+  private BroadcastReceiver hrPermissionReceiver;
+
   @Override
   public IBinder onBind(Intent intent) {
     // We don't provide binding, so return null
@@ -53,6 +62,8 @@ public class HeartRateService extends Service implements SensorEventListener {
     super.onCreate();
     Log.d(TAG, "onCreate");
 
+    setupPermissionReceiver();
+
     // Initialize the SensorManager and attempt to get the default heart rate sensor.
     sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
     if (sensorManager != null) {
@@ -60,7 +71,7 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
 
     if (heartRateSensor == null) {
-      Log.e(TAG, "Heart rate sensor not available.");
+      Log.e(TAG, "onCreate: Heart rate sensor not available.");
       stopSelf(); // Stop the service if sensor is not found
     }
   }
@@ -79,43 +90,77 @@ public class HeartRateService extends Service implements SensorEventListener {
       return START_NOT_STICKY;
     }
 
-    // TODO: Check permission before start listening to the sensor.
-    startHeartRateMonitoring();
+    attemptToStartHeartRateMonitoring();
 
     // Ensures the Intent (with sourceNodeId) is redelivered if the service restarts
     return START_REDELIVER_INTENT;
   }
 
   private void startHeartRateMonitoring() {
+    Log.d(TAG, "startHeartRateMonitoring");
+
     if (sensorManager != null && heartRateSensor != null) {
-      // TODO: Use SENSOR_DELAY_UI for faster updates?
       boolean registered = sensorManager.registerListener(
               this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
       if (registered) {
-        Log.d(TAG, "Heart rate sensor listener registered.");
+        Log.d(TAG, "startHeartRateMonitoring: Heart rate sensor listener registered.");
       } else {
-        Log.e(TAG, "Failed to register heart rate sensor listener.");
+        Log.e(TAG, "startHeartRateMonitoring: Failed to register heart rate sensor listener.");
         stopSelf(); // Stop if registration fails
       }
     } else {
-      Log.e(TAG, "SensorManager or HeartRateSensor is null in startHeartRateMonitoring.");
+      Log.e(TAG, "startHeartRateMonitoring: SensorManager or HeartRateSensor is null in startHeartRateMonitoring.");
       stopSelf();
     }
   }
 
   @Override
   public void onDestroy() {
-    super.onDestroy();
     Log.d(TAG, "onDestroy");
 
-    stopHeartRateMonitoring();
+    // Unregister the receiver to prevent leaks
+    if (hrPermissionReceiver != null) {
+      LocalBroadcastManager.getInstance(this).unregisterReceiver(hrPermissionReceiver);
+      Log.d(TAG, "onDestroy: HR Permission Receiver unregistered.");
+      hrPermissionReceiver = null;
+    }
+    stopHeartRateMonitoring(); // Ensure monitoring is stopped
+    super.onDestroy();
+  }
+
+  private void attemptToStartHeartRateMonitoring() {
+    Log.d(TAG, "attemptToStartHeartRateMonitoring");
+
+    if (checkHeartRatePermission()) {
+      startHeartRateMonitoring();
+    } else {
+      Log.w(TAG, "attemptToStartHeartRateMonitoring: Permission not granted for HR monitoring. Requesting...");
+      launchPermissionActivity(); // The result will be handled by hrPermissionReceiver
+    }
   }
 
   private void stopHeartRateMonitoring() {
+    Log.d(TAG, "stopHeartRateMonitoring");
+
     if (sensorManager != null) {
       sensorManager.unregisterListener(this);
-      Log.d(TAG, "Heart rate sensor listener unregistered.");
+      Log.d(TAG, "stopHeartRateMonitoring: Heart rate sensor listener unregistered.");
     }
+  }
+
+  private boolean checkHeartRatePermission() {
+    boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) ==
+            PackageManager.PERMISSION_GRANTED;
+    Log.d(TAG, "checkHeartRatePermission: permissionGranted=" + permissionGranted);
+    return permissionGranted;
+  }
+
+  private void launchPermissionActivity() {
+    Log.d(TAG, "launchPermissionActivity");
+    Intent intent = new Intent(this, RequestPermissionActivity.class);
+    intent.putExtra(Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, Manifest.permission.BODY_SENSORS);
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary when starting activity from a service
+    startActivity(intent);
   }
 
   @Override
@@ -147,7 +192,12 @@ public class HeartRateService extends Service implements SensorEventListener {
   }
 
   private void sendHeartRateToPhone(int bpm) {
-    Log.d(TAG, "sendHeartRateToPhone: bpm=" + bpm);
+    Log.d(TAG, "sendHeartRateToPhone: bpm=" + bpm + ", sourceNodeId=" + sourceNodeId);
+
+    if (sourceNodeId == null) {
+      Log.e(TAG, "sendHeartRateToPhone: sourceNodeId is null. Not sending HR.");
+      return;
+    }
 
     byte[] payload = String.valueOf(bpm).getBytes();
 
@@ -157,6 +207,38 @@ public class HeartRateService extends Service implements SensorEventListener {
     Wearable.getMessageClient(this).sendMessage(sourceNodeId, Constants.Wear.Path.MSG_HEART_RATE, payload)
             .addOnSuccessListener(integer -> Log.d(TAG, "HR sent successfully: " + bpm))
             .addOnFailureListener(e -> Log.e(TAG, "Error sending HR: " + e.getMessage()));
+  }
 
+  private void setupPermissionReceiver() {
+    Log.d(TAG, "setupPermissionReceiver");
+
+    hrPermissionReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        Log.d(TAG, "onReceive: action=" + action);
+
+        if (Constants.Intents.ACTION_PERMISSION_RESULT.equals(action)) {
+          boolean permissionGranted = intent.getBooleanExtra(
+                  Constants.Intents.EXTRA_PERMISSION_GRANTED, false);
+
+          Log.d(TAG, "onReceive: permissionGranted=" + permissionGranted);
+
+          if (permissionGranted) {
+            startHeartRateMonitoring();
+          }
+          else {
+            Log.w(TAG, "onReceive: stopping service due to missing permission");
+            stopSelf(); // Stop if permission is not granted
+            // TODO: Notify phone app that permission is missing?
+          }
+        }
+      }
+    };
+
+    // Register the receiver
+    IntentFilter filter = new IntentFilter(Constants.Intents.ACTION_PERMISSION_RESULT);
+    LocalBroadcastManager.getInstance(this).registerReceiver(hrPermissionReceiver, filter);
+    Log.d(TAG, "setupPermissionReceiver: HR Permission Receiver registered.");
   }
 }
