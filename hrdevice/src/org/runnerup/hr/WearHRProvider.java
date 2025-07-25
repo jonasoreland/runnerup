@@ -22,6 +22,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.CapabilityInfo;
@@ -149,7 +151,8 @@ public class WearHRProvider implements HRProvider {
         });
 
         capabilityInfoTask.addOnFailureListener(e -> {
-            Log.e(TAG, "startScan: Failed to get capabilities", e);
+            Log.e(TAG, "startScan: Failed to get capabilities. Error message: " + e.getMessage());
+            postToHRClient(() -> hrClient.log(this, e.getMessage()));
             stopScan();
         });
     }
@@ -302,4 +305,16 @@ public class WearHRProvider implements HRProvider {
             Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
         }
     };
+
+    public static boolean checkLibrary(Context ctx) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(ctx);
+
+        if (resultCode != ConnectionResult.SUCCESS) {
+            Log.w(TAG, "Google Play services is not installed or is not enabled on this device.");
+            return false;
+        }
+
+        return true;
+    }
 }

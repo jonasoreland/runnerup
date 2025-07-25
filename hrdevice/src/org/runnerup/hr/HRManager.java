@@ -80,6 +80,7 @@ public class HRManager {
     }
 
     if (src.contentEquals(WearHRProvider.NAME)) {
+      if (!WearHRProvider.checkLibrary(ctx)) return null;
       return new WearHRProvider(ctx);
     }
 
