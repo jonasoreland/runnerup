@@ -106,6 +106,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
      * Sports, Nordic Walking
      */
     runkeeper2sportMap.put("Running", Sport.RUNNING);
+    runkeeper2sportMap.put("Running", Sport.TREADMILL);
     runkeeper2sportMap.put("Cycling", Sport.BIKING);
     runkeeper2sportMap.put("Mountain Biking", Sport.BIKING);
     runkeeper2sportMap.put("Other", Sport.OTHER);

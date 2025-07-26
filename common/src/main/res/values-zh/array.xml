@@ -33,6 +33,7 @@
     <item>其他</item>
     <item>越野</item>
     <item>行走</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>时间</item>

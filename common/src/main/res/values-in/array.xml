@@ -29,6 +29,7 @@
     <item>Lainnya</item>
     <item>Orienteering</item>
     <item>Jalan kaki</item>
+    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Waktu</item>

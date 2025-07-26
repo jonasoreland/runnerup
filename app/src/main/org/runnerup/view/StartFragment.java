@@ -192,11 +192,23 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     gpsBoundState = new GpsBoundState(context);
 
     ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
-    ArrayAdapter<CharSequence> adapter =
-        ArrayAdapter.createFromResource(
-            context, org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
-    adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
-    sportSpinner.setAdapter(adapter);
+    if (true) {
+      // TODO(jonas): Until SPORT_TREADMILL is fully implemented.
+      String[] sportEntries = getResources().getStringArray(org.runnerup.common.R.array.sportEntries);
+      sportEntries = remove(sportEntries,  DB.ACTIVITY.SPORT_TREADMILL);
+      ArrayAdapter<CharSequence> adapter =
+          new ArrayAdapter<CharSequence>(
+              context, R.layout.actionbar_spinner, sportEntries);
+      adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
+      sportSpinner.setAdapter(adapter);
+    } else {
+      ArrayAdapter<CharSequence> adapter =
+          ArrayAdapter.createFromResource(
+              context, org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
+      adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
+      sportSpinner.setAdapter(adapter);
+    }
+
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     sportSpinner.setViewSelection(
         prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
@@ -311,6 +323,18 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     mWearNotifier = new TrackerWear.WearNotifier(requireActivity().getApplicationContext());
     mWearNotifier.onViewCreated();
+  }
+
+  // TODO (jonas): remove once TREADMILL is completed.
+  private String[] remove(String[] array, int element) {
+    String[] copy = new String[array.length - 1];
+    int pos = 0;
+    for (int i = 0; i < array.length; i++) {
+      if (i != element) {
+        copy[pos++] = array[i];
+      }
+    }
+    return copy;
   }
 
   private class OnConfigureAudioListener implements OnSetValueListener {
