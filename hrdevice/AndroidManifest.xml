@@ -14,10 +14,4 @@
         android:name="android.permission.BLUETOOTH_CONNECT"
         android:minSdkVersion="31" />
 
-    <application
-        android:allowBackup="true"
-        android:label="@string/app_name">
-
-    </application>
-
 </manifest>
