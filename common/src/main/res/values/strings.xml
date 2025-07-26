@@ -82,6 +82,7 @@
   <string name="GPS_level_acceptable">Acceptable GPS</string>
   <string name="GPS_level_good">Good GPS</string>
   <string name="Start_GPS">Start GPS</string>
+  <string name="Stop_GPS">Stop GPS</string>
   <string name="Duration">Duration</string>
   <string name="Cancel">Cancel</string>
   <string name="value">value</string>
