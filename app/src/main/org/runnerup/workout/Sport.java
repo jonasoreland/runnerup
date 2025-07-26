@@ -166,4 +166,13 @@ public enum Sport {
   public boolean isWithoutGps() {
     return isWithoutGps(dbValue);
   }
+
+  public static boolean HasManualDistance(int dbValue) {
+    switch (dbValue) {
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
