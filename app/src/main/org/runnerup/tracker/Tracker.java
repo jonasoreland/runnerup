@@ -206,7 +206,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
             state.set(TrackerState.INITIALIZED);
           }
 
-          Log.e(getClass().getName(), "state.set(" + getState() + ")");
+          Log.d(getClass().getName(), "state.set(" + getState() + ")");
           handleNextState();
         }
       };
@@ -251,14 +251,14 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   public void connect() {
-    Log.e(getClass().getName(), "Tracker.connect() - state: " + state.get());
+    Log.d(getClass().getName(), "Tracker.connect() - state: " + state.get());
     switch (state.get()) {
       case INIT:
         setup();
       case INITIALIZING:
       case CLEANUP:
         nextState = TrackerState.CONNECTED;
-        Log.e(getClass().getName(), " => nextState: " + nextState);
+        Log.d(getClass().getName(), " => nextState: " + nextState);
         return;
       case INITIALIZED:
         break;
@@ -321,7 +321,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
       mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, logGpxAccuracy);
     } catch (IllegalStateException ex) {
-      Log.e(getClass().getName(), "Query failed:", ex);
+      Log.i(getClass().getName(), "Query failed:", ex);
     }
     return mActivityId;
   }

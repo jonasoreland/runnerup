@@ -409,7 +409,7 @@ public class WorkoutBuilder {
 
   private static void checkDuplicateTriggers(Step step) {
     if (hasEndOfLapTrigger(step.triggers) != null) {
-      Log.e("WorkoutBuilder", "hasEndOfLapTrigger()");
+      Log.d("WorkoutBuilder", "hasEndOfLapTrigger()");
       /*
        * The end of lap trigger can be a duplicate of a distance based interval trigger
        *  1) in a step with distance duration, that is a multiple of the interval-distance

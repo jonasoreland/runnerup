@@ -50,7 +50,7 @@ public abstract class Trigger implements TickComponent {
   void fire(Workout w) {
     for (TriggerSuppression s : triggerSuppression) {
       if (s.suppress(this, w)) {
-        Log.e(getClass().getName(), "trigger: " + this + "suppressed by: " + s);
+        Log.v(getClass().getName(), "trigger: " + this + "suppressed by: " + s);
         return;
       }
     }

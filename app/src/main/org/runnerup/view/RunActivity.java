@@ -198,7 +198,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    Log.e(getClass().getName(), "onConfigurationChange => do NOTHING!!");
+    Log.d(getClass().getName(), "onConfigurationChange => do NOTHING!!");
   }
 
   @Override

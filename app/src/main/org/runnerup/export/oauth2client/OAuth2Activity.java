@@ -172,7 +172,7 @@ public class OAuth2Activity extends AppCompatActivity {
               }
 
               if (e != null) {
-                Log.e(getClass().getName(), "e: " + e);
+                Log.d(getClass().getName(), "e: " + e);
                 Intent res = new Intent().putExtra("error", e);
                 OAuth2Activity.this.setResult(AppCompatActivity.RESULT_CANCELED, res);
                 OAuth2Activity.this.finish();

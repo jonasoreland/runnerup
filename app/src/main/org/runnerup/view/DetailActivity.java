@@ -317,8 +317,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
-    graphWrapper = new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
-                                    formatter, mDB, mID, use_distance_as_x);
+    // variable not needed
+    new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
+                     formatter, mDB, mID, use_distance_as_x);
 
     if (this.mode == MODE_SAVE) {
       resumeButton.setOnClickListener(resumeButtonClick);
