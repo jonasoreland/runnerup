@@ -230,7 +230,7 @@ public class ActivityCleaner implements Constants {
 
     for (long lap : laps) {
       int res = trimLap(db, activityId, lap);
-      Log.e("ActivityCleaner", "lap " + lap + " removed " + res + " locations");
+      Log.i("ActivityCleaner", "lap " + lap + " removed " + res + " locations");
     }
   }
 

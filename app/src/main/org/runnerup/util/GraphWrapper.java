@@ -455,7 +455,7 @@ public class GraphWrapper implements Constants {
 
     public void complete(final GraphView graphView) {
       avg_velocity /= velocityList.size();
-      Log.e(getClass().getName(), "graph: " + velocityList.size() + " points");
+      Log.d(getClass().getName(), "graph: " + velocityList.size() + " points");
 
       boolean smoothData =
           PreferenceManager.getDefaultSharedPreferences(graphView.getContext())
@@ -465,7 +465,7 @@ public class GraphWrapper implements Constants {
                       .getResources()
                       .getString(R.string.pref_pace_graph_smoothing),
                   true);
-      if (velocityList.size() > 0 && smoothData) {
+      if (!velocityList.isEmpty() && smoothData) {
         GraphFilter f = new GraphFilter(velocityList);
         final String defaultFilterList =
             graphView.getContext().getResources().getString(R.string.mm31kz513sg5);
@@ -478,35 +478,35 @@ public class GraphWrapper implements Constants {
                         .getString(R.string.pref_pace_graph_smoothing_filters),
                     defaultFilterList);
         final String[] filters = filterList.split(";");
-        System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
+        StringBuilder s = new StringBuilder("Applying filters(" + filters.length + ", >" + filterList + "<):");
         for (String filter : filters) {
           int[] args = getArgs(filter);
           if (filter.startsWith("mm")) {
             if (args.length == 1) {
               f.movingMedian(args[0]);
-              System.err.print(" mm(" + args[0] + ")");
+              s.append(" mm(").append(args[0]).append(")");
             }
           } else if (filter.startsWith("ma")) {
             if (args.length == 1) {
               f.movingAvergage(args[0]);
-              System.err.print(" ma(" + args[0] + ")");
+              s.append(" ma(").append(args[0]).append(")");
             }
           } else if (filter.startsWith("kz")) {
             if (args.length == 2) {
               f.KolmogorovZurbenko(args[0], args[1]);
-              System.err.print(" kz(" + args[0] + "," + args[1] + ")");
+              s.append(" kz(").append(args[0]).append(",").append(args[1]).append(")");
             }
           } else if (filter.startsWith("sg")) {
             if (args.length == 1 && args[0] == 5) {
               f.SavitzkyGolay5();
-              System.err.print(" sg(5)");
+              s.append(" sg(5)");
             } else if (args.length == 1 && args[0] == 7) {
               f.SavitzkyGolay7();
-              System.err.print(" sg(7)");
+              s.append(" sg(7)");
             }
           }
         }
-        Log.e(getClass().getName(), "");
+        Log.d(getClass().getName(), s.toString());
         f.complete();
       }
       LineGraphSeries<DataPoint> graphViewData =
@@ -547,16 +547,16 @@ public class GraphWrapper implements Constants {
             });
 
         if (showHRZhist) {
-          System.err.print("HR Zones:");
+          StringBuilder s = new StringBuilder("HR Zones:");
           double sum = 0;
           for (double aHrzHist : hrzHist) {
             sum += aHrzHist;
           }
           for (int i = 0; i < hrzHist.length; i++) {
             hrzHist[i] = hrzHist[i] / sum;
-            System.err.print(" " + hrzHist[i]);
+            s.append(" ").append(hrzHist[i]);
           }
-          Log.e(getClass().getName(), "\n");
+          Log.d(getClass().getName(), s.toString());
           hrzonesBar.pushHrzData(hrzHist);
         }
       }
@@ -662,8 +662,8 @@ public class GraphWrapper implements Constants {
       graphData.clearSmooth(xAxis.getX(tot_distance, tot_time));
 
       ll.close();
-      Log.e(getClass().getName(), "Finished loading " + cnt + " points"
-            + " => " + graphData.velocityList.size() + " points");
+      // Log.e(getClass().getName(), "Finished loading " + cnt + " points"
+      //      + " => " + graphData.velocityList.size() + " points");
       return graphData;
     }
 
