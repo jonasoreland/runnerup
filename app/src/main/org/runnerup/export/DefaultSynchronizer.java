@@ -98,7 +98,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
   @NonNull
   @Override
   public Intent getAuthIntent(AppCompatActivity a) {
-    Log.e(getName(), "getAuthIntent: getAuthIntent must be implemented for OAUTH2");
+    Log.i(getName(), "getAuthIntent: getAuthIntent must be implemented for OAUTH2");
     return new Intent();
   }
 
@@ -158,7 +158,7 @@ public abstract class DefaultSynchronizer implements Synchronizer {
   }
 
   ActivityEntity download(SyncActivityItem item) {
-    Log.e(Constants.LOG, "No download method implemented for the synchronizer " + getName());
+    Log.i(Constants.LOG, "No download method implemented for the synchronizer " + getName());
     return null;
   }
 

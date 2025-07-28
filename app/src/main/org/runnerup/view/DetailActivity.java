@@ -225,8 +225,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     LinearLayout graphTab = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
-    GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
+    // variable not needed
+    new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
 
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(

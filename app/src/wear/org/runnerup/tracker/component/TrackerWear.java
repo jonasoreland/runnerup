@@ -214,7 +214,7 @@ public class TrackerWear extends DefaultTrackerComponent
         dataItem -> {
           if (dataItem != null) {
             wearNode = dataItem.getUri().getHost();
-            Log.e(getName(), "getDataItem => wearNode:" + wearNode);
+            Log.d(getName(), "getDataItem => wearNode:" + wearNode);
           }
         });
   }
@@ -231,12 +231,12 @@ public class TrackerWear extends DefaultTrackerComponent
       case WORKOUT_TYPE.INTERVAL:
       case WORKOUT_TYPE.ADVANCED:
         initIntervalScreens();
-        Log.e("TrackerWear::onBind()", "initIntervalScreens()");
+        Log.d("TrackerWear::onBind()", "initIntervalScreens()");
         break;
       default:
       case WORKOUT_TYPE.BASIC:
         initBasicScreens();
-        Log.e("TrackerWear::onBind()", "initBasicScreens()");
+        Log.d("TrackerWear::onBind()", "initBasicScreens()");
         break;
     }
   }
@@ -249,7 +249,7 @@ public class TrackerWear extends DefaultTrackerComponent
   }
 
   private void setTrackerState(TrackerState val) {
-    Log.e(getName(), "setTrackerState(" + val + ")");
+    Log.d(getName(), "setTrackerState(" + val + ")");
     Bundle b = new Bundle();
     b.putInt(Wear.TrackerState.STATE, val.getValue());
     setData(Wear.Path.TRACKER_STATE, b);
@@ -433,7 +433,7 @@ public class TrackerWear extends DefaultTrackerComponent
 
   @Override
   public void onMessageReceived(final MessageEvent messageEvent) {
-    Log.e(getName(), "onMessageReceived: " + messageEvent);
+    Log.d(getName(), "onMessageReceived: " + messageEvent);
     // note: skip state checking, do that in receiver instead
     if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
       sendLocalBroadcast(Intents.PAUSE_WORKOUT);
@@ -497,7 +497,7 @@ public class TrackerWear extends DefaultTrackerComponent
   @Override
   public void onDataChanged(final DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      Log.e(getName(), "onDataChanged: " + ev.getDataItem().getUri());
+      Log.d(getName(), "onDataChanged: " + ev.getDataItem().getUri());
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.WEAR_NODE_ID.contentEquals(path)) {
         setWearNode(ev);

@@ -70,11 +70,11 @@ public class RUTextToSpeech {
         case TextToSpeech.LANG_COUNTRY_AVAILABLE:
         case TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE:
           res = tts.setLanguage(locale);
-          Log.e(getClass().getName(), "setLanguage(" + locale.getDisplayLanguage() + ") => " + res);
+          Log.d(getClass().getName(), "setLanguage(" + locale.getDisplayLanguage() + ") => " + res);
           break;
         case TextToSpeech.LANG_MISSING_DATA:
         case TextToSpeech.LANG_NOT_SUPPORTED:
-          Log.e(
+          Log.v(
               getClass().getName(),
               "setLanguage(" + locale.getDisplayLanguage() + ") => MISSING: " + res);
           break;
@@ -109,14 +109,14 @@ public class RUTextToSpeech {
     if (!cueSet.contains(text)) {
       //noinspection ConstantConditions
       if (trace) {
-        Log.e(getClass().getName(), "buffer speak: " + text);
+        Log.d(getClass().getName(), "buffer speak: " + text);
       }
       cueSet.add(text);
       cueList.add(new Entry(text, prio, flush, params, getId(text)));
     } else {
       //noinspection ConstantConditions
       if (trace) {
-        Log.e(getClass().getName(), "skip buffer (duplicate) speak: " + text);
+        Log.d(getClass().getName(), "skip buffer (duplicate) speak: " + text);
       }
     }
     return 0;
@@ -191,7 +191,7 @@ public class RUTextToSpeech {
 
       int res = textToSpeech.speak(e.text, mode, params);
       if (res == TextToSpeech.ERROR) {
-        Log.e(
+        Log.i(
             getClass().getName(),
               "res == ERROR emit() text: "
               + e.text

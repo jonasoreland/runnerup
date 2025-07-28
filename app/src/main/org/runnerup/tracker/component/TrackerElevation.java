@@ -65,7 +65,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
         Geoid.init(context.getAssets().open("egm96-delta.dat"));
         return new GeoidAdjust();
       } catch (IOException e) {
-        Log.e("TrackerElevation", "Altitude correction " + e);
+        Log.i("TrackerElevation", "Altitude correction " + e);
       }
       return null;
     }
