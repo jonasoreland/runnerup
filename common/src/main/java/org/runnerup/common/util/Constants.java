@@ -57,6 +57,8 @@ public interface Constants {
       int SPORT_OTHER = 2; // unknown
       int SPORT_ORIENTEERING = 3;
       int SPORT_WALKING = 4;
+      int SPORT_MAX = 4;
+
       String WITH_BAROMETER = "<WithBarometer/>";
     }
 

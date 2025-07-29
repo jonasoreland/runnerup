@@ -89,6 +89,7 @@ import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.Sport;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
 import org.runnerup.workout.WorkoutBuilder;
@@ -193,8 +194,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
     ArrayAdapter<CharSequence> adapter =
-        ArrayAdapter.createFromResource(
-            context, org.runnerup.common.R.array.sportEntries, R.layout.actionbar_spinner);
+        new ArrayAdapter<CharSequence>(
+            context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
     adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
     sportSpinner.setAdapter(adapter);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

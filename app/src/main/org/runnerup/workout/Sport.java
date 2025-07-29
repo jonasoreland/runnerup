@@ -18,6 +18,9 @@
 package org.runnerup.workout;
 
 import android.content.res.Resources;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 
@@ -38,6 +41,46 @@ public enum Sport {
     return dbValue;
   }
 
+  private static Map<Integer, Integer> createSportToStringMap() {
+    Map<Integer, Integer> result = new HashMap<>();
+    result.put(DB.ACTIVITY.SPORT_RUNNING, org.runnerup.common.R.string.SPORT_RUNNING);
+    result.put(DB.ACTIVITY.SPORT_BIKING, org.runnerup.common.R.string.SPORT_BIKING);
+    result.put(DB.ACTIVITY.SPORT_OTHER, org.runnerup.common.R.string.SPORT_OTHER);
+    result.put(DB.ACTIVITY.SPORT_ORIENTEERING, org.runnerup.common.R.string.SPORT_ORIENTEERING);
+    result.put(DB.ACTIVITY.SPORT_WALKING, org.runnerup.common.R.string.SPORT_WALKING);
+    return Collections.unmodifiableMap(result);
+  }
+  private static final Map<Integer,Integer> gSportToStringMap = createSportToStringMap();
+
+  public static String[] getStringArray(Resources res) {
+    String[] ret = new String[DB.ACTIVITY.SPORT_MAX + 1];
+
+    {  // Backward compability. TODO: Remove once new sport strings are translated.
+      int resId = org.runnerup.common.R.array.sportEntries;
+      String[] org = res.getStringArray(resId);
+      for (int i = 0; i < org.length && i < ret.length; i++) {
+        if (ret[i] == null) {
+          ret[i] = org[i];
+        }
+      }
+    }
+
+    for (int i = 0; i < ret.length; i++) {
+      if (ret[i] == null && gSportToStringMap.containsKey(i)) {
+        int id = gSportToStringMap.get(i);
+        ret[i] = res.getString(id);
+      }
+    }
+
+    for (int i = 0; i < ret.length; i++) {
+      if (ret[i] == null) {
+        ret[i] = res.getString(org.runnerup.common.R.string.Unknown);
+      }
+    }
+
+    return ret;
+  }
+
   public static String textOf(int dbValue) {
     return textOf(null, dbValue);
   }
@@ -45,7 +88,7 @@ public enum Sport {
   public static String textOf(Resources res, int dbValue) {
     String sportName = null;
     if (res != null) {
-      String[] sports = res.getStringArray(org.runnerup.common.R.array.sportEntries);
+      String[] sports = getStringArray(res);
       if (0 <= dbValue && dbValue < sports.length) {
         sportName = sports[dbValue];
       }
