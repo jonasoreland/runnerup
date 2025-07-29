@@ -362,4 +362,11 @@
   <string name="Activity_ongoing">Activity ongoing</string>
   <string name="Activity_paused">Activity paused</string>
   <string name="Activity_stopped">Activity stopped</string>
+
+  <!--Name of sports, these deprecate array.sportEntries -->
+  <string name="SPORT_RUNNING">Running</string>
+  <string name="SPORT_BIKING">Biking</string>
+  <string name="SPORT_OTHER">Other</string>
+  <string name="SPORT_ORIENTEERING">Orienteering</string>
+  <string name="SPORT_WALKING">Walking</string>
 </resources>
