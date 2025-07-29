@@ -211,7 +211,7 @@ public enum Sport {
     return isWithoutGps(dbValue);
   }
 
-  public static boolean HasManualDistance(int dbValue) {
+  public static boolean hasManualDistance(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_TREADMILL:
         return true;
