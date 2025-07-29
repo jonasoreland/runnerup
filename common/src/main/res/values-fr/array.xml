@@ -33,7 +33,6 @@
     <item>Autre</item>
     <item>Course d\'orientation</item>
     <item>Marche</item>
-    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Temps</item>

@@ -33,7 +33,6 @@
     <item>Інше</item>
     <item>Орієнтування</item>
     <item>Прогулянка</item>
-    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Час</item>

@@ -49,6 +49,7 @@ public enum Sport {
     result.put(DB.ACTIVITY.SPORT_OTHER, org.runnerup.common.R.string.SPORT_OTHER);
     result.put(DB.ACTIVITY.SPORT_ORIENTEERING, org.runnerup.common.R.string.SPORT_ORIENTEERING);
     result.put(DB.ACTIVITY.SPORT_WALKING, org.runnerup.common.R.string.SPORT_WALKING);
+    result.put(DB.ACTIVITY.SPORT_TREADMILL, org.runnerup.common.R.string.SPORT_TREADMILL);
     return Collections.unmodifiableMap(result);
   }
   private static final Map<Integer,Integer> gSportToStringMap = createSportToStringMap();

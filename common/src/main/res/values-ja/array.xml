@@ -33,7 +33,6 @@
     <item>その他</item>
     <item>オリエンテーリング</item>
     <item>ウォーキング</item>
-    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>時間</item>

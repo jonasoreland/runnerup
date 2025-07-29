@@ -33,7 +33,6 @@
     <item>Altro</item>
     <item>Orientamento</item>
     <item>Camminata</item>
-    <item>Treadmill</item>
   </string-array>
   <string-array name="types">
     <item>Tempo</item>
