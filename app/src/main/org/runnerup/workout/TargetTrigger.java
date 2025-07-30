@@ -111,16 +111,15 @@ public class TargetTrigger extends Trigger {
       for (int i = 0; i < elapsed_seconds; i++) {
         addObservation(val_now);
       }
-      // Log.e(getName(), "val_now: " + val_now + " elapsed: " +
-      // elapsed_seconds);
+      // Log.d(getName(), "val_now: " + val_now + " elapsed: " + elapsed_seconds);
 
       if (graceCount > 0) { // only emit coaching ever so often
-        // Log.e(getName(), "graceCount: " + graceCount);
+        // Log.d(getName(), "graceCount: " + graceCount);
         graceCount -= elapsed_seconds;
       } else {
         double avg = getValue();
         double cmp = range.compare(avg);
-        // Log.e(getName(), " => avg: " + avg + " => cmp: " + cmp);
+        // Log.d(getName(), " => avg: " + avg + " => cmp: " + cmp);
         if (cmp == 0) {
           graceCount = minGraceCount;
           return false;

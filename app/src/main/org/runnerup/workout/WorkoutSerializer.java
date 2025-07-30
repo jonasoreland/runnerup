@@ -439,7 +439,7 @@ public class WorkoutSerializer {
       throws FileNotFoundException, JSONException {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     File fin = getFile(ctx, name);
-    Log.e("WorkoutSerializer", "reading " + fin.getPath());
+    Log.d("WorkoutSerializer", "reading " + fin.getPath());
 
     Workout w = readJSON(new FileReader(fin));
     w.sport =
@@ -452,7 +452,7 @@ public class WorkoutSerializer {
   public static void writeFile(Context ctx, String name, Workout workout)
       throws IOException, JSONException {
     File fout = getFile(ctx, name);
-    Log.e("WorkoutSerializer", "writing " + fout.getPath());
+    Log.v("WorkoutSerializer", "writing " + fout.getPath());
     writeJSON(new FileWriter(fout), workout);
   }
 

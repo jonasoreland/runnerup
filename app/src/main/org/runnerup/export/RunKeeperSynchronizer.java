@@ -411,7 +411,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
     Exception ex;
     try {
       URL newurl = new URL(REST_URL + fitnessActivitiesUrl);
-      // Log.e(Constants.LOG, "url: " + newurl.toString());
+      // Log.d(Constants.LOG, "url: " + newurl.toString());
       conn = (HttpURLConnection) newurl.openConnection();
       conn.setDoOutput(true);
       conn.setRequestMethod(RequestMethod.POST.name());
