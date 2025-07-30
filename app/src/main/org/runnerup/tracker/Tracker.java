@@ -191,6 +191,10 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     }
   }
 
+  public void setWithoutGps(boolean val) {
+    trackerGPS.setWithoutGps(val);
+  }
+
   private final TrackerComponent.Callback onInitCallback =
       new TrackerComponent.Callback() {
         @Override
@@ -421,7 +425,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity();
+    saveActivity(/* manualDistance= */null);
     components.onPause();
   }
 
@@ -450,7 +454,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity();
+    saveActivity(/* manualDistance= */null);
     components.onPause(); // TODO add new callback for this
   }
 
@@ -538,7 +542,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
         handleNextState();
       };
 
-  public void completeActivity(boolean save) {
+  public void completeActivity(boolean save, Double manualDistance) {
     if (BuildConfig.DEBUG
         && state.get() != TrackerState.PAUSED
         && state.get() != TrackerState.STOPPED) {
@@ -549,7 +553,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     internalOnLocationChanged(mLastLocationStarted);
 
     if (save) {
-      saveActivity();
+      saveActivity(manualDistance);
       liveLog(DB.LOCATION.TYPE_END);
     } else {
       ContentValues tmp = new ContentValues();
@@ -564,7 +568,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     reset();
   }
 
-  private void saveActivity() {
+  private void saveActivity(Double manualDistance) {
     ContentValues tmp = new ContentValues();
     if (mHeartbeatNanos > 0) {
       long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
@@ -582,7 +586,11 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       }
     }
 
-    tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+    if (manualDistance != null) {
+      tmp.put(Constants.DB.ACTIVITY.DISTANCE, manualDistance);
+    } else {
+      tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+    }
     tmp.put(
         Constants.DB.ACTIVITY.TIME,
         Math.round(getTimeMs() / 1000.0d)); // time should be updated last for conditionalRecompute
