@@ -839,10 +839,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
     tmp.put(DB.ACTIVITY.SPORT, sportValue);
     String[] whereArgs = {Long.toString(mID)};
+    Log.e("KESO", "tmp="+tmp);
     mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 
     // path simplification (reduce resolution of location entries in database)
     if (!Sport.hasManualDistance(sportValue)) {
+      Log.e("KESO", "Simplify path");
       try {
         PathSimplifier simplifier = PathSimplifier.getPathSimplifierForSave(this);
         if (simplifier != null) {
@@ -903,7 +905,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           syncManager.startUploading(
               (synchronizerName, status) -> {
                 uploading = false;
-                DetailActivity.this.setResult(RESULT_OK);
+                final Intent returnIntent = new Intent();
+                int sportValue = sport.getValueInt();
+                if (Sport.hasManualDistance(sportValue)) {
+                  returnIntent.putExtra(
+                      "MANUAL_DISTANCE", headerData.getAsDouble(DB.ACTIVITY.DISTANCE));
+                }
+                DetailActivity.this.setResult(RESULT_OK, returnIntent);
                 DetailActivity.this.finish();
               },
               pendingSynchronizers,
