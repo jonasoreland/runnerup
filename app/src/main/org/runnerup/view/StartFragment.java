@@ -41,6 +41,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -69,6 +70,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
@@ -110,7 +112,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private boolean statusDetailsShown = false;
 
-  private boolean skipStopGps = false;
+  private boolean runActivityPending = false;
   private Tracker mTracker = null;
   private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
@@ -134,6 +136,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private TextView wearOsMessage = null;
   private TrackerWear.WearNotifier mWearNotifier = null;
 
+  boolean sportWithoutGps = false;
   boolean batteryLevelMessageShown = false;
 
   TitleSpinner simpleTargetType = null;
@@ -312,6 +315,51 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     mWearNotifier = new TrackerWear.WearNotifier(requireActivity().getApplicationContext());
     mWearNotifier.onViewCreated();
+
+    var listener = sportSpinner.getViewOnItemSelectedListener();
+    sportSpinner.setViewOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (listener != null) {
+              listener.onItemSelected(parent, view, position, id);
+            }
+            setGpsNotRequired(Sport.isWithoutGps((int) id));
+            StartFragment.this.updateView();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {
+            if (listener != null) {
+              listener.onNothingSelected(parent);
+            }
+          }
+        });
+  }
+
+  private void setGpsNotRequired(boolean val) {
+    if (sportWithoutGps == val) {
+      return;
+    }
+
+    sportWithoutGps = val;
+    if (sportWithoutGps) {
+      // Turning GPS off
+      if (mTracker != null) {
+        mTracker.setWithoutGps(true);
+      }
+    } else {
+      // Toggling GPS on
+      Log.e(getClass().getName(), "mTracker.reset()");
+      if (mTracker != null) {
+        mTracker.setWithoutGps(false);
+        mTracker.reset();
+        if (mGpsStatus.isStarted()) {
+          mTracker.setup();
+          startGps();
+        }
+      }
+    }
   }
 
   private class OnConfigureAudioListener implements OnSetValueListener {
@@ -427,7 +475,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     stopGps();
     unbindGpsTracker();
     mGpsStatus = null;
-    mTracker = null;
 
     DBHelper.closeDB(mDB);
     super.onDestroy();
@@ -477,9 +524,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private void onGpsTrackerBound() {
     // check and request permissions at startup
     boolean missingEssentialPermission = checkPermissions(false);
+    mTracker.setWithoutGps(sportWithoutGps);
     if (!missingEssentialPermission && getAutoStartGps()) {
       startGps();
     } else {
+      Log.e(getClass().getName(), "onGpsTrackerBound state: " + mTracker.getState());
       switch (mTracker.getState()) {
         case INIT:
         case CLEANUP:
@@ -492,12 +541,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         case CONNECTED:
         case STARTED:
         case PAUSED:
-          if (BuildConfig.DEBUG) {
-            // Seem to happen when returning to RunnerUp
-            Log.e(
-                getClass().getName(),
-                "onGpsTrackerBound unexpected tracker state: " + mTracker.getState().toString());
-          }
           break;
         case ERROR:
           break;
@@ -514,8 +557,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void startGps() {
     Log.v(getClass().getName(), "StartFragment.startGps()");
-    if (!mGpsStatus.isEnabled()) {
-      startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    if (!sportWithoutGps) {
+      if (!mGpsStatus.isEnabled()) {
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+      }
+      notificationStateManager.displayNotificationState(gpsSearchingState);
     }
 
     if (mGpsStatus != null && !mGpsStatus.isStarted()) {
@@ -523,19 +569,26 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
 
     if (mTracker != null) {
+      mTracker.setWithoutGps(sportWithoutGps);
       mTracker.connect();
     }
-
-    notificationStateManager.displayNotificationState(gpsSearchingState);
   }
 
   public void stopGps() {
-    Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.skipStopGps);
-    if (skipStopGps) return;
+    Log.e(
+        getClass().getName(),
+        "StartFragment.stopGps() runActivityPending: " + this.runActivityPending);
+    if (runActivityPending) {
+      return;
+    }
 
-    if (mGpsStatus != null) mGpsStatus.stop(this);
+    if (mGpsStatus != null) {
+      mGpsStatus.stop(this);
+    }
 
-    if (mTracker != null) mTracker.reset();
+    if (mTracker != null) {
+      mTracker.reset();
+    }
 
     notificationStateManager.cancelNotification();
   }
@@ -648,7 +701,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     mTracker.setWorkout(prepareWorkout());
     mTracker.start();
 
-    skipStopGps = true;
+    runActivityPending = true;
     Intent intent = new Intent(requireContext(), RunActivity.class);
     // TODO: Use the Activity Result API
     StartFragment.this.startActivityForResult(intent, START_ACTIVITY);
@@ -899,15 +952,21 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         break;
       }
 
-      if (!mGpsStatus.isLogging()) {
-        break;
-      }
+      if (!sportWithoutGps) {
+        if (!mGpsStatus.isLogging()) {
+          break;
+        }
 
-      if (!mGpsStatus.isFixed()) {
-        break;
+        if (!mGpsStatus.isFixed()) {
+          break;
+        }
       }
 
       if (mTracker == null || !mIsBound) {
+        break;
+      }
+
+      if (mTracker.getState() != TrackerState.CONNECTED) {
         break;
       }
 
@@ -930,7 +989,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       }
 
       //
-      if (mGpsStatus.isEnabled()) {
+      if (sportWithoutGps) {
+        gpsEnable.setText(org.runnerup.common.R.string.Start_tracker);
+      } else if (mGpsStatus.isEnabled()) {
         gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
       } else {
         gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
@@ -943,7 +1004,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void updateGPSView() {
-    if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted()) {
+    if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted() || sportWithoutGps) {
 
       if (statusDetailsShown) {
         gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
@@ -1164,6 +1225,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           mTracker = ((Tracker.LocalBinder) service).getService();
           // Tell the user about this for our demo.
           StartFragment.this.onGpsTrackerBound();
+          if (mTracker != null) {
+            mTracker.registerTrackerStateListener(trackerStateListener);
+          }
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -1171,6 +1235,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           // unexpectedly disconnected -- that is, its process crashed.
           // Because it is running in our same process, we should never
           // see this happen.
+          if (mTracker != null) {
+            mTracker.unregisterTrackerStateListener(trackerStateListener);
+          }
           mTracker = null;
         }
       };
@@ -1193,6 +1260,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       requireActivity().getApplicationContext().unbindService(mConnection);
       mIsBound = false;
     }
+    if (mTracker != null) {
+      mTracker.unregisterTrackerStateListener(trackerStateListener);
+    }
+    mTracker = null;
   }
 
   // TODO: Use Activity Result API
@@ -1212,7 +1283,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
     }
     if (requestCode == START_ACTIVITY) {
-      skipStopGps = false;
+      runActivityPending = false;
       if (!mIsBound || mTracker == null) {
         bindGpsTracker();
       } else {
@@ -1391,4 +1462,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           return newValue;
         }
       };
+
+  private final ValueModel.ChangeListener<TrackerState> trackerStateListener = new ValueModel.ChangeListener<>(){
+      @Override
+      public void onValueChanged(
+          ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
+        onTick();
+      }
+    };
 }

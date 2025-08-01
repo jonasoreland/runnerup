@@ -45,6 +45,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
   private static final String NAME = "GPS";
   private GpsStatus mGpsStatus;
   private Callback mConnectCallback;
+  private LocationManager locationManager;
 
   @Override
   public String getName() {
@@ -57,6 +58,9 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onInit(final Callback callback, Context context) {
+    if (mWithoutGps) {
+      return ResultCode.RESULT_OK;
+    }
     try {
       LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
       if (lm == null) {
@@ -69,6 +73,28 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       return ResultCode.RESULT_ERROR;
     }
     return ResultCode.RESULT_OK;
+  }
+
+  public void setWithoutGps(boolean val) {
+    if (mWithoutGps == val) {
+      return;
+    }
+    mWithoutGps = val;
+    if (mWithoutGps) {
+      switch (tracker.getState()) {
+        case INIT:
+        case CLEANUP:
+        case ERROR:
+        case INITIALIZING:
+        case INITIALIZED:
+          return;
+        default:
+          break;
+      }
+      stopGps();
+      onTick();
+      gpsLessLocationProvider.run();
+    }
   }
 
   private Integer parseAndFixInteger(
@@ -86,37 +112,41 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
-    if (ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
+    if (mWithoutGps == false &&
+        ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
       mWithoutGps = true;
     }
+
     try {
       LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+      String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
+      for (String s : list) {
+        Location tmp = lm.getLastKnownLocation(s);
+        if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
+          mLastLocation = tmp;
+        }
+      }
+      if (mLastLocation != null) {
+        mLastLocation.removeSpeed();
+        mLastLocation.removeAltitude();
+        mLastLocation.removeAccuracy();
+        mLastLocation.removeBearing();
+        mLastLocation.setTime(System.currentTimeMillis());
+      }
+
       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
       frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
       if (!mWithoutGps) {
         Integer frequency_meters =
             parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
+        locationManager = lm;
         lm.requestLocationUpdates(GPS_PROVIDER, frequency_ms, frequency_meters, tracker);
         mGpsStatus = new GpsStatus(context);
         mGpsStatus.start(this);
         mConnectCallback = callback;
         return ResultCode.RESULT_PENDING;
       } else {
-        String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
-        mLastLocation = null;
-        for (String s : list) {
-          Location tmp = lm.getLastKnownLocation(s);
-          if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
-            mLastLocation = tmp;
-          }
-        }
-        if (mLastLocation != null) {
-          mLastLocation.removeSpeed();
-          mLastLocation.removeAltitude();
-          mLastLocation.removeAccuracy();
-          mLastLocation.removeBearing();
-        }
         gpsLessLocationProvider.run();
         return ResultCode.RESULT_OK;
       }
@@ -131,37 +161,39 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     return (mWithoutGps) || (mGpsStatus != null) && mGpsStatus.isFixed();
   }
 
-  @Override
-  public ResultCode onEnd(Callback callback, Context context) {
-    if (!mWithoutGps) {
-      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+  private void stopGps() {
+    if (locationManager != null) {
       try {
-        lm.removeUpdates(tracker);
+        locationManager.removeUpdates(tracker);
       } catch (Exception ex) {
         ex.printStackTrace();
       }
-
-      if (mGpsStatus != null) {
-        mGpsStatus.stop(this);
-      }
-      mGpsStatus = null;
-      mConnectCallback = null;
+      locationManager = null;
     }
+
+    if (mGpsStatus != null) {
+      mGpsStatus.stop(this);
+      mGpsStatus = null;
+    }
+  }
+
+  @Override
+  public ResultCode onEnd(Callback callback, Context context) {
+    stopGps();
+    mConnectCallback = null;
+    mWithoutGps = false;
     return ResultCode.RESULT_OK;
   }
 
   private final Runnable gpsLessLocationProvider =
       new Runnable() {
 
-        Location location = null;
         final Handler handler = new Handler();
 
         @Override
         public void run() {
-          if (location == null) {
-            location = new Location(mLastLocation);
-            mLastLocation = null;
-          }
+          Location location = new Location(mLastLocation);
+          location.setTime(System.currentTimeMillis());
           switch (tracker.getState()) {
             case INIT:
             case CLEANUP:
@@ -182,14 +214,21 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public void onTick() {
-    if (mGpsStatus == null) return;
+    if (mWithoutGps == false) {
+      if (mGpsStatus == null) {
+        return;
+      }
 
-    if (!mGpsStatus.isFixed()) return;
+      if (!mGpsStatus.isFixed()) {
+        return;
+      }
+    }
 
-    if (mConnectCallback == null) return;
+    if (mConnectCallback == null) {
+      return;
+    }
 
     Callback tmp = mConnectCallback;
-
     mConnectCallback = null;
     mGpsStatus.stop(this);
     // note: Don't reset mGpsStatus, it's used for isConnected()
