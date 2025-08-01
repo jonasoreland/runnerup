@@ -195,7 +195,7 @@ public class GPX {
     // number of GPS points in current track segment
     int segmentPoints = 0;
     while (lok) {
-      if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
+      if (! (cLap.getFloat(1) == 0 && cLap.getLong(2) == 0)) {
         long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
