@@ -189,4 +189,8 @@ public enum Sport {
       return "Other";
     }
   }
+
+  public static boolean hasManualDistance(int dbValue) {
+    return false;
+  }
 }
