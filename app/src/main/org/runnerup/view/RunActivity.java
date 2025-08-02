@@ -322,8 +322,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       /*
        * they saved
        */
+      Double manualDistance = null;
+      if (data != null && data.hasExtra("MANUAL_DISTANCE")) {
+        manualDistance = data.getDoubleExtra("MANUAL_DISTANCE", 0);
+      }
       workout.onComplete(Scope.ACTIVITY, workout);
-      workout.onSave();
+      if (mTracker != null) {
+        mTracker.completeActivity(/* save= */true, manualDistance);
+      }
       mTracker = null;
       finish();
     } else if (resultCode == AppCompatActivity.RESULT_CANCELED) {
@@ -331,7 +337,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
        * they discarded
        */
       workout.onComplete(Scope.ACTIVITY, workout);
-      workout.onDiscard();
+      mTracker.completeActivity(/* save= */false, /* manualDistance= */null);
       mTracker = null;
       finish();
     } else if (resultCode == AppCompatActivity.RESULT_FIRST_USER) {
