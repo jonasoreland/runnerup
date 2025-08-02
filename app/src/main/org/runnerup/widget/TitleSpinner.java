@@ -119,11 +119,6 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
     mSpinner.setOnItemSelectedListener(listener);
   }
 
-  @Override
-  public AdapterView.OnItemSelectedListener getViewOnItemSelectedListener() {
-    return mSpinner.getOnItemSelectedListener();
-  }
-
   public void setAdapter(SpinnerAdapter adapter) {
     mSpinner.setAdapter(adapter);
     mPresenter.loadValue(null);

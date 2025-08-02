@@ -28,7 +28,6 @@ public interface SpinnerInterface {
 
   void viewOnClose(OnCloseDialogListener listener, boolean b);
 
-  AdapterView.OnItemSelectedListener getViewOnItemSelectedListener();
   void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener);
 
   void setOnClickSpinnerOpen();

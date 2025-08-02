@@ -87,9 +87,4 @@ public class ClassicSpinner extends AppCompatSpinner implements SpinnerInterface
   public void setViewOnItemSelectedListener(AdapterView.OnItemSelectedListener listener) {
     setOnItemSelectedListener(listener);
   }
-
-  @Override
-  public AdapterView.OnItemSelectedListener getViewOnItemSelectedListener() {
-    return getOnItemSelectedListener();
-  }
 }
