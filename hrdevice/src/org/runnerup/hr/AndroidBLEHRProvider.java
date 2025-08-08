@@ -64,7 +64,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   private int hrValue = 0;
   private long hrTimestamp = 0;
   private long hrElapsedRealtime = 0;
-  private int batteryLevel = -1;
+  private int batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
   private boolean hasBatteryService = false;
 
   private long mPrevHrTimestampNotZero = 0;
