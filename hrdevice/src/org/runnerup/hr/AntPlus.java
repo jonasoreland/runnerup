@@ -410,7 +410,7 @@ public class AntPlus extends BtHRBase {
 
   @Override
   public int getBatteryLevel() {
-    return -1;
+    return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
   }
 
   // ANT+ requires Bluetooth too, as well as that system libs are loaded
