@@ -193,4 +193,8 @@ public enum Sport {
   public static boolean isWithoutGps(int dbValue) {
     return false;
   }
+
+  public static boolean hasManualDistance(int dbValue) {
+    return false;
+  }
 }

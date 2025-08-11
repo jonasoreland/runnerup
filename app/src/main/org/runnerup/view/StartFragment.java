@@ -72,6 +72,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
+import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.MockHRProvider;
 import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
@@ -1207,7 +1208,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       if (hrVal != null) {
         str.append(" ").append(hrVal);
         Integer batteryLevel = mTracker.getCurrentBatteryLevel();
-        str.append(" ").append(batteryLevel).append("%");
+
+        if (batteryLevel != HRProvider.BATTERY_LEVEL_UNAVAILABLE) {
+          str.append(" ").append(batteryLevel).append("%");
+        }
       }
     }
     return str.toString();
