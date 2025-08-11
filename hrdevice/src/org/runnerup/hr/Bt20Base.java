@@ -175,7 +175,7 @@ public abstract class Bt20Base extends BtHRBase {
 
   @Override
   public int getBatteryLevel() {
-    return -1;
+    return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
   }
 
   /** Cancels all the threads. */

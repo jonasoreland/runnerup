@@ -847,7 +847,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
 
   public Integer getCurrentBatteryLevel() {
     HRProvider hrProvider = trackerHRM.getHrProvider();
-    if (hrProvider == null) return null;
+    if (hrProvider == null) return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
     return hrProvider.getBatteryLevel();
   }
 
