@@ -168,13 +168,17 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
-                <include
+		<LinearLayout
                     android:id="@+id/tab_map"
-                    layout="@layout/map_area"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content">
+		  <org.runnerup.util.MapViewWrapper
+		      android:id="@+id/mapview"
+		      android:layout_width="match_parent"
+		      android:layout_height="match_parent" />
+		  </LinearLayout>
 
-                <LinearLayout
+                  <LinearLayout
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -27,10 +27,12 @@ android {
             } else {
                 java.srcDirs += ['src/nonwear']
             }
-            if (rootProject.ext.useMapBox) {
+            if (rootProject.ext.noMap) {
+                java.srcDirs += ['src/nomap']
+	    } else if (rootProject.ext.useMapBox) {
                 java.srcDirs += ['src/mapbox']
-            } else {
-                java.srcDirs += ['src/nonmapbox']
+	    } else {
+                java.srcDirs += ['src/osmdroid']
             }
             // renderscript.srcDirs = java.srcDirs
             res.srcDirs = ['res']
@@ -214,7 +216,11 @@ if (rootProject.file("release.properties").exists()) {
 
 android.applicationVariants.configureEach {
     // Note: As a minimum extra security at least obfuscate the strings with Proguard
-    if (rootProject.ext.useMapBox) {
+    if (rootProject.ext.noMap) {
+        buildConfigField 'boolean', 'USING_OSMDROID', "false"
+        buildConfigField 'int', 'MAPBOX_ENABLED', "0"
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
+    } else if (rootProject.ext.useMapBox) {
         // https://www.mapbox.com/account/
         props.load(new FileInputStream(rootProject.file("mapbox.properties")))
         buildConfigField 'int', 'MAPBOX_ENABLED', "1"
@@ -224,7 +230,6 @@ android.applicationVariants.configureEach {
     } else {
         buildConfigField 'int', 'MAPBOX_ENABLED', "0"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
-
         buildConfigField 'boolean', 'USING_OSMDROID', "true"
     }
 
