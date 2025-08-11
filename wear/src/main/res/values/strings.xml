@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_rationale_message">RunnerUp requires the %1$s permission to function correctly. Please grant the permission.</string>
+</resources>

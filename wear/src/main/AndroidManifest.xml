@@ -47,6 +47,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".view.RequestPermissionActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:taskAffinity="" />
+
         <service
             android:exported="true"
             android:name=".service.ListenerService">
