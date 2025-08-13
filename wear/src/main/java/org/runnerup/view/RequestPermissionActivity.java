@@ -78,15 +78,10 @@ public class RequestPermissionActivity extends AppCompatActivity {
           sendPermissionResultAndFinish(true);
         } else {
           Log.w(TAG, permissionToRequest + " denied by user.");
-          if (shouldShowRequestPermissionRationale(permissionToRequest)) {
-            Log.d(TAG, "resultCallback: Rationale needed. Making UI visible.");
-            rationaleUIRoot.setVisibility(View.VISIBLE);
-          } else {
-            Log.d(
-                TAG,
-                "resultCallback: " + permissionToRequest + " denied and policy prevents asking.");
-            sendPermissionResultAndFinish(false);
-          }
+          // TODO: As per Android guidelines, implement UI to inform the user that the specific
+          //  feature (requiring permissionToRequest) is unavailable due to denial.
+          // For now, just send the denial result back to the caller.
+          sendPermissionResultAndFinish(false);
         }
       };
 
@@ -147,6 +142,9 @@ public class RequestPermissionActivity extends AppCompatActivity {
     if (shouldShowRationale) {
       // 3a. Rationale needed: Make rationale UI visible.
       Log.d(TAG, "startRequestPermissionFlow: Rationale needed. Making UI visible.");
+      // TODO: As per Android guidelines, in an educational UI, explain to the user why the app
+      //  requires this permission. In this UI, include a "cancel" or "no thanks" button.
+      // For now, just show the rationale message with an OK button.
       rationaleUIRoot.setVisibility(View.VISIBLE);
     } else {
       // 3b. No rationale needed: Directly request permission.
