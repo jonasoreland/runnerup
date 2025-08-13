@@ -182,7 +182,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         @Override
         public int preSetValue(int newValue) throws IllegalArgumentException {
-          showManualDistance(newValue);
+          updateViewForSport(newValue);
+          ViewCompat.requestApplyInsets(rootView);
           headerData.put(DB.ACTIVITY.SPORT, newValue);
           return newValue;
         }
@@ -331,19 +332,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     sport.setEnabled(value);
     updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
-    showManualDistance(sport.getValueInt());
   }
 
-  private void showManualDistance(int sportValue) {
+  private void updateViewForSport(int sportValue) {
     if (edit && Sport.hasManualDistance(sportValue)) {
       manualDistance.setVisibility(View.VISIBLE);
       manualDistance.setEnabled(true);
     } else {
       manualDistance.setVisibility(View.GONE);
     }
-  }
 
-  private void updateViewForSport(int sportValue) {
     if (mapTab != null) {
       if (Sport.isWithoutGps(sportValue)) {
         mapTab.setVisibility(View.GONE);
