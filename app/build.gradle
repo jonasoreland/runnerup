@@ -29,9 +29,9 @@ android {
             }
             if (rootProject.ext.noMap) {
                 java.srcDirs += ['src/nomap']
-	    } else if (rootProject.ext.useMapBox) {
+            } else if (rootProject.ext.useMapBox) {
                 java.srcDirs += ['src/mapbox']
-	    } else {
+            } else {
                 java.srcDirs += ['src/osmdroid']
             }
             // renderscript.srcDirs = java.srcDirs
