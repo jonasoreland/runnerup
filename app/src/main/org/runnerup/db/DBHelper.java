@@ -260,7 +260,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
-    Log.e(
+    Log.i(
         getClass().getName(),
         "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
@@ -429,7 +429,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   private static void echoDo(SQLiteDatabase arg0, String str) {
-    Log.e("DBHelper", "execSQL(" + str + ")");
+    Log.d("DBHelper", "execSQL(" + str + ")");
     arg0.execSQL(str);
   }
 
@@ -567,12 +567,12 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
       arg1.remove(DB.ACCOUNT.FORMAT);
       arg1.remove(DB.ACCOUNT.AUTH_METHOD);
       arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-      Log.v("DBhelper", "update: " + arg1);
+      Log.d("DBhelper", "update: " + arg1);
     }
   }
 
   public static void deleteAccount(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting account: " + id);
+    Log.v("DBHelper", "deleting account: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
     db.delete(DB.ACCOUNT.TABLE, "_id = ?", args);
@@ -601,7 +601,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   public static void deleteActivity(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting activity: " + id);
+    Log.v("DBHelper", "deleting activity: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
     db.delete(DB.LOCATION.TABLE, DB.LOCATION.ACTIVITY + " = ?", args);

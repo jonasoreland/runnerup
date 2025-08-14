@@ -2,6 +2,8 @@ package org.runnerup.hr;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -326,7 +328,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             + requestedState
             + ", "
             + msg;
-    System.err.println(res);
+    Log.d(getClass().getName(), res);
     if (client != null) {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         client.log(this, msg);
