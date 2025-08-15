@@ -51,6 +51,8 @@ public class GraphWrapper implements Constants {
   private final Formatter formatter;
   private final LinearLayout hrzonesBarLayout;
 
+  static final private String TAG = "KESO"; // getClass().getName()
+
   /** Called when the activity is first created. */
   @SuppressLint("ObsoleteSdkInt")
   public GraphWrapper(
@@ -135,13 +137,16 @@ public class GraphWrapper implements Constants {
     final List<DataPoint> velocityList;
     final List<DataPoint> hrList;
 
+    boolean useTimeAsX = false;
+    boolean showPace = false;
     boolean showHR = false;
     boolean showHRZhist = false;
     final HRZones hrCalc;
 
     final SpeedUnit preferred_speedunit;
 
-    public GraphProducer(Context context, int noPoints) {
+    public GraphProducer(Context context, int noPoints, boolean useTimeAsX) {
+      this.useTimeAsX = useTimeAsX;
       final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
       final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
 
@@ -175,11 +180,19 @@ public class GraphWrapper implements Constants {
       clearSmooth(0);
     }
 
-    void clearSmooth(double tot_distance) {
+    double getX() {
+      if (useTimeAsX) {
+        return sum_time;
+      } else {
+        return sum_distance;
+      }
+    }
+
+    void clearSmooth(double tot_X) {
       if (pos >= (this.time.length / 2)
           && (acc_time >= 1000 * (interval / 2.0))
-          && sum_distance > 0) {
-        emit(tot_distance);
+          && getX() > 0) {
+        emit(tot_X);
       }
 
       for (int i = 0; i < this.distance.length; i++) {
@@ -194,9 +207,11 @@ public class GraphWrapper implements Constants {
     }
 
     void addObservation(
-        double delta_time, double delta_distance, double tot_distance, LocationEntity loc) {
+        double delta_time, double delta_distance, double tot_distance, double tot_time, LocationEntity loc) {
       // delta_time is in ms, dist in m
-      if (delta_time < 500) return;
+      if (delta_time < 500) {
+        return;
+      }
 
       // Update moving average
       int p = pos % this.time.length;
@@ -219,15 +234,20 @@ public class GraphWrapper implements Constants {
         this.hr[p] = 0;
       }
 
+      if (tot_distance > 0) {
+        showPace = true;
+      }
+
       pos += 1;
       acc_time += delta_time;
 
-      if (pos >= this.time.length && (acc_time >= 1000 * interval) && sum_distance > 0) {
-        emit(tot_distance);
+      double total_X = useTimeAsX ? tot_time : tot_distance;
+      if (pos >= this.time.length && (acc_time >= 1000 * interval) && getX() > 0) {
+        emit(total_X);
       }
     }
 
-    void emit(double tot_distance) {
+    void emit(double tot_X) {
       double avg_time = sum_time;
       double avg_dist = sum_distance;
       double avg_hr = calculateAverageHr(hr);
@@ -239,17 +259,17 @@ public class GraphWrapper implements Constants {
         velocity = Math.max(velocity, paceLimit);
       }
       if (first) {
-        if (tot_distance > 0) {
+        if (tot_X > 0) {
           velocityList.add(new DataPoint(0, velocity));
-          if (avg_hr > 0) {
-            hrList.add(new DataPoint(0, Math.round(avg_hr)));
-          }
+        }
+        if (avg_hr > 0) {
+          hrList.add(new DataPoint(0, Math.round(avg_hr)));
         }
         first = false;
       }
-      velocityList.add(new DataPoint(tot_distance, velocity));
+      velocityList.add(new DataPoint(tot_X, velocity));
       if (avg_hr > 0) {
-        hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
+        hrList.add(new DataPoint(tot_X, Math.round(avg_hr)));
       }
       acc_time = 0;
 
@@ -267,7 +287,9 @@ public class GraphWrapper implements Constants {
       GraphFilter(List<DataPoint> velocityList) {
         source = velocityList;
         data = new double[velocityList.size()];
-        for (int i = 0; i < velocityList.size(); i++) data[i] = velocityList.get(i).getY();
+        for (int i = 0; i < velocityList.size(); i++) {
+          data[i] = velocityList.get(i).getY();
+        }
       }
 
       void complete() {
@@ -377,7 +399,7 @@ public class GraphWrapper implements Constants {
 
     public void complete(final GraphView graphView) {
       avg_velocity /= velocityList.size();
-      Log.e(getClass().getName(), "graph: " + velocityList.size() + " points");
+      Log.e(TAG, "graph: " + velocityList.size() + " points");
 
       boolean smoothData =
           PreferenceManager.getDefaultSharedPreferences(graphView.getContext())
@@ -400,7 +422,7 @@ public class GraphWrapper implements Constants {
                         .getString(R.string.pref_pace_graph_smoothing_filters),
                     defaultFilterList);
         final String[] filters = filterList.split(";");
-        System.err.print("Applying filters(" + filters.length + ", >" + filterList + "<):");
+        System.err.print(TAG + ": Applying filters(" + filters.length + ", >" + filterList + "<):");
         for (String filter : filters) {
           int[] args = getArgs(filter);
           if (filter.startsWith("mm")) {
@@ -428,7 +450,7 @@ public class GraphWrapper implements Constants {
             }
           }
         }
-        Log.e(getClass().getName(), "");
+        Log.e(TAG, "");
         f.complete();
       }
       LineGraphSeries<DataPoint> graphViewData =
@@ -470,7 +492,7 @@ public class GraphWrapper implements Constants {
             });
 
         if (showHRZhist) {
-          System.err.print("HR Zones:");
+          System.err.print(TAG + ": HR Zones:");
           double sum = 0;
           for (double aHrzHist : hrzHist) {
             sum += aHrzHist;
@@ -479,7 +501,7 @@ public class GraphWrapper implements Constants {
             hrzHist[i] = hrzHist[i] / sum;
             System.err.print(" " + hrzHist[i]);
           }
-          Log.e(getClass().getName(), "\n");
+          Log.e(TAG, "\n");
           hrzonesBar.pushHrzData(hrzHist);
         }
       }
@@ -499,6 +521,10 @@ public class GraphWrapper implements Constants {
         e.printStackTrace();
         return new int[0];
       }
+    }
+
+    public boolean HasPaceInfo() {
+      return showPace;
     }
 
     public boolean HasHRInfo() {
@@ -547,30 +573,39 @@ public class GraphWrapper implements Constants {
 
       LocationEntity.LocationList<LocationEntity> ll =
           new LocationEntity.LocationList<>(params[0].mDB, params[0].mID);
-      GraphProducer graphData = new GraphProducer(params[0].context, ll.getCount());
+      boolean useTimeAsX = true;
+      GraphProducer graphData = new GraphProducer(params[0].context, ll.getCount(), useTimeAsX);
       double lastDistance = 0;
       long lastTime = 0;
       int lastLap = -1;
       Double tot_distance = 0.0;
+      Double start_time = 0.0;
+      Double tot_time = 0.0;
+      int cnt = 0;
       for (LocationEntity loc : ll) {
+        cnt++;
         Long time = loc.getElapsed();
         time = time != null ? time : lastTime;
+        if (start_time == 0.0 && time != 0) {
+          start_time = time + 0.0d;
+        }
         Integer lap = loc.getLap();
         lap = lap != null ? lap : 0;
         tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
+        tot_time = time - start_time;
 
         if (lap != lastLap) {
-          graphData.clearSmooth(tot_distance);
+          graphData.clearSmooth(useTimeAsX ? tot_time : tot_distance);
           lastLap = lap;
         }
 
-        graphData.addObservation(time - lastTime, tot_distance - lastDistance, tot_distance, loc);
+        graphData.addObservation(time - lastTime, tot_distance - lastDistance, tot_distance, tot_time, loc);
         lastTime = time;
         lastDistance = tot_distance;
       }
-      graphData.clearSmooth(tot_distance);
+      graphData.clearSmooth(useTimeAsX ? tot_time : tot_distance);
 
-      //    Log.e(getClass().getName(), "Finished loading " + cnt + " points");
+      Log.e(TAG, "Finished loading " + cnt + " points");
       // }
       ll.close();
       return graphData;
@@ -581,11 +616,12 @@ public class GraphWrapper implements Constants {
     protected void onPostExecute(GraphProducer graphData) {
 
       graphData.complete(graphView);
-      if (!graphData.HasHRInfo()) {
+      if (graphData.HasPaceInfo() && !graphData.HasHRInfo()) {
         graphTab.addView(graphView);
-      } else {
+      } else if (!graphData.HasPaceInfo() && graphData.HasHRInfo()) {
+        graphTab.addView(graphView2);
+      } else if (graphData.HasPaceInfo() && graphData.HasHRInfo()) {
         graphTab.addView(graphView, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
-
         graphTab.addView(graphView2, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
       }
 
