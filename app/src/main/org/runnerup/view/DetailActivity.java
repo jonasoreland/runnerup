@@ -620,6 +620,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       String s = formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d);
       activityDistance.setText(s);
       if (!fromManualDistance) {
+        /**
+         * IF !fromManualDistance (e.g. from database)
+         *   update the manual distance field in case (if it might be needed)
+         * ELSE
+         *   fromManualDistance=true
+         *   e.g. from spinner, don't update or else it will recurse
+         */
         int distance = (int)d;
         manualDistance.setValue(Long.toString(distance));
         manualDistance.setValue(distance);
