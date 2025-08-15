@@ -115,6 +115,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TitleSpinner sport = null;
   private EditText notes = null;
   private View rootView;
+  private View mapTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -130,14 +131,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+      // MapBox or Osmdroid, set mapWrapper.
       MapWrapper.start(this);
-      setContentView(R.layout.detail);
-      rootView = findViewById(R.id.detail_view);
-    } else {
-      // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
-      setContentView(R.layout.detail_nomap);
-      rootView = findViewById(R.id.detail_nomap_view);
     }
+    setContentView(R.layout.detail);
+    rootView = findViewById(R.id.detail_view);
+
     Toolbar toolbar = findViewById(R.id.actionbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -215,6 +214,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Map)));
       tabSpec.setContent(R.id.tab_map);
       th.addTab(tabSpec);
+      mapTab = th.getTabWidget().getChildTabViewAt(2);
     }
 
     tabSpec = th.newTabSpec("graph");
@@ -293,7 +293,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     else saveButton.setVisibility(View.GONE);
     WidgetUtil.setEditable(notes, value);
     sport.setEnabled(value);
+    updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
+  }
+
+  private void updateViewForSport(int sportValue) {
+    if (mapTab != null) {
+      if (Sport.isWithoutGps(sportValue)) {
+        mapTab.setVisibility(View.GONE);
+      } else {
+        mapTab.setVisibility(View.VISIBLE);
+      }
+    }
   }
 
   private void setUploadVisibility() {

@@ -42,6 +42,7 @@ project.ext {
 
     // Use or not use mapbox.
     useMapBox = allowNonFree && rootProject.file("mapbox.properties").exists()
+    noMap = project.hasProperty('org.runnerup.nomap')
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     // Therefore, the .aar file may not be redistributed in the RU repo
