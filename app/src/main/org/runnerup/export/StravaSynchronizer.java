@@ -363,9 +363,10 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
 
     try {
       var options = ExportOptions.builder();
+      options.mStrava = true;
       TCX tcx = new TCX(db, options.build(), simplifier);
       StringWriter writer = new StringWriter();
-      tcx.exportForStrava(mID, writer);
+      tcx.export(mID, writer);
       ActivityDbInfo dbInfo = getStravaType(db, mID);
 
       HttpURLConnection conn = (HttpURLConnection) new URL(UPLOAD_URL).openConnection();
