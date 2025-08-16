@@ -118,6 +118,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TitleSpinner manualDistance = null;
   private EditText notes = null;
   private View rootView;
+  private View mapTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -134,14 +135,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+      // MapBox or Osmdroid, set mapWrapper.
       MapWrapper.start(this);
-      setContentView(R.layout.detail);
-      rootView = findViewById(R.id.detail_view);
-    } else {
-      // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
-      setContentView(R.layout.detail_nomap);
-      rootView = findViewById(R.id.detail_nomap_view);
     }
+    setContentView(R.layout.detail);
+    rootView = findViewById(R.id.detail_view);
+
     Toolbar toolbar = findViewById(R.id.actionbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -183,7 +182,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
         @Override
         public int preSetValue(int newValue) throws IllegalArgumentException {
-          showManualDistance(newValue);
+          updateViewForSport(newValue);
+          ViewCompat.requestApplyInsets(rootView);
           headerData.put(DB.ACTIVITY.SPORT, newValue);
           return newValue;
         }
@@ -238,6 +238,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Map)));
       tabSpec.setContent(R.id.tab_map);
       th.addTab(tabSpec);
+      mapTab = th.getTabWidget().getChildTabViewAt(2);
     }
 
     tabSpec = th.newTabSpec("graph");
@@ -329,6 +330,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
     WidgetUtil.setEditable(notes, value);
     sport.setEnabled(value);
+    updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
     showManualDistance(sport.getValueInt());
   }
@@ -339,6 +341,23 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       manualDistance.setEnabled(true);
     } else {
       manualDistance.setVisibility(View.GONE);
+    }
+  }
+
+  private void updateViewForSport(int sportValue) {
+    if (edit && Sport.hasManualDistance(sportValue)) {
+      manualDistance.setVisibility(View.VISIBLE);
+      manualDistance.setEnabled(true);
+    } else {
+      manualDistance.setVisibility(View.GONE);
+    }
+
+    if (mapTab != null) {
+      if (Sport.isWithoutGps(sportValue)) {
+        mapTab.setVisibility(View.GONE);
+      } else {
+        mapTab.setVisibility(View.VISIBLE);
+      }
     }
   }
 
@@ -611,6 +630,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       String s = formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d);
       activityDistance.setText(s);
       if (!fromManualDistance) {
+        /**
+         * IF !fromManualDistance (e.g. from database)
+         *   update the manual distance field in case (if it might be needed)
+         * ELSE
+         *   fromManualDistance=true
+         *   e.g. from spinner, don't update or else it will recurse
+         */
         int distance = (int)d;
         manualDistance.setValue(Long.toString(distance));
         manualDistance.setValue(distance);
