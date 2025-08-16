@@ -275,18 +275,6 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     currentStepNo = -1;
   }
 
-  public void onSave() {
-    if (tracker == null) {
-      // Taskkiller?
-      return;
-    }
-    tracker.completeActivity(true);
-  }
-
-  public void onDiscard() {
-    tracker.completeActivity(false);
-  }
-
   @Override
   public boolean isPaused() {
     return paused;
