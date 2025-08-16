@@ -36,26 +36,19 @@ public class GPX {
   private final SQLiteDatabase mDB;
   private KXmlSerializer mXML;
   private final SimpleDateFormat simpleDateFormat;
-  private final boolean mGarminExt; // Also Cluetrust
-  private final boolean mAccuracyExtensions;
+  private final ExportOptions exportOptions;
   private final PathSimplifier simplifier;
-
-  public GPX(SQLiteDatabase mDB, PathSimplifier simplifier) {
-    this(mDB, true, false, simplifier);
-  }
 
   public GPX(
       SQLiteDatabase mDB,
-      boolean garminExt,
-      boolean accuracyExtensions,
+      ExportOptions exportOptions,
       PathSimplifier simplifier) {
     this.mDB = mDB;
     mXML = new KXmlSerializer();
     simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    this.mGarminExt = garminExt;
-    this.mAccuracyExtensions = accuracyExtensions;
     this.simplifier = simplifier;
+    this.exportOptions = exportOptions;
   }
 
   private String formatTime(long time) {
@@ -93,7 +86,7 @@ public class GPX {
           "",
           "xsi:schemaLocation",
           "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-      if (mGarminExt) {
+      if (exportOptions.mGarminExt) {
         mXML.attribute(
             "", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
       } else {
@@ -207,7 +200,7 @@ public class GPX {
             int locType = cLocation.getInt(5);
             long time = cLocation.getLong(1);
             if (locType != DB.LOCATION.TYPE_GPS) {
-              if (mAccuracyExtensions) {
+              if (exportOptions.mAccuracyExtensions) {
                 if (segmentPoints >= 2 && locType == DB.LOCATION.TYPE_RESUME) {
                   // GPX has no standard for pauses, but segments are occasionally used,
                   // sometimes separate activities
@@ -230,7 +223,7 @@ public class GPX {
               mXML.attribute("", "lat", Float.toString(lat));
 
               Float ele = null;
-              if (mAccuracyExtensions && !cLocation.isNull(14)) {
+              if (exportOptions.mAccuracyExtensions && !cLocation.isNull(14)) {
                 // raw elevation
                 ele = cLocation.getFloat(14);
               } else if (!cLocation.isNull(4)) {
@@ -254,11 +247,11 @@ public class GPX {
                 boolean isHr = !cLocation.isNull(6);
                 boolean isCad = !cLocation.isNull(7);
                 boolean isTemp = !cLocation.isNull(8);
-                boolean isPres = !cLocation.isNull(9) && mAccuracyExtensions;
-                boolean isAccuracy = !cLocation.isNull(10) && mAccuracyExtensions;
-                boolean isBearing = !cLocation.isNull(11) && mAccuracyExtensions;
-                boolean isSpeed = !cLocation.isNull(12) && mAccuracyExtensions;
-                boolean isSats = !cLocation.isNull(13) && mAccuracyExtensions;
+                boolean isPres = !cLocation.isNull(9) && exportOptions.mAccuracyExtensions;
+                boolean isAccuracy = !cLocation.isNull(10) && exportOptions.mAccuracyExtensions;
+                boolean isBearing = !cLocation.isNull(11) && exportOptions.mAccuracyExtensions;
+                boolean isSpeed = !cLocation.isNull(12) && exportOptions.mAccuracyExtensions;
+                boolean isSats = !cLocation.isNull(13) && exportOptions.mAccuracyExtensions;
                 boolean isAny =
                     isCad
                         || isTemp
@@ -271,7 +264,7 @@ public class GPX {
 
                 if (isAny) {
                   mXML.startTag("", "extensions");
-                  if (mGarminExt) {
+                  if (exportOptions.mGarminExt) {
                     mXML.startTag("", "gpxtpx:TrackPointExtension");
                   }
                 }
@@ -286,7 +279,7 @@ public class GPX {
 
                 if (isCad) {
                   String ns;
-                  if (mGarminExt) {
+                  if (exportOptions.mGarminExt) {
                     // Seen in some examples, not officially supported by Strava
                     ns = "gpxtpx:cad";
                   } else {
@@ -300,7 +293,7 @@ public class GPX {
 
                 if (isTemp) {
                   String ns;
-                  if (mGarminExt) {
+                  if (exportOptions.mGarminExt) {
                     ns = "gpxtpx:atemp";
                   } else {
                     ns = "gpxtpx:temp";
@@ -348,7 +341,7 @@ public class GPX {
                 }
 
                 if (isAny) {
-                  if (mGarminExt) {
+                  if (exportOptions.mGarminExt) {
                     mXML.endTag("", "gpxtpx:TrackPointExtension");
                   }
                   mXML.endTag("", "extensions");

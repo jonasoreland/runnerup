@@ -48,10 +48,13 @@ public class TCX {
   private String notes = null;
   private final SimpleDateFormat simpleDateFormat;
   private Sport sport = null;
+  private final ExportOptions exportOptions;
   private final PathSimplifier simplifier;
 
-  public TCX(SQLiteDatabase mDB, PathSimplifier simplifier) {
+  public TCX(SQLiteDatabase mDB, ExportOptions exportOptions,
+             PathSimplifier simplifier) {
     this.mDB = mDB;
+    this.exportOptions = exportOptions;
     this.simplifier = simplifier;
     simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));

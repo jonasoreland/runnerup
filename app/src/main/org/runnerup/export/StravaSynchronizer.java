@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -361,7 +362,8 @@ public class StravaSynchronizer extends DefaultSynchronizer implements OAuth2Ser
     }
 
     try {
-      TCX tcx = new TCX(db, simplifier);
+      var options = ExportOptions.builder();
+      TCX tcx = new TCX(db, options.build(), simplifier);
       StringWriter writer = new StringWriter();
       tcx.exportForStrava(mID, writer);
       ActivityDbInfo dbInfo = getStravaType(db, mID);
