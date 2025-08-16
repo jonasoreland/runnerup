@@ -172,7 +172,7 @@ dependencies {
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
 
-    implementation "com.squareup.okhttp3:okhttp:3.12.3"
+    implementation "com.squareup.okhttp3:okhttp:5.1.0"
     latestImplementation 'com.getpebble:pebblekit:4.0.1'
     if (rootProject.ext.allowNonFree) {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
