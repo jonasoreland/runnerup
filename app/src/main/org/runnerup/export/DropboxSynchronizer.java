@@ -329,8 +329,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
         s = uploadFile(writer, mID, fileBase, FileFormats.TCX.getValue());
       }
       if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
-        var options = ExportOptions.builder();
-        GPX gpx = new GPX(db, options.build(), simplifier);
+        GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         gpx.export(mID, writer);
         s = uploadFile(writer, mID, fileBase, FileFormats.GPX.getValue());
