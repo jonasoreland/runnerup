@@ -240,8 +240,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
 
-      var options = ExportOptions.builder();
-      GPX gpx = new GPX(db, options.build(), simplifier);
+      GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
       StringWriter writer = new StringWriter();
       gpx.export(mID, writer);
       s = uploadFile(writer, fileBase, FileFormats.GPX.getValue());
