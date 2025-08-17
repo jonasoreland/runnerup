@@ -332,6 +332,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     sport.setEnabled(value);
     updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
+    showManualDistance(sport.getValueInt());
+  }
+
+  private void showManualDistance(int sportValue) {
+    if (edit && Sport.hasManualDistance(sportValue)) {
+      manualDistance.setVisibility(View.VISIBLE);
+      manualDistance.setEnabled(true);
+    } else {
+      manualDistance.setVisibility(View.GONE);
+    }
   }
 
   private void updateViewForSport(int sportValue) {
@@ -855,18 +865,22 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
     tmp.put(DB.ACTIVITY.SPORT, sportValue);
     String[] whereArgs = {Long.toString(mID)};
+    Log.e("KESO", "tmp="+tmp);
     mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 
     // path simplification (reduce resolution of location entries in database)
-    try {
-      PathSimplifier simplifier = PathSimplifier.getPathSimplifierForSave(this);
-      if (simplifier != null) {
-        ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
-        ActivityCleaner.deleteLocations(mDB, ids);
-        (new ActivityCleaner()).recompute(mDB, mID);
+    if (!Sport.hasManualDistance(sportValue)) {
+      Log.e("KESO", "Simplify path");
+      try {
+        PathSimplifier simplifier = PathSimplifier.getPathSimplifierForSave(this);
+        if (simplifier != null) {
+          ArrayList<String> ids = simplifier.getNoisyLocationIDsAsStrings(mDB, mID);
+          ActivityCleaner.deleteLocations(mDB, ids);
+          (new ActivityCleaner()).recompute(mDB, mID);
+        }
+      } catch (Exception e) {
+        Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
       }
-    } catch (Exception e) {
-      Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
     }
   }
 
