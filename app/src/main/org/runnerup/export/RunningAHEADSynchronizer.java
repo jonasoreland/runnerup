@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -215,7 +216,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     }
 
     String URL = IMPORT_URL + "?access_token=" + access_token;
-    TCX tcx = new TCX(db, simplifier);
+    TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
     HttpURLConnection conn;
     Exception ex;
     try {

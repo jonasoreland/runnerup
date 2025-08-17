@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.util.FileNameHelper;
 import org.runnerup.workout.FileFormats;
@@ -239,7 +240,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
 
-      GPX gpx = new GPX(db, true, true, simplifier);
+      GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
       StringWriter writer = new StringWriter();
       gpx.export(mID, writer);
       s = uploadFile(writer, fileBase, FileFormats.GPX.getValue());

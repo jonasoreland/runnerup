@@ -38,6 +38,7 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
@@ -306,7 +307,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     String desc = getDesc(db, mID);
-    TCX tcx = new TCX(db, simplifier);
+    TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
     try {
       StringWriter writer = new StringWriter();
       tcx.export(mID, writer);
