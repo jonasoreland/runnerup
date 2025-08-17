@@ -227,8 +227,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
       if (mFormat.contains(FileFormats.TCX)) {
-        var options = ExportOptions.builder();
-        TCX tcx = new TCX(db, options.build(), simplifier);
+        TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         tcx.export(mID, writer);
         s = uploadFile(writer, fileBase, FileFormats.TCX.getValue());
