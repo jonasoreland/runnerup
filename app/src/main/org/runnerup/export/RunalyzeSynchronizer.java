@@ -307,8 +307,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
     }
 
     String desc = getDesc(db, mID);
-    var options = ExportOptions.builder();
-    TCX tcx = new TCX(db, options.build(), simplifier);
+    TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
     try {
       StringWriter writer = new StringWriter();
       tcx.export(mID, writer);
