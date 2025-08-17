@@ -16,6 +16,7 @@
  */
 
 package org.runnerup.export.format;
+import org.runnerup.workout.Sport;
 
 public class ExportOptions {
 
@@ -32,6 +33,18 @@ public class ExportOptions {
       return new ExportOptions(this);
     }
     private Builder() {}
+  }
+
+  boolean shouldExportLap(Integer sportDbValue, Float distance, Long time) {
+    if (distance > 0 && time > 0) {
+      return true;
+    }
+    if (sportDbValue != null && Sport.isWithoutGps(sportDbValue)) {
+      return time > 0;
+    }
+    // TODO should we export laps with distance = 0 and time > 0
+    // or with distance > 0 and time = 0 for other sports??
+    return false;
   }
 
   public static Builder builder() {

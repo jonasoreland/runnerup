@@ -110,12 +110,14 @@ public class GPX {
 
       mXML.startTag("", "trk");
       mXML.startTag("", "name");
+      Integer sportDbValue = null;
       String sportName;
       if (cursor.isNull(3)) {
         sportName = "Running";
       } else {
         // Resources are not available, use hardcoded strings
-        sportName = Sport.textOf(cursor.getInt(3));
+        sportDbValue = cursor.getInt(3);
+        sportName = Sport.textOf(sportDbValue);
       }
 
       mXML.text("RunnerUp-" + sportName + "-" + time);
@@ -127,7 +129,7 @@ public class GPX {
         mXML.endTag("", "desc");
       }
 
-      exportLaps(activityId);
+      exportLaps(activityId, sportDbValue);
       mXML.endTag("", "trk");
       mXML.endTag("", "gpx");
       mXML.flush();
@@ -141,7 +143,7 @@ public class GPX {
     }
   }
 
-  private void exportLaps(long activityId) throws IOException {
+  private void exportLaps(long activityId, Integer sportDbValue) throws IOException {
     String[] lColumns = {DB.LAP.LAP, DB.LAP.DISTANCE, DB.LAP.TIME, DB.LAP.INTENSITY};
     Cursor cLap =
         mDB.query(
@@ -188,7 +190,9 @@ public class GPX {
     // number of GPS points in current track segment
     int segmentPoints = 0;
     while (lok) {
-      if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
+      if (exportOptions.shouldExportLap(sportDbValue,
+                                        /* distance= */cLap.getFloat(1),
+                                        /* time= */cLap.getLong(2))) {
         long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
