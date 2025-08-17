@@ -244,7 +244,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
         EditText hi = zones.get(2 * zone + 1);
         lo.setText(String.format(Locale.getDefault(), "%d", values.first));
         hi.setText(String.format(Locale.getDefault(), "%d", values.second));
-        Log.e(
+        Log.i(
             getClass().getName(),
             "loaded " + (zone + 1) + " " + values.first + "-" + values.second);
       }
@@ -291,13 +291,14 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   private void saveHR() {
     try {
       Vector<Integer> vals = new Vector<>();
-      System.err.print("saving: ");
+      String s = "saving:";
       for (int i = 0; i < zones.size(); i += 2) {
         vals.add(Integer.valueOf(zones.get(i).getText().toString()));
-        System.err.print(" " + vals.lastElement());
+        s += " " + vals.lastElement();
       }
       vals.add(Integer.valueOf(zones.lastElement().getText().toString()));
-      Log.e(getClass().getName(), " " + vals.lastElement());
+      s += " " + vals.lastElement();
+      Log.d(getClass().getName(), s);
       hrZones.save(vals);
     } catch (Exception ex) {
     }

@@ -50,11 +50,11 @@ public class HRZones {
       zones = null;
     }
     if (zones != null) {
-      System.err.print("loaded: (" + str + ")");
+      String s = "loaded: (" + str + ")";
       for (int zone : zones) {
-        System.err.print(" " + zone);
+        s += " " + zone;
       }
-      Log.e(getClass().getName(), "");
+      Log.d(getClass().getName(), s);
     }
   }
 
@@ -80,7 +80,7 @@ public class HRZones {
       double lo = (z == 0) ? 0 : zones[z - 1];
       double hi = zones[z];
       double add = (value - lo) / (hi - lo);
-      Log.e(
+      Log.d(
           getClass().getName(),
           "value: " + value + ", z: " + z + ", lo: " + lo + ", hi: " + hi + ", add: " + add);
       return z + add;

@@ -160,7 +160,7 @@ public class SyncManager {
   @SuppressWarnings("null")
   public Synchronizer add(ContentValues config) {
     if (config == null) {
-      Log.e(getClass().getName(), "Add null!");
+      Log.w(getClass().getName(), "Add null!");
       if (BuildConfig.DEBUG) {
         throw new AssertionError();
       }
@@ -169,7 +169,7 @@ public class SyncManager {
 
     String synchronizerName = config.getAsString(DB.ACCOUNT.NAME);
     if (synchronizerName == null) {
-      Log.e(getClass().getName(), "name not found!");
+      Log.w(getClass().getName(), "name not found!");
       return null;
     }
     if (synchronizers.containsKey(synchronizerName)) {
@@ -196,7 +196,7 @@ public class SyncManager {
     } else if (synchronizerName.contentEquals(EndurainSynchronizer.NAME)) {
       synchronizer = new EndurainSynchronizer(simplifier);
     } else {
-      Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
+      Log.w(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
     }
 
     if (synchronizer != null) {
@@ -209,7 +209,7 @@ public class SyncManager {
       synchronizers.put(synchronizerName, synchronizer);
       synchronizersById.put(synchronizer.getId(), synchronizer);
     } else {
-      Log.e(getClass().getName(), "Synchronizer not found for " + synchronizerName);
+      Log.w(getClass().getName(), "Synchronizer not found for " + synchronizerName);
       try {
         long synchronizerId = Long.parseLong(config.getAsString(DB.PRIMARY_KEY));
         DBHelper.deleteAccount(mDB, synchronizerId);
@@ -900,14 +900,14 @@ public class SyncManager {
             synchronizer.downloadWorkout(w, ref.workoutKey);
             if (w != f) {
               if (!compareFiles(w, f)) {
-                Log.e(getClass().getName(), "overwriting " + f.getPath() + " with " + w.getPath());
+                Log.w(getClass().getName(), "overwriting " + f.getPath() + " with " + w.getPath());
                 // TODO dialog
                 //noinspection ResultOfMethodCallIgnored
                 f.delete();
                 //noinspection ResultOfMethodCallIgnored
                 w.renameTo(f);
               } else {
-                Log.e(getClass().getName(), "file identical...deleting temporary " + w.getPath());
+                Log.i(getClass().getName(), "file identical...deleting temporary " + w.getPath());
                 //noinspection ResultOfMethodCallIgnored
                 w.delete();
               }

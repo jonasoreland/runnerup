@@ -97,7 +97,7 @@ public class ActivityProvider extends ContentProvider {
         @SuppressWarnings("ConstantConditions")
         final File file = new File(path.getAbsolutePath() + File.separator + name);
         final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-        Log.e(getClass().getName(), i + ": putting cache file in: " + file.getAbsolutePath());
+        Log.d(getClass().getName(), i + ": putting cache file in: " + file.getAbsolutePath());
         //noinspection Convert2Diamond
         return new Pair<File, OutputStream>(file, out);
       } catch (IOException | NullPointerException ignored) {
@@ -112,7 +112,7 @@ public class ActivityProvider extends ContentProvider {
       throws FileNotFoundException {
 
     final int res = uriMatcher.match(uri);
-    Log.e(getClass().getName(), "match(" + uri + "): " + res);
+    Log.d(getClass().getName(), "match(" + uri + "): " + res);
     switch (res) {
       case GPX:
       case TCX:
@@ -122,11 +122,11 @@ public class ActivityProvider extends ContentProvider {
         final String parcelFile = "activity." + list.get(list.size() - 3);
         final Pair<File, OutputStream> out = openCacheFile(parcelFile);
         if (out == null) {
-          Log.e(getClass().getName(), "Failed to open cacheFile(" + parcelFile + ")");
+          Log.i(getClass().getName(), "Failed to open cacheFile(" + parcelFile + ")");
           return null;
         }
 
-        Log.e(
+        Log.d(
             getClass().getName(),
             "activity: " + activityId + ", file: " + out.first.getAbsolutePath());
         SQLiteDatabase mDB = DBHelper.getReadableDatabase(getContext());
@@ -139,7 +139,7 @@ public class ActivityProvider extends ContentProvider {
               var options = ExportOptions.builder();
               TCX tcx = new TCX(mDB, options.build(), simplifier);
               tcx.export(activityId, new OutputStreamWriter(out.second));
-              Log.e(getClass().getName(), "export tcx");
+              Log.d(getClass().getName(), "export tcx");
               break;
             }
             case GPX:{
@@ -154,13 +154,13 @@ public class ActivityProvider extends ContentProvider {
               options.accuracyExtensions = extraData;
               GPX gpx = new GPX(mDB, options.build(), simplifier);
               gpx.export(activityId, new OutputStreamWriter(out.second));
-              Log.e(getClass().getName(), "export gpx");
+              Log.d(getClass().getName(), "export gpx");
               break;
             }
           }
           out.second.flush();
           out.second.close();
-          Log.e(getClass().getName(), "wrote " + out.first.length() + " bytes...");
+          Log.d(getClass().getName(), "wrote " + out.first.length() + " bytes...");
         } catch (Exception e) {
           e.printStackTrace();
         }

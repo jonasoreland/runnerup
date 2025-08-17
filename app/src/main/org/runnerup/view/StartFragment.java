@@ -410,7 +410,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       if (mTracker != null
           && ((mTracker.getState() == TrackerState.INITIALIZED)
               || (mTracker.getState() == TrackerState.INITIALIZING))) {
-        Log.e(getClass().getName(), "mTracker.reset()");
+        Log.i(getClass().getName(), "mTracker.reset()");
         mTracker.reset();
       }
     }
@@ -495,7 +495,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         case PAUSED:
           if (BuildConfig.DEBUG) {
             // Seem to happen when returning to RunnerUp
-            Log.e(
+            Log.w(
                 getClass().getName(),
                 "onGpsTrackerBound unexpected tracker state: " + mTracker.getState().toString());
           }
@@ -514,7 +514,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void startGps() {
-    Log.v(getClass().getName(), "StartFragment.startGps()");
+    Log.d(getClass().getName(), "StartFragment.startGps()");
     if (!mGpsStatus.isEnabled()) {
       startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
     }
@@ -531,7 +531,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   public void stopGps() {
-    Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.skipStopGps);
+    Log.d(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.skipStopGps);
     if (skipStopGps) return;
 
     if (mGpsStatus != null) mGpsStatus.stop(this);
@@ -1207,12 +1207,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     if (data != null) {
       if (data.getStringExtra("url") != null)
-        Log.e(
+        Log.d(
             getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
       if (data.getStringExtra("ex") != null)
-        Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
+        Log.d(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
       if (data.getStringExtra("obj") != null)
-        Log.e(
+        Log.d(
             getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
     }
     if (requestCode == START_ACTIVITY) {
