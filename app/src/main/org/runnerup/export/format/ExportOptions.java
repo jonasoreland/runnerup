@@ -19,14 +19,14 @@ package org.runnerup.export.format;
 
 public class ExportOptions {
 
-  public final boolean mStrava;
-  public final boolean mGarminExt; // Also Cluetrust
-  public final boolean mAccuracyExtensions;
+  public final boolean isStrava;
+  public final boolean garminExtensions; // Also Cluetrust
+  public final boolean accuracyExtensions;
 
   public static class Builder {
-    public boolean mStrava = false;
-    public boolean mGarminExt = true; // Also Cluetrust
-    public boolean mAccuracyExtensions = true;
+    public boolean isStrava = false;
+    public boolean garminExtensions = true; // Also Cluetrust
+    public boolean accuracyExtensions = true;
 
     public ExportOptions build() {
       return new ExportOptions(this);
@@ -43,8 +43,8 @@ public class ExportOptions {
   }
 
   private ExportOptions(Builder builder) {
-    this.mStrava = builder.mStrava;
-    this.mGarminExt = builder.mGarminExt;
-    this.mAccuracyExtensions = builder.mAccuracyExtensions;
+    this.isStrava = builder.isStrava;
+    this.garminExtensions = builder.garminExtensions;
+    this.accuracyExtensions = builder.accuracyExtensions;
   }
 }

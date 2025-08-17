@@ -113,7 +113,7 @@ public class TCX {
         // TCX supports only these 3 sports...(cf
         // http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
         sport = Sport.valueOf(cursor.getInt(3));
-        if (exportOptions.mStrava) {
+        if (exportOptions.isStrava) {
           if (sport.IsCycling()) {
             mXML.attribute("", "Sport", "Biking");
           } else if (sport.IsWalking()) {
@@ -407,7 +407,7 @@ public class TCX {
               }
               if (isRunCad) {
                 mXML.startTag("", "Extensions");
-                if (exportOptions.mStrava) {
+                if (exportOptions.isStrava) {
                   mXML.startTag("", "TPX");
                   mXML.attribute(
                       "", "xmlns", "\"http://www.garmin.com/xmlschemas/ActivityExtension/v2\"");
@@ -418,14 +418,14 @@ public class TCX {
               }
               if (isRunCad) {
                 int val = cLocation.getInt(8);
-                if (exportOptions.mStrava) {
+                if (exportOptions.isStrava) {
                   mXML.startTag("", "RunCadence");
                 } else {
                   mXML.startTag("", "ns3:RunCadence");
                 }
                 String sval = Integer.toString(val);
                 mXML.text(sval);
-                if (exportOptions.mStrava) {
+                if (exportOptions.isStrava) {
                   mXML.endTag("", "RunCadence");
                 } else {
                   mXML.endTag("", "ns3:RunCadence");
@@ -449,7 +449,7 @@ public class TCX {
               //    }
               // }
               if (isRunCad) {
-                if (exportOptions.mStrava) {
+                if (exportOptions.isStrava) {
                   mXML.endTag("", "TPX");
                 } else {
                   mXML.endTag("", "ns3:TPX");

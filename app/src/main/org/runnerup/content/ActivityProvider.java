@@ -151,7 +151,7 @@ public class ActivityProvider extends ContentProvider {
                       this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy),
                       false);
               var options = ExportOptions.builder();
-              options.mAccuracyExtensions = extraData;
+              options.accuracyExtensions = extraData;
               GPX gpx = new GPX(mDB, options.build(), simplifier);
               gpx.export(activityId, new OutputStreamWriter(out.second));
               Log.e(getClass().getName(), "export gpx");

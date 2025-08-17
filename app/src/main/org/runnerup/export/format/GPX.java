@@ -86,7 +86,7 @@ public class GPX {
           "",
           "xsi:schemaLocation",
           "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-      if (exportOptions.mGarminExt) {
+      if (exportOptions.garminExtensions) {
         mXML.attribute(
             "", "xmlns:gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v1");
       } else {
@@ -200,7 +200,7 @@ public class GPX {
             int locType = cLocation.getInt(5);
             long time = cLocation.getLong(1);
             if (locType != DB.LOCATION.TYPE_GPS) {
-              if (exportOptions.mAccuracyExtensions) {
+              if (exportOptions.accuracyExtensions) {
                 if (segmentPoints >= 2 && locType == DB.LOCATION.TYPE_RESUME) {
                   // GPX has no standard for pauses, but segments are occasionally used,
                   // sometimes separate activities
@@ -223,7 +223,7 @@ public class GPX {
               mXML.attribute("", "lat", Float.toString(lat));
 
               Float ele = null;
-              if (exportOptions.mAccuracyExtensions && !cLocation.isNull(14)) {
+              if (exportOptions.accuracyExtensions && !cLocation.isNull(14)) {
                 // raw elevation
                 ele = cLocation.getFloat(14);
               } else if (!cLocation.isNull(4)) {
@@ -247,11 +247,11 @@ public class GPX {
                 boolean isHr = !cLocation.isNull(6);
                 boolean isCad = !cLocation.isNull(7);
                 boolean isTemp = !cLocation.isNull(8);
-                boolean isPres = !cLocation.isNull(9) && exportOptions.mAccuracyExtensions;
-                boolean isAccuracy = !cLocation.isNull(10) && exportOptions.mAccuracyExtensions;
-                boolean isBearing = !cLocation.isNull(11) && exportOptions.mAccuracyExtensions;
-                boolean isSpeed = !cLocation.isNull(12) && exportOptions.mAccuracyExtensions;
-                boolean isSats = !cLocation.isNull(13) && exportOptions.mAccuracyExtensions;
+                boolean isPres = !cLocation.isNull(9) && exportOptions.accuracyExtensions;
+                boolean isAccuracy = !cLocation.isNull(10) && exportOptions.accuracyExtensions;
+                boolean isBearing = !cLocation.isNull(11) && exportOptions.accuracyExtensions;
+                boolean isSpeed = !cLocation.isNull(12) && exportOptions.accuracyExtensions;
+                boolean isSats = !cLocation.isNull(13) && exportOptions.accuracyExtensions;
                 boolean isAny =
                     isCad
                         || isTemp
@@ -264,7 +264,7 @@ public class GPX {
 
                 if (isAny) {
                   mXML.startTag("", "extensions");
-                  if (exportOptions.mGarminExt) {
+                  if (exportOptions.garminExtensions) {
                     mXML.startTag("", "gpxtpx:TrackPointExtension");
                   }
                 }
@@ -279,7 +279,7 @@ public class GPX {
 
                 if (isCad) {
                   String ns;
-                  if (exportOptions.mGarminExt) {
+                  if (exportOptions.garminExtensions) {
                     // Seen in some examples, not officially supported by Strava
                     ns = "gpxtpx:cad";
                   } else {
@@ -293,7 +293,7 @@ public class GPX {
 
                 if (isTemp) {
                   String ns;
-                  if (exportOptions.mGarminExt) {
+                  if (exportOptions.garminExtensions) {
                     ns = "gpxtpx:atemp";
                   } else {
                     ns = "gpxtpx:temp";
@@ -341,7 +341,7 @@ public class GPX {
                 }
 
                 if (isAny) {
-                  if (exportOptions.mGarminExt) {
+                  if (exportOptions.garminExtensions) {
                     mXML.endTag("", "gpxtpx:TrackPointExtension");
                   }
                   mXML.endTag("", "extensions");
