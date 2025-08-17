@@ -230,8 +230,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          var options = ExportOptions.builder();
-          GPX gpx = new GPX(db, options.build(), simplifier);
+          GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
           gpx.export(mID, new OutputStreamWriter(out));
         }
       }
