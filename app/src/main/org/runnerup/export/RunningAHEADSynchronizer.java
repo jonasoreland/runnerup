@@ -216,8 +216,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     }
 
     String URL = IMPORT_URL + "?access_token=" + access_token;
-    var options = ExportOptions.builder();
-    TCX tcx = new TCX(db, options.build(), simplifier);
+    TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
     HttpURLConnection conn;
     Exception ex;
     try {
