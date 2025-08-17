@@ -220,8 +220,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          var options = ExportOptions.builder();
-          TCX tcx = new TCX(db, options.build(), simplifier);
+          TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
           tcx.export(mID, new OutputStreamWriter(out));
         }
       }
