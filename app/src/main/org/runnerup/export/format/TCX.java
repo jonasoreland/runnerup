@@ -271,9 +271,6 @@ public class TCX {
         mDB.query(
             DB.LAP.TABLE,
             lColumns,
-<<<<<<< HEAD
-            "(" + DB.LAP.DISTANCE + " > 0 or " + DB.LAP.TIME + " > 0) and " + DB.LAP.ACTIVITY + " = " + activityId,
-=======
             "("
                 + DB.LAP.DISTANCE
                 + " > 0 or "
@@ -282,7 +279,6 @@ public class TCX {
                 + DB.LAP.ACTIVITY
                 + " = "
                 + activityId,
->>>>>>> master
             null,
             null,
             null,
