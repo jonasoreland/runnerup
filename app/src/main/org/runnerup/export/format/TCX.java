@@ -48,10 +48,13 @@ public class TCX {
   private String notes = null;
   private final SimpleDateFormat simpleDateFormat;
   private Sport sport = null;
+  private final ExportOptions exportOptions;
   private final PathSimplifier simplifier;
 
-  public TCX(SQLiteDatabase mDB, PathSimplifier simplifier) {
+  public TCX(SQLiteDatabase mDB, ExportOptions exportOptions,
+             PathSimplifier simplifier) {
     this.mDB = mDB;
+    this.exportOptions = exportOptions;
     this.simplifier = simplifier;
     simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -62,12 +65,7 @@ public class TCX {
   }
 
   public String export(long activityId, Writer writer) throws IOException {
-    Pair<String, Sport> res = exportWithSport(activityId, writer, false);
-    return res.first;
-  }
-
-  public String exportForStrava(long activityId, Writer writer) throws IOException {
-    Pair<String, Sport> res = exportWithSport(activityId, writer, true);
+    Pair<String, Sport> res = exportWithSport(activityId, writer);
     return res.first;
   }
 
@@ -77,7 +75,7 @@ public class TCX {
    * @return TCX id
    * @throws IOException
    */
-  public Pair<String, Sport> exportWithSport(long activityId, Writer writer, boolean isStrava)
+  public Pair<String, Sport> exportWithSport(long activityId, Writer writer)
       throws IOException {
 
     String[] aColumns = {
@@ -115,7 +113,7 @@ public class TCX {
         // TCX supports only these 3 sports...(cf
         // http://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd)
         sport = Sport.valueOf(cursor.getInt(3));
-        if (isStrava) {
+        if (exportOptions.isStrava) {
           if (sport.IsCycling()) {
             mXML.attribute("", "Sport", "Biking");
           } else if (sport.IsWalking()) {
@@ -139,7 +137,7 @@ public class TCX {
       String id = formatTime(startTime * 1000);
       mXML.text(id);
       mXML.endTag("", "Id");
-      exportLaps(activityId, startTime * 1000, sport, isStrava);
+      exportLaps(activityId, startTime * 1000, sport);
       if (!cursor.isNull(1)) {
         notes = cursor.getString(1);
         mXML.startTag("", "Notes");
@@ -266,14 +264,25 @@ public class TCX {
     c.close();
   }
 
-  private void exportLaps(long activityId, long startTime, Sport sport, boolean isStrava)
+  private void exportLaps(long activityId, long startTime, Sport sport)
       throws IOException {
     String[] lColumns = {DB.LAP.LAP, DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.INTENSITY};
     Cursor cLap =
         mDB.query(
             DB.LAP.TABLE,
             lColumns,
+<<<<<<< HEAD
             "(" + DB.LAP.DISTANCE + " > 0 or " + DB.LAP.TIME + " > 0) and " + DB.LAP.ACTIVITY + " = " + activityId,
+=======
+            "("
+                + DB.LAP.DISTANCE
+                + " > 0 or "
+                + DB.LAP.TIME
+                + " > 0) and "
+                + DB.LAP.ACTIVITY
+                + " = "
+                + activityId,
+>>>>>>> master
             null,
             null,
             null,
@@ -297,8 +306,9 @@ public class TCX {
 
     double totalDistance = 0;
     while (lok) {
-      if (! (cLap.getFloat(1) == 0 && cLap.getLong(2) == 0)) {
-        long lap = cLap.getLong(0);
+      if (exportOptions.shouldExportLap(sport.getDbValue(),
+                                        /* distance= */cLap.getFloat(1),
+                                        /* time= */cLap.getLong(2))) {
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
         }
@@ -409,7 +419,7 @@ public class TCX {
               }
               if (isRunCad) {
                 mXML.startTag("", "Extensions");
-                if (isStrava) {
+                if (exportOptions.isStrava) {
                   mXML.startTag("", "TPX");
                   mXML.attribute(
                       "", "xmlns", "\"http://www.garmin.com/xmlschemas/ActivityExtension/v2\"");
@@ -420,14 +430,14 @@ public class TCX {
               }
               if (isRunCad) {
                 int val = cLocation.getInt(8);
-                if (isStrava) {
+                if (exportOptions.isStrava) {
                   mXML.startTag("", "RunCadence");
                 } else {
                   mXML.startTag("", "ns3:RunCadence");
                 }
                 String sval = Integer.toString(val);
                 mXML.text(sval);
-                if (isStrava) {
+                if (exportOptions.isStrava) {
                   mXML.endTag("", "RunCadence");
                 } else {
                   mXML.endTag("", "ns3:RunCadence");
@@ -451,7 +461,7 @@ public class TCX {
               //    }
               // }
               if (isRunCad) {
-                if (isStrava) {
+                if (exportOptions.isStrava) {
                   mXML.endTag("", "TPX");
                 } else {
                   mXML.endTag("", "ns3:TPX");

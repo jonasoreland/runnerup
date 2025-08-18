@@ -80,6 +80,8 @@ import org.runnerup.util.FileNameHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GraphWrapper;
 import org.runnerup.util.MapWrapper;
+import org.runnerup.util.SafeParse;
+import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -113,6 +115,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TextView activityDistance = null;
 
   private TitleSpinner sport = null;
+  private TitleSpinner manualDistance = null;
   private EditText notes = null;
   private View rootView;
   private View mapTab;
@@ -123,6 +126,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private Formatter formatter = null;
 
   private long mStartTime = 0; // activity start time in unix timestamp
+  private ContentValues headerData = new ContentValues();
   private static final int EDIT_ACCOUNT_REQUEST = 2;
 
   /** Called when the activity is first created. */
@@ -170,6 +174,35 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
     sport = findViewById(R.id.summary_sport);
+    sport.setOnSetValueListener(new OnSetValueListener() {
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          updateViewForSport(newValue);
+          ViewCompat.requestApplyInsets(rootView);
+          headerData.put(DB.ACTIVITY.SPORT, newValue);
+          return newValue;
+        }
+      });
+    manualDistance = findViewById(R.id.summary_manual_distance);
+    manualDistance.setOnSetValueListener(new OnSetValueListener() {
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          double dist = SafeParse.parseDouble(newValue, 0); // convert to meters
+          headerData.put(DB.ACTIVITY.DISTANCE, dist);
+          updateHeader(headerData, /* fromManualDistance= */true);
+          return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+      });
     notes = findViewById(R.id.notes_text);
 
     if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
@@ -180,15 +213,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     saveButton.setOnClickListener(saveButtonClick);
     uploadButton.setOnClickListener(uploadButtonClick);
-    if (this.mode == MODE_SAVE) {
-      resumeButton.setOnClickListener(resumeButtonClick);
-      discardButton.setOnClickListener(discardButtonClick);
-      setEdit(true);
-    } else if (this.mode == MODE_DETAILS) {
-      resumeButton.setVisibility(View.GONE);
-      discardButton.setVisibility(View.GONE);
-      setEdit(false);
-    }
 
     fillHeaderData();
     requery();
@@ -285,12 +309,25 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return WindowInsetsCompat.CONSUMED;
           }
         });
+
+    if (this.mode == MODE_SAVE) {
+      resumeButton.setOnClickListener(resumeButtonClick);
+      discardButton.setOnClickListener(discardButtonClick);
+      setEdit(true);
+    } else if (this.mode == MODE_DETAILS) {
+      resumeButton.setVisibility(View.GONE);
+      discardButton.setVisibility(View.GONE);
+      setEdit(false);
+    }
   }
 
   private void setEdit(boolean value) {
     edit = value;
-    if (value) saveButton.setVisibility(View.VISIBLE);
-    else saveButton.setVisibility(View.GONE);
+    if (value) {
+      saveButton.setVisibility(View.VISIBLE);
+    } else {
+      saveButton.setVisibility(View.GONE);
+    }
     WidgetUtil.setEditable(notes, value);
     sport.setEnabled(value);
     updateViewForSport(sport.getValueInt());
@@ -298,6 +335,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void updateViewForSport(int sportValue) {
+    if (edit && Sport.hasManualDistance(sportValue)) {
+      manualDistance.setVisibility(View.VISIBLE);
+      manualDistance.setEnabled(true);
+    } else {
+      manualDistance.setVisibility(View.GONE);
+    }
+
     if (mapTab != null) {
       if (Sport.isWithoutGps(sportValue)) {
         mapTab.setVisibility(View.GONE);
@@ -560,17 +604,40 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       mStartTime = st;
       setTitle(formatter.formatDateTime(st));
     }
+
+    if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
+      notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
+    }
+
+    headerData = tmp;
+    updateHeader(tmp, /* fromManualDistance= */false);
+  }
+
+  private void updateHeader(ContentValues data, boolean fromManualDistance) {
     double d = 0;
-    if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
-      d = tmp.getAsDouble(DB.ACTIVITY.DISTANCE);
-      activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d));
+    if (data.containsKey(DB.ACTIVITY.DISTANCE)) {
+      d = data.getAsDouble(DB.ACTIVITY.DISTANCE);
+      String s = formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d);
+      activityDistance.setText(s);
+      if (!fromManualDistance) {
+        /**
+         * IF !fromManualDistance (e.g. from database)
+         *   update the manual distance field in case (if it might be needed)
+         * ELSE
+         *   fromManualDistance=true
+         *   e.g. from spinner, don't update or else it will recurse
+         */
+        int distance = (int)d;
+        manualDistance.setValue(Long.toString(distance));
+        manualDistance.setValue(distance);
+      }
     } else {
       activityDistance.setText("");
     }
 
     long t = 0;
-    if (tmp.containsKey(DB.ACTIVITY.TIME)) {
-      t = tmp.getAsInteger(DB.ACTIVITY.TIME);
+    if (data.containsKey(DB.ACTIVITY.TIME)) {
+      t = data.getAsInteger(DB.ACTIVITY.TIME);
       activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
     } else {
       activityTime.setText("");
@@ -586,12 +653,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       activityPaceSeparator.setVisibility(View.GONE);
     }
 
-    if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
-      notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
-    }
-
-    if (tmp.containsKey(DB.ACTIVITY.SPORT)) {
-      sport.setValue(tmp.getAsInteger(DB.ACTIVITY.SPORT));
+    if (data.containsKey(DB.ACTIVITY.SPORT)) {
+      sport.setValue(data.getAsInteger(DB.ACTIVITY.SPORT));
     }
   }
 
@@ -787,9 +850,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void saveActivity() {
-    ContentValues tmp = new ContentValues();
+    int sportValue = sport.getValueInt();
+    ContentValues tmp = headerData;
     tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
-    tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
+    tmp.put(DB.ACTIVITY.SPORT, sportValue);
     String[] whereArgs = {Long.toString(mID)};
     mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 
@@ -853,7 +917,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           syncManager.startUploading(
               (synchronizerName, status) -> {
                 uploading = false;
-                DetailActivity.this.setResult(RESULT_OK);
+                final Intent returnIntent = new Intent();
+                int sportValue = sport.getValueInt();
+                if (Sport.hasManualDistance(sportValue)) {
+                  returnIntent.putExtra(
+                      "MANUAL_DISTANCE", headerData.getAsDouble(DB.ACTIVITY.DISTANCE));
+                }
+                DetailActivity.this.setResult(RESULT_OK, returnIntent);
                 DetailActivity.this.finish();
               },
               pendingSynchronizers,
