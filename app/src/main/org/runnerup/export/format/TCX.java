@@ -271,7 +271,14 @@ public class TCX {
         mDB.query(
             DB.LAP.TABLE,
             lColumns,
-            DB.LAP.DISTANCE + " > 0 and " + DB.LAP.ACTIVITY + " = " + activityId,
+            "("
+                + DB.LAP.DISTANCE
+                + " > 0 or "
+                + DB.LAP.TIME
+                + " > 0) and "
+                + DB.LAP.ACTIVITY
+                + " = "
+                + activityId,
             null,
             null,
             null,
@@ -295,7 +302,9 @@ public class TCX {
 
     double totalDistance = 0;
     while (lok) {
-      if (cLap.getFloat(1) != 0 && cLap.getLong(2) != 0) {
+      if (exportOptions.shouldExportLap(sport.getDbValue(),
+                                        /* distance= */cLap.getFloat(1),
+                                        /* time= */cLap.getLong(2))) {
         long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
