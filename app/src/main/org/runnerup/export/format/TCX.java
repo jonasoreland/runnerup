@@ -305,6 +305,7 @@ public class TCX {
       if (exportOptions.shouldExportLap(sport.getDbValue(),
                                         /* distance= */cLap.getFloat(1),
                                         /* time= */cLap.getLong(2))) {
+        long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
         }
