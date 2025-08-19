@@ -111,7 +111,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private boolean statusDetailsShown = false;
 
-  private boolean skipStopGps = false;
+  // StartFragment normally stop GPS in onDestroy (or onStop)
+  // but if the fragment stop as it has started a RunActivity
+  // it should not!
+  // TODO Figure out a way to do this prettier
+  private boolean runActivityPending = false;
   private Tracker mTracker = null;
   private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
@@ -531,8 +535,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   public void stopGps() {
-    Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.skipStopGps);
-    if (skipStopGps) return;
+    Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.runActivityPending);
+    if (runActivityPending) return;
 
     if (mGpsStatus != null) mGpsStatus.stop(this);
 
@@ -649,7 +653,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     mTracker.setWorkout(prepareWorkout());
     mTracker.start();
 
-    skipStopGps = true;
+    runActivityPending = true;
     Intent intent = new Intent(requireContext(), RunActivity.class);
     // TODO: Use the Activity Result API
     StartFragment.this.startActivityForResult(intent, START_ACTIVITY);
@@ -1216,7 +1220,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
     }
     if (requestCode == START_ACTIVITY) {
-      skipStopGps = false;
+      runActivityPending = false;
       if (!mIsBound || mTracker == null) {
         bindGpsTracker();
       } else {
