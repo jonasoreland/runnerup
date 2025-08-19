@@ -113,6 +113,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private boolean statusDetailsShown = false;
 
+  // StartFragment normally stop GPS in onDestroy (or onStop)
+  // but if the fragment stop as it has started a RunActivity
+  // it should not!
+  // TODO Figure out a way to do this prettier
   private boolean runActivityPending = false;
   private Tracker mTracker = null;
   private org.runnerup.tracker.GpsStatus mGpsStatus = null;
