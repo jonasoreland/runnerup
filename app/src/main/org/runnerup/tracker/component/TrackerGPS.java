@@ -91,17 +91,24 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     Location lastLocation = null;
     for (String s : list) {
       Location tmp = lm.getLastKnownLocation(s);
-      if (lastLocation == null || tmp.getTime() > lastLocation.getTime()) {
+      if (tmp == null) {
+        continue;
+      }
+      if (lastLocation == null) {
+        lastLocation = tmp;
+      } else if (tmp.getTime() > lastLocation.getTime()) {
         lastLocation = tmp;
       }
     }
-    if (lastLocation != null) {
+    if (lastLocation == null) {
+      lastLocation = new Location("RunnerUp");
+    } else {
       lastLocation.removeSpeed();
       lastLocation.removeAltitude();
       lastLocation.removeAccuracy();
       lastLocation.removeBearing();
-      lastLocation.setTime(System.currentTimeMillis());
     }
+    lastLocation.setTime(System.currentTimeMillis());
     return lastLocation;
   }
 
