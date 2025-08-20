@@ -580,9 +580,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   public void stopGps() {
-    Log.e(
-        getClass().getName(),
-        "StartFragment.stopGps() runActivityPending: " + this.runActivityPending);
+    Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.runActivityPending);
     if (runActivityPending) {
       return;
     }
@@ -1267,6 +1265,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       // Detach our existing connection.
       requireActivity().getApplicationContext().unbindService(mConnection);
       mIsBound = false;
+      if (mTracker != null) {
+        mTracker.unregisterTrackerStateListener(trackerStateListener);
+      }
+      mTracker = null;
     }
     if (mTracker != null) {
       mTracker.unregisterTrackerStateListener(trackerStateListener);
@@ -1471,11 +1473,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         }
       };
 
-  private final ValueModel.ChangeListener<TrackerState> trackerStateListener = new ValueModel.ChangeListener<>(){
-      @Override
-      public void onValueChanged(
-          ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
-        onTick();
-      }
-    };
+  private final ValueModel.ChangeListener<TrackerState> trackerStateListener =
+      new ValueModel.ChangeListener<>() {
+        @Override
+        public void onValueChanged(
+            ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
+          onTick();
+        }
+      };
 }

@@ -66,6 +66,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       if (lm == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
+      locationManager = lm;
       if (lm.getProvider(LocationManager.GPS_PROVIDER) == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
@@ -110,6 +111,32 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     return Integer.parseInt(s);
   }
 
+  static Location getLastKnownLocation(LocationManager lm) {
+    String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
+    Location lastLocation = null;
+    for (String s : list) {
+      Location tmp = lm.getLastKnownLocation(s);
+      if (tmp == null) {
+        continue;
+      }
+      if (lastLocation == null) {
+        lastLocation = tmp;
+      } else if (tmp.getTime() > lastLocation.getTime()) {
+        lastLocation = tmp;
+      }
+    }
+    if (lastLocation == null) {
+      lastLocation = new Location("RunnerUp");
+    } else {
+      lastLocation.removeSpeed();
+      lastLocation.removeAltitude();
+      lastLocation.removeAccuracy();
+      lastLocation.removeBearing();
+    }
+    lastLocation.setTime(System.currentTimeMillis());
+    return lastLocation;
+  }
+
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
     if (mWithoutGps == false &&
@@ -119,24 +146,10 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     }
 
     try {
-      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-      String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
-      for (String s : list) {
-        Location tmp = lm.getLastKnownLocation(s);
-        if (mLastLocation == null || tmp.getTime() > mLastLocation.getTime()) {
-          mLastLocation = tmp;
-        }
-      }
-      if (mLastLocation != null) {
-        mLastLocation.removeSpeed();
-        mLastLocation.removeAltitude();
-        mLastLocation.removeAccuracy();
-        mLastLocation.removeBearing();
-        mLastLocation.setTime(System.currentTimeMillis());
-      }
-
+      var lm = locationManager;
       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
       frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
+      mLastLocation = getLastKnownLocation(lm);
       if (!mWithoutGps) {
         Integer frequency_meters =
             parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
