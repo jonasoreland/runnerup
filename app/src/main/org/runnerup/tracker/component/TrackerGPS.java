@@ -58,6 +58,9 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onInit(final Callback callback, Context context) {
+    if (mWithoutGps) {
+      return ResultCode.RESULT_OK;
+    }
     try {
       LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
       if (lm == null) {
@@ -71,6 +74,28 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       return ResultCode.RESULT_ERROR;
     }
     return ResultCode.RESULT_OK;
+  }
+
+  public void setWithoutGps(boolean val) {
+    if (mWithoutGps == val) {
+      return;
+    }
+    mWithoutGps = val;
+    if (mWithoutGps) {
+      switch (tracker.getState()) {
+        case INIT:
+        case CLEANUP:
+        case ERROR:
+        case INITIALIZING:
+        case INITIALIZED:
+          return;
+        default:
+          break;
+      }
+      stopGps();
+      onTick();
+      gpsLessLocationProvider.run();
+    }
   }
 
   private Integer parseAndFixInteger(
@@ -114,10 +139,12 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
-    if (ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
+    if (mWithoutGps == false &&
+        ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
       mWithoutGps = true;
     }
+
     try {
       var lm = locationManager;
       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -199,12 +226,14 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public void onTick() {
-    if (mGpsStatus == null) {
-      return;
-    }
+    if (mWithoutGps == false) {
+      if (mGpsStatus == null) {
+        return;
+      }
 
-    if (!mGpsStatus.isFixed()) {
-      return;
+      if (!mGpsStatus.isFixed()) {
+        return;
+      }
     }
 
     if (mConnectCallback == null) {
@@ -212,7 +241,6 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     }
 
     Callback tmp = mConnectCallback;
-
     mConnectCallback = null;
     mGpsStatus.stop(this);
     // note: Don't reset mGpsStatus, it's used for isConnected()

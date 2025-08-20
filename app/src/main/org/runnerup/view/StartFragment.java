@@ -41,6 +41,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -140,6 +141,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private TextView wearOsMessage = null;
   private TrackerWear.WearNotifier mWearNotifier = null;
 
+  boolean sportWithoutGps = false;
   boolean batteryLevelMessageShown = false;
 
   TitleSpinner simpleTargetType = null;
@@ -318,6 +320,51 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     mWearNotifier = new TrackerWear.WearNotifier(requireActivity().getApplicationContext());
     mWearNotifier.onViewCreated();
+
+    var listener = sportSpinner.getViewOnItemSelectedListener();
+    sportSpinner.setViewOnItemSelectedListener(
+        new AdapterView.OnItemSelectedListener() {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (listener != null) {
+              listener.onItemSelected(parent, view, position, id);
+            }
+            setGpsNotRequired(Sport.isWithoutGps((int) id));
+            StartFragment.this.updateView();
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {
+            if (listener != null) {
+              listener.onNothingSelected(parent);
+            }
+          }
+        });
+  }
+
+  private void setGpsNotRequired(boolean val) {
+    if (sportWithoutGps == val) {
+      return;
+    }
+
+    sportWithoutGps = val;
+    if (sportWithoutGps) {
+      // Turning GPS off
+      if (mTracker != null) {
+        mTracker.setWithoutGps(true);
+      }
+    } else {
+      // Toggling GPS on
+      Log.e(getClass().getName(), "mTracker.reset()");
+      if (mTracker != null) {
+        mTracker.setWithoutGps(false);
+        mTracker.reset();
+        if (mGpsStatus.isStarted()) {
+          mTracker.setup();
+          startGps();
+        }
+      }
+    }
   }
 
   private class OnConfigureAudioListener implements OnSetValueListener {
@@ -433,7 +480,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     stopGps();
     unbindGpsTracker();
     mGpsStatus = null;
-    mTracker = null;
 
     DBHelper.closeDB(mDB);
     super.onDestroy();
@@ -483,9 +529,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private void onGpsTrackerBound() {
     // check and request permissions at startup
     boolean missingEssentialPermission = checkPermissions(false);
+    mTracker.setWithoutGps(sportWithoutGps);
     if (!missingEssentialPermission && getAutoStartGps()) {
       startGps();
     } else {
+      Log.e(getClass().getName(), "onGpsTrackerBound state: " + mTracker.getState());
       switch (mTracker.getState()) {
         case INIT:
         case CLEANUP:
@@ -498,12 +546,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         case CONNECTED:
         case STARTED:
         case PAUSED:
-          if (BuildConfig.DEBUG) {
-            // Seem to happen when returning to RunnerUp
-            Log.e(
-                getClass().getName(),
-                "onGpsTrackerBound unexpected tracker state: " + mTracker.getState().toString());
-          }
           break;
         case ERROR:
           break;
@@ -520,8 +562,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void startGps() {
     Log.v(getClass().getName(), "StartFragment.startGps()");
-    if (!mGpsStatus.isEnabled()) {
-      startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+    if (!sportWithoutGps) {
+      if (!mGpsStatus.isEnabled()) {
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+      }
+      notificationStateManager.displayNotificationState(gpsSearchingState);
     }
 
     if (mGpsStatus != null && !mGpsStatus.isStarted()) {
@@ -529,10 +574,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
 
     if (mTracker != null) {
+      mTracker.setWithoutGps(sportWithoutGps);
       mTracker.connect();
     }
-
-    notificationStateManager.displayNotificationState(gpsSearchingState);
   }
 
   public void stopGps() {
@@ -911,12 +955,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         break;
       }
 
-      if (!mGpsStatus.isLogging()) {
-        break;
-      }
+      if (!sportWithoutGps) {
+        if (!mGpsStatus.isLogging()) {
+          break;
+        }
 
-      if (!mGpsStatus.isFixed()) {
-        break;
+        if (!mGpsStatus.isFixed()) {
+          break;
+        }
       }
 
       if (mTracker == null || !mIsBound) {
@@ -946,7 +992,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       }
 
       //
-      if (mGpsStatus.isEnabled()) {
+      if (sportWithoutGps) {
+        gpsEnable.setText(org.runnerup.common.R.string.Start_tracker);
+      } else if (mGpsStatus.isEnabled()) {
         gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
       } else {
         gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
@@ -959,7 +1007,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void updateGPSView() {
-    if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted()) {
+    if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted() || sportWithoutGps) {
 
       if (statusDetailsShown) {
         gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
@@ -1217,11 +1265,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       // Detach our existing connection.
       requireActivity().getApplicationContext().unbindService(mConnection);
       mIsBound = false;
-      if (mTracker != null) {
-        mTracker.unregisterTrackerStateListener(trackerStateListener);
-      }
-      mTracker = null;
     }
+    if (mTracker != null) {
+      mTracker.unregisterTrackerStateListener(trackerStateListener);
+    }
+    mTracker = null;
   }
 
   // TODO: Use Activity Result API
