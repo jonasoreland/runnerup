@@ -153,7 +153,6 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       if (!mWithoutGps) {
         Integer frequency_meters =
             parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);
-        locationManager = lm;
         lm.requestLocationUpdates(GPS_PROVIDER, frequency_ms, frequency_meters, tracker);
         mGpsStatus = new GpsStatus(context);
         mGpsStatus.start(this);
