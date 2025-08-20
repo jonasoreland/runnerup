@@ -1265,10 +1265,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       // Detach our existing connection.
       requireActivity().getApplicationContext().unbindService(mConnection);
       mIsBound = false;
-      if (mTracker != null) {
-        mTracker.unregisterTrackerStateListener(trackerStateListener);
-      }
-      mTracker = null;
     }
     if (mTracker != null) {
       mTracker.unregisterTrackerStateListener(trackerStateListener);
