@@ -370,4 +370,5 @@
   <string name="SPORT_OTHER">Other</string>
   <string name="SPORT_ORIENTEERING">Orienteering</string>
   <string name="SPORT_WALKING">Walking</string>
+  <string name="SPORT_TREADMILL">Treadmill</string>
 </resources>
