@@ -69,6 +69,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.MockHRProvider;
@@ -536,11 +537,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   public void stopGps() {
     Log.e(getClass().getName(), "StartFragment.stopGps() skipStop: " + this.runActivityPending);
-    if (runActivityPending) return;
+    if (runActivityPending) {
+      return;
+    }
 
-    if (mGpsStatus != null) mGpsStatus.stop(this);
+    if (mGpsStatus != null) {
+      mGpsStatus.stop(this);
+    }
 
-    if (mTracker != null) mTracker.reset();
+    if (mTracker != null) {
+      mTracker.reset();
+    }
 
     notificationStateManager.cancelNotification();
   }
@@ -916,6 +923,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         break;
       }
 
+      if (mTracker.getState() != TrackerState.CONNECTED) {
+        break;
+      }
+
       if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)
           && advancedWorkout == null) {
         break;
@@ -1172,6 +1183,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           mTracker = ((Tracker.LocalBinder) service).getService();
           // Tell the user about this for our demo.
           StartFragment.this.onGpsTrackerBound();
+          if (mTracker != null) {
+            mTracker.registerTrackerStateListener(trackerStateListener);
+          }
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -1179,6 +1193,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           // unexpectedly disconnected -- that is, its process crashed.
           // Because it is running in our same process, we should never
           // see this happen.
+          if (mTracker != null) {
+            mTracker.unregisterTrackerStateListener(trackerStateListener);
+          }
           mTracker = null;
         }
       };
@@ -1200,6 +1217,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       // Detach our existing connection.
       requireActivity().getApplicationContext().unbindService(mConnection);
       mIsBound = false;
+      if (mTracker != null) {
+        mTracker.unregisterTrackerStateListener(trackerStateListener);
+      }
+      mTracker = null;
     }
   }
 
@@ -1397,6 +1418,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         @Override
         public int preSetValue(int newValue) throws IllegalArgumentException {
           return newValue;
+        }
+      };
+
+  private final ValueModel.ChangeListener<TrackerState> trackerStateListener =
+      new ValueModel.ChangeListener<>() {
+        @Override
+        public void onValueChanged(
+            ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
+          onTick();
         }
       };
 }
