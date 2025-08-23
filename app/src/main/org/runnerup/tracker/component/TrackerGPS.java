@@ -37,6 +37,7 @@ import org.runnerup.util.TickListener;
 
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
+  private int onEndCounter = 0;
   private boolean mWithoutGps = false;
   private int frequency_ms = 0;
   private Location mLastLocation;
@@ -58,16 +59,20 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onInit(final Callback callback, Context context) {
-    if (mWithoutGps) {
-      return ResultCode.RESULT_OK;
-    }
     try {
       LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
       if (lm == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
       locationManager = lm;
-      if (lm.getProvider(LocationManager.GPS_PROVIDER) == null) {
+    } catch (Exception ex) {
+      return ResultCode.RESULT_ERROR;
+    }
+    if (mWithoutGps) {
+      return ResultCode.RESULT_OK;
+    }
+    try {
+      if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
     } catch (Exception ex) {
@@ -94,7 +99,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       }
       stopGps();
       onTick();
-      gpsLessLocationProvider.run();
+      gpsLessLocationProvider.start(onEndCounter);
     }
   }
 
@@ -159,7 +164,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         mConnectCallback = callback;
         return ResultCode.RESULT_PENDING;
       } else {
-        gpsLessLocationProvider.run();
+        gpsLessLocationProvider.start(onEndCounter);
         return ResultCode.RESULT_OK;
       }
 
@@ -191,38 +196,53 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onEnd(Callback callback, Context context) {
+    onEndCounter++;
     stopGps();
     mConnectCallback = null;
     mWithoutGps = false;
     return ResultCode.RESULT_OK;
   }
 
-  private final Runnable gpsLessLocationProvider =
-      new Runnable() {
+  private final class GpsLessLocationProvider implements Runnable {
+    // onEnd has no mechanism of waiting for gpsLessLocationProvider
+    // to stop. Use a counter on call to onEnd to stop once it has
+    // increased higher than we started.
+    int onEndCounter = 0;
 
-        final Handler handler = new Handler();
+    final Handler handler = new Handler();
 
-        @Override
-        public void run() {
-          Location location = new Location(mLastLocation);
-          location.setTime(System.currentTimeMillis());
-          switch (tracker.getState()) {
-            case INIT:
-            case CLEANUP:
-            case ERROR:
-              /* end loop be returning directly here */
-              return;
-            case INITIALIZING:
-            case INITIALIZED:
-            case STARTED:
-            case PAUSED:
-              /* continue looping */
-              break;
-          }
-          tracker.onLocationChanged(location);
-          handler.postDelayed(this, frequency_ms);
-        }
-      };
+    public void start(int onEndCounter) {
+      this.onEndCounter = onEndCounter;
+      run();
+    }
+
+    @Override
+    public void run() {
+      Location location = new Location(mLastLocation);
+      location.setTime(System.currentTimeMillis());
+      if (this.onEndCounter < TrackerGPS.this.onEndCounter) {
+        return;
+      }
+      switch (tracker.getState()) {
+        case INIT:
+        case CLEANUP:
+        case ERROR:
+          /* end loop be returning directly here */
+          return;
+        case INITIALIZING:
+        case INITIALIZED:
+        case STARTED:
+        case PAUSED:
+          /* continue looping */
+          break;
+      }
+      tracker.onLocationChanged(location);
+      handler.postDelayed(this, frequency_ms);
+    }
+  };
+
+  private final GpsLessLocationProvider gpsLessLocationProvider =
+      new GpsLessLocationProvider();
 
   @Override
   public void onTick() {
