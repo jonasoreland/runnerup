@@ -119,6 +119,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private EditText notes = null;
   private View rootView;
   private View mapTab;
+  private LinearLayout graphTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -250,7 +251,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
 
-    LinearLayout graphTab = findViewById(R.id.tab_graph);
+    graphTab = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
         new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
@@ -351,6 +352,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       } else {
         mapTab.setVisibility(View.VISIBLE);
       }
+    }
+
+    // Reenable once 'graph based on time' is submitted.
+    if (Sport.isWithoutGps(sportValue)) {
+      graphTab.setVisibility(View.GONE);
+    } else {
+      graphTab.setVisibility(View.VISIBLE);
     }
   }
 
