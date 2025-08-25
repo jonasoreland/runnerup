@@ -171,6 +171,7 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
   public void setArrayEntries(String[] entries) {
     var adapter = new ArrayAdapter<CharSequence>(
         getContext(), android.R.layout.simple_spinner_item, entries);
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     mSpinner.setAdapter(adapter);
   }
 }
