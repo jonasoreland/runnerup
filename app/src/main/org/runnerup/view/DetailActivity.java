@@ -119,6 +119,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private EditText notes = null;
   private View rootView;
   private View mapTab;
+  private LinearLayout graphTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -188,6 +189,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           return newValue;
         }
       });
+
+    sport.setArrayEntries(Sport.getStringArray(getResources()));
+
     manualDistance = findViewById(R.id.summary_manual_distance);
     manualDistance.setOnSetValueListener(new OnSetValueListener() {
         @Override
@@ -247,7 +251,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
 
-    LinearLayout graphTab = findViewById(R.id.tab_graph);
+    graphTab = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
         new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
@@ -348,6 +352,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       } else {
         mapTab.setVisibility(View.VISIBLE);
       }
+    }
+
+    // Reenable once 'graph based on time' is submitted.
+    if (Sport.isWithoutGps(sportValue)) {
+      graphTab.setVisibility(View.GONE);
+    } else {
+      graphTab.setVisibility(View.VISIBLE);
     }
   }
 
@@ -1046,7 +1057,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               // Use of content:// (or STREAM?) instead of file:// is not supported in ES and other
               // apps
               // Solid Explorer File Manager works though
-              String actType = Sport.textOf(sport.getValueInt());
+              String actType = Sport.textOf(getResources(), sport.getValueInt());
               Uri uri =
                   Uri.parse(
                       "content://"
