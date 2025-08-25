@@ -29,7 +29,6 @@ import android.widget.TextView;
 import org.runnerup.R;
 
 public class TitleSpinner extends LinearLayout implements SpinnerInterface {
-  final Context context;
   final SpinnerPresenter mPresenter;
   final LinearLayout mLayout;
   final TextView mLabel;
@@ -38,7 +37,6 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
 
   public TitleSpinner(Context context, AttributeSet attrs) {
     super(context, attrs);
-    this.context = context;
 
     LayoutInflater inflater =
         (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
