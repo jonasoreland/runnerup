@@ -188,6 +188,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           return newValue;
         }
       });
+
+    sport.setArrayEntries(Sport.getStringArray(getResources()));
+
     manualDistance = findViewById(R.id.summary_manual_distance);
     manualDistance.setOnSetValueListener(new OnSetValueListener() {
         @Override

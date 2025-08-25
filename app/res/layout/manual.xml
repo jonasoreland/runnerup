@@ -31,7 +31,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:entries="@array/sportEntries"
         android:prompt="@string/Type"
         android:text="@string/Sport" />
 
@@ -108,5 +107,4 @@
         android:inputType="textMultiLine"
         android:hint="@string/Add_workout_notes"
         tools:ignore="AutoFill" />
-
 </RelativeLayout>

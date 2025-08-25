@@ -40,6 +40,7 @@ import org.runnerup.util.SafeParse;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Sport;
 
 public class ManualActivity extends AppCompatActivity {
 
@@ -77,6 +78,8 @@ public class ManualActivity extends AppCompatActivity {
     manualNotes = findViewById(R.id.manual_notes);
 
     ViewUtil.Insets(findViewById(R.id.tab_manual), true);
+
+    manualSport.setArrayEntries(Sport.getStringArray(getResources()));
   }
 
   @Override
