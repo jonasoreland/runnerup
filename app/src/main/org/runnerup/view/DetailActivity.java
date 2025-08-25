@@ -1057,7 +1057,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               // Use of content:// (or STREAM?) instead of file:// is not supported in ES and other
               // apps
               // Solid Explorer File Manager works though
-              String actType = Sport.textOf(sport.getValueInt());
+              String actType = Sport.textOf(getResources(), sport.getValueInt());
               Uri uri =
                   Uri.parse(
                       "content://"

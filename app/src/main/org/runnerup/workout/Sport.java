@@ -104,11 +104,13 @@ public enum Sport {
         case DB.ACTIVITY.SPORT_RUNNING:
         case DB.ACTIVITY.SPORT_ORIENTEERING:
         case DB.ACTIVITY.SPORT_WALKING:
-        case DB.ACTIVITY.SPORT_TREADMILL:
           sportName = "Running";
           break;
         case DB.ACTIVITY.SPORT_BIKING:
           sportName = "Biking";
+          break;
+        case DB.ACTIVITY.SPORT_TREADMILL:
+          sportName = "Treadmill";
           break;
         default:
           sportName = "Other";
