@@ -174,6 +174,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityDistance = findViewById(R.id.activity_distance);
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
+    graphTab = findViewById(R.id.tab_graph);
     sport = findViewById(R.id.summary_sport);
     sport.setOnSetValueListener(new OnSetValueListener() {
         @Override
@@ -251,7 +252,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
 
-    graphTab = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
         new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
