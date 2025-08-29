@@ -47,6 +47,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.FileNameHelper;
@@ -219,7 +220,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          TCX tcx = new TCX(db, simplifier);
+          TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
           tcx.export(mID, new OutputStreamWriter(out));
         }
       }
@@ -229,7 +230,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          GPX gpx = new GPX(db, true, true, simplifier);
+          GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
           gpx.export(mID, new OutputStreamWriter(out));
         }
       }

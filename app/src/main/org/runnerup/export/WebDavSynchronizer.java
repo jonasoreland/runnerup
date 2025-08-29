@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.FileNameHelper;
@@ -226,13 +227,13 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
       if (mFormat.contains(FileFormats.TCX)) {
-        TCX tcx = new TCX(db, simplifier);
+        TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         tcx.export(mID, writer);
         s = uploadFile(writer, fileBase, FileFormats.TCX.getValue());
       }
       if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
-        GPX gpx = new GPX(db, true, true, simplifier);
+        GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         gpx.export(mID, writer);
         s = uploadFile(writer, fileBase, FileFormats.GPX.getValue());
