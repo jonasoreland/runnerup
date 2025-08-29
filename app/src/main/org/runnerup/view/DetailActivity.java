@@ -119,7 +119,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private EditText notes = null;
   private View rootView;
   private View mapTab;
-  private LinearLayout graphTab;
+  private View graphTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -218,8 +218,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     saveButton.setOnClickListener(saveButtonClick);
     uploadButton.setOnClickListener(uploadButtonClick);
 
-    fillHeaderData();
-    requery();
     uploadButton.setVisibility(View.GONE);
 
     TabHost th = findViewById(R.id.tabhost);
@@ -250,11 +248,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Graph)));
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
-// Get graph tab (cannot hardcode index due to optional map tab).
-int graphTabIndex = th.getTabWidget().getChildCount() - 1;
-graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
+    // Get graph tab (cannot hardcode index due to optional map tab).
+    int graphTabIndex = th.getTabWidget().getChildCount() - 1;
+    graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 
-LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
         new GraphWrapper(this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID);
@@ -264,6 +262,9 @@ LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
     tabSpec.setContent(R.id.tab_upload);
     th.addTab(tabSpec);
+
+    fillHeaderData();
+    requery();
 
     {
       ListView lv = findViewById(R.id.laplist);
