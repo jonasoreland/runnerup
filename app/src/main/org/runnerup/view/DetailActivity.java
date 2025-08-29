@@ -121,6 +121,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private View mapTab;
 
   private MapWrapper mapWrapper = null;
+  private GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;
@@ -250,11 +251,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
 
-    LinearLayout graphTab = findViewById(R.id.tab_graph);
-    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
-    GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
-
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
@@ -313,6 +309,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           }
         });
 
+    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
+    boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
+    graphWrapper = new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
+                                    formatter, mDB, mID, use_distance_as_x);
+
     if (this.mode == MODE_SAVE) {
       resumeButton.setOnClickListener(resumeButtonClick);
       discardButton.setOnClickListener(discardButtonClick);
@@ -351,6 +353,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       } else {
         mapTab.setVisibility(View.VISIBLE);
       }
+    }
+    if (graphWrapper != null) {
+      boolean use_distance_as_x = !Sport.isWithoutGps(sportValue);
+      graphWrapper.setUseDistanceAsX(use_distance_as_x);
     }
   }
 

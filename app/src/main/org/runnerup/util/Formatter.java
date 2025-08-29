@@ -185,6 +185,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     return null;
   }
 
+  public String getElapsedUnit(Format target) {
+    return resources.getString(
+        org.runnerup.common.R.string.metrics_elapsed_unit);
+  }
+
   public static boolean getUseMetric(Resources res, SharedPreferences prefs, Editor editor) {
     boolean _km;
     String unit = prefs.getString(res.getString(R.string.pref_unit), null);

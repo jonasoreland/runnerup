@@ -50,6 +50,18 @@ public class GraphWrapper implements Constants {
   private final HRZonesBar hrzonesBar;
   private final Formatter formatter;
   private final LinearLayout hrzonesBarLayout;
+  private final LoadParam loadParam;
+
+  interface XAxis {
+    String label();
+    String formatValue(double val);
+    double getX(double distance, double time_ms);
+  };
+
+  boolean useDistanceAsX = true;
+  XAxis distanceXAxis;
+  XAxis timeXAxis;
+  XAxis xAxis;
 
   /** Called when the activity is first created. */
   @SuppressLint("ObsoleteSdkInt")
@@ -59,12 +71,52 @@ public class GraphWrapper implements Constants {
       LinearLayout hrzonesBarLayout,
       final Formatter formatter,
       SQLiteDatabase mDB,
-      long mID) {
+      long mID,
+      boolean use_distance_as_x) {
     this.graphTab = graphTab;
     this.hrzonesBarLayout = hrzonesBarLayout;
     this.formatter = formatter;
 
-    new LoadGraph().execute(new LoadParam(context, mDB, mID));
+    this.distanceXAxis = new XAxis() {
+        @Override
+        public String label() {
+          return formatter.getDistanceUnit(Formatter.Format.TXT);
+        }
+        @Override
+        public String formatValue(double value) {
+          return formatter.formatDistance(Formatter.Format.TXT_SHORT,
+                                          (long)value);
+        }
+        @Override
+        public double getX(double distance, double time_ms) {
+          return distance;
+        }
+      };
+
+    this.timeXAxis = new XAxis() {
+        @Override
+        public String label() {
+          return formatter.getElapsedUnit(Formatter.Format.TXT);
+        }
+        @Override
+        public String formatValue(double value) {
+          return formatter.formatElapsedTime(Formatter.Format.TXT_SHORT,
+                                             (long)value);
+        }
+        @Override
+        public double getX(double distance, double time_ms) {
+          return time_ms / 1000;
+        }
+      };
+
+    this.useDistanceAsX = use_distance_as_x;
+    if (use_distance_as_x) {
+      this.xAxis = distanceXAxis;
+    } else {
+      this.xAxis = timeXAxis;
+    }
+
+    loadParam = new LoadParam(context, mDB, mID);
 
     graphView = new GraphView(context);
     graphView.setTitle(formatter.formatVelocityLabel());
@@ -75,7 +127,7 @@ public class GraphWrapper implements Constants {
               @Override
               public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) {
-                  return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
+                  return xAxis.formatValue(value);
                 } else {
                   return formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, value);
                 }
@@ -84,7 +136,7 @@ public class GraphWrapper implements Constants {
     graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit(context));
     graphView
         .getGridLabelRenderer()
-        .setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
+        .setHorizontalAxisTitle(xAxis.label());
     // enable zoom
     graphView.getViewport().setScalable(true);
     graphView.getViewport().setScrollable(true);
@@ -94,7 +146,7 @@ public class GraphWrapper implements Constants {
     graphView2.getGridLabelRenderer().setVerticalAxisTitle("bpm");
     graphView2
         .getGridLabelRenderer()
-        .setHorizontalAxisTitle(formatter.getDistanceUnit(Formatter.Format.TXT));
+        .setHorizontalAxisTitle(xAxis.label());
     graphView2
         .getGridLabelRenderer()
         .setLabelFormatter(
@@ -102,7 +154,7 @@ public class GraphWrapper implements Constants {
               @Override
               public String formatLabel(double value, boolean isValueX) {
                 if (isValueX) {
-                  return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
+                  return xAxis.formatValue(value);
                 } else {
                   return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                 }
@@ -112,6 +164,22 @@ public class GraphWrapper implements Constants {
     graphView2.getViewport().setScrollable(true);
 
     hrzonesBar = new HRZonesBar(context);
+    new LoadGraph().execute(loadParam);
+  }
+
+  public void setUseDistanceAsX(boolean val) {
+    if (val == useDistanceAsX) {
+      return;
+    }
+    useDistanceAsX = val;
+    if (val) {
+      xAxis = distanceXAxis;
+    } else {
+      xAxis = timeXAxis;
+    }
+    graphView.removeAllSeries();
+    graphView2.removeAllSeries();
+    new LoadGraph().execute(loadParam);
   }
 
   class GraphProducer {
@@ -135,6 +203,7 @@ public class GraphWrapper implements Constants {
     final List<DataPoint> velocityList;
     final List<DataPoint> hrList;
 
+    boolean showPace = false;
     boolean showHR = false;
     boolean showHRZhist = false;
     final HRZones hrCalc;
@@ -175,11 +244,11 @@ public class GraphWrapper implements Constants {
       clearSmooth(0);
     }
 
-    void clearSmooth(double tot_distance) {
+    void clearSmooth(double tot_X) {
       if (pos >= (this.time.length / 2)
           && (acc_time >= 1000 * (interval / 2.0))
-          && sum_distance > 0) {
-        emit(tot_distance);
+          && xAxis.getX(sum_distance, sum_time) > 0) {
+        emit(tot_X);
       }
 
       for (int i = 0; i < this.distance.length; i++) {
@@ -194,15 +263,15 @@ public class GraphWrapper implements Constants {
     }
 
     void addObservation(
-        double delta_time, double delta_distance, double tot_distance, LocationEntity loc) {
+        double delta_time, double delta_distance, double tot_X, LocationEntity loc) {
       // delta_time is in ms, dist in m
       if (delta_time < 500) return;
 
       // Update moving average
       int p = pos % this.time.length;
       sum_time -= this.time[p];
-      sum_distance -= this.distance[p];
       sum_time += delta_time;
+      sum_distance -= this.distance[p];
       sum_distance += delta_distance;
       this.time[p] = delta_time;
       this.distance[p] = delta_distance;
@@ -219,15 +288,20 @@ public class GraphWrapper implements Constants {
         this.hr[p] = 0;
       }
 
+      if (delta_distance > 0 && delta_time > 0) {
+        showPace = true;
+      }
+
       pos += 1;
       acc_time += delta_time;
 
-      if (pos >= this.time.length && (acc_time >= 1000 * interval) && sum_distance > 0) {
-        emit(tot_distance);
+      if (pos >= this.time.length && (acc_time >= 1000 * interval) &&
+          xAxis.getX(sum_distance, sum_time) > 0) {
+        emit(tot_X);
       }
     }
 
-    void emit(double tot_distance) {
+    void emit(double tot_X) {
       double avg_time = sum_time;
       double avg_dist = sum_distance;
       double avg_hr = calculateAverageHr(hr);
@@ -239,7 +313,7 @@ public class GraphWrapper implements Constants {
         velocity = Math.max(velocity, paceLimit);
       }
       if (first) {
-        if (tot_distance > 0) {
+        if (tot_X > 0) {
           velocityList.add(new DataPoint(0, velocity));
           if (avg_hr > 0) {
             hrList.add(new DataPoint(0, Math.round(avg_hr)));
@@ -247,9 +321,9 @@ public class GraphWrapper implements Constants {
         }
         first = false;
       }
-      velocityList.add(new DataPoint(tot_distance, velocity));
+      velocityList.add(new DataPoint(tot_X, velocity));
       if (avg_hr > 0) {
-        hrList.add(new DataPoint(tot_distance, Math.round(avg_hr)));
+        hrList.add(new DataPoint(tot_X, Math.round(avg_hr)));
       }
       acc_time = 0;
 
@@ -257,6 +331,10 @@ public class GraphWrapper implements Constants {
       avg_velocity += velocity;
       min_velocity = Math.min(min_velocity, velocity);
       max_velocity = Math.max(max_velocity, velocity);
+
+      if (sum_distance > 0 && sum_time > 0) {
+        showPace = true;
+      }
     }
 
     class GraphFilter {
@@ -442,7 +520,7 @@ public class GraphWrapper implements Constants {
                 String.format(
                     "%s: %s\n%s: %s %s",
                     graphView.getContext().getString(org.runnerup.common.R.string.Distance),
-                    formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) dataPoint.getX()),
+                    xAxis.formatValue(dataPoint.getX()),
                     formatter.formatVelocityLabel(),
                     formatter.formatVelocityByPreferredUnit(
                         Formatter.Format.TXT_SHORT, dataPoint.getY()),
@@ -460,8 +538,7 @@ public class GraphWrapper implements Constants {
               String msg =
                   graphView.getContext().getString(org.runnerup.common.R.string.Distance)
                       + ": "
-                      + formatter.formatDistance(
-                          Formatter.Format.TXT_SHORT, (long) dataPoint.getX())
+                      + xAxis.formatValue(dataPoint.getX())
                       + "\n"
                       + graphView.getContext().getString(org.runnerup.common.R.string.Heart_rate)
                       + ": "
@@ -499,6 +576,10 @@ public class GraphWrapper implements Constants {
         e.printStackTrace();
         return new int[0];
       }
+    }
+
+    public boolean HasPaceInfo() {
+      return showPace;
     }
 
     public boolean HasHRInfo() {
@@ -540,6 +621,8 @@ public class GraphWrapper implements Constants {
     final long mID;
   }
 
+  boolean firstLoad = true;
+
   @SuppressLint("StaticFieldLeak")
   private class LoadGraph extends AsyncTask<LoadParam, Void, GraphProducer> {
     @Override
@@ -552,48 +635,67 @@ public class GraphWrapper implements Constants {
       long lastTime = 0;
       int lastLap = -1;
       Double tot_distance = 0.0;
+      Double tot_time = 0.0;
+      int cnt = 0;
       for (LocationEntity loc : ll) {
+        cnt++;
         Long time = loc.getElapsed();
         time = time != null ? time : lastTime;
+        if (time != null) {
+          tot_time = time.doubleValue();
+        }
         Integer lap = loc.getLap();
         lap = lap != null ? lap : 0;
         tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
 
+        double tot_X = xAxis.getX(tot_distance, time);
         if (lap != lastLap) {
-          graphData.clearSmooth(tot_distance);
+          graphData.clearSmooth(tot_X);
           lastLap = lap;
         }
 
-        graphData.addObservation(time - lastTime, tot_distance - lastDistance, tot_distance, loc);
+        graphData.addObservation(time - lastTime, tot_distance - lastDistance,
+                                 tot_X, loc);
         lastTime = time;
         lastDistance = tot_distance;
       }
-      graphData.clearSmooth(tot_distance);
+      graphData.clearSmooth(xAxis.getX(tot_distance, tot_time));
 
-      //    Log.e(getClass().getName(), "Finished loading " + cnt + " points");
-      // }
       ll.close();
+      Log.e(getClass().getName(), "Finished loading " + cnt + " points"
+            + " => " + graphData.velocityList.size() + " points");
       return graphData;
     }
 
     @SuppressLint("ObsoleteSdkInt")
     @Override
     protected void onPostExecute(GraphProducer graphData) {
-
       graphData.complete(graphView);
-      if (!graphData.HasHRInfo()) {
+      graphTab.removeView(graphView);
+      graphTab.removeView(graphView2);
+      if (graphData.HasPaceInfo() && !graphData.HasHRInfo()) {
         graphTab.addView(graphView);
-      } else {
-        graphTab.addView(graphView, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
+      } else if (!graphData.HasPaceInfo() && graphData.HasHRInfo()) {
+        graphTab.addView(graphView2);
+      } else if (graphData.HasPaceInfo() && graphData.HasHRInfo()) {
+        graphTab.addView(graphView,
+                         new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
 
-        graphTab.addView(graphView2, new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
+        graphTab.addView(graphView2,
+                         new LayoutParams(LayoutParams.MATCH_PARENT, 0, 0.5f));
       }
 
+      hrzonesBarLayout.removeView(hrzonesBar);
       if (graphData.HasHRZHist()) {
         hrzonesBarLayout.setVisibility(View.VISIBLE);
         hrzonesBarLayout.addView(hrzonesBar);
       } else {
         hrzonesBarLayout.setVisibility(View.GONE);
+      }
+      if (!firstLoad) {
+        graphTab.invalidate();
+      } else {
+        firstLoad = false;
       }
     }
   }
