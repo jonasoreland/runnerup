@@ -250,7 +250,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Graph)));
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
+// Get graph tab (cannot hardcode index due to optional map tab).
+int graphTabIndex = th.getTabWidget().getChildCount() - 1;
+graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 
+LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
         new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
