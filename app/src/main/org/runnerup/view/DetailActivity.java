@@ -257,7 +257,7 @@ graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
+        new GraphWrapper(this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID);
 
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(
