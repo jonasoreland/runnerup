@@ -174,7 +174,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityDistance = findViewById(R.id.activity_distance);
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
-    graphTab = findViewById(R.id.tab_graph);
     sport = findViewById(R.id.summary_sport);
     sport.setOnSetValueListener(new OnSetValueListener() {
         @Override
