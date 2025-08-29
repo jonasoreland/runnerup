@@ -357,13 +357,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         mapTab.setVisibility(View.VISIBLE);
       }
     }
-
-    // Reenable once 'graph based on time' is submitted.
-    if (Sport.isWithoutGps(sportValue)) {
-      graphTab.setVisibility(View.GONE);
-    } else {
-      graphTab.setVisibility(View.VISIBLE);
-    }
   }
 
   private void setUploadVisibility() {
