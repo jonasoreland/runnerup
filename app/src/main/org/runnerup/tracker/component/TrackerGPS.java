@@ -37,6 +37,7 @@ import org.runnerup.util.TickListener;
 
 public class TrackerGPS extends DefaultTrackerComponent implements TickListener {
 
+  private int onEndCounter = 0;
   private boolean mWithoutGps = false;
   private int frequency_ms = 0;
   private Location mLastLocation;
@@ -64,13 +65,42 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
       locationManager = lm;
-      if (lm.getProvider(LocationManager.GPS_PROVIDER) == null) {
+    } catch (Exception ex) {
+      return ResultCode.RESULT_ERROR;
+    }
+    if (mWithoutGps) {
+      return ResultCode.RESULT_OK;
+    }
+    try {
+      if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
     } catch (Exception ex) {
       return ResultCode.RESULT_ERROR;
     }
     return ResultCode.RESULT_OK;
+  }
+
+  public void setWithoutGps(boolean val) {
+    if (mWithoutGps == val) {
+      return;
+    }
+    mWithoutGps = val;
+    if (mWithoutGps) {
+      switch (tracker.getState()) {
+        case INIT:
+        case CLEANUP:
+        case ERROR:
+        case INITIALIZING:
+        case INITIALIZED:
+          return;
+        default:
+          break;
+      }
+      stopGps();
+      onTick();
+      gpsLessLocationProvider.start(onEndCounter);
+    }
   }
 
   private Integer parseAndFixInteger(
@@ -114,10 +144,12 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
-    if (ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
+    if (mWithoutGps == false &&
+        ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
       mWithoutGps = true;
     }
+
     try {
       var lm = locationManager;
       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -132,7 +164,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
         mConnectCallback = callback;
         return ResultCode.RESULT_PENDING;
       } else {
-        gpsLessLocationProvider.run();
+        gpsLessLocationProvider.start(onEndCounter);
         return ResultCode.RESULT_OK;
       }
 
@@ -164,47 +196,64 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onEnd(Callback callback, Context context) {
+    onEndCounter++;
     stopGps();
     mConnectCallback = null;
     mWithoutGps = false;
     return ResultCode.RESULT_OK;
   }
 
-  private final Runnable gpsLessLocationProvider =
-      new Runnable() {
+  private final class GpsLessLocationProvider implements Runnable {
+    // onEnd has no mechanism of waiting for gpsLessLocationProvider
+    // to stop. Use a counter on call to onEnd to stop once it has
+    // increased higher than we started.
+    int onEndCounter = 0;
 
-        final Handler handler = new Handler();
+    final Handler handler = new Handler();
 
-        @Override
-        public void run() {
-          Location location = new Location(mLastLocation);
-          location.setTime(System.currentTimeMillis());
-          switch (tracker.getState()) {
-            case INIT:
-            case CLEANUP:
-            case ERROR:
-              /* end loop be returning directly here */
-              return;
-            case INITIALIZING:
-            case INITIALIZED:
-            case STARTED:
-            case PAUSED:
-              /* continue looping */
-              break;
-          }
-          tracker.onLocationChanged(location);
-          handler.postDelayed(this, frequency_ms);
-        }
-      };
+    public void start(int onEndCounter) {
+      this.onEndCounter = onEndCounter;
+      run();
+    }
+
+    @Override
+    public void run() {
+      Location location = new Location(mLastLocation);
+      location.setTime(System.currentTimeMillis());
+      if (this.onEndCounter < TrackerGPS.this.onEndCounter) {
+        return;
+      }
+      switch (tracker.getState()) {
+        case INIT:
+        case CLEANUP:
+        case ERROR:
+          /* end loop be returning directly here */
+          return;
+        case INITIALIZING:
+        case INITIALIZED:
+        case STARTED:
+        case PAUSED:
+          /* continue looping */
+          break;
+      }
+      tracker.onLocationChanged(location);
+      handler.postDelayed(this, frequency_ms);
+    }
+  };
+
+  private final GpsLessLocationProvider gpsLessLocationProvider =
+      new GpsLessLocationProvider();
 
   @Override
   public void onTick() {
-    if (mGpsStatus == null) {
-      return;
-    }
+    if (mWithoutGps == false) {
+      if (mGpsStatus == null) {
+        return;
+      }
 
-    if (!mGpsStatus.isFixed()) {
-      return;
+      if (!mGpsStatus.isFixed()) {
+        return;
+      }
     }
 
     if (mConnectCallback == null) {
@@ -212,7 +261,6 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     }
 
     Callback tmp = mConnectCallback;
-
     mConnectCallback = null;
     mGpsStatus.stop(this);
     // note: Don't reset mGpsStatus, it's used for isConnected()

@@ -191,6 +191,10 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     }
   }
 
+  public void setWithoutGps(boolean val) {
+    trackerGPS.setWithoutGps(val);
+  }
+
   private final TrackerComponent.Callback onInitCallback =
       new TrackerComponent.Callback() {
         @Override

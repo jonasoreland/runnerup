@@ -119,6 +119,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private EditText notes = null;
   private View rootView;
   private View mapTab;
+  private View graphTab;
 
   private MapWrapper mapWrapper = null;
 
@@ -217,8 +218,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     saveButton.setOnClickListener(saveButtonClick);
     uploadButton.setOnClickListener(uploadButtonClick);
 
-    fillHeaderData();
-    requery();
     uploadButton.setVisibility(View.GONE);
 
     TabHost th = findViewById(R.id.tabhost);
@@ -249,17 +248,23 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Graph)));
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
+    // Get graph tab (cannot hardcode index due to optional map tab).
+    int graphTabIndex = th.getTabWidget().getChildCount() - 1;
+    graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 
-    LinearLayout graphTab = findViewById(R.id.tab_graph);
+    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
+        new GraphWrapper(this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID);
 
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
     tabSpec.setContent(R.id.tab_upload);
     th.addTab(tabSpec);
+
+    fillHeaderData();
+    requery();
 
     {
       ListView lv = findViewById(R.id.laplist);
@@ -351,6 +356,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       } else {
         mapTab.setVisibility(View.VISIBLE);
       }
+    }
+
+    // Reenable once 'graph based on time' is submitted.
+    if (Sport.isWithoutGps(sportValue)) {
+      graphTab.setVisibility(View.GONE);
+    } else {
+      graphTab.setVisibility(View.VISIBLE);
     }
   }
 
@@ -1049,7 +1061,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               // Use of content:// (or STREAM?) instead of file:// is not supported in ES and other
               // apps
               // Solid Explorer File Manager works though
-              String actType = Sport.textOf(sport.getValueInt());
+              String actType = Sport.textOf(getResources(), sport.getValueInt());
               Uri uri =
                   Uri.parse(
                       "content://"
