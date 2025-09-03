@@ -689,7 +689,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
     if (w != null) {
       WorkoutBuilder.prepareWorkout(getResources(), pref, w);
-      WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref);
+      WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref, pref);
     }
     return w;
   }

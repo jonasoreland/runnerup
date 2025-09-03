@@ -236,10 +236,11 @@ public class WorkoutBuilder {
     return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
   }
 
-  public static void addAudioCuesToWorkout(Resources res, Workout w, SharedPreferences prefs) {
-    final boolean muteMusic = prefs.getBoolean(res.getString(R.string.pref_mute_bool), false);
+  public static void addAudioCuesToWorkout(
+      Resources res, Workout w, SharedPreferences audioPrefs, SharedPreferences prefs) {
+    final boolean muteMusic = audioPrefs.getBoolean(res.getString(R.string.pref_mute_bool), false);
     w.setMute(muteMusic);
-    addAudioCuesToWorkout(res, w.steps, prefs);
+    addAudioCuesToWorkout(res, w.steps, audioPrefs, prefs);
   }
 
   /**
@@ -247,14 +248,15 @@ public class WorkoutBuilder {
    *
    * @param res
    * @param steps
+   * @param audioPrefs
    * @param prefs
    */
   private static void addAudioCuesToWorkout(
-      Resources res, ArrayList<Step> steps, SharedPreferences prefs) {
+      Resources res, ArrayList<Step> steps, SharedPreferences audioPrefs, SharedPreferences prefs) {
     final boolean skip_startstop_cue =
-        prefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false);
+        audioPrefs.getBoolean(res.getString(R.string.cueinfo_skip_startstop), false);
     final boolean isLapStartedCue =
-        prefs.getBoolean(res.getString(R.string.pref_lap_started), true);
+        audioPrefs.getBoolean(res.getString(R.string.pref_lap_started), true);
 
     Step[] stepArr = new Step[steps.size()];
     steps.toArray(stepArr);
@@ -263,7 +265,7 @@ public class WorkoutBuilder {
       Step next = i + 1 == stepArr.length ? null : stepArr[i + 1];
 
       if (step.getIntensity() == Intensity.REPEAT) {
-        addAudioCuesToWorkout(res, ((RepeatStep) step).steps, prefs);
+        addAudioCuesToWorkout(res, ((RepeatStep) step).steps, audioPrefs, prefs);
         continue;
       }
 
@@ -272,7 +274,7 @@ public class WorkoutBuilder {
         // Some suppressions for each intensity for related lap started/completed
         // endOfLap is related to the autolap
         boolean endOfLap = step.getIntensity() == Intensity.ACTIVE || step.getAutolap() > 0;
-        ArrayList<Trigger> defaultTriggers = createDefaultTriggers(res, prefs, endOfLap);
+        ArrayList<Trigger> defaultTriggers = createDefaultTriggers(res, audioPrefs, endOfLap);
 
         step.triggers.addAll(defaultTriggers);
       }
@@ -353,14 +355,14 @@ public class WorkoutBuilder {
           break;
       }
 
-      if (prefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
+      if (audioPrefs.getBoolean(res.getString(R.string.pref_cue_hrm_connection), false)) {
         HRMStateTrigger hrmState = new HRMStateTrigger();
         hrmState.triggerAction.add(new HRMStateChangeFeedback(hrmState));
         step.triggers.add(hrmState);
       }
 
       final boolean coaching =
-          prefs.getBoolean(res.getString(R.string.cueinfo_target_coaching), true);
+          audioPrefs.getBoolean(res.getString(R.string.cueinfo_target_coaching), true);
       if (coaching && step.getTargetType() != null) {
         final Range range = step.getTargetValue();
         final int averageSeconds =
