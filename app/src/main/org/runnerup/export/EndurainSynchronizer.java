@@ -46,8 +46,8 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   public static final String NAME = "Endurain";
 
-  private static final String TOKEN_URL_PATH = "/token";
-  private static final String UPLOAD_URL_PATH = "/activities/create/upload";
+  private static final String TOKEN_URL_PATH = "/api/v1/token";
+  private static final String UPLOAD_URL_PATH = "/api/v1/activities/create/upload";
 
   private long id = 0;
 
