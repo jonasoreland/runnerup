@@ -80,7 +80,7 @@ public class GraphWrapper implements Constants {
     this.distanceXAxis = new XAxis() {
         @Override
         public String label() {
-          return formatter.getDistanceUnit(Formatter.Format.TXT);
+          return context.getString(org.runnerup.common.R.string.Distance);
         }
         @Override
         public String formatValue(double value) {
@@ -96,7 +96,7 @@ public class GraphWrapper implements Constants {
     this.timeXAxis = new XAxis() {
         @Override
         public String label() {
-          return formatter.getElapsedUnit(Formatter.Format.TXT);
+          return context.getString(org.runnerup.common.R.string.Time);
         }
         @Override
         public String formatValue(double value) {
