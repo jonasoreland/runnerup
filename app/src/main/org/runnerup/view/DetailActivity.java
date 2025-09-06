@@ -122,6 +122,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private View graphTab;
 
   private MapWrapper mapWrapper = null;
+  private GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;
@@ -252,11 +253,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     int graphTabIndex = th.getTabWidget().getChildCount() - 1;
     graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 
-    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
-    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
-    GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID);
-
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
@@ -318,6 +314,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           }
         });
 
+    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
+    boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
+    graphWrapper = new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
+                                    formatter, mDB, mID, use_distance_as_x);
+
     if (this.mode == MODE_SAVE) {
       resumeButton.setOnClickListener(resumeButtonClick);
       discardButton.setOnClickListener(discardButtonClick);
@@ -357,12 +359,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         mapTab.setVisibility(View.VISIBLE);
       }
     }
-
-    // Reenable once 'graph based on time' is submitted.
-    if (Sport.isWithoutGps(sportValue)) {
-      graphTab.setVisibility(View.GONE);
-    } else {
-      graphTab.setVisibility(View.VISIBLE);
+    if (graphWrapper != null) {
+      boolean use_distance_as_x = !Sport.isWithoutGps(sportValue);
+      graphWrapper.setUseDistanceAsX(use_distance_as_x);
     }
   }
 
