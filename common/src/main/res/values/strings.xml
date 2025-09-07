@@ -23,7 +23,6 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
-  <string name="metrics_elapsed_unit">hh:mm</string>
   <string name="metrics_heartrate">HR</string>
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace</string>

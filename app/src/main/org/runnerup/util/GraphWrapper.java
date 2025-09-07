@@ -58,10 +58,10 @@ public class GraphWrapper implements Constants {
     double getX(double distance, double time_ms);
   };
 
+  private final XAxis distanceXAxis;
+  private final XAxis timeXAxis;
   boolean useDistanceAsX = true;
-  XAxis distanceXAxis;
-  XAxis timeXAxis;
-  XAxis xAxis;
+  private XAxis xAxis;
 
   /** Called when the activity is first created. */
   @SuppressLint("ObsoleteSdkInt")
