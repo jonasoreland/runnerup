@@ -387,7 +387,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private final OnClickListener newLapButtonClick = v -> workout.onNewLapOrNextStep();
 
   private void updateView() {
-    if (mTracker.getState() == TrackerState.STOPPED) {
+    boolean isPaused = workout != null && workout.isPaused();
+    if (mTracker.getState() == TrackerState.STOPPED && !isPaused) {
       doStop();
     } else {
       if (workout == null) {
