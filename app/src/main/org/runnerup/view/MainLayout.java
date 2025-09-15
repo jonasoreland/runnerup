@@ -28,7 +28,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -170,7 +169,10 @@ public class MainLayout extends AppCompatActivity {
     handleBundled(getApplicationContext().getAssets(), "bundled", getFilesDir().getPath() + "/..");
 
     // if we were called from an intent-filter because user opened "runnerup.db.export", load it
-    final String filePath;
+    // TODO: Add/Update intent-filter in Manifest to handle ACTION_VIEW for 'content' (and
+    //  optionally 'file') schemes with appropriate MIME and path, but only after implementing
+    //  "overwrite protection" when importing (prompt user to confirm overwrite).
+    /*final String filePath;
     final Uri data = getIntent().getData();
     if (data != null) {
       if ("content".equals(data.getScheme())) {
@@ -196,7 +198,7 @@ public class MainLayout extends AppCompatActivity {
       // No check for permissions or that this is within scooped storage (>=SDK29)
       Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
       DBHelper.importDatabase(MainLayout.this, filePath);
-    }
+    }*/
 
     // Apply system bars insets to avoid UI overlap
     ViewUtil.Insets(findViewById(R.id.main_root), true);
