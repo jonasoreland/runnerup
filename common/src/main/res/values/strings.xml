@@ -372,4 +372,7 @@
   <string name="SPORT_ORIENTEERING">Orienteering</string>
   <string name="SPORT_WALKING">Walking</string>
   <string name="SPORT_TREADMILL">Treadmill</string>
+
+  <string name="import_cancelled">Import cancelled</string>
+  <string name="export_cancelled">Export cancelled</string>
 </resources>

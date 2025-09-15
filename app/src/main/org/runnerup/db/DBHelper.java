@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
@@ -49,6 +50,7 @@ import org.runnerup.workout.FileFormats;
 
 public class DBHelper extends SQLiteOpenHelper implements Constants {
 
+  private static final String TAG = "DBHelper";
   private static final int DBVERSION = 31;
   private static final String DBNAME = "runnerup.db";
 
@@ -260,9 +262,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
-    Log.e(
-        getClass().getName(),
-        "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+    Log.e(TAG, "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
     if (oldVersion < 5) {
       arg0.execSQL("alter table account add column icon integer");
@@ -671,12 +671,22 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     return ctx.getFilesDir().getPath() + "/../databases/" + DBNAME;
   }
 
+  public static Uri getDbUri(Context ctx) {
+    File dbFile = new File(getDbPath(ctx));
+
+    if (!dbFile.exists()) {
+      return null;
+    }
+
+    return Uri.fromFile(dbFile);
+  }
+
   public static String getDefaultBackupPath(Context ctx) {
     // A path that can be used with SDK 29 scooped storage
     return ctx.getExternalFilesDir(null) + File.separator + "runnerup.db.export";
   }
 
-  public static void importDatabase(Context ctx, String from) {
+  public static void importDatabase(Context ctx, Uri from) {
     final DBHelper mDBHelper = DBHelper.getHelper(ctx);
     final SQLiteDatabase db = mDBHelper.getWritableDatabase();
     db.close();
@@ -685,16 +695,27 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
     if (from == null) {
-      from = getDefaultBackupPath(ctx);
+      Log.e(TAG, "Source URI is null for import.");
+      return;
     }
+
+    // TODO 1: Test if selected Uri is an actual RunnerUp SQLite database
+    // TODO 2: Prompt user that this will overwrite current database
+    // TODO 3: Backup the current DB before importing
+
     AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Import " + DBNAME);
     try {
-      String to = getDbPath(ctx);
-      int cnt = FileUtil.copyFile(to, from);
+      Uri to = getDbUri(ctx);
+      int cnt = FileUtil.copyFile(ctx, to, from);
       builder
-          .setMessage("Copied " + cnt + " bytes from " + from + "\n\nRestart to use the database")
+          .setMessage(
+              "Copied "
+                  + cnt
+                  + " bytes from "
+                  + Uri.decode(from.toString())
+                  + "\n\nRestart to use the database")
           .setPositiveButton(org.runnerup.common.R.string.OK, listener);
-    } catch (IOException e) {
+    } catch (IOException | NullPointerException e) {
       builder
           .setMessage("Exception: " + e + " for " + from)
           .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
@@ -702,25 +723,22 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     builder.show();
   }
 
-  public static void exportDatabase(Context ctx, String to) {
+  public static void exportDatabase(Context ctx, Uri to) {
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
     if (to == null) {
-      to = getDefaultBackupPath(ctx);
+      Log.e(TAG, "Destination URI is null for export.");
+      return;
     }
+
     AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Export " + DBNAME);
     try {
-      String from = getDbPath(ctx);
-      int cnt = FileUtil.copyFile(to, from);
+      Uri from = getDbUri(ctx);
+      int cnt = FileUtil.copyFile(ctx, to, from);
       builder
-          .setMessage(
-              "Exported "
-                  + cnt
-                  + " bytes to "
-                  + to
-                  + "\n\nNote that the file will be deleted at uninstall")
+          .setMessage("Exported " + cnt + " bytes to " + Uri.decode(to.toString()))
           .setPositiveButton(org.runnerup.common.R.string.OK, listener);
-    } catch (IOException e) {
+    } catch (IOException | NullPointerException e) {
       builder
           .setMessage("Exception: " + e + " for " + to)
           .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
