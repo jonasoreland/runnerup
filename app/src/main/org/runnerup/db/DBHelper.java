@@ -693,17 +693,20 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     mDBHelper.close();
 
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
+    AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Import " + DBNAME);
 
     if (!isValidRunnerUpDatabase(ctx, from)) {
       Log.e(TAG, "Selected Uri is not a valid RunnerUp database: " + from);
-      // TODO: Show error dialog
+      builder
+          .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
+          .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+          .show();
       return;
     }
 
     // TODO 2: Prompt user that this will overwrite current database
     // TODO 3: Backup the current DB before importing
 
-    AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Import " + DBNAME);
     try {
       Uri to = getDbUri(ctx);
       int cnt = FileUtil.copyFile(ctx, to, from);
