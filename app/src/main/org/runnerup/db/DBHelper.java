@@ -694,12 +694,12 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
-    if (from == null) {
-      Log.e(TAG, "Source URI is null for import.");
+    if (!isValidRunnerUpDatabase(ctx, from)) {
+      Log.e(TAG, "Selected Uri is not a valid RunnerUp database: " + from);
+      // TODO: Show error dialog
       return;
     }
 
-    // TODO 1: Test if selected Uri is an actual RunnerUp SQLite database
     // TODO 2: Prompt user that this will overwrite current database
     // TODO 3: Backup the current DB before importing
 
@@ -744,5 +744,70 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
           .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
     }
     builder.show();
+  }
+
+  /**
+   * Checks if the content at the given Uri is a valid RunnerUp SQLite database by attempting to
+   * open the database and query its schema.
+   *
+   * @param context The Context used to obtain a ContentResolver for opening the Uri.
+   * @param uri The Uri to check.
+   * @return true if the Uri is a valid RunnerUp database, false otherwise.
+   */
+  private static boolean isValidRunnerUpDatabase(Context context, Uri uri) {
+    if (uri == null || context == null) {
+      return false;
+    }
+
+    File tempDbFile = null;
+    SQLiteDatabase tempDb = null;
+
+    try {
+      // 1. Create a temp file in the app's cache directory, and copy the content of the Uri to it
+      tempDbFile = File.createTempFile("import_test", ".db", context.getCacheDir());
+      int cnt = FileUtil.copyFile(context, Uri.fromFile(tempDbFile), uri);
+      Log.d(TAG, "Copied " + cnt + " bytes to temporary db file.");
+
+      // 2. Open the temporary file as an SQLite database
+      tempDb =
+          SQLiteDatabase.openDatabase(
+              tempDbFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+
+      // 3. Assume valid if a table named "activity" exists
+      return tableExists(tempDb, DB.ACTIVITY.TABLE);
+
+    } catch (Exception e) {
+      Log.e(TAG, "Unexpected error during db validation. URI: " + uri);
+      return false;
+    } finally {
+      if (tempDb != null && tempDb.isOpen()) {
+        tempDb.close();
+      }
+
+      if (tempDbFile != null && tempDbFile.exists()) {
+        tempDbFile.delete(); // ignore result, assume deleted
+      }
+    }
+  }
+
+  /** Checks if a table exists in the given database (that needs to be in a opened state). */
+  private static boolean tableExists(SQLiteDatabase db, String tableName) {
+    if (tableName == null || db == null || !db.isOpen()) {
+      return false;
+    }
+
+    try (Cursor cursor =
+        db.rawQuery(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?",
+            new String[] {"table", tableName})) {
+      if (cursor.moveToFirst()) {
+        return cursor.getInt(0) > 0;
+      }
+
+      return false;
+    } catch (Exception e) {
+      Log.e(TAG, "Error checking if RunnerUp database table named \"" + tableName + "\" exists.");
+      return false;
+    }
   }
 }
