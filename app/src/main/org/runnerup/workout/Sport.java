@@ -178,7 +178,7 @@ public enum Sport {
       case DB.ACTIVITY.SPORT_OTHER:
         return R.drawable.sport_other;
       default:
-        return 0;
+        return R.drawable.sport_other;
     }
   }
 
