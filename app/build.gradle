@@ -6,11 +6,11 @@ def getGitHash = providers.exec {
 
 android {
     buildToolsVersion = rootProject.ext.buildToolsVersion
-    namespace 'org.runnerup'
+    namespace = 'org.runnerup'
 
     compileOptions {
-        sourceCompatibility JavaVersion.toVersion("17")
-        targetCompatibility JavaVersion.toVersion("17")
+        sourceCompatibility = JavaVersion.toVersion("17")
+        targetCompatibility = JavaVersion.toVersion("17")
     }
 
     sourceSets {
@@ -44,13 +44,13 @@ android {
     flavorDimensions = [ "all" ]
     productFlavors {
         latest {
-            dimension "all"
+            dimension = "all"
             // multidexing support, min play support
-            minSdk rootProject.ext.minSdk
-            compileSdk rootProject.ext.compileSdk
-            targetSdk rootProject.ext.targetSdk
-            versionName rootProject.ext.versionName
-            versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
+            minSdk = rootProject.ext.minSdk
+            compileSdk = rootProject.ext.compileSdk
+            targetSdk = rootProject.ext.targetSdk
+            versionName = rootProject.ext.versionName
+            versionCode = rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
         }
     }
 
@@ -60,7 +60,7 @@ android {
             // enable rootProject.ext.allowNonFree && gradle.startParameter.taskNames.contains("assembleLatestRelease")
             // relevant archs only - these are the only available anyway for newer NDK
             include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-            universalApk true
+            universalApk = true
         }
     }
 
@@ -86,22 +86,22 @@ android {
             versionNameSuffix = "-${getGitHash}"
         }
         release {
-            debuggable false
-            applicationIdSuffix ""
+            debuggable = false
+            applicationIdSuffix = ""
 
-            minifyEnabled rootProject.ext.allowNonFree
-            shrinkResources rootProject.ext.allowNonFree
+            minifyEnabled = rootProject.ext.allowNonFree
+            shrinkResources = rootProject.ext.allowNonFree
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
     lint {
-        baseline file('lint-baseline.xml')
-        checkReleaseBuilds true
-        lintConfig file('lint.xml')
-        showAll true
-        //textOutput 'stdout'
-        textReport true
+        baseline = file('lint-baseline.xml')
+        checkReleaseBuilds = true
+        lintConfig = file('lint.xml')
+        showAll = true
+        //textOutput = 'stdout'
+        textReport = true
     }
     bundle {
         language {
@@ -110,21 +110,21 @@ android {
         }
     }
     buildFeatures {
-        aidl true
-        buildConfig true
+        aidl = true
+        buildConfig = true
     }
     androidResources {
-        generateLocaleConfig true
+        generateLocaleConfig = true
     }
 }
 
 repositories {
     google()
     mavenCentral() //MapBox GraphView
-    maven { url "https://oss.sonatype.org/content/groups/public/" } //pebblekit
+    maven { url = "https://oss.sonatype.org/content/groups/public/" } //pebblekit
     if (rootProject.ext.useMapBox) {
         maven {
-            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            url = 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
                 basic(BasicAuthentication)
             }
@@ -163,7 +163,7 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:2.2.1"
 
-    latestImplementation "com.google.android.material:material:1.12.0"
+    latestImplementation "com.google.android.material:material:1.13.0"
     if (rootProject.ext.enableWear) {
         // Build Wear separately, do not include in phone apk
         // latestWearApp project(':wear')

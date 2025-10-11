@@ -1,21 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'org.runnerup'
-    compileSdk rootProject.ext.compileSdk
+    namespace = 'org.runnerup'
+    compileSdk = rootProject.ext.compileSdk
     buildToolsVersion = rootProject.ext.buildToolsVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.toVersion("17")
-        targetCompatibility JavaVersion.toVersion("17")
+        sourceCompatibility = JavaVersion.toVersion("17")
+        targetCompatibility = JavaVersion.toVersion("17")
     }
 
     defaultConfig {
-        minSdk 25
-        targetSdk rootProject.ext.targetSdk
-        versionName rootProject.ext.versionName
-        versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode + 1
-        applicationId rootProject.ext.applicationId
+        minSdk = 25
+        targetSdk = rootProject.ext.targetSdk
+        versionName = rootProject.ext.versionName
+        versionCode = rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode + 1
+        applicationId = rootProject.ext.applicationId
     }
 
     signingConfigs {
@@ -26,27 +26,27 @@ android {
 
     buildTypes {
         release {
-            debuggable false
-            minifyEnabled true
-            shrinkResources true
+            debuggable = false
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix = ".debug"
         }
     }
     lint {
-        baseline file('lint-baseline.xml')
-        checkReleaseBuilds true
-        lintConfig file('lint.xml')
-        showAll true
-        //textOutput 'stdout'
-        textReport true
+        baseline = file('lint-baseline.xml')
+        checkReleaseBuilds = true
+        lintConfig = file('lint.xml')
+        showAll = true
+        //textOutput = 'stdout'
+        textReport = true
     }
-    namespace 'org.runnerup'
+    namespace = 'org.runnerup'
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 }
 
@@ -76,7 +76,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
 
     implementation "androidx.wear:wear:1.3.0"
-    implementation "androidx.wear:wear-ongoing:1.0.0"
+    implementation "androidx.wear:wear-ongoing:1.1.0"
     // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
     implementation "androidx.core:core:1.16.0"
 }

@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:8.13.2'
     }
 }
 
@@ -15,7 +15,7 @@ repositories {
 project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
-    buildToolsVersion = '36.0.0' //Update Travis manually
+    buildToolsVersion = '36.1.0' //Update Travis manually
     compileSdk = 35 //Update Travis manually
     targetSdk = 35
     minSdk = 21
@@ -28,7 +28,7 @@ project.ext {
     googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
-    mockitoVersion = '5.18.0'
+    mockitoVersion = '5.20.0'
 
     //The Git tag for the release must be identical for F-Droid
     versionName = '2.9.0.6'
