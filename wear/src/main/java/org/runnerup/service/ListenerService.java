@@ -264,9 +264,15 @@ public class ListenerService extends WearableListenerService {
     if (ongoingActivity == null) {
       return;
     }
-    ongoingActivity.update(this, new Status.Builder()
-                           .addPart("Status",
-                                    new TextPart(getStatusString())).build());
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+      return;
+    }
+
+    ongoingActivity.update(
+        this, new Status.Builder().addPart("Status", new TextPart(getStatusString())).build());
   }
 
   private void dismissNotification() {

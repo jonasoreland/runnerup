@@ -4,13 +4,13 @@ group = "org.runnerup.hr"
 version = "1.0"
 
 android {
-    namespace 'org.runnerup.hr'
-    compileSdk rootProject.ext.compileSdk
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    namespace = 'org.runnerup.hr'
+    compileSdk = rootProject.ext.compileSdk
+    buildToolsVersion = rootProject.ext.buildToolsVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.toVersion("17")
-        targetCompatibility JavaVersion.toVersion("17")
+        sourceCompatibility = JavaVersion.toVersion("17")
+        targetCompatibility = JavaVersion.toVersion("17")
     }
 
     sourceSets {
@@ -25,16 +25,16 @@ android {
         }
     }
     lint {
-        baseline file('lint-baseline.xml')
-        checkReleaseBuilds true
-        //lintConfig file('lint.xml')
-        showAll true
-        //textOutput 'stdout'
-        textReport true
+        baseline = file('lint-baseline.xml')
+        checkReleaseBuilds = true
+        //lintConfig = file('lint.xml')
+        showAll = true
+        //textOutput = 'stdout'
+        textReport = true
     }
     defaultConfig {
-        minSdk rootProject.ext.minSdk
-        targetSdk rootProject.ext.targetSdk
+        minSdk = rootProject.ext.minSdk
+        targetSdk = rootProject.ext.targetSdk
 
         if (rootProject.ext.antPlusLibName) {
             buildConfigField 'Boolean', 'ANTPLUS_ENABLED', "true"
@@ -44,8 +44,8 @@ android {
         }
     }
     buildFeatures {
-        aidl true
-        buildConfig true
+        aidl = true
+        buildConfig = true
     }
 }
 

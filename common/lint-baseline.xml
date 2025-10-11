@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.4.1" type="baseline" client="gradle" dependencies="false" name="AGP (7.4.1)" variant="all" version="7.4.1">
+<issues format="6" by="lint 8.13.2" type="baseline" client="gradle" dependencies="false" name="AGP (8.13.2)" variant="all" version="8.13.2">
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of Gradle than 8.13 is available: 8.14.3"
+        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="../gradle/wrapper/gradle-wrapper.properties"
+            line="3"
+            column="17"/>
+    </issue>
 
     <issue
         id="IconMissingDensityFolder"
