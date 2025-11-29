@@ -147,6 +147,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   TitleSpinner simpleTargetType = null;
   TitleSpinner simpleTargetPaceValue = null;
   TitleSpinner simpleTargetHrz = null;
+  TitleSpinner simpleAutolapTime = null;
   AudioSchemeListAdapter simpleAudioListAdapter = null;
   HRZonesListAdapter hrZonesAdapter = null;
 
@@ -271,6 +272,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     simpleTargetHrz = view.findViewById(R.id.tab_basic_target_hrz);
     simpleTargetHrz.setAdapter(hrZonesAdapter);
     simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
+    simpleAutolapTime = view.findViewById(R.id.tab_basic_autolap_time_duration);
+    simpleAutolapTime.setOnSetValueListener(onSetTimeValidator);
 
     intervalType = view.findViewById(R.id.interval_type);
     intervalTime = view.findViewById(R.id.start_interval_time);
@@ -689,6 +692,13 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
     if (w != null) {
       WorkoutBuilder.prepareWorkout(getResources(), pref, w);
+      if (sportWithoutGps) {
+        long seconds =
+            SafeParse.parseSeconds(String.valueOf(simpleAutolapTime.getViewValueText()), 0);
+        if (seconds > 0) {
+          WorkoutBuilder.setAutolapTime(w, seconds);
+        }
+      }
       WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref, pref);
     }
     return w;
@@ -946,6 +956,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       noDevicesConnected.setVisibility(View.VISIBLE);
     } else {
       noDevicesConnected.setVisibility(View.GONE);
+    }
+    if (sportWithoutGps) {
+      simpleAutolapTime.setVisibility(View.VISIBLE);
+    } else {
+      simpleAutolapTime.setVisibility(View.GONE);
     }
   }
 

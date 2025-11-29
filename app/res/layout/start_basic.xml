@@ -60,4 +60,16 @@
         android:prompt="@string/Type"
         android:text="@string/Target_heart_rate_zone"
         android:visibility="gone" />
+
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/tab_basic_autolap_time_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:key="@string/pref_basic_autolap_time_duration"
+        android:prompt="@string/Type"
+        android:text="@string/Autolap_time"
+        android:defaultValue="00:10:00"
+        android:inputType="time"
+        runnerup:type="durationpicker" />
+
 </LinearLayout>

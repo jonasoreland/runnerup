@@ -273,7 +273,7 @@ public class WorkoutBuilder {
         // Periodic distance/time and end of lap/step
         // Some suppressions for each intensity for related lap started/completed
         // endOfLap is related to the autolap
-        boolean endOfLap = step.getIntensity() == Intensity.ACTIVE || step.getAutolap() > 0;
+        boolean endOfLap = step.getIntensity() == Intensity.ACTIVE || step.getAutolapDistance() > 0;
         ArrayList<Trigger> defaultTriggers = createDefaultTriggers(res, audioPrefs, endOfLap);
 
         step.triggers.addAll(defaultTriggers);
@@ -418,8 +418,8 @@ public class WorkoutBuilder {
        * trigger
        */
       ArrayList<TriggerSuppression> list = new ArrayList<>();
-      if (step.getAutolap() > 0) {
-        list.add(new EndOfLapSuppression(step.getAutolap()));
+      if (step.getAutolapDistance() > 0) {
+        list.add(new EndOfLapSuppression(step.getAutolapDistance()));
       }
 
       if (step.getDurationType() == Dimension.DISTANCE) {
@@ -662,6 +662,15 @@ public class WorkoutBuilder {
                 "Added step at index: " + (i + 1) + " repeat index: " + (idx + 1));
           }
         }
+      }
+    }
+  }
+
+  public static void setAutolapTime(Workout w, double seconds) {
+    for (StepListEntry s : w.getStepList()) {
+      if (s.step.getIntensity() == Intensity.ACTIVE
+          || s.step.getIntensity() == Intensity.COOLDOWN) {
+        s.step.setAutolapTime(seconds);
       }
     }
   }
