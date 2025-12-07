@@ -200,6 +200,7 @@
   <string name="Paired_BLE_devices">Paired BLE devices</string>
   <string name="Experimental_features">Experimental features</string>
   <string name="Mock_HRM_devices">Mock HRM devices</string>
+  <string name="Debug_HRM">Debug HRM</string>
   <string name="About_RunnerUp">About RunnerUp</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Time trigger</string>

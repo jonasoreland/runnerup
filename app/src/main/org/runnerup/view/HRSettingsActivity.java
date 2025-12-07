@@ -53,6 +53,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -180,6 +181,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     stopTimer();
   }
 
+  private static final HashMap<Integer, Integer> kPrefByMenu =
+      new HashMap<Integer, Integer>() {
+        {
+          put(R.id.menu_hrdevice_paired_ble, R.string.pref_bt_paired_ble);
+          put(R.id.menu_hrdevice_experimental, R.string.pref_bt_experimental);
+          put(R.id.menu_hrdevice_mock, R.string.pref_bt_mock);
+          put(R.id.menu_hrdevice_debug, R.string.pref_bt_debug);
+        }
+      };
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.hrsettings_menu, menu);
@@ -187,17 +198,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     Resources res = getResources();
 
-    boolean isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
-    MenuItem item = menu.findItem(R.id.menu_hrdevice_paired_ble);
-    item.setChecked(isChecked);
-
-    isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
-    item = menu.findItem(R.id.menu_hrdevice_experimental);
-    item.setChecked(isChecked);
-
-    isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
-    item = menu.findItem(R.id.menu_hrdevice_mock);
-    item.setChecked(isChecked);
+    for (var e : kPrefByMenu.entrySet()) {
+      MenuItem item = menu.findItem(e.getKey());
+      boolean isChecked = prefs.getBoolean(res.getString(e.getValue()), false);
+      item.setChecked(isChecked);
+    }
 
     return true;
   }
@@ -211,24 +216,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     } else if (id == R.id.menu_hrzones) {
       hrZonesClick.onClick(null);
       return true;
-    } else if (id == R.id.menu_hrdevice_paired_ble
-        || id == R.id.menu_hrdevice_experimental
-        || id == R.id.menu_hrdevice_mock) {
+    } else if (kPrefByMenu.containsKey(id)) {
       boolean isChecked = !item.isChecked();
       item.setChecked(isChecked);
       SharedPreferences prefs =
           PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
       Resources res = getResources();
       Editor editor = prefs.edit();
-      int key;
-      if (id == R.id.menu_hrdevice_paired_ble) {
-        key = R.string.pref_bt_paired_ble;
-      } else if (id == R.id.menu_hrdevice_experimental) {
-        key = R.string.pref_bt_experimental;
-      } else {
-        key = R.string.pref_bt_mock;
-      }
-
+      int key = kPrefByMenu.get(id);
       editor.putBoolean(res.getString(key), isChecked);
       editor.apply();
       providers = HRManager.getHRProviderList(this);

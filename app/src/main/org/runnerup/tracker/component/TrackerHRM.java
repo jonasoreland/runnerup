@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -35,6 +36,10 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
   private final Handler handler = new Handler();
   private HRProvider hrProvider;
+
+  private int lineNo = 0;
+  private final StringBuffer logBuffer = new StringBuffer();
+  private TextView debugLog = null;
 
   public static final String NAME = "HRM";
 
@@ -114,7 +119,15 @@ public class TrackerHRM extends DefaultTrackerComponent {
             public void onCloseResult(boolean closeOK) {}
 
             @Override
-            public void log(HRProvider src, String msg) {}
+            public void log(HRProvider src, String msg) {
+              TrackerHRM.this.logBuffer.insert(0, ++lineNo + ": " + msg + "\n");
+              if (TrackerHRM.this.logBuffer.length() > 5000) {
+                TrackerHRM.this.logBuffer.setLength(5000);
+              }
+              if (TrackerHRM.this.debugLog != null) {
+                TrackerHRM.this.setDebugLog(TrackerHRM.this.debugLog);
+              }
+            }
           });
     }
     return ResultCode.RESULT_PENDING;
@@ -138,5 +151,12 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
   public HRProvider getHrProvider() {
     return hrProvider;
+  }
+
+  public void setDebugLog(TextView tvLog) {
+    this.debugLog = tvLog;
+    if (tvLog != null) {
+      tvLog.setText(logBuffer.toString());
+    }
   }
 }
