@@ -627,7 +627,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     Context context = requireContext();
     final String pref_key = getString(R.string.pref_battery_level_low_notification_discard);
-    prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     int batteryLevelHighThreshold =
         SafeParse.parseInt(
@@ -765,7 +764,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
       requiredPerms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
       boolean enabled =
           prefs.getBoolean(
               this.getString(org.runnerup.R.string.pref_use_cadence_step_sensor), true);
@@ -778,7 +776,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S /* Android12, sdk31*/
         && (packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)
             || packageManager.hasSystemFeature(PackageManager.FEATURE_BLUETOOTH))) {
-      final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
       final String btDeviceName = prefs.getString(getString(R.string.pref_bt_name), null);
       if (btDeviceName != null && !btDeviceName.isEmpty()) {
         requiredPerms.add(Manifest.permission.BLUETOOTH_CONNECT);
@@ -879,7 +876,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     // https://developer.android.com/training/monitoring-device-state/doze-standby#support_for_other_use_cases
     // Permission REQUEST_IGNORE_BATTERY_OPTIMIZATIONS requires special approval in Play
-    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     final Resources res = this.getResources();
     final boolean suppressOptimizeBatteryPopup =
         prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
@@ -1226,7 +1222,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private String getHRDetailString() {
     StringBuilder str = new StringBuilder();
 
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
     final String btDeviceName = prefs.getString(getString(R.string.pref_bt_name), null);
 
     if (btDeviceName != null) {
