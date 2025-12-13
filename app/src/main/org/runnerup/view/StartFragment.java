@@ -46,6 +46,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -147,6 +148,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   TitleSpinner simpleTargetType = null;
   TitleSpinner simpleTargetPaceValue = null;
   TitleSpinner simpleTargetHrz = null;
+  CheckBox simpleEnableAutolapTime = null;
   TitleSpinner simpleAutolapTime = null;
   AudioSchemeListAdapter simpleAudioListAdapter = null;
   HRZonesListAdapter hrZonesAdapter = null;
@@ -167,6 +169,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   AudioSchemeListAdapter advancedAudioListAdapter = null;
 
   SQLiteDatabase mDB = null;
+  SharedPreferences prefs = null;
 
   Formatter formatter = null;
   private NotificationStateManager notificationStateManager;
@@ -191,6 +194,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     Context context = requireContext();
     mDB = DBHelper.getWritableDatabase(context);
     formatter = new Formatter(context);
+    prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     bindGpsTracker();
     mGpsStatus = new org.runnerup.tracker.GpsStatus(context);
@@ -207,7 +211,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
     adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
     sportSpinner.setAdapter(adapter);
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     sportSpinner.setViewSelection(
         prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
 
@@ -272,6 +275,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     simpleTargetHrz = view.findViewById(R.id.tab_basic_target_hrz);
     simpleTargetHrz.setAdapter(hrZonesAdapter);
     simpleTargetType.setOnCloseDialogListener(simpleTargetTypeClick);
+    simpleEnableAutolapTime = view.findViewById(R.id.tab_basic_enable_autolap_time);
     simpleAutolapTime = view.findViewById(R.id.tab_basic_autolap_time_duration);
     simpleAutolapTime.setOnSetValueListener(onSetTimeValidator);
 
@@ -323,6 +327,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     mWearNotifier = new TrackerWear.WearNotifier(requireActivity().getApplicationContext());
     mWearNotifier.onViewCreated();
+
+    var enable_autolap_time_key = getString(R.string.pref_basic_enable_autolap_time);
+    simpleEnableAutolapTime.setChecked(prefs.getBoolean(enable_autolap_time_key, true));
+    simpleEnableAutolapTime.setOnCheckedChangeListener(
+        new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            prefs.edit().putBoolean(enable_autolap_time_key, b).apply();
+            simpleAutolapTime.setEnabled(b);
+          }
+        });
 
     var listener = sportSpinner.getViewOnItemSelectedListener();
     sportSpinner.setViewOnItemSelectedListener(
@@ -558,9 +573,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   public boolean getAutoStartGps() {
-    Context ctx = requireActivity().getApplicationContext();
-    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-    return pref.getBoolean(getString(R.string.pref_startgps), false);
+    return prefs.getBoolean(getString(R.string.pref_startgps), false);
   }
 
   private void startGps() {
@@ -614,7 +627,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     Context context = requireContext();
     final String pref_key = getString(R.string.pref_battery_level_low_notification_discard);
-    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     int batteryLevelHighThreshold =
         SafeParse.parseInt(
@@ -692,7 +705,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
     if (w != null) {
       WorkoutBuilder.prepareWorkout(getResources(), pref, w);
-      if (sportWithoutGps) {
+      if (sportWithoutGps && simpleEnableAutolapTime.isChecked()) {
         long seconds =
             SafeParse.parseSeconds(String.valueOf(simpleAutolapTime.getViewValueText()), 0);
         if (seconds > 0) {
@@ -958,8 +971,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       noDevicesConnected.setVisibility(View.GONE);
     }
     if (sportWithoutGps) {
+      simpleEnableAutolapTime.setVisibility(View.VISIBLE);
       simpleAutolapTime.setVisibility(View.VISIBLE);
+      simpleAutolapTime.setEnabled(simpleEnableAutolapTime.isChecked());
     } else {
+      simpleEnableAutolapTime.setVisibility(View.GONE);
       simpleAutolapTime.setVisibility(View.GONE);
     }
   }

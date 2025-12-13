@@ -81,6 +81,7 @@
     <string name="pref_basic_target_pace_max">basic_target_pace_max</string>
     <string name="pref_basic_target_pace_min_range">basic_target_pace_min_range</string>
     <string name="pref_basic_target_hrz">basic_target_hrz</string>
+    <string name="pref_basic_enable_autolap_time">basic_enable_autolap_time</string>
     <string name="pref_basic_autolap_time_duration">basic_autolap_time_duration</string>
 
     <string name="pref_interval_audio">intervalAudio</string>

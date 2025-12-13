@@ -61,6 +61,12 @@
         android:text="@string/Target_heart_rate_zone"
         android:visibility="gone" />
 
+    <CheckBox
+        android:id="@+id/tab_basic_enable_autolap_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Enable_autolap_time" />
+
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/tab_basic_autolap_time_duration"
         android:layout_width="match_parent"
