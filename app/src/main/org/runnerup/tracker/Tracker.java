@@ -32,6 +32,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
@@ -820,6 +821,12 @@ public class Tracker extends android.app.Service implements LocationListener, Co
 
   public HRProvider getHRProvider() {
     return (trackerHRM.getHrProvider());
+  }
+
+  public void setHrDebug(TextView tv) {
+    if (trackerHRM != null) {
+      trackerHRM.setDebugLog(tv);
+    }
   }
 
   private Integer getCurrentHRValueElapsed(long now, long maxAge) {

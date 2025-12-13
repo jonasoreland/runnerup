@@ -96,6 +96,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private TextView intervalHr;
   private TextView currentHr;
   private TextView activityHeaderHr;
+  private TextView hrDebug;
   // A circular buffer for tap events
   private final long[] mTapArray = {0, 0, 0, 0};
   private int mTapIndex = 0;
@@ -141,12 +142,17 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     currentHr = findViewById(R.id.current_hr);
     countdownView = findViewById(R.id.countdown_text_view);
     workoutList = findViewById(R.id.workout_list);
+    hrDebug = findViewById(R.id.hr_debug);
     WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
     workoutList.setAdapter(adapter);
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+
+    if (prefs.getBoolean(res.getString(R.string.pref_bt_debug), false) == false) {
+      hrDebug = null;
+    }
 
     TableLayout t = findViewById(R.id.table_layout1);
     t.setOnTouchListener(
@@ -449,6 +455,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         intervalHr.setVisibility(View.VISIBLE);
         currentHr.setVisibility(View.VISIBLE);
         activityHeaderHr.setVisibility(View.VISIBLE);
+        if (hrDebug != null) {
+          hrDebug.setVisibility(View.VISIBLE);
+          mTracker.setHrDebug(hrDebug);
+        }
       } else {
         activityHr.setVisibility(View.GONE);
         lapHr.setVisibility(View.GONE);
