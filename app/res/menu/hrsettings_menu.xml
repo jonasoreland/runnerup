@@ -44,4 +44,10 @@
         android:orderInCategory="100"
         android:title="@string/Mock_HRM_devices"
         android:checkable="true"/>
+
+    <item
+        android:id="@+id/menu_hrdevice_debug"
+        android:orderInCategory="100"
+        android:title="@string/Debug_HRM"
+        android:checkable="true"/>
 </menu>

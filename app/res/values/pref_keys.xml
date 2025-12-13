@@ -126,6 +126,7 @@
     <string name="pref_bt_paired_ble">pref_bt_paired_ble</string>
     <string name="pref_bt_experimental">pref_bt_experimental</string>
     <string name="pref_bt_mock">pref_bt_mock</string>
+    <string name="pref_bt_debug">pref_bt_debug</string>
 
     <string name="pref_hrz_age">hrzAge</string>
     <string name="pref_hrz_sex">hrzSex</string>
