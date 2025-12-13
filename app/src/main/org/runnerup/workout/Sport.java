@@ -30,7 +30,9 @@ public enum Sport {
   OTHER(DB.ACTIVITY.SPORT_OTHER),
   ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING),
   WALKING(DB.ACTIVITY.SPORT_WALKING),
-  TREADMILL(DB.ACTIVITY.SPORT_TREADMILL);
+  TREADMILL(DB.ACTIVITY.SPORT_TREADMILL),
+  GYM(DB.ACTIVITY.SPORT_GYM),
+  STATIONARY_BIKE(DB.ACTIVITY.SPORT_STATIONARY_BIKE);
 
   final int dbValue;
 
@@ -50,6 +52,8 @@ public enum Sport {
     result.put(DB.ACTIVITY.SPORT_ORIENTEERING, org.runnerup.common.R.string.SPORT_ORIENTEERING);
     result.put(DB.ACTIVITY.SPORT_WALKING, org.runnerup.common.R.string.SPORT_WALKING);
     result.put(DB.ACTIVITY.SPORT_TREADMILL, org.runnerup.common.R.string.SPORT_TREADMILL);
+    result.put(DB.ACTIVITY.SPORT_GYM, org.runnerup.common.R.string.SPORT_GYM);
+    result.put(DB.ACTIVITY.SPORT_STATIONARY_BIKE, org.runnerup.common.R.string.SPORT_STATIONARY_BIKE);
     return Collections.unmodifiableMap(result);
   }
   private static final Map<Integer,Integer> gSportToStringMap = createSportToStringMap();
@@ -132,6 +136,10 @@ public enum Sport {
         return WALKING;
       case DB.ACTIVITY.SPORT_TREADMILL:
         return TREADMILL;
+      case DB.ACTIVITY.SPORT_GYM:
+        return GYM;
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return STATIONARY_BIKE;
       default:
       case DB.ACTIVITY.SPORT_OTHER:
         return OTHER;
@@ -170,7 +178,7 @@ public enum Sport {
       case DB.ACTIVITY.SPORT_OTHER:
         return R.drawable.sport_other;
       default:
-        return 0;
+        return R.drawable.sport_other;
     }
   }
 
@@ -184,7 +192,7 @@ public enum Sport {
   }
 
   public boolean IsCycling() {
-    return dbValue == DB.ACTIVITY.SPORT_BIKING;
+    return dbValue == DB.ACTIVITY.SPORT_BIKING || dbValue == DB.ACTIVITY.SPORT_STATIONARY_BIKE;
   }
 
   // part of filename used to determine type for Tapiriik files
@@ -203,6 +211,7 @@ public enum Sport {
   public static boolean hasManualDistance(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_TREADMILL:
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
         return true;
       default:
         return false;
@@ -212,6 +221,8 @@ public enum Sport {
   public static boolean isWithoutGps(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_TREADMILL:
+      case DB.ACTIVITY.SPORT_GYM:
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
         return true;
       default:
         return false;
