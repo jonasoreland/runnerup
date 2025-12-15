@@ -12,17 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up JDK 8
+
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '8'
+          java-version: '17'
           cache: 'gradle'
-      
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      
+
       - name: Install Android SDK components
         run: |
           sdkmanager "tools"
@@ -31,18 +31,15 @@ jobs:
           sdkmanager "extras;android;m2repository"
           sdkmanager "extras;google;m2repository"
           sdkmanager "extras;google;google_play_services"
-      
+
       - name: Make gradlew executable
         run: chmod +x gradlew
-      
-      - name: Lint release
-        run: ./gradlew wear:lintRelease
-      
+
       - name: Lint latest release
-        run: ./gradlew app:lintLatestRelease
-      
+        run: ./gradlew app:lintLatestRelease wear:lintRelease hrdevice:lintRelease common:lintRelease
+
       - name: Assemble latest release
         run: ./gradlew app:assembleLatestRelease
-      
+
       - name: Test
         run: ./gradlew app:test
