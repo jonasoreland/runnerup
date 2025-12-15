@@ -29,7 +29,7 @@ android {
             }
             if (rootProject.ext.noMap) {
                 java.srcDirs += ['src/nomap']
-            } else if (rootProject.ext.useMapBox) {
+            } else if (rootProject.ext.mapboxEnabled) {
                 java.srcDirs += ['src/mapbox']
             } else {
                 java.srcDirs += ['src/osmdroid']
@@ -102,6 +102,10 @@ android {
         showAll = true
         //textOutput = 'stdout'
         textReport = true
+        // Treat all warnings as errors
+        warningsAsErrors = true
+        // Halt the build if any errors are found
+        abortOnError = true
     }
     bundle {
         language {
@@ -122,7 +126,7 @@ repositories {
     google()
     mavenCentral() //MapBox GraphView
     maven { url = "https://oss.sonatype.org/content/groups/public/" } //pebblekit
-    if (rootProject.ext.useMapBox) {
+    if (rootProject.ext.mapboxEnabled) {
         maven {
             url = 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
@@ -178,7 +182,7 @@ dependencies {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
     }
-    if (rootProject.ext.useMapBox) {
+    if (rootProject.ext.mapboxEnabled) {
         //noinspection GradleDependency
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2'
         latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
@@ -202,6 +206,7 @@ allprojects {
 }
 
 def props = new Properties()
+// For locally signed builds only, Google Play signs the bundle
 if (rootProject.file("release.properties").exists()) {
     props.load(new FileInputStream(rootProject.file("release.properties")))
 
@@ -215,54 +220,17 @@ if (rootProject.file("release.properties").exists()) {
 }
 
 android.applicationVariants.configureEach {
-    // Note: As a minimum extra security at least obfuscate the strings with Proguard
-    if (rootProject.ext.noMap) {
-        buildConfigField 'boolean', 'USING_OSMDROID', "false"
-        buildConfigField 'int', 'MAPBOX_ENABLED', "0"
-        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
-    } else if (rootProject.ext.useMapBox) {
-        // https://www.mapbox.com/account/
-        props.load(new FileInputStream(rootProject.file("mapbox.properties")))
-        buildConfigField 'int', 'MAPBOX_ENABLED', "1"
-        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', props.mapboxAccessToken
+    buildConfigField 'boolean', 'MAPBOX_ENABLED', "${rootProject.ext.mapboxEnabled}"
+    buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', "\"${rootProject.ext.mapboxAccessToken}\""
+    buildConfigField 'boolean', 'OSMDROID_ENABLED', "${rootProject.ext.osmdroidEnabled}"
 
-        buildConfigField 'boolean', 'USING_OSMDROID', "false"
-    } else {
-        buildConfigField 'int', 'MAPBOX_ENABLED', "0"
-        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', '""'
-        buildConfigField 'boolean', 'USING_OSMDROID', "true"
-    }
+    buildConfigField 'boolean', 'RUNALYZE_ENABLED', "${rootProject.ext.runalyzeEnabled}"
+    buildConfigField 'String', 'RUNALYZE_ID', "\"${rootProject.ext.runalyzeId}\""
+    buildConfigField 'String', 'RUNALYZE_SECRET', "\"${rootProject.ext.runalyzeSecret}\""
 
-    if (rootProject.file("runalyze.properties").exists()) {
-        // Contact Runalyze team at https://forum.runalyze.com/
-        props.load(new FileInputStream(rootProject.file("runalyze.properties")))
-        buildConfigField 'int', 'RUNALYZE_ENABLED', "1"
-        buildConfigField 'String', 'RUNALYZE_ID', props.CLIENT_ID
-        buildConfigField 'String', 'RUNALYZE_SECRET', props.CLIENT_SECRET
-    } else {
-        // Demo, connect to testing.runalyze.com
-        buildConfigField 'int', 'RUNALYZE_ENABLED', "0"
-        buildConfigField 'String', 'RUNALYZE_ID', '"8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g"'
-        buildConfigField 'String', 'RUNALYZE_SECRET', '"1v7d6nwe1v9c8skok44g0gc8cc04cc0wwwo8swwgckoogwsww4"'
-    }
-
-    if (rootProject.file("dropbox.properties").exists()) {
-        // Create an app at https://www.dropbox.com/developers/apps/
-        // Dropbox API, App folder -> create app
-        // Enable additional users, Redirect URI:http://localhost:8080/runnerup/dropbox, Disallow implicit grant
-        // Set branding icon
-        // Create dropbox.properties with two lines:
-        //   CLIENT_ID="replace_dropbox_id"
-        //   CLIENT_SECRET="replace_dropbox_secret"
-        props.load(new FileInputStream(rootProject.file("dropbox.properties")))
-        buildConfigField 'int', 'DROPBOX_ENABLED', "1"
-        buildConfigField 'String', 'DROPBOX_ID', props.CLIENT_ID
-        buildConfigField 'String', 'DROPBOX_SECRET', props.CLIENT_SECRET
-    } else {
-        buildConfigField 'int', 'DROPBOX_ENABLED', "0"
-        buildConfigField 'String', 'DROPBOX_ID', "null"
-        buildConfigField 'String', 'DROPBOX_SECRET', "null"
-    }
+    buildConfigField 'boolean', 'DROPBOX_ENABLED', "${rootProject.ext.dropboxEnabled}"
+    buildConfigField 'String', 'DROPBOX_ID', "\"${rootProject.ext.dropboxId}\""
+    buildConfigField 'String', 'DROPBOX_SECRET', "\"${rootProject.ext.dropboxSecret}\""
 }
 
 //Based on an example from https://developer.android.com/studio/build/configure-apk-splits.html

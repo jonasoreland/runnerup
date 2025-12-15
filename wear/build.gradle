@@ -43,6 +43,10 @@ android {
         showAll = true
         //textOutput = 'stdout'
         textReport = true
+        // Treat all warnings as errors
+        warningsAsErrors = true
+        // Halt the build if any errors are found
+        abortOnError = true
     }
     namespace = 'org.runnerup'
     buildFeatures {

@@ -50,9 +50,10 @@ import org.runnerup.export.util.SyncHelper;
 public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2Server {
 
   public static final String NAME = "Runalyze";
-  public static final int ENABLED = BuildConfig.RUNALYZE_ENABLED;
+  public static final boolean ENABLED = BuildConfig.RUNALYZE_ENABLED;
+  // test is enabled if normal db is not
   private static final String BASE_URL =
-      BuildConfig.RUNALYZE_ENABLED > 0 ? "https://runalyze.com" : "https://testing.runalyze.com";
+      BuildConfig.RUNALYZE_ENABLED ? "https://runalyze.com" : "https://testing.runalyze.com";
   private static final String PUBLIC_URL = BASE_URL;
 
   private static final String UPLOAD_URL = BASE_URL + "/api/v1/activities/uploads";
@@ -67,7 +68,7 @@ public class RunalyzeSynchronizer extends DefaultSynchronizer implements OAuth2S
   private final PathSimplifier simplifier;
 
   RunalyzeSynchronizer(PathSimplifier simplifier) {
-    if (ENABLED == 0) {
+    if (!ENABLED) {
       Log.w(NAME, "No client id configured in this build");
     }
     this.simplifier = simplifier;

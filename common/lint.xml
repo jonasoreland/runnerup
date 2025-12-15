@@ -5,4 +5,7 @@
     <!-- Ignore not cleaned up strings -->
     <issue id="ExtraTranslation" severity="ignore" />
     <issue id="PluralsCandidate,UnusedResources,TypographyEllipsis" severity="ignore" />
+
+    <!-- icon with all densities are not included - don't bother -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
 </lint>

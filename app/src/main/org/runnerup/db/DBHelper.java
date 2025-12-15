@@ -535,8 +535,10 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     insertAccount(arg0, EndurainSynchronizer.NAME, 1);
     insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
     insertAccount(arg0, FileSynchronizer.NAME, 1);
-    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
-    insertAccount(arg0, DropboxSynchronizer.NAME, 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED ? 1 : 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED ? 1 : 0);
     insertAccount(arg0, WebDavSynchronizer.NAME, 1);
   }
 

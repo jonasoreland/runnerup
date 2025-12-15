@@ -12,11 +12,4 @@
             column="17"/>
     </issue>
 
-    <issue
-        id="IconMissingDensityFolder"
-        message="Missing density variation folders in `src\main\res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi">
-        <location
-            file="src/main/res"/>
-    </issue>
-
 </issues>
