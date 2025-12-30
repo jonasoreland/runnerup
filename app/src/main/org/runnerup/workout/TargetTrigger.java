@@ -248,6 +248,7 @@ public class TargetTrigger extends Trigger {
   @Override
   public void onStart(Scope what, Workout s) {
     if (this.scope == what) {
+      paused = false;
       reset();
       for (Feedback f : triggerAction) {
         f.onStart(s);
