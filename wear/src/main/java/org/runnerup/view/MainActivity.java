@@ -33,6 +33,7 @@ import android.os.IBinder;
 import android.support.wearable.view.DotsPageIndicator;
 import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
+import android.util.Log;
 import android.widget.LinearLayout;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -221,12 +222,12 @@ public class MainActivity extends Activity
   private int getRowsForScreen(int col) {
     Bundle b = headers.get();
     if (b == null) {
-      System.err.println("getRowsForScreen(): headers == null");
+      Log.d(getClass().getName(), "getRowsForScreen(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      System.err.println("getRowsForScreen(): screens == null");
+      Log.d(getClass().getName(), "getRowsForScreen(): screens == null");
       return 1;
     }
     if (col > screens.size()) return 1;
@@ -236,12 +237,12 @@ public class MainActivity extends Activity
   private int getScreensCount() {
     Bundle b = headers.get();
     if (b == null) {
-      System.err.println("getScreensCount(): headers == null");
+      Log.d(getClass().getName(), "getScreensCount(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      System.err.println("getScreensCount(): screens == null");
+      Log.d(getClass().getName(), "getScreensCount(): screens == null");
       return 1;
     }
     return screens.size();

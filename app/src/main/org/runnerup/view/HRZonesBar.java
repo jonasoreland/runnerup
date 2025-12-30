@@ -79,7 +79,7 @@ public class HRZonesBar extends View {
 
     float totalWidth = getWidth();
     if (totalWidth <= 0 || calculatedBarHeight < 10) {
-      Log.e(getClass().getName(), "Not enough space to display the heart-rate zone bar");
+      Log.i(getClass().getName(), "Not enough space to display the heart-rate zone bar");
       activity.findViewById(R.id.hrzonesBarLayout).setVisibility(View.GONE);
       return;
     }
