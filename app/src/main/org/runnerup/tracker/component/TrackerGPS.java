@@ -110,22 +110,22 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     String s = preferences.getString(context.getString(resId), def);
     if (TextUtils.isEmpty(s)) {
       // Update the settings
-      SharedPreferences.Editor prefedit = preferences.edit();
-      prefedit.putString(context.getString(resId), def);
-      prefedit.apply();
+      SharedPreferences.Editor prefs = preferences.edit();
+      prefs.putString(context.getString(resId), def);
+      prefs.apply();
       s = def;
     }
     return Integer.parseInt(s);
   }
 
-  static Location getLastKnownLocation(LocationManager lm, Context context) {
+  private static Location getLastKnownLocation(LocationManager lm, Context context) {
     String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
     Location lastLocation = null;
     for (String s : list) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // User has deactivated location permission during the workout.
-            continue;
+        if (s.equals(GPS_PROVIDER)
+                && (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+          continue;
         }
         Location tmp = lm.getLastKnownLocation(s);
       if (tmp == null) {
@@ -151,7 +151,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
-    if (mWithoutGps == false &&
+    if (!mWithoutGps &&
         ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
       mWithoutGps = true;
@@ -253,7 +253,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public void onTick() {
-    if (mWithoutGps == false) {
+    if (!mWithoutGps) {
       if (mGpsStatus == null) {
         return;
       }
@@ -269,8 +269,10 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
     Callback tmp = mConnectCallback;
     mConnectCallback = null;
-    mGpsStatus.stop(this);
-    // note: Don't reset mGpsStatus, it's used for isConnected()
+    if (mGpsStatus != null) {
+      mGpsStatus.stop(this);
+      // note: Don't reset mGpsStatus, it's used for isConnected()
+    }
 
     tmp.run(this, ResultCode.RESULT_OK);
   }
