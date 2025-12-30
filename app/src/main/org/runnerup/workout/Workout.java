@@ -139,6 +139,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
   @Override
   public void onRepeat(int current, int limit) {}
 
+  /**
+   * Start the ACTIVITY, the tracker starts this once. The activity starts the steps for STEP/LAP.
+   *
+   * @param s always ACTIVITY
+   * @param w current workout
+   */
   public void onStart(Scope s, Workout w) {
     if (BuildConfig.DEBUG && w != this) {
       throw new AssertionError();
@@ -151,10 +157,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     }
 
     currentStepNo = 0;
-    if (steps.size() > 0) {
+    if (!steps.isEmpty()) {
       setCurrentStep(steps.get(currentStepNo));
     }
 
+    // start STEP and LAP
     if (currentStep != null) {
       currentStep.onStart(Scope.ACTIVITY, this);
       currentStep.onStart(Scope.STEP, this);

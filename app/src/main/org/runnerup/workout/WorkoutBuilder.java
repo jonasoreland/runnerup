@@ -185,17 +185,14 @@ public class WorkoutBuilder {
       }
       repeat.steps.add(step);
 
-      Step rest = null;
-      switch (intervalRestType) {
-        case 0: // Time
-          rest = Step.createRestStep(Dimension.TIME, intervalRestTime, convertRestToRecovery);
-          break;
-        case 1: // Distance
-          rest =
-              Step.createRestStep(Dimension.DISTANCE, intervalRestDistance, convertRestToRecovery);
-          break;
-      }
-      repeat.steps.add(rest);
+      Step rest = switch (intervalRestType) {
+          case 0 -> // Time
+                  Step.createRestStep(Dimension.TIME, intervalRestTime, convertRestToRecovery);
+          case 1 -> // Distance
+                  Step.createRestStep(Dimension.DISTANCE, intervalRestDistance, convertRestToRecovery);
+          default -> null;
+      };
+        repeat.steps.add(rest);
     }
     w.steps.add(repeat);
 
@@ -214,7 +211,7 @@ public class WorkoutBuilder {
     // TODO move this somewhere
     long seconds = SafeParse.parseSeconds(newValue, -1);
     long seconds2 = SafeParse.parseSeconds(DateUtils.formatElapsedTime(seconds), -1);
-    return seconds == seconds2;
+    return seconds >= 0 && seconds == seconds2;
   }
 
   public static SharedPreferences getAudioCuePreferences(
@@ -552,7 +549,7 @@ public class WorkoutBuilder {
     }
 
     // Remove all values in list close to the step
-    while (list.size() > 0 && step.getDurationValue() < list.get(0) * 1.1d) {
+    while (!list.isEmpty() && step.getDurationValue() < list.get(0) * 1.1d) {
       list.remove(0);
     }
     list.add(0, step.getDurationValue());
