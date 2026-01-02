@@ -755,8 +755,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               : 0;
       if (hr > 0) {
         viewHolder.tvHr.setVisibility(View.VISIBLE);
-        // Use CUE_LONG instead of TXT_LONG to include unit
-        viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.CUE_LONG, hr));
+        viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_LONG, hr));
       } else if (lapHrPresent) {
         viewHolder.tvHr.setVisibility(View.INVISIBLE);
       } else {

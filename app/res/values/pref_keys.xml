@@ -111,7 +111,7 @@
     <string name="pref_path_simplification_tolerance">pref_path_simplification_tolerance</string>
     <string name="pref_path_simplification_algorithm">pref_path_simplification_algorithm</string>
 
-    <string name="pref_mapbox_default_style">pref_mapbox_default_style2</string>
+    <string name="pref_mapbox_default_style">pref_mapbox_default_style3</string>
     <string name="pref_runneruplive_active">pref_runneruplive_active</string>
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
 
