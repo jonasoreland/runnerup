@@ -41,6 +41,8 @@ import org.runnerup.common.util.ValueModel;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
+import java.util.Objects;
+
 public class StateService extends Service
     implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
 
@@ -213,7 +215,7 @@ public class StateService extends Service
   }
 
   private void setPhoneNode(DataEvent ev) {
-    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
       phoneNode = new String(ev.getDataItem().getData());
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       phoneNode = null;
