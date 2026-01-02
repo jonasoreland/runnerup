@@ -1,0 +1,48 @@
+name: Android CI
+
+on: [push, pull_request]
+
+env:
+  ANDROID_API: 35
+  ANDROID_BUILD_TOOLS: 36.0.0
+  ADB_INSTALL_TIMEOUT: 5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          cache: 'gradle'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      
+      - name: Install Android SDK components
+        run: |
+          sdkmanager "tools"
+          sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
+          sdkmanager "platforms;android-${ANDROID_API}"
+          sdkmanager "extras;android;m2repository"
+          sdkmanager "extras;google;m2repository"
+          sdkmanager "extras;google;google_play_services"
+      
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Lint release
+        run: ./gradlew wear:lintRelease
+      
+      - name: Lint latest release
+        run: ./gradlew app:lintLatestRelease
+      
+      - name: Assemble latest release
+        run: ./gradlew app:assembleLatestRelease
+      
+      - name: Test
+        run: ./gradlew app:test
