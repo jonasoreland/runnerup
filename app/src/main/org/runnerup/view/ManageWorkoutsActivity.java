@@ -162,12 +162,11 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     } else if (ContentResolver.SCHEME_CONTENT.contentEquals(data.getScheme())) {
       String[] projection = {MediaStore.MediaColumns.DISPLAY_NAME};
       Cursor c = getContentResolver().query(data, projection, null, null, null);
-      if (c != null) {
-        c.moveToFirst();
+      if (c != null && c.moveToFirst()) {
         final int fileNameColumnId = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
         if (fileNameColumnId >= 0) name = c.getString(fileNameColumnId);
-        c.close();
       }
+      c.close();
     }
     return name;
   }
