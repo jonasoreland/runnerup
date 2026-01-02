@@ -105,7 +105,7 @@ jobs:
           rm $GITHUB_WORKSPACE/mapbox.properties 
           # For special build steps, see https://gitlab.com/fdroid/fdroiddata.git metadata/org.runnerup.free.yml 
           rm -rf wear ANT-Android-SDKs $GITHUB_WORKSPACE/dropbox.properties $GITHUB_WORKSPACE/runalyze.properties
-          sed -i -e '/play-services/d' -e '/mapboxsdk/d' -e '/api.mapbox.com/d' app/build.gradle
+          sed -i -e '/play-services/d' -e '/com.mapbox.maps/d' -e '/api.mapbox.com/d' app/build.gradle
           sed -i -e '/wearable/d' common/build.gradle
           ./gradlew clean :app:assembleLatestRelease
 

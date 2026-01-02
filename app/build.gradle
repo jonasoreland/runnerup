@@ -145,18 +145,6 @@ repositories {
     }
 }
 
-// Duplicate class kotlin.collections.jdk8 (from MapBox?)
-dependencies {
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0") {
-            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0") {
-            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
-        }
-    }
-}
-
 dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
@@ -183,10 +171,7 @@ dependencies {
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
     }
     if (rootProject.ext.mapboxEnabled) {
-        //noinspection GradleDependency
-        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2'
-        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-v9:0.9.0'
-        latestImplementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-scalebar-v8:0.2.0'
+        latestImplementation 'com.mapbox.maps:android-ndk27:11.17.1'
     } else {
         implementation 'org.osmdroid:osmdroid-android:6.1.11'
     }

@@ -400,8 +400,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
       case TXT:
       case TXT_SHORT:
-      case TXT_LONG:
         return Integer.toString(val2);
+      case TXT_LONG:
+        return cueResources.getQuantityString(R.plurals.cue_bpm, val2, val2);
     }
     return "";
   }
@@ -426,8 +427,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         }
       case TXT:
       case TXT_SHORT:
-      case TXT_LONG:
         return Integer.toString(val2);
+      case TXT_LONG:
+        return cueResources.getQuantityString(R.plurals.cue_rpm, val2, val2);
     }
     return "";
   }
