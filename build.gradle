@@ -18,7 +18,7 @@ project.ext {
     buildToolsVersion = '36.1.0' // also .github/workflows/actions.yml
     compileSdk = 36.1 // also .github/workflows/actions.yml
     targetSdk = 36.1
-    minSdk = 21
+    minSdk = 23
 
     appcompat_version = "1.7.1"
     annotation_version = "1.6.0"
