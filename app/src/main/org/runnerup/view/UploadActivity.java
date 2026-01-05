@@ -17,7 +17,6 @@
 
 package org.runnerup.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -328,7 +327,6 @@ public class UploadActivity extends AppCompatActivity implements Constants {
       private long activityID;
     }
 
-    @SuppressLint("ObsoleteSdkInt")
     @Override
     public View getView(int arg0, View convertView, ViewGroup parent) {
       View view = convertView;
