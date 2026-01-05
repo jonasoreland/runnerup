@@ -37,8 +37,6 @@
     <issue id="ObsoleteSdkInt" severity="ignore">
         <ignore regexp=".*drawable-r21$" />
     </issue>
-    <!-- Ignored since minimum version less than 17 requires both left/right and start/end -->
-    <issue id="RtlHardcoded" severity="ignore"/>
     <!-- TODO -->
     <issue id="ClickableViewAccessibility" severity="ignore">
         <ignore path="**/NumberPicker.java" />

@@ -140,7 +140,7 @@
                         android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|left"
+                        android:gravity="top|start"
                         android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
@@ -229,7 +229,6 @@
             android:background="@drawable/btn_blue"
             android:drawablePadding="-32dp"
             android:drawableEnd="@drawable/ic_av_play_arrow"
-            android:drawableRight="@drawable/ic_av_play_arrow"
             android:text="@string/Resume" />
 
         <Button
