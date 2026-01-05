@@ -17,7 +17,6 @@
 
 package org.runnerup.util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -64,7 +63,6 @@ public class GraphWrapper implements Constants {
   private XAxis xAxis;
 
   /** Called when the activity is first created. */
-  @SuppressLint("ObsoleteSdkInt")
   public GraphWrapper(
       Context context,
       LinearLayout graphTab,
@@ -225,7 +223,6 @@ public class GraphWrapper implements Constants {
     return graphData;
   }
 
-  @SuppressLint("ObsoleteSdkInt")
   private void onPostExecute(GraphProducer graphData) {
     if (graphData == null) return;
 

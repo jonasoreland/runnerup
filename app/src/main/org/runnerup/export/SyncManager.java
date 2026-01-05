@@ -554,15 +554,10 @@ public class SyncManager {
   private boolean checkStoragePermissions(final AppCompatActivity activity) {
     boolean result = true;
     String[] requiredPerms;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      //noinspection InlinedApi
-      requiredPerms =
-          new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-          };
-    } else {
-      requiredPerms = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    }
+    requiredPerms =
+        new String[] {
+          Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+        };
     List<String> defaultPerms = new ArrayList<>();
     for (final String perm : requiredPerms) {
       if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {

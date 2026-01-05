@@ -17,7 +17,6 @@
 
 package org.runnerup.db.entities;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -73,7 +72,6 @@ public abstract class AbstractEntity implements DBEntity {
     }
   }
 
-  @SuppressLint("ObsoleteSdkInt")
   void toContentValues(Cursor c) {
     if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst()) {
       throw new CursorIndexOutOfBoundsException("Cursor not readable");
@@ -94,7 +92,6 @@ public abstract class AbstractEntity implements DBEntity {
 
   // This is a replacement for DatabaseUtils.cursorRowToContentValues
   // see https://code.google.com/p/android/issues/detail?id=22219
-  @SuppressLint("NewApi")
   private static void cursorRowToContentValues(Cursor cursor, ContentValues values) {
     String[] columns = cursor.getColumnNames();
     int length = columns.length;
