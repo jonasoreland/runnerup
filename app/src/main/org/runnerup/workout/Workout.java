@@ -354,6 +354,25 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     return 0;
   }
 
+    public double getElevation(Scope scope) {
+        switch (scope) {
+            case ACTIVITY:
+                if (tracker != null) {
+                    return tracker.getCurrentElevation();
+                }
+                break;
+            case STEP:
+            case LAP:
+                if (currentStep != null) return currentStep.getTime(this, scope);
+                // if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                break;
+            case CURRENT:
+                // if (BuildConfig.DEBUG) { throw new AssertionError(); }
+                return tracker.getCurrentElevation(); // now, not to be used
+        }
+        return 0;
+    }
+
   @Override
   public double getSpeed(Scope scope) {
     switch (scope) {

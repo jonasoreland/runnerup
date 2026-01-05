@@ -403,7 +403,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       }
 
       setPauseButtonEnabled(!workout.isPaused());
-      double ad = workout.getDistance(Scope.ACTIVITY);
+      double ad = workout.getElevation(Scope.CURRENT);
       double at = workout.getTime(Scope.ACTIVITY);
       double ap = workout.getSpeed(Scope.ACTIVITY);
       activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, Math.round(at)));
