@@ -31,7 +31,7 @@ public class WearableClient {
     mDataClient
         .getDataItems(new Uri.Builder().scheme(WEAR_URI_SCHEME).path(path).build())
         .addOnCompleteListener(
-            new OnCompleteListener<DataItemBuffer>() {
+            new OnCompleteListener<>() {
               @Override
               public void onComplete(@NonNull Task<DataItemBuffer> task) {
                 if (task.isSuccessful()) {

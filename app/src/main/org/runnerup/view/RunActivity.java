@@ -623,10 +623,5 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
       return inflater.inflate(R.layout.laplist_row, parent, false);
     }
-
-    @Override
-    public boolean hasStableIds() {
-      return false;
-    }
   }
 }

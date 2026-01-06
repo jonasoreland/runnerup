@@ -74,7 +74,6 @@ android {
     }
 
     signingConfigs {
-        //noinspection GroovyMissingReturnStatement
         release {
         }
     }
@@ -161,10 +160,6 @@ dependencies {
 
     latestImplementation "com.google.android.material:material:1.13.0"
     if (rootProject.ext.enableWear) {
-        // Build Wear separately, do not include in phone apk
-        // latestWearApp project(':wear')
-
-        //noinspection GradleDependency
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
 
