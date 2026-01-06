@@ -120,7 +120,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private View graphTab;
 
   private MapWrapper mapWrapper = null;
-  private GraphWrapper graphWrapper = null;
+  private final GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;

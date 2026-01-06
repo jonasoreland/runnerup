@@ -470,21 +470,21 @@ public class WorkoutSerializer {
     Workout.StepListEntry prev = null;
     for (Workout.StepListEntry e : workout.getStepList()) {
       jsonstep s = new jsonstep();
-      s.step = e.step;
+      s.step = e.step();
       s.order = no++;
-      if (e.parent != null) {
-        while (e.parent != stepStack.peek().step) {
+      if (e.parent() != null) {
+        while (e.parent() != stepStack.peek().step) {
           stepStack.pop();
           group = stepStack.peek().group;
         }
         s.parentGroup = stepStack.peek().group;
         s.parentStep = (RepeatStep) stepStack.peek().step;
       }
-      if (e.step instanceof RepeatStep) {
+      if (e.step() instanceof RepeatStep) {
         group++;
         stepStack.push(s);
       }
-      if (e.parent == null && prev != null && prev.parent != null) {
+      if (e.parent() == null && prev != null && prev.parent() != null) {
         group++;
       }
       s.group = group;
