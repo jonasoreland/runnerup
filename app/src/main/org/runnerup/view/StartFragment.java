@@ -1425,10 +1425,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           (convertView instanceof StepButton)
               ? (StepButton) convertView
               : new StepButton(requireContext(), null);
-      button.setStep(entry.step);
+      button.setStep(entry.step());
 
       float pxToDp = getResources().getDisplayMetrics().density;
-      button.setPadding((int) (entry.level * 8 * pxToDp + 0.5f), 0, 0, 0);
+      button.setPadding((int) (entry.level() * 8 * pxToDp + 0.5f), 0, 0, 0);
       button.setOnChangedListener(onWorkoutChanged);
       return button;
     }
