@@ -79,7 +79,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     }
     sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     if (sensor == null) {
-      //noinspection deprecation
       sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
     }
 
@@ -125,9 +124,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
   public boolean isConnected() {
     return sensorManager != null || isMockSensor;
   }
-
-  @Override
-  public void onConnected() {}
 
   /** Called by tracked after workout has ended */
   @Override

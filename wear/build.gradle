@@ -29,7 +29,7 @@ android {
             debuggable = false
             minifyEnabled = true
             shrinkResources = true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
             signingConfig = signingConfigs.release
         }
         debug {
@@ -59,17 +59,7 @@ repositories {
     mavenCentral()
 }
 
-// Duplicate class kotlin.collections.jdk8 (from MapBox?)
 dependencies {
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.0") {
-            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.0") {
-            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
-        }
-    }
-
     implementation project(':common')
 
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"

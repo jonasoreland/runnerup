@@ -199,7 +199,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   private static boolean guessDefaultUnit(Resources res, Editor editor) {
     String countryCode = Locale.getDefault().getCountry();
     Log.i("Formatter", "guessDefaultUnit: countryCode: " + countryCode);
-    if (countryCode.equals("")) return true; // km;
+    if (countryCode.isEmpty()) return true; // km;
     String key = res.getString(R.string.pref_unit);
     if ("US".contentEquals(countryCode) || "GB".contentEquals(countryCode)) {
       if (editor != null) editor.putString(key, "mi");

@@ -77,7 +77,7 @@ class DisabledEntriesAdapter extends BaseAdapter {
 
   @Override
   public boolean areAllItemsEnabled() {
-    return disabled == null || disabled.size() == 0;
+    return disabled == null || disabled.isEmpty();
   }
 
   @Override

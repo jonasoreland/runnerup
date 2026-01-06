@@ -490,7 +490,6 @@ public class SyncManager {
       // All paths are related to Environment.DIRECTORY_DOCUMENTS
       path = "";
     } else {
-      //noinspection InlinedApi
       path =
           Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath()
               + File.separator;
@@ -1042,7 +1041,7 @@ public class SyncManager {
       return;
     }
 
-    if (syncActivitiesList.size() == 0) {
+    if (syncActivitiesList.isEmpty()) {
       try {
         mSpinner.cancel();
       } catch (IllegalStateException ex) {

@@ -212,7 +212,7 @@ public class AntPlus extends BtHRBase {
   private AntPlusHeartRatePcc antDevice = null;
 
   private final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver =
-      new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
+      new IPluginAccessResultReceiver<>() {
 
         @Override
         public void onResultReceived(

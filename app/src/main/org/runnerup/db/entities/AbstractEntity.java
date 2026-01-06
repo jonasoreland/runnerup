@@ -78,8 +78,7 @@ public abstract class AbstractEntity implements DBEntity {
     }
 
     if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
-      //noinspection AccessStaticViaInstance
-      this.cursorRowToContentValues(c, values());
+      cursorRowToContentValues(c, values());
     } else {
       throw new IllegalArgumentException(
           "Cursor " + c + " is incompatible with the Entity " + this.getClass().getName());
@@ -119,14 +118,10 @@ public abstract class AbstractEntity implements DBEntity {
   public void readByPrimaryKey(SQLiteDatabase DB, long primaryKey) {
     String[] cols = new String[getValidColumns().size()];
     getValidColumns().toArray(cols);
-    Cursor cursor = DB.query(getTableName(), cols, "_id = " + primaryKey, null, null, null, null);
-    //noinspection TryFinallyCanBeTryWithResources
-    try {
-      if (cursor.moveToFirst()) {
-        toContentValues(cursor);
+      try (Cursor cursor = DB.query(getTableName(), cols, "_id = " + primaryKey, null, null, null, null)) {
+          if (cursor.moveToFirst()) {
+              toContentValues(cursor);
+          }
       }
-    } finally {
-      cursor.close();
-    }
   }
 }
