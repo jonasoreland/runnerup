@@ -86,7 +86,7 @@ public class FileFormats {
     if (readonly) {
       throw new UnsupportedOperationException();
     }
-    if (formats.length() == 0) {
+    if (formats.isEmpty()) {
       formats = format.getValue();
       return true;
     } else {

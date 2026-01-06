@@ -202,7 +202,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
     ArrayAdapter<CharSequence> adapter =
-        new ArrayAdapter<CharSequence>(
+        new ArrayAdapter<>(
             context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
     adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
     sportSpinner.setAdapter(adapter);
@@ -810,7 +810,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       final String[] permissions = new String[requestPerms.size()];
       requestPerms.toArray(permissions);
 
-      if (popup && missingEssentialPermission || requestPerms.size() > 0) {
+      if (popup && missingEssentialPermission || !requestPerms.isEmpty()) {
         // Essential or requestable permissions missing
         String baseMessage =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
@@ -824,7 +824,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
                 .setTitle(org.runnerup.common.R.string.GPS_permission_required)
                 .setNegativeButton(
                     org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
-        if (requestPerms.size() > 0) {
+        if (!requestPerms.isEmpty()) {
           // Let Android request the permissions
           builder
               .setPositiveButton(
@@ -1045,7 +1045,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     // gps details
     String gpsAccuracy = getGpsAccuracyString(accuracy);
     String gpsDetail =
-        gpsAccuracy.length() == 0
+        gpsAccuracy.isEmpty()
             ? String.format(
                 getString(org.runnerup.common.R.string.GPS_status_no_accuracy),
                 satFixedCount,
