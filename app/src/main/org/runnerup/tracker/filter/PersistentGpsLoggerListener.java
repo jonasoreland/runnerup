@@ -21,6 +21,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import org.runnerup.common.util.Constants;
+import org.runnerup.db.DBHelper;
 import org.runnerup.tracker.LocationListenerBase;
 
 public class PersistentGpsLoggerListener extends LocationListenerBase implements Constants {
@@ -135,7 +136,9 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
       values.put(DB.LOCATION.TEMPERATURE, temperatureValue);
     }
     if (mDB != null) {
-      mDB.insert(mTable, null, values);
+        DBHelper.getDatabaseWriteExecutor().execute(() -> {
+            mDB.insert(mTable, null, values);
+        });
     }
   }
 }

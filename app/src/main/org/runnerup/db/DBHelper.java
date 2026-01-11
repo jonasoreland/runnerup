@@ -62,7 +62,14 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   //        + (DB.DBINFO.ACCOUNT_VERSION + " integer not null default 0")
   //        + ");";
 
-  @SuppressWarnings("SyntaxError")
+    // executor for the database, to avoid running on the ui thread
+    // may currently not be used by all writers
+    private static final ExecutorService databaseWriteExecutor = Executors.newSingleThreadExecutor();// ... existing DBHelper code ...
+    public static ExecutorService getDatabaseWriteExecutor() {
+        return databaseWriteExecutor;
+    }
+
+    @SuppressWarnings("SyntaxError")
   private static final String CREATE_TABLE_ACTIVITY =
       "create table "
           + DB.ACTIVITY.TABLE
@@ -215,6 +222,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public synchronized void close() {
+    databaseWriteExecutor.shutdown();
     if (sInstance != null) {
       // don't close
       return;
