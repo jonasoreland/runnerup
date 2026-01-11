@@ -61,6 +61,7 @@ jobs:
       - name: Prepare builddir
         run: |
           echo "${{ secrets.MAPBOX }}" > $GITHUB_WORKSPACE/mapbox.properties
+          ls -l $GITHUB_WORKSPACE/mapbox.properties
           echo "${{ secrets.DROPBOX }}" > $GITHUB_WORKSPACE/dropbox.properties
           echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
           chmod +x gradlew
