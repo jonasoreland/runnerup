@@ -109,9 +109,9 @@ public class PersistentGpsLoggerListener extends LocationListenerBase implements
       }
       // Most GPS chips also includes no of sats
       if (arg0.getExtras() != null) {
-        int sats = arg0.getExtras().getInt("satellites", -1);
-        if (sats >= 0) {
-          values.put(DB.LOCATION.SATELLITES, sats);
+        int satellites = arg0.getExtras().getInt("satellites", -1);
+        if (satellites >= 0) {
+          values.put(DB.LOCATION.SATELLITES, satellites);
         }
       }
       // Not accuracy related but unused by exporters
