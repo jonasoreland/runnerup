@@ -60,6 +60,7 @@ jobs:
           
       - name: Prepare builddir
         run: |
+          # secrets are only available for collabrators, other will build with OsmDroid (but a few more options than F-Droid still)
           echo "${{ secrets.MAPBOX }}" > $GITHUB_WORKSPACE/mapbox.properties
           echo "${{ secrets.DROPBOX }}" > $GITHUB_WORKSPACE/dropbox.properties
           echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
