@@ -51,7 +51,7 @@ public class Simplify<T> extends AbstractSimplify<T> {
   public Simplify(T[] sampleArray) {
     super(sampleArray);
     this.pointExtractor =
-        new PointExtractor<T>() {
+        new PointExtractor<>() {
           @Override
           public double getX(T point) {
             return ((Point) point).getX();

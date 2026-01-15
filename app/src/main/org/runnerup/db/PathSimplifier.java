@@ -58,7 +58,7 @@ public class PathSimplifier {
    * <p>https://github.com/hgoebl/simplify-java
    */
   private static final PointExtractor<Location> locationPointExtractor =
-      new PointExtractor<Location>() {
+      new PointExtractor<>() {
         @Override
         public double getX(Location point) {
           return point.getLatitude() * PathSimplifier.MULTIPLIER;

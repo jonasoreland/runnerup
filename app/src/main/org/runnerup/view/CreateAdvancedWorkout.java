@@ -145,9 +145,9 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
       }
 
       Workout.StepListEntry entry = steps.get(position);
-      viewHolder.button.setStep(entry.step);
+      viewHolder.button.setStep(entry.step());
       float pxToDp = getResources().getDisplayMetrics().density;
-      viewHolder.button.setPadding((int) (entry.level * 8 * pxToDp + 0.5f), 0, 0, 0);
+      viewHolder.button.setPadding((int) (entry.level() * 8 * pxToDp + 0.5f), 0, 0, 0);
 
       return view;
     }

@@ -98,8 +98,7 @@ public class ActivityProvider extends ContentProvider {
         final File file = new File(path.getAbsolutePath() + File.separator + name);
         final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
         Log.d(getClass().getName(), i + ": putting cache file in: " + file.getAbsolutePath());
-        //noinspection Convert2Diamond
-        return new Pair<File, OutputStream>(file, out);
+        return new Pair<>(file, out);
       } catch (IOException | NullPointerException ignored) {
       }
     }
@@ -166,10 +165,7 @@ public class ActivityProvider extends ContentProvider {
         }
         DBHelper.closeDB(mDB);
 
-        //noinspection UnnecessaryLocalVariable
-        ParcelFileDescriptor pfd =
-            ParcelFileDescriptor.open(out.first, ParcelFileDescriptor.MODE_READ_ONLY);
-        return pfd;
+        return ParcelFileDescriptor.open(out.first, ParcelFileDescriptor.MODE_READ_ONLY);
     }
 
     throw new FileNotFoundException("Unsupported uri: " + uri);

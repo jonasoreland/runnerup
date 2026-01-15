@@ -35,9 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_weight="1" />
 
     <ImageView
@@ -45,9 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
         android:contentDescription="@string/Edit_step" />
 
     <TextView
@@ -55,8 +51,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginEnd="22dp"
-        android:layout_marginRight="22dp"
         android:layout_weight="2" />
 </LinearLayout>
