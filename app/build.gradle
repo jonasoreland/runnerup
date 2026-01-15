@@ -98,7 +98,11 @@ android {
     lint {
         baseline = file('lint-baseline.xml')
         checkReleaseBuilds = true
-        lintConfig = file('lint.xml')
+        if (mapboxEnabled) {
+            lintConfig = file('lint.xml')
+        } else {
+            lintConfig = file('lint-osmdroid.xml')
+        }
         showAll = true
         //textOutput = 'stdout'
         textReport = true

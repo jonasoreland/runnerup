@@ -28,6 +28,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.text.TextUtils;
+
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import org.runnerup.R;
@@ -116,11 +118,16 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     return Integer.parseInt(s);
   }
 
-  static Location getLastKnownLocation(LocationManager lm) {
+  static Location getLastKnownLocation(LocationManager lm, Context context) {
     String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
     Location lastLocation = null;
     for (String s : list) {
-      Location tmp = lm.getLastKnownLocation(s);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // User has deactivated location permission during the workout.
+            continue;
+        }
+        Location tmp = lm.getLastKnownLocation(s);
       if (tmp == null) {
         continue;
       }
@@ -154,7 +161,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       var lm = locationManager;
       SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
       frequency_ms = parseAndFixInteger(preferences, R.string.pref_pollInterval, "1000", context);
-      mLastLocation = getLastKnownLocation(lm);
+      mLastLocation = getLastKnownLocation(lm, context);
       if (!mWithoutGps) {
         Integer frequency_meters =
             parseAndFixInteger(preferences, R.string.pref_pollDistance, "0", context);

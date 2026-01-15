@@ -69,4 +69,5 @@
     <issue id="ClickableViewAccessibility" severity="ignore">
         <ignore path="**/NumberPicker.java" />
     </issue>
+    <!-- lint-osmdroid.xml has specific suppressions, maintained separately -->
 </lint>

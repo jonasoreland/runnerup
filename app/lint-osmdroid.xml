@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="all" >
+        <ignore path="ANT-Android-SDKs/**" />
+    </issue>
+    <!-- promote to error, must be handled -->
+    <issue id="InlinedApi" severity="fatal" />
+    <issue id="InconsistentArrays" severity="fatal" />
+
+    <issue id="UsingOnClickInXml" severity="ignore">
+        <ignore path="**/reportlist_row.xml" />
+    </issue>
+
+    <!-- All translations will not be complete -->
+    <issue id="MissingTranslation" severity="ignore" />
+
+    <!-- icon with all densities are not included - don't bother -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="MissingQuantity">
+        <!-- Transifex refuses quantity="one" for tr,pl (gradle) lint requires it, Inspect allows both-->
+        <ignore path="res/values-tr/cues.xml" />
+        <ignore path="res/values-pl/cues.xml" />
+        <ignore path="res/values-zh/cues.xml" />
+    </issue>
+    <issue id="UnusedQuantity">
+        <ignore path="res/values-lt/cues.xml" />
+        <ignore path="res/values-zh/cues.xml" />
+    </issue>
+
+    <issue id="IconDensities">
+        <ignore path="res/**" />
+        <ignore path="**/common/src/main/res/**" />
+    </issue>
+    <issue id="IconColors">
+        <ignore path="**/ic_stat_notify.png" />
+    </issue>
+    <issue id="ObsoleteSdkInt" severity="ignore">
+        <ignore regexp=".*drawable-r21$" />
+    </issue>
+    <!-- TODO -->
+    <issue id="ClickableViewAccessibility" severity="ignore">
+        <ignore path="**/NumberPicker.java" />
+    </issue>
+    <!-- Specific for CI - MapBox cannot be downloaded -->
+    <issue id="UnusedResources" severity="ignore">
+        <ignore path="**/res/drawable-*/ic_map_marker*.png" />
+    </issue>
+</lint>
