@@ -20,7 +20,6 @@ package org.runnerup.view;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -121,7 +120,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private View graphTab;
 
   private MapWrapper mapWrapper = null;
-  private GraphWrapper graphWrapper = null;
+  private final GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;
@@ -131,7 +130,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private static final int EDIT_ACCOUNT_REQUEST = 2;
 
   /** Called when the activity is first created. */
-  @SuppressLint("ObsoleteSdkInt")
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

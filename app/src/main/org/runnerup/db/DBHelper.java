@@ -466,7 +466,6 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
         try {
           // Check if AUTH_CONFIG contains deprecated FORMAT field
           JSONObject authcfg = new JSONObject(oldAuthConfig);
-          @SuppressWarnings("ConstantConditions")
           String format = authcfg.optString(DB.ACCOUNT.FORMAT, null);
           if (format != null) {
             // Move deprecated FORMAT field in AUTH_CONFIG to ACCOUNT.FORMAT

@@ -96,7 +96,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="bottom|left"
+                        android:gravity="bottom|start"
                         android:orientation="horizontal">
 
                         <TextView
@@ -113,7 +113,6 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:layout_marginRight="4dp"
                             android:contentDescription="@string/Heart_Rate_Monitor"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_heartrate_white_24dp"/>
@@ -124,7 +123,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
                             android:visibility="gone"
                             />
 
@@ -133,7 +131,6 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:layout_marginRight="4dp"
                             android:contentDescription="@string/Wear_OS_Device"
                             android:visibility="gone"
                             app:srcCompat="@drawable/ic_watch_white_24dp"/>
@@ -143,16 +140,13 @@
                             style="@style/StatusText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginRight="8dp"
-                            />
+                            android:layout_marginEnd="8dp" />
 
                         <ImageView
                             android:id="@+id/gps_indicator"
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:layout_marginRight="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
                             tools:ignore="ContentDescription"/>
 
@@ -170,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="bottom|left"
+                        android:gravity="bottom|start"
                         android:visibility="gone"
                         tools:ignore="UseCompoundDrawables">
 
@@ -179,7 +173,6 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
-                            android:layout_marginRight="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
                             tools:ignore="ContentDescription"/>
 
@@ -199,7 +192,6 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/status_frame"
                     android:layout_toEndOf="@id/status_frame"
                     android:minWidth="48dp"
                     android:minHeight="48dp"
@@ -211,7 +203,6 @@
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     tools:ignore="RelativeOverlap" />
@@ -224,10 +215,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginBottom="20dp"
-                android:layout_marginLeft="@dimen/activity_margin"
-                android:layout_marginRight="@dimen/activity_margin"/>
+                android:layout_marginStart="@dimen/activity_margin" />
 
         </RelativeLayout>
     </TabHost>

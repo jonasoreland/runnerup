@@ -178,7 +178,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
 
     if (newValue == null) return;
 
-    if (textViews.size() == 0) return;
+    if (textViews.isEmpty()) return;
 
     if (newValue == TrackerState.PAUSED || newValue == TrackerState.STOPPED) {
       Animation anim = new AlphaAnimation(0, 1);

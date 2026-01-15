@@ -587,11 +587,11 @@ public class WorkoutBuilder {
       Log.d("WorkoutBuilder", "setAutolap(" + val + ")");
       for (StepListEntry s : steps) {
         if (basic
-            || s.step.getIntensity() == Intensity.ACTIVE
+            || s.step().getIntensity() == Intensity.ACTIVE
             ||
             // Also set on the last in the flat list
             s == steps.get(steps.size() - 1)) {
-          s.step.setAutolap(val);
+          s.step().setAutolap(val);
         }
       }
     }
@@ -599,13 +599,13 @@ public class WorkoutBuilder {
     // Autopause
     for (StepListEntry s : steps) {
       if (basic) {
-        addAutoPauseTrigger(res, s.step, prefs);
+        addAutoPauseTrigger(res, s.step(), prefs);
         continue;
       }
-      switch (s.step.getIntensity()) {
+      switch (s.step().getIntensity()) {
         case WARMUP:
         case COOLDOWN:
-          addAutoPauseTrigger(res, s.step, prefs);
+          addAutoPauseTrigger(res, s.step(), prefs);
           break;
         case ACTIVE:
         case RECOVERY:
@@ -635,23 +635,23 @@ public class WorkoutBuilder {
         StepListEntry[] stepArr = new StepListEntry[steps.size()];
         steps.toArray(stepArr);
         for (int i = 0; i < stepArr.length; i++) {
-          Step step = stepArr[i].step;
+          Step step = stepArr[i].step();
 
           if (step.durationType != null
               || step.intensity == Intensity.REPEAT
               || step.intensity == Intensity.RESTING
               || i + 1 >= stepArr.length) continue;
 
-          Step next = stepArr[i + 1].step;
+          Step next = stepArr[i + 1].step();
 
           if (next.intensity == Intensity.RESTING) continue;
 
           Step s = Step.createRestStep(Dimension.TIME, val, convertRestToRecovery);
-          if (stepArr[i].parent == null) {
+          if (stepArr[i].parent() == null) {
             w.steps.add(i + 1, s);
             Log.d("WorkoutBuilder", "Added step at index: " + (i + 1));
           } else {
-            RepeatStep rs = (RepeatStep) stepArr[i].parent;
+            RepeatStep rs = (RepeatStep) stepArr[i].parent();
             int idx = rs.steps.indexOf(step);
             rs.steps.add(idx, s);
             Log.d(

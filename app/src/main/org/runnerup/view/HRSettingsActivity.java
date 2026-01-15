@@ -182,7 +182,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private static final HashMap<Integer, Integer> kPrefByMenu =
-      new HashMap<Integer, Integer>() {
+      new HashMap<>() {
         {
           put(R.id.menu_hrdevice_paired_ble, R.string.pref_bt_paired_ble);
           put(R.id.menu_hrdevice_experimental, R.string.pref_bt_experimental);
@@ -372,7 +372,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private void selectProvider() {
-    if (providers.size() == 0) {
+    if (providers.isEmpty()) {
       return;
     }
 
@@ -448,7 +448,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
       }
     }
 
-    if (requestPerms.size() == 0 && !isDeniedPermission) {
+    if (requestPerms.isEmpty() && !isDeniedPermission) {
       return false;
     }
     final String[] permissions = new String[requestPerms.size()];
@@ -460,7 +460,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             .setMessage(getString(org.runnerup.common.R.string.Request_permission_text))
             .setNegativeButton(
                 org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
-    if (requestPerms.size() > 0) {
+    if (!requestPerms.isEmpty()) {
       // Let Android request the permissions
       // Note that the result is not used, the user is dropped back to initial view when a request
       // is done.
@@ -564,7 +564,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     tvBTName.setText(getName());
     tvHR.setText("?");
     String name = btName;
-    if (name == null || name.length() == 0) {
+    if (name == null || name.isEmpty()) {
       name = btAddress;
     }
     log(hrProvider.getProviderName() + ".connect(" + name + ")");
@@ -597,7 +597,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private CharSequence getName() {
-    if (btName != null && btName.length() > 0) return btName;
+    if (btName != null && !btName.isEmpty()) return btName;
     return btAddress;
   }
 

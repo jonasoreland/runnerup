@@ -188,7 +188,7 @@
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
   <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
   <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
-  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
+  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM2008)</string>
   <string name="Export">Exportera</string>
   <string name="Import">Importera</string>
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>

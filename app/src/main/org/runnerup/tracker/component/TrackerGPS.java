@@ -246,9 +246,9 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       tracker.onLocationChanged(location);
       handler.postDelayed(this, frequency_ms);
     }
-  };
+  }
 
-  private final GpsLessLocationProvider gpsLessLocationProvider =
+    private final GpsLessLocationProvider gpsLessLocationProvider =
       new GpsLessLocationProvider();
 
   @Override

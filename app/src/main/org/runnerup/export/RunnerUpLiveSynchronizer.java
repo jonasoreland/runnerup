@@ -96,9 +96,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     if (auth != null) {
       try {
         JSONObject tmp = new JSONObject(auth);
-        //noinspection ConstantConditions
         username = tmp.optString("username", null);
-        //noinspection ConstantConditions
         password = tmp.optString("password", null);
       } catch (JSONException e) {
         e.printStackTrace();

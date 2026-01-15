@@ -143,7 +143,6 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     if (authConfig != null) {
       try {
         JSONObject tmp = new JSONObject(authConfig);
-        //noinspection ConstantConditions
         access_token = tmp.optString("access_token", null);
       } catch (Exception e) {
         e.printStackTrace();

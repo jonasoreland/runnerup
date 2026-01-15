@@ -26,7 +26,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true">
 
         <TableRow
@@ -53,7 +52,6 @@
                 android:id="@+id/activity_header_hr"
                 style="@style/RunHeader"
                 android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
                 android:gravity="end"
                 android:text="@string/metrics_heartrate" />
         </TableRow>
@@ -70,7 +68,6 @@
 
                 <TextView
                     style="@style/RunHeader"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/Total" />
             </LinearLayout>
@@ -94,8 +91,7 @@
                 <TextView
                     android:id="@+id/activity_hr"
                     style="@style/RunInfo"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp" />
+                    android:layout_marginEnd="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -112,7 +108,6 @@
 
                 <TextView
                     style="@style/RunHeader"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/Interval" />
             </LinearLayout>
@@ -136,8 +131,7 @@
                 <TextView
                     android:id="@+id/interval_hr"
                     style="@style/RunInfo"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp" />
+                    android:layout_marginEnd="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -153,7 +147,6 @@
 
                 <TextView
                     style="@style/RunHeader"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/Lap" />
             </LinearLayout>
@@ -178,8 +171,7 @@
                 <TextView
                     android:id="@+id/lap_hr"
                     style="@style/RunInfo"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp" />
+                    android:layout_marginEnd="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -196,7 +188,6 @@
 
                 <TextView
                     style="@style/RunHeader"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:text="@string/Current" />
             </LinearLayout>
@@ -204,8 +195,7 @@
             <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="0dp"
-                android:layout_marginRight="0dp">
+                android:layout_marginEnd="0dp" >
 
                 <TextView
                     android:id="@+id/current_time_unused"
@@ -218,14 +208,12 @@
                 <TextView
                     android:id="@+id/current_pace"
                     style="@style/RunInfo"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp" />
+                    android:layout_marginEnd="3dp" />
 
                 <TextView
                     android:id="@+id/current_hr"
                     style="@style/RunInfo"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp" />
+                    android:layout_marginEnd="3dp" />
             </TableRow>
         </LinearLayout>
 
@@ -283,7 +271,6 @@
             android:background="@drawable/btn_blue"
             android:text="@string/Lap"
             android:drawableEnd="@drawable/ic_av_newlap"
-            android:drawableRight="@drawable/ic_av_newlap"
             android:drawablePadding="-32dp" />
 
         <Button
@@ -295,7 +282,6 @@
             android:background="@drawable/btn_blue"
             android:text="@string/Pause"
             android:drawableEnd="@drawable/ic_av_pause"
-            android:drawableRight="@drawable/ic_av_pause"
             android:drawablePadding="-32dp" />
     </TableRow>
 
@@ -314,7 +300,6 @@
             android:background="@drawable/btn_red"
             android:text="@string/Stop"
             android:drawableEnd="@drawable/ic_av_stop"
-            android:drawableRight="@drawable/ic_av_stop"
             android:drawablePadding="-32dp" />
     </TableRow>
 
