@@ -118,7 +118,6 @@ android {
 repositories {
     google()
     mavenCentral() //MapBox GraphView
-    maven { url = "https://oss.sonatype.org/content/groups/public/" } //pebblekit
     if (rootProject.ext.mapboxEnabled) {
         maven {
             url = 'https://api.mapbox.com/downloads/v2/releases/maven'
@@ -154,7 +153,6 @@ dependencies {
     }
 
     implementation "com.squareup.okhttp3:okhttp:5.3.2"
-    latestImplementation 'com.getpebble:pebblekit:4.0.1'
     if (rootProject.ext.allowNonFree) {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
