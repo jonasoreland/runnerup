@@ -22,7 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.Toast;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import com.getpebble.android.kit.Constants;
 import com.getpebble.android.kit.PebbleKit;
@@ -48,7 +47,6 @@ public class TrackerPebble extends DefaultTrackerComponent
   private PebbleKit.PebbleDataReceiver sportsDataHandler = null;
   private Formatter formatter;
   private boolean isMetric;
-  private boolean bMetricSent;
   private final Tracker tracker;
 
   public TrackerPebble(Tracker tracker) {
@@ -82,9 +80,9 @@ public class TrackerPebble extends DefaultTrackerComponent
                 if (tracker.getWorkout() == null) {
                   sendBroadcast(org.runnerup.common.util.Constants.Intents.START_WORKOUT);
                 } else if (tracker.getWorkout().isPaused()) {
-                  sendLocalBroadcast(org.runnerup.common.util.Constants.Intents.RESUME_WORKOUT);
+                  sendBroadcast(org.runnerup.common.util.Constants.Intents.RESUME_WORKOUT);
                 } else {
-                  sendLocalBroadcast(org.runnerup.common.util.Constants.Intents.PAUSE_WORKOUT);
+                  sendBroadcast(org.runnerup.common.util.Constants.Intents.PAUSE_WORKOUT);
                 }
               }
             } catch (Exception ex) {
@@ -94,11 +92,6 @@ public class TrackerPebble extends DefaultTrackerComponent
         };
     PebbleKit.registerReceivedDataHandler(context, sportsDataHandler);
     return ResultCode.RESULT_OK;
-  }
-
-  private void sendLocalBroadcast(String action) {
-    Intent intent = new Intent().setAction(action);
-    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
   }
 
   private void sendBroadcast(String action) {
