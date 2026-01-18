@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -436,20 +435,15 @@ public class TrackerWear extends DefaultTrackerComponent
     Log.d(getName(), "onMessageReceived: " + messageEvent);
     // note: skip state checking, do that in receiver instead
     if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.PAUSE_WORKOUT);
+      sendBroadcast(Intents.PAUSE_WORKOUT);
     } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.RESUME_WORKOUT);
+      sendBroadcast(Intents.RESUME_WORKOUT);
     } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.NEW_LAP);
+      sendBroadcast(Intents.NEW_LAP);
     } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
       /* send broadcast to start the workout */
       sendBroadcast(Intents.START_WORKOUT);
     }
-  }
-
-  private void sendLocalBroadcast(String action) {
-    Intent intent = new Intent().setAction(action);
-    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
   }
 
   private void sendBroadcast(String action) {
