@@ -84,6 +84,19 @@ android {
             signingConfig = signingConfigs.release
         }
     }
+    buildTypes.configureEach {
+        buildConfigField 'boolean', 'MAPBOX_ENABLED', "${rootProject.ext.mapboxEnabled}"
+        buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', "\"${rootProject.ext.mapboxAccessToken}\""
+        buildConfigField 'boolean', 'OSMDROID_ENABLED', "${rootProject.ext.osmdroidEnabled}"
+
+        buildConfigField 'boolean', 'RUNALYZE_ENABLED', "${rootProject.ext.runalyzeEnabled}"
+        buildConfigField 'String', 'RUNALYZE_ID', "\"${rootProject.ext.runalyzeId}\""
+        buildConfigField 'String', 'RUNALYZE_SECRET', "\"${rootProject.ext.runalyzeSecret}\""
+
+        buildConfigField 'boolean', 'DROPBOX_ENABLED', "${rootProject.ext.dropboxEnabled}"
+        buildConfigField 'String', 'DROPBOX_ID', "\"${rootProject.ext.dropboxId}\""
+        buildConfigField 'String', 'DROPBOX_SECRET', "\"${rootProject.ext.dropboxSecret}\""
+    }
     lint {
         baseline = file('lint-baseline.xml')
         checkReleaseBuilds = true
@@ -109,6 +122,7 @@ android {
     buildFeatures {
         aidl = true
         buildConfig = true
+        resValues = true
     }
     androidResources {
         generateLocaleConfig = true
@@ -189,18 +203,4 @@ if (rootProject.file("release.properties").exists()) {
 } else {
     project.logger.info('INFO: Set the values storeFile, storePassword, keyAlias, and keyPassword in release.properties to sign the release.')
     android.buildTypes.release.signingConfig = null
-}
-
-android.applicationVariants.configureEach {
-    buildConfigField 'boolean', 'MAPBOX_ENABLED', "${rootProject.ext.mapboxEnabled}"
-    buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', "\"${rootProject.ext.mapboxAccessToken}\""
-    buildConfigField 'boolean', 'OSMDROID_ENABLED', "${rootProject.ext.osmdroidEnabled}"
-
-    buildConfigField 'boolean', 'RUNALYZE_ENABLED', "${rootProject.ext.runalyzeEnabled}"
-    buildConfigField 'String', 'RUNALYZE_ID', "\"${rootProject.ext.runalyzeId}\""
-    buildConfigField 'String', 'RUNALYZE_SECRET', "\"${rootProject.ext.runalyzeSecret}\""
-
-    buildConfigField 'boolean', 'DROPBOX_ENABLED', "${rootProject.ext.dropboxEnabled}"
-    buildConfigField 'String', 'DROPBOX_ID', "\"${rootProject.ext.dropboxId}\""
-    buildConfigField 'String', 'DROPBOX_SECRET', "\"${rootProject.ext.dropboxSecret}\""
 }

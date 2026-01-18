@@ -79,7 +79,7 @@ jobs:
             **/build/outputs/logs/
 
       - name: Test
-        run: ./gradlew testBuildTypesUnitTest :app:testLatestDebugUnitTest testDebugUnitTest
+        run: ./gradlew test
 
       - name: Upload test logs
         if: always()
@@ -108,6 +108,7 @@ jobs:
           rm -rf wear ANT-Android-SDKs $GITHUB_WORKSPACE/dropbox.properties $GITHUB_WORKSPACE/runalyze.properties
           sed -i -e '/play-services/d' -e '/com.mapbox.maps/d' -e '/api.mapbox.com/d' app/build.gradle
           sed -i -e '/wearable/d' common/build.gradle
+          sed -i -e '/:wear/d' settings.gradle
           ./gradlew clean :app:assembleLatestRelease
 
       - name: Upload F-Droid logs

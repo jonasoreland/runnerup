@@ -41,5 +41,7 @@
     <issue id="ClickableViewAccessibility" severity="ignore">
         <ignore path="**/NumberPicker.java" />
     </issue>
+    <!-- Ignore warning, let the AGP update manage the gradle version -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
     <!-- lint-osmdroid.xml has specific suppressions, maintained separately -->
 </lint>
