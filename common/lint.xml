@@ -8,4 +8,6 @@
 
     <!-- icon with all densities are not included - don't bother -->
     <issue id="IconMissingDensityFolder" severity="ignore" />
+    <!-- Ignore warning, let the AGP update manage the gradle version -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>

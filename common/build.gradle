@@ -51,6 +51,7 @@ android {
     namespace = 'org.runnerup.common'
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
 
     sourceSets {
