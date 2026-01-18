@@ -508,7 +508,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void registerStartEventListener() {
     IntentFilter intentFilter = new IntentFilter();
-    // START_WORKOUT is used by Wear/Pebble when GPS is captured
+    // START_WORKOUT is used by Wear when GPS is captured
     // START_ACTIVITY should also start GPS if not done
     intentFilter.addAction(Constants.Intents.START_ACTIVITY);
     intentFilter.addAction(Constants.Intents.START_WORKOUT);

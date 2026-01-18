@@ -57,7 +57,6 @@ import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerElevation;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
-import org.runnerup.tracker.component.TrackerPebble;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerTTS;
@@ -102,8 +101,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       (TrackerReceiver) components.addComponent(new TrackerReceiver(this));
   private final TrackerWear trackerWear =
       (TrackerWear) components.addComponent(new TrackerWear(this));
-  private final TrackerPebble trackerPebble =
-      (TrackerPebble) components.addComponent(new TrackerPebble(this));
 
   private boolean mTimeFromGpsPoints = false;
   private boolean mCurrentSpeedFromGpsPoints = false;
@@ -341,9 +338,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // Add Wear to live loggers if it's active
     if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
       liveLoggers.add(trackerWear);
-
-    if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
-      liveLoggers.add(trackerPebble);
 
     // create the DB activity
     createActivity(workout.getSport());
