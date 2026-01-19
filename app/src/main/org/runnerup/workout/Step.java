@@ -42,7 +42,10 @@ public class Step implements TickComponent {
   Range targetValue = null;
 
   /** Autolap (m) */
-  private double autolap = 0;
+  private double autolap_distance = 0;
+
+  /** Autolap (s) */
+  private double autolap_time = 0;
 
   /** Triggers */
   final ArrayList<Trigger> triggers = new ArrayList<>();
@@ -130,17 +133,18 @@ public class Step implements TickComponent {
   }
 
   /**
-   * @return the autolap distance (may be set in workouts too)
-   */
-  double getAutolap() {
-    return autolap;
-  }
-
-  /**
    * @param val the autolap to set
    */
   void setAutolap(double val) {
-    this.autolap = val;
+    this.autolap_distance = val;
+  }
+
+  double getAutolapDistance() {
+    return autolap_distance;
+  }
+
+  void setAutolapTime(double val) {
+    this.autolap_time = val;
   }
 
   @Override
@@ -302,7 +306,7 @@ public class Step implements TickComponent {
   }
 
   private boolean checkFinished(Workout s) {
-    if (this.getAutolap() == 0 && durationType == null) {
+    if (autolap_distance == 0 && durationType == null) {
       return false;
     }
 
@@ -325,11 +329,18 @@ public class Step implements TickComponent {
       newStep = s.get(Scope.STEP, durationType) + diff >= this.durationValue;
     }
 
-    if (!newStep && this.getAutolap() > 0) {
+    if (!newStep) {
       double distance = s.getDistance(Scope.LAP);
-      double lapDist = getAutolap();
-      if (exceedDistance(distance, mPrevTickLapDistance, lapDist, time)) {
-        newLap = true;
+      if (autolap_distance > 0) {
+        if (exceedDistance(distance, mPrevTickLapDistance, autolap_distance, time)) {
+          newLap = true;
+        }
+      }
+      if (autolap_time > 0) {
+        double lap_time = s.getTime(Scope.LAP);
+        if (lap_time >= autolap_time) {
+          newLap = true;
+        }
       }
       mPrevTickLapDistance = distance;
     }
