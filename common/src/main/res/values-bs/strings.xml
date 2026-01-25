@@ -228,8 +228,6 @@
   <string name="use_step_sensor_summary">Koristi za ritam</string>
   <string name="use_temperature_sensor">Temperaturni senzor</string>
   <string name="use_pressure_sensor_title">Senzor pritiska</string>
-  <string name="adjust_barometer_altitude_from_gps">Prilagodi nadmorsku visinu barometra prema GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Koristi početnu GPS visinu za usrednjavanje barometarske visine</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Puls</string>
   <string name="Autopause_category">Auto pauza</string>

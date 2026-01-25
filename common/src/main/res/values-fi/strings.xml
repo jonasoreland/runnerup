@@ -248,8 +248,6 @@
   <string name="use_step_sensor_summary">Käytä kadenssin laskemiseksi</string>
   <string name="use_temperature_sensor">Lämpötila-anturi</string>
   <string name="use_pressure_sensor_title">Ilmanpaineanturi</string>
-  <string name="adjust_barometer_altitude_from_gps">Mukauta ilmanpaineanturi GPS korkeysasemaan</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Käytä alkuperäistä GPS korkeusasemaa ilmanpaineanturin korkeusaseman stabiloimiseksi</string>
   <string name="channel_notification_ongoing">RunnerUP GPS ja harjoituksen notifikaatiot</string>
   <string name="Lap_start">Kierros alku</string>
   <string name="Lock_activity_buttons">Lukitse harjoituksen painikkeet</string>

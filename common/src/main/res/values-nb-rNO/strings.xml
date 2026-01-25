@@ -228,8 +228,6 @@
   <string name="use_step_sensor_summary">Bruk for takt</string>
   <string name="use_temperature_sensor">Temperatursensor</string>
   <string name="use_pressure_sensor_title">Trykksensor</string>
-  <string name="adjust_barometer_altitude_from_gps">Juster barometerhøyde til GPS-høyde</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Bruk opprinnelig GPS-høyde til gjennomsnitt for barometrisk høyde</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Hjerterytme</string>
   <string name="Autopause_category">Autopause</string>

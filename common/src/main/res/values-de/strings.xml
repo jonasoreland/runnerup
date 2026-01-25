@@ -320,8 +320,6 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="use_temperature_sensor">Temperatursensor</string>
   <string name="use_pressure_sensor_title">Drucksensor</string>
   <string name="use_pressure_sensor_summary">Barometer statt GPS für Höhe verwenden</string>
-  <string name="adjust_barometer_altitude_from_gps">Barometerhöhe aus GPS-Höhe</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Anfängliche GPS-Höhe zum Kalibrieren der barometrischen Höhe verwenden</string>
   <string name="channel_notification_ongoing">RunnerUp GPS- und Aktivitätsbenachrichtigungen</string>
   <string name="Lap_start">Rundenstart</string>
   <string name="Lap_start_summary">Hinweis bei Rundenstart und Aktivität, Aufwärmen, Abkühlen</string>
@@ -367,4 +365,8 @@ Für die Wartung der Daten kann die Datei runnerup.db.export von/nach %1$s im-/e
   <string name="Current_speed_from_GPS_points_summary">Nutze Gechwindigkeit vom GPS-Sensor, statt diese aus den GPS Positionen zu berechnen</string>
   <string name="Target_coaching_summary">Setze das Intervall mit dem die durchschnittliche Bewegung berechnet wird. Für Ziel Rückmeldungen und Pausen bei Audio-Hinweisen</string>
   <string name="Activity_ongoing">Aktivität laufend</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Laufen</string>
+  <string name="SPORT_BIKING">Radfahren</string>
+  <string name="SPORT_OTHER">Andere</string>
 </resources>

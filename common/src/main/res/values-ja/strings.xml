@@ -267,8 +267,6 @@
   <string name="use_step_sensor_summary">ケイデンスの使用</string>
   <string name="use_temperature_sensor">気温センサー</string>
   <string name="use_pressure_sensor_title">気圧センサー</string>
-  <string name="adjust_barometer_altitude_from_gps">気圧計の高度をGPS高度に合わせる</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">最初の GPS 高度を使用して気圧計の高度を平均化する</string>
   <string name="channel_notification_ongoing">RunnerUp GPS とアクティビティ通知</string>
   <string name="Lap_start">ラップ開始</string>
   <string name="Lock_activity_buttons">アクティビティボタンをロックする</string>
@@ -285,4 +283,8 @@
   <string name="Autopause_category">自動一時休止</string>
   <string name="Target_category">目標コーチング</string>
   <string name="Activity_ongoing">アクティビティ継続中</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">ランニング</string>
+  <string name="SPORT_BIKING">サイクリング</string>
+  <string name="SPORT_OTHER">その他</string>
 </resources>
