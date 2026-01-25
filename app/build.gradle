@@ -160,6 +160,7 @@ dependencies {
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:2.2.1"
+    implementation "androidx.core:core-location-altitude:1.0.0-beta01"
 
     latestImplementation "com.google.android.material:material:1.13.0"
     if (rootProject.ext.enableWear) {

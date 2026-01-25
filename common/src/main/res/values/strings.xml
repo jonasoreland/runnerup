@@ -192,7 +192,7 @@
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">GPS poll interval (ms)</string>
   <string name="Poll_distance_m">GPS poll distance (m)</string>
-  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM96)</string>
+  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM2008)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
@@ -317,8 +317,6 @@
   <string name="use_temperature_sensor">Temperature sensor</string>
   <string name="use_pressure_sensor_title">Pressure sensor</string>
   <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
-  <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to the GPS elevation</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Use the initial GPS elevation to average out the barometric elevation</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
   <string name="Lap_start">Lap start</string>
   <string name="Lap_start_summary">Cue for start of laps and Active, Warmup, and Cooldown steps</string>
