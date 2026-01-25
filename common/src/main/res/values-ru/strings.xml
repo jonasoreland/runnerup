@@ -304,8 +304,6 @@
   <string name="use_temperature_sensor">Датчик температуры</string>
   <string name="use_pressure_sensor_title">Датчик давления</string>
   <string name="use_pressure_sensor_summary">Использовать барометр для вычисления перепадов высот</string>
-  <string name="adjust_barometer_altitude_from_gps">Отрегулировать барометр по GPS высоте</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">GPS высота в начальной точке по средним показаниям высоты по барометру</string>
   <string name="channel_notification_ongoing">RunnerUp: уведомления об активности</string>
   <string name="Lap_start">Новый круг</string>
   <string name="Lap_start_summary">Сигнал для начала кругов и этапов Движения, Разминки и Заминки</string>
@@ -347,4 +345,8 @@
   <string name="Current_speed_from_GPS_points_summary">Получить скорость от датчика GPS вместо вычисления по GPS-положениям</string>
   <string name="Target_coaching_summary">Задать период для расчета скользящего среднего для обратной связи с целью и льготный период для звуковых сигналов</string>
   <string name="Activity_ongoing">Продолжать</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Бег</string>
+  <string name="SPORT_BIKING">Велосипед</string>
+  <string name="SPORT_OTHER">Другое</string>
 </resources>

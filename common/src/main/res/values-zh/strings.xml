@@ -312,8 +312,6 @@
   <string name="use_temperature_sensor">温度传感器</string>
   <string name="use_pressure_sensor_title">气压传感器</string>
   <string name="use_pressure_sensor_summary">使用气压计计算海拔</string>
-  <string name="adjust_barometer_altitude_from_gps">使用气压计修正GPS海拔</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">使用初始GPS海拔来平均气压计海拔</string>
   <string name="channel_notification_ongoing">RunnerUp GPS和运动通知</string>
   <string name="Lap_start">分段开始</string>
   <string name="Lap_start_summary">在记圈开始、开始活动、热身、冷身时语音提示</string>
