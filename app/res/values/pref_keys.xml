@@ -148,7 +148,6 @@
     <string name="pref_use_temperature_sensor">pref_use_temperature_sensor</string>
     <string name="pref_use_pressure_sensor">pref_use_pressure_sensor</string>
 
-    <string name="pref_pressure_elevation_gps_average">pref_pressure_elevation_gps_average</string>
     <string name="pref_log_gpx_accuracy">pref_log_gpx_accuracy</string>
     <string name="pref_time_from_gps_points">pref_time_from_gps_points</string>
     <string name="pref_speed_from_gps_points">pref_speed_from_gps_points</string>

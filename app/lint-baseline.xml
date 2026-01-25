@@ -13,14 +13,14 @@
     </issue>
 
     <issue
-        id="UnusedAttribute"
-        message="Attribute `singleLineTitle` is only used in API level 26 and higher (current min is 23)"
-        errorLine1="            android:singleLineTitle=&quot;false&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="AppBundleLocaleChanges"
+        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
+        errorLine1="      configuration.setLocale(locale);"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res/xml/settings_sensors.xml"
-            line="240"
-            column="13"/>
+            file="src/main/org/runnerup/util/Formatter.java"
+            line="112"
+            column="7"/>
     </issue>
 
     <issue

@@ -45,7 +45,6 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
   private Double mAverageGpsElevation = null;
   private long minEleAverageCutoffTime = Long.MAX_VALUE;
   private AltitudeConverterWrapper mAltitudeConverter = null;
-  private boolean mAltitudeFromGpsAverage = true;
   private boolean isStarted;
 
   public TrackerElevation(Tracker tracker, TrackerGPS trackerGPS, TrackerPressure trackerPressure) {
@@ -67,20 +66,20 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
 
     double val;
     Float pressure = tracker.getCurrentPressure();
-    // ignore pressure if in mock mode
+    // pressure only ignore pressure if in mock mode
     if (pressure != null && !lastLocation.isFromMockProvider()) {
       // Pressure available - use it for elevation
       float pressureElevation =
           SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
       if (mPressureOffset == null) {
         double mslOffset =
-            (mAltitudeFromGpsAverage && (mAverageGpsElevation != null))
+            (mAverageGpsElevation != null)
                 ? (mAverageGpsElevation - pressureElevation)
                 : 0D;
         // Apply correction to mean-sea-level
-        Double offset = mAltitudeConverter.getOffset(lastLocation);
+        Double offset = mAltitudeConverter == null ? 0 : mAltitudeConverter.getOffset(lastLocation);
         if (offset != null) {
-          mslOffset += offset;
+          mslOffset = mslOffset - offset;
           // "Lock" the offset (can be unlocked in onLocationChanged)
           mPressureOffset = mslOffset;
         }
@@ -91,9 +90,11 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
       val = LocationCompat.getMslAltitudeMeters(lastLocation);
     } else {
       val = lastLocation.getAltitude();
-      Double offset = mAltitudeConverter.getOffset(lastLocation);
-      if (offset != null) {
-        val -= offset;
+      if (mAltitudeConverter != null) {
+        Double offset = mAltitudeConverter.getOffset(lastLocation);
+        if (offset != null) {
+          val -= offset;
+        }
       }
     }
     return val;
@@ -101,20 +102,21 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
 
   public void onLocationChanged(android.location.Location arg0) {
     if (arg0.hasAltitude()
-        && (mPressureOffset == null || arg0.getTime() < minEleAverageCutoffTime || !isStarted)) {
+        && (!isStarted || mPressureOffset == null || arg0.getTime() < minEleAverageCutoffTime)) {
       // If mPressureOffset is not "used" yet or shortly after first GPS, update the average
-      double ele = arg0.getAltitude();
       final int minElevationStabilizeTime = 60;
       if (minEleAverageCutoffTime == Long.MAX_VALUE) {
         minEleAverageCutoffTime = arg0.getTime() + minElevationStabilizeTime * 1000;
       }
+      double ele = arg0.getAltitude();
       if (mAverageGpsElevation == null) {
         mAverageGpsElevation = ele;
       } else {
-        final float alpha = 0.5f;
+        // low pass filter to align relative quickly
+        final float alpha = 0.3f;
         mAverageGpsElevation = mAverageGpsElevation * alpha + (1 - alpha) * ele;
       }
-      if (!LocationCompat.hasMslAltitude(arg0)) {
+      if (mAltitudeConverter != null && !LocationCompat.hasMslAltitude(arg0)) {
         mAltitudeConverter.calcOffset(arg0);
       }
       // Recalculate offset when needed
@@ -132,16 +134,11 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
   @Override
   public ResultCode onInit(Callback callback, Context context) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    mAltitudeFromGpsAverage =
-        prefs.getBoolean(
-            context.getString(org.runnerup.R.string.pref_pressure_elevation_gps_average), false);
     boolean altitudeAdjust =
         prefs.getBoolean(context.getString(R.string.pref_altitude_adjust), true);
-    boolean usePressure =
-        prefs.getBoolean(context.getString(R.string.pref_use_pressure_sensor), true);
-    // mAltitudeConverter is needed also if !usePressure and SDK > 34 (Android 14),
-    // all devices do not calcalate
-    mAltitudeConverter = new AltitudeConverterWrapper(context);
+    if (altitudeAdjust) {
+       mAltitudeConverter = new AltitudeConverterWrapper(context);
+    }
     return ResultCode.RESULT_OK;
   }
 
@@ -201,7 +198,8 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
   }
 
   /**
-   * New wrapper for AltitudeConverterCompat to handle asynchronous loading and offset calculation.
+   * Convert GPS elevation to mean-sea-level elevation wrapper for AltitudeConverterCompat to handle
+   * asynchronous loading and offset calculation.
    */
   private static class AltitudeConverterWrapper {
     // Keep the interval reasonable to avoid constant background work
@@ -219,6 +217,8 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
       this.context = context;
     }
 
+    // mAltitudeConverter is needed also if SDK > 34 (Android 14),
+    // all devices do not calculate
     public static boolean hasMslAltitude(Location location) {
       return location != null && LocationCompat.hasMslAltitude(location);
     }
