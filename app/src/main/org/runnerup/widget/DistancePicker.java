@@ -33,7 +33,7 @@ public class DistancePicker extends LinearLayout {
   private final NumberPicker meters;
 
   public DistancePicker(Context context, AttributeSet attrs) {
-    super(context, attrs);
+    super(context);
 
     unitMeters = new NumberPicker(context, attrs);
     LinearLayout unitStringLayout = new LinearLayout(context);

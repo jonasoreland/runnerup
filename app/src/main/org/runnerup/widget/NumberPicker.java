@@ -65,7 +65,7 @@ public class NumberPicker extends LinearLayout {
   private String fmtString = "%0" + digits + "d";
 
   public NumberPicker(Context context, AttributeSet attrs) {
-    super(context, attrs);
+    super(context);
 
     createValueText(context);
     createButton(context, '+');
