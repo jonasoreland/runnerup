@@ -228,7 +228,7 @@ public class NumberPicker extends LinearLayout {
 
   private void validateInput(EditText tv) {
     String str = String.valueOf(tv.getText());
-    if ("".equals(str)) {
+    if (str.isEmpty()) {
       updateView();
     } else {
       try {

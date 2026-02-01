@@ -24,13 +24,16 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
@@ -260,7 +263,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
-    Log.e(
+    Log.i(
         getClass().getName(),
         "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
@@ -429,7 +432,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   private static void echoDo(SQLiteDatabase arg0, String str) {
-    Log.e("DBHelper", "execSQL(" + str + ")");
+    Log.d("DBHelper", "execSQL(" + str + ")");
     arg0.execSQL(str);
   }
 
@@ -463,7 +466,6 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
         try {
           // Check if AUTH_CONFIG contains deprecated FORMAT field
           JSONObject authcfg = new JSONObject(oldAuthConfig);
-          @SuppressWarnings("ConstantConditions")
           String format = authcfg.optString(DB.ACCOUNT.FORMAT, null);
           if (format != null) {
             // Move deprecated FORMAT field in AUTH_CONFIG to ACCOUNT.FORMAT
@@ -535,8 +537,10 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     insertAccount(arg0, EndurainSynchronizer.NAME, 1);
     insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
     insertAccount(arg0, FileSynchronizer.NAME, 1);
-    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
-    insertAccount(arg0, DropboxSynchronizer.NAME, 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED ? 1 : 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED ? 1 : 0);
     insertAccount(arg0, WebDavSynchronizer.NAME, 1);
   }
 
@@ -567,12 +571,12 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
       arg1.remove(DB.ACCOUNT.FORMAT);
       arg1.remove(DB.ACCOUNT.AUTH_METHOD);
       arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-      Log.v("DBhelper", "update: " + arg1);
+      Log.d("DBhelper", "update: " + arg1);
     }
   }
 
   public static void deleteAccount(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting account: " + id);
+    Log.v("DBHelper", "deleting account: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
     db.delete(DB.ACCOUNT.TABLE, "_id = ?", args);
@@ -601,7 +605,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   public static void deleteActivity(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting activity: " + id);
+    Log.v("DBHelper", "deleting activity: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
     db.delete(DB.LOCATION.TABLE, DB.LOCATION.ACTIVITY + " = ?", args);
@@ -624,35 +628,40 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     }
     c.close();
 
-    if (list.size() > 0) {
-      new AsyncTask<Long, Void, Void>() {
+    if (!list.isEmpty()) {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Handler handler = new Handler(Looper.getMainLooper());
 
-        @Override
-        protected void onPreExecute() {
-          dialog.setMax(list.size());
-          super.onPreExecute();
-        }
+      // Pre-execution step (runs on the current/main thread)
+      dialog.setMax(list.size());
 
-        @Override
-        protected Void doInBackground(Long... args) {
-          for (Long id : list) {
-            deleteActivity(db, id);
-            dialog.incrementProgressBy(1);
-          }
-          return null;
-        }
+      executor.execute(
+          () -> {
+            int currentProgress = 0;
+            for (Long id : list) {
+              deleteActivity(db, id);
+              currentProgress++;
+              final int progressToShow = currentProgress;
+              handler.post(() -> dialog.setProgress(progressToShow));
+            }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-          db.close();
-          mDBHelper.close();
-          if (onComplete != null) onComplete.run();
-        }
-      }.execute((long) 2);
+            // Post-execution step (runs on the main thread)
+            handler.post(
+                () -> {
+                  db.close();
+                  mDBHelper.close();
+                  if (onComplete != null) {
+                    onComplete.run();
+                  }
+                });
+          });
     } else {
+      // No activities to delete, just clean up
       db.close();
       mDBHelper.close();
-      if (onComplete != null) onComplete.run();
+      if (onComplete != null) {
+        onComplete.run();
+      }
     }
   }
 

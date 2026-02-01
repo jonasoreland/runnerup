@@ -24,6 +24,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.wear.ongoing.OngoingActivity;
@@ -54,7 +56,7 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onCreate() {
     super.onCreate();
-    System.err.println("ListenerService.onCreate()");
+    Log.d(getClass().getName(), "ListenerService.onCreate()");
     mGoogleApiClient = new WearableClient(getApplicationContext());
     mGoogleApiClient.readData(Constants.Wear.Path.WEAR_APP, dataItem -> {
         mainActivityRunning = (dataItem != null);
@@ -81,7 +83,7 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    System.err.println("ListenerService.onDestroy()");
+    Log.d(getClass().getName(), "ListenerService.onDestroy()");
     if (mGoogleApiClient != null) {
       mGoogleApiClient = null;
     }
@@ -89,14 +91,14 @@ public class ListenerService extends WearableListenerService {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    System.err.println("ListenerService.onStart()");
+    Log.d(getClass().getName(), "ListenerService.onStart()");
     return super.onStartCommand(intent, flags, startId);
   }
 
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+      Log.d(getClass().getName(), "onDataChanged: " + ev.getDataItem().getUri());
       var type = ev.getType();
       String path = ev.getDataItem().getUri().getPath();
       if (!(type == DataEvent.TYPE_DELETED || type == DataEvent.TYPE_CHANGED)) {
@@ -129,19 +131,19 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onPeerConnected(Node peer) {
     if (BuildConfig.DEBUG) {
-      System.err.println("ListenerService.onPeerConnected: " + peer.getId());
+      Log.d(getClass().getName(), "ListenerService.onPeerConnected: " + peer.getId());
     }
   }
 
   @Override
   public void onPeerDisconnected(Node peer) {
     if (BuildConfig.DEBUG) {
-      System.err.println("ListenerService.onPeerDisconnected: " + peer.getId());
+      Log.d(getClass().getName(), "ListenerService.onPeerDisconnected: " + peer.getId());
     }
   }
 
   private void maybeShowNotification() {
-    System.err.println("mainActivityRunning=" + mainActivityRunning +
+    Log.d(getClass().getName(), "mainActivityRunning=" + mainActivityRunning +
                        ", phoneApp=" + phoneApp +
                        " ,phoneRunning=" + phoneRunning +
                        " ,trackerState=" + trackerState);
@@ -160,7 +162,7 @@ public class ListenerService extends WearableListenerService {
     }
 
     if (mainActivityRunning == null || phoneRunning == null || trackerState == null) {
-      System.err.println("wait for read");
+      Log.d(getClass().getName(), "wait for read");
       return;
     }
     showNotification();
@@ -262,9 +264,15 @@ public class ListenerService extends WearableListenerService {
     if (ongoingActivity == null) {
       return;
     }
-    ongoingActivity.update(this, new Status.Builder()
-                           .addPart("Status",
-                                    new TextPart(getStatusString())).build());
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+      return;
+    }
+
+    ongoingActivity.update(
+        this, new Status.Builder().addPart("Status", new TextPart(getStatusString())).build());
   }
 
   private void dismissNotification() {

@@ -57,7 +57,6 @@ import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerElevation;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
-import org.runnerup.tracker.component.TrackerPebble;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerTTS;
@@ -102,8 +101,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       (TrackerReceiver) components.addComponent(new TrackerReceiver(this));
   private final TrackerWear trackerWear =
       (TrackerWear) components.addComponent(new TrackerWear(this));
-  private final TrackerPebble trackerPebble =
-      (TrackerPebble) components.addComponent(new TrackerPebble(this));
 
   private boolean mTimeFromGpsPoints = false;
   private boolean mCurrentSpeedFromGpsPoints = false;
@@ -206,7 +203,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
             state.set(TrackerState.INITIALIZED);
           }
 
-          Log.e(getClass().getName(), "state.set(" + getState() + ")");
+          Log.d(getClass().getName(), "state.set(" + getState() + ")");
           handleNextState();
         }
       };
@@ -251,14 +248,14 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   public void connect() {
-    Log.e(getClass().getName(), "Tracker.connect() - state: " + state.get());
+    Log.d(getClass().getName(), "Tracker.connect() - state: " + state.get());
     switch (state.get()) {
       case INIT:
         setup();
       case INITIALIZING:
       case CLEANUP:
         nextState = TrackerState.CONNECTED;
-        Log.e(getClass().getName(), " => nextState: " + nextState);
+        Log.d(getClass().getName(), " => nextState: " + nextState);
         return;
       case INITIALIZED:
         break;
@@ -321,7 +318,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
       mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, logGpxAccuracy);
     } catch (IllegalStateException ex) {
-      Log.e(getClass().getName(), "Query failed:", ex);
+      Log.i(getClass().getName(), "Query failed:", ex);
     }
     return mActivityId;
   }
@@ -341,9 +338,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // Add Wear to live loggers if it's active
     if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
       liveLoggers.add(trackerWear);
-
-    if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
-      liveLoggers.add(trackerPebble);
 
     // create the DB activity
     createActivity(workout.getSport());

@@ -102,11 +102,8 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
       try {
         mFormat = new FileFormats(config.getAsString(Constants.DB.ACCOUNT.FORMAT));
         JSONObject tmp = new JSONObject(authToken);
-        //noinspection ConstantConditions
         username = tmp.optString("username", null);
-        //noinspection ConstantConditions
         password = tmp.optString("password", null);
-        //noinspection ConstantConditions
         url = tmp.optString("url", null);
       } catch (JSONException e) {
         e.printStackTrace();

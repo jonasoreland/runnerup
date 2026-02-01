@@ -310,8 +310,6 @@
   <string name="use_temperature_sensor">Sensore della temperatura</string>
   <string name="use_pressure_sensor_title">Sensore della pressione</string>
   <string name="use_pressure_sensor_summary">Usa il barometro per calcolare l\'altezza</string>
-  <string name="adjust_barometer_altitude_from_gps">Regola l\'altitudine del barometro con l\'elevazione GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Utilizza l\'altitudine GPS iniziale per l\'altitudine barometrica media</string>
   <string name="channel_notification_ongoing">Notifiche GPS e attività RunnerUp</string>
   <string name="Lap_start">Inizio giro</string>
   <string name="Lap_start_summary">Notifiche di inizio giro e delle fasi Attivo, Riscaldamento e Defaticamento</string>
@@ -355,4 +353,8 @@
   <string name="Current_speed_from_GPS_points_summary">Ottieni la velocità dal GPS invece di calcolarla dalla posizione GPS</string>
   <string name="Target_coaching_summary">Imposta l\'intervallo di calcolo della media mobile per il feedback dell\'obiettivo e il tempo di grazia per le notifiche audio</string>
   <string name="Activity_ongoing">Attività in corso</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Corsa</string>
+  <string name="SPORT_BIKING">Bici</string>
+  <string name="SPORT_OTHER">Altro</string>
 </resources>

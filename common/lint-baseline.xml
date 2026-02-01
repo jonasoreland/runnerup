@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 7.4.1" type="baseline" client="gradle" dependencies="false" name="AGP (7.4.1)" variant="all" version="7.4.1">
-
-    <issue
-        id="IconMissingDensityFolder"
-        message="Missing density variation folders in `src\main\res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi">
-        <location
-            file="src/main/res"/>
-    </issue>
+<issues format="6" by="lint 9.0.0" type="baseline" client="gradle" dependencies="false" name="AGP (9.0.0)" variant="all" version="9.0.0">
 
 </issues>

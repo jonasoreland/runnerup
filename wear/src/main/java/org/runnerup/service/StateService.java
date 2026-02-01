@@ -21,6 +21,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,6 +40,8 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
+
+import java.util.Objects;
 
 public class StateService extends Service
     implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
@@ -89,7 +93,7 @@ public class StateService extends Service
     mGoogleApiClient.connect();
     this.headers.registerChangeListener(this);
 
-    System.err.println("StateService.onCreate()");
+    Log.d(getClass().getName(), "StateService.onCreate()");
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -101,7 +105,7 @@ public class StateService extends Service
     mDataClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
         if (dataItem != null ) {
           phoneNode = dataItem.getUri().getHost();
-          System.err.println("getDataItem => phoneNode:" + phoneNode);
+          Log.d(getClass().getName(), "getDataItem => phoneNode:" + phoneNode);
         }
       });
     mDataClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
@@ -133,7 +137,7 @@ public class StateService extends Service
 
   @Override
   public void onDestroy() {
-    System.err.println("StateService.onDestroy()");
+    Log.d(getClass().getName(), "StateService.onDestroy()");
     trackerState.clearListeners();
     if (mGoogleApiClient != null) {
       if (mGoogleApiClient.isConnected()) {
@@ -191,14 +195,14 @@ public class StateService extends Service
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
     } else {
-      System.err.println("onMessageReceived: " + messageEvent);
+      Log.d(getClass().getName(), "onMessageReceived: " + messageEvent);
     }
   }
 
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      System.err.println("onDataChanged: " + ev.getDataItem().getUri());
+      Log.d(getClass().getName(), "onDataChanged: " + ev.getDataItem().getUri());
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         setPhoneNode(ev);
@@ -211,7 +215,7 @@ public class StateService extends Service
   }
 
   private void setPhoneNode(DataEvent ev) {
-    if (ev.getType() == DataEvent.TYPE_CHANGED) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
       phoneNode = new String(ev.getDataItem().getData());
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       phoneNode = null;
@@ -223,7 +227,7 @@ public class StateService extends Service
     if (ev.getType() == DataEvent.TYPE_CHANGED) {
       Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
       b.putLong(UPDATE_TIME, System.currentTimeMillis());
-      System.err.println("setHeaders(): b=" + b);
+      Log.d(getClass().getName(), "setHeaders(): b=" + b);
       headers.set(b);
     } else {
       headers.set(null);

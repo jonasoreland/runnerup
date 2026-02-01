@@ -46,7 +46,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   public static final String NAME = "Endurain";
 
-  private static final String TOKEN_URL_PATH = "/api/v1/token";
+  private static final String TOKEN_URL_PATH = "/api/v1/auth/login";
   private static final String UPLOAD_URL_PATH = "/api/v1/activities/create/upload";
 
   private long id = 0;
@@ -99,11 +99,8 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     if (authToken != null) {
       try {
         JSONObject tmp = new JSONObject(authToken);
-        //noinspection ConstantConditions
         username = tmp.optString("username", null);
-        //noinspection ConstantConditions
         password = tmp.optString("password", null);
-        //noinspection ConstantConditions
         url = tmp.optString("url", null);
         hasCorrectConfig = tmp.optBoolean("hasCorrectConfig", false);
       } catch (JSONException e) {
@@ -171,7 +168,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
       OkHttpClient client = getAuthClient();
       RequestBody formBody =
           new FormBody.Builder()
-              .add("grant_type", "password")
               .add("username", username)
               .add("password", password)
               .build();

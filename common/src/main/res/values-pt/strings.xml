@@ -312,8 +312,6 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressão</string>
   <string name="use_pressure_sensor_summary">Usar barómetro para calcular a altitude</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barómetro à elevação do GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para calcular a altitude barométrica média</string>
   <string name="channel_notification_ongoing">RunnerUp GPS e notificações da atividade</string>
   <string name="Lap_start">Início da volta</string>
   <string name="Lap_start_summary">Aviso para início de voltas e etapas de atividade, aquecimento e arrefecimento</string>

@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:9.0.0'
     }
 }
 
@@ -15,10 +15,10 @@ repositories {
 project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
-    buildToolsVersion = '36.0.0' //Update Travis manually
-    compileSdk = 35 //Update Travis manually
-    targetSdk = 35
-    minSdk = 21
+    buildToolsVersion = '36.1.0' // also .github/workflows/actions.yml
+    compileSdk = 36.1 // also .github/workflows/actions.yml
+    targetSdk = 36.1
+    minSdk = 23
 
     appcompat_version = "1.7.1"
     annotation_version = "1.6.0"
@@ -28,21 +28,62 @@ project.ext {
     googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
-    mockitoVersion = '5.18.0'
+    mockitoVersion = '5.21.0'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.9.0.6'
+    versionName = '2.10.0.0'
     // wear uses +1, only set even codes
-    versionCode = 358
+    versionCode = 366
     latestBaseVersionCode = minSdk * 1000000
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
     enableWear = !project.hasProperty('org.runnerup.wear.disable') && rootProject.file("wear").exists()
-
-    // Use or not use mapbox.
-    useMapBox = allowNonFree && rootProject.file("mapbox.properties").exists()
     noMap = project.hasProperty('org.runnerup.nomap')
+
+    // get tokens, also required to set buildDirs
+
+    mapboxAccessToken = ""
+    def props = new Properties()
+    if (!noMap && allowNonFree && rootProject.file("mapbox.properties").exists()) {
+        // https://www.mapbox.com/account/
+        props.load(new FileInputStream(rootProject.file("mapbox.properties")))
+        mapboxAccessToken = props.getProperty("mapboxAccessToken") ?: ""
+    }
+    mapboxEnabled = !mapboxAccessToken.isEmpty()
+    osmdroidEnabled = !noMap && !mapboxEnabled
+
+    runalyzeId = ""
+    if (rootProject.file("runalyze.properties").exists()) {
+        // Contact Runalyze team at https://forum.runalyze.com/
+        props.load(new FileInputStream(rootProject.file("runalyze.properties")))
+        runalyzeEnabled = true
+        runalyzeId = props.getProperty("CLIENT_ID") ?: ""
+        runalyzeSecret = props.getProperty("CLIENT_SECRET") ?: ""
+    }
+    if (runalyzeId.isEmpty() || runalyzeSecret.isEmpty()) {
+        // Demo, with runalyzeEnabled set to false connect to testing.runalyze.com
+        runalyzeEnabled = false
+        runalyzeId = "8_2jx5jt9r39ic40ooc80c8c0884okgk0owsowg808c4csg8ko8g"
+        runalyzeSecret = "1v7d6nwe1v9c8skok44g0gc8cc04cc0wwwo8swwgckoogwsww4"
+    }
+
+    dropboxEnabled = false
+    dropboxId = ""
+    dropboxSecret = ""
+    if (rootProject.file("dropbox.properties").exists()) {
+        // Create an app at https://www.dropbox.com/developers/apps/
+        // Dropbox API, App folder -> create app
+        // Enable additional users, Redirect URI:http://localhost:8080/runnerup/dropbox, Disallow implicit grant
+        // Set branding icon
+        // Create dropbox.properties with two lines:
+        //   CLIENT_ID="replace_dropbox_id"
+        //   CLIENT_SECRET="replace_dropbox_secret"
+        props.load(new FileInputStream(rootProject.file("dropbox.properties")))
+        dropboxEnabled = true
+        dropboxId = props.getProperty("CLIENT_ID") ?: ""
+        dropboxSecret = props.getProperty("CLIENT_SECRET") ?: ""
+    }
 
     // Note: AntPlus may have to be downloaded explicitly due to licensing
     // Therefore, the .aar file may not be redistributed in the RU repo

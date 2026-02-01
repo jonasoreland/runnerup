@@ -1,21 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'org.runnerup'
-    compileSdk rootProject.ext.compileSdk
+    namespace = 'org.runnerup'
+    compileSdk = rootProject.ext.compileSdk
     buildToolsVersion = rootProject.ext.buildToolsVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.toVersion("17")
-        targetCompatibility JavaVersion.toVersion("17")
+        sourceCompatibility = JavaVersion.toVersion("17")
+        targetCompatibility = JavaVersion.toVersion("17")
     }
 
     defaultConfig {
-        minSdk 25
-        targetSdk rootProject.ext.targetSdk
-        versionName rootProject.ext.versionName
-        versionCode rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode + 1
-        applicationId rootProject.ext.applicationId
+        minSdk = 25
+        targetSdk = rootProject.ext.targetSdk
+        versionName = rootProject.ext.versionName
+        versionCode = rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode + 1
+        applicationId = rootProject.ext.applicationId
     }
 
     signingConfigs {
@@ -26,27 +26,31 @@ android {
 
     buildTypes {
         release {
-            debuggable false
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
-            signingConfig signingConfigs.release
+            debuggable = false
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
+            signingConfig = signingConfigs.release
         }
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix = ".debug"
         }
     }
     lint {
-        baseline file('lint-baseline.xml')
-        checkReleaseBuilds true
-        lintConfig file('lint.xml')
-        showAll true
-        //textOutput 'stdout'
-        textReport true
+        baseline = file('lint-baseline.xml')
+        checkReleaseBuilds = true
+        lintConfig = file('lint.xml')
+        showAll = true
+        //textOutput = 'stdout'
+        textReport = true
+        // Treat all warnings as errors
+        warningsAsErrors = true
+        // Halt the build if any errors are found
+        abortOnError = true
     }
-    namespace 'org.runnerup'
+    namespace = 'org.runnerup'
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 }
 
@@ -55,17 +59,7 @@ repositories {
     mavenCentral()
 }
 
-// Duplicate class kotlin.collections.jdk8 (from MapBox?)
 dependencies {
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
-            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
-            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
-        }
-    }
-
     implementation project(':common')
 
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
@@ -76,9 +70,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
 
     implementation "androidx.wear:wear:1.3.0"
-    implementation "androidx.wear:wear-ongoing:1.0.0"
+    implementation "androidx.wear:wear-ongoing:1.1.0"
     // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
-    implementation "androidx.core:core:1.16.0"
+    implementation "androidx.core:core:1.17.0"
 }
 
 def props = new Properties()

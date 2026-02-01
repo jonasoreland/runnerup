@@ -143,7 +143,6 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
     if (authConfig != null) {
       try {
         JSONObject tmp = new JSONObject(authConfig);
-        //noinspection ConstantConditions
         access_token = tmp.optString("access_token", null);
       } catch (Exception e) {
         e.printStackTrace();
@@ -232,7 +231,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
       out.close();
       int responseCode = conn.getResponseCode();
       String amsg = conn.getResponseMessage();
-      Log.e(getName(), "code: " + responseCode + ", amsg: " + amsg);
+      Log.d(getName(), "code: " + responseCode + ", amsg: " + amsg);
 
       BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       JSONObject obj = SyncHelper.parse(in);
@@ -252,7 +251,7 @@ public class RunningAHEADSynchronizer extends DefaultSynchronizer implements OAu
         }
       }
       if (!found) {
-        Log.e(getName(), "Unhandled response from RunningAHEADSynchronizer: " + obj);
+        Log.i(getName(), "Unhandled response from RunningAHEADSynchronizer: " + obj);
       }
       if (responseCode == HttpURLConnection.HTTP_OK && found) {
         conn.disconnect();

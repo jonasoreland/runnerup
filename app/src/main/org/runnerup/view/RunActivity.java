@@ -150,7 +150,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     final Resources res = this.getResources();
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
 
-    if (prefs.getBoolean(res.getString(R.string.pref_bt_debug), false) == false) {
+    if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
     }
 
@@ -198,7 +198,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    Log.e(getClass().getName(), "onConfigurationChange => do NOTHING!!");
+    Log.d(getClass().getName(), "onConfigurationChange => do NOTHING!!");
   }
 
   @Override
@@ -252,8 +252,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     List<Workout.StepListEntry> list = workout.getStepList();
     for (Workout.StepListEntry aList : list) {
       WorkoutRow row = new WorkoutRow();
-      row.level = aList.level;
-      row.step = aList.step;
+      row.level = aList.level();
+      row.step = aList.step();
       row.lap = null;
       workoutRows.add(row);
     }
@@ -622,11 +622,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
       LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
       return inflater.inflate(R.layout.laplist_row, parent, false);
-    }
-
-    @Override
-    public boolean hasStableIds() {
-      return false;
     }
   }
 }

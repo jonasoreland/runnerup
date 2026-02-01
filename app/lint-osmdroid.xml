@@ -41,7 +41,8 @@
     <issue id="ClickableViewAccessibility" severity="ignore">
         <ignore path="**/NumberPicker.java" />
     </issue>
-    <!-- Ignore warning, let the AGP update manage the gradle version -->
-    <issue id="AndroidGradlePluginVersion" severity="ignore" />
-    <!-- lint-osmdroid.xml has specific suppressions, maintained separately -->
+    <!-- Specific for CI - MapBox cannot be downloaded -->
+    <issue id="UnusedResources" severity="ignore">
+        <ignore path="**/res/drawable-*/ic_map_marker*.png" />
+    </issue>
 </lint>

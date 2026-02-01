@@ -439,7 +439,7 @@ public class WorkoutSerializer {
       throws FileNotFoundException, JSONException {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     File fin = getFile(ctx, name);
-    Log.e("WorkoutSerializer", "reading " + fin.getPath());
+    Log.d("WorkoutSerializer", "reading " + fin.getPath());
 
     Workout w = readJSON(new FileReader(fin));
     w.sport =
@@ -452,7 +452,7 @@ public class WorkoutSerializer {
   public static void writeFile(Context ctx, String name, Workout workout)
       throws IOException, JSONException {
     File fout = getFile(ctx, name);
-    Log.e("WorkoutSerializer", "writing " + fout.getPath());
+    Log.v("WorkoutSerializer", "writing " + fout.getPath());
     writeJSON(new FileWriter(fout), workout);
   }
 
@@ -470,21 +470,21 @@ public class WorkoutSerializer {
     Workout.StepListEntry prev = null;
     for (Workout.StepListEntry e : workout.getStepList()) {
       jsonstep s = new jsonstep();
-      s.step = e.step;
+      s.step = e.step();
       s.order = no++;
-      if (e.parent != null) {
-        while (e.parent != stepStack.peek().step) {
+      if (e.parent() != null) {
+        while (e.parent() != stepStack.peek().step) {
           stepStack.pop();
           group = stepStack.peek().group;
         }
         s.parentGroup = stepStack.peek().group;
         s.parentStep = (RepeatStep) stepStack.peek().step;
       }
-      if (e.step instanceof RepeatStep) {
+      if (e.step() instanceof RepeatStep) {
         group++;
         stepStack.push(s);
       }
-      if (e.parent == null && prev != null && prev.parent != null) {
+      if (e.parent() == null && prev != null && prev.parent() != null) {
         group++;
       }
       s.group = group;

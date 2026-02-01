@@ -35,6 +35,7 @@
   <string name="cool_down">récupération</string>
   <string name="repeat">Répétitions</string>
   <string name="repeat_times">Répéter %1$d fois</string>
+  <string name="Time">Temps</string>
   <string name="time">temps</string>
   <string name="distance">distance</string>
   <string name="Distance">Distance</string>
@@ -312,8 +313,6 @@
   <string name="use_temperature_sensor">Capteur de température</string>
   <string name="use_pressure_sensor_title">Capteur de pression</string>
   <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'altitude</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajuster l\'altitude du baromètre à l\'altitude GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Utiliser l\'altitude initiale du signal GPS pour obtenir une altitude barométrique moyenne</string>
   <string name="channel_notification_ongoing">Notifications de GPS et activité RunnerUp</string>
   <string name="Lap_start">Début du tour</string>
   <string name="Lap_start_summary">Suivi audio pour démarrage d\'étapes Actives, Échauffement et Récupération</string>
@@ -358,4 +357,8 @@
   <string name="Current_speed_from_GPS_points_summary">Utiliser la vitesse du capteur GPS au lieu de la calculer à partir des positions GPS</string>
   <string name="Target_coaching_summary">Définir la période de calcul de la moyenne en temps réel pour le retour sur objectif et la période de grâce pour le suivi audio</string>
   <string name="Activity_ongoing">Séance en cours</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Course</string>
+  <string name="SPORT_BIKING">Vélo</string>
+  <string name="SPORT_OTHER">Autre</string>
 </resources>

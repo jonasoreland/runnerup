@@ -39,6 +39,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -76,6 +78,7 @@ public class MainLayout extends AppCompatActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    EdgeToEdge.enable(this);
     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     setContentView(R.layout.main);
 
@@ -112,7 +115,7 @@ public class MainLayout extends AppCompatActivity {
     // clear basicTargetType between application startup/shutdown
     pref.edit().remove(getString(R.string.pref_basic_target_type)).apply();
 
-    Log.e(
+    Log.i(
         getClass().getName(),
         "app-version: " + versionCode + ", upgradeState: " + upgradeState + ", km: " + km);
 
@@ -295,7 +298,7 @@ public class MainLayout extends AppCompatActivity {
           // Normal, src is directory for first call
         }
 
-        Log.v(getClass().getName(), "Found: " + src + ", " + dst + ", isFile: " + isFile);
+        Log.d(getClass().getName(), "Found: " + src + ", " + dst + ", isFile: " + isFile);
 
         if (!isFile) {
           // The request is hierarchical, source is still on a directory level
@@ -303,7 +306,7 @@ public class MainLayout extends AppCompatActivity {
           //noinspection ResultOfMethodCallIgnored
           dstDir.mkdir();
           if (!dstDir.isDirectory()) {
-            Log.w(
+            Log.i(
                 getClass().getName(),
                 "Failed to copy " + src + " as \"" + dstBase + "\" is not a directory!");
             continue;
@@ -313,7 +316,7 @@ public class MainLayout extends AppCompatActivity {
           // Source is a file, ready to copy
           File dstFile = new File(dst);
           if (dstFile.isDirectory() || dstFile.isFile()) {
-            Log.v(
+            Log.d(
                 getClass().getName(),
                 "Skip: "
                     + dst
@@ -328,13 +331,13 @@ public class MainLayout extends AppCompatActivity {
           String key = "install_bundled_" + add;
           SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
           if (pref.contains(key)) {
-            Log.v(getClass().getName(), "Skip already existing pref: " + key);
+            Log.d(getClass().getName(), "Skip already existing pref: " + key);
             continue;
           }
 
           pref.edit().putBoolean(key, true).apply();
 
-          Log.v(getClass().getName(), "Copying: " + dst);
+          Log.d(getClass().getName(), "Copying: " + dst);
           InputStream input = null;
           try {
             input = mgr.open(src);

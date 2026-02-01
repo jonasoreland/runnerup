@@ -57,16 +57,17 @@ public class TargetTrigger extends Trigger {
 
   public TargetTrigger(Dimension dim, int movingAverageSeconds, int graceSeconds) {
     dimension = dim;
-    measure = new double[movingAverageSeconds];
-    sort_measure = new double[movingAverageSeconds];
+    final int movingAverage = Math.max(1, movingAverageSeconds);
+    measure = new double[movingAverage];
+    sort_measure = new double[movingAverage];
 
     if (dimension == Dimension.HRZ) dimension = Dimension.HR;
 
-    measure_time = new double[movingAverageSeconds];
-    measure_distance = new double[movingAverageSeconds];
+    measure_time = new double[movingAverage];
+    measure_distance = new double[movingAverage];
 
     minGraceCount = graceSeconds;
-    skip_values = (5 * movingAverageSeconds) / 100; // ignore 5% lowest and
+    skip_values = (5 * movingAverage) / 100; // ignore 5% lowest and
     // 5% higest values
 
     reset();
@@ -111,16 +112,15 @@ public class TargetTrigger extends Trigger {
       for (int i = 0; i < elapsed_seconds; i++) {
         addObservation(val_now);
       }
-      // Log.e(getName(), "val_now: " + val_now + " elapsed: " +
-      // elapsed_seconds);
+      // Log.d(getName(), "val_now: " + val_now + " elapsed: " + elapsed_seconds);
 
       if (graceCount > 0) { // only emit coaching ever so often
-        // Log.e(getName(), "graceCount: " + graceCount);
+        // Log.d(getName(), "graceCount: " + graceCount);
         graceCount -= elapsed_seconds;
       } else {
         double avg = getValue();
         double cmp = range.compare(avg);
-        // Log.e(getName(), " => avg: " + avg + " => cmp: " + cmp);
+        // Log.d(getName(), " => avg: " + avg + " => cmp: " + cmp);
         if (cmp == 0) {
           graceCount = minGraceCount;
           return false;
@@ -249,6 +249,7 @@ public class TargetTrigger extends Trigger {
   @Override
   public void onStart(Scope what, Workout s) {
     if (this.scope == what) {
+      paused = false;
       reset();
       for (Feedback f : triggerAction) {
         f.onStart(s);

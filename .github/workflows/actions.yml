@@ -1,0 +1,120 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - master
+      - test/**
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  ANDROID_API: 36.1
+  ANDROID_BUILD_TOOLS: 36.1.0
+  ADB_INSTALL_TIMEOUT: 5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Cache Gradle Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches/build-cache-*
+          key: ${{ runner.os }}-gradle-build-cache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-build-cache-
+
+      - name: Restore cache for Git LFS Objects
+        id: lfs-cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.git/lfs/objects/**') }}
+          restore-keys: ${{ runner.os }}-lfs-
+
+      - name: Git LFS Pull
+        run: git lfs pull
+ 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          sdkmanager "tools"
+          sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
+          sdkmanager "platforms;android-${ANDROID_API}"
+          sdkmanager "extras;android;m2repository"
+          sdkmanager "extras;google;m2repository"
+          sdkmanager "extras;google;google_play_services"
+          
+      - name: Prepare builddir
+        run: |
+          # secrets are only available for collabrators, other will build with OsmDroid (but a few more options than F-Droid still)
+          echo "${{ secrets.MAPBOX }}" > $GITHUB_WORKSPACE/mapbox.properties
+          echo "${{ secrets.DROPBOX }}" > $GITHUB_WORKSPACE/dropbox.properties
+          echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
+          chmod +x gradlew
+
+      - name: Build bundle
+        run: ./gradlew :app:bundleLatestRelease :wear:bundleRelease
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-bundle
+          # possibly include: app/build/outputs/bundle/latestRelease/ wear/build/outputs/bundle/release/
+          path: |
+            **/build/outputs/logs/
+
+      - name: Test
+        run: ./gradlew test
+
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: |
+            **/build/reports/tests/
+
+      - name: Lint latest release
+        run: ./gradlew :app:lintLatestRelease :wear:lintRelease :hrdevice:lintRelease :common:lintRelease
+
+      - name: Upload lint logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-logs
+          path: |
+            **/build/reports/lint-results-release.html
+            **/build/reports/lint-results-latestRelease.html
+
+      - name: Build F-Droid
+        run: |
+          rm $GITHUB_WORKSPACE/mapbox.properties 
+          # For special build steps, see https://gitlab.com/fdroid/fdroiddata.git metadata/org.runnerup.free.yml 
+          rm -rf wear ANT-Android-SDKs $GITHUB_WORKSPACE/dropbox.properties $GITHUB_WORKSPACE/runalyze.properties
+          sed -i -e '/play-services/d' -e '/com.mapbox.maps/d' -e '/api.mapbox.com/d' app/build.gradle
+          sed -i -e '/wearable/d' common/build.gradle
+          sed -i -e '/:wear/d' settings.gradle
+          ./gradlew clean :app:assembleLatestRelease
+
+      - name: Upload F-Droid logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fdroid-logs
+          path: |
+            build/reports/problems/

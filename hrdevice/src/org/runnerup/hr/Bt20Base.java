@@ -28,6 +28,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import java.io.IOException;
@@ -49,10 +51,7 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   public static boolean isEnabledImpl() {
-    //noinspection SimplifiableIfStatement
-    if (BluetoothAdapter.getDefaultAdapter() != null)
-      return BluetoothAdapter.getDefaultAdapter().isEnabled();
-    return false;
+    return BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled();
   }
 
   public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
@@ -64,7 +63,7 @@ public abstract class Bt20Base extends BtHRBase {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         && ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT)
             != PackageManager.PERMISSION_GRANTED) {
-      System.err.println("No BLUETOOTH_CONNECT permission in startEnableIntentImpl");
+      Log.d(Bt20Base.class.getName(), "No BLUETOOTH_CONNECT permission in startEnableIntentImpl");
       return false;
     }
     activity.startActivityForResult(
@@ -334,8 +333,7 @@ public abstract class Bt20Base extends BtHRBase {
         {
           Method m;
           try {
-            //noinspection RedundantArrayCreation,JavaReflectionMemberAccess
-            m = device.getClass().getMethod("createInsecureRfcommSocket", new Class[] {int.class});
+            m = device.getClass().getMethod("createInsecureRfcommSocket", int.class);
             m.setAccessible(true);
             sock = (BluetoothSocket) m.invoke(device, 1);
           } catch (NoSuchMethodException
@@ -702,8 +700,7 @@ public abstract class Bt20Base extends BtHRBase {
     private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
       if (bytesInBuffer < pos + 4) return false;
 
-      //noinspection PointlessArithmeticExpression
-      int b0 = getByte(buffer[pos + 0]);
+      int b0 = getByte(buffer[pos]);
       int b1 = getByte(buffer[pos + 1]); // len
       int b2 = getByte(buffer[pos + 2]);
       int b3 = getByte(buffer[pos + 3]);
@@ -719,10 +716,7 @@ public abstract class Bt20Base extends BtHRBase {
         return false;
       }
 
-      //noinspection RedundantIfStatement
-      if (bytesInBuffer < pos + b1) return false;
-
-      return true;
+      return bytesInBuffer >= pos + b1;
     }
 
     @Override

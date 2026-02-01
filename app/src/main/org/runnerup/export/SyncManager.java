@@ -18,7 +18,6 @@
 package org.runnerup.export;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -28,9 +27,10 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
@@ -56,6 +56,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
@@ -76,43 +78,31 @@ public class SyncManager {
   public static final long ERROR_ACTIVITY_ID = -1L;
   // Id to identify a permission request.
   private static final int REQUEST_STORAGE = 3003;
-
+  private final Map<String, Synchronizer> synchronizers = new HashMap<>();
+  private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  PathSimplifier simplifier;
   private SQLiteDatabase mDB = null;
   private AppCompatActivity mActivity = null;
   private Context mContext = null;
-  private final Map<String, Synchronizer> synchronizers = new HashMap<>();
-  private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
-  PathSimplifier simplifier;
-
   private ProgressDialog mSpinner = null;
+  private Synchronizer authSynchronizer = null;
+  private Callback authCallback = null;
+  private long mID = 0;
+  private Callback uploadCallback = null;
+  private HashSet<String> pendingSynchronizers = null;
+  private final Callback disableSynchronizerCallback =
+      (synchronizerName, status) -> nextSynchronizer();
+  private Callback listWorkoutCallback = null;
+  private HashSet<String> pendingListWorkout = null;
+  private ArrayList<WorkoutRef> workoutRef = null;
 
-  public enum SyncMode {
-    DOWNLOAD(org.runnerup.common.R.string.Downloading_from_1s),
-    UPLOAD(org.runnerup.common.R.string.Uploading_to_1s);
+  /** Synch set of activities for a specific synchronizer */
+  private List<SyncActivityItem> syncActivitiesList = null;
 
-    final int textId;
-
-    SyncMode(int textId) {
-      this.textId = textId;
-    }
-
-    public int getTextId() {
-      return textId;
-    }
-  }
-
-  public interface Callback {
-    void run(String synchronizerName, Synchronizer.Status status);
-  }
-
-  private void init(AppCompatActivity activity, Context context, ProgressDialog spinner) {
-    this.mActivity = activity;
-    this.mContext = context;
-    mDB = DBHelper.getWritableDatabase(context);
-    mSpinner = spinner;
-    mSpinner.setCancelable(false);
-    simplifier = PathSimplifier.getPathSimplifierForExport(context);
-  }
+  private Callback syncActivityCallback = null;
+  private StringBuffer cancelSync = null;
 
   public SyncManager(AppCompatActivity activity) {
     init(activity, activity, new ProgressDialog(activity));
@@ -126,7 +116,71 @@ public class SyncManager {
     init(null, context, spinner);
   }
 
+  private static void externalIdCompleted(
+      Synchronizer synchronizer, SQLiteDatabase copyDB, Synchronizer.Status status) {
+    ContentValues tmp = new ContentValues();
+    tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
+    tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
+    String[] args = {Long.toString(synchronizer.getId()), Long.toString(status.activityId)};
+    copyDB.update(
+        DB.EXPORT.TABLE, tmp, DB.EXPORT.ACCOUNT + "= ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
+  }
+
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  private static boolean compareFiles(File w, File f) {
+    if (w.length() != f.length()) return false;
+
+    boolean cmp = true;
+    FileInputStream f1 = null;
+    FileInputStream f2 = null;
+    try {
+      f1 = new FileInputStream(w);
+      f2 = new FileInputStream(f);
+      byte[] buf1 = new byte[1024];
+      byte[] buf2 = new byte[1024];
+      do {
+        int cnt1 = f1.read(buf1);
+        int cnt2 = f2.read(buf2);
+        if (cnt1 <= 0 || cnt2 <= 0) break;
+
+        if (!java.util.Arrays.equals(buf1, buf2)) {
+          cmp = false;
+          break;
+        }
+      } while (true);
+    } catch (Exception ex) {
+      // f1, f2 checked
+    }
+
+    if (f1 != null) {
+      try {
+        f1.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+    if (f2 != null) {
+      try {
+        f2.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return cmp;
+  }
+
+  private void init(AppCompatActivity activity, Context context, ProgressDialog spinner) {
+    this.mActivity = activity;
+    this.mContext = context;
+    mDB = DBHelper.getWritableDatabase(context);
+    mSpinner = spinner;
+    mSpinner.setCancelable(false);
+    simplifier = PathSimplifier.getPathSimplifierForExport(context);
+  }
+
   public synchronized void close() {
+    executor.shutdown();
     if (mDB != null) {
       DBHelper.closeDB(mDB);
     }
@@ -160,7 +214,7 @@ public class SyncManager {
   @SuppressWarnings("null")
   public Synchronizer add(ContentValues config) {
     if (config == null) {
-      Log.e(getClass().getName(), "Add null!");
+      Log.w(getClass().getName(), "Add null!");
       if (BuildConfig.DEBUG) {
         throw new AssertionError();
       }
@@ -169,7 +223,7 @@ public class SyncManager {
 
     String synchronizerName = config.getAsString(DB.ACCOUNT.NAME);
     if (synchronizerName == null) {
-      Log.e(getClass().getName(), "name not found!");
+      Log.w(getClass().getName(), "name not found!");
       return null;
     }
     if (synchronizers.containsKey(synchronizerName)) {
@@ -196,7 +250,7 @@ public class SyncManager {
     } else if (synchronizerName.contentEquals(EndurainSynchronizer.NAME)) {
       synchronizer = new EndurainSynchronizer(simplifier);
     } else {
-      Log.e(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
+      Log.w(getClass().getName(), "synchronizer does not exist: " + synchronizerName);
     }
 
     if (synchronizer != null) {
@@ -209,7 +263,7 @@ public class SyncManager {
       synchronizers.put(synchronizerName, synchronizer);
       synchronizersById.put(synchronizer.getId(), synchronizer);
     } else {
-      Log.e(getClass().getName(), "Synchronizer not found for " + synchronizerName);
+      Log.w(getClass().getName(), "Synchronizer not found for " + synchronizerName);
       try {
         long synchronizerId = Long.parseLong(config.getAsString(DB.PRIMARY_KEY));
         DBHelper.deleteAccount(mDB, synchronizerId);
@@ -278,9 +332,6 @@ public class SyncManager {
 
     return s;
   }
-
-  private Synchronizer authSynchronizer = null;
-  private Callback authCallback = null;
 
   private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
     authSynchronizer = l;
@@ -402,32 +453,31 @@ public class SyncManager {
         .show();
   }
 
-  @SuppressLint("StaticFieldLeak")
   private void testUserPass(final Synchronizer l, final JSONObject authConfig) {
     mSpinner.setTitle("Testing login " + l.getName());
 
-    new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
+    executor.execute(
+        () -> {
+          final ContentValues config = new ContentValues();
+          config.put(DB.ACCOUNT.AUTH_CONFIG, authConfig.toString());
+          config.put("_id", l.getId());
+          l.init(config);
 
-      final ContentValues config = new ContentValues();
+          Status result;
+          try {
+            result = l.connect();
+          } catch (Exception ex) {
+            Log.e(getClass().getName(), "Connection test failed", ex);
+            result = Synchronizer.Status.ERROR;
+          }
 
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
-        config.put(DB.ACCOUNT.AUTH_CONFIG, authConfig.toString());
-        config.put("_id", l.getId());
-        l.init(config);
-        try {
-          return params[0].connect();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          return Synchronizer.Status.ERROR;
-        }
-      }
+          final Status finalResult = result;
 
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        handleAuthComplete(l, result);
-      }
-    }.execute(l);
+          mainHandler.post(
+              () -> {
+                handleAuthComplete(l, finalResult);
+              });
+        });
   }
 
   private void askFileUrl(final Synchronizer sync) {
@@ -440,7 +490,6 @@ public class SyncManager {
       // All paths are related to Environment.DIRECTORY_DOCUMENTS
       path = "";
     } else {
-      //noinspection InlinedApi
       path =
           Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath()
               + File.separator;
@@ -504,15 +553,10 @@ public class SyncManager {
   private boolean checkStoragePermissions(final AppCompatActivity activity) {
     boolean result = true;
     String[] requiredPerms;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      //noinspection InlinedApi
-      requiredPerms =
-          new String[] {
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
-          };
-    } else {
-      requiredPerms = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    }
+    requiredPerms =
+        new String[] {
+          Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE
+        };
     List<String> defaultPerms = new ArrayList<>();
     for (final String perm : requiredPerms) {
       if (ContextCompat.checkSelfPermission(activity, perm) != PackageManager.PERMISSION_GRANTED) {
@@ -521,7 +565,7 @@ public class SyncManager {
         defaultPerms.add(perm);
       }
     }
-    if (defaultPerms.size() > 0) {
+    if (!defaultPerms.isEmpty()) {
       // Request permission, dont care about the result
       final String[] perms = new String[defaultPerms.size()];
       defaultPerms.toArray(perms);
@@ -531,10 +575,6 @@ public class SyncManager {
     // TODO A popup in the AccountActivity, to prompt for storage permissions
     return result;
   }
-
-  private long mID = 0;
-  private Callback uploadCallback = null;
-  private HashSet<String> pendingSynchronizers = null;
 
   public void startUploading(Callback callback, HashSet<String> synchronizers, long id) {
     mID = id;
@@ -557,7 +597,6 @@ public class SyncManager {
     doUpload(synchronizer);
   }
 
-  @SuppressLint("StaticFieldLeak")
   private void doUpload(final Synchronizer synchronizer) {
     final ProgressDialog copySpinner = mSpinner;
     final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
@@ -565,58 +604,54 @@ public class SyncManager {
     copySpinner.setMessage(
         getResources().getString(SyncMode.UPLOAD.getTextId(), synchronizer.getName()));
 
-    new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
-
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
-        try {
-          Synchronizer.Status s2 = params[0].upload(copyDB, mID);
-          // See doUpload() for motivation
-          if (s2 == Synchronizer.Status.NEED_REFRESH) {
-            s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-            if (s2 == Synchronizer.Status.OK) {
-              s2 = params[0].upload(copyDB, mID);
+    executor.execute(
+        () -> {
+          Status result;
+          try {
+            result = synchronizer.upload(copyDB, mID);
+            // See doUpload() for motivation
+            if (result == Synchronizer.Status.NEED_REFRESH) {
+              result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+              if (result == Synchronizer.Status.OK) {
+                result = synchronizer.upload(copyDB, mID);
+              }
             }
+          } catch (Exception ex) {
+            Log.e(getClass().getName(), "Upload failed", ex);
+            result = Synchronizer.Status.ERROR;
           }
-          return s2;
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          return Synchronizer.Status.ERROR;
-        }
-      }
 
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        switch (result) {
-          case OK:
-            syncOK(synchronizer, copySpinner, copyDB, result);
-            nextSynchronizer();
-            break;
+          final Status finalResult = result;
 
-          case NEED_AUTH:
-            handleAuth(
-                (synchronizerName, status) -> {
-                  if (status == Synchronizer.Status.OK) {
-                    doUpload(synchronizer);
-                  } else {
+          mainHandler.post(
+              () -> {
+                switch (finalResult) {
+                  case OK:
+                    syncOK(synchronizer, copySpinner, copyDB, finalResult);
                     nextSynchronizer();
-                  }
-                },
-                synchronizer,
-                result.authMethod);
-            return;
-
-          case CANCEL:
-            pendingSynchronizers.clear();
-            doneUploading();
-            return;
-
-          default:
-            nextSynchronizer();
-            break;
-        }
-      }
-    }.execute(synchronizer);
+                    break;
+                  case NEED_AUTH:
+                    handleAuth(
+                        (synchronizerName, status) -> {
+                          if (status == Synchronizer.Status.OK) {
+                            doUpload(synchronizer);
+                          } else {
+                            nextSynchronizer();
+                          }
+                        },
+                        synchronizer,
+                        finalResult.authMethod);
+                    break;
+                  case CANCEL:
+                    pendingSynchronizers.clear();
+                    doneUploading();
+                    break;
+                  default:
+                    nextSynchronizer();
+                    break;
+                }
+              });
+        });
   }
 
   /**
@@ -627,30 +662,23 @@ public class SyncManager {
    * @param copyDB
    * @param status
    */
-  private static void getExternalId(
+  private void getExternalId(
       final Synchronizer synchronizer,
       final SQLiteDatabase copyDB,
       final Synchronizer.Status status) {
     if (status.externalIdStatus == Synchronizer.ExternalIdStatus.PENDING) {
-      new AsyncTask<Void, Void, Synchronizer.Status>() {
+      executor.execute(
+          () -> {
+            // Implementation must delay the call rate
+            final Status result = synchronizer.getExternalId(copyDB, status);
 
-        @Override
-        protected Synchronizer.Status doInBackground(Void... args) {
-          // Implementation must delay the call rate
-          return synchronizer.getExternalId(copyDB, status);
-        }
-
-        @Override
-        protected void onPostExecute(Synchronizer.Status result) {
-          // the external status is updated, check
-          externalIdCompleted(synchronizer, copyDB, result);
-        }
-      }.execute();
+            mainHandler.post(
+                () ->
+                    // the external status is updated, check
+                    externalIdCompleted(synchronizer, copyDB, result));
+          });
     }
   }
-
-  private final Callback disableSynchronizerCallback =
-      (synchronizerName, status) -> nextSynchronizer();
 
   private void syncOK(
       Synchronizer synchronizer,
@@ -668,16 +696,6 @@ public class SyncManager {
     copyDB.insert(DB.EXPORT.TABLE, null, tmp);
 
     getExternalId(synchronizer, copyDB, status);
-  }
-
-  private static void externalIdCompleted(
-      Synchronizer synchronizer, SQLiteDatabase copyDB, Synchronizer.Status status) {
-    ContentValues tmp = new ContentValues();
-    tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
-    tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
-    String[] args = {Long.toString(synchronizer.getId()), Long.toString(status.activityId)};
-    copyDB.update(
-        DB.EXPORT.TABLE, tmp, DB.EXPORT.ACCOUNT + "= ? AND " + DB.EXPORT.ACTIVITY + " = ?", args);
   }
 
   private void doneUploading() {
@@ -712,17 +730,31 @@ public class SyncManager {
 
   private void resetDB(
       final Callback callback, final Synchronizer synchronizer, final boolean clearUploads) {
-    final String[] args = {Long.toString(synchronizer.getId())};
-    ContentValues config = new ContentValues();
-    config.putNull(DB.ACCOUNT.AUTH_CONFIG);
-    mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
+    mSpinner.show();
+    mSpinner.setTitle("Resetting " + synchronizer.getName());
 
-    if (clearUploads) {
-      mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
-    }
+    executor.execute(
+        () -> {
+          try {
+            final String[] args = {Long.toString(synchronizer.getId())};
+            ContentValues config = new ContentValues();
+            config.putNull(DB.ACCOUNT.AUTH_CONFIG);
+            mDB.update(DB.ACCOUNT.TABLE, config, "_id = ?", args);
 
-    synchronizer.reset();
-    callback.run(synchronizer.getName(), Synchronizer.Status.OK);
+            if (clearUploads) {
+              mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
+            }
+            synchronizer.reset();
+          } catch (Exception ex) {
+            Log.e(getClass().getName(), "Failed to reset " + synchronizer.getName(), ex);
+          }
+
+          mainHandler.post(
+              () -> {
+                mSpinner.dismiss();
+                callback.run(synchronizer.getName(), Synchronizer.Status.OK);
+              });
+        });
   }
 
   public void clearUploadsByName(Callback callback, String synchronizerName) {
@@ -741,7 +773,6 @@ public class SyncManager {
     }
   }
 
-  @SuppressLint("StaticFieldLeak")
   public void loadActivityList(
       final List<SyncActivityItem> items, final String synchronizerName, final Callback callback) {
     mSpinner.setTitle(getResources().getString(org.runnerup.common.R.string.Loading_activities));
@@ -750,35 +781,27 @@ public class SyncManager {
             .getString(org.runnerup.common.R.string.Fetching_activities_from_1s, synchronizerName));
     mSpinner.show();
 
-    new AsyncTask<Synchronizer, String, Status>() {
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
-        return params[0].listActivities(items);
-      }
-
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        callback.run(synchronizerName, result);
-        mSpinner.dismiss();
-      }
-    }.execute(synchronizers.get(synchronizerName));
-  }
-
-  public static class WorkoutRef {
-    public WorkoutRef(String synchronizerName, String key, String workoutName) {
-      this.synchronizer = synchronizerName;
-      this.workoutKey = key;
-      this.workoutName = workoutName;
+    final Synchronizer synchronizer = synchronizers.get(synchronizerName);
+    if (synchronizer == null) {
+      mainHandler.post(
+          () -> {
+            mSpinner.dismiss();
+            callback.run(synchronizerName, Status.ERROR);
+          });
+      return;
     }
 
-    public final String synchronizer;
-    public final String workoutKey;
-    public final String workoutName;
-  }
+    executor.execute(
+        () -> {
+          final Status result = synchronizer.listActivities(items);
 
-  private Callback listWorkoutCallback = null;
-  private HashSet<String> pendingListWorkout = null;
-  private ArrayList<WorkoutRef> workoutRef = null;
+          mainHandler.post(
+              () -> {
+                callback.run(synchronizerName, result);
+                mSpinner.dismiss();
+              });
+        });
+  }
 
   public void loadWorkoutList(
       ArrayList<WorkoutRef> workoutRef, Callback callback, HashSet<String> wourkouts) {
@@ -809,62 +832,58 @@ public class SyncManager {
     doListWorkout(synchronizer);
   }
 
-  @SuppressLint("StaticFieldLeak")
   private void doListWorkout(final Synchronizer synchronizer) {
     final ProgressDialog copySpinner = mSpinner;
-
     copySpinner.setMessage("Listing from " + synchronizer.getName());
-    final ArrayList<Pair<String, String>> list = new ArrayList<>();
 
-    new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
-
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
-        try {
-          Synchronizer.Status s2 = params[0].listWorkouts(list);
-          // See doUpload() for motivation
-          if (s2 == Synchronizer.Status.NEED_REFRESH) {
-            s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-            if (s2 == Synchronizer.Status.OK) {
-              s2 = params[0].listWorkouts(list);
+    executor.execute(
+        () -> {
+          final ArrayList<Pair<String, String>> list = new ArrayList<>();
+          Status result;
+          try {
+            result = synchronizer.listWorkouts(list);
+            if (result == Synchronizer.Status.NEED_REFRESH) {
+              result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+              if (result == Synchronizer.Status.OK) {
+                result = synchronizer.listWorkouts(list);
+              }
             }
+          } catch (Exception ex) {
+            Log.e(getClass().getName(), "List workouts failed", ex);
+            result = Synchronizer.Status.ERROR;
           }
-          return s2;
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          return Synchronizer.Status.ERROR;
-        }
-      }
 
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        switch (result) {
-          case OK:
-            for (Pair<String, String> w : list) {
-              workoutRef.add(new WorkoutRef(synchronizer.getName(), w.first, w.second));
-            }
-            nextListWorkout();
-            break;
-
-          case NEED_AUTH:
-            handleAuth(
-                (synchronizerName, status) -> {
-                  if (status == Synchronizer.Status.OK) {
-                    doListWorkout(synchronizer);
-                  } else { // Unexpected result, nothing to do
+          final Status finalResult = result;
+          mainHandler.post(
+              () -> {
+                switch (finalResult) {
+                  case OK:
+                    for (Pair<String, String> w : list) {
+                      workoutRef.add(new WorkoutRef(synchronizer.getName(), w.first, w.second));
+                    }
                     nextListWorkout();
-                  }
-                },
-                synchronizer,
-                result.authMethod);
-            return;
+                    break;
 
-          default:
-            nextListWorkout();
-            break;
-        }
-      }
-    }.execute(synchronizer);
+                  case NEED_AUTH:
+                    handleAuth(
+                        (synchronizerName, status) -> {
+                          if (status == Synchronizer.Status.OK) {
+                            doListWorkout(synchronizer);
+                          } else {
+                            // Unexpected result, nothing to do
+                            nextListWorkout();
+                          }
+                        },
+                        synchronizer,
+                        finalResult.authMethod);
+                    return;
+
+                  default:
+                    nextListWorkout();
+                    break;
+                }
+              });
+        });
   }
 
   private void doneListing() {
@@ -874,105 +893,55 @@ public class SyncManager {
     if (cb != null) cb.run(null, Status.OK);
   }
 
-  @SuppressLint("StaticFieldLeak")
   public void loadWorkouts(final HashSet<WorkoutRef> pendingWorkouts, final Callback callback) {
     int cnt = pendingWorkouts.size();
     mSpinner.setTitle("Downloading workouts (" + cnt + ")");
     mSpinner.show();
-    new AsyncTask<String, String, Synchronizer.Status>() {
 
-      @Override
-      protected void onProgressUpdate(String... values) {
-        mSpinner.setMessage("Loading " + values[0] + " from " + values[1]);
-      }
+    executor.execute(
+        () -> {
+          for (WorkoutRef ref : pendingWorkouts) {
+            mainHandler.post(
+                () ->
+                    mSpinner.setMessage(
+                        "Loading " + ref.workoutName + " from " + ref.synchronizer));
 
-      @Override
-      protected Synchronizer.Status doInBackground(String... params0) {
-        for (WorkoutRef ref : pendingWorkouts) {
-          publishProgress(ref.workoutName, ref.synchronizer);
-          Synchronizer synchronizer = synchronizers.get(ref.synchronizer);
-          File f = WorkoutSerializer.getFile(mContext, ref.workoutName);
-          File w = f;
-          if (f.exists()) {
-            w = WorkoutSerializer.getFile(mContext, ref.workoutName + ".tmp");
-          }
-          try {
-            synchronizer.downloadWorkout(w, ref.workoutKey);
-            if (w != f) {
-              if (!compareFiles(w, f)) {
-                Log.e(getClass().getName(), "overwriting " + f.getPath() + " with " + w.getPath());
-                // TODO dialog
-                //noinspection ResultOfMethodCallIgnored
-                f.delete();
-                //noinspection ResultOfMethodCallIgnored
-                w.renameTo(f);
-              } else {
-                Log.e(getClass().getName(), "file identical...deleting temporary " + w.getPath());
-                //noinspection ResultOfMethodCallIgnored
-                w.delete();
-              }
+            Synchronizer synchronizer = synchronizers.get(ref.synchronizer);
+            if (synchronizer == null) continue;
+
+            File f = WorkoutSerializer.getFile(mContext, ref.workoutName);
+            File w = f;
+            if (f.exists()) {
+              w = WorkoutSerializer.getFile(mContext, ref.workoutName + ".tmp");
             }
-          } catch (Exception e) {
-            e.printStackTrace();
-            //noinspection ResultOfMethodCallIgnored
-            w.delete();
+            try {
+              synchronizer.downloadWorkout(w, ref.workoutKey);
+              if (w != f) {
+                if (!compareFiles(w, f)) {
+                  Log.w(
+                      getClass().getName(), "overwriting " + f.getPath() + " with " + w.getPath());
+                  // TODO dialog
+                  if (f.exists()) f.delete();
+                  w.renameTo(f);
+                } else {
+                  Log.v(getClass().getName(), "file identical...deleting temporary " + w.getPath());
+                  w.delete();
+                }
+              }
+            } catch (Exception e) {
+              Log.e(getClass().getName(), "Workout download failed for " + ref.workoutName, e);
+              w.delete();
+            }
           }
-        }
-        return Synchronizer.Status.OK;
-      }
 
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        mSpinner.dismiss();
-        if (callback != null) {
-          callback.run(null, Synchronizer.Status.OK);
-        }
-      }
-    }.execute("string");
-  }
-
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private static boolean compareFiles(File w, File f) {
-    if (w.length() != f.length()) return false;
-
-    boolean cmp = true;
-    FileInputStream f1 = null;
-    FileInputStream f2 = null;
-    try {
-      f1 = new FileInputStream(w);
-      f2 = new FileInputStream(f);
-      byte[] buf1 = new byte[1024];
-      byte[] buf2 = new byte[1024];
-      do {
-        int cnt1 = f1.read(buf1);
-        int cnt2 = f2.read(buf2);
-        if (cnt1 <= 0 || cnt2 <= 0) break;
-
-        if (!java.util.Arrays.equals(buf1, buf2)) {
-          cmp = false;
-          break;
-        }
-      } while (true);
-    } catch (Exception ex) {
-      // f1, f2 checked
-    }
-
-    if (f1 != null) {
-      try {
-        f1.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-
-    if (f2 != null) {
-      try {
-        f2.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    return cmp;
+          mainHandler.post(
+              () -> {
+                mSpinner.dismiss();
+                if (callback != null) {
+                  callback.run(null, Synchronizer.Status.OK);
+                }
+              });
+        });
   }
 
   /**
@@ -998,12 +967,6 @@ public class SyncManager {
   public Context getContext() {
     return mContext;
   }
-
-  /** Synch set of activities for a specific synchronizer */
-  private List<SyncActivityItem> syncActivitiesList = null;
-
-  private Callback syncActivityCallback = null;
-  private StringBuffer cancelSync = null;
 
   public void syncActivities(
       SyncMode mode,
@@ -1078,7 +1041,7 @@ public class SyncManager {
       return;
     }
 
-    if (syncActivitiesList.size() == 0) {
+    if (syncActivitiesList.isEmpty()) {
       try {
         mSpinner.cancel();
       } catch (IllegalStateException ex) {
@@ -1097,85 +1060,80 @@ public class SyncManager {
     doSyncMulti(synchronizer, mode, ai);
   }
 
-  @SuppressLint("StaticFieldLeak")
   private void doSyncMulti(
       final Synchronizer synchronizer, final SyncMode mode, final SyncActivityItem activityItem) {
     final ProgressDialog copySpinner = mSpinner;
     final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
 
-    copySpinner.setMessage(Long.toString(1 + syncActivitiesList.size()) + " remaining");
-    new AsyncTask<Synchronizer, String, Status>() {
+    copySpinner.setMessage((1 + syncActivitiesList.size()) + " remaining");
 
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
-        try {
-          Synchronizer.Status s2;
-          switch (mode) {
-            case UPLOAD:
-              s2 = synchronizer.upload(copyDB, activityItem.getId());
-              break;
-            case DOWNLOAD:
-              s2 = synchronizer.download(copyDB, activityItem);
-              break;
-            default:
-              s2 = Synchronizer.Status.INCORRECT_USAGE;
-          }
-          // See doUpload() for motivation
-          if (s2 == Synchronizer.Status.NEED_REFRESH) {
-            s2 = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-            if (s2 == Synchronizer.Status.OK) {
-              switch (mode) {
-                case UPLOAD:
-                  s2 = synchronizer.upload(copyDB, activityItem.getId());
-                  break;
-                case DOWNLOAD:
-                  s2 = synchronizer.download(copyDB, activityItem);
-                  break;
-                default:
-                  s2 = Synchronizer.Status.INCORRECT_USAGE;
+    executor.execute(
+        () -> {
+          Status result;
+          try {
+            switch (mode) {
+              case UPLOAD:
+                result = synchronizer.upload(copyDB, activityItem.getId());
+                break;
+              case DOWNLOAD:
+                result = synchronizer.download(copyDB, activityItem);
+                break;
+              default:
+                result = Synchronizer.Status.INCORRECT_USAGE;
+            }
+
+            // See doUpload() for motivation
+            if (result == Synchronizer.Status.NEED_REFRESH) {
+              result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
+              if (result == Synchronizer.Status.OK) {
+                switch (mode) {
+                  case UPLOAD:
+                    result = synchronizer.upload(copyDB, activityItem.getId());
+                    break;
+                  case DOWNLOAD:
+                    result = synchronizer.download(copyDB, activityItem);
+                    break;
+                  default:
+                    result = Synchronizer.Status.INCORRECT_USAGE;
+                }
               }
             }
+          } catch (Exception ex) {
+            Log.e(getClass().getName(), "Sync (multi) failed", ex);
+            result = Synchronizer.Status.ERROR;
           }
-          return s2;
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          return Synchronizer.Status.ERROR;
-        }
-      }
 
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        switch (result) {
-          case OK:
-            syncOK(synchronizer, copySpinner, copyDB, result);
-            syncNextActivity(synchronizer, mode);
-            break;
+          final Status finalResult = result;
 
-          // TODO Handling of NEED_AUTH and CANCEL hangs the app
-          case NEED_AUTH:
-            handleAuth(
-                (synchronizerName, s2) -> {
-                  if (s2 == Synchronizer.Status.OK) {
-                    doSyncMulti(synchronizer, mode, activityItem);
-                  } else { // Unexpected result, nothing to do
+          mainHandler.post(
+              () -> {
+                switch (finalResult) {
+                  case OK:
+                    syncOK(synchronizer, copySpinner, copyDB, finalResult);
                     syncNextActivity(synchronizer, mode);
-                  }
-                },
-                synchronizer,
-                result.authMethod);
-            return;
-
-          case CANCEL:
-            syncActivitiesList.clear();
-            syncNextActivity(synchronizer, mode);
-            break;
-
-          default:
-            syncNextActivity(synchronizer, mode);
-            break;
-        }
-      }
-    }.execute(synchronizer);
+                    break;
+                  case NEED_AUTH:
+                    handleAuth(
+                        (synchronizerName, s2) -> {
+                          if (s2 == Synchronizer.Status.OK) {
+                            doSyncMulti(synchronizer, mode, activityItem);
+                          } else {
+                            syncNextActivity(synchronizer, mode);
+                          }
+                        },
+                        synchronizer,
+                        finalResult.authMethod);
+                    return;
+                  case CANCEL:
+                    syncActivitiesList.clear();
+                    syncNextActivity(synchronizer, mode);
+                    break;
+                  default:
+                    syncNextActivity(synchronizer, mode);
+                    break;
+                }
+              });
+        });
   }
 
   public void loadLiveLoggers(List<WorkoutObserver> liveLoggers) {
@@ -1218,4 +1176,25 @@ public class SyncManager {
       Log.e(getClass().getName(), "Query for liveloggers failed:", ex);
     }
   }
+
+  public enum SyncMode {
+    DOWNLOAD(org.runnerup.common.R.string.Downloading_from_1s),
+    UPLOAD(org.runnerup.common.R.string.Uploading_to_1s);
+
+    final int textId;
+
+    SyncMode(int textId) {
+      this.textId = textId;
+    }
+
+    public int getTextId() {
+      return textId;
+    }
+  }
+
+  public interface Callback {
+    void run(String synchronizerName, Synchronizer.Status status);
+  }
+
+  public record WorkoutRef(String synchronizer, String workoutKey, String workoutName) {}
 }

@@ -35,6 +35,7 @@
   <string name="cool_down">nedvarvning</string>
   <string name="repeat">Upprepning</string>
   <string name="repeat_times">Upprepa %1$d gånger</string>
+  <string name="Time">Tid</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>
   <string name="Distance">Distans</string>
@@ -81,6 +82,7 @@
   <string name="GPS_level_acceptable">Acceptabel GPS</string>
   <string name="GPS_level_good">Bra GPS</string>
   <string name="Start_GPS">Starta GPS</string>
+  <string name="Start_tracker">Starta tracker</string>
   <string name="Duration">Varaktighet</string>
   <string name="Cancel">Avbryt</string>
   <string name="value">värde</string>
@@ -188,13 +190,14 @@
   <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
   <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
   <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
-  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM96)</string>
+  <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM2008)</string>
   <string name="Export">Exportera</string>
   <string name="Import">Importera</string>
   <string name="Experimental_HRM_devices">Experimentella pulsmätare</string>
   <string name="Paired_BLE_devices">Parkopplade BLE enheter</string>
   <string name="Experimental_features">Experimentella funktioner</string>
   <string name="Mock_HRM_devices">Sken-pulsmätare</string>
+  <string name="Debug_HRM">Debugga HR</string>
   <string name="About_RunnerUp">Om RunnerUp</string>
   <string name="Triggers">Starta ljud vid</string>
   <string name="Time_triggered_audio_cue">Tid trigger</string>
@@ -287,7 +290,7 @@
   <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
   <string name="Battery_optimization_check">Batterioptimering aktiverad</string>
   <string name="Battery_optimization_check_text">Batterioptimering minskar noggrannheten.\nVälj OK för att gå till inställningar, välj \"Alla appar\", sök efter \"RunnerUp\", välj \"Optimera inte\".</string>
-  <string name="Battery_optimization_check_text_Android9">Batterioptimering kan få Android att stoppa inspelningar.\nVälj OK för att gå till app inställningar, välj \"Batteri användning\", välj \"Optimera inte\" eller \"Tillåt bakgrundsaktivitet\".</string>
+  <string name="Battery_optimization_check_text_Android9">Batterioptimering kan få Android att stoppa inspelningar som kör i bakgrunden.\nVälj OK för att gå till app inställningar, välj \\"Batteri användning\\", välj \\"Tillåt bakgrundsaktivitet\\", välj \\"Optimera inte\\" eller \\"Obegränsad\\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
   <string name="Downloading_from_1s">Laddar ner från %1$s</string>
@@ -312,8 +315,6 @@
   <string name="use_temperature_sensor">Temperatursensor</string>
   <string name="use_pressure_sensor_title">Trycksensor</string>
   <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
-  <string name="adjust_barometer_altitude_from_gps">Justera barometerhöjd till GPS höjd</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Använd GPS-höjd vid start för att sätta starthöjd</string>
   <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
   <string name="Lap_start">Varv start</string>
   <string name="Lap_start_summary">Meddelande vid start av varv och Aktiv, Uppvärmning och Nedvarvning steg</string>
@@ -358,4 +359,15 @@
   <string name="Current_speed_from_GPS_points_summary">Hastighet från GPS sensorn istället för att beräkna från GPS punkter</string>
   <string name="Target_coaching_summary">Set period för att beräkna rullande medelvärde för återkoppling och anståndstid för ljudmeddelanden</string>
   <string name="Activity_ongoing">Aktivitet pågår</string>
+  <string name="Activity_paused">Aktivitet pausad</string>
+  <string name="Activity_stopped">Aktivitet stoppad</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Löpning</string>
+  <string name="SPORT_BIKING">Cykel</string>
+  <string name="SPORT_OTHER">Annat</string>
+  <string name="SPORT_ORIENTEERING">Orientering</string>
+  <string name="SPORT_WALKING">Gång</string>
+  <string name="SPORT_TREADMILL">Löpband</string>
+  <string name="SPORT_GYM">Gym</string>
+  <string name="SPORT_STATIONARY_BIKE">Träningscykel</string>
 </resources>

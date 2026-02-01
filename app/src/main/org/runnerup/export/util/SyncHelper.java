@@ -18,6 +18,7 @@
 package org.runnerup.export.util;
 
 import android.content.ContentValues;
+import android.os.Build;
 import android.util.Log;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -30,6 +31,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -53,11 +55,15 @@ public final class SyncHelper {
   }
 
   public static String URLEncode(String s) {
-    try {
-      return URLEncoder.encode(s, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-      return s;
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
+      return URLEncoder.encode(s, StandardCharsets.UTF_8);
+    } else {
+      try {
+        return URLEncoder.encode(s, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+        return s;
+      }
     }
   }
 

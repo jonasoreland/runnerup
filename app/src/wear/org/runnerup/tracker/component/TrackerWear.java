@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Pair;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -214,7 +213,7 @@ public class TrackerWear extends DefaultTrackerComponent
         dataItem -> {
           if (dataItem != null) {
             wearNode = dataItem.getUri().getHost();
-            Log.e(getName(), "getDataItem => wearNode:" + wearNode);
+            Log.d(getName(), "getDataItem => wearNode:" + wearNode);
           }
         });
   }
@@ -231,12 +230,12 @@ public class TrackerWear extends DefaultTrackerComponent
       case WORKOUT_TYPE.INTERVAL:
       case WORKOUT_TYPE.ADVANCED:
         initIntervalScreens();
-        Log.e("TrackerWear::onBind()", "initIntervalScreens()");
+        Log.d("TrackerWear::onBind()", "initIntervalScreens()");
         break;
       default:
       case WORKOUT_TYPE.BASIC:
         initBasicScreens();
-        Log.e("TrackerWear::onBind()", "initBasicScreens()");
+        Log.d("TrackerWear::onBind()", "initBasicScreens()");
         break;
     }
   }
@@ -249,7 +248,7 @@ public class TrackerWear extends DefaultTrackerComponent
   }
 
   private void setTrackerState(TrackerState val) {
-    Log.e(getName(), "setTrackerState(" + val + ")");
+    Log.d(getName(), "setTrackerState(" + val + ")");
     Bundle b = new Bundle();
     b.putInt(Wear.TrackerState.STATE, val.getValue());
     setData(Wear.Path.TRACKER_STATE, b);
@@ -433,23 +432,18 @@ public class TrackerWear extends DefaultTrackerComponent
 
   @Override
   public void onMessageReceived(final MessageEvent messageEvent) {
-    Log.e(getName(), "onMessageReceived: " + messageEvent);
+    Log.d(getName(), "onMessageReceived: " + messageEvent);
     // note: skip state checking, do that in receiver instead
     if (Wear.Path.MSG_CMD_WORKOUT_PAUSE.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.PAUSE_WORKOUT);
+      sendBroadcast(Intents.PAUSE_WORKOUT);
     } else if (Wear.Path.MSG_CMD_WORKOUT_RESUME.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.RESUME_WORKOUT);
+      sendBroadcast(Intents.RESUME_WORKOUT);
     } else if (Wear.Path.MSG_CMD_WORKOUT_NEW_LAP.contentEquals(messageEvent.getPath())) {
-      sendLocalBroadcast(Intents.NEW_LAP);
+      sendBroadcast(Intents.NEW_LAP);
     } else if (Wear.Path.MSG_CMD_WORKOUT_START.contentEquals(messageEvent.getPath())) {
       /* send broadcast to start the workout */
       sendBroadcast(Intents.START_WORKOUT);
     }
-  }
-
-  private void sendLocalBroadcast(String action) {
-    Intent intent = new Intent().setAction(action);
-    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
   }
 
   private void sendBroadcast(String action) {
@@ -497,7 +491,7 @@ public class TrackerWear extends DefaultTrackerComponent
   @Override
   public void onDataChanged(final DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      Log.e(getName(), "onDataChanged: " + ev.getDataItem().getUri());
+      Log.d(getName(), "onDataChanged: " + ev.getDataItem().getUri());
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.WEAR_NODE_ID.contentEquals(path)) {
         setWearNode(ev);

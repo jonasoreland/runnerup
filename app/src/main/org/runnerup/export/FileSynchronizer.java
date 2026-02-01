@@ -120,7 +120,6 @@ public class FileSynchronizer extends DefaultSynchronizer {
       try {
         mFormat = new FileFormats(config.getAsString(DB.ACCOUNT.FORMAT));
         JSONObject tmp = new JSONObject(authConfig);
-        //noinspection ConstantConditions
         mPath = tmp.optString(DB.ACCOUNT.URL, null);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath.startsWith(File.separator)) {
           // Migrate to use scooped storage
@@ -258,7 +257,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
       final Uri contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
       Uri uri = resolver.insert(contentUri, contentValues);
       if (uri == null) {
-        Log.w(getName(), "No uri: " + contentUri + " " + fileName);
+        Log.i(getName(), "No uri: " + contentUri + " " + fileName);
         return null;
       }
       return resolver.openOutputStream(uri);
@@ -266,7 +265,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
       String path = new File(mPath).getAbsolutePath() + File.separator + fileName;
       if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
           != PackageManager.PERMISSION_GRANTED) {
-        Log.w(getName(), "No permission to write to: " + path);
+        Log.i(getName(), "No permission to write to: " + path);
         return null;
       }
       File file = new File(path);

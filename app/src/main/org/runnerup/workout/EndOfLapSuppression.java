@@ -100,7 +100,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
 
     double distance = w.getDistance(Scope.LAP);
     if ((distance - lapDuration) == lapDistanceLimit) {
-      Log.e(
+      Log.i(
           getClass().getName(),
           "suppressing trigger! distance: " + distance + ", lapDistance: " + lapDuration);
       return true;
