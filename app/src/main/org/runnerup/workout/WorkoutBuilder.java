@@ -665,9 +665,9 @@ public class WorkoutBuilder {
 
   public static void setAutolapTime(Workout w, double seconds) {
     for (StepListEntry s : w.getStepList()) {
-      if (s.step.getIntensity() == Intensity.ACTIVE
-          || s.step.getIntensity() == Intensity.COOLDOWN) {
-        s.step.setAutolapTime(seconds);
+      if (s.step().getIntensity() == Intensity.ACTIVE
+          || s.step().getIntensity() == Intensity.COOLDOWN) {
+        s.step().setAutolapTime(seconds);
       }
     }
   }
