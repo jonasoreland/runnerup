@@ -432,7 +432,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   private static void echoDo(SQLiteDatabase arg0, String str) {
-    Log.d("DBHelper", "execSQL(" + str + ")");
+    Log.d(TAG, "execSQL(" + str + ")");
     arg0.execSQL(str);
   }
 
@@ -476,7 +476,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
             arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
           }
         } catch (JSONException e) {
-          Log.w("DBHelper", "Failed to parse File auth config", e);
+          Log.w(TAG, "Failed to parse File auth config", e);
         }
       }
     }
@@ -571,12 +571,12 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
       arg1.remove(DB.ACCOUNT.FORMAT);
       arg1.remove(DB.ACCOUNT.AUTH_METHOD);
       arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-      Log.d("DBhelper", "update: " + arg1);
+      Log.d(TAG, "update: " + arg1);
     }
   }
 
   public static void deleteAccount(SQLiteDatabase db, long id) {
-    Log.v("DBHelper", "deleting account: " + id);
+    Log.v(TAG, "deleting account: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
     db.delete(DB.ACCOUNT.TABLE, "_id = ?", args);
@@ -605,7 +605,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   public static void deleteActivity(SQLiteDatabase db, long id) {
-    Log.v("DBHelper", "deleting activity: " + id);
+    Log.v(TAG, "deleting activity: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
     db.delete(DB.LOCATION.TABLE, DB.LOCATION.ACTIVITY + " = ?", args);
@@ -690,11 +690,6 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     return Uri.fromFile(dbFile);
   }
 
-  public static String getDefaultBackupPath(Context ctx) {
-    // A path that can be used with SDK 29 scooped storage
-    return ctx.getExternalFilesDir(null) + File.separator + "runnerup.db.export";
-  }
-
   public static void importDatabase(Context ctx, Uri from) {
     final DBHelper mDBHelper = DBHelper.getHelper(ctx);
     final SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -702,37 +697,44 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     mDBHelper.close();
 
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
-    AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Import " + DBNAME);
 
     if (!isValidRunnerUpDatabase(ctx, from)) {
       Log.e(TAG, "Selected Uri is not a valid RunnerUp database: " + from);
-      builder
-          .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
-          .setPositiveButton(org.runnerup.common.R.string.OK, listener)
-          .show();
+        new AlertDialog.Builder(ctx)
+              .setTitle("Import " + DBNAME)
+              .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
+              .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+              .show();
       return;
     }
 
-    // TODO 2: Prompt user that this will overwrite current database
-    // TODO 3: Backup the current DB before importing
-
-    try {
-      Uri to = getDbUri(ctx);
-      int cnt = FileUtil.copyFile(ctx, to, from);
-      builder
-          .setMessage(
-              "Copied "
-                  + cnt
-                  + " bytes from "
-                  + Uri.decode(from.toString())
-                  + "\n\nRestart to use the database")
-          .setPositiveButton(org.runnerup.common.R.string.OK, listener);
-    } catch (IOException | NullPointerException e) {
-      builder
-          .setMessage("Exception: " + e + " for " + from)
-          .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
-    }
-    builder.show();
+      new AlertDialog.Builder(ctx)
+            .setTitle("Overwrite database")
+            .setMessage("This will overwrite your current database. Are you sure?")
+            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+              try {
+                Uri to = getDbUri(ctx);
+                int cnt = FileUtil.copyFile(ctx, to, from);
+                new AlertDialog.Builder(ctx)
+                        .setTitle("Import " + DBNAME)
+                        .setMessage(
+                                "Copied "
+                                        + cnt
+                                        + " bytes from "
+                                        + Uri.decode(from.toString())
+                                        + "Restart app to use the database")
+                        .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+                        .show();
+              } catch (IOException | NullPointerException e) {
+                new AlertDialog.Builder(ctx)
+                        .setTitle("Import " + DBNAME)
+                        .setMessage("Exception: " + e + " for " + from)
+                        .setNegativeButton(org.runnerup.common.R.string.Cancel, listener)
+                        .show();
+              }
+            })
+            .setNegativeButton(android.R.string.no, listener)
+            .show();
   }
 
   public static void exportDatabase(Context ctx, Uri to) {
