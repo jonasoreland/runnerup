@@ -239,7 +239,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
 
     /** Initiates a calculation of the last known offset without blocking if needed. */
     synchronized void calcOffset(Location location) {
-      if (location == null) {
+      if (location == null || !location.hasAltitude() || !LocationCompat.hasVerticalAccuracy(location)) {
         return;
       }
 
