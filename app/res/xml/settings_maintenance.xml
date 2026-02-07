@@ -26,9 +26,9 @@
         app:iconSpaceReserved="false">
 
         <Preference
-            android:key="@string/Maintenance_explanation_summary"
-            android:summary="@string/Maintenance_explanation_summary"
-            app:iconSpaceReserved="false" />
+            android:summary="@string/Maintenance_explanation_summary_v2"
+            app:iconSpaceReserved="false"
+            android:selectable="false" />
 
         <Preference
             android:key="@string/pref_exportdb"
