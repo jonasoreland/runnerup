@@ -29,7 +29,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import java.io.IOException;
@@ -110,7 +109,7 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   @Override
-  public void close() {
+  public void close(String from) {
     reset();
     btAdapter = null;
   }

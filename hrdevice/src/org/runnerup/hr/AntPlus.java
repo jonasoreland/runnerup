@@ -84,7 +84,7 @@ public class AntPlus extends BtHRBase {
   }
 
   @Override
-  public void close() {
+  public void close(String from) {
     HRClient client = hrClient;
     hrClient = null;
     stopScan();
