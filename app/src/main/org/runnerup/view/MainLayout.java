@@ -27,6 +27,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -79,7 +80,9 @@ public class MainLayout extends AppCompatActivity {
   public void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    if (!isLargeScreen()) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
     setContentView(R.layout.main);
 
     int versionCode = 0;
@@ -203,6 +206,11 @@ public class MainLayout extends AppCompatActivity {
 
     // Handle back navigation
     getOnBackPressedDispatcher().addCallback(this, onBackPressed);
+  }
+
+  private boolean isLargeScreen() {
+    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
   /**
