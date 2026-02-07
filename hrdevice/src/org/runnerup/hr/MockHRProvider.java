@@ -31,7 +31,7 @@ public class MockHRProvider implements HRProvider {
   }
 
   @Override
-  public void close() {}
+  public void close(String from) {}
 
   private boolean mIsScanning = false;
 

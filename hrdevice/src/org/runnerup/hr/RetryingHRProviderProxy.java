@@ -3,7 +3,6 @@ package org.runnerup.hr;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -19,72 +18,23 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
   private HRDeviceRef connectRef;
 
+  // What has been request by us.
   enum State {
-    OPENING,
-    OPENED,
-    SCANNING,
-    CONNECTING,
-    CONNECTED,
-    DISCONNECTING,
-    CLOSING,
-    CLOSED,
-    ERROR,
-    RECONNECTING
-  }
+    INITIAL,
+    OPEN,
+    CLOSE,
+    START_SCAN,
+    STOP_SCAN,
+    CONNECT,
+    DISCONNECT,
+  };
 
-  private int attempt = 0;
   private final HRProvider provider;
+  private int attempt = 0;
   private HRClient client = null;
   private Handler handler = null;
-  private State state = State.CLOSED;
-  private State requestedState = State.CLOSED;
-
-  private int getMaxRetries() {
-    switch (state) {
-      case OPENING:
-      case OPENED:
-      case SCANNING:
-      case CONNECTED:
-      case DISCONNECTING:
-      case CLOSING:
-      case CLOSED:
-      case ERROR:
-        return 0;
-      case CONNECTING:
-        return 3; // kMaxConnectRetries
-      case RECONNECTING:
-        return 10; // kMaxReconnectRetries
-    }
-    return 0;
-  }
-
-  private boolean checkMaxAttempts() {
-    attempt++;
-    return attempt <= getMaxRetries();
-  }
-
-  private int getRetryDelayMillis() {
-    switch (state) {
-      case OPENING:
-      case OPENED:
-      case SCANNING:
-      case CONNECTED:
-      case DISCONNECTING:
-      case CLOSING:
-      case CLOSED:
-      case ERROR:
-        return 0;
-      case CONNECTING:
-        return 750 * (attempt - 1);
-      case RECONNECTING:
-        return 3000 * (Math.min(attempt, 6));
-    }
-    return 0;
-  }
-
-  private void resetAttempts() {
-    attempt = 0;
-  }
+  private DefaultProxy proxy = new DefaultProxy();
+  private State requested = State.INITIAL; // What has been last requested.
 
   public RetryingHRProviderProxy(HRProvider src) {
     this.provider = src;
@@ -101,6 +51,11 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
   }
 
   @Override
+  public String getLogName() {
+    return "RetryingHRProviderProxy";
+  }
+
+  @Override
   public boolean isEnabled() {
     return provider.isEnabled();
   }
@@ -112,40 +67,39 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
   @Override
   public void open(Handler handler, HRClient hrClient) {
+    log("open");
     this.client = hrClient;
     this.handler = handler;
-    this.requestedState = State.OPENED;
-    state = State.OPENING;
+    this.requested = State.OPEN;
+    registerDefault();
     provider.open(handler, this);
   }
 
   @Override
   public void onOpenResult(boolean ok) {
-    log("onOpenResult(" + ok + ")");
-
-    if (requestedState != State.OPENED) {
-      /* ignore onOpenResult in weird state */
-      return;
-    }
-
-    if (ok) {
-      state = State.OPENED;
-    } else {
-      state = State.CLOSED;
-    }
-    client.onOpenResult(ok);
+    getProxy().onOpenResult(ok);
   }
 
   @Override
-  public void close() {
-    state = State.CLOSED;
-    requestedState = State.CLOSED;
+  public void close(String from) {
+    log("close, from: " + from);
+    this.requested = State.CLOSE;
+    var save = this.client;
+    this.client = null;
     if (provider != null) {
+      registerDefault();
       provider.stopScan();
       provider.disconnect();
-      provider.close();
+      provider.close(from);
     }
-    client = null;
+    if (save != null) {
+      save.onCloseResult(true);
+    }
+  }
+
+  @Override
+  public void onCloseResult(boolean closeOK) {
+    getProxy().onCloseResult(closeOK);
   }
 
   @Override
@@ -165,92 +119,164 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
 
   @Override
   public boolean isConnecting() {
-    return (requestedState == State.CONNECTING);
+    return requested == State.CONNECT;
   }
 
   @Override
   public void startScan() {
-    this.state = State.SCANNING;
-    this.requestedState = State.SCANNING;
+    log("startScan");
+    this.requested = State.START_SCAN;
+    registerDefault();
     provider.startScan();
   }
 
   @Override
   public void onScanResult(HRDeviceRef device) {
-    client.onScanResult(device);
+    getProxy().onScanResult(device);
   }
 
   @Override
   public void stopScan() {
-    this.state = State.OPENED;
-    this.requestedState = State.OPENED;
+    log("stopScan");
+    this.requested = State.STOP_SCAN;
+    registerDefault();
     provider.stopScan();
   }
 
   @Override
   public void connect(HRDeviceRef ref) {
     log("connect(" + ref + ")");
-    resetAttempts();
-    this.state = State.CONNECTING;
-    this.requestedState = State.CONNECTED;
+    this.attempt = 0;
+    this.requested = State.CONNECT;
     this.connectRef = ref;
+    log("Update proxy from: " + proxy + ", to: ConnectProxy");
+    setProxy(
+        new DefaultProxy() {
+          int getDelay() {
+            int delay = (1 << attempt) * 1000;
+            if (delay > 10000) {
+              delay = 10000;
+            }
+            return delay;
+          }
+
+          boolean check(String from) {
+            var proxy = RetryingHRProviderProxy.this.getProxy();
+            if (proxy == this && RetryingHRProviderProxy.this.requested == State.CONNECT) {
+              RetryingHRProviderProxy.this.log("check(" + from + ") => TRUE");
+              return true;
+            }
+            RetryingHRProviderProxy.this.log(
+                "check("
+                    + from
+                    + "), proxy: "
+                    + (proxy == this)
+                    + " state: "
+                    + RetryingHRProviderProxy.this.requested
+                    + " => FALSE");
+            return false;
+          }
+
+          @Override
+          public void onConnectResult(boolean ok) {
+            String from = "onConnectResult(" + ok + ")";
+            if (!check(from)) {
+              return;
+            }
+            if (ok) {
+              RetryingHRProviderProxy.this.log(from + " => super.onConnectResult(true)");
+              super.onConnectResult(ok);
+              return;
+            }
+            handler.postDelayed(
+                () -> {
+                  if (!check("delayed:" + from)) {
+                    return;
+                  }
+                  RetryingHRProviderProxy.this.log(from + " => provider.disconnect()");
+                  provider.disconnect();
+                },
+                getDelay());
+          }
+
+          @Override
+          public void onDisconnectResult(boolean ok) {
+            String from = "onDisconnectResult(" + ok + ")";
+            if (!check(from)) {
+              return;
+            }
+            handler.postDelayed(
+                () -> {
+                  if (!check("delayed:" + from)) {
+                    return;
+                  }
+                  RetryingHRProviderProxy.this.log(from + " => provider.close()");
+                  provider.close("proxy:onDisconnectResult(" + ok + ")");
+                },
+                getDelay());
+          }
+
+          @Override
+          public void onCloseResult(boolean ok) {
+            String from = "onCloseResult(" + ok + ")";
+            if (!check(from)) {
+              return;
+            }
+            attempt++;
+            if (attempt >= 10) {
+              RetryingHRProviderProxy.this.log(from + ", attempt: " + attempt);
+              return;
+            }
+            handler.postDelayed(
+                () -> {
+                  if (!check("delayed:" + from)) {
+                    return;
+                  }
+                  RetryingHRProviderProxy.this.log(from + " => provider.open()");
+                  provider.open(handler, this);
+                },
+                getDelay());
+          }
+
+          @Override
+          public void onOpenResult(boolean ok) {
+            String from = "onOpenResult(" + ok + ")";
+            if (!check(from)) {
+              return;
+            }
+            if (!ok) {
+              RetryingHRProviderProxy.this.log(from + " => give up");
+              return;
+            }
+            handler.post(
+                () -> {
+                  if (!check("delayed:" + from)) {
+                    return;
+                  }
+                  RetryingHRProviderProxy.this.log(from + " => provider.connect()");
+                  provider.connect(ref);
+                });
+          }
+        });
     provider.connect(ref);
   }
 
   @Override
   public void onConnectResult(boolean connectOK) {
-    log("onConnectResult(" + connectOK + ")");
-    switch (requestedState) {
-      case OPENING:
-      case OPENED:
-      case SCANNING:
-      case CONNECTING:
-      case CLOSING:
-      case CLOSED:
-      case ERROR:
-        /* weird => ignore */
-        return;
-      case CONNECTED:
-        break;
-      case DISCONNECTING:
-        /* ignore */
-        return;
-    }
-
-    if (connectOK) {
-      boolean reconnect = state == State.RECONNECTING;
-      state = State.CONNECTED;
-      requestedState = State.CONNECTED;
-      if (!reconnect) {
-        log("client.onConnectResult(true)");
-        client.onConnectResult(true);
-      }
-    } else {
-      if (!checkMaxAttempts()) {
-        state = State.OPENED;
-        requestedState = State.OPENED;
-        log("client.onConnectResult(false)");
-        client.onConnectResult(false);
-        return;
-      }
-
-      int delayMillis = getRetryDelayMillis();
-      log("retry in " + delayMillis + "ms");
-      handler.postDelayed(
-          () -> {
-            log("retry connect");
-            provider.connect(connectRef);
-          },
-          delayMillis);
-    }
+    getProxy().onConnectResult(connectOK);
+  }
+    
+  @Override
+  public void disconnect() {
+    log("disconnect");
+    this.requested = State.DISCONNECT;
+    registerDefault();
+    provider.disconnect();
   }
 
   @Override
-  public void disconnect() {
-    resetAttempts();
-    this.state = State.DISCONNECTING;
-    this.requestedState = State.OPENED;
-    provider.disconnect();
+  public void onDisconnectResult(boolean disconnectOK) {
+    getProxy().onDisconnectResult(disconnectOK);
   }
 
   @Override
@@ -279,65 +305,101 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
   }
 
   /*** HRClient interface */
-
-  @Override
-  public void onDisconnectResult(boolean disconnectOK) {
-    log("onDisonncetResult(" + disconnectOK + ")");
-    if (disconnectOK && state == State.CONNECTED && requestedState == State.CONNECTED) {
-      /* this is unwanted disconnect, silently disconnect/connect */
-      state = State.DISCONNECTING;
-      provider.disconnect();
-      return;
-    }
-
-    if (state == State.DISCONNECTING && requestedState == State.CONNECTED) {
-      /* this is disconnected after unwanted disconnect, silently connect */
-      state = State.RECONNECTING;
-      provider.connect(connectRef);
-      return;
-    }
-
-    state = State.OPENED;
-    requestedState = State.OPENED;
-    if (client != null) client.onDisconnectResult(disconnectOK);
-  }
-
-  @Override
-  public void onCloseResult(boolean closeOK) {
-    state = State.CLOSED;
-    requestedState = State.CLOSED;
-    if (client != null) client.onConnectResult(closeOK);
-  }
-
   @Override
   public void log(HRProvider src, String msg) {
-    log(msg);
-  }
-
-  private void log(final String msg) {
-
-    String res =
-        "[ RetryingHRProviderProxy: "
-            + provider.getProviderName()
-            + ", attempt: "
-            + attempt
-            + " ]"
-            + ", state: "
-            + state
-            + ", request: "
-            + requestedState
-            + ", "
-            + msg;
-    Log.d(getClass().getName(), res);
+    String extra = (client == null) ? "Log w/o client: " : "";
+    Log.d(src.getLogName(), "KESO: " + extra + msg);
     if (client != null) {
       if (Looper.myLooper() == Looper.getMainLooper()) {
-        client.log(this, msg);
+        client.log(src, msg);
       } else {
         handler.post(
             () -> {
-              if (client != null) client.log(RetryingHRProviderProxy.this, msg);
+              if (client != null) client.log(src, msg);
             });
       }
     }
+  }
+
+  void log(final String msg) {
+    String res =
+        "[ "
+            + provider.getProviderName()
+            + ", request: "
+            + requested
+            + (attempt > 0 ? ", attempt: " + attempt : "")
+            + " ]: "
+            + msg;
+    log(this, res);
+  }
+
+  class DefaultProxy implements HRProvider.HRClient {
+    DefaultProxy() {}
+
+    @Override
+    public void onOpenResult(boolean ok) {
+      var client = checkAndLog("onOpenResult(" + ok + ")");
+      if (client != null) {
+        client.onOpenResult(ok);
+      }
+    }
+
+    @Override
+    public void onScanResult(HRDeviceRef device) {
+      var client = checkAndLog("onScanResult(" + device + ")");
+      if (client != null) {
+        client.onScanResult(device);
+      }
+    }
+
+    @Override
+    public void onConnectResult(boolean connectOK) {
+      var client = checkAndLog("onConnectResult(" + connectOK + ")");
+      if (client != null) {
+        client.onConnectResult(connectOK);
+      }
+    }
+
+    @Override
+    public void onDisconnectResult(boolean disconnectOK) {
+      var client = checkAndLog("onDisconnectResult(" + disconnectOK + ")");
+      if (client != null) {
+        client.onDisconnectResult(disconnectOK);
+      }
+    }
+
+    @Override
+    public void onCloseResult(boolean closeOK) {
+      var client = checkAndLog("onCloseResult(" + closeOK + ")");
+      if (client != null) {
+        client.onCloseResult(closeOK);
+      }
+    }
+
+    @Override
+    public void log(HRProvider src, String msg) {}
+
+    HRClient checkAndLog(String msg) {
+      var client = RetryingHRProviderProxy.this.client;
+      RetryingHRProviderProxy.this.log((client != null ? "proxy: " : "null: ") + msg);
+      return client;
+    }
+  }
+  ;
+
+  void registerDefault() {
+    setProxy(new DefaultProxy());
+  }
+
+  synchronized void setProxy(DefaultProxy p) {
+    log("Update proxy from: " + proxy + ", to: " + p);
+    proxy = p;
+  }
+
+  synchronized DefaultProxy getProxy() {
+    if (proxy != null) {
+      return proxy;
+    }
+    return new DefaultProxy();
   }
 }

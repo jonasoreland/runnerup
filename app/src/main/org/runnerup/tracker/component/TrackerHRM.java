@@ -120,7 +120,8 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
             @Override
             public void log(HRProvider src, String msg) {
-              TrackerHRM.this.logBuffer.insert(0, ++lineNo + ": " + msg + "\n");
+              TrackerHRM.this.logBuffer.insert(
+                  0, ++lineNo + ": " + src.getLogName() + ": " + msg + "\n");
               if (TrackerHRM.this.logBuffer.length() > 5000) {
                 TrackerHRM.this.logBuffer.setLength(5000);
               }
@@ -143,7 +144,7 @@ public class TrackerHRM extends DefaultTrackerComponent {
   public ResultCode onEnd(Callback callback, Context context) {
     if (hrProvider != null) {
       hrProvider.disconnect();
-      hrProvider.close();
+      hrProvider.close("TrackerHRM::onEnd");
       hrProvider = null;
     }
     return ResultCode.RESULT_OK;
