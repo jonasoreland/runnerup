@@ -21,7 +21,7 @@ project.ext {
     minSdk = 23
 
     appcompat_version = "1.7.1"
-    annotation_version = "1.6.0"
+    annotation_version = "1.9.1"
     preference_version = "1.2.1"
     googlePlayServicesVersion = '21.3.0'
     googlePlayServicesWearableVersion = '19.0.0'
