@@ -28,7 +28,7 @@ public class DurationPicker extends LinearLayout {
   private final NumberPicker seconds;
 
   public DurationPicker(Context context, AttributeSet attrs) {
-    super(context, attrs);
+    super(context);
 
     hours = new NumberPicker(context, attrs);
     hours.setMinimumHeight(48);
