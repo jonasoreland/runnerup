@@ -26,6 +26,7 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.util.Log;
 import androidx.annotation.GuardedBy;
+import androidx.annotation.Nullable;
 import androidx.core.location.LocationCompat;
 import androidx.core.location.altitude.AltitudeConverterCompat;
 import androidx.preference.PreferenceManager;
@@ -77,7 +78,9 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
                 ? (mAverageGpsElevation - pressureElevation)
                 : 0D;
         // Apply correction to mean-sea-level
-        Double offset = mAltitudeConverter == null ? 0 : mAltitudeConverter.getOffset(lastLocation);
+        Double offset = mAltitudeConverter == null
+                ? Double.valueOf(0D)
+                : mAltitudeConverter.getOffset(lastLocation);
         if (offset != null) {
           mslOffset = mslOffset - offset;
           // "Lock" the offset (can be unlocked in onLocationChanged)
@@ -224,6 +227,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     }
 
     /** Gets the last known offset without blocking. Triggers a new calculation if needed. */
+    @Nullable
     synchronized Double getOffset(Location location) {
       if (hasMslAltitude(location)) {
         calcOffset(location);
