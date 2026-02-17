@@ -370,4 +370,7 @@
   <string name="SPORT_TREADMILL">Löpband</string>
   <string name="SPORT_GYM">Gym</string>
   <string name="SPORT_STATIONARY_BIKE">Träningscykel</string>
+  <string name="import_cancelled">Import avbruten</string>
+  <string name="export_cancelled">Export avbruten</string>
+  <string name="import_error_invalid_database">Den valda filen är inte en RunnerUp databas!</string>
 </resources>

@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.0.0'
+        classpath 'com.android.tools.build:gradle:9.0.1'
     }
 }
 
@@ -31,9 +31,9 @@ project.ext {
     mockitoVersion = '5.21.0'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.10.0.3'
+    versionName = '2.11.0.1'
     // wear uses +1, only set even codes
-    versionCode = 370
+    versionCode = 372
     latestBaseVersionCode = minSdk * 1000000
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
