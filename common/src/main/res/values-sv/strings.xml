@@ -343,7 +343,7 @@
   <string name="GPS_recording_category">GPS inspelning</string>
   <string name="Phone_sensors_category">Telefon sensorer</string>
   <string name="Database_category">Databasunderhåll</string>
-  <string name="Maintenance_explanation_summary">RunnerUp sparar aktiviteter i en SQL databas.\nFilen runnerup.db.export kan importeras och exporteras från \n%1$s</string>
+  <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
   <string name="Controls">Kontroller</string>
   <string name="Controls_pref_summary">Lås aktivitetsknappar</string>

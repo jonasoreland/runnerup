@@ -345,7 +345,7 @@
   <string name="GPS_recording_category">GPS recording</string>
   <string name="Phone_sensors_category">Phone sensors</string>
   <string name="Database_category">Database maintenance</string>
-  <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be imported and exported from/to\n%1$s</string>
+  <string name="Maintenance_explanation_summary_v2">RunnerUp saves workouts into a SQL-database that can be exported and imported.</string>
   <string name="Map_pref_summary">Mapstyle</string>
   <string name="Controls">Controls</string>
   <string name="Controls_pref_summary">Lock buttons</string>
@@ -373,4 +373,8 @@
   <string name="SPORT_TREADMILL">Treadmill</string>
   <string name="SPORT_GYM">Gym</string>
   <string name="SPORT_STATIONARY_BIKE">Stationary bike</string>
+
+  <string name="import_cancelled">Import cancelled</string>
+  <string name="export_cancelled">Export cancelled</string>
+  <string name="import_error_invalid_database">Selected file is not a valid RunnerUp database!</string>
 </resources>
