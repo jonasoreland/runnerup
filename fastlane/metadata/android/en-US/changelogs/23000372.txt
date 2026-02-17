@@ -1,0 +1,4 @@
+#1323 Use system file picker (SAF) for DB export/import
+#1326 fix: elevation null handling
+#1320 fix check mslAltitude conditions
+#1318 Modify distance picket when using Miles
