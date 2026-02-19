@@ -61,6 +61,11 @@ public interface HRProvider {
    */
   String getProviderName(); // For internal usage
 
+  /** String used for debug logging */
+  default String getLogName() {
+    return getProviderName();
+  }
+
   /**
    * @return true if the wireless module is enabled, false otherwise
    */
@@ -85,7 +90,7 @@ public interface HRProvider {
   void open(Handler handler, HRClient hrClient);
 
   /** Closes the wireless module */
-  void close();
+  void close(String from);
 
   /**
    * A pairing device is a wireless module that requires devices to be paired (or bonded) before
