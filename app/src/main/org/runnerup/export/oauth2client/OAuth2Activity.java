@@ -32,6 +32,7 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -78,6 +79,7 @@ public class OAuth2Activity extends AppCompatActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
     Intent intent = getIntent();
     Bundle b = mArgs = intent.getBundleExtra(OAuth2ServerCredentials.AUTH_ARGUMENTS);
