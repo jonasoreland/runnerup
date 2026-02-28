@@ -42,6 +42,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -72,6 +73,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.account);
 

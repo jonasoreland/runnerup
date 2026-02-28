@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableRow;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -35,6 +36,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
 
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

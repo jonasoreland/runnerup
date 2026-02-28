@@ -20,6 +20,7 @@ package org.runnerup.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -33,6 +34,7 @@ public class AudioCueSettingsActivity extends AppCompatActivity {
   public static final String SUFFIX = "_audio_cues";
 
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
     WidgetUtil.addLegacyOverflowButton(getWindow());
     setContentView(R.layout.settings_activity);

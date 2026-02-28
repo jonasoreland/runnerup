@@ -42,6 +42,7 @@ import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -111,8 +112,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    if (!isLargeScreen()) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
     setContentView(R.layout.run);
     formatter = new Formatter(this);
     // HRZones hrZones = new HRZones(this);
@@ -193,6 +197,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
               }
             });
     ViewUtil.Insets(findViewById(R.id.start_view), true);
+  }
+
+  private boolean isLargeScreen() {
+    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
   @Override

@@ -27,6 +27,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -77,9 +78,11 @@ public class MainLayout extends AppCompatActivity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
     EdgeToEdge.enable(this);
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    super.onCreate(savedInstanceState);
+    if (!isLargeScreen()) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
     setContentView(R.layout.main);
 
     int versionCode = 0;
@@ -195,7 +198,7 @@ public class MainLayout extends AppCompatActivity {
     if (filePath != null) {
       // No check for permissions or that this is within scooped storage (>=SDK29)
       Log.i(getClass().getSimpleName(), "Importing database from " + filePath);
-      DBHelper.importDatabase(MainLayout.this, filePath);
+      DBHelper.importDatabase(MainLayout.this, Uri.parse(filePath));
     }
 
     // Apply system bars insets to avoid UI overlap
@@ -203,6 +206,11 @@ public class MainLayout extends AppCompatActivity {
 
     // Handle back navigation
     getOnBackPressedDispatcher().addCallback(this, onBackPressed);
+  }
+
+  private boolean isLargeScreen() {
+    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
   /**

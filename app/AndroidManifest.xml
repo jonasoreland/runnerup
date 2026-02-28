@@ -65,7 +65,7 @@
         android:supportsRtl="true"
 	android:debuggable="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:ignore="HardcodedDebugMode,UnusedAttribute"
+        tools:ignore="UnusedAttribute"
         android:dataExtractionRules="@xml/data_extraction_rules">
         <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="true" />
         <activity
@@ -87,9 +87,7 @@
                     android:mimeType="application/octet-stream"
                     android:scheme="http"/>
                 <data android:host="*"/>
-                <data android:pathPattern="runnerup.db.export"
-                    android:autoVerify="false"
-                    tools:ignore="AppLinkUrlError" />
+                <data android:path="/runnerup.db.export"/>
             </intent-filter>
         </activity>
 
@@ -158,19 +156,21 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.MainLayout"/>
-            <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:mimeType="application/vnd.garmin.workout+json"/>
             </intent-filter>
             <!-- Check for application/json too, see http://code.google.com/p/android/issues/detail?id=48594 -->
-            <intent-filter tools:ignore="GoogleAppIndexingWarning,AppLinkUrlError">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.EDIT"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:mimeType="application/json"/>
             </intent-filter>
         </activity>
@@ -179,15 +179,13 @@
             android:name=".content.WorkoutFileProvider"
             android:authorities="${applicationId}.workout.file.provider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            tools:ignore="ExportedContentProvider"/>
+            android:grantUriPermissions="true" />
 
         <provider
             android:name=".content.ActivityProvider"
             android:authorities="${applicationId}.activity.provider"
             android:exported="false"
-            android:grantUriPermissions="true"
-            tools:ignore="ExportedContentProvider"/>
+            android:grantUriPermissions="true" />
 
         <activity
             android:name=".export.oauth2client.OAuth2Activity"

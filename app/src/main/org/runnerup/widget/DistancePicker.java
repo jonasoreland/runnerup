@@ -26,14 +26,17 @@ import org.runnerup.util.Formatter;
 
 public class DistancePicker extends LinearLayout {
 
-  private long baseUnitMeters;
+  private final long baseUnitMeters;
+  private final long fractionBase; // (10 ^ digits)
 
   private final NumberPicker unitMeters; // e.g km or mi
   private final TextView unitString;
-  private final NumberPicker meters;
+  private final NumberPicker fraction;
 
   public DistancePicker(Context context, AttributeSet attrs) {
     super(context);
+
+    Formatter f = new Formatter(context);
 
     unitMeters = new NumberPicker(context, attrs);
     LinearLayout unitStringLayout = new LinearLayout(context);
@@ -45,51 +48,56 @@ public class DistancePicker extends LinearLayout {
     unitString.setMinimumHeight(48);
     unitString.setMinimumWidth(48);
     unitStringLayout.addView(unitString);
-    meters = new NumberPicker(context, attrs);
-
+    unitString.setText(f.getUnitString());
     unitMeters.setDigits(3);
     unitMeters.setRange(0, 999, true);
     unitMeters.setOrientation(VERTICAL);
-    meters.setDigits(4);
-    meters.setOrientation(VERTICAL);
+
+    baseUnitMeters = (long) f.getUnitMeters();
+    int digits = 2;
+    if (baseUnitMeters == 1000) {
+      digits = 3;
+    }
+    int fb = 1;
+    for (int i = 0; i < digits; i++) {
+      fb *= 10;
+    }
+    fractionBase = fb;
+
+    fraction = new NumberPicker(context, attrs);
+    fraction.setRange(0, fb - 1, true);
+    fraction.setDigits(digits);
+    fraction.setOrientation(VERTICAL);
 
     setOrientation(HORIZONTAL);
     setLayoutParams(
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     addView(unitMeters);
     addView(unitStringLayout);
-    addView(meters);
-
-    {
-      Formatter f = new Formatter(context);
-      setBaseUint((long) f.getUnitMeters(), f.getUnitString());
-    }
-  }
-
-  private void setBaseUint(long baseUnit, String baseString) {
-    baseUnitMeters = baseUnit;
-    unitString.setText(baseString);
-    meters.setRange(0, (int) baseUnitMeters - 1, true);
+    addView(fraction);
   }
 
   public long getDistance() {
-    long ret = 0;
-    ret += meters.getValue();
-    ret += (long) unitMeters.getValue() * baseUnitMeters;
-    return ret;
+    double val = fraction.getValue();
+    val *= baseUnitMeters;
+    val = (val + fractionBase / 2) / fractionBase;
+    val += unitMeters.getValue() * baseUnitMeters;
+    return (long) val;
   }
 
   public void setDistance(long s) {
     long h = s / baseUnitMeters;
     s -= h * baseUnitMeters;
+    double f = s * fractionBase;
+    f = (f + baseUnitMeters / 2) / baseUnitMeters;
     unitMeters.setValue((int) h);
-    meters.setValue((int) s);
+    fraction.setValue((int) f);
   }
 
   @Override
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
     unitMeters.setEnabled(enabled);
-    meters.setEnabled(enabled);
+    fraction.setEnabled(enabled);
   }
 }
