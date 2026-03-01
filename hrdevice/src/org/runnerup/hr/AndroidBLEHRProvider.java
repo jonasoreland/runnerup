@@ -831,13 +831,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
           BluetoothGatt copy = btGatt;
           if (copy != null) {
             log("close btGatt in disconnect() after waiting 2 secs");
-	    close(copy);
+            close(copy);
           }
         }
       } else {
         log("close btGatt here in disconnect()");
         BluetoothGatt copy = btGatt;
-	close(copy);
+        close(copy);
       }
     } while (false);
 
