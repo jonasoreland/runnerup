@@ -26,22 +26,29 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.os.SystemClock;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * Connects to a Bluetooth Low Energy module for Android versions >= 4.3
+ * Connects to a Bluetooth Low Energy module for Android versions >= 5.0
  *
  * @author jonas
  */
@@ -61,6 +68,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   private BluetoothAdapter btAdapter = null;
   private BluetoothGatt btGatt = null;
   private BluetoothDevice btDevice = null;
+  private BluetoothLeScanner btScanner = null;
+
   private int hrValue = 0;
   private long hrTimestamp = 0;
   private long hrElapsedRealtime = 0;
@@ -471,51 +480,76 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     return mIsScanning;
   }
 
-  // Using a deprecated API - change in API 21 (Marshmallow)
-  private final BluetoothAdapter.LeScanCallback mLeScanCallback =
-      new BluetoothAdapter.LeScanCallback() {
+  private final ScanCallback mLeScanCallback =
+      new ScanCallback() {
         @Override
-        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-          if (hrClient == null) return;
-
-          if (hrClientHandler == null) return;
-
-          String address = device.getAddress();
-          if (mIsConnecting && btDevice != null && address.equals(btDevice.getAddress())) {
-            stopScan();
-
-            if (!checkPermission(
-                context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
-              log("No BLUETOOTH_CONNECT permission in onLeScan");
-              return;
-            }
-            btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
-            if (btGatt == null) {
-              reportConnectFailed("connectGatt returned null");
-            } else {
-              log("connectGatt: " + btGatt);
-            }
-            return;
+        public void onBatchScanResults(List<ScanResult> results) {
+          for (var result : results) {
+            addScanResult(result.getDevice());
           }
+        }
 
-          if (mScanDevices.contains(address)) return;
+        @Override
+        public void onScanFailed(int errorCode) {
+          reportConnectFailed("onScanFailed: " + errorCode);
+        }
 
-          mScanDevices.add(address);
-
-          hrClientHandler.post(
-              () -> {
-                if (mIsScanning) { // NOTE: mIsScanning in user-thread
-                  hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, device));
-                }
-              });
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+          if (callbackType == ScanSettings.CALLBACK_TYPE_MATCH_LOST) {
+          } else {
+            addScanResult(result.getDevice());
+          }
         }
       };
+
+  private void addScanResult(BluetoothDevice device) {
+    if (hrClient == null) {
+      return;
+    }
+
+    if (hrClientHandler == null) {
+      return;
+    }
+
+    String address = device.getAddress();
+    if (mIsConnecting && btDevice != null && address.equals(btDevice.getAddress())) {
+      stopScan();
+
+      if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_CONNECT)) {
+        log("No BLUETOOTH_CONNECT permission in onLeScan");
+        return;
+      }
+      btGatt = btDevice.connectGatt(context, false, btGattCallbacks);
+      if (btGatt == null) {
+        reportConnectFailed("connectGatt returned null");
+      } else {
+        log("connectGatt: " + btGatt);
+      }
+      return;
+    }
+
+    if (mScanDevices.contains(address)) {
+      return;
+    }
+
+    mScanDevices.add(address);
+
+    hrClientHandler.post(
+        () -> {
+          if (mIsScanning) { // NOTE: mIsScanning in user-thread
+            hrClient.onScanResult(Bt20Base.createDeviceRef(NAME, device));
+          }
+        });
+  }
 
   private final HashSet<String> mScanDevices = new HashSet<>();
 
   @Override
   public void startScan() {
-    if (mIsScanning || btAdapter == null) return;
+    if (mIsScanning || btAdapter == null) {
+      return;
+    }
 
     mIsScanning = true;
     mScanDevices.clear();
@@ -534,22 +568,35 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         // Paired device, for instance Huami/Amazfit Bip S could be supported
         log("Trying paired generic BLE device: " + btDeviceThis.getName());
-        mLeScanCallback.onLeScan(btDeviceThis, 0, null);
+        addScanResult(btDeviceThis);
       }
     }
-    btAdapter.startLeScan(SCAN_UUIDS, mLeScanCallback);
+
+    btScanner = btAdapter.getBluetoothLeScanner();
+    btScanner.startScan(
+        Collections.singletonList(
+            new ScanFilter.Builder().setServiceUuid(new ParcelUuid(HRP_SERVICE)).build()),
+        new ScanSettings.Builder().build(),
+        mLeScanCallback);
   }
+
+  private final ScanCallback mLeStopScanCallback =
+      new ScanCallback() {
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {}
+
+        @Override
+        public void onScanFailed(int errorCode) {}
+
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {}
+      };
 
   @Override
   public void stopScan() {
     if (mIsScanning) {
       mIsScanning = false;
-      if (!checkPermission(context, Build.VERSION_CODES.S, Manifest.permission.BLUETOOTH_SCAN)) {
-        log("No BLUETOOTH_SCAN permission in stopScan");
-        return;
-      }
-
-      btAdapter.stopLeScan(mLeScanCallback);
+      btScanner.stopScan(mLeStopScanCallback);
     }
   }
 
