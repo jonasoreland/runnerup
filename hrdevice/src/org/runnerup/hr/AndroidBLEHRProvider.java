@@ -62,8 +62,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   static final String NAME = "AndroidBLE";
   private static final String DISPLAY_NAME = "Bluetooth LE";
 
-  private static final UUID[] SCAN_UUIDS = {HRP_SERVICE};
-
   private final Context context;
   private BluetoothAdapter btAdapter = null;
   private BluetoothGatt btGatt = null;
@@ -496,8 +494,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-          if (callbackType == ScanSettings.CALLBACK_TYPE_MATCH_LOST) {
-          } else {
+          if (callbackType != ScanSettings.CALLBACK_TYPE_MATCH_LOST) {
             addScanResult(result.getDevice());
           }
         }
@@ -580,23 +577,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         mLeScanCallback);
   }
 
-  private final ScanCallback mLeStopScanCallback =
-      new ScanCallback() {
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {}
-
-        @Override
-        public void onScanFailed(int errorCode) {}
-
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {}
-      };
-
   @Override
   public void stopScan() {
     if (mIsScanning) {
       mIsScanning = false;
-      btScanner.stopScan(mLeStopScanCallback);
+      btScanner.stopScan(mLeScanCallback);
     }
   }
 
