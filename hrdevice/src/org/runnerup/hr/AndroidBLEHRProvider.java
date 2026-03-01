@@ -332,7 +332,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor arg0, int status) {
 
           BluetoothGattCharacteristic mHRMcharac = arg0.getCharacteristic();
-          if (!enableNotification(true, mHRMcharac)) {
+          if (!enableNotification(true, gatt, mHRMcharac)) {
             reportConnectFailed("Failed to enable notification in onDescriptorRead");
           }
         }
@@ -450,15 +450,27 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       };
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private boolean enableNotification(boolean onoff, BluetoothGattCharacteristic charac) {
-    if (btGatt == null) {
+  private boolean enableHeartrateNotification(boolean onoff, BluetoothGatt gatt) {
+    if (gatt == null) {
+      return false;
+    }
+    BluetoothGattCharacteristic charac = getHeartrateCharacteristic(gatt);
+    if (charac == null) {
+      return false;
+    }
+    return enableNotification(onoff, gatt, charac);
+  }
+
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  private boolean enableNotification(
+      boolean onoff, BluetoothGatt gatt, BluetoothGattCharacteristic charac) {
+    if (gatt == null) {
       return false;
     }
     if (!checkPermission(Manifest.permission.BLUETOOTH_CONNECT, "enableNotification")) {
       return false;
     }
-
-    if (!btGatt.setCharacteristicNotification(charac, onoff)) {
+    if (!gatt.setCharacteristicNotification(charac, onoff)) {
       log("btGatt.setCharacteristicNotification() failed");
       return false;
     }
@@ -696,6 +708,18 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     gatt.close();
   }
 
+  private static BluetoothGattCharacteristic getHeartrateCharacteristic(BluetoothGatt gatt) {
+    if (gatt == null) {
+      return null;
+    }
+    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
+    if (mHRP == null) {
+      return null;
+    }
+
+    return mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
+  }
+
   @Override
   public void connect(HRDeviceRef ref) {
     stopScan();
@@ -784,7 +808,12 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         break;
       }
 
-      disconnect(btGatt)
+      if (!enableHeartrateNotification(false, btGatt)) {
+        reportDisconnectFailed("disableNotfication");
+        return;
+      }
+
+      disconnect(btGatt);
 
       if (isConnected) {
         log("close btGatt in onConnectionState, btGatt=" + btGatt);
@@ -802,15 +831,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
           BluetoothGatt copy = btGatt;
           if (copy != null) {
             log("close btGatt in disconnect() after waiting 2 secs");
-            close(copy);
+	    close(copy);
           }
         }
       } else {
         log("close btGatt here in disconnect()");
         BluetoothGatt copy = btGatt;
-        if (copy != null) {
-	  close(copy);
-	}
+	close(copy);
       }
     } while (false);
 
