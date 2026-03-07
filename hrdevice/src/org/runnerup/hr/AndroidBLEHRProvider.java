@@ -799,7 +799,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
    * @param perm The name of the permission
    * @return true if permission is granted
    */
-  private boolean checkPermission(Context context, int minCode, String perm, String from) {
+  private boolean checkPermission(Context context, String perm, String from) {
     boolean check =
         Build.VERSION.SDK_INT < minCode
             || ActivityCompat.checkSelfPermission(context, perm)
