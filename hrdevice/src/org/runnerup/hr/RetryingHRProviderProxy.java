@@ -36,6 +36,10 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
   private DefaultProxy proxy = new DefaultProxy();
   private State requested = State.INITIAL; // What has been last requested.
 
+  // If we stayed connected for 30s after a reconnect
+  // then reset the attempt which affect how quickly we reconnect.
+  private final int kResetAttemptCounterDelay = 30000;
+
   public RetryingHRProviderProxy(HRProvider src) {
     this.provider = src;
   }
@@ -186,6 +190,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             if (ok) {
               RetryingHRProviderProxy.this.log(from + " => super.onConnectResult(true)");
               super.onConnectResult(ok);
+              resetAttemptCounter(this);
               return;
             }
             handler.postDelayed(
@@ -261,11 +266,35 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     provider.connect(ref);
   }
 
+  void resetAttemptCounter(DefaultProxy proxyArg) {
+    handler.postDelayed(
+        () -> {
+          if (proxy != proxyArg) {
+            return;
+          }
+          if (requested != State.CONNECT) {
+            return;
+          }
+
+          if (provider.isConnected()) {
+            RetryingHRProviderProxy.this.log(
+                "provider connected after "
+                    + kResetAttemptCounterDelay
+                    + " => reset attempt counter");
+            attempt = 0;
+          } else {
+            RetryingHRProviderProxy.this.log(
+                "provider NOT connected after " + kResetAttemptCounterDelay);
+          }
+        },
+        kResetAttemptCounterDelay);
+  }
+
   @Override
   public void onConnectResult(boolean connectOK) {
     getProxy().onConnectResult(connectOK);
   }
-    
+
   @Override
   public void disconnect() {
     log("disconnect");
