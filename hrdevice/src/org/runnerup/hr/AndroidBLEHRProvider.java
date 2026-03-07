@@ -79,7 +79,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   private boolean mIsConnected = false;
   private boolean mIsConnecting = false;
   private boolean mIsDisconnecting = false;
-  private boolean mNotifictionsOn = false;
+  private boolean mNotificationsOn = false;
   private final boolean mSupportPaired;
 
   public AndroidBLEHRProvider(Context ctx) {
@@ -475,7 +475,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     }
     boolean result = gatt.writeDescriptor(clientConfig);
     if (result) {
-      mNotifictionsOn = onoff;
+      mNotificationsOn = onoff;
     }
     return result;
   }
@@ -649,7 +649,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     if (gatt == null) {
       return false;
     }
-    if (!checkPermission(Manifest.permission.BLUETOOTH_CONNECT, "btGatt.connect")) {
+    if (!checkPermission(Manifest.permission.BLUETOOTH_CONNECT, "btGatt.discoverServices")) {
       return false;
     }
     return gatt.discoverServices();
@@ -799,7 +799,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       }
       mIsDisconnecting = true;
 
-      if (mNotifictionsOn) {
+      if (mNotificationsOn) {
         if (!disableNotification(btGatt)) {
           log("disconnect: Failed to disable notification");
         }
