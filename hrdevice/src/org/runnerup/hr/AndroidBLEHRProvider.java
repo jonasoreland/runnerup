@@ -61,8 +61,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   static final String NAME = "AndroidBLE";
   private static final String DISPLAY_NAME = "Bluetooth LE";
 
-  private static final UUID[] SCAN_UUIDS = {HRP_SERVICE};
-
   private final Context context;
   private BluetoothAdapter btAdapter = null;
   private BluetoothGatt btGatt = null;
