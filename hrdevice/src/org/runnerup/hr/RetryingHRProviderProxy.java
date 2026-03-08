@@ -229,7 +229,12 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
             }
             attempt++;
             if (attempt >= 10) {
-              RetryingHRProviderProxy.this.log(from + ", attempt: " + attempt);
+              RetryingHRProviderProxy.this.log(from + ", attempt: " + attempt + " => give up");
+              registerDefault();
+              HRClient c = RetryingHRProviderProxy.this.client;
+              if (c != null) {
+                c.onConnectResult(false);
+              }
               return;
             }
             handler.postDelayed(
@@ -337,7 +342,7 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
   @Override
   public void log(HRProvider src, String msg) {
     String extra = (client == null) ? "Log w/o client: " : "";
-    Log.d(src.getLogName(), "KESO: " + extra + msg);
+    Log.d(src.getLogName(), extra + msg);
     if (client != null) {
       if (Looper.myLooper() == Looper.getMainLooper()) {
         client.log(src, msg);

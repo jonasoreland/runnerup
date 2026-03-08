@@ -137,8 +137,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   public void open(Handler handler, HRClient hrClient) {
     this.hrClient = hrClient;
     this.hrClientHandler = handler;
-    System.err.println("KESO open: " + getName());
-
     if (btAdapter == null) {
       btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -908,11 +906,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     }
 
     if (isDisconnecting) {
-      hrClient.onDisconnectResult(true);
+      client.onDisconnectResult(true);
     } else if (isConnecting) {
-      hrClient.onConnectResult(false);
+      client.onConnectResult(false);
     } else if (isConnected) {
-      hrClient.onConnectResult(false);
+      client.onConnectResult(false);
     }
   }
 
