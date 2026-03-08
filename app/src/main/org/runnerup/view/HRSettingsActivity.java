@@ -108,7 +108,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         clear();
         stopTimer();
 
-        close();
+        close("scanButtonClick");
         mIsScanning = true;
         log("select HR-provider");
         selectProvider();
@@ -179,7 +179,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   public void onDestroy() {
     super.onDestroy();
 
-    close();
+    close("onDestroy");
     stopTimer();
   }
 
@@ -313,11 +313,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
   }
 
-  private void close() {
+  private void close(String from) {
     if (hrProvider != null) {
       log(hrProvider.getProviderName() + ".close()");
       hrProvider.disconnect();
-      hrProvider.close();
+      hrProvider.close("HRSettingsActivity:" + from);
       hrProvider = null;
     }
   }
@@ -553,7 +553,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     if (hrProvider.isConnecting() || hrProvider.isConnected()) {
       log(hrProvider.getProviderName() + ".disconnect()");
       hrProvider.disconnect();
-      hrProvider.close();
       updateView();
       return;
     }
@@ -719,7 +718,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
   @Override
   public void log(HRProvider src, String msg) {
-    log(src.getProviderName() + ": " + msg);
+    log(src.getLogName() + ": " + msg);
   }
 
   @SuppressLint("InflateParams")

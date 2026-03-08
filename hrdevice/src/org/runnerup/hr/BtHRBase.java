@@ -19,7 +19,6 @@ package org.runnerup.hr;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 import java.util.UUID;
 
 abstract class BtHRBase implements HRProvider {
@@ -46,6 +45,8 @@ abstract class BtHRBase implements HRProvider {
               if (hrClient != null) hrClient.log(BtHRBase.this, msg);
             });
       }
-    } else Log.d(getClass().getName(), msg);
+    } else {
+      Log.d(getClass().getName(), msg);
+    }
   }
 }

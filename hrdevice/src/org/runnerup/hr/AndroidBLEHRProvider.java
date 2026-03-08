@@ -107,11 +107,36 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     return Bt20Base.startEnableIntentImpl(activity, requestCode);
   }
 
+  private static String statusToString(int status) {
+    if (status == BluetoothGatt.GATT_SUCCESS) {
+      return "GATT_SUCCESS";
+    } else if (status == BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED) {
+      return "GATT_REQUEST_NOT_SUPPORTED";
+    } else if (status == BluetoothGatt.GATT_CONNECTION_TIMEOUT) {
+      return "GATT_CONNECTION_TIMEOUT";
+    } else if (status == BluetoothGatt.GATT_FAILURE) {
+      return "GATT_FAILURE";
+    } else if (status == BluetoothGatt.GATT_CONNECTION_CONGESTED) {
+      return "GATT_CONNECTION_CONGESTED";
+    } else if (status == BluetoothGatt.GATT_READ_NOT_PERMITTED) {
+      return "GATT_READ_NOT_PERMITTED";
+    }
+    return "<unknown status: " + status + " >";
+  }
+
+  private static String stateToString(int state) {
+    if (state == BluetoothProfile.STATE_DISCONNECTED) {
+      return "DISCONNECTED";
+    } else if (state == BluetoothProfile.STATE_CONNECTED) {
+      return "CONNECTED";
+    }
+    return "<unknown state: " + state + " >";
+  }
+
   @Override
   public void open(Handler handler, HRClient hrClient) {
     this.hrClient = hrClient;
     this.hrClientHandler = handler;
-
     if (btAdapter == null) {
       btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
@@ -120,17 +145,28 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   }
 
   @Override
-  public void close() {
+  public void close(String from) {
+    var client = hrClient;
+    var handler = hrClientHandler;
+    log("close, from: " + from);
     stopScan();
     disconnect();
 
     close(btGatt);
-
     btGatt = null;
     btAdapter = null;
     btDevice = null;
     hrClient = null;
     hrClientHandler = null;
+    if (client != null && handler != null) {
+      handler.post(
+          () -> {
+            log("close(" + from + ") => onCloseResult(true)");
+            client.onCloseResult(true);
+          });
+    } else {
+      log("close(" + from + ") with client: " + client + ", handler: " + handler + " => nothing");
+    }
   }
 
   private final BluetoothGattCallback btGattCallbacks =
@@ -174,12 +210,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
               final long mMaxHrTimestampNotZero = 60 * 1000;
               if (mPrevHrTimestampNotZero > 0
                   && hrTimestamp - mPrevHrTimestampNotZero > mMaxHrTimestampNotZero) {
-                if (mIsConnecting) {
-                  reportConnectFailed("got hrValue = 0 => reportConnectFailed");
-                  return;
-                }
-                log("got hrValue == 0 => disconnecting");
-                reportDisconnected();
+                reportDisconnected("got hrValue = 0 => reportConnectFailed");
                 return;
               }
             } else {
@@ -192,8 +223,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
           } catch (Exception e) {
             log("onCharacteristicChanged => " + e);
-            if (mIsConnecting) reportConnectFailed("Exception in onCharacteristicChanged: " + e);
-            else if (mIsConnected) reportDisconnected();
+            reportDisconnected("Exception in onCharacteristicChanged: " + e);
           }
         }
 
@@ -209,7 +239,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     + ", status: "
                     + status);
 
-            if (!checkBtGatt(gatt)) return;
+            if (!checkBtGatt(gatt)) {
+              return;
+            }
 
             UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
@@ -241,25 +273,25 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-
           try {
             log(
                 "onConnectionStateChange: "
                     + gatt
                     + ", status: "
-                    + status
+                    + statusToString(status)
                     + ", newState: "
-                    + newState);
-            log("STATUS_SUCCESS:" + BluetoothGatt.GATT_SUCCESS);
-            log(
-                "STATE_CONNECTED: "
-                    + BluetoothProfile.STATE_CONNECTED
-                    + ", STATE_DISCONNECTED: "
-                    + BluetoothProfile.STATE_DISCONNECTED);
-
+                    + stateToString(newState)
+                    + ", mIsConnecting: "
+                    + mIsConnecting
+                    + ", mIsConnected: "
+                    + mIsConnected
+                    + ", mIsDisconnecting: "
+                    + mIsDisconnecting);
             if (!checkBtGatt(gatt)) {
+              log("checkBtGatt => return");
               return;
             }
+            log("after checkBtGatt");
 
             if (mIsConnecting) {
               if (newState == BluetoothProfile.STATE_CONNECTED) {
@@ -283,7 +315,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             }
 
             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-              reportDisconnected();
+              reportDisconnected("onConnectionStateChange => reportDisconnected");
               return;
             }
             log("onConnectionStateChange => Already connected?");
@@ -306,7 +338,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
           log("onServicesDiscoverd(): " + gatt + ", status: " + status);
 
-          if (!checkBtGatt(gatt)) return;
+          if (!checkBtGatt(gatt)) {
+            return;
+          }
 
           List<BluetoothGattService> list = btGatt.getServices();
           for (BluetoothGattService s : list) {
@@ -333,7 +367,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
          * from Samsung HRPService.java
          */
         private void DummyReadForSecLevelCheck(BluetoothGatt btGatt) {
-          if (btGatt == null) return;
+          if (btGatt == null) {
+            return;
+          }
 
           if (hasBatteryService && readBatteryLevel()) {
             return;
@@ -419,7 +455,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     if (!checkPermission(Manifest.permission.BLUETOOTH_CONNECT, "enableNotification")) {
       return false;
     }
-
     if (!gatt.setCharacteristicNotification(charac, onoff)) {
       log("btGatt.setCharacteristicNotification() failed");
       return false;
@@ -665,6 +700,18 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     gatt.close();
   }
 
+  private static BluetoothGattCharacteristic getHeartrateCharacteristic(BluetoothGatt gatt) {
+    if (gatt == null) {
+      return null;
+    }
+    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
+    if (mHRP == null) {
+      return null;
+    }
+
+    return mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
+  }
+
   @Override
   public void connect(HRDeviceRef ref) {
     stopScan();
@@ -729,64 +776,71 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
   @Override
   public void disconnect() {
-    if (btGatt == null || btDevice == null) {
-      return;
-    }
+    log(
+        "disconnect()"
+            + ", mIsConnecting: "
+            + mIsConnecting
+            + ", mIsConnected: "
+            + mIsConnected
+            + ", mIsDisconnecting: "
+            + mIsDisconnecting
+            + ", btGatt: "
+            + btGatt
+            + ", btDevice: "
+            + btDevice);
 
-    if (!mIsConnecting && !mIsConnected) {
-      return;
-    }
-
-    if (mIsDisconnecting) {
-      return;
-    }
-
-    boolean isConnected = mIsConnected;
-    mIsConnected = false;
+    final boolean isConnected = mIsConnected;
     mIsConnecting = false;
-    mIsDisconnecting = true;
-
-    if (mNotificationsOn) {
-      if (!disableNotification(btGatt)) {
-        log("disconnect: Failed to disable notification");
+    do {
+      if (mIsDisconnecting) {
+        return;
       }
-    }
+      mIsDisconnecting = true;
 
-    disconnect(btGatt);
+      if (mNotificationsOn) {
+        if (!disableNotification(btGatt)) {
+          log("disconnect: Failed to disable notification");
+        }
+      }
 
-    if (isConnected) {
-      log("close btGatt in onConnectionState");
-      // close btGatt in onConnectionState
-      synchronized (this) {
-        long end = System.currentTimeMillis() + 2000; // wait max 2 seconds
-        while (btGatt != null && System.currentTimeMillis() < end) {
-          log("waiting for btGatt to become null");
-          try {
-            this.wait(500);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
+      if (!mIsConnecting && !mIsConnected) {
+        break;
+      }
+
+      disconnect(btGatt);
+
+      if (isConnected) {
+        log("close btGatt in onConnectionState, btGatt=" + btGatt);
+        // close btGatt in onConnectionState
+        synchronized (this) {
+          long end = System.currentTimeMillis() + 2000; // wait max 2 seconds
+          while (btGatt != null && System.currentTimeMillis() < end) {
+            log("waiting for btGatt to become null");
+            try {
+              this.wait(500);
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+          BluetoothGatt copy = btGatt;
+          if (copy != null) {
+            log("close btGatt in disconnect() after waiting 2 secs");
+            close(copy);
           }
         }
+      } else {
+        log("close btGatt here in disconnect()");
         BluetoothGatt copy = btGatt;
-        if (copy != null) {
-          log("close btGatt in disconnect() after waiting 2 secs");
-          close(copy);
-          btGatt = null;
-        }
-      }
-    } else {
-      log("close btGatt here in disconnect()");
-      BluetoothGatt copy = btGatt;
-      if (copy != null) {
         close(copy);
       }
+    } while (false);
 
-      btGatt = null;
-    }
-
+    btGatt = null;
     btDevice = null;
+    mIsConnected = false;
+    mIsConnecting = false;
+    reportDisconnected("user request");
     mIsDisconnecting = false;
-    reportDisconnected();
   }
 
   boolean disableNotification(BluetoothGatt gatt) {
@@ -838,8 +892,26 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     hrClient.onDisconnectResult(false);
   }
 
-  private void reportDisconnected() {
-    hrClient.onDisconnectResult(true);
+  private void reportDisconnected(String msg) {
+    log("disconnected: " + msg);
+    var isConnecting = mIsConnecting;
+    var isConnected = mIsConnected;
+    var isDisconnecting = mIsDisconnecting;
+    var client = hrClient;
+    mIsConnecting = false;
+    mIsConnected = false;
+    mIsDisconnecting = false;
+    if (client == null) {
+      return;
+    }
+
+    if (isDisconnecting) {
+      client.onDisconnectResult(true);
+    } else if (isConnecting) {
+      client.onConnectResult(false);
+    } else if (isConnected) {
+      client.onConnectResult(false);
+    }
   }
 
   @Override
@@ -889,12 +961,16 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
   private synchronized boolean checkBtGatt(BluetoothGatt gatt, boolean onlyLogError) {
     if (btGatt == null) {
-      if (!onlyLogError) log("checkBtGatt, btGatt == null => true");
+      if (!onlyLogError) {
+        log("checkBtGatt, btGatt == null => true");
+      }
       btGatt = gatt;
       return true;
     }
     if (btGatt == gatt) {
-      if (!onlyLogError) log("checkBtGatt, btGatt == gatt => true");
+      if (!onlyLogError) {
+        log("checkBtGatt, btGatt == gatt => true");
+      }
       return true;
     }
     log("checkBtGatt, btGatt(" + btGatt + ") != gatt(" + gatt + ") => false");
