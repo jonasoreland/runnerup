@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.wear.ongoing.OngoingActivity;
@@ -44,6 +43,8 @@ import org.runnerup.wear.WearableClient;
 
 public class ListenerService extends WearableListenerService {
 
+  private static String TAG = "RU:ListenerService";
+
   private final int notificationId = 10;
 
   private WearableClient mGoogleApiClient = null;
@@ -56,7 +57,7 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onCreate() {
     super.onCreate();
-    Log.d(getClass().getName(), "ListenerService.onCreate()");
+    Log.i(TAG, "ListenerService.onCreate()");
     mGoogleApiClient = new WearableClient(getApplicationContext());
     mGoogleApiClient.readData(Constants.Wear.Path.WEAR_APP, dataItem -> {
         mainActivityRunning = (dataItem != null);
@@ -83,7 +84,7 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    Log.d(getClass().getName(), "ListenerService.onDestroy()");
+    Log.i(TAG, "ListenerService.onDestroy()");
     if (mGoogleApiClient != null) {
       mGoogleApiClient = null;
     }
@@ -91,14 +92,14 @@ public class ListenerService extends WearableListenerService {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.d(getClass().getName(), "ListenerService.onStart()");
+    Log.i(TAG, "ListenerService.onStart()");
     return super.onStartCommand(intent, flags, startId);
   }
 
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      Log.d(getClass().getName(), "onDataChanged: " + ev.getDataItem().getUri());
+      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri());
       var type = ev.getType();
       String path = ev.getDataItem().getUri().getPath();
       if (!(type == DataEvent.TYPE_DELETED || type == DataEvent.TYPE_CHANGED)) {
@@ -131,26 +132,28 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onPeerConnected(Node peer) {
     if (BuildConfig.DEBUG) {
-      Log.d(getClass().getName(), "ListenerService.onPeerConnected: " + peer.getId());
+      Log.i(TAG, "ListenerService.onPeerConnected: " + peer.getId());
     }
   }
 
   @Override
   public void onPeerDisconnected(Node peer) {
     if (BuildConfig.DEBUG) {
-      Log.d(getClass().getName(), "ListenerService.onPeerDisconnected: " + peer.getId());
+      Log.i(TAG, "ListenerService.onPeerDisconnected: " + peer.getId());
     }
   }
 
   private void maybeShowNotification() {
-    Log.d(getClass().getName(), "mainActivityRunning=" + mainActivityRunning +
-                       ", phoneApp=" + phoneApp +
-                       " ,phoneRunning=" + phoneRunning +
-                       " ,trackerState=" + trackerState);
-    if (mainActivityRunning == Boolean.TRUE) {
-      dismissNotification();
-      return;
-    }
+    Log.i(
+        TAG,
+        "mainActivityRunning="
+            + mainActivityRunning
+            + ", phoneApp="
+            + phoneApp
+            + " ,phoneRunning="
+            + phoneRunning
+            + " ,trackerState="
+            + trackerState);
     if (phoneRunning == Boolean.FALSE && phoneApp == Boolean.FALSE) {
       dismissNotification();
       return;
@@ -162,7 +165,7 @@ public class ListenerService extends WearableListenerService {
     }
 
     if (mainActivityRunning == null || phoneRunning == null || trackerState == null) {
-      Log.d(getClass().getName(), "wait for read");
+      Log.i(TAG, "wait for read");
       return;
     }
     showNotification();
@@ -211,7 +214,7 @@ public class ListenerService extends WearableListenerService {
       return;
     }
 
-    System.out.println("create notification");
+    Log.i(TAG, ": create notification");
 
     Intent viewIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingViewIntent =
@@ -260,7 +263,7 @@ public class ListenerService extends WearableListenerService {
 
   private void updateNotification() {
     var ongoingActivity = OngoingActivity.recoverOngoingActivity(this);
-    System.out.println("update ongoingActivity: " + ongoingActivity);
+    Log.i(TAG, ": update ongoingActivity: " + ongoingActivity);
     if (ongoingActivity == null) {
       return;
     }
@@ -276,7 +279,7 @@ public class ListenerService extends WearableListenerService {
   }
 
   private void dismissNotification() {
-    System.out.println("dismissNotification");
+    Log.i(TAG, ": dismissNotification");
     this.notification = null;
     NotificationManagerCompat.from(this).cancel(notificationId);
   }

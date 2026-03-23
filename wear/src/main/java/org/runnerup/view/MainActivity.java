@@ -48,6 +48,7 @@ import org.runnerup.widget.MyDotsPageIndicator;
 
 public class MainActivity extends Activity
     implements Constants, ValueModel.ChangeListener<TrackerState> {
+  private static final String TAG = "RU:MainActivity";
   private final Handler handler = new Handler();
   private GridViewPager pager;
   private DataClient mGoogleApiClient = null;
@@ -65,6 +66,7 @@ public class MainActivity extends Activity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    Log.i(TAG, "onCreate");
     setContentView(R.layout.activity_main);
     pager = findViewById(R.id.pager);
     FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getFragmentManager());
@@ -86,6 +88,7 @@ public class MainActivity extends Activity
   @Override
   protected void onResume() {
     super.onResume();
+    Log.i(TAG, "onResume");
     mIsBound =
         getApplicationContext()
             .bindService(
@@ -107,12 +110,14 @@ public class MainActivity extends Activity
   @Override
   protected void onPause() {
     super.onPause();
+    Log.i(TAG, "onPause");
     putDataItem(Constants.Wear.Path.WEAR_APP, false);
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    Log.i(TAG, "onDestroy");
     if (mStateService != null) {
       mStateService.unregisterTrackerStateListener(this);
       mStateService.unregisterHeadersListener(this);
@@ -222,12 +227,12 @@ public class MainActivity extends Activity
   private int getRowsForScreen(int col) {
     Bundle b = headers.get();
     if (b == null) {
-      Log.d(getClass().getName(), "getRowsForScreen(): headers == null");
+      Log.i(TAG, "getRowsForScreen(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      Log.d(getClass().getName(), "getRowsForScreen(): screens == null");
+      Log.i(TAG, "getRowsForScreen(): screens == null");
       return 1;
     }
     if (col > screens.size()) return 1;
@@ -237,12 +242,12 @@ public class MainActivity extends Activity
   private int getScreensCount() {
     Bundle b = headers.get();
     if (b == null) {
-      Log.d(getClass().getName(), "getScreensCount(): headers == null");
+      Log.i(TAG, "getScreensCount(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      Log.d(getClass().getName(), "getScreensCount(): screens == null");
+      Log.i(TAG, "getScreensCount(): screens == null");
       return 1;
     }
     return screens.size();

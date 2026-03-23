@@ -16,13 +16,11 @@
  */
 package org.runnerup.service;
 
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,17 +33,17 @@ import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
+import java.util.Objects;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
-import java.util.Objects;
-
 public class StateService extends Service
     implements MessageApi.MessageListener, DataApi.DataListener, ValueModel.ChangeListener<Bundle> {
 
+  private static String TAG = "RU:StateService";
   public static final String UPDATE_TIME = "UPDATE_TIME";
 
   private final IBinder mBinder = new LocalBinder();
@@ -93,7 +91,7 @@ public class StateService extends Service
     mGoogleApiClient.connect();
     this.headers.registerChangeListener(this);
 
-    Log.d(getClass().getName(), "StateService.onCreate()");
+    Log.i(TAG, "StateService.onCreate()");
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -102,12 +100,14 @@ public class StateService extends Service
   }
 
   private void readData() {
-    mDataClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
-        if (dataItem != null ) {
-          phoneNode = dataItem.getUri().getHost();
-          Log.d(getClass().getName(), "getDataItem => phoneNode:" + phoneNode);
-        }
-      });
+    mDataClient.readData(
+        Constants.Wear.Path.PHONE_NODE_ID,
+        dataItem -> {
+          if (dataItem != null) {
+            phoneNode = dataItem.getUri().getHost();
+            Log.i(TAG, "getDataItem => phoneNode:" + phoneNode);
+          }
+        });
     mDataClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
         if (dataItem != null) {
           TrackerState newState = getTrackerStateFromDataItem(dataItem);
@@ -137,7 +137,7 @@ public class StateService extends Service
 
   @Override
   public void onDestroy() {
-    Log.d(getClass().getName(), "StateService.onDestroy()");
+    Log.i(TAG, "StateService.onDestroy()");
     trackerState.clearListeners();
     if (mGoogleApiClient != null) {
       if (mGoogleApiClient.isConnected()) {
@@ -195,14 +195,14 @@ public class StateService extends Service
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
     } else {
-      Log.d(getClass().getName(), "onMessageReceived: " + messageEvent);
+      Log.i(TAG, "onMessageReceived: " + messageEvent);
     }
   }
 
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      Log.d(getClass().getName(), "onDataChanged: " + ev.getDataItem().getUri());
+      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri());
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         setPhoneNode(ev);
@@ -227,7 +227,7 @@ public class StateService extends Service
     if (ev.getType() == DataEvent.TYPE_CHANGED) {
       Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
       b.putLong(UPDATE_TIME, System.currentTimeMillis());
-      Log.d(getClass().getName(), "setHeaders(): b=" + b);
+      Log.i(TAG, "setHeaders(): b=" + b);
       headers.set(b);
     } else {
       headers.set(null);
