@@ -205,6 +205,7 @@ public class ListenerService extends WearableListenerService {
     }
 
     // check if we have permission to post notification
+    // note: permission request is initiated by MainActivity; this service won't ask
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
         && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
             != android.content.pm.PackageManager.PERMISSION_GRANTED) {
