@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -25,8 +26,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -81,6 +84,39 @@ public class MainActivity extends Activity
     dotsPageIndicator.setOnAdapterChangeListener(dot2);
     dot2.setPager(pager);
     mGoogleApiClient = Wearable.getDataClient(this);
+
+    requestPostNotificationsPermission();
+  }
+
+  /**
+   * Checks if the POST_NOTIFICATIONS permission is required (Android 13+) and, if so, whether it
+   * has been granted. If the permission is needed but not granted, this method launches the {@link
+   * RequestPermissionActivity} to ask the user.
+   */
+  private void requestPostNotificationsPermission() {
+    // Permission is not applicable for versions below Android 13 (TIRAMISU)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      Log.d(getClass().getSimpleName(), "POST_NOTIFICATIONS permission not applicable below Android 13.");
+      return;
+    }
+
+    // Permission has already been granted
+    if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED) {
+      Log.d(getClass().getSimpleName(), "POST_NOTIFICATIONS permission already granted.");
+      return;
+    }
+
+    // Permission is needed and not yet granted
+    Log.i(getClass().getSimpleName(),
+            "POST_NOTIFICATIONS permission is not granted. Launching RequestPermissionActivity.");
+
+    // Prepare and launch the activity responsible for handling the permission request
+    Intent permissionIntent = new Intent(this, RequestPermissionActivity.class);
+    permissionIntent.putExtra( // Pass the permission being requested as an extra
+            Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, Manifest.permission.POST_NOTIFICATIONS);
+
+    startActivity(permissionIntent);
   }
 
   @Override
