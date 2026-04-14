@@ -38,6 +38,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TableRow;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
@@ -56,6 +57,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
@@ -76,6 +79,7 @@ public class SyncManager {
   public static final long ERROR_ACTIVITY_ID = -1L;
   // Id to identify a permission request.
   private static final int REQUEST_STORAGE = 3003;
+  private static final String TAG = "SyncManager";
 
   private SQLiteDatabase mDB = null;
   private AppCompatActivity mActivity = null;
@@ -85,6 +89,7 @@ public class SyncManager {
   PathSimplifier simplifier;
 
   private ProgressDialog mSpinner = null;
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public enum SyncMode {
     DOWNLOAD(org.runnerup.common.R.string.Downloading_from_1s),
@@ -110,7 +115,7 @@ public class SyncManager {
     this.mContext = context;
     mDB = DBHelper.getWritableDatabase(context);
     mSpinner = spinner;
-    mSpinner.setCancelable(false);
+    mSpinner.setCancelable(true); // Allow cancelling
     simplifier = PathSimplifier.getPathSimplifierForExport(context);
   }
 
@@ -130,6 +135,7 @@ public class SyncManager {
     if (mDB != null) {
       DBHelper.closeDB(mDB);
     }
+    executor.shutdown();
   }
 
   public void clear() {
@@ -283,10 +289,12 @@ public class SyncManager {
   private Callback authCallback = null;
 
   private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
+    Log.d(TAG, "handleAuth: " + l.getName() + ", method=" + authMethod);
     authSynchronizer = l;
     authCallback = callback;
     switch (authMethod) {
       case OAUTH2:
+        Log.d(TAG, "handleAuth: starting OAUTH2 activity");
         mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
         return;
       case USER_PASS:
@@ -296,6 +304,22 @@ public class SyncManager {
       case FILEPERMISSION:
         checkStoragePermissions(mActivity);
         askFileUrl(l);
+        return;
+      case MFA:
+        askMfaCode(l);
+        return;
+      case NONE:
+        // Handle unexpected NONE state, likely error or rate limit
+        if (mSpinner != null && mSpinner.isShowing()) {
+            mSpinner.dismiss();
+        }
+        // Maybe show an error dialog?
+        new AlertDialog.Builder(mActivity)
+            .setTitle("Error")
+            .setMessage("Authentication failed or rate limit exceeded. Please try again later.")
+            .setPositiveButton(android.R.string.ok, null)
+            .show();
+        return;
     }
   }
 
@@ -303,7 +327,10 @@ public class SyncManager {
     Callback cb = authCallback;
     authCallback = null;
     authSynchronizer = null;
-    if (s == Status.OK) {
+    
+    // If we need auth (e.g. switching from USER_PASS_URL to OAUTH2), we should not reset
+    // because we want to preserve the partial config (like the URL we just entered)
+    if (s == Status.OK || s == Status.NEED_AUTH) {
       ContentValues tmp = new ContentValues();
       tmp.put("_id", synchronizer.getId());
       tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
@@ -316,10 +343,46 @@ public class SyncManager {
         s = Status.ERROR;
       }
     }
-    if (s != Status.OK) {
+    
+    if (s != Status.OK && s != Status.NEED_AUTH) {
       synchronizer.reset();
     }
-    cb.run(synchronizer.getName(), s);
+    
+    // If we need auth, we should trigger the next step instead of just returning
+    if (s == Status.NEED_AUTH && cb != null) {
+        // We need to re-trigger handleAuth with the new method
+        // But we can't do it directly here easily because we need the activity context etc.
+        // So we pass it back to the callback, and the callback needs to handle it.
+        // However, the existing callbacks don't handle recursion.
+        
+        // Let's check if we can handle it here if we have the activity
+        if (mActivity != null) {
+            final Callback originalCallback = cb;
+            // Re-assign auth variables for the new flow
+            authCallback = originalCallback; // Restore callback
+            authSynchronizer = synchronizer; // Restore synchronizer
+            
+            // Get the new auth method (it should have updated after the partial config save)
+            // IMPORTANT: We must run connect() in background if it does network IO!
+            // But here we are on UI thread (handleAuthComplete is called from onPostExecute).
+            // If connect() does network IO, we will crash with NetworkOnMainThreadException.
+            
+            // EndurainSynchronizer.connect() DOES network IO if it has credentials but no token.
+            
+            mSpinner.show(); // Show spinner again
+            
+            executor.execute(() -> {
+                Status newStatus = synchronizer.connect();
+                mActivity.runOnUiThread(() -> handleAuth(originalCallback, synchronizer, newStatus.authMethod));
+            });
+            
+            return;
+        }
+    }
+    
+    if (cb != null) {
+        cb.run(synchronizer.getName(), s);
+    }
   }
 
   private JSONObject newObj(String str) {
@@ -329,6 +392,32 @@ public class SyncManager {
       e.printStackTrace();
     }
     return null;
+  }
+
+  private void askMfaCode(final Synchronizer sync) {
+      final EditText input = new EditText(mActivity);
+      input.setInputType(InputType.TYPE_CLASS_NUMBER);
+      
+      new AlertDialog.Builder(mActivity)
+          .setTitle("MFA Verification")
+          .setMessage("Enter the 6-digit code from your authenticator app")
+          .setView(input)
+          .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
+              String code = input.getText().toString();
+              String authConfigStr = sync.getAuthConfig();
+              JSONObject authConfig = newObj(authConfigStr);
+              if (authConfig == null) authConfig = new JSONObject();
+              
+              try {
+                  authConfig.put("mfa_code", code);
+              } catch (JSONException e) {
+                  e.printStackTrace();
+              }
+              
+              testUserPass(sync, authConfig);
+          })
+          .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.CANCEL))
+          .show();
   }
 
   private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
@@ -406,28 +495,23 @@ public class SyncManager {
   private void testUserPass(final Synchronizer l, final JSONObject authConfig) {
     mSpinner.setTitle("Testing login " + l.getName());
 
-    new AsyncTask<Synchronizer, String, Synchronizer.Status>() {
-
-      final ContentValues config = new ContentValues();
-
-      @Override
-      protected Synchronizer.Status doInBackground(Synchronizer... params) {
+    executor.execute(() -> {
+        ContentValues config = new ContentValues();
         config.put(DB.ACCOUNT.AUTH_CONFIG, authConfig.toString());
         config.put("_id", l.getId());
         l.init(config);
+        
+        Synchronizer.Status result;
         try {
-          return params[0].connect();
+          result = l.connect();
         } catch (Exception ex) {
           ex.printStackTrace();
-          return Synchronizer.Status.ERROR;
+          result = Synchronizer.Status.ERROR;
         }
-      }
-
-      @Override
-      protected void onPostExecute(Synchronizer.Status result) {
-        handleAuthComplete(l, result);
-      }
-    }.execute(l);
+        
+        final Synchronizer.Status finalResult = result;
+        mActivity.runOnUiThread(() -> handleAuthComplete(l, finalResult));
+    });
   }
 
   private void askFileUrl(final Synchronizer sync) {
