@@ -98,7 +98,9 @@ public class MainActivity extends Activity
   private void requestPostNotificationsPermission() {
     // Permission is not applicable for versions below Android 13 (TIRAMISU)
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      Log.d(getClass().getSimpleName(), "POST_NOTIFICATIONS permission not applicable below Android 13.");
+      Log.d(
+          getClass().getSimpleName(),
+          "POST_NOTIFICATIONS permission not applicable below Android 13.");
       return;
     }
 
@@ -132,6 +134,9 @@ public class MainActivity extends Activity
                 mStateServiceConnection,
                 Context.BIND_AUTO_CREATE);
     putDataItem(Constants.Wear.Path.WEAR_APP, true);
+    if (mStateService != null) {
+      mStateService.readDataIfMissing();
+    }
   }
 
   void putDataItem(String path, boolean value) {
@@ -203,8 +208,9 @@ public class MainActivity extends Activity
             }
             return RunInfoFragment.createForScreen(col, getRowsForScreen(col));
           } else if (row == PAUSE_RESUME_ROW) {
-            if (trackerState.get() == TrackerState.STOPPED) return new StoppedFragment();
-            else {
+            if (trackerState.get() == TrackerState.STOPPED) {
+              return new StoppedFragment();
+            } else {
               return new PauseResumeFragment();
             }
           }
@@ -324,10 +330,12 @@ public class MainActivity extends Activity
       new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+          Log.i(TAG, "onServiceConnected: mStateService==" + mStateService);
           if (mStateService == null) {
             mStateService = ((StateService.LocalBinder) service).getService();
             mStateService.registerTrackerStateListener(MainActivity.this);
             mStateService.registerHeadersListener(MainActivity.this);
+            mStateService.readDataIfMissing();
           }
         }
 
@@ -373,7 +381,9 @@ public class MainActivity extends Activity
   }
 
   private void postScrollRight() {
-    if (postScrollRightRunning) return;
+    if (postScrollRightRunning) {
+      return;
+    }
     if (scroll > 0 && getScreensCount() > 1) {
       postScrollRightRunning = true;
       handler.postDelayed(
