@@ -34,4 +34,18 @@
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="@string/Visibility_category"
+        android:title="@string/Visibility_category"
+        app:iconSpaceReserved="false">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_show_on_lock_screen"
+            android:persistent="true"
+            android:summary="@string/Show_on_lock_screen_summary"
+            android:title="@string/Show_on_lock_screen"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

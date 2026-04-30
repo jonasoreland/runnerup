@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.app.KeyguardManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -152,7 +155,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
+    final KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
 
     if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
@@ -193,10 +198,16 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             new OnBackPressedCallback(true) {
               @Override
               public void handleOnBackPressed() {
-                // ignore back while in an activity
+                // Ignore back while in an activity and the device is unlocked
+                if (km.isKeyguardLocked()) {
+                  // Original state is re-enabled on resume
+                  showOnLockScreen(false);
+                }
               }
             });
     ViewUtil.Insets(findViewById(R.id.start_view), true);
+
+    showOnLockScreen(showOnLockScreen);
   }
 
   private boolean isLargeScreen() {
@@ -217,7 +228,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
   @Override
   public void onResume() {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    final Resources res = this.getResources();
+    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+
     super.onResume();
+    showOnLockScreen(showOnLockScreen);
   }
 
   @Override
@@ -396,6 +412,18 @@ public class RunActivity extends AppCompatActivity implements TickListener {
           pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
           0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
+    }
+  }
+
+  private void showOnLockScreen(boolean enabled) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+      setShowWhenLocked(enabled);
+    } else {
+      if (enabled) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+      } else {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+      }
     }
   }
 
