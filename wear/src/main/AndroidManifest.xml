@@ -35,6 +35,7 @@
         <activity
             android:exported="true"
             android:name=".view.MainActivity"
+            android:launchMode="singleTop"
             tools:ignore="WearRecents">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

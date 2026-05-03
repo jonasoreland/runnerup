@@ -69,7 +69,7 @@ public class MainActivity extends Activity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Log.i(TAG, "onCreate");
+    Log.d(TAG, "onCreate");
     setContentView(R.layout.activity_main);
     pager = findViewById(R.id.pager);
     FragmentGridPagerAdapter pageAdapter = new PagerAdapter(getFragmentManager());
@@ -98,7 +98,9 @@ public class MainActivity extends Activity
   private void requestPostNotificationsPermission() {
     // Permission is not applicable for versions below Android 13 (TIRAMISU)
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      Log.d(getClass().getSimpleName(), "POST_NOTIFICATIONS permission not applicable below Android 13.");
+      Log.d(
+          getClass().getSimpleName(),
+          "POST_NOTIFICATIONS permission not applicable below Android 13.");
       return;
     }
 
@@ -110,7 +112,7 @@ public class MainActivity extends Activity
     }
 
     // Permission is needed and not yet granted
-    Log.i(getClass().getSimpleName(),
+    Log.d(getClass().getSimpleName(),
             "POST_NOTIFICATIONS permission is not granted. Launching RequestPermissionActivity.");
 
     // Prepare and launch the activity responsible for handling the permission request
@@ -124,7 +126,7 @@ public class MainActivity extends Activity
   @Override
   protected void onResume() {
     super.onResume();
-    Log.i(TAG, "onResume");
+    Log.d(TAG, "onResume");
     mIsBound =
         getApplicationContext()
             .bindService(
@@ -132,6 +134,9 @@ public class MainActivity extends Activity
                 mStateServiceConnection,
                 Context.BIND_AUTO_CREATE);
     putDataItem(Constants.Wear.Path.WEAR_APP, true);
+    if (mStateService != null) {
+      mStateService.readDataIfMissing();
+    }
   }
 
   void putDataItem(String path, boolean value) {
@@ -146,14 +151,14 @@ public class MainActivity extends Activity
   @Override
   protected void onPause() {
     super.onPause();
-    Log.i(TAG, "onPause");
+    Log.d(TAG, "onPause");
     putDataItem(Constants.Wear.Path.WEAR_APP, false);
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    Log.i(TAG, "onDestroy");
+    Log.d(TAG, "onDestroy");
     if (mStateService != null) {
       mStateService.unregisterTrackerStateListener(this);
       mStateService.unregisterHeadersListener(this);
@@ -203,8 +208,9 @@ public class MainActivity extends Activity
             }
             return RunInfoFragment.createForScreen(col, getRowsForScreen(col));
           } else if (row == PAUSE_RESUME_ROW) {
-            if (trackerState.get() == TrackerState.STOPPED) return new StoppedFragment();
-            else {
+            if (trackerState.get() == TrackerState.STOPPED) {
+              return new StoppedFragment();
+            } else {
               return new PauseResumeFragment();
             }
           }
@@ -263,12 +269,12 @@ public class MainActivity extends Activity
   private int getRowsForScreen(int col) {
     Bundle b = headers.get();
     if (b == null) {
-      Log.i(TAG, "getRowsForScreen(): headers == null");
+      Log.d(TAG, "getRowsForScreen(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      Log.i(TAG, "getRowsForScreen(): screens == null");
+      Log.d(TAG, "getRowsForScreen(): screens == null");
       return 1;
     }
     if (col > screens.size()) return 1;
@@ -278,12 +284,12 @@ public class MainActivity extends Activity
   private int getScreensCount() {
     Bundle b = headers.get();
     if (b == null) {
-      Log.i(TAG, "getScreensCount(): headers == null");
+      Log.d(TAG, "getScreensCount(): headers == null");
       return 1;
     }
     ArrayList<Integer> screens = b.getIntegerArrayList(Wear.RunInfo.SCREENS);
     if (screens == null) {
-      Log.i(TAG, "getScreensCount(): screens == null");
+      Log.d(TAG, "getScreensCount(): screens == null");
       return 1;
     }
     return screens.size();
@@ -324,10 +330,12 @@ public class MainActivity extends Activity
       new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+          Log.d(TAG, "onServiceConnected: mStateService==" + mStateService);
           if (mStateService == null) {
             mStateService = ((StateService.LocalBinder) service).getService();
             mStateService.registerTrackerStateListener(MainActivity.this);
             mStateService.registerHeadersListener(MainActivity.this);
+            mStateService.readDataIfMissing();
           }
         }
 
@@ -373,7 +381,9 @@ public class MainActivity extends Activity
   }
 
   private void postScrollRight() {
-    if (postScrollRightRunning) return;
+    if (postScrollRightRunning) {
+      return;
+    }
     if (scroll > 0 && getScreensCount() > 1) {
       postScrollRightRunning = true;
       handler.postDelayed(

@@ -67,7 +67,6 @@ public class StateService extends Service
                 new GoogleApiClient.ConnectionCallbacks() {
                   @Override
                   public void onConnected(Bundle connectionHint) {
-
                     /* set "our" data */
                     setData();
 
@@ -75,7 +74,7 @@ public class StateService extends Service
                     Wearable.DataApi.addListener(mGoogleApiClient, StateService.this);
 
                     /* read already existing data */
-                    readData();
+                    readData(/* force= */ true);
                   }
 
                   @Override
@@ -91,38 +90,59 @@ public class StateService extends Service
     mGoogleApiClient.connect();
     this.headers.registerChangeListener(this);
 
-    Log.i(TAG, "StateService.onCreate()");
+    Log.d(TAG, "StateService.onCreate()");
   }
 
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private boolean checkConnection() {
-    return mGoogleApiClient != null && mGoogleApiClient.isConnected() && phoneNode != null;
+  private String checkConnection() {
+    if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && phoneNode != null) {
+      return null;
+    }
+    return "mGoogleApiClient="
+        + mGoogleApiClient
+        + ", isConnected="
+        + (mGoogleApiClient != null ? mGoogleApiClient.isConnected(): false)
+        + ", phoneNode="
+        + phoneNode;
   }
 
-  private void readData() {
-    mDataClient.readData(
-        Constants.Wear.Path.PHONE_NODE_ID,
-        dataItem -> {
-          if (dataItem != null) {
-            phoneNode = dataItem.getUri().getHost();
-            Log.i(TAG, "getDataItem => phoneNode:" + phoneNode);
-          }
-        });
-    mDataClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
-        if (dataItem != null) {
-          TrackerState newState = getTrackerStateFromDataItem(dataItem);
-          if (newState != null) {
-            setTrackerState(newState);
-          }
-        }
-      });
-    mDataClient.readData(Constants.Wear.Path.HEADERS, dataItem -> {
-        if (dataItem != null) {
-          Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
-          b.putLong(UPDATE_TIME, System.currentTimeMillis());
-          headers.set(b);
-        }
-      });
+  public void readDataIfMissing() {
+    readData(/* force= */ false);
+  }
+
+  private void readData(boolean force) {
+    if (force || phoneNode == null) {
+      mDataClient.readData(
+          Constants.Wear.Path.PHONE_NODE_ID,
+          dataItem -> {
+            if (dataItem != null) {
+              phoneNode = dataItem.getUri().getHost();
+              Log.d(TAG, "getDataItem => phoneNode:" + phoneNode);
+            }
+          });
+    }
+    if (force || trackerState.get() == null) {
+      mDataClient.readData(
+          Constants.Wear.Path.TRACKER_STATE,
+          dataItem -> {
+            if (dataItem != null) {
+              TrackerState newState = getTrackerStateFromDataItem(dataItem);
+              if (newState != null) {
+                setTrackerState(newState);
+              }
+            }
+          });
+    }
+    if (force || headers.get() == null) {
+      mDataClient.readData(
+          Constants.Wear.Path.HEADERS,
+          dataItem -> {
+            if (dataItem != null) {
+              Bundle b = DataMapItem.fromDataItem(dataItem).getDataMap().toBundle();
+              b.putLong(UPDATE_TIME, System.currentTimeMillis());
+              headers.set(b);
+            }
+          });
+    }
   }
 
   private void setData() {
@@ -137,7 +157,7 @@ public class StateService extends Service
 
   @Override
   public void onDestroy() {
-    Log.i(TAG, "StateService.onDestroy()");
+    Log.d(TAG, "StateService.onDestroy()");
     trackerState.clearListeners();
     if (mGoogleApiClient != null) {
       if (mGoogleApiClient.isConnected()) {
@@ -161,7 +181,9 @@ public class StateService extends Service
 
   @Override
   public void onValueChanged(ValueModel<Bundle> instance, Bundle oldValue, Bundle newValue) {
-    if (headersListener != null) headersListener.onValueChanged(newValue);
+    if (headersListener != null) {
+      headersListener.onValueChanged(newValue);
+    }
   }
 
   public class LocalBinder extends android.os.Binder {
@@ -195,14 +217,13 @@ public class StateService extends Service
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
     } else {
-      Log.i(TAG, "onMessageReceived: " + messageEvent);
+      Log.d(TAG, "onMessageReceived: " + messageEvent);
     }
   }
 
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
-      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri());
       String path = ev.getDataItem().getUri().getPath();
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         setPhoneNode(ev);
@@ -210,6 +231,9 @@ public class StateService extends Service
         setHeaders(ev);
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
         setTrackerState(ev);
+      } else {
+        Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri());
+        readDataIfMissing();
       }
     }
   }
@@ -217,7 +241,10 @@ public class StateService extends Service
   private void setPhoneNode(DataEvent ev) {
     if (ev.getType() == DataEvent.TYPE_CHANGED && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
       phoneNode = new String(ev.getDataItem().getData());
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=" + phoneNode);
+      readDataIfMissing();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");
       phoneNode = null;
       resetState();
     }
@@ -227,20 +254,27 @@ public class StateService extends Service
     if (ev.getType() == DataEvent.TYPE_CHANGED) {
       Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
       b.putLong(UPDATE_TIME, System.currentTimeMillis());
-      Log.i(TAG, "setHeaders(): b=" + b);
+      Log.d(TAG, "setHeaders(): b=" + b);
       headers.set(b);
+      readDataIfMissing();
     } else {
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", headers=null");
       headers.set(null);
       resetState();
     }
   }
 
   public static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
-    if (!dataItem.isDataValid()) return null;
+    if (!dataItem.isDataValid()) {
+      Log.d(TAG, "onDataChanged: " + dataItem.getUri() + ", dataItem.isDataValid() == false");
+      return null;
+    }
 
     Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();
     if (b.containsKey(Constants.Wear.TrackerState.STATE)) {
-      return TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
+      var state = TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
+      Log.d(TAG, "onDataChanged: " + dataItem.getUri() + ", trackerState=" + state);
+      return state;
     }
     return null;
   }
@@ -259,6 +293,7 @@ public class StateService extends Service
       resetState();
     }
     setTrackerState(newVal);
+    readDataIfMissing();
   }
 
   private void resetState() {
@@ -291,14 +326,22 @@ public class StateService extends Service
   }
 
   public void sendStart() {
-    if (!checkConnection()) return;
+    var msg = checkConnection();
+    if (msg != null) {
+      Log.d(TAG, "sendStart => not connected: " + msg);
+      return;
+    }
 
     Wearable.MessageApi.sendMessage(
         mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_START, null);
   }
 
   public void sendPauseResume() {
-    if (!checkConnection()) return;
+    var msg = checkConnection();
+    if (msg != null) {
+      Log.d(TAG, "sendPauseResume => not connected: " + msg);
+      return;
+    }
 
     if (getTrackerState() == TrackerState.STARTED) {
       Wearable.MessageApi.sendMessage(
@@ -310,7 +353,11 @@ public class StateService extends Service
   }
 
   public void sendNewLap() {
-    if (!checkConnection()) return;
+    var msg = checkConnection();
+    if (msg != null) {
+      Log.d(TAG, "sendNewLap => not connected: " + msg);
+      return;
+    }
 
     Wearable.MessageApi.sendMessage(
         mGoogleApiClient, phoneNode, Constants.Wear.Path.MSG_CMD_WORKOUT_NEW_LAP, null);
