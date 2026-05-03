@@ -90,7 +90,7 @@ public class StateService extends Service
     mGoogleApiClient.connect();
     this.headers.registerChangeListener(this);
 
-    Log.i(TAG, "StateService.onCreate()");
+    Log.d(TAG, "StateService.onCreate()");
   }
 
   private String checkConnection() {
@@ -100,7 +100,7 @@ public class StateService extends Service
     return "mGoogleApiClient="
         + mGoogleApiClient
         + ", isConnected="
-        + mGoogleApiClient.isConnected()
+        + (mGoogleApiClient != null ? mGoogleApiClient.isConnected(): false)
         + ", phoneNode="
         + phoneNode;
   }
@@ -116,7 +116,7 @@ public class StateService extends Service
           dataItem -> {
             if (dataItem != null) {
               phoneNode = dataItem.getUri().getHost();
-              Log.i(TAG, "getDataItem => phoneNode:" + phoneNode);
+              Log.d(TAG, "getDataItem => phoneNode:" + phoneNode);
             }
           });
     }
@@ -157,7 +157,7 @@ public class StateService extends Service
 
   @Override
   public void onDestroy() {
-    Log.i(TAG, "StateService.onDestroy()");
+    Log.d(TAG, "StateService.onDestroy()");
     trackerState.clearListeners();
     if (mGoogleApiClient != null) {
       if (mGoogleApiClient.isConnected()) {
@@ -217,7 +217,7 @@ public class StateService extends Service
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
     } else {
-      Log.i(TAG, "onMessageReceived: " + messageEvent);
+      Log.d(TAG, "onMessageReceived: " + messageEvent);
     }
   }
 
@@ -232,7 +232,7 @@ public class StateService extends Service
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
         setTrackerState(ev);
       } else {
-        Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri());
+        Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri());
         readDataIfMissing();
       }
     }
@@ -241,10 +241,10 @@ public class StateService extends Service
   private void setPhoneNode(DataEvent ev) {
     if (ev.getType() == DataEvent.TYPE_CHANGED && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
       phoneNode = new String(ev.getDataItem().getData());
-      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=" + phoneNode);
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=" + phoneNode);
       readDataIfMissing();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
-      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");
       phoneNode = null;
       resetState();
     }
@@ -254,11 +254,11 @@ public class StateService extends Service
     if (ev.getType() == DataEvent.TYPE_CHANGED) {
       Bundle b = DataMapItem.fromDataItem(ev.getDataItem()).getDataMap().toBundle();
       b.putLong(UPDATE_TIME, System.currentTimeMillis());
-      Log.i(TAG, "setHeaders(): b=" + b);
+      Log.d(TAG, "setHeaders(): b=" + b);
       headers.set(b);
       readDataIfMissing();
     } else {
-      Log.i(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", headers=null");
+      Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", headers=null");
       headers.set(null);
       resetState();
     }
@@ -266,14 +266,14 @@ public class StateService extends Service
 
   public static TrackerState getTrackerStateFromDataItem(DataItem dataItem) {
     if (!dataItem.isDataValid()) {
-      Log.i(TAG, "onDataChanged: " + dataItem.getUri() + ", dataItem.isDataValid() == false");
+      Log.d(TAG, "onDataChanged: " + dataItem.getUri() + ", dataItem.isDataValid() == false");
       return null;
     }
 
     Bundle b = DataMap.fromByteArray(dataItem.getData()).toBundle();
     if (b.containsKey(Constants.Wear.TrackerState.STATE)) {
       var state = TrackerState.valueOf(b.getInt(Constants.Wear.TrackerState.STATE));
-      Log.i(TAG, "onDataChanged: " + dataItem.getUri() + ", tracketState=" + state);
+      Log.d(TAG, "onDataChanged: " + dataItem.getUri() + ", trackerState=" + state);
       return state;
     }
     return null;
@@ -328,7 +328,7 @@ public class StateService extends Service
   public void sendStart() {
     var msg = checkConnection();
     if (msg != null) {
-      Log.i(TAG, "sendStart => not connected: " + msg);
+      Log.d(TAG, "sendStart => not connected: " + msg);
       return;
     }
 
@@ -339,7 +339,7 @@ public class StateService extends Service
   public void sendPauseResume() {
     var msg = checkConnection();
     if (msg != null) {
-      Log.i(TAG, "sendPauseResume => not connected: " + msg);
+      Log.d(TAG, "sendPauseResume => not connected: " + msg);
       return;
     }
 
@@ -355,7 +355,7 @@ public class StateService extends Service
   public void sendNewLap() {
     var msg = checkConnection();
     if (msg != null) {
-      Log.i(TAG, "sendNewLap => not connected: " + msg);
+      Log.d(TAG, "sendNewLap => not connected: " + msg);
       return;
     }
 
