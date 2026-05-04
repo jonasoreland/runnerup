@@ -38,13 +38,13 @@
         app:fragment="org.runnerup.view.SettingsSensorsFragment"
         app:iconSpaceReserved="false" />
 
-    <!--Controls -->
+    <!--User interface -->
 
     <Preference
-        android:key="controls_preferencescreen"
-        android:summary="@string/Controls_pref_summary"
-        android:title="@string/Controls"
-        app:fragment="org.runnerup.view.SettingsControlsFragment"
+        android:key="userinterface_preferencescreen"
+        android:summary="@string/User_interface_pref_summary"
+        android:title="@string/User_interface"
+        app:fragment="org.runnerup.view.SettingsUserInterfaceFragment"
         app:iconSpaceReserved="false" />
 
     <!--Workout -->

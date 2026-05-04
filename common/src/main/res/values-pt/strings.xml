@@ -342,8 +342,6 @@
   <string name="Database_category">Manutenção da base de dados</string>
   <string name="Maintenance_explanation_summary">O RunnerUp guarda os exercícios numa base de dados SQL.\nPara manutenção, o ficheiro runnerup.db.export pode ser importado e exportado de/para\n%1$s</string>
   <string name="Map_pref_summary">Estilo do mapa</string>
-  <string name="Controls">Controlos</string>
-  <string name="Controls_pref_summary">Bloquear botões</string>
   <string name="Workout_pref_summary">Gerir exercícios, voltas, descanso, treino de objetivos</string>
   <string name="Manage_workouts_category">Exercícios avançados</string>
   <string name="Autolap_category">Voltas automáticas</string>

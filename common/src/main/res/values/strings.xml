@@ -347,8 +347,8 @@
   <string name="Database_category">Database maintenance</string>
   <string name="Maintenance_explanation_summary_v2">RunnerUp saves workouts into a SQL-database that can be exported and imported.</string>
   <string name="Map_pref_summary">Mapstyle</string>
-  <string name="Controls">Controls</string>
-  <string name="Controls_pref_summary">Lock buttons, visibility</string>
+  <string name="User_interface">User interface</string>
+  <string name="User_interface_pref_summary">Lock buttons, visibility</string>
   <string name="Workout_pref_summary">Manage workouts, laps, rest, target coaching</string>
   <string name="Visibility_category">Visibility</string>
   <string name="Manage_workouts_category">Advanced workouts</string>

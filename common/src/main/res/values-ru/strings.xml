@@ -333,8 +333,6 @@
   <string name="Database_category">Ведение базы данных</string>
   <string name="Maintenance_explanation_summary">RunnerUp сохраняет тренировки в SQL-базе данных.\n Для обслуживания файл runnerup.db.export можно импортировать и экспортировать из/в\n%1$s.</string>
   <string name="Map_pref_summary">Стиль карты</string>
-  <string name="Controls">Управление</string>
-  <string name="Controls_pref_summary">Блокировка кнопок</string>
   <string name="Workout_pref_summary">Управление тренировками, кругами, отдыхом, целевым тренингом</string>
   <string name="Manage_workouts_category">Продвинутые тренировки</string>
   <string name="Autopause_category">Авто пауза</string>
