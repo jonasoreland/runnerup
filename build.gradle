@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.0.1'
+        classpath 'com.android.tools.build:gradle:9.2.1'
     }
 }
 
@@ -15,7 +15,7 @@ repositories {
 project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
-    buildToolsVersion = '36.1.0' // also .github/workflows/actions.yml
+    buildToolsVersion = '37.0.0' // also .github/workflows/actions.yml
     compileSdk = 36.1 // also .github/workflows/actions.yml
     targetSdk = 36.1
     minSdk = 23
