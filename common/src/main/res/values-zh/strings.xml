@@ -342,8 +342,6 @@
   <string name="Database_category">数据库维护</string>
   <string name="Maintenance_explanation_summary">RunnerUp会把训练数据保存到一个SQL数据库。\n为了维护，可以把runnerup.db.export文件从\n%1$s导入/导出</string>
   <string name="Map_pref_summary">地图风格</string>
-  <string name="Controls">控制</string>
-  <string name="Controls_pref_summary">锁定按钮</string>
   <string name="Workout_pref_summary">管理训练、分段、休息、虚拟兔子</string>
   <string name="Manage_workouts_category">高级训练</string>
   <string name="Autolap_category">自动分段</string>

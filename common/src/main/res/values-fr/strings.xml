@@ -343,8 +343,6 @@
   <string name="Database_category">Maintenance de la base de données</string>
   <string name="Maintenance_explanation_summary">RunnerUp enregistre les entraînements dans une base de données SQL.\nPour la maintenance, le fichier runnerup.db.export peut être importé et exporté depuis/vers\n%1$s</string>
   <string name="Map_pref_summary">Style de carte</string>
-  <string name="Controls">Contrôles</string>
-  <string name="Controls_pref_summary">Verrouiller les boutons</string>
   <string name="Workout_pref_summary">Gérez les entraînements, tours, repos, et objectifs</string>
   <string name="Manage_workouts_category">Entraînements avancés</string>
   <string name="Autolap_category">Tours automatiques</string>

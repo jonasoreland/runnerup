@@ -345,8 +345,6 @@
   <string name="Database_category">Databasunderhåll</string>
   <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
-  <string name="Controls">Kontroller</string>
-  <string name="Controls_pref_summary">Lås aktivitetsknappar</string>
   <string name="Workout_pref_summary">Hantera träningspass, varv och målcoachning</string>
   <string name="Manage_workouts_category">Avancerat träningspass</string>
   <string name="Autolap_category">Autovarv</string>
