@@ -345,7 +345,10 @@
   <string name="Database_category">Databasunderhåll</string>
   <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
+  <string name="User_interface">Användarinterface</string>
+  <string name="User_interface_pref_summary">Lås aktivitetsknappar, synlighet</string>
   <string name="Workout_pref_summary">Hantera träningspass, varv och målcoachning</string>
+  <string name="Visibility_category">Synlighet</string>
   <string name="Manage_workouts_category">Avancerat träningspass</string>
   <string name="Autolap_category">Autovarv</string>
   <string name="Autopause_category">Autopaus</string>
@@ -359,6 +362,8 @@
   <string name="Activity_ongoing">Aktivitet pågår</string>
   <string name="Activity_paused">Aktivitet pausad</string>
   <string name="Activity_stopped">Aktivitet stoppad</string>
+  <string name="Show_on_lock_screen">Visa på låsskärmen</string>
+  <string name="Show_on_lock_screen_summary">Visa aktivitet på låsskärmen då enheten är låst</string>
   <!--Name of sports, these deprecate array.sportEntries-->
   <string name="SPORT_RUNNING">Löpning</string>
   <string name="SPORT_BIKING">Cykel</string>
