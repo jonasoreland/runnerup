@@ -477,7 +477,27 @@ public class SyncManager {
               }
               testUserPass(sync, authConfig);
             })
-        .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+        .setNeutralButton(
+                (authSynchronizer.getName().equals(EndurainSynchronizer.NAME))
+                        ? "Web Login" : "Skip",
+                (dialog, which) ->
+                  {
+                    if (authSynchronizer.getName().equals(EndurainSynchronizer.NAME)) {
+                      try {
+                        //noinspection ConstantConditions
+                        authConfig.put("username", null);
+                        authConfig.put("password", null);
+                        if (authMethod == AuthMethod.USER_PASS_URL) {
+                          authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
+                        }
+                      } catch (JSONException e) {
+                        e.printStackTrace();
+                      }
+                      testUserPass(sync, authConfig);
+                    } else {
+                      handleAuthComplete(sync, Status.SKIP);
+                    }
+                  })
         .setNegativeButton(
             org.runnerup.common.R.string.Cancel,
             (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
