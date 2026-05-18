@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.entities.LocationEntity;
@@ -58,6 +59,9 @@ public class GraphWrapper implements Constants {
   private final Handler handler = new Handler(Looper.getMainLooper());
   private final XAxis distanceXAxis;
   private final XAxis timeXAxis;
+  private int sport;
+  private volatile int loadGeneration = 0;
+  private Future<?> pendingGraphLoad;
   boolean firstLoad = true;
   boolean useDistanceAsX = true;
   private XAxis xAxis;
@@ -70,10 +74,12 @@ public class GraphWrapper implements Constants {
       final Formatter formatter,
       SQLiteDatabase mDB,
       long mID,
+      int sport,
       boolean use_distance_as_x) {
     this.graphTab = graphTab;
     this.hrzonesBarLayout = hrzonesBarLayout;
     this.formatter = formatter;
+    this.sport = sport;
 
     this.distanceXAxis =
         new XAxis() {
@@ -121,7 +127,6 @@ public class GraphWrapper implements Constants {
     loadParam = new LoadParam(context, mDB, mID);
 
     graphView = new GraphView(context);
-    graphView.setTitle(formatter.formatVelocityLabel());
     graphView
         .getGridLabelRenderer()
         .setLabelFormatter(
@@ -131,12 +136,12 @@ public class GraphWrapper implements Constants {
                 if (isValueX) {
                   return xAxis.formatValue(value);
                 } else {
-                  return formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, value);
+                  return formatter.formatVelocityByPreferredUnit(
+                      Formatter.Format.TXT_SHORT, value, GraphWrapper.this.sport);
                 }
               }
             });
-    graphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit(context));
-    graphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.label());
+    updateVelocityAxisLabels();
     // enable zoom
     graphView.getViewport().setScalable(true);
     graphView.getViewport().setScrollable(true);
@@ -158,6 +163,7 @@ public class GraphWrapper implements Constants {
                 }
               }
             });
+    updateXAxisLabels();
     graphView2.getViewport().setScalable(true);
     graphView2.getViewport().setScrollable(true);
 
@@ -175,56 +181,114 @@ public class GraphWrapper implements Constants {
     } else {
       xAxis = timeXAxis;
     }
+    updateXAxisLabels();
     graphView.removeAllSeries();
     graphView2.removeAllSeries();
     loadGraph();
   }
 
+  public void setSport(int sport) {
+    if (this.sport == sport) {
+      return;
+    }
+    this.sport = sport;
+    updateVelocityAxisLabels();
+    graphView.removeAllSeries();
+    graphView2.removeAllSeries();
+    loadGraph();
+  }
+
+  private void updateVelocityAxisLabels() {
+    graphView.setTitle(formatter.formatVelocityLabel(sport));
+    graphView
+        .getGridLabelRenderer()
+        .setVerticalAxisTitle(formatter.getVelocityUnit(graphView.getContext(), sport));
+  }
+
+  private void updateXAxisLabels() {
+    final String axisLabel = xAxis.label();
+    graphView.getGridLabelRenderer().setHorizontalAxisTitle(axisLabel);
+    graphView2.getGridLabelRenderer().setHorizontalAxisTitle(axisLabel);
+  }
+
   private void loadGraph() {
-    executor.execute(
+    final GraphLoadRequest request = new GraphLoadRequest(++loadGeneration, sport, xAxis);
+    if (pendingGraphLoad != null) {
+      pendingGraphLoad.cancel(true);
+    }
+    pendingGraphLoad =
+        executor.submit(
         () -> {
+          if (isObsoleteRequest(request)) {
+            return;
+          }
           // Background work
-          GraphProducer producer = doLoadGraphInBackground(loadParam);
+          GraphProducer producer = doLoadGraphInBackground(loadParam, request);
+          if (producer == null || isObsoleteRequest(request)) {
+            return;
+          }
           // Post result to UI thread
-          handler.post(() -> onPostExecute(producer));
+          handler.post(() -> onPostExecute(request, producer));
         });
   }
 
-  private GraphProducer doLoadGraphInBackground(LoadParam params) {
+  private GraphProducer doLoadGraphInBackground(LoadParam params, GraphLoadRequest request) {
+    if (isObsoleteRequest(request)) {
+      return null;
+    }
     LocationEntity.LocationList<LocationEntity> ll =
         new LocationEntity.LocationList<>(params.mDB, params.mID);
-    GraphProducer graphData = new GraphProducer(params.context, ll.getCount());
-    double lastDistance = 0;
-    long lastTime = 0;
-    int lastLap = -1;
-    Double tot_distance = 0.0;
-    double tot_time = 0.0;
-    for (LocationEntity loc : ll) {
-      Long time = loc.getElapsed();
-      time = time != null ? time : lastTime;
-      tot_time = time.doubleValue();
-      Integer lap = loc.getLap();
-      lap = lap != null ? lap : 0;
-      tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
+    try {
+      GraphProducer graphData = new GraphProducer(params.context, ll.getCount(), request.sport());
+      double lastDistance = 0;
+      long lastTime = 0;
+      int lastLap = -1;
+      Double tot_distance = 0.0;
+      double tot_time = 0.0;
+      for (LocationEntity loc : ll) {
+        if (isObsoleteRequest(request)) {
+          return null;
+        }
 
-      double tot_X = xAxis.getX(tot_distance, time);
-      if (lap != lastLap) {
-        graphData.clearSmooth(tot_X);
-        lastLap = lap;
+        Long time = loc.getElapsed();
+        time = time != null ? time : lastTime;
+        tot_time = time.doubleValue();
+        Integer lap = loc.getLap();
+        lap = lap != null ? lap : 0;
+        tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
+
+        double tot_X = request.xAxis().getX(tot_distance, time);
+        if (lap != lastLap) {
+          graphData.clearSmooth(tot_X);
+          lastLap = lap;
+        }
+
+        graphData.addObservation(time - lastTime, tot_distance - lastDistance, tot_X, loc);
+        lastTime = time;
+        lastDistance = tot_distance;
       }
-
-      graphData.addObservation(time - lastTime, tot_distance - lastDistance, tot_X, loc);
-      lastTime = time;
-      lastDistance = tot_distance;
+      if (isObsoleteRequest(request)) {
+        return null;
+      }
+      graphData.clearSmooth(request.xAxis().getX(tot_distance, tot_time));
+      return graphData;
+    } finally {
+      ll.close();
     }
-    graphData.clearSmooth(xAxis.getX(tot_distance, tot_time));
-
-    ll.close();
-    return graphData;
   }
 
-  private void onPostExecute(GraphProducer graphData) {
+  private boolean isObsoleteRequest(GraphLoadRequest request) {
+    return Thread.currentThread().isInterrupted()
+        || request.generation() != loadGeneration
+        || request.sport() != sport
+        || request.xAxis() != xAxis;
+  }
+
+  private void onPostExecute(GraphLoadRequest request, GraphProducer graphData) {
     if (graphData == null) return;
+    if (request.generation() != loadGeneration) return;
+    if (request.sport() != sport) return;
+    if (request.xAxis() != xAxis) return;
 
     graphData.complete(graphView);
     graphTab.removeView(graphView);
@@ -302,7 +366,7 @@ public class GraphWrapper implements Constants {
     boolean showHR = false;
     boolean showHRZhist = false;
 
-    public GraphProducer(Context context, int noPoints) {
+    public GraphProducer(Context context, int noPoints, int sport) {
       final int GRAPH_INTERVAL_SECONDS = 5; // 1 point every 5 sec
       final int GRAPH_AVERAGE_SECONDS = 30; // moving average 30 sec
 
@@ -331,7 +395,7 @@ public class GraphWrapper implements Constants {
         Arrays.fill(this.hrzHist, 0);
         showHRZhist = true;
       }
-      this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context);
+      this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context, sport);
 
       clearSmooth(0);
     }
@@ -503,10 +567,10 @@ public class GraphWrapper implements Constants {
                     "%s: %s\n%s: %s %s",
                     graphView.getContext().getString(org.runnerup.common.R.string.Distance),
                     xAxis.formatValue(dataPoint.getX()),
-                    formatter.formatVelocityLabel(),
+                    formatter.formatVelocityLabel(sport),
                     formatter.formatVelocityByPreferredUnit(
-                        Formatter.Format.TXT_SHORT, dataPoint.getY()),
-                    formatter.getVelocityUnit(graphView.getContext()));
+                        Formatter.Format.TXT_SHORT, dataPoint.getY(), sport),
+                    formatter.getVelocityUnit(graphView.getContext(), sport));
             Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
           });
       if (showHR) {
@@ -692,4 +756,6 @@ public class GraphWrapper implements Constants {
   }
 
   record LoadParam(Context context, SQLiteDatabase mDB, long mID) {}
+
+  record GraphLoadRequest(int generation, int sport, XAxis xAxis) {}
 }

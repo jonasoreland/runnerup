@@ -121,7 +121,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private View graphTab;
 
   private MapWrapper mapWrapper = null;
-  private final GraphWrapper graphWrapper = null;
+  private GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;
@@ -186,6 +186,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           updateViewForSport(newValue);
           ViewCompat.requestApplyInsets(rootView);
           headerData.put(DB.ACTIVITY.SPORT, newValue);
+          refreshVelocityDisplays(newValue);
           return newValue;
         }
       });
@@ -317,8 +318,16 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
     // variable not needed
-    new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
-                     formatter, mDB, mID, use_distance_as_x);
+    graphWrapper =
+        new GraphWrapper(
+            this,
+            graphTabLayout,
+            hrzonesBarLayout,
+            formatter,
+            mDB,
+            mID,
+            sport.getValueInt(),
+            use_distance_as_x);
 
     if (this.mode == MODE_SAVE) {
       resumeButton.setOnClickListener(resumeButtonClick);
@@ -361,7 +370,33 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
     if (graphWrapper != null) {
       boolean use_distance_as_x = !Sport.isWithoutGps(sportValue);
+      graphWrapper.setSport(sportValue);
       graphWrapper.setUseDistanceAsX(use_distance_as_x);
+    }
+  }
+
+  private int getActivitySport(ContentValues data) {
+    if (data.containsKey(DB.ACTIVITY.SPORT)) {
+      return data.getAsInteger(DB.ACTIVITY.SPORT);
+    }
+    if (sport != null) {
+      return sport.getValueInt();
+    }
+    return DB.ACTIVITY.SPORT_RUNNING;
+  }
+
+  private void refreshVelocityDisplays(int sportValue) {
+    if (headerData.containsKey(DB.ACTIVITY.DISTANCE) && headerData.containsKey(DB.ACTIVITY.TIME)) {
+      double distance = headerData.getAsDouble(DB.ACTIVITY.DISTANCE);
+      long time = headerData.getAsLong(DB.ACTIVITY.TIME);
+      if (time != 0) {
+        activityPace.setText(
+            formatter.formatVelocityByPreferredUnit(
+                Formatter.Format.TXT_LONG, distance / time, sportValue));
+      }
+    }
+    for (BaseAdapter adapter : adapters) {
+      adapter.notifyDataSetChanged();
     }
   }
 
@@ -628,6 +663,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void updateHeader(ContentValues data, boolean fromManualDistance) {
+    int sportValue = getActivitySport(data);
     double d = 0;
     if (data.containsKey(DB.ACTIVITY.DISTANCE)) {
       d = data.getAsDouble(DB.ACTIVITY.DISTANCE);
@@ -661,7 +697,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       activityPace.setVisibility(View.VISIBLE);
       activityPaceSeparator.setVisibility(View.VISIBLE);
       activityPace.setText(
-          formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t));
+          formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t, sportValue));
     } else {
       activityPace.setVisibility(View.GONE);
       activityPaceSeparator.setVisibility(View.GONE);
@@ -745,7 +781,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       viewHolder.tv3.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
       if (t != 0) {
         viewHolder.tv4.setText(
-            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t));
+            formatter.formatVelocityByPreferredUnit(
+                Formatter.Format.TXT_LONG, d / t, sport.getValueInt()));
       } else {
         viewHolder.tv4.setText("");
       }

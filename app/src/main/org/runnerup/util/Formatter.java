@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.Constants.DB;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.SpeedUnit;
 
@@ -217,7 +218,19 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return Configured Speed Unit (falls back to pace, if the configured value is invalid)
    */
   public static SpeedUnit getPreferredSpeedUnit(Context context) {
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    return getGlobalPreferredSpeedUnit(
+        context, PreferenceManager.getDefaultSharedPreferences(context));
+  }
+
+  public static SpeedUnit getPreferredSpeedUnit(Context context, int sport) {
+    SpeedUnit globalSpeedUnit = getPreferredSpeedUnit(context);
+    if (!usesOppositeSpeedUnit(context, sport)) {
+      return globalSpeedUnit;
+    }
+    return globalSpeedUnit == SpeedUnit.PACE ? SpeedUnit.SPEED : SpeedUnit.PACE;
+  }
+
+  private static SpeedUnit getGlobalPreferredSpeedUnit(Context context, SharedPreferences prefs) {
     // use either pace or speed according to the user's preference
     String speedUnit =
         prefs.getString(
@@ -230,6 +243,69 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       default:
         return SpeedUnit.PACE;
     }
+  }
+
+  public static int[] getOppositeSpeedUnitSports(Context context) {
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    String storedSports =
+        prefs.getString(context.getString(R.string.pref_speedunit_opposite_sports), null);
+    if (storedSports == null || storedSports.isEmpty()) {
+      return new int[0];
+    }
+    return normalizeSportIds(SafeParse.parseIntList(storedSports));
+  }
+
+  public static void setOppositeSpeedUnitSports(Context context, int[] sports) {
+    int[] normalizedSports = normalizeSportIds(sports);
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    Editor editor = prefs.edit();
+    String key = context.getString(R.string.pref_speedunit_opposite_sports);
+    if (normalizedSports.length == 0) {
+      editor.remove(key).apply();
+      return;
+    }
+    editor.putString(key, SafeParse.storeIntList(normalizedSports)).apply();
+  }
+
+  private static boolean usesOppositeSpeedUnit(Context context, int sport) {
+    if (sport < 0) {
+      return false;
+    }
+    for (int oppositeSport : getOppositeSpeedUnitSports(context)) {
+      if (oppositeSport == sport) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static int[] normalizeSportIds(int[] sports) {
+    if (sports == null || sports.length == 0) {
+      return new int[0];
+    }
+
+    boolean[] includedSports = new boolean[DB.ACTIVITY.SPORT_MAX + 1];
+    for (int sport : sports) {
+      if (0 <= sport && sport <= DB.ACTIVITY.SPORT_MAX) {
+        includedSports[sport] = true;
+      }
+    }
+
+    int count = 0;
+    for (boolean includedSport : includedSports) {
+      if (includedSport) {
+        count++;
+      }
+    }
+
+    int[] normalizedSports = new int[count];
+    int index = 0;
+    for (int sport = 0; sport < includedSports.length; sport++) {
+      if (includedSports[sport]) {
+        normalizedSports[index++] = sport;
+      }
+    }
+    return normalizedSports;
   }
 
   public double getUnitMeters() {
@@ -483,15 +559,14 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return display value
    */
   public String formatVelocityByPreferredUnit(Format target, double meters_per_second) {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+    return formatVelocityByPreferredUnit(target, meters_per_second, -1);
+  }
+
+  public String formatVelocityByPreferredUnit(Format target, double meters_per_second, int sport) {
+    if (getPreferredSpeedUnit(context, sport) == SpeedUnit.PACE) {
       return this.formatPaceSpeed(target, meters_per_second);
-    } else {
-      return this.formatSpeed(target, meters_per_second);
     }
+    return this.formatSpeed(target, meters_per_second);
   }
 
   /**
@@ -500,15 +575,14 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return value
    */
   public String formatVelocityLabel() {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            context.getResources().getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+    return formatVelocityLabel(-1);
+  }
+
+  public String formatVelocityLabel(int sport) {
+    if (getPreferredSpeedUnit(context, sport) == SpeedUnit.PACE) {
       return this.context.getString(org.runnerup.common.R.string.Pace);
-    } else {
-      return this.context.getString(org.runnerup.common.R.string.Speed);
     }
+    return this.context.getString(org.runnerup.common.R.string.Speed);
   }
 
   /**
@@ -538,11 +612,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    */
   String getVelocityUnit(
       Context context) { // Resources resources, SharedPreferences sharedPreferences) {
+    return getVelocityUnit(context, -1);
+  }
+
+  String getVelocityUnit(
+      Context context, int sport) { // Resources resources, SharedPreferences sharedPreferences) {
     int du =
         metric
             ? org.runnerup.common.R.string.metrics_distance_km
             : org.runnerup.common.R.string.metrics_distance_mi;
-    switch (getPreferredSpeedUnit(context)) {
+    switch (getPreferredSpeedUnit(context, sport)) {
       case SPEED:
         return resources.getString(du)
             + "/"

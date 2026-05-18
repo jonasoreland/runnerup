@@ -37,4 +37,10 @@
         android:title="@string/Speed_unit_preference"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="@string/pref_speedunit_opposite_sports"
+        android:summary="@string/speed_unit_opposite_activities_summary_empty"
+        android:title="@string/speed_unit_opposite_activities_title"
+        app:iconSpaceReserved="false" />
+
 </PreferenceScreen>

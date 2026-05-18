@@ -82,6 +82,7 @@ public class ManualActivity extends AppCompatActivity {
     ViewUtil.Insets(findViewById(R.id.tab_manual), true);
 
     manualSport.setArrayEntries(Sport.getStringArray(getResources()));
+    manualSport.setOnSetValueListener(onSetManualSport);
   }
 
   @Override
@@ -123,6 +124,10 @@ public class ManualActivity extends AppCompatActivity {
   }
 
   void setManualPace(String distance, String duration) {
+    setManualPace(distance, duration, manualSport.getValueInt());
+  }
+
+  void setManualPace(String distance, String duration, int sportValue) {
     Log.d(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
     double dist = SafeParse.parseDouble(distance, 0); // convert to meters
     long seconds = SafeParse.parseSeconds(duration, 0);
@@ -131,9 +136,25 @@ public class ManualActivity extends AppCompatActivity {
       return;
     }
     manualPace.setValue(
-        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dist / seconds));
+        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, dist / seconds, sportValue));
     manualPace.setVisibility(View.VISIBLE);
   }
+
+  final OnSetValueListener onSetManualSport =
+      new OnSetValueListener() {
+
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          setManualPace(
+              manualDistance.getValue().toString(), manualDuration.getValue().toString(), newValue);
+          return newValue;
+        }
+      };
 
   final OnSetValueListener onSetManualDistance =
       new OnSetValueListener() {

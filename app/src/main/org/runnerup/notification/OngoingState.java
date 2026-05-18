@@ -79,7 +79,7 @@ public class OngoingState implements NotificationState {
             Formatter.Format.TXT_LONG, Math.round(workoutInfo.getTime(Scope.ACTIVITY)));
     String pace =
         formatter.formatVelocityByPreferredUnit(
-            Formatter.Format.TXT_SHORT, workoutInfo.getSpeed(Scope.ACTIVITY));
+            Formatter.Format.TXT_SHORT, workoutInfo.getSpeed(Scope.ACTIVITY), workoutInfo.getSport());
 
     String content =
         String.format(
@@ -88,7 +88,7 @@ public class OngoingState implements NotificationState {
             distance,
             context.getString(org.runnerup.common.R.string.time),
             time,
-            context.getString(org.runnerup.common.R.string.pace),
+            formatter.formatVelocityLabel(workoutInfo.getSport()),
             pace);
     builder.setContentText(content);
 
