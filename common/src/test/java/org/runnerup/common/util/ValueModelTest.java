@@ -4,8 +4,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -71,7 +71,7 @@ public class ValueModelTest {
 
     sut.set(null);
 
-    verify(listener, never()).onValueChanged(eq(sut), anyObject(), anyObject());
+    verify(listener, never()).onValueChanged(eq(sut), any(), any());
   }
 
   @Test
@@ -82,7 +82,7 @@ public class ValueModelTest {
     sut.unregisterChangeListener(listener);
     sut.set(newValue);
 
-    verify(listener, never()).onValueChanged(eq(sut), anyObject(), anyObject());
+    verify(listener, never()).onValueChanged(eq(sut), any(), any());
   }
 
   @Test
@@ -112,9 +112,9 @@ public class ValueModelTest {
 
     sut.set(newValue);
 
-    verify(listener1, never()).onValueChanged(eq(sut), anyObject(), anyObject());
-    verify(listener2, never()).onValueChanged(eq(sut), anyObject(), anyObject());
-    verify(listener3, never()).onValueChanged(eq(sut), anyObject(), anyObject());
+    verify(listener1, never()).onValueChanged(eq(sut), any(), any());
+    verify(listener2, never()).onValueChanged(eq(sut), any(), any());
+    verify(listener3, never()).onValueChanged(eq(sut), any(), any());
   }
 
   @Test

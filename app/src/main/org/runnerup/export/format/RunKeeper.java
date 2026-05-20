@@ -87,7 +87,7 @@ public class RunKeeper {
       w.name("start_time").value(formatTime(startTime * 1000));
       w.name("total_distance").value(distance);
       w.name("duration").value(duration);
-      if (comment != null && comment.length() > 0) {
+      if (comment != null && !comment.isEmpty()) {
         w.name("notes").value(comment);
       }
       // it seems that upload fails if writting an empty array...

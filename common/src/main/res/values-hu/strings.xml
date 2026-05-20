@@ -265,8 +265,6 @@
   <string name="use_temperature_sensor">Hőmérsékletérzékelő</string>
   <string name="use_pressure_sensor_title">Nyomásérzékelő</string>
   <string name="use_pressure_sensor_summary">Barométer használata a magasság számításhoz</string>
-  <string name="adjust_barometer_altitude_from_gps">Barométer magasság állítása GPS magassághoz</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Használja a kezdeti GPS magasságot a barometrikus magasság átlagolásához</string>
   <string name="Lap_start">Kör kezdete</string>
   <string name="Speed">Sebesség</string>
   <string name="path_simplification_algorithm">Algoritmus</string>

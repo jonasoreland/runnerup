@@ -217,4 +217,6 @@
   <string name="Autopause_category">Kendiliğinden duraklat</string>
   <string name="Target_category">Hedef yönlendirmesi</string>
   <string name="Activity_ongoing">Etkinlik devam ediyor</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Koşu</string>
 </resources>

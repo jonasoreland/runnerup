@@ -47,6 +47,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.util.FileNameHelper;
@@ -119,7 +120,6 @@ public class FileSynchronizer extends DefaultSynchronizer {
       try {
         mFormat = new FileFormats(config.getAsString(DB.ACCOUNT.FORMAT));
         JSONObject tmp = new JSONObject(authConfig);
-        //noinspection ConstantConditions
         mPath = tmp.optString(DB.ACCOUNT.URL, null);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && mPath.startsWith(File.separator)) {
           // Migrate to use scooped storage
@@ -219,7 +219,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          TCX tcx = new TCX(db, simplifier);
+          TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
           tcx.export(mID, new OutputStreamWriter(out));
         }
       }
@@ -229,7 +229,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
         if (out == null) {
           s = Status.ERROR;
         } else {
-          GPX gpx = new GPX(db, true, true, simplifier);
+          GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
           gpx.export(mID, new OutputStreamWriter(out));
         }
       }
@@ -257,7 +257,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
       final Uri contentUri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
       Uri uri = resolver.insert(contentUri, contentValues);
       if (uri == null) {
-        Log.w(getName(), "No uri: " + contentUri + " " + fileName);
+        Log.i(getName(), "No uri: " + contentUri + " " + fileName);
         return null;
       }
       return resolver.openOutputStream(uri);
@@ -265,7 +265,7 @@ public class FileSynchronizer extends DefaultSynchronizer {
       String path = new File(mPath).getAbsolutePath() + File.separator + fileName;
       if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
           != PackageManager.PERMISSION_GRANTED) {
-        Log.w(getName(), "No permission to write to: " + path);
+        Log.i(getName(), "No permission to write to: " + path);
         return null;
       }
       File file = new File(path);

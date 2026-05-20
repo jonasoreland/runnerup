@@ -46,7 +46,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="@string/Website" />
 
             <EditText
@@ -72,7 +71,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="@string/Username" />
 
             <EditText
@@ -99,7 +97,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:text="@string/Password" />
 
             <EditText
@@ -121,7 +118,7 @@
     <CheckBox
         android:layout_marginTop="8dp"
         android:id="@+id/showpass"
-        android:layout_gravity="right"
+        android:layout_gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minWidth="48dp"

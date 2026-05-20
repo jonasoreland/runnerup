@@ -57,6 +57,11 @@ public interface Constants {
       int SPORT_OTHER = 2; // unknown
       int SPORT_ORIENTEERING = 3;
       int SPORT_WALKING = 4;
+      int SPORT_TREADMILL = 5;
+      int SPORT_GYM = 6;
+      int SPORT_STATIONARY_BIKE = 7;
+      int SPORT_MAX = 7;
+
       String WITH_BAROMETER = "<WithBarometer/>";
     }
 
@@ -200,6 +205,14 @@ public interface Constants {
     String START_WORKOUT = BuildConfig.applicationIdFull + ".START_WORKOUT";
     String PAUSE_WORKOUT = BuildConfig.applicationIdFull + ".PAUSE_WORKOUT";
     String RESUME_WORKOUT = BuildConfig.applicationIdFull + ".RESUME_WORKOUT";
+    // Used from Wear: Request permission
+    String EXTRA_PERMISSION_TO_REQUEST =
+        BuildConfig.applicationIdFull + ".EXTRA_PERMISSION_TO_REQUEST";
+    // Used from Wear: Broadcast permission result
+    String ACTION_PERMISSION_RESULT = BuildConfig.applicationIdFull + ".ACTION_PERMISSION_RESULT";
+    String EXTRA_PERMISSION_GRANTED = BuildConfig.applicationIdFull + ".EXTRA_PERMISSION_GRANTED";
+    String EXTRA_REQUESTED_PERMISSION_NAME =
+        BuildConfig.applicationIdFull + ".EXTRA_REQUESTED_PERMISSION_NAME";
   }
 
   interface TRACKER_STATE {

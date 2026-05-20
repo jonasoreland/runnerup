@@ -84,7 +84,7 @@ public class AntPlus extends BtHRBase {
   }
 
   @Override
-  public void close() {
+  public void close(String from) {
     HRClient client = hrClient;
     hrClient = null;
     stopScan();
@@ -212,7 +212,7 @@ public class AntPlus extends BtHRBase {
   private AntPlusHeartRatePcc antDevice = null;
 
   private final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver =
-      new IPluginAccessResultReceiver<AntPlusHeartRatePcc>() {
+      new IPluginAccessResultReceiver<>() {
 
         @Override
         public void onResultReceived(
@@ -410,7 +410,7 @@ public class AntPlus extends BtHRBase {
 
   @Override
   public int getBatteryLevel() {
-    return -1;
+    return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
   }
 
   // ANT+ requires Bluetooth too, as well as that system libs are loaded

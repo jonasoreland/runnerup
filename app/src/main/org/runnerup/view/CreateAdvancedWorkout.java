@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableRow;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -35,6 +36,7 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
 
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -145,9 +147,9 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
       }
 
       Workout.StepListEntry entry = steps.get(position);
-      viewHolder.button.setStep(entry.step);
+      viewHolder.button.setStep(entry.step());
       float pxToDp = getResources().getDisplayMetrics().density;
-      viewHolder.button.setPadding((int) (entry.level * 8 * pxToDp + 0.5f), 0, 0, 0);
+      viewHolder.button.setPadding((int) (entry.level() * 8 * pxToDp + 0.5f), 0, 0, 0);
 
       return view;
     }

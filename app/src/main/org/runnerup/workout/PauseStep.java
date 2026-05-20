@@ -17,8 +17,6 @@
 
 package org.runnerup.workout;
 
-import org.runnerup.BuildConfig;
-
 public class PauseStep extends Step {
 
   private long elapsedTime = 0;

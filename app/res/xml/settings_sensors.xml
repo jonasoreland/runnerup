@@ -231,16 +231,6 @@
             android:summary="@string/use_pressure_sensor_summary"
             android:title="@string/use_pressure_sensor_title"
             app:iconSpaceReserved="false" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_use_pressure_sensor"
-            android:key="@string/pref_pressure_elevation_gps_average"
-            android:persistent="true"
-            android:singleLineTitle="false"
-            android:summary="@string/adjust_barometer_elevation_from_gps_summary"
-            android:title="@string/adjust_barometer_altitude_from_gps"
-            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <!-- Comment out for now, no implementation available. Code still exists.

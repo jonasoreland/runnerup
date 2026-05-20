@@ -303,8 +303,6 @@
   <string name="use_temperature_sensor">Senzor de temperatura</string>
   <string name="use_pressure_sensor_title">Senzor de presiune</string>
   <string name="use_pressure_sensor_summary">Utilizează barometrul pentru a calcula altitudinea</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajustează altitudinea barometrului la altitudinea GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Utilizează creșterea inițială a GPS-ului pentru a obține o medie a cotei barometrice</string>
   <string name="channel_notification_ongoing">Notificări RunnerUp de GPS și activitate</string>
   <string name="Lap_start">Începe runda</string>
   <string name="Lap_start_summary">Cue pentru începerea rundelor și etapele active, de încălzire și de răcire</string>

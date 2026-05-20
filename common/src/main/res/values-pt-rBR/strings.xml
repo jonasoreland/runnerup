@@ -312,8 +312,6 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressão</string>
   <string name="use_pressure_sensor_summary">Usar barômetro para calcular a altitude</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barômetro à elevação do GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para calcular a altitude barométrica média</string>
   <string name="channel_notification_ongoing">RunnerUp GPS e notificações da atividade</string>
   <string name="Lap_start">Início da volta</string>
   <string name="Lap_start_summary">Avisos para início de voltas e etapas de Atividade, Aquecimento e Desaquecimento</string>
@@ -344,8 +342,6 @@
   <string name="Database_category">Manutenção do banco de dados</string>
   <string name="Maintenance_explanation_summary">RunnerUp armazena os treinos em um banco de dados SQL.\nPara manutenção, o arquivo runnerup.db.export pode ser importado de e exportado para\n%1$s</string>
   <string name="Map_pref_summary">Estilo do mapa</string>
-  <string name="Controls">Controles</string>
-  <string name="Controls_pref_summary">Travar botões</string>
   <string name="Workout_pref_summary">Gerenciar exercícios, voltas, descanso e treinamento de meta</string>
   <string name="Manage_workouts_category">Exercícios avançados</string>
   <string name="Autolap_category">Voltas automáticas</string>
@@ -358,4 +354,8 @@
   <string name="Current_speed_from_GPS_points_summary">Obter velocidade do sensor de GPS em vez de calcular das posições do GPS</string>
   <string name="Target_coaching_summary">Definir o período para o cálculo da média móvel para o informe da meta e o período de tolerância para os avisos de áudio</string>
   <string name="Activity_ongoing">Atividade em andamento</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Corrida</string>
+  <string name="SPORT_BIKING">Ciclismo</string>
+  <string name="SPORT_OTHER">Outros</string>
 </resources>

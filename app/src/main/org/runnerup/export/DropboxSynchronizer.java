@@ -39,6 +39,7 @@ import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.export.format.TCX;
 import org.runnerup.export.oauth2client.OAuth2Activity;
@@ -52,7 +53,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
   public static final String NAME = "Dropbox";
   private static final String PUBLIC_URL = "https://dropbox.com";
-  public static final int ENABLED = BuildConfig.DROPBOX_ENABLED;
+  public static final boolean ENABLED = BuildConfig.DROPBOX_ENABLED;
 
   private static final String UPLOAD_URL = "https://content.dropboxapi.com/2/files/upload";
   private static final String AUTH_URL = "https://www.dropbox.com/oauth2/authorize";
@@ -65,7 +66,7 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
   private final PathSimplifier simplifier;
 
   DropboxSynchronizer(Context context, PathSimplifier simplifier) {
-    if (ENABLED == 0) {
+    if (!ENABLED) {
       Log.w(NAME, "No client id configured in this build");
     }
     this.simplifier = simplifier;
@@ -322,13 +323,13 @@ public class DropboxSynchronizer extends DefaultSynchronizer implements OAuth2Se
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(start_time, sport.TapiriikType());
       if (mFormat.contains(FileFormats.TCX)) {
-        TCX tcx = new TCX(db, simplifier);
+        TCX tcx = new TCX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         tcx.export(mID, writer);
         s = uploadFile(writer, mID, fileBase, FileFormats.TCX.getValue());
       }
       if (s == Status.OK && mFormat.contains(FileFormats.GPX)) {
-        GPX gpx = new GPX(db, true, true, simplifier);
+        GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
         StringWriter writer = new StringWriter();
         gpx.export(mID, writer);
         s = uploadFile(writer, mID, fileBase, FileFormats.GPX.getValue());

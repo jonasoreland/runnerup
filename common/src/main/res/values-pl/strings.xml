@@ -285,8 +285,6 @@
   <string name="use_temperature_sensor">Czujnik temperatury</string>
   <string name="use_pressure_sensor_title">Czujnik ciśnienia</string>
   <string name="use_pressure_sensor_summary">Użyj barometru do obliczenia wzniesienia</string>
-  <string name="adjust_barometer_altitude_from_gps">Dopasuj wysokość z barometru do wzniesienia z GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Użyj początkowego wzniesienia z GPS do uśrednienia wzniesienia barometrycznego</string>
   <string name="channel_notification_ongoing">Powiadomienie z RunnerUp o GPS i o treningu</string>
   <string name="Lap_start">Start okrążenia</string>
   <!--Preference categories & summaries-->
@@ -294,4 +292,8 @@
   <string name="Autopause_category">Autopauza</string>
   <string name="Target_category">Wskazówki trenera</string>
   <string name="Activity_ongoing">Trening w toku</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Bieganie</string>
+  <string name="SPORT_BIKING">Kolarstwo</string>
+  <string name="SPORT_OTHER">Inne</string>
 </resources>

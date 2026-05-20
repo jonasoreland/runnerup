@@ -17,11 +17,9 @@
 
 package org.runnerup.view;
 
-import static org.runnerup.BuildConfig.USING_OSMDROID;
 import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +48,7 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -80,6 +79,8 @@ import org.runnerup.util.FileNameHelper;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.GraphWrapper;
 import org.runnerup.util.MapWrapper;
+import org.runnerup.util.SafeParse;
+import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
 import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Intensity;
@@ -113,31 +114,34 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TextView activityDistance = null;
 
   private TitleSpinner sport = null;
+  private TitleSpinner manualDistance = null;
   private EditText notes = null;
   private View rootView;
+  private View mapTab;
+  private View graphTab;
 
   private MapWrapper mapWrapper = null;
+  private final GraphWrapper graphWrapper = null;
 
   private SyncManager syncManager = null;
   private Formatter formatter = null;
 
   private long mStartTime = 0; // activity start time in unix timestamp
+  private ContentValues headerData = new ContentValues();
   private static final int EDIT_ACCOUNT_REQUEST = 2;
 
   /** Called when the activity is first created. */
-  @SuppressLint("ObsoleteSdkInt")
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
-    if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+    if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
+      // MapBox or Osmdroid, set mapWrapper.
       MapWrapper.start(this);
-      setContentView(R.layout.detail);
-      rootView = findViewById(R.id.detail_view);
-    } else {
-      // No MapBox key nor Osmdroid, load without mapview, do not set mapWrapper
-      setContentView(R.layout.detail_nomap);
-      rootView = findViewById(R.id.detail_nomap_view);
     }
+    setContentView(R.layout.detail);
+    rootView = findViewById(R.id.detail_view);
+
     Toolbar toolbar = findViewById(R.id.actionbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -171,9 +175,41 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
     sport = findViewById(R.id.summary_sport);
+    sport.setOnSetValueListener(new OnSetValueListener() {
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          updateViewForSport(newValue);
+          ViewCompat.requestApplyInsets(rootView);
+          headerData.put(DB.ACTIVITY.SPORT, newValue);
+          return newValue;
+        }
+      });
+
+    sport.setArrayEntries(Sport.getStringArray(getResources()));
+
+    manualDistance = findViewById(R.id.summary_manual_distance);
+    manualDistance.setOnSetValueListener(new OnSetValueListener() {
+        @Override
+        public String preSetValue(String newValue) throws IllegalArgumentException {
+          double dist = SafeParse.parseDouble(newValue, 0); // convert to meters
+          headerData.put(DB.ACTIVITY.DISTANCE, dist);
+          updateHeader(headerData, /* fromManualDistance= */true);
+          return newValue;
+        }
+
+        @Override
+        public int preSetValue(int newValue) throws IllegalArgumentException {
+          return newValue;
+        }
+      });
     notes = findViewById(R.id.notes_text);
 
-    if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+    if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
       Object mapView = findViewById(R.id.mapview);
       mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
       mapWrapper.onCreate(savedInstanceState);
@@ -181,18 +217,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     saveButton.setOnClickListener(saveButtonClick);
     uploadButton.setOnClickListener(uploadButtonClick);
-    if (this.mode == MODE_SAVE) {
-      resumeButton.setOnClickListener(resumeButtonClick);
-      discardButton.setOnClickListener(discardButtonClick);
-      setEdit(true);
-    } else if (this.mode == MODE_DETAILS) {
-      resumeButton.setVisibility(View.GONE);
-      discardButton.setVisibility(View.GONE);
-      setEdit(false);
-    }
 
-    fillHeaderData();
-    requery();
     uploadButton.setVisibility(View.GONE);
 
     TabHost th = findViewById(R.id.tabhost);
@@ -209,12 +234,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     tabSpec.setContent(R.id.tab_lap);
     th.addTab(tabSpec);
 
-    if (USING_OSMDROID || BuildConfig.MAPBOX_ENABLED > 0) {
+    if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
       tabSpec = th.newTabSpec("map");
       tabSpec.setIndicator(
           WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Map)));
       tabSpec.setContent(R.id.tab_map);
       th.addTab(tabSpec);
+      mapTab = th.getTabWidget().getChildTabViewAt(2);
     }
 
     tabSpec = th.newTabSpec("graph");
@@ -222,17 +248,18 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Graph)));
     tabSpec.setContent(R.id.tab_graph);
     th.addTab(tabSpec);
-
-    LinearLayout graphTab = findViewById(R.id.tab_graph);
-    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
-    GraphWrapper graphWrapper =
-        new GraphWrapper(this, graphTab, hrzonesBarLayout, formatter, mDB, mID);
+    // Get graph tab (cannot hardcode index due to optional map tab).
+    int graphTabIndex = th.getTabWidget().getChildCount() - 1;
+    graphTab = th.getTabWidget().getChildTabViewAt(graphTabIndex);
 
     tabSpec = th.newTabSpec("share");
     tabSpec.setIndicator(
         WidgetUtil.createHoloTabIndicator(this, getString(org.runnerup.common.R.string.Upload)));
     tabSpec.setContent(R.id.tab_upload);
     th.addTab(tabSpec);
+
+    fillHeaderData();
+    requery();
 
     {
       ListView lv = findViewById(R.id.laplist);
@@ -285,15 +312,57 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             return WindowInsetsCompat.CONSUMED;
           }
         });
+
+    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
+    boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
+    // variable not needed
+    new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
+                     formatter, mDB, mID, use_distance_as_x);
+
+    if (this.mode == MODE_SAVE) {
+      resumeButton.setOnClickListener(resumeButtonClick);
+      discardButton.setOnClickListener(discardButtonClick);
+      setEdit(true);
+    } else if (this.mode == MODE_DETAILS) {
+      resumeButton.setVisibility(View.GONE);
+      discardButton.setVisibility(View.GONE);
+      setEdit(false);
+    }
   }
 
   private void setEdit(boolean value) {
     edit = value;
-    if (value) saveButton.setVisibility(View.VISIBLE);
-    else saveButton.setVisibility(View.GONE);
+    if (value) {
+      saveButton.setVisibility(View.VISIBLE);
+    } else {
+      saveButton.setVisibility(View.GONE);
+    }
     WidgetUtil.setEditable(notes, value);
     sport.setEnabled(value);
+    updateViewForSport(sport.getValueInt());
     ViewCompat.requestApplyInsets(rootView);
+  }
+
+  private void updateViewForSport(int sportValue) {
+    if (edit && Sport.hasManualDistance(sportValue)) {
+      manualDistance.setVisibility(View.VISIBLE);
+      manualDistance.setEnabled(true);
+    } else {
+      manualDistance.setVisibility(View.GONE);
+    }
+
+    if (mapTab != null) {
+      if (Sport.isWithoutGps(sportValue)) {
+        mapTab.setVisibility(View.GONE);
+      } else {
+        mapTab.setVisibility(View.VISIBLE);
+      }
+    }
+    if (graphWrapper != null) {
+      boolean use_distance_as_x = !Sport.isWithoutGps(sportValue);
+      graphWrapper.setUseDistanceAsX(use_distance_as_x);
+    }
   }
 
   private void setUploadVisibility() {
@@ -549,17 +618,40 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       mStartTime = st;
       setTitle(formatter.formatDateTime(st));
     }
+
+    if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
+      notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
+    }
+
+    headerData = tmp;
+    updateHeader(tmp, /* fromManualDistance= */false);
+  }
+
+  private void updateHeader(ContentValues data, boolean fromManualDistance) {
     double d = 0;
-    if (tmp.containsKey(DB.ACTIVITY.DISTANCE)) {
-      d = tmp.getAsDouble(DB.ACTIVITY.DISTANCE);
-      activityDistance.setText(formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d));
+    if (data.containsKey(DB.ACTIVITY.DISTANCE)) {
+      d = data.getAsDouble(DB.ACTIVITY.DISTANCE);
+      String s = formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) d);
+      activityDistance.setText(s);
+      if (!fromManualDistance) {
+        /**
+         * IF !fromManualDistance (e.g. from database)
+         *   update the manual distance field in case (if it might be needed)
+         * ELSE
+         *   fromManualDistance=true
+         *   e.g. from spinner, don't update or else it will recurse
+         */
+        int distance = (int)d;
+        manualDistance.setValue(Long.toString(distance));
+        manualDistance.setValue(distance);
+      }
     } else {
       activityDistance.setText("");
     }
 
     long t = 0;
-    if (tmp.containsKey(DB.ACTIVITY.TIME)) {
-      t = tmp.getAsInteger(DB.ACTIVITY.TIME);
+    if (data.containsKey(DB.ACTIVITY.TIME)) {
+      t = data.getAsInteger(DB.ACTIVITY.TIME);
       activityTime.setText(formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, t));
     } else {
       activityTime.setText("");
@@ -575,12 +667,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       activityPaceSeparator.setVisibility(View.GONE);
     }
 
-    if (tmp.containsKey(DB.ACTIVITY.COMMENT)) {
-      notes.setText(tmp.getAsString(DB.ACTIVITY.COMMENT));
-    }
-
-    if (tmp.containsKey(DB.ACTIVITY.SPORT)) {
-      sport.setValue(tmp.getAsInteger(DB.ACTIVITY.SPORT));
+    if (data.containsKey(DB.ACTIVITY.SPORT)) {
+      sport.setValue(data.getAsInteger(DB.ACTIVITY.SPORT));
     }
   }
 
@@ -667,8 +755,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               : 0;
       if (hr > 0) {
         viewHolder.tvHr.setVisibility(View.VISIBLE);
-        // Use CUE_LONG instead of TXT_LONG to include unit
-        viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.CUE_LONG, hr));
+        viewHolder.tvHr.setText(formatter.formatHeartRate(Formatter.Format.TXT_LONG, hr));
       } else if (lapHrPresent) {
         viewHolder.tvHr.setVisibility(View.INVISIBLE);
       } else {
@@ -776,9 +863,10 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void saveActivity() {
-    ContentValues tmp = new ContentValues();
+    int sportValue = sport.getValueInt();
+    ContentValues tmp = headerData;
     tmp.put(DB.ACTIVITY.COMMENT, notes.getText().toString());
-    tmp.put(DB.ACTIVITY.SPORT, sport.getValueInt());
+    tmp.put(DB.ACTIVITY.SPORT, sportValue);
     String[] whereArgs = {Long.toString(mID)};
     mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", whereArgs);
 
@@ -842,7 +930,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           syncManager.startUploading(
               (synchronizerName, status) -> {
                 uploading = false;
-                DetailActivity.this.setResult(RESULT_OK);
+                final Intent returnIntent = new Intent();
+                int sportValue = sport.getValueInt();
+                if (Sport.hasManualDistance(sportValue)) {
+                  returnIntent.putExtra(
+                      "MANUAL_DISTANCE", headerData.getAsDouble(DB.ACTIVITY.DISTANCE));
+                }
+                DetailActivity.this.setResult(RESULT_OK, returnIntent);
                 DetailActivity.this.finish();
               },
               pendingSynchronizers,
@@ -965,7 +1059,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               // Use of content:// (or STREAM?) instead of file:// is not supported in ES and other
               // apps
               // Solid Explorer File Manager works though
-              String actType = Sport.textOf(sport.getValueInt());
+              String actType = Sport.textOf(getResources(), sport.getValueInt());
               Uri uri =
                   Uri.parse(
                       "content://"

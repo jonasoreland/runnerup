@@ -43,6 +43,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -53,6 +54,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -106,7 +108,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         clear();
         stopTimer();
 
-        close();
+        close("scanButtonClick");
         mIsScanning = true;
         log("select HR-provider");
         selectProvider();
@@ -114,6 +116,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.hr_settings);
     WidgetUtil.addLegacyOverflowButton(getWindow());
@@ -176,9 +179,19 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   public void onDestroy() {
     super.onDestroy();
 
-    close();
+    close("onDestroy");
     stopTimer();
   }
+
+  private static final HashMap<Integer, Integer> kPrefByMenu =
+      new HashMap<>() {
+        {
+          put(R.id.menu_hrdevice_paired_ble, R.string.pref_bt_paired_ble);
+          put(R.id.menu_hrdevice_experimental, R.string.pref_bt_experimental);
+          put(R.id.menu_hrdevice_mock, R.string.pref_bt_mock);
+          put(R.id.menu_hrdevice_debug, R.string.pref_bt_debug);
+        }
+      };
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,17 +200,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     Resources res = getResources();
 
-    boolean isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
-    MenuItem item = menu.findItem(R.id.menu_hrdevice_paired_ble);
-    item.setChecked(isChecked);
-
-    isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_experimental), false);
-    item = menu.findItem(R.id.menu_hrdevice_experimental);
-    item.setChecked(isChecked);
-
-    isChecked = prefs.getBoolean(res.getString(R.string.pref_bt_mock), false);
-    item = menu.findItem(R.id.menu_hrdevice_mock);
-    item.setChecked(isChecked);
+    for (var e : kPrefByMenu.entrySet()) {
+      MenuItem item = menu.findItem(e.getKey());
+      boolean isChecked = prefs.getBoolean(res.getString(e.getValue()), false);
+      item.setChecked(isChecked);
+    }
 
     return true;
   }
@@ -211,24 +218,14 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     } else if (id == R.id.menu_hrzones) {
       hrZonesClick.onClick(null);
       return true;
-    } else if (id == R.id.menu_hrdevice_paired_ble
-        || id == R.id.menu_hrdevice_experimental
-        || id == R.id.menu_hrdevice_mock) {
+    } else if (kPrefByMenu.containsKey(id)) {
       boolean isChecked = !item.isChecked();
       item.setChecked(isChecked);
       SharedPreferences prefs =
           PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
       Resources res = getResources();
       Editor editor = prefs.edit();
-      int key;
-      if (id == R.id.menu_hrdevice_paired_ble) {
-        key = R.string.pref_bt_paired_ble;
-      } else if (id == R.id.menu_hrdevice_experimental) {
-        key = R.string.pref_bt_experimental;
-      } else {
-        key = R.string.pref_bt_mock;
-      }
-
+      int key = kPrefByMenu.get(id);
       editor.putBoolean(res.getString(key), isChecked);
       editor.apply();
       providers = HRManager.getHRProviderList(this);
@@ -316,11 +313,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
   }
 
-  private void close() {
+  private void close(String from) {
     if (hrProvider != null) {
       log(hrProvider.getProviderName() + ".close()");
       hrProvider.disconnect();
-      hrProvider.close();
+      hrProvider.close("HRSettingsActivity:" + from);
       hrProvider = null;
     }
   }
@@ -377,7 +374,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private void selectProvider() {
-    if (providers.size() == 0) {
+    if (providers.isEmpty()) {
       return;
     }
 
@@ -453,7 +450,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
       }
     }
 
-    if (requestPerms.size() == 0 && !isDeniedPermission) {
+    if (requestPerms.isEmpty() && !isDeniedPermission) {
       return false;
     }
     final String[] permissions = new String[requestPerms.size()];
@@ -465,7 +462,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
             .setMessage(getString(org.runnerup.common.R.string.Request_permission_text))
             .setNegativeButton(
                 org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
-    if (requestPerms.size() > 0) {
+    if (!requestPerms.isEmpty()) {
       // Let Android request the permissions
       // Note that the result is not used, the user is dropped back to initial view when a request
       // is done.
@@ -556,7 +553,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     if (hrProvider.isConnecting() || hrProvider.isConnected()) {
       log(hrProvider.getProviderName() + ".disconnect()");
       hrProvider.disconnect();
-      hrProvider.close();
       updateView();
       return;
     }
@@ -569,7 +565,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     tvBTName.setText(getName());
     tvHR.setText("?");
     String name = btName;
-    if (name == null || name.length() == 0) {
+    if (name == null || name.isEmpty()) {
       name = btAddress;
     }
     log(hrProvider.getProviderName() + ".connect(" + name + ")");
@@ -602,7 +598,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private CharSequence getName() {
-    if (btName != null && btName.length() > 0) return btName;
+    if (btName != null && !btName.isEmpty()) return btName;
     return btAddress;
   }
 
@@ -722,7 +718,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
   @Override
   public void log(HRProvider src, String msg) {
-    log(src.getProviderName() + ": " + msg);
+    log(src.getLogName() + ": " + msg);
   }
 
   @SuppressLint("InflateParams")

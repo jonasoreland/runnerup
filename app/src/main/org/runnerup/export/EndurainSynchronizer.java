@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.PathSimplifier;
+import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.util.FileNameHelper;
 import org.runnerup.view.EndurainLoginActivity;
@@ -48,11 +49,10 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   public static final String NAME = "Endurain";
   private static final String TAG = "EndurainSynchronizer";
-
-  // Updated endpoints based on documentation
   private static final String TOKEN_URL_PATH = "/api/v1/auth/login";
   private static final String MFA_URL_PATH = "/api/v1/auth/mfa/verify";
   private static final String UPLOAD_URL_PATH = "/api/v1/activities/create/upload";
+  private static final String REFRESH_URL_PATH = "/api/v1/auth/refresh";
 
   private long id = 0;
 
@@ -100,6 +100,36 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     return R.drawable.service_endurain;
   }
 
+  private String sanitizeUrl(String input) {
+    if (input == null) return null;
+    String res = input.trim();
+    while (res.endsWith("/")) {
+      res = res.substring(0, res.length() - 1);
+    }
+    return res;
+  }
+
+  private String getEndpoint(String path) {
+    if (url == null) return "";
+    String baseUrl = url;
+    if (baseUrl.endsWith("/api/v1")) {
+      baseUrl = baseUrl.substring(0, baseUrl.length() - 7);
+    }
+    return baseUrl + path;
+  }
+
+  private Status getNeedAuthStatus() {
+    Status needAuth = Status.NEED_AUTH;
+    if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(url)) {
+      needAuth.authMethod = AuthMethod.USER_PASS_URL;
+    } else if (!TextUtils.isEmpty(url)) {
+      needAuth.authMethod = AuthMethod.OAUTH2;
+    } else {
+      needAuth.authMethod = AuthMethod.USER_PASS_URL;
+    }
+    return needAuth;
+  }
+
   @Override
   public void init(ContentValues config) {
     id = config.getAsLong("_id");
@@ -108,12 +138,9 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     if (authToken != null) {
       try {
         JSONObject tmp = new JSONObject(authToken);
-        //noinspection ConstantConditions
         username = tmp.optString("username", null);
-        //noinspection ConstantConditions
         password = tmp.optString("password", null);
-        //noinspection ConstantConditions
-        url = tmp.optString("url", null);
+        url = sanitizeUrl(tmp.optString("url", null));
         mfaCode = tmp.optString("mfa_code", null); // Read MFA code if present
         hasCorrectConfig = tmp.optBoolean("hasCorrectConfig", false);
         
@@ -225,11 +252,18 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     Status s = Status.NEED_AUTH;
     
     Log.d(TAG, "connect: access_token=" + (access_token != null ? "YES" : "NO") + 
+               ", refresh_token=" + (refresh_token != null ? "YES" : "NO") +
                ", username=" + username + ", url=" + url + ", mfaCode=" + (mfaCode != null ? "YES" : "NO"));
 
     // If we have an access token, we are good
     if (access_token != null) {
       return Status.OK;
+    }
+
+    // If we don't have an access token, but we have a refresh token, trigger refresh
+    if (refresh_token != null) {
+      Log.d(TAG, "connect: no access token but refresh token exists, requesting NEED_REFRESH");
+      return Status.NEED_REFRESH;
     }
 
     // If we have username/password (legacy flow), try to get token
@@ -243,17 +277,10 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
           String endpoint;
           RequestBody formBody;
           
-          // Ensure we don't double-append /api/v1 if the user included it
-          String baseUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-          
           if (!TextUtils.isEmpty(mfaCode)) {
               // MFA Verification
               Log.d(TAG, "connect: verifying MFA");
-              if (baseUrl.endsWith("/api/v1")) {
-                  endpoint = baseUrl + "/auth/mfa/verify";
-              } else {
-                  endpoint = baseUrl + MFA_URL_PATH;
-              }
+              endpoint = getEndpoint(MFA_URL_PATH);
               
               JSONObject json = new JSONObject();
               json.put("username", username);
@@ -264,11 +291,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
           } else {
               // Initial Login
               Log.d(TAG, "connect: initial login");
-              if (baseUrl.endsWith("/api/v1")) {
-                  endpoint = baseUrl + "/auth/login";
-              } else {
-                  endpoint = baseUrl + TOKEN_URL_PATH;
-              }
+              endpoint = getEndpoint(TOKEN_URL_PATH);
               
               // Use application/x-www-form-urlencoded for initial login as per docs
               formBody = new FormBody.Builder()
@@ -285,24 +308,23 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
                   .post(formBody)
                   .build();
     
-          Response response = client.newCall(request).execute();
-          String responseBody = response.body() != null ? response.body().string() : "";
-          Log.d(TAG, "connect: response code=" + response.code() + ", body=" + responseBody);
-    
-          if (response.isSuccessful() || response.code() == 202 || response.code() == 200) { // 202 Accepted is used for MFA required
-            JSONObject obj = new JSONObject(responseBody);
-            response.close();
-            return parseAuthData(obj);
-          } else if (response.code() == 405) {
-              // If 405 Method Not Allowed, try without /api/v1 prefix if it was double appended or server structure is different
-              // But we already handle double append.
-              // Maybe the server redirects http to https and changes method?
-              // Or maybe it requires a trailing slash?
-              Log.e(TAG, "connect: 405 Method Not Allowed. Check URL and server configuration.");
+          try (Response response = client.newCall(request).execute()) {
+              String responseBody = response.body() != null ? response.body().string() : "";
+              Log.d(TAG, "connect: response code=" + response.code() + ", body=" + responseBody);
+        
+              if (response.isSuccessful() || response.code() == 202 || response.code() == 200) { // 202 Accepted is used for MFA required
+                JSONObject obj = new JSONObject(responseBody);
+                return parseAuthData(obj);
+              } else if (response.code() == 405) {
+                  // If 405 Method Not Allowed, try without /api/v1 prefix if it was double appended or server structure is different
+                  // But we already handle double append.
+                  // Maybe the server redirects http to https and changes method?
+                  // Or maybe it requires a trailing slash?
+                  Log.e(TAG, "connect: 405 Method Not Allowed. Check URL and server configuration.");
+              }
+        
+              return Status.ERROR;
           }
-    
-          response.close();
-          return Status.ERROR;
         } catch (Exception e) {
           Log.e(TAG, "connect: exception", e);
           return Status.ERROR;
@@ -366,7 +388,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
       String fileBase = FileNameHelper.getExportFileNameWithModel(startTime, sport.TapiriikType());
 
-      GPX gpx = new GPX(db, true, true, simplifier);
+      GPX gpx = new GPX(db, ExportOptions.getDefault(), simplifier);
       StringWriter writer = new StringWriter();
       gpx.export(mID, writer);
       s = uploadFile(writer, fileBase, FileFormats.GPX.getValue());
@@ -393,12 +415,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
                       MediaType.parse("application/" + fileExt + "+xml"), writer.toString()))
               .build();
 
-      // Ensure we don't double-append /api/v1 if the user included it
-      String baseUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-      String uploadUrl = baseUrl + UPLOAD_URL_PATH;
-      if (baseUrl.endsWith("/api/v1")) {
-          uploadUrl = baseUrl + "/activities/create/upload";
-      }
+      String uploadUrl = getEndpoint(UPLOAD_URL_PATH);
 
       Request request =
           new Request.Builder()
@@ -407,15 +424,60 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
               .method("POST", requestBody)
               .build();
 
-      int responseCode;
-      Response response = client.newCall(request).execute();
-
-      s = response.isSuccessful() ? Status.OK : Status.ERROR;
+      try (Response response = client.newCall(request).execute()) {
+        if (response.isSuccessful()) {
+          s = Status.OK;
+        } else if (response.code() == 401) {
+          s = Status.NEED_REFRESH;
+        } else {
+          s = Status.ERROR;
+        }
+      }
     } catch (Exception e) {
       s = Status.ERROR;
     }
 
     return s;
+  }
+
+  @NonNull
+  @Override
+  public Status refreshToken() {
+    Log.d(TAG, "refreshToken: starting token refresh flow");
+    if (TextUtils.isEmpty(refresh_token)) {
+      Log.d(TAG, "refreshToken: no refresh token available");
+      return getNeedAuthStatus();
+    }
+
+    String endpoint = getEndpoint(REFRESH_URL_PATH);
+    Log.d(TAG, "refreshToken: requesting " + endpoint);
+
+    try {
+      OkHttpClient client = new OkHttpClient();
+      RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{}");
+      Request request = new Request.Builder()
+          .url(endpoint)
+          .addHeader("X-Client-Type", "mobile")
+          .addHeader("Authorization", "Bearer " + refresh_token)
+          .post(body)
+          .build();
+
+      try (Response response = client.newCall(request).execute()) {
+        String responseBody = response.body() != null ? response.body().string() : "";
+        Log.d(TAG, "refreshToken: response code=" + response.code() + ", body=" + responseBody);
+
+        if (response.isSuccessful()) {
+          JSONObject obj = new JSONObject(responseBody);
+          return parseAuthData(obj);
+        } else {
+          Log.e(TAG, "refreshToken failed: server returned error " + response.code());
+        }
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "refreshToken: exception during request", e);
+    }
+
+    return getNeedAuthStatus();
   }
 
   @Override

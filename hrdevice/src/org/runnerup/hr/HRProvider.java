@@ -30,6 +30,9 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public interface HRProvider {
 
+  /** Indicates that the battery level is not available or not supplied by the device. */
+  int BATTERY_LEVEL_UNAVAILABLE = -1;
+
   /**
    * An interface through which the client of the {@link HRProvider} is notified of changes to the
    * state of the {@link HRProvider}
@@ -58,6 +61,11 @@ public interface HRProvider {
    */
   String getProviderName(); // For internal usage
 
+  /** String used for debug logging */
+  default String getLogName() {
+    return getProviderName();
+  }
+
   /**
    * @return true if the wireless module is enabled, false otherwise
    */
@@ -82,7 +90,7 @@ public interface HRProvider {
   void open(Handler handler, HRClient hrClient);
 
   /** Closes the wireless module */
-  void close();
+  void close(String from);
 
   /**
    * A pairing device is a wireless module that requires devices to be paired (or bonded) before
@@ -158,8 +166,9 @@ public interface HRProvider {
   HRData getHRData();
 
   /**
-   * @return The battery level, in percents, of the heart rate monitor device or 0 if no device has
-   *     been connected or the device doesn't supply battery information
+   * @return The battery level, in percents (0-100), of the heart rate monitor device, or {@link
+   *     #BATTERY_LEVEL_UNAVAILABLE} if no device has been connected or the device doesn't supply
+   *     battery information.
    */
   int getBatteryLevel();
 }

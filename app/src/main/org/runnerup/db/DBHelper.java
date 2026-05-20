@@ -24,13 +24,17 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.common.util.Constants;
@@ -49,6 +53,7 @@ import org.runnerup.workout.FileFormats;
 
 public class DBHelper extends SQLiteOpenHelper implements Constants {
 
+  private static final String TAG = "DBHelper";
   private static final int DBVERSION = 31;
   private static final String DBNAME = "runnerup.db";
 
@@ -260,9 +265,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public void onUpgrade(SQLiteDatabase arg0, int oldVersion, int newVersion) {
-    Log.e(
-        getClass().getName(),
-        "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+    Log.i(TAG, "onUpgrade: oldVersion: " + oldVersion + ", newVersion: " + newVersion);
 
     if (oldVersion < 5) {
       arg0.execSQL("alter table account add column icon integer");
@@ -429,7 +432,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   private static void echoDo(SQLiteDatabase arg0, String str) {
-    Log.e("DBHelper", "execSQL(" + str + ")");
+    Log.d(TAG, "execSQL(" + str + ")");
     arg0.execSQL(str);
   }
 
@@ -463,7 +466,6 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
         try {
           // Check if AUTH_CONFIG contains deprecated FORMAT field
           JSONObject authcfg = new JSONObject(oldAuthConfig);
-          @SuppressWarnings("ConstantConditions")
           String format = authcfg.optString(DB.ACCOUNT.FORMAT, null);
           if (format != null) {
             // Move deprecated FORMAT field in AUTH_CONFIG to ACCOUNT.FORMAT
@@ -474,7 +476,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
             arg0.update(DB.ACCOUNT.TABLE, tmp, DB.ACCOUNT.NAME + " = ?", args);
           }
         } catch (JSONException e) {
-          Log.w("DBHelper", "Failed to parse File auth config", e);
+          Log.w(TAG, "Failed to parse File auth config", e);
         }
       }
     }
@@ -535,8 +537,10 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     insertAccount(arg0, EndurainSynchronizer.NAME, 1);
     insertAccount(arg0, RunnerUpLiveSynchronizer.NAME, 0);
     insertAccount(arg0, FileSynchronizer.NAME, 1);
-    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED);
-    insertAccount(arg0, DropboxSynchronizer.NAME, 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, RunalyzeSynchronizer.NAME, RunalyzeSynchronizer.ENABLED ? 1 : 0);
+    //noinspection ConstantValue
+    insertAccount(arg0, DropboxSynchronizer.NAME, DropboxSynchronizer.ENABLED ? 1 : 0);
     insertAccount(arg0, WebDavSynchronizer.NAME, 1);
   }
 
@@ -567,12 +571,12 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
       arg1.remove(DB.ACCOUNT.FORMAT);
       arg1.remove(DB.ACCOUNT.AUTH_METHOD);
       arg0.update(DB.ACCOUNT.TABLE, arg1, DB.ACCOUNT.NAME + " = ?", arr);
-      Log.v("DBhelper", "update: " + arg1);
+      Log.d(TAG, "update: " + arg1);
     }
   }
 
   public static void deleteAccount(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting account: " + id);
+    Log.v(TAG, "deleting account: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
     db.delete(DB.ACCOUNT.TABLE, "_id = ?", args);
@@ -601,7 +605,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   public static void deleteActivity(SQLiteDatabase db, long id) {
-    Log.e("DBHelper", "deleting activity: " + id);
+    Log.v(TAG, "deleting activity: " + id);
     String[] args = {Long.toString(id)};
     db.delete(DB.EXPORT.TABLE, DB.EXPORT.ACTIVITY + " = ?", args);
     db.delete(DB.LOCATION.TABLE, DB.LOCATION.ACTIVITY + " = ?", args);
@@ -624,35 +628,40 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     }
     c.close();
 
-    if (list.size() > 0) {
-      new AsyncTask<Long, Void, Void>() {
+    if (!list.isEmpty()) {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Handler handler = new Handler(Looper.getMainLooper());
 
-        @Override
-        protected void onPreExecute() {
-          dialog.setMax(list.size());
-          super.onPreExecute();
-        }
+      // Pre-execution step (runs on the current/main thread)
+      dialog.setMax(list.size());
 
-        @Override
-        protected Void doInBackground(Long... args) {
-          for (Long id : list) {
-            deleteActivity(db, id);
-            dialog.incrementProgressBy(1);
-          }
-          return null;
-        }
+      executor.execute(
+          () -> {
+            int currentProgress = 0;
+            for (Long id : list) {
+              deleteActivity(db, id);
+              currentProgress++;
+              final int progressToShow = currentProgress;
+              handler.post(() -> dialog.setProgress(progressToShow));
+            }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-          db.close();
-          mDBHelper.close();
-          if (onComplete != null) onComplete.run();
-        }
-      }.execute((long) 2);
+            // Post-execution step (runs on the main thread)
+            handler.post(
+                () -> {
+                  db.close();
+                  mDBHelper.close();
+                  if (onComplete != null) {
+                    onComplete.run();
+                  }
+                });
+          });
     } else {
+      // No activities to delete, just clean up
       db.close();
       mDBHelper.close();
-      if (onComplete != null) onComplete.run();
+      if (onComplete != null) {
+        onComplete.run();
+      }
     }
   }
 
@@ -671,12 +680,17 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     return ctx.getFilesDir().getPath() + "/../databases/" + DBNAME;
   }
 
-  public static String getDefaultBackupPath(Context ctx) {
-    // A path that can be used with SDK 29 scooped storage
-    return ctx.getExternalFilesDir(null) + File.separator + "runnerup.db.export";
+  public static Uri getDbUri(Context ctx) {
+    File dbFile = new File(getDbPath(ctx));
+
+    if (!dbFile.exists()) {
+      return null;
+    }
+
+    return Uri.fromFile(dbFile);
   }
 
-  public static void importDatabase(Context ctx, String from) {
+  public static void importDatabase(Context ctx, Uri from) {
     final DBHelper mDBHelper = DBHelper.getHelper(ctx);
     final SQLiteDatabase db = mDBHelper.getWritableDatabase();
     db.close();
@@ -684,47 +698,130 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
-    if (from == null) {
-      from = getDefaultBackupPath(ctx);
+    if (!isValidRunnerUpDatabase(ctx, from)) {
+      Log.e(TAG, "Selected Uri is not a valid RunnerUp database: " + from);
+        new AlertDialog.Builder(ctx)
+              .setTitle("Import " + DBNAME)
+              .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
+              .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+              .show();
+      return;
     }
-    AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Import " + DBNAME);
-    try {
-      String to = getDbPath(ctx);
-      int cnt = FileUtil.copyFile(to, from);
-      builder
-          .setMessage("Copied " + cnt + " bytes from " + from + "\n\nRestart to use the database")
-          .setPositiveButton(org.runnerup.common.R.string.OK, listener);
-    } catch (IOException e) {
-      builder
-          .setMessage("Exception: " + e + " for " + from)
-          .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
-    }
-    builder.show();
+
+      new AlertDialog.Builder(ctx)
+            .setTitle("Overwrite database")
+            .setMessage("This will overwrite your current database. Are you sure?")
+            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+              try {
+                Uri to = getDbUri(ctx);
+                int cnt = FileUtil.copyFile(ctx, to, from);
+                new AlertDialog.Builder(ctx)
+                        .setTitle("Import " + DBNAME)
+                        .setMessage(
+                                "Copied "
+                                        + cnt
+                                        + " bytes from "
+                                        + Uri.decode(from.toString())
+                                        + "Restart app to use the database")
+                        .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+                        .show();
+              } catch (IOException | NullPointerException e) {
+                new AlertDialog.Builder(ctx)
+                        .setTitle("Import " + DBNAME)
+                        .setMessage("Exception: " + e + " for " + from)
+                        .setNegativeButton(org.runnerup.common.R.string.Cancel, listener)
+                        .show();
+              }
+            })
+            .setNegativeButton(android.R.string.no, listener)
+            .show();
   }
 
-  public static void exportDatabase(Context ctx, String to) {
+  public static void exportDatabase(Context ctx, Uri to) {
     DialogInterface.OnClickListener listener = (dialog, which) -> dialog.dismiss();
 
     if (to == null) {
-      to = getDefaultBackupPath(ctx);
+      Log.e(TAG, "Destination URI is null for export.");
+      return;
     }
+
     AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setTitle("Export " + DBNAME);
     try {
-      String from = getDbPath(ctx);
-      int cnt = FileUtil.copyFile(to, from);
+      Uri from = getDbUri(ctx);
+      int cnt = FileUtil.copyFile(ctx, to, from);
       builder
-          .setMessage(
-              "Exported "
-                  + cnt
-                  + " bytes to "
-                  + to
-                  + "\n\nNote that the file will be deleted at uninstall")
+          .setMessage("Exported " + cnt + " bytes to " + Uri.decode(to.toString()))
           .setPositiveButton(org.runnerup.common.R.string.OK, listener);
-    } catch (IOException e) {
+    } catch (IOException | NullPointerException e) {
       builder
           .setMessage("Exception: " + e + " for " + to)
           .setNegativeButton(org.runnerup.common.R.string.Cancel, listener);
     }
     builder.show();
+  }
+
+  /**
+   * Checks if the content at the given Uri is a valid RunnerUp SQLite database by attempting to
+   * open the database and query its schema.
+   *
+   * @param context The Context used to obtain a ContentResolver for opening the Uri.
+   * @param uri The Uri to check.
+   * @return true if the Uri is a valid RunnerUp database, false otherwise.
+   */
+  private static boolean isValidRunnerUpDatabase(Context context, Uri uri) {
+    if (uri == null || context == null) {
+      return false;
+    }
+
+    File tempDbFile = null;
+    SQLiteDatabase tempDb = null;
+
+    try {
+      // 1. Create a temp file in the app's cache directory, and copy the content of the Uri to it
+      tempDbFile = File.createTempFile("import_test", ".db", context.getCacheDir());
+      int cnt = FileUtil.copyFile(context, Uri.fromFile(tempDbFile), uri);
+      Log.d(TAG, "Copied " + cnt + " bytes to temporary db file.");
+
+      // 2. Open the temporary file as an SQLite database
+      tempDb =
+          SQLiteDatabase.openDatabase(
+              tempDbFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+
+      // 3. Assume valid if a table named "activity" exists
+      return tableExists(tempDb, DB.ACTIVITY.TABLE);
+
+    } catch (Exception e) {
+      Log.e(TAG, "Unexpected error during db validation. URI: " + uri);
+      return false;
+    } finally {
+      if (tempDb != null && tempDb.isOpen()) {
+        tempDb.close();
+      }
+
+      if (tempDbFile != null && tempDbFile.exists()) {
+        tempDbFile.delete(); // ignore result, assume deleted
+      }
+    }
+  }
+
+  /** Checks if a table exists in the given database (that needs to be in a opened state). */
+  private static boolean tableExists(SQLiteDatabase db, String tableName) {
+    if (tableName == null || db == null || !db.isOpen()) {
+      return false;
+    }
+
+    try (Cursor cursor =
+        db.rawQuery(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?",
+            new String[] {"table", tableName})) {
+      if (cursor.moveToFirst()) {
+        return cursor.getInt(0) > 0;
+      }
+
+      return false;
+    } catch (Exception e) {
+      Log.e(TAG, "Error checking if RunnerUp database table named \"" + tableName + "\" exists.");
+      return false;
+    }
   }
 }

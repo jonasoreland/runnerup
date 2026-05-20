@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 8.11.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.11.1)" variant="all" version="8.11.1">
+<issues format="6" by="lint 9.0.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.0.1)" variant="all" version="9.0.1">
 
     <issue
         id="UnusedAttribute"
-        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 21)"
+        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 23)"
         errorLine1="        android:usesPermissionFlags=&quot;neverForLocation&quot; android:minSdkVersion=&quot;31&quot;/>"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -13,61 +13,25 @@
     </issue>
 
     <issue
-        id="UnusedAttribute"
-        message="Attribute `singleLineTitle` is only used in API level 26 and higher (current min is 21)"
-        errorLine1="            android:singleLineTitle=&quot;false&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="SourceLockedOrientationActivity"
+        message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
+        errorLine1="      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="res/xml/settings_sensors.xml"
-            line="240"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="AppBundleLocaleChanges"
-        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
-        errorLine1="      configuration.setLocale(locale);"
-        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/org/runnerup/util/Formatter.java"
-            line="112"
+            file="src/main/org/runnerup/view/MainLayout.java"
+            line="84"
             column="7"/>
     </issue>
 
     <issue
         id="SourceLockedOrientationActivity"
         message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
-        errorLine1="    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/org/runnerup/view/MainLayout.java"
-            line="79"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="SourceLockedOrientationActivity"
-        message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
-        errorLine1="    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
+        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/view/RunActivity.java"
-            line="114"
-            column="5"/>
-    </issue>
-
-    <issue
-        id="Aligned16KB"
-        message="The native library `arm64-v8a/libmapbox-gl.so` (from `com.mapbox.mapboxsdk:mapbox-android-sdk-gl-core:5.2.2`) is not 16 KB aligned">
-        <location
-            file="$GRADLE_USER_HOME/caches/8.13/transforms/374b0f5ddf7a7b7bd2585a649e851b6e/transformed/jetified-mapbox-android-sdk-gl-core-5.2.2/jni/arm64-v8a/libmapbox-gl.so"/>
-    </issue>
-
-    <issue
-        id="Aligned16KB"
-        message="The native library `arm64-v8a/libmapbox-gl.so` (from `com.mapbox.mapboxsdk:mapbox-android-sdk-gl-core:5.2.2`) is not 16 KB aligned">
-        <location
-            file="$GRADLE_USER_HOME/caches/8.13/transforms/374b0f5ddf7a7b7bd2585a649e851b6e/transformed/jetified-mapbox-android-sdk-gl-core-5.2.2/jni/arm64-v8a/libmapbox-gl.so"/>
+            line="116"
+            column="7"/>
     </issue>
 
     <issue

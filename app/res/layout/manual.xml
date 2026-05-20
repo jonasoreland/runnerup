@@ -29,9 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:entries="@array/sportEntries"
         android:prompt="@string/Type"
         android:text="@string/Sport" />
 
@@ -50,7 +48,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/manual_date"
         android:prompt="@string/Type"
         android:text="@string/Start_hour"
@@ -62,7 +59,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/manual_time"
         android:prompt="@string/Type"
         android:text="@string/Duration"
@@ -74,7 +70,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/manual_duration"
         android:minWidth="48dp"
         android:minHeight="48dp"
@@ -88,7 +83,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/manual_distance"
         android:prompt="@string/Type"
         android:inputType="numberDecimal"
@@ -100,7 +94,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_below="@id/manual_pace"
         android:layout_alignParentBottom="true"
         android:ems="10"
@@ -108,5 +101,4 @@
         android:inputType="textMultiLine"
         android:hint="@string/Add_workout_notes"
         tools:ignore="AutoFill" />
-
 </RelativeLayout>

@@ -88,21 +88,20 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
     int[] ids = null;
-    int card = 0;
-    switch (rowsOnScreen) {
-      case 3:
-        ids = card3ids;
-        card = R.layout.card3;
-        break;
-      case 2:
-        ids = card2ids;
-        card = R.layout.card2;
-        break;
-      case 1:
-        ids = card1ids;
-        card = R.layout.card1;
-        break;
-    }
+    int card = switch (rowsOnScreen) {
+        case 2 -> {
+            ids = card2ids;
+            yield R.layout.card2;
+        }
+        case 1 -> {
+            ids = card1ids;
+            yield R.layout.card1;
+        }
+        default -> {
+            ids = card3ids;
+            yield R.layout.card3;
+        }
+    };
     View view = inflater.inflate(card, container, false);
     for (int i = 0; i < rowsOnScreen; i++) {
       textViews.add(
@@ -179,7 +178,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
 
     if (newValue == null) return;
 
-    if (textViews.size() == 0) return;
+    if (textViews.isEmpty()) return;
 
     if (newValue == TrackerState.PAUSED || newValue == TrackerState.STOPPED) {
       Animation anim = new AlphaAnimation(0, 1);

@@ -18,6 +18,9 @@
 package org.runnerup.workout;
 
 import android.content.res.Resources;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 
@@ -26,7 +29,10 @@ public enum Sport {
   BIKING(DB.ACTIVITY.SPORT_BIKING),
   OTHER(DB.ACTIVITY.SPORT_OTHER),
   ORIENTEERING(DB.ACTIVITY.SPORT_ORIENTEERING),
-  WALKING(DB.ACTIVITY.SPORT_WALKING);
+  WALKING(DB.ACTIVITY.SPORT_WALKING),
+  TREADMILL(DB.ACTIVITY.SPORT_TREADMILL),
+  GYM(DB.ACTIVITY.SPORT_GYM),
+  STATIONARY_BIKE(DB.ACTIVITY.SPORT_STATIONARY_BIKE);
 
   final int dbValue;
 
@@ -38,6 +44,49 @@ public enum Sport {
     return dbValue;
   }
 
+  private static Map<Integer, Integer> createSportToStringMap() {
+    Map<Integer, Integer> result = new HashMap<>();
+    result.put(DB.ACTIVITY.SPORT_RUNNING, org.runnerup.common.R.string.SPORT_RUNNING);
+    result.put(DB.ACTIVITY.SPORT_BIKING, org.runnerup.common.R.string.SPORT_BIKING);
+    result.put(DB.ACTIVITY.SPORT_OTHER, org.runnerup.common.R.string.SPORT_OTHER);
+    result.put(DB.ACTIVITY.SPORT_ORIENTEERING, org.runnerup.common.R.string.SPORT_ORIENTEERING);
+    result.put(DB.ACTIVITY.SPORT_WALKING, org.runnerup.common.R.string.SPORT_WALKING);
+    result.put(DB.ACTIVITY.SPORT_TREADMILL, org.runnerup.common.R.string.SPORT_TREADMILL);
+    result.put(DB.ACTIVITY.SPORT_GYM, org.runnerup.common.R.string.SPORT_GYM);
+    result.put(DB.ACTIVITY.SPORT_STATIONARY_BIKE, org.runnerup.common.R.string.SPORT_STATIONARY_BIKE);
+    return Collections.unmodifiableMap(result);
+  }
+  private static final Map<Integer,Integer> gSportToStringMap = createSportToStringMap();
+
+  public static String[] getStringArray(Resources res) {
+    String[] ret = new String[DB.ACTIVITY.SPORT_MAX + 1];
+
+    {  // Backward compability. TODO: Remove once new sport strings are translated.
+      int resId = org.runnerup.common.R.array.sportEntries;
+      String[] org = res.getStringArray(resId);
+      for (int i = 0; i < org.length && i < ret.length; i++) {
+        if (ret[i] == null) {
+          ret[i] = org[i];
+        }
+      }
+    }
+
+    for (int i = 0; i < ret.length; i++) {
+      if (ret[i] == null && gSportToStringMap.containsKey(i)) {
+        int id = gSportToStringMap.get(i);
+        ret[i] = res.getString(id);
+      }
+    }
+
+    for (int i = 0; i < ret.length; i++) {
+      if (ret[i] == null) {
+        ret[i] = res.getString(org.runnerup.common.R.string.Unknown);
+      }
+    }
+
+    return ret;
+  }
+
   public static String textOf(int dbValue) {
     return textOf(null, dbValue);
   }
@@ -45,7 +94,7 @@ public enum Sport {
   public static String textOf(Resources res, int dbValue) {
     String sportName = null;
     if (res != null) {
-      String[] sports = res.getStringArray(org.runnerup.common.R.array.sportEntries);
+      String[] sports = getStringArray(res);
       if (0 <= dbValue && dbValue < sports.length) {
         sportName = sports[dbValue];
       }
@@ -63,6 +112,9 @@ public enum Sport {
           break;
         case DB.ACTIVITY.SPORT_BIKING:
           sportName = "Biking";
+          break;
+        case DB.ACTIVITY.SPORT_TREADMILL:
+          sportName = "Treadmill";
           break;
         default:
           sportName = "Other";
@@ -82,6 +134,12 @@ public enum Sport {
         return ORIENTEERING;
       case DB.ACTIVITY.SPORT_WALKING:
         return WALKING;
+      case DB.ACTIVITY.SPORT_TREADMILL:
+        return TREADMILL;
+      case DB.ACTIVITY.SPORT_GYM:
+        return GYM;
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return STATIONARY_BIKE;
       default:
       case DB.ACTIVITY.SPORT_OTHER:
         return OTHER;
@@ -91,6 +149,7 @@ public enum Sport {
   public static int colorOf(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
+      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.color.sportRunning;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.color.sportBiking;
@@ -108,6 +167,7 @@ public enum Sport {
   public static int drawableColored16Of(int dbValue) {
     switch (dbValue) {
       case DB.ACTIVITY.SPORT_RUNNING:
+      case DB.ACTIVITY.SPORT_TREADMILL:
         return R.drawable.sport_running;
       case DB.ACTIVITY.SPORT_BIKING:
         return R.drawable.sport_biking;
@@ -118,7 +178,7 @@ public enum Sport {
       case DB.ACTIVITY.SPORT_OTHER:
         return R.drawable.sport_other;
       default:
-        return 0;
+        return R.drawable.sport_other;
     }
   }
 
@@ -127,11 +187,12 @@ public enum Sport {
   }
 
   public boolean IsRunning() {
-    return dbValue == DB.ACTIVITY.SPORT_RUNNING || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING;
+    return dbValue == DB.ACTIVITY.SPORT_RUNNING || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING ||
+        dbValue == DB.ACTIVITY.SPORT_TREADMILL;
   }
 
   public boolean IsCycling() {
-    return dbValue == DB.ACTIVITY.SPORT_BIKING;
+    return dbValue == DB.ACTIVITY.SPORT_BIKING || dbValue == DB.ACTIVITY.SPORT_STATIONARY_BIKE;
   }
 
   // part of filename used to determine type for Tapiriik files
@@ -144,6 +205,27 @@ public enum Sport {
       return "Walking";
     } else {
       return "Other";
+    }
+  }
+
+  public static boolean hasManualDistance(int dbValue) {
+    switch (dbValue) {
+      case DB.ACTIVITY.SPORT_TREADMILL:
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  public static boolean isWithoutGps(int dbValue) {
+    switch (dbValue) {
+      case DB.ACTIVITY.SPORT_TREADMILL:
+      case DB.ACTIVITY.SPORT_GYM:
+      case DB.ACTIVITY.SPORT_STATIONARY_BIKE:
+        return true;
+      default:
+        return false;
     }
   }
 }

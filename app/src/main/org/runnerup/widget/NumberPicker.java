@@ -65,7 +65,7 @@ public class NumberPicker extends LinearLayout {
   private String fmtString = "%0" + digits + "d";
 
   public NumberPicker(Context context, AttributeSet attrs) {
-    super(context, attrs);
+    super(context);
 
     createValueText(context);
     createButton(context, '+');
@@ -228,7 +228,7 @@ public class NumberPicker extends LinearLayout {
 
   private void validateInput(EditText tv) {
     String str = String.valueOf(tv.getText());
-    if ("".equals(str)) {
+    if (str.isEmpty()) {
       updateView();
     } else {
       try {

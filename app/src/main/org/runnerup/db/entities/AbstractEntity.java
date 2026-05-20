@@ -17,7 +17,6 @@
 
 package org.runnerup.db.entities;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -73,15 +72,13 @@ public abstract class AbstractEntity implements DBEntity {
     }
   }
 
-  @SuppressLint("ObsoleteSdkInt")
   void toContentValues(Cursor c) {
     if (c.isClosed() || c.isAfterLast() || c.isBeforeFirst()) {
       throw new CursorIndexOutOfBoundsException("Cursor not readable");
     }
 
     if (getValidColumns().containsAll(Arrays.asList(c.getColumnNames()))) {
-      //noinspection AccessStaticViaInstance
-      this.cursorRowToContentValues(c, values());
+      cursorRowToContentValues(c, values());
     } else {
       throw new IllegalArgumentException(
           "Cursor " + c + " is incompatible with the Entity " + this.getClass().getName());
@@ -94,7 +91,6 @@ public abstract class AbstractEntity implements DBEntity {
 
   // This is a replacement for DatabaseUtils.cursorRowToContentValues
   // see https://code.google.com/p/android/issues/detail?id=22219
-  @SuppressLint("NewApi")
   private static void cursorRowToContentValues(Cursor cursor, ContentValues values) {
     String[] columns = cursor.getColumnNames();
     int length = columns.length;
@@ -122,14 +118,10 @@ public abstract class AbstractEntity implements DBEntity {
   public void readByPrimaryKey(SQLiteDatabase DB, long primaryKey) {
     String[] cols = new String[getValidColumns().size()];
     getValidColumns().toArray(cols);
-    Cursor cursor = DB.query(getTableName(), cols, "_id = " + primaryKey, null, null, null, null);
-    //noinspection TryFinallyCanBeTryWithResources
-    try {
-      if (cursor.moveToFirst()) {
-        toContentValues(cursor);
+      try (Cursor cursor = DB.query(getTableName(), cols, "_id = " + primaryKey, null, null, null, null)) {
+          if (cursor.moveToFirst()) {
+              toContentValues(cursor);
+          }
       }
-    } finally {
-      cursor.close();
-    }
   }
 }

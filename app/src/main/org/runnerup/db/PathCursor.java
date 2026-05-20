@@ -20,7 +20,7 @@ public class PathCursor {
 
     if (simplifier != null) {
       ignoreIDs = simplifier.getNoisyLocationIDs(mDB, activityId);
-      if (ignoreIDs.size() == 0) {
+      if (ignoreIDs.isEmpty()) {
         ignoreIDs = null;
       }
     }

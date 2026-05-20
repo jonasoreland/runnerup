@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -40,6 +41,7 @@ import org.runnerup.util.SafeParse;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
+import org.runnerup.workout.Sport;
 
 public class ManualActivity extends AppCompatActivity {
 
@@ -58,6 +60,7 @@ public class ManualActivity extends AppCompatActivity {
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
 
     mDB = DBHelper.getWritableDatabase(this);
@@ -77,6 +80,8 @@ public class ManualActivity extends AppCompatActivity {
     manualNotes = findViewById(R.id.manual_notes);
 
     ViewUtil.Insets(findViewById(R.id.tab_manual), true);
+
+    manualSport.setArrayEntries(Sport.getStringArray(getResources()));
   }
 
   @Override
@@ -107,18 +112,18 @@ public class ManualActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (data != null) {
       if (data.getStringExtra("url") != null)
-        Log.e(
+        Log.d(
             getClass().getName(), "data.getStringExtra(\"url\") => " + data.getStringExtra("url"));
       if (data.getStringExtra("ex") != null)
-        Log.e(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
+        Log.d(getClass().getName(), "data.getStringExtra(\"ex\") => " + data.getStringExtra("ex"));
       if (data.getStringExtra("obj") != null)
-        Log.e(
+        Log.d(
             getClass().getName(), "data.getStringExtra(\"obj\") => " + data.getStringExtra("obj"));
     }
   }
 
   void setManualPace(String distance, String duration) {
-    Log.e(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
+    Log.d(getClass().getName(), "distance: >" + distance + "< duration: >" + duration + "<");
     double dist = SafeParse.parseDouble(distance, 0); // convert to meters
     long seconds = SafeParse.parseSeconds(duration, 0);
     if (seconds == 0) {

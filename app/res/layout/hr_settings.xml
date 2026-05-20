@@ -18,14 +18,12 @@
         <TextView
             style="@style/RunHeader"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:gravity="start"
             android:text="@string/Device" />
 
         <TextView
             style="@style/RunHeader"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:gravity="end"
             android:text="@string/Heart_rate" />
     </LinearLayout>
@@ -43,8 +41,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp" >
+            android:layout_marginStart="8dp" >
 
             <TextView style="@style/RunHeader" />
         </LinearLayout>
@@ -58,14 +55,12 @@
                 android:id="@+id/hr_device"
                 style="@style/RunInfo"
                 android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
                 android:gravity="start" />
 
             <TextView
                 android:id="@+id/hr_value"
                 style="@style/RunInfo"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp" />
+                android:layout_marginEnd="8dp" />
         </LinearLayout>
     </LinearLayout>
 

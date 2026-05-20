@@ -301,8 +301,6 @@
   <string name="use_temperature_sensor">Датчик температури</string>
   <string name="use_pressure_sensor_title">Датчик тиску</string>
   <string name="use_pressure_sensor_summary">Використовувати барометр для визначення висоти над рівнем моря</string>
-  <string name="adjust_barometer_altitude_from_gps">Уточнити висоту по барометру по висоті GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Використовувати початкову висоту GPS для усереднення висоти по барометру</string>
   <string name="channel_notification_ongoing">RunnerUp GPS та сповіщення про активність</string>
   <string name="Lap_start">Початок кола</string>
   <string name="Lap_start_summary">Повідомлення про початок кола, активності, розминки, заминки</string>

@@ -4,7 +4,11 @@ import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wearable.DataClient;
@@ -24,28 +28,29 @@ public class WearableClient {
   }
 
   public void readData(String path, Consumer<DataItem> consumer) {
-    mDataClient.getDataItems(new Uri.Builder()
-                             .scheme(WEAR_URI_SCHEME)
-                             .path(path)
-                             .build())
-        .addOnCompleteListener(new OnCompleteListener<DataItemBuffer>() {
-            @Override
-            public void onComplete(Task<DataItemBuffer> task) {
-              if (task.isSuccessful()) {
-                DataItemBuffer dataItems = task.getResult();
-                if (dataItems.getCount() == 0) {
-                  consumer.accept(null);
-                } else {
-                  for (DataItem dataItem : dataItems) {
-                    consumer.accept(dataItem);
+    mDataClient
+        .getDataItems(new Uri.Builder().scheme(WEAR_URI_SCHEME).path(path).build())
+        .addOnCompleteListener(
+            new OnCompleteListener<>() {
+              @Override
+              public void onComplete(@NonNull Task<DataItemBuffer> task) {
+                if (task.isSuccessful()) {
+                  DataItemBuffer dataItems = task.getResult();
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    if (dataItems.getCount() == 0) {
+                      consumer.accept(null);
+                    } else {
+                      for (DataItem dataItem : dataItems) {
+                        consumer.accept(dataItem);
+                      }
+                    }
                   }
+                  dataItems.release();
+                } else {
+                  System.out.println("task.getException(): " + task.getException());
                 }
-                dataItems.release();
-              } else {
-                System.out.println("task.getException(): " + task.getException());
               }
-            }
-          });
+            });
   }
 
   public Task<DataItem> putData(String path) {

@@ -18,7 +18,6 @@ Track your sport activities with RunnerUp using the GPS in your Android phone.
 * Configure and use heart rate zones
 * Phone internal sensors like step sensor and barometer.
 * WearOS app
-* Pebble support
 
 ## Release
 

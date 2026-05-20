@@ -36,6 +36,7 @@
   <string name="cool_down">cooldown</string>
   <string name="repeat">Repeat</string>
   <string name="repeat_times">Repeat %1$d times</string>
+  <string name="Time">Time</string>
   <string name="time">time</string>
   <string name="distance">distance</string>
   <string name="Distance">Distance</string>
@@ -82,6 +83,7 @@
   <string name="GPS_level_acceptable">Acceptable GPS</string>
   <string name="GPS_level_good">Good GPS</string>
   <string name="Start_GPS">Start GPS</string>
+  <string name="Start_tracker">Start tracker</string>
   <string name="Duration">Duration</string>
   <string name="Cancel">Cancel</string>
   <string name="value">value</string>
@@ -190,13 +192,14 @@
   <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
   <string name="Poll_interval_ms">GPS poll interval (ms)</string>
   <string name="Poll_distance_m">GPS poll distance (m)</string>
-  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM96)</string>
+  <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM2008)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimental HRM devices</string>
   <string name="Paired_BLE_devices">Paired BLE devices</string>
   <string name="Experimental_features">Experimental features</string>
   <string name="Mock_HRM_devices">Mock HRM devices</string>
+  <string name="Debug_HRM">Debug HRM</string>
   <string name="About_RunnerUp">About RunnerUp</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Time trigger</string>
@@ -314,8 +317,6 @@
   <string name="use_temperature_sensor">Temperature sensor</string>
   <string name="use_pressure_sensor_title">Pressure sensor</string>
   <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
-  <string name="adjust_barometer_altitude_from_gps">Adjust barometer altitude to the GPS elevation</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Use the initial GPS elevation to average out the barometric elevation</string>
   <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
   <string name="Lap_start">Lap start</string>
   <string name="Lap_start_summary">Cue for start of laps and Active, Warmup, and Cooldown steps</string>
@@ -344,11 +345,12 @@
   <string name="GPS_recording_category">GPS recording</string>
   <string name="Phone_sensors_category">Phone sensors</string>
   <string name="Database_category">Database maintenance</string>
-  <string name="Maintenance_explanation_summary">RunnerUp saves workouts into a SQL-database.\nFor maintenance, the file runnerup.db.export can be imported and exported from/to\n%1$s</string>
+  <string name="Maintenance_explanation_summary_v2">RunnerUp saves workouts into a SQL-database that can be exported and imported.</string>
   <string name="Map_pref_summary">Mapstyle</string>
-  <string name="Controls">Controls</string>
-  <string name="Controls_pref_summary">Lock buttons</string>
+  <string name="User_interface">User interface</string>
+  <string name="User_interface_pref_summary">Lock buttons, visibility</string>
   <string name="Workout_pref_summary">Manage workouts, laps, rest, target coaching</string>
+  <string name="Visibility_category">Visibility</string>
   <string name="Manage_workouts_category">Advanced workouts</string>
   <string name="Autolap_category">Autolaps</string>
   <string name="Autopause_category">Autopause</string>
@@ -362,4 +364,20 @@
   <string name="Activity_ongoing">Activity ongoing</string>
   <string name="Activity_paused">Activity paused</string>
   <string name="Activity_stopped">Activity stopped</string>
+  <string name="Show_on_lock_screen">Show on lock screen</string>
+  <string name="Show_on_lock_screen_summary">Show the recording screen while the device is locked</string>
+
+  <!--Name of sports, these deprecate array.sportEntries -->
+  <string name="SPORT_RUNNING">Running</string>
+  <string name="SPORT_BIKING">Biking</string>
+  <string name="SPORT_OTHER">Other</string>
+  <string name="SPORT_ORIENTEERING">Orienteering</string>
+  <string name="SPORT_WALKING">Walking</string>
+  <string name="SPORT_TREADMILL">Treadmill</string>
+  <string name="SPORT_GYM">Gym</string>
+  <string name="SPORT_STATIONARY_BIKE">Stationary bike</string>
+
+  <string name="import_cancelled">Import cancelled</string>
+  <string name="export_cancelled">Export cancelled</string>
+  <string name="import_error_invalid_database">Selected file is not a valid RunnerUp database!</string>
 </resources>

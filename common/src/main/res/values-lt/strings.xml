@@ -301,8 +301,6 @@
   <string name="use_temperature_sensor">Temperatūros jutiklis</string>
   <string name="use_pressure_sensor_title">Slėgio jutiklis</string>
   <string name="use_pressure_sensor_summary">Naudoti barometrą aukščio paskaičiavimui</string>
-  <string name="adjust_barometer_altitude_from_gps">Priderinti barometro altitudę prie GPS altitudės </string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Naudoti pradinį GPS aukštį išvedant vidutinį barometrinį aukštį</string>
   <string name="channel_notification_ongoing">RunnerUp GPS ir veiklos pranešimai</string>
   <string name="Lap_start">Rato pradžia</string>
   <string name="Lap_start_summary">Nurodymai ratų pradžiai ir žingsniams \"Aktyvus\", \"Apšilimas\" bei \"Atvėsimas\"</string>

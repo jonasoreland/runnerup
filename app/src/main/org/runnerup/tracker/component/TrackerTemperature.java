@@ -17,7 +17,6 @@
 
 package org.runnerup.tracker.component;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
@@ -73,7 +72,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     return ((new TrackerTemperature()).getSensor(context) != null) || isMockSensor;
   }
 
-  @SuppressLint("ObsoleteSdkInt")
   private Sensor getSensor(final Context context) {
     Sensor sensor;
     if (sensorManager == null) {
@@ -81,7 +79,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
     }
     sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     if (sensor == null) {
-      //noinspection deprecation
       sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
     }
 
@@ -127,9 +124,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
   public boolean isConnected() {
     return sensorManager != null || isMockSensor;
   }
-
-  @Override
-  public void onConnected() {}
 
   /** Called by tracked after workout has ended */
   @Override

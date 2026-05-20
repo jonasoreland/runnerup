@@ -35,6 +35,7 @@
   <string name="cool_down">cooling-down</string>
   <string name="repeat">Herhaal</string>
   <string name="repeat_times">Herhaal %1$dkeer</string>
+  <string name="Time">Tijd</string>
   <string name="time">tijd</string>
   <string name="distance">afstand</string>
   <string name="Distance">Afstand</string>
@@ -284,8 +285,6 @@
   <string name="use_temperature_sensor">Temperatuursensor</string>
   <string name="use_pressure_sensor_title">Druksensor</string>
   <string name="use_pressure_sensor_summary">Gebruik barometer om hoogte te berekenen</string>
-  <string name="adjust_barometer_altitude_from_gps">Stel barometer af op gps-hoogte</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Gebruik de initiële gps-hoogte barometrische hoogte uit te middelen</string>
   <string name="channel_notification_ongoing">RunnerUp gps- en activiteitsmeldingen</string>
   <string name="Lap_start">Ronde starten</string>
   <string name="Lock_activity_buttons">Activiteitsknoppen vergrendelen</string>
@@ -304,4 +303,8 @@
   <string name="Autopause_category">Automatisch pauzeren</string>
   <string name="Target_category">Doel coachen</string>
   <string name="Activity_ongoing">Activiteit is gaande</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
+  <string name="SPORT_RUNNING">Hardlopen</string>
+  <string name="SPORT_BIKING">Fietsen</string>
+  <string name="SPORT_OTHER">Ander</string>
 </resources>

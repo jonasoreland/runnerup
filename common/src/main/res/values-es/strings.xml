@@ -299,8 +299,6 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de presión</string>
   <string name="use_pressure_sensor_summary">Usar barómetro para calcular elevación</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajustar la altitud del barómetro a la elevación de GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Utilizar la elevación inicial de GPS para la elevación barométrica</string>
   <string name="channel_notification_ongoing">Notificacions de GPS y de actividad RunnerUp</string>
   <string name="Lap_start">Fin de tramo</string>
   <string name="Lap_start_summary">Pista para inicio de tramos y etapas Activas, Calentamiento y Enfriamiento</string>

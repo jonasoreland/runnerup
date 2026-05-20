@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.app.KeyguardManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,12 +38,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,6 +100,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private TextView intervalHr;
   private TextView currentHr;
   private TextView activityHeaderHr;
+  private TextView hrDebug;
   // A circular buffer for tap events
   private final long[] mTapArray = {0, 0, 0, 0};
   private int mTapIndex = 0;
@@ -110,8 +115,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    EdgeToEdge.enable(this);
     super.onCreate(savedInstanceState);
-    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    if (!isLargeScreen()) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
     setContentView(R.layout.run);
     formatter = new Formatter(this);
     // HRZones hrZones = new HRZones(this);
@@ -141,12 +149,19 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     currentHr = findViewById(R.id.current_hr);
     countdownView = findViewById(R.id.countdown_text_view);
     workoutList = findViewById(R.id.workout_list);
+    hrDebug = findViewById(R.id.hr_debug);
     WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
     workoutList.setAdapter(adapter);
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
+    final KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+
+    if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
+      hrDebug = null;
+    }
 
     TableLayout t = findViewById(R.id.table_layout1);
     t.setOnTouchListener(
@@ -183,16 +198,27 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             new OnBackPressedCallback(true) {
               @Override
               public void handleOnBackPressed() {
-                // ignore back while in an activity
+                // Ignore back while in an activity and the device is unlocked
+                if (km.isKeyguardLocked()) {
+                  // Original state is re-enabled on resume
+                  showOnLockScreen(false);
+                }
               }
             });
     ViewUtil.Insets(findViewById(R.id.start_view), true);
+
+    showOnLockScreen(showOnLockScreen);
+  }
+
+  private boolean isLargeScreen() {
+    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
   @Override
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    Log.e(getClass().getName(), "onConfigurationChange => do NOTHING!!");
+    Log.d(getClass().getName(), "onConfigurationChange => do NOTHING!!");
   }
 
   @Override
@@ -202,7 +228,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
   @Override
   public void onResume() {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    final Resources res = this.getResources();
+    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+
     super.onResume();
+    showOnLockScreen(showOnLockScreen);
   }
 
   @Override
@@ -246,8 +277,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     List<Workout.StepListEntry> list = workout.getStepList();
     for (Workout.StepListEntry aList : list) {
       WorkoutRow row = new WorkoutRow();
-      row.level = aList.level;
-      row.step = aList.step;
+      row.level = aList.level();
+      row.step = aList.step();
       row.lap = null;
       workoutRows.add(row);
     }
@@ -322,8 +353,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       /*
        * they saved
        */
+      Double manualDistance = null;
+      if (data != null && data.hasExtra("MANUAL_DISTANCE")) {
+        manualDistance = data.getDoubleExtra("MANUAL_DISTANCE", 0);
+      }
       workout.onComplete(Scope.ACTIVITY, workout);
-      workout.onSave();
+      if (mTracker != null) {
+        mTracker.completeActivity(/* save= */true, manualDistance);
+      }
       mTracker = null;
       finish();
     } else if (resultCode == AppCompatActivity.RESULT_CANCELED) {
@@ -331,7 +368,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
        * they discarded
        */
       workout.onComplete(Scope.ACTIVITY, workout);
-      workout.onDiscard();
+      mTracker.completeActivity(/* save= */false, /* manualDistance= */null);
       mTracker = null;
       finish();
     } else if (resultCode == AppCompatActivity.RESULT_FIRST_USER) {
@@ -378,10 +415,23 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
   }
 
+  private void showOnLockScreen(boolean enabled) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+      setShowWhenLocked(enabled);
+    } else {
+      if (enabled) {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+      } else {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+      }
+    }
+  }
+
   private final OnClickListener newLapButtonClick = v -> workout.onNewLapOrNextStep();
 
   private void updateView() {
-    if (mTracker.getState() == TrackerState.STOPPED) {
+    boolean isPaused = workout != null && workout.isPaused();
+    if (mTracker.getState() == TrackerState.STOPPED && !isPaused) {
       doStop();
     } else {
       if (workout == null) {
@@ -442,6 +492,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         intervalHr.setVisibility(View.VISIBLE);
         currentHr.setVisibility(View.VISIBLE);
         activityHeaderHr.setVisibility(View.VISIBLE);
+        if (hrDebug != null) {
+          hrDebug.setVisibility(View.VISIBLE);
+          mTracker.setHrDebug(hrDebug);
+        }
       } else {
         activityHr.setVisibility(View.GONE);
         lapHr.setVisibility(View.GONE);
@@ -605,11 +659,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
       LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
       return inflater.inflate(R.layout.laplist_row, parent, false);
-    }
-
-    @Override
-    public boolean hasStableIds() {
-      return false;
     }
   }
 }

@@ -32,4 +32,6 @@
     </issue>
     <issue id="AllowBackup" severity="ignore"/>
     <issue id="GradleCompatible" severity="warning"/>
+    <!-- Ignore warning, let the AGP update manage the gradle version -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>

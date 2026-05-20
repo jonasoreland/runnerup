@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import org.runnerup.common.util.Constants;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.workout.Workout;
@@ -60,14 +59,6 @@ public class TrackerReceiver extends DefaultTrackerComponent {
   }
 
   private final BroadcastReceiver mBroadcastReceiver =
-      new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-          TrackerReceiver.this.onReceive(context, intent);
-        }
-      };
-
-  private final BroadcastReceiver mLocalBroadcastReceiver =
       new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,8 +106,6 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
     intentFilter.addAction(Constants.Intents.NEW_LAP);
     intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
-    LocalBroadcastManager.getInstance(context)
-        .registerReceiver(mLocalBroadcastReceiver, intentFilter);
     ContextCompat.registerReceiver(
         context, mBroadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
   }
@@ -124,11 +113,6 @@ public class TrackerReceiver extends DefaultTrackerComponent {
   private void unregisterReceivers() {
     try {
       context.unregisterReceiver(mBroadcastReceiver);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    try {
-      LocalBroadcastManager.getInstance(context).unregisterReceiver(mLocalBroadcastReceiver);
     } catch (Exception e) {
       e.printStackTrace();
     }

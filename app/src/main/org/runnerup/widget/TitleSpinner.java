@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -119,6 +120,11 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
     mSpinner.setOnItemSelectedListener(listener);
   }
 
+  @Override
+  public AdapterView.OnItemSelectedListener getViewOnItemSelectedListener() {
+    return mSpinner.getOnItemSelectedListener();
+  }
+
   public void setAdapter(SpinnerAdapter adapter) {
     mSpinner.setAdapter(adapter);
     mPresenter.loadValue(null);
@@ -159,5 +165,13 @@ public class TitleSpinner extends LinearLayout implements SpinnerInterface {
 
   public void setOnCloseDialogListener(SpinnerInterface.OnCloseDialogListener listener) {
     mPresenter.setOnCloseDialogListener(listener);
+  }
+
+  // Instead of android:entries="@array/anArray"
+  public void setArrayEntries(String[] entries) {
+    var adapter = new ArrayAdapter<CharSequence>(
+        getContext(), android.R.layout.simple_spinner_item, entries);
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    mSpinner.setAdapter(adapter);
   }
 }

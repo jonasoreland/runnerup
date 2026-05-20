@@ -1,0 +1,4 @@
+#1298 Target Android 16 and 16KB stack
+#1241 Activities without GPS
+#1298 Target Android 16
+#1276 #1284 Treadmill, Gym and Stationary bike activities

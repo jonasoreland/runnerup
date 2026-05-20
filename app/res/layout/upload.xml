@@ -53,7 +53,6 @@
     android:layout_height="fill_parent"
     android:layout_above="@id/upload_account_button_layout"
     android:layout_alignParentStart="true"
-    android:layout_alignParentLeft="true"
     android:layout_below="@id/upload_layout"
     android:scrollbarAlwaysDrawVerticalTrack="true">
 
@@ -65,7 +64,6 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
     android:layout_above="@id/upload_account_action_buttons">
 
     <Button
@@ -91,7 +89,6 @@
     android:layout_height="wrap_content"
     android:id="@+id/upload_account_action_buttons"
     android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
     android:layout_alignParentBottom="true">
 
     <Button

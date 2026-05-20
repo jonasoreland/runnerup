@@ -83,7 +83,7 @@ public class HRManager {
   }
 
   private static HRProvider getHRProviderImpl(Context ctx, String src) {
-    System.err.println("getHRProvider(" + src + ")");
+    Log.d(HRManager.class.getName(), "getHRProvider(" + src + ")");
     if (src.contentEquals(AndroidBLEHRProvider.NAME)) {
       if (!AndroidBLEHRProvider.checkLibrary(ctx)) return null;
       return new AndroidBLEHRProvider(ctx);

@@ -14,7 +14,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     setPreferencesFromResource(R.xml.settings, rootKey);
 
-    if (BuildConfig.MAPBOX_ENABLED == 0) {
+    if (!BuildConfig.MAPBOX_ENABLED) {
       Preference pref = findPreference("map_preferencescreen");
       pref.setEnabled(false);
     }

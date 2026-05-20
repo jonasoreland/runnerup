@@ -17,14 +17,12 @@
 
 package org.runnerup.export;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.ColorRes;
@@ -47,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,6 +91,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
   private String fitnessActivitiesUrl = null;
   private String userName = null;
   private final PathSimplifier simplifier;
+  private final Executor executor = Executors.newSingleThreadExecutor();
 
   public static final Map<String, Sport> runkeeper2sportMap = new HashMap<>();
   public static final Map<Sport, String> sport2runkeeperMap = new HashMap<>();
@@ -207,6 +208,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
       try {
         JSONObject tmp = new JSONObject(authConfig);
         access_token = tmp.optString("access_token", null);
+        userName = tmp.optString("username", null);
       } catch (Exception e) {
         Log.e(Constants.LOG, e.getMessage());
       }
@@ -224,6 +226,9 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
     JSONObject tmp = new JSONObject();
     try {
       tmp.put("access_token", access_token);
+      if (userName != null) {
+        tmp.put("username", userName);
+      }
     } catch (JSONException e) {
       Log.e(Constants.LOG, e.getMessage());
     }
@@ -257,6 +262,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
   @Override
   public void reset() {
     access_token = null;
+    userName = null;
   }
 
   @NonNull
@@ -268,6 +274,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
       return s;
     }
 
+    // Already connected and initialized.
     if (fitnessActivitiesUrl != null) {
       return Synchronizer.Status.OK;
     }
@@ -313,11 +320,47 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
 
     if (uri != null) {
       fitnessActivitiesUrl = uri;
+      // After a successful connection, fetch the user profile info in the background.
+      fetchUserProfileAsync();
       return Synchronizer.Status.OK;
     }
     s = Synchronizer.Status.ERROR;
     s.ex = ex;
     return s;
+  }
+
+  /**
+   * Fetches the user's profile information, including the username, on a background thread. This is
+   * a non-blocking "fire-and-forget" call.
+   */
+  private void fetchUserProfileAsync() {
+    // If we already have the username, no need to fetch it again.
+    if (userName != null) {
+      return;
+    }
+
+    executor.execute(
+        () -> {
+          try {
+            URL newurl = new URL(REST_URL + "/profile");
+            HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
+            conn.setRequestProperty("Authorization", "Bearer " + access_token);
+            conn.addRequestProperty("Content-Type", "application/vnd.com.runkeeper.Profile+json");
+
+            InputStream in = new BufferedInputStream(conn.getInputStream());
+            JSONObject obj = SyncHelper.parse(in);
+            conn.disconnect();
+
+            String uri = obj.getString("profile");
+            // The username is the last part of the profile URI.
+            String fetchedUserName = uri.substring(uri.lastIndexOf("/") + 1);
+            if (!TextUtils.isEmpty(fetchedUserName)) {
+              this.userName = fetchedUserName;
+            }
+          } catch (Exception e) {
+            Log.w(getName(), "Failed to fetch user profile in background: " + e.getMessage());
+          }
+        });
   }
 
   @NonNull
@@ -411,7 +454,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
     Exception ex;
     try {
       URL newurl = new URL(REST_URL + fitnessActivitiesUrl);
-      // Log.e(Constants.LOG, "url: " + newurl.toString());
+      // Log.d(Constants.LOG, "url: " + newurl.toString());
       conn = (HttpURLConnection) newurl.openConnection();
       conn.setDoOutput(true);
       conn.setRequestMethod(RequestMethod.POST.name());
@@ -455,63 +498,25 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
     return s;
   }
 
-  @SuppressLint("StaticFieldLeak")
   @Override
   public String getActivityUrl(String extId) {
-    // username is part of the "web" URL but is not directly accessible in the API
-    // the numeric userID is in the "User" info (see connect()), but that is not accepted in URLs
-    // The userName could be retrieved from getAuthResult() too and saved in auth_config (but
-    // retries will not be handled)
-    if (userName == null) {
-      // try to get the information (cannot run in UI thread, use timeout)
-      try {
-        userName =
-            new AsyncTask<Void, Void, String>() {
-
-              @Override
-              protected String doInBackground(Void... args) {
-                try {
-                  URL newurl = new URL(REST_URL + "/profile");
-                  HttpURLConnection conn = (HttpURLConnection) newurl.openConnection();
-                  conn.setRequestProperty("Authorization", "Bearer " + access_token);
-                  conn.addRequestProperty(
-                      "Content-Type", "application/vnd.com.runkeeper.Profile+json");
-
-                  InputStream in = new BufferedInputStream(conn.getInputStream());
-                  JSONObject obj = SyncHelper.parse(in);
-                  conn.disconnect();
-
-                  String uri = obj.getString("profile");
-                  return uri.substring(uri.lastIndexOf("/") + 1);
-                } catch (Exception e) {
-                }
-                return null;
-              }
-            }.execute().get(5, TimeUnit.SECONDS);
-      } catch (Exception e) {
-      }
-    }
-    String url;
     if (userName == null || extId == null) {
-      url = null;
-    } else {
-      // Do not bother with fitnessActivitiesUrl
-      url = PUBLIC_URL + "/user/" + userName + extId.replace("/fitnessActivities/", "/activity/");
+      // If userName is not yet available, we can't construct the URL.
+      // It might be fetched in the background, so this could work on a subsequent attempt.
+      Log.w(getName(), "Cannot get activity URL because userName is not available.");
+      return null;
     }
-    return url;
+
+    // Do not bother with fitnessActivitiesUrl
+    return PUBLIC_URL + "/user/" + userName + extId.replace("/fitnessActivities/", "/activity/");
   }
 
   @Override
   public boolean checkSupport(Synchronizer.Feature f) {
-    switch (f) {
-      case UPLOAD:
-      case ACTIVITY_LIST:
-      case GET_ACTIVITY:
-        return true;
-      default:
-        break;
-    }
-    return false;
+      return switch (f) {
+          case UPLOAD, ACTIVITY_LIST, GET_ACTIVITY -> true;
+          default -> false;
+      };
   }
 
   @Override
@@ -541,7 +546,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
       Log.e(Constants.LOG, e.getMessage());
       return activity;
     }
-    return activity;
+      return activity;
   }
 
   private double getLapLength() {

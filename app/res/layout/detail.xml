@@ -15,6 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_view"
     android:layout_width="fill_parent"
@@ -121,15 +122,25 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1px"
-                        android:entries="@array/sportEntries"
                         android:prompt="@string/Type"
                         android:text="@string/Sport" />
+
+		    <org.runnerup.widget.TitleSpinner
+			android:id="@+id/summary_manual_distance"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minWidth="48dp"
+			android:minHeight="48dp"
+			android:prompt="@string/Type"
+			android:inputType="numberDecimal"
+			android:text="@string/Distance"
+			runnerup:type="distancepicker" />
 
                     <EditText
                         android:id="@+id/notes_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|left"
+                        android:gravity="top|start"
                         android:hint="@string/Notes_about_your_workout"
                         android:inputType="textCapSentences|textMultiLine"
                         android:minLines="4"
@@ -168,13 +179,17 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
-                <include
+		<LinearLayout
                     android:id="@+id/tab_map"
-                    layout="@layout/map_area"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content">
+		  <org.runnerup.util.MapViewWrapper
+		      android:id="@+id/mapview"
+		      android:layout_width="match_parent"
+		      android:layout_height="match_parent" />
+		  </LinearLayout>
 
-                <LinearLayout
+                  <LinearLayout
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -214,7 +229,6 @@
             android:background="@drawable/btn_blue"
             android:drawablePadding="-32dp"
             android:drawableEnd="@drawable/ic_av_play_arrow"
-            android:drawableRight="@drawable/ic_av_play_arrow"
             android:text="@string/Resume" />
 
         <Button

@@ -32,6 +32,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ import org.runnerup.tracker.component.TrackerComponentCollection;
 import org.runnerup.tracker.component.TrackerElevation;
 import org.runnerup.tracker.component.TrackerGPS;
 import org.runnerup.tracker.component.TrackerHRM;
-import org.runnerup.tracker.component.TrackerPebble;
 import org.runnerup.tracker.component.TrackerPressure;
 import org.runnerup.tracker.component.TrackerReceiver;
 import org.runnerup.tracker.component.TrackerTTS;
@@ -101,8 +101,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       (TrackerReceiver) components.addComponent(new TrackerReceiver(this));
   private final TrackerWear trackerWear =
       (TrackerWear) components.addComponent(new TrackerWear(this));
-  private final TrackerPebble trackerPebble =
-      (TrackerPebble) components.addComponent(new TrackerPebble(this));
 
   private boolean mTimeFromGpsPoints = false;
   private boolean mCurrentSpeedFromGpsPoints = false;
@@ -191,6 +189,10 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     }
   }
 
+  public void setWithoutGps(boolean val) {
+    trackerGPS.setWithoutGps(val);
+  }
+
   private final TrackerComponent.Callback onInitCallback =
       new TrackerComponent.Callback() {
         @Override
@@ -201,7 +203,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
             state.set(TrackerState.INITIALIZED);
           }
 
-          Log.e(getClass().getName(), "state.set(" + getState() + ")");
+          Log.d(getClass().getName(), "state.set(" + getState() + ")");
           handleNextState();
         }
       };
@@ -246,14 +248,14 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   public void connect() {
-    Log.e(getClass().getName(), "Tracker.connect() - state: " + state.get());
+    Log.d(getClass().getName(), "Tracker.connect() - state: " + state.get());
     switch (state.get()) {
       case INIT:
         setup();
       case INITIALIZING:
       case CLEANUP:
         nextState = TrackerState.CONNECTED;
-        Log.e(getClass().getName(), " => nextState: " + nextState);
+        Log.d(getClass().getName(), " => nextState: " + nextState);
         return;
       case INITIALIZED:
         break;
@@ -316,7 +318,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       tmp.put(DB.LOCATION.LAP, 0); // always start with lap 0
       mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, tmp, logGpxAccuracy);
     } catch (IllegalStateException ex) {
-      Log.e(getClass().getName(), "Query failed:", ex);
+      Log.i(getClass().getName(), "Query failed:", ex);
     }
     return mActivityId;
   }
@@ -336,9 +338,6 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // Add Wear to live loggers if it's active
     if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK)
       liveLoggers.add(trackerWear);
-
-    if (components.getResultCode(TrackerPebble.NAME) == TrackerComponent.ResultCode.RESULT_OK)
-      liveLoggers.add(trackerPebble);
 
     // create the DB activity
     createActivity(workout.getSport());
@@ -421,7 +420,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity();
+    saveActivity(/* manualDistance= */null);
     components.onPause();
   }
 
@@ -450,7 +449,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity();
+    saveActivity(/* manualDistance= */null);
     components.onPause(); // TODO add new callback for this
   }
 
@@ -538,7 +537,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
         handleNextState();
       };
 
-  public void completeActivity(boolean save) {
+  public void completeActivity(boolean save, Double manualDistance) {
     if (BuildConfig.DEBUG
         && state.get() != TrackerState.PAUSED
         && state.get() != TrackerState.STOPPED) {
@@ -549,7 +548,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     internalOnLocationChanged(mLastLocationStarted);
 
     if (save) {
-      saveActivity();
+      saveActivity(manualDistance);
       liveLog(DB.LOCATION.TYPE_END);
     } else {
       ContentValues tmp = new ContentValues();
@@ -564,7 +563,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     reset();
   }
 
-  private void saveActivity() {
+  private void saveActivity(Double manualDistance) {
     ContentValues tmp = new ContentValues();
     if (mHeartbeatNanos > 0) {
       long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
@@ -582,7 +581,11 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       }
     }
 
-    tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+    if (manualDistance != null) {
+      tmp.put(Constants.DB.ACTIVITY.DISTANCE, manualDistance);
+    } else {
+      tmp.put(Constants.DB.ACTIVITY.DISTANCE, mElapsedDistance);
+    }
     tmp.put(
         Constants.DB.ACTIVITY.TIME,
         Math.round(getTimeMs() / 1000.0d)); // time should be updated last for conditionalRecompute
@@ -814,6 +817,12 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     return (trackerHRM.getHrProvider());
   }
 
+  public void setHrDebug(TextView tv) {
+    if (trackerHRM != null) {
+      trackerHRM.setDebugLog(tv);
+    }
+  }
+
   private Integer getCurrentHRValueElapsed(long now, long maxAge) {
     HRProvider hrProvider = trackerHRM.getHrProvider();
     if ((hrProvider == null) || !hrProvider.isConnected()) return null;
@@ -843,7 +852,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
 
   public Integer getCurrentBatteryLevel() {
     HRProvider hrProvider = trackerHRM.getHrProvider();
-    if (hrProvider == null) return null;
+    if (hrProvider == null) return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
     return hrProvider.getBatteryLevel();
   }
 

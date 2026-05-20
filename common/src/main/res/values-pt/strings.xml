@@ -312,8 +312,6 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressão</string>
   <string name="use_pressure_sensor_summary">Usar barómetro para calcular a altitude</string>
-  <string name="adjust_barometer_altitude_from_gps">Ajustar a altitude do barómetro à elevação do GPS</string>
-  <string name="adjust_barometer_elevation_from_gps_summary">Usar a elevação inicial do GPS para calcular a altitude barométrica média</string>
   <string name="channel_notification_ongoing">RunnerUp GPS e notificações da atividade</string>
   <string name="Lap_start">Início da volta</string>
   <string name="Lap_start_summary">Aviso para início de voltas e etapas de atividade, aquecimento e arrefecimento</string>
@@ -344,8 +342,6 @@
   <string name="Database_category">Manutenção da base de dados</string>
   <string name="Maintenance_explanation_summary">O RunnerUp guarda os exercícios numa base de dados SQL.\nPara manutenção, o ficheiro runnerup.db.export pode ser importado e exportado de/para\n%1$s</string>
   <string name="Map_pref_summary">Estilo do mapa</string>
-  <string name="Controls">Controlos</string>
-  <string name="Controls_pref_summary">Bloquear botões</string>
   <string name="Workout_pref_summary">Gerir exercícios, voltas, descanso, treino de objetivos</string>
   <string name="Manage_workouts_category">Exercícios avançados</string>
   <string name="Autolap_category">Voltas automáticas</string>

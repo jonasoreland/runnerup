@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'org.runnerup'
-    compileSdk rootProject.ext.compileSdk
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    namespace = 'org.runnerup'
+    compileSdk = rootProject.ext.compileSdk
+    buildToolsVersion = rootProject.ext.buildToolsVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.toVersion("17")
-        targetCompatibility JavaVersion.toVersion("17")
+        sourceCompatibility = JavaVersion.toVersion("17")
+        targetCompatibility = JavaVersion.toVersion("17")
     }
 
     defaultConfig {
-        minSdk rootProject.ext.minSdk
-        targetSdk rootProject.ext.targetSdk
+        minSdk = rootProject.ext.minSdk
+        targetSdk = rootProject.ext.targetSdk
         // Default, needed by test
         buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '"')
     }
@@ -26,27 +26,32 @@ android {
                 resValue "string", "app_name", "dRunnerUp"
             }
             release {
-                debuggable false
+                debuggable = false
                 buildConfigField ('String', 'applicationIdFull', '"' + rootProject.ext.applicationId + '"')
                 resValue "string", "applicationIdFull", rootProject.ext.applicationId
 
-                minifyEnabled false
+                minifyEnabled = false
             }
         }
     }
     lint {
-        showAll true
+        showAll = true
         warning 'MissingTranslation'
-        baseline file('lint-baseline.xml')
-        lintConfig file('lint.xml')
-        checkReleaseBuilds true
-        lintConfig file('lint.xml')
-        //textOutput 'stdout'
-        textReport true
+        baseline = file('lint-baseline.xml')
+        lintConfig = file('lint.xml')
+        checkReleaseBuilds = true
+        lintConfig = file('lint.xml')
+        //textOutput = 'stdout'
+        textReport = true
+        // Treat all warnings as errors
+        warningsAsErrors = true
+        // Halt the build if any errors are found
+        abortOnError = true
     }
-    namespace 'org.runnerup.common'
+    namespace = 'org.runnerup.common'
     buildFeatures {
-        buildConfig true
+        buildConfig = true
+        resValues = true
     }
 
     sourceSets {
@@ -67,7 +72,7 @@ repositories {
 dependencies {
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
 
-    testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.hamcrest:hamcrest:3.0'
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 

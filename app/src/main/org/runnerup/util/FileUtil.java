@@ -17,6 +17,10 @@
 
 package org.runnerup.util;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -77,6 +81,48 @@ public class FileUtil {
       return copy(input, output);
     } finally {
       close(output);
+    }
+  }
+
+  /**
+   * Copies content from a source Uri to a destination Uri using the provided Context.
+   *
+   * @param context The Context used to obtain a ContentResolver for opening the Uris.
+   * @param to The destination Uri.
+   * @param from The source Uri.
+   * @return The number of bytes copied.
+   * @throws IOException If an I/O error occurs, including if Uris cannot be opened (e.g.,
+   *     FileNotFoundException).
+   * @throws NullPointerException if context, to, or from Uri is null.
+   */
+  public static int copyFile(Context context, Uri to, Uri from) throws IOException {
+    if (context == null) {
+      throw new NullPointerException("Context cannot be null");
+    }
+    if (to == null) {
+      throw new NullPointerException("Destination Uri cannot be null");
+    }
+    if (from == null) {
+      throw new NullPointerException("Source Uri cannot be null");
+    }
+
+    // openFileDescriptor will throw FileNotFoundException if the URI cannot be opened,
+    // which will be propagated up.
+    ContentResolver resolver = context.getContentResolver();
+    try (ParcelFileDescriptor fromFileDescriptor = resolver.openFileDescriptor(from, "r");
+        ParcelFileDescriptor toFileDescriptor = resolver.openFileDescriptor(to, "w")) {
+
+      if (fromFileDescriptor == null) {
+        throw new IOException("Could not open source Uri: " + from);
+      }
+      if (toFileDescriptor == null) {
+        throw new IOException("Could not open destination Uri: " + to);
+      }
+
+      try (FileInputStream input = new FileInputStream(fromFileDescriptor.getFileDescriptor());
+          FileOutputStream output = new FileOutputStream(toFileDescriptor.getFileDescriptor())) {
+        return copy(input, output);
+      }
     }
   }
 }
