@@ -90,7 +90,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @Override
   public String getPublicUrl() {
     if (url == null || url.isEmpty()) {
-      return "https://demo.endurain.com";
+      return "https://endurain.example.com";
     }
     return url;
   }
