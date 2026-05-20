@@ -377,9 +377,7 @@ public class SyncManager {
     Callback cb = authCallback;
     authCallback = null;
     authSynchronizer = null;
-    
-    // If we need auth (e.g. switching from USER_PASS_URL to OAUTH2), we should not reset
-    // because we want to preserve the partial config (like the URL we just entered)
+
     if (s == Status.OK || s == Status.NEED_AUTH) {
       ContentValues tmp = new ContentValues();
       tmp.put("_id", synchronizer.getId());
@@ -397,29 +395,15 @@ public class SyncManager {
     if (s != Status.OK && s != Status.NEED_AUTH) {
       synchronizer.reset();
     }
-    
-    // If we need auth, we should trigger the next step instead of just returning
+
     if (s == Status.NEED_AUTH && cb != null) {
-        // We need to re-trigger handleAuth with the new method
-        // But we can't do it directly here easily because we need the activity context etc.
-        // So we pass it back to the callback, and the callback needs to handle it.
-        // However, the existing callbacks don't handle recursion.
-        
-        // Let's check if we can handle it here if we have the activity
+
         if (mActivity != null) {
             final Callback originalCallback = cb;
-            // Re-assign auth variables for the new flow
-            authCallback = originalCallback; // Restore callback
-            authSynchronizer = synchronizer; // Restore synchronizer
+            authCallback = originalCallback;
+            authSynchronizer = synchronizer;
             
-            // Get the new auth method (it should have updated after the partial config save)
-            // IMPORTANT: We must run connect() in background if it does network IO!
-            // But here we are on UI thread (handleAuthComplete is called from onPostExecute).
-            // If connect() does network IO, we will crash with NetworkOnMainThreadException.
-            
-            // EndurainSynchronizer.connect() DOES network IO if it has credentials but no token.
-            
-            mSpinner.show(); // Show spinner again
+            mSpinner.show();
             
             executor.execute(() -> {
                 Status newStatus = synchronizer.connect();
@@ -439,7 +423,7 @@ public class SyncManager {
     try {
       return new JSONObject(str);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(getClass().getName(), "JSON issue", e);
     }
     return null;
   }
@@ -461,7 +445,7 @@ public class SyncManager {
               try {
                   authConfig.put("mfa_code", code);
               } catch (JSONException e) {
-                  e.printStackTrace();
+                Log.e(getClass().getName(), "JSON issue", e);
               }
               
               testUserPass(sync, authConfig);

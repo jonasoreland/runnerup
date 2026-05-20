@@ -10,7 +10,7 @@ public class PKCEUtil {
 
     public static String generateCodeVerifier() {
         SecureRandom sr = new SecureRandom();
-        byte[] code = new byte[64]; // Increased from 32 to 64 to ensure length is well within 43-128 range
+        byte[] code = new byte[64];
         sr.nextBytes(code);
         return Base64.encodeToString(code, Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
     }

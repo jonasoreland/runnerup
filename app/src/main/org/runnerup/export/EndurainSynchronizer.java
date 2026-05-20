@@ -48,7 +48,6 @@ import org.runnerup.workout.Sport;
 public class EndurainSynchronizer extends DefaultSynchronizer {
 
   public static final String NAME = "Endurain";
-  private static final String TAG = "EndurainSynchronizer";
   private static final String TOKEN_URL_PATH = "/api/v1/auth/login";
   private static final String MFA_URL_PATH = "/api/v1/auth/mfa/verify";
   private static final String UPLOAD_URL_PATH = "/api/v1/activities/create/upload";
@@ -134,7 +133,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   public void init(ContentValues config) {
     id = config.getAsLong("_id");
     String authToken = config.getAsString(Constants.DB.ACCOUNT.AUTH_CONFIG);
-    Log.d(TAG, "init: authToken=" + authToken);
     if (authToken != null) {
       try {
         JSONObject tmp = new JSONObject(authToken);
@@ -147,8 +145,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
         access_token = tmp.optString("access_token", null);
         refresh_token = tmp.optString("refresh_token", null);
         csrf_token = tmp.optString("csrf_token", null);
-        
-        Log.d(TAG, "init parsed: url=" + url + ", hasToken=" + (access_token != null));
+
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -157,10 +154,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   @Override
   public boolean isConfigured() {
-    // We now support both old username/password flow and new PKCE flow (which might not have username/password)
-    // But for now, let's keep it simple and assume if we have a URL we are partially configured.
-    // The actual check depends on whether we have tokens or credentials.
-    // For the dynamic URL task, we just need to ensure 'url' is part of the state.
     return url != null && !url.isEmpty();
   }
 
@@ -186,7 +179,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   private Status parseAuthData(JSONObject obj) {
     try {
       if (obj.has("mfa_required") && obj.getBoolean("mfa_required")) {
-          Log.d(TAG, "MFA required");
           Status s = Status.NEED_AUTH;
           s.authMethod = AuthMethod.MFA;
           return s;
@@ -225,7 +217,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @NonNull
   @Override
   public Intent getAuthIntent(AppCompatActivity activity) {
-      Log.d(TAG, "getAuthIntent called with url=" + url);
       Intent intent = new Intent(activity, EndurainLoginActivity.class);
       intent.putExtra(EndurainLoginActivity.EXTRA_URL, url);
       return intent;
@@ -234,13 +225,11 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @NonNull
   @Override
   public Status getAuthResult(int resultCode, Intent data) {
-      Log.d(TAG, "getAuthResult: resultCode=" + resultCode);
       if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
           access_token = data.getStringExtra(EndurainLoginActivity.EXTRA_ACCESS_TOKEN);
           refresh_token = data.getStringExtra(EndurainLoginActivity.EXTRA_REFRESH_TOKEN);
           csrf_token = data.getStringExtra(EndurainLoginActivity.EXTRA_CSRF_TOKEN);
           hasCorrectConfig = true;
-          Log.d(TAG, "getAuthResult: success, token received");
           return Status.OK;
       }
       return Status.ERROR;
@@ -250,36 +239,24 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @Override
   public Status connect() {
     Status s = Status.NEED_AUTH;
-    
-    Log.d(TAG, "connect: access_token=" + (access_token != null ? "YES" : "NO") + 
-               ", refresh_token=" + (refresh_token != null ? "YES" : "NO") +
-               ", username=" + username + ", url=" + url + ", mfaCode=" + (mfaCode != null ? "YES" : "NO"));
 
-    // If we have an access token, we are good
     if (access_token != null) {
       return Status.OK;
     }
 
-    // If we don't have an access token, but we have a refresh token, trigger refresh
     if (refresh_token != null) {
-      Log.d(TAG, "connect: no access token but refresh token exists, requesting NEED_REFRESH");
       return Status.NEED_REFRESH;
     }
 
-    // If we have username/password (legacy flow), try to get token
     if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(url)) {
-        Log.d(TAG, "connect: using legacy USER_PASS_URL flow");
         s.authMethod = AuthMethod.USER_PASS_URL;
         try {
           OkHttpClient client = getAuthClient();
-          
-          // Determine if we are doing initial login or MFA verification
+
           String endpoint;
           RequestBody formBody;
           
           if (!TextUtils.isEmpty(mfaCode)) {
-              // MFA Verification
-              Log.d(TAG, "connect: verifying MFA");
               endpoint = getEndpoint(MFA_URL_PATH);
               
               JSONObject json = new JSONObject();
@@ -289,18 +266,13 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
               formBody = RequestBody.create(MediaType.parse("application/json"), json.toString());
               
           } else {
-              // Initial Login
-              Log.d(TAG, "connect: initial login");
               endpoint = getEndpoint(TOKEN_URL_PATH);
-              
-              // Use application/x-www-form-urlencoded for initial login as per docs
+
               formBody = new FormBody.Builder()
                   .add("username", username)
                   .add("password", password)
                   .build();
           }
-
-          Log.d(TAG, "connect: requesting " + endpoint);
 
           Request request = new Request.Builder()
                   .url(endpoint)
@@ -310,32 +282,20 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     
           try (Response response = client.newCall(request).execute()) {
               String responseBody = response.body() != null ? response.body().string() : "";
-              Log.d(TAG, "connect: response code=" + response.code() + ", body=" + responseBody);
         
-              if (response.isSuccessful() || response.code() == 202 || response.code() == 200) { // 202 Accepted is used for MFA required
+              if (response.isSuccessful() || response.code() == 202 || response.code() == 200) {
                 JSONObject obj = new JSONObject(responseBody);
                 return parseAuthData(obj);
-              } else if (response.code() == 405) {
-                  // If 405 Method Not Allowed, try without /api/v1 prefix if it was double appended or server structure is different
-                  // But we already handle double append.
-                  // Maybe the server redirects http to https and changes method?
-                  // Or maybe it requires a trailing slash?
-                  Log.e(TAG, "connect: 405 Method Not Allowed. Check URL and server configuration.");
               }
         
               return Status.ERROR;
           }
         } catch (Exception e) {
-          Log.e(TAG, "connect: exception", e);
           return Status.ERROR;
         }
     } else if (!TextUtils.isEmpty(url)) {
-        // If we only have a URL, we need to use the new OAuth2 flow
-        Log.d(TAG, "connect: using OAUTH2 flow");
         s.authMethod = AuthMethod.OAUTH2;
     } else {
-        // If we don't even have a URL, we need to ask for it (and potentially username/password)
-        Log.d(TAG, "connect: missing URL, fallback to USER_PASS_URL");
         s.authMethod = AuthMethod.USER_PASS_URL;
     }
     
@@ -420,7 +380,6 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
       Request request =
           new Request.Builder()
               .url(uploadUrl)
-              //.addHeader("Content-Type", "application/json") // Multipart body sets its own content type
               .method("POST", requestBody)
               .build();
 
@@ -443,14 +402,11 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @NonNull
   @Override
   public Status refreshToken() {
-    Log.d(TAG, "refreshToken: starting token refresh flow");
     if (TextUtils.isEmpty(refresh_token)) {
-      Log.d(TAG, "refreshToken: no refresh token available");
       return getNeedAuthStatus();
     }
 
     String endpoint = getEndpoint(REFRESH_URL_PATH);
-    Log.d(TAG, "refreshToken: requesting " + endpoint);
 
     try {
       OkHttpClient client = new OkHttpClient();
@@ -464,17 +420,14 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
       try (Response response = client.newCall(request).execute()) {
         String responseBody = response.body() != null ? response.body().string() : "";
-        Log.d(TAG, "refreshToken: response code=" + response.code() + ", body=" + responseBody);
 
         if (response.isSuccessful()) {
           JSONObject obj = new JSONObject(responseBody);
           return parseAuthData(obj);
-        } else {
-          Log.e(TAG, "refreshToken failed: server returned error " + response.code());
         }
       }
     } catch (Exception e) {
-      Log.e(TAG, "refreshToken: exception during request", e);
+      Log.e(getName(), "refreshToken: exception during request", e);
     }
 
     return getNeedAuthStatus();
