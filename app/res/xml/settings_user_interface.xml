@@ -46,6 +46,14 @@
             android:summary="@string/Show_on_lock_screen_summary"
             android:title="@string/Show_on_lock_screen"
             app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_keep_screen_on"
+            android:persistent="true"
+            android:summary="@string/Keep_screen_on_summary"
+            android:title="@string/Keep_screen_on"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

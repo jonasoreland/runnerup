@@ -158,6 +158,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     final KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
     final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+    final boolean keepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keep_screen_on), false);
 
     if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
@@ -208,6 +209,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     ViewUtil.Insets(findViewById(R.id.start_view), true);
 
     showOnLockScreen(showOnLockScreen);
+
+    if (keepScreenOn) {
+      getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    } else {
+      getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
   }
 
   private boolean isLargeScreen() {

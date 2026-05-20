@@ -366,6 +366,8 @@
   <string name="Activity_stopped">Activity stopped</string>
   <string name="Show_on_lock_screen">Show on lock screen</string>
   <string name="Show_on_lock_screen_summary">Show the recording screen while the device is locked</string>
+  <string name="Keep_screen_on">Keep screen on</string>
+  <string name="Keep_screen_on_summary">Keep the screen on while recording</string>
 
   <!--Name of sports, these deprecate array.sportEntries -->
   <string name="SPORT_RUNNING">Running</string>
