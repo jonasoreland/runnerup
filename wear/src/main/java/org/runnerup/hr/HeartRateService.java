@@ -29,6 +29,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.health.connect.HealthPermissions;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -52,6 +53,7 @@ public class HeartRateService extends Service implements SensorEventListener {
   private Sensor heartRateSensor;
 
   private BroadcastReceiver hrPermissionReceiver;
+  private BroadcastReceiver batteryChangedReceiver;
 
   @Override
   public IBinder onBind(Intent intent) {
@@ -65,6 +67,7 @@ public class HeartRateService extends Service implements SensorEventListener {
     Log.d(TAG, "onCreate");
 
     setupPermissionReceiver();
+    setupBatteryChangedReceiver();
 
     // Initialize the SensorManager and attempt to get the default heart rate sensor.
     sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -120,12 +123,20 @@ public class HeartRateService extends Service implements SensorEventListener {
   public void onDestroy() {
     Log.d(TAG, "onDestroy");
 
-    // Unregister the receiver to prevent leaks
+    // Unregister the HR permission receiver
     if (hrPermissionReceiver != null) {
       LocalBroadcastManager.getInstance(this).unregisterReceiver(hrPermissionReceiver);
       Log.d(TAG, "onDestroy: HR Permission Receiver unregistered.");
       hrPermissionReceiver = null;
     }
+
+    // Stop listening for battery changes
+    if (batteryChangedReceiver != null) {
+      unregisterReceiver(batteryChangedReceiver);
+      Log.d(TAG, "onDestroy: Battery Receiver unregistered.");
+      batteryChangedReceiver = null;
+    }
+
     stopHeartRateMonitoring(); // Ensure monitoring is stopped
     super.onDestroy();
   }
@@ -262,5 +273,32 @@ public class HeartRateService extends Service implements SensorEventListener {
     IntentFilter filter = new IntentFilter(Constants.Intents.ACTION_PERMISSION_RESULT);
     LocalBroadcastManager.getInstance(this).registerReceiver(hrPermissionReceiver, filter);
     Log.d(TAG, "setupPermissionReceiver: HR Permission Receiver registered.");
+  }
+
+  private void setupBatteryChangedReceiver() {
+    Log.d(TAG, "setupBatteryChangedReceiver");
+
+    batteryChangedReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        String action = intent.getAction();
+        Log.d(TAG, "batteryChangedReceiver.onReceive: action=" + action);
+
+        if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+          int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+          int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+          int batteryPercent = (int) ((level / (float) scale) * 100);
+
+          Log.d(TAG, "batteryChangedReceiver.onReceive: battery level=" + batteryPercent + "%");
+
+          // TODO: send battery level to the phone
+        }
+      }
+    };
+
+    // Register the receiver
+    IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+    registerReceiver(batteryChangedReceiver, filter);
+    Log.d(TAG, "batteryChangedReceiver: Battery Receiver registered.");
   }
 }
