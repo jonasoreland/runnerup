@@ -18,8 +18,25 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.type.watch" />
-    <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      Starting with Wear OS 6 (API 36), granular Health Platform permissions replace
+      BODY_SENSORS and BODY_SENSORS_BACKGROUND.
+      See: https://developer.android.com/health-and-fitness/health-services/permissions
+    -->
+
+    <!-- Legacy heart rate permission for Wear OS 5.1 (API 35) and lower -->
+    <uses-permission
+        android:name="android.permission.BODY_SENSORS"
+        android:maxSdkVersion="35" />
+
+    <!-- Health Platform heart rate permission for Wear OS 6 (API 36) and higher -->
+    <!-- TODO: Google Play has strict policies regarding Prominent Disclosure for Health Connect permissions.
+         Ensure a rationale is shown before requesting this permission. -->
+    <uses-permission
+        android:name="android.permission.health.READ_HEART_RATE"
+        tools:ignore="HealthConnectPolicy" />
 
     <application
         android:allowBackup="true"
