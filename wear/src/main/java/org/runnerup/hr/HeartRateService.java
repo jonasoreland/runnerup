@@ -28,6 +28,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.health.connect.HealthPermissions;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
@@ -148,17 +150,37 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
   }
 
+  /**
+   * Checks if the app has the necessary permission to access heart rate data.
+   *
+   * <p>The required permission depends on the Android version:
+   * <ul>
+   *   <li>Wear OS 6 (API 36) and higher: {@link HealthPermissions#READ_HEART_RATE}</li>
+   *   <li>Wear OS 5 (API 35) and lower: {@link Manifest.permission#BODY_SENSORS}</li>
+   * </ul>
+   *
+   * @return {@code true} if the required permission is granted, {@code false} otherwise.
+   */
   private boolean checkHeartRatePermission() {
-    boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) ==
+    String permission = getRequiredHeartRatePermission();
+    boolean permissionGranted = ContextCompat.checkSelfPermission(this, permission) ==
             PackageManager.PERMISSION_GRANTED;
-    Log.d(TAG, "checkHeartRatePermission: permissionGranted=" + permissionGranted);
+    Log.d(TAG, "checkHeartRatePermission: permission=" + permission + ", granted=" + permissionGranted);
     return permissionGranted;
+  }
+
+  private String getRequiredHeartRatePermission() {
+    if (Build.VERSION.SDK_INT >= 36) {
+      return HealthPermissions.READ_HEART_RATE;
+    } else {
+      return Manifest.permission.BODY_SENSORS;
+    }
   }
 
   private void launchPermissionActivity() {
     Log.d(TAG, "launchPermissionActivity");
     Intent intent = new Intent(this, RequestPermissionActivity.class);
-    intent.putExtra(Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, Manifest.permission.BODY_SENSORS);
+    intent.putExtra(Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, getRequiredHeartRatePermission());
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary when starting activity from a service
     startActivity(intent);
   }
