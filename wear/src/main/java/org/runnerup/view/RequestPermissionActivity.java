@@ -167,9 +167,9 @@ public class RequestPermissionActivity extends AppCompatActivity {
   }
 
   /**
-   * Converts a full Android permission string (e.g., "android.permission.POST_NOTIFICATIONS") into
-   * a more human-readable, simplified name (e.g., "POST NOTIFICATIONS"). If the permission string
-   * does not start with "android.permission.", it's returned as is.
+   * Converts a full Android permission string (e.g., "android.permission.POST_NOTIFICATIONS" or
+   * "android.permission.health.READ_HEART_RATE") into a more human-readable, simplified name (e.g.,
+   * "POST NOTIFICATIONS" or "READ HEART RATE").
    *
    * @param permission The full permission string.
    * @return A simplified, human-readable version of the permission name, or "Unknown" if the input
@@ -178,10 +178,11 @@ public class RequestPermissionActivity extends AppCompatActivity {
   private String getSimplePermissionName(String permission) {
     if (permission == null) return "Unknown";
 
-    if (permission.startsWith("android.permission.")) {
-      return permission.substring("android.permission.".length()).replace("_", " ");
-    }
+    // Extract the last part of the permission string (e.g., "READ_HEART_RATE")
+    int lastDotIndex = permission.lastIndexOf('.');
+    String simpleName = (lastDotIndex != -1) ? permission.substring(lastDotIndex + 1) : permission;
 
-    return permission;
+    // Replace underscores with spaces for better readability
+    return simpleName.replace("_", " ");
   }
 }
