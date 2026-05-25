@@ -242,6 +242,24 @@ public class HeartRateService extends Service implements SensorEventListener {
             .addOnFailureListener(e -> Log.e(TAG, "Error sending HR: " + e.getMessage()));
   }
 
+  private void sendBatteryLevelToPhone(int batteryLevel) {
+    Log.d(TAG, "sendBatteryLevelToPhone: batteryLevel=" + batteryLevel + ", sourceNodeId=" + sourceNodeId);
+
+    if (sourceNodeId == null) {
+      Log.e(TAG, "sendBatteryLevelToPhone: sourceNodeId is null. Not sending battery level.");
+      return;
+    }
+
+    byte[] payload = String.valueOf(batteryLevel).getBytes();
+
+    // Wearable API clients, such as DataClient and MessageClient, are inexpensive to create.
+    // So instead of holding onto the clients, recreate them when needed.
+    // https://developer.android.com/training/wearables/data/overview#recreate-client-instances
+    Wearable.getMessageClient(this).sendMessage(sourceNodeId, Constants.Wear.Path.MSG_BATTERY_LEVEL, payload)
+            .addOnSuccessListener(integer -> Log.d(TAG, "Battery level sent successfully: " + batteryLevel))
+            .addOnFailureListener(e -> Log.e(TAG, "Error sending battery level: " + e.getMessage()));
+  }
+
   private void setupPermissionReceiver() {
     Log.d(TAG, "setupPermissionReceiver");
 
@@ -291,7 +309,7 @@ public class HeartRateService extends Service implements SensorEventListener {
 
           Log.d(TAG, "batteryChangedReceiver.onReceive: battery level=" + batteryPercent + "%");
 
-          // TODO: send battery level to the phone
+          sendBatteryLevelToPhone(batteryPercent);
         }
       }
     };
