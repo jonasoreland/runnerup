@@ -128,9 +128,19 @@ public class EndurainLoginActivity extends AppCompatActivity {
     }
 
     private boolean handleOverride(WebView view, String url, String challenge) {
+        if (isFinishing) return true;
+
         if (url.contains("sso=success") && url.contains("session_id=")) {
             Uri uri = Uri.parse(url);
             String sessionId = uri.getQueryParameter("session_id");
+
+            if (sessionId == null || sessionId.trim().isEmpty()) {
+                Log.e("EndurainLoginActivity", "SSO redirect missing valid session_id");
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+                return true;
+            }
+
             exchangeSessionForTokens(sessionId);
             return true;
         }
@@ -223,9 +233,17 @@ public class EndurainLoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         isFinishing = true;
+
+        if (webView != null) {
+            webView.stopLoading();
+            webView.setWebViewClient(null);
+            webView.destroy();
+            webView = null;
+        }
+
         executor.shutdown();
+        super.onDestroy();
     }
 
     private void exchangeSessionForTokens(String sessionId) {

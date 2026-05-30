@@ -353,4 +353,5 @@
   <string name="use_temperature_sensor_summary">Registar temperatura</string>
   <string name="Current_speed_from_GPS_points_summary">Obter a velocidade a partir do sensor GPS em vez de a calcular a partir das posições GPS</string>
   <string name="Target_coaching_summary">Definir o período de cálculo da média móvel para informar sobre o objetivo e o período de carência para os avisos de áudio</string>
+    <string name="auth_failed_try_again_later">Falha na autenticação ou limite de taxa excedido. Por favor, tente novamente mais tarde.</string>
 </resources>

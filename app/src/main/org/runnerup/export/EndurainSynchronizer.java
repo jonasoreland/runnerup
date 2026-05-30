@@ -387,6 +387,10 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
         if (response.isSuccessful()) {
           s = Status.OK;
         } else if (response.code() == 401) {
+          // clear token
+          access_token = null;
+          csrf_token = null;
+
           s = Status.NEED_REFRESH;
         } else {
           s = Status.ERROR;
@@ -425,9 +429,17 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
           JSONObject obj = new JSONObject(responseBody);
           return parseAuthData(obj);
         }
+
+        // clear token if response is not successful
+        access_token = null;
+        csrf_token = null;
       }
     } catch (Exception e) {
       Log.e(getName(), "refreshToken: exception during request", e);
+
+      // clear token
+      access_token = null;
+      csrf_token = null;
     }
 
     return getNeedAuthStatus();

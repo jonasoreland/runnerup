@@ -359,4 +359,5 @@
   <string name="SPORT_RUNNING">Course</string>
   <string name="SPORT_BIKING">Vélo</string>
   <string name="SPORT_OTHER">Autre</string>
+    <string name="auth_failed_try_again_later">Échec de l\'authentification ou limite de débit dépassée. Veuillez réessayer plus tard.</string>
 </resources>

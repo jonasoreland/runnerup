@@ -188,7 +188,6 @@ public class SyncManager {
     if (mDB != null) {
       DBHelper.closeDB(mDB);
     }
-    executor.shutdown();
   }
 
   public void clear() {
@@ -365,8 +364,8 @@ public class SyncManager {
         }
         // Maybe show an error dialog?
         new AlertDialog.Builder(mActivity)
-            .setTitle("Error")
-            .setMessage("Authentication failed or rate limit exceeded. Please try again later.")
+            .setTitle(getResources().getString(org.runnerup.common.R.string.Error))
+            .setMessage(getResources().getString(org.runnerup.common.R.string.auth_failed_try_again_later))
             .setPositiveButton(android.R.string.ok, null)
             .show();
         return;
@@ -400,14 +399,16 @@ public class SyncManager {
 
         if (mActivity != null) {
             final Callback originalCallback = cb;
+            final Status authStatus = s;
             authCallback = originalCallback;
             authSynchronizer = synchronizer;
             
             mSpinner.show();
             
             executor.execute(() -> {
-                Status newStatus = synchronizer.connect();
-                mActivity.runOnUiThread(() -> handleAuth(originalCallback, synchronizer, newStatus.authMethod));
+                mActivity.runOnUiThread(() ->
+                        handleAuth(originalCallback, synchronizer, authStatus.authMethod)
+                );
             });
             
             return;
@@ -519,8 +520,12 @@ public class SyncManager {
                     if (authSynchronizer.getName().equals(EndurainSynchronizer.NAME)) {
                       try {
                         //noinspection ConstantConditions
-                        authConfig.put("username", null);
-                        authConfig.put("password", null);
+                        authConfig.remove("username");
+                        authConfig.remove("password");
+                        authConfig.remove("access_token");
+                        authConfig.remove("refresh_token");
+                        authConfig.remove("csrf_token");
+
                         if (authMethod == AuthMethod.USER_PASS_URL) {
                           authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
                         }

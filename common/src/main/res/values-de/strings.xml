@@ -367,4 +367,7 @@ Für die Wartung der Daten kann die Datei runnerup.db.export von/nach %1$s im-/e
   <string name="SPORT_RUNNING">Laufen</string>
   <string name="SPORT_BIKING">Radfahren</string>
   <string name="SPORT_OTHER">Andere</string>
+  <string name="auth_failed_try_again_later">Authentifizierung fehlgeschlagen oder Rate-Limit überschritten. Bitte versuchen Sie es später noch einmal.</string>
+
+
 </resources>
