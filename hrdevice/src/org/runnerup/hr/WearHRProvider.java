@@ -49,6 +49,7 @@ public class WearHRProvider implements HRProvider {
     private int hrValue = 0;
     private long hrTimestamp = 0;
     private long hrElapsedRealtime = 0;
+    private int batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
 
     public WearHRProvider(Context context) {
         Log.d(TAG, "WearHRProvider: context=" + context);
@@ -270,7 +271,7 @@ public class WearHRProvider implements HRProvider {
 
     @Override
     public int getBatteryLevel() {
-        return HRProvider.BATTERY_LEVEL_UNAVAILABLE;
+        return batteryLevel;
     }
 
     /**
@@ -303,6 +304,11 @@ public class WearHRProvider implements HRProvider {
             hrTimestamp = System.currentTimeMillis();
             hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
             Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
+        }
+        else if (Constants.Wear.Path.MSG_BATTERY_LEVEL.equals(path)) {
+            byte[] payload = messageEvent.getData();
+            batteryLevel = Integer.parseInt(new String(payload));
+            Log.d(TAG, "onMessageReceived: battery level: " + batteryLevel);
         }
     };
 
