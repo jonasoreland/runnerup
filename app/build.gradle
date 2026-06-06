@@ -162,7 +162,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.2.1"
     implementation "androidx.core:core-location-altitude:1.0.0-rc01"
 
-    latestImplementation "com.google.android.material:material:1.13.0"
+    latestImplementation "com.google.android.material:material:1.14.0"
     if (rootProject.ext.enableWear) {
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
