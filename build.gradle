@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.diffplug.spotless" version "8.6.0"
+}
+
 repositories {
     google()
 }
@@ -16,8 +20,8 @@ project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
     buildToolsVersion = '37.0.0' // also .github/workflows/actions.yml
-    compileSdk = 36.1 // also .github/workflows/actions.yml
-    targetSdk = 36.1
+    compileSdk = 37 // also .github/workflows/actions.yml
+    targetSdk = 37
     minSdk = 23
 
     appcompat_version = "1.7.1"
@@ -111,5 +115,20 @@ allprojects {
         if (rootProject.ext.antPlusLibName) {
             flatDir { dirs rootProject.ext.antPlusLibPath }
         }
+    }
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        target '**/*.java'
+        targetExclude '**/ANT-Android-SDKs/**/*.java', '**/build/**'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
     }
 }
