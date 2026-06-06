@@ -118,3 +118,13 @@ jobs:
           name: fdroid-logs
           path: |
             build/reports/problems/
+
+      - name: Check Java Style
+        run: ./gradlew spotlessCheck
+
+      - name: Report Java Style Violations
+        if: failure()
+        run: |
+          echo "::error::Java style violations detected! Please run './gradlew spotlessApply' locally."
+          # Fallback to general message if the specific diff location is hard to pinpoint
+          echo "Run './gradlew spotlessApply' to format your code."
