@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.diffplug.spotless" version "8.6.0"
+}
+
 repositories {
     google()
 }
@@ -111,5 +115,21 @@ allprojects {
         if (rootProject.ext.antPlusLibName) {
             flatDir { dirs rootProject.ext.antPlusLibPath }
         }
+    }
+}
+
+spotless {
+    lineEndings 'UNIX'
+    java {
+        googleJavaFormat()
+        target '**/*.java'
+        targetExclude '**/ANT-Android-SDKs/**', '**/build/**'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
     }
 }
