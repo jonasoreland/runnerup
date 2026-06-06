@@ -462,29 +462,30 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
       conn.addRequestProperty(
           "Content-type", "application/vnd.com.runkeeper.NewFitnessActivity+json");
       RunKeeper rk = new RunKeeper(db, simplifier);
-      BufferedWriter w = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-      rk.export(mID, w);
-      w.flush();
+      try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()))) {
+          rk.export(mID, w);
+          w.flush();
 
-      int responseCode = conn.getResponseCode();
-      String amsg = conn.getResponseMessage();
-      String externalId = noNullStr(conn.getHeaderField("Location"));
-      conn.disconnect();
-      conn = null;
+          int responseCode = conn.getResponseCode();
+          String amsg = conn.getResponseMessage();
+          String externalId = noNullStr(conn.getHeaderField("Location"));
+          conn.disconnect();
+          conn = null;
 
-      if (responseCode >= HttpURLConnection.HTTP_OK
-          && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
-        s.activityId = mID;
-        if (!TextUtils.isEmpty(externalId)) {
-          s.externalId = externalId;
-          s.externalIdStatus = ExternalIdStatus.OK;
-        }
-        return s;
+          if (responseCode >= HttpURLConnection.HTTP_OK
+              && responseCode < HttpURLConnection.HTTP_MULT_CHOICE) {
+            s.activityId = mID;
+            if (!TextUtils.isEmpty(externalId)) {
+              s.externalId = externalId;
+              s.externalIdStatus = ExternalIdStatus.OK;
+            }
+            return s;
+          }
+          Log.e(getName(), "Error code: " + responseCode + ", amsg: " + amsg);
+          ex = new Exception(amsg);
+          } catch (Exception e) {
+          ex = e;
       }
-      Log.e(getName(), "Error code: " + responseCode + ", amsg: " + amsg);
-      ex = new Exception(amsg);
-    } catch (Exception e) {
-      ex = e;
     }
 
     Log.e(getName(), "Failed to upload: " + ex.getMessage());
