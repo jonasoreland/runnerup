@@ -160,14 +160,14 @@ dependencies {
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:2.2.1"
-    implementation "androidx.core:core-location-altitude:1.0.0-rc01"
+    implementation "androidx.core:core-location-altitude:1.0.0"
 
     latestImplementation "com.google.android.material:material:1.14.0"
     if (rootProject.ext.enableWear) {
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
 
-    implementation "com.squareup.okhttp3:okhttp:5.3.2"
+    implementation "com.squareup.okhttp3:okhttp:5.4.0"
     if (rootProject.ext.allowNonFree) {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
