@@ -18,4 +18,6 @@
   <string name="_sign_plus" translatable="false">+</string>
   <string name="_sign_minus" translatable="false">-</string>
   <string name="path_simplification_default_tolerance" translatable="false">3</string>
+  <string name="speed_unit_opposite_activities_title">Activities using opposite speed unit</string>
+  <string name="speed_unit_opposite_activities_summary_empty">No activity overrides. All activities use the global speed unit.</string>
 </resources>

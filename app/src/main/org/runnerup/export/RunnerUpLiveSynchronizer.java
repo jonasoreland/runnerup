@@ -198,7 +198,8 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
                 LiveService.PARAM_IN_PACE,
                 formatter.formatVelocityByPreferredUnit(
                     Formatter.Format.TXT_SHORT,
-                    elapsedTimeMillis == 0 ? 0 : elapsedDistanceMeter * 1000.0 / elapsedTimeMillis))
+                    elapsedTimeMillis == 0 ? 0 : elapsedDistanceMeter * 1000.0 / elapsedTimeMillis,
+                    workoutInfo.getSport()))
             .putExtra(LiveService.PARAM_IN_USERNAME, username)
             .putExtra(LiveService.PARAM_IN_PASSWORD, password)
             .putExtra(LiveService.PARAM_IN_SERVERADRESS, postUrl);

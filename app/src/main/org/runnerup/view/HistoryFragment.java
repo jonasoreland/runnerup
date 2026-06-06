@@ -231,7 +231,7 @@ public class HistoryFragment extends Fragment
       String paceTextContents = "";
       if (d != null && dur != null && dur != 0) {
         paceTextContents =
-            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / dur);
+            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / dur, s);
       }
       paceText.setText(paceTextContents);
     }

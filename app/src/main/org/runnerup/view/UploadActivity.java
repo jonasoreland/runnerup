@@ -351,6 +351,10 @@ public class UploadActivity extends AppCompatActivity implements Constants {
       }
       viewHolder.activityID = getItemId(arg0);
       SyncActivityItem ai = allSyncActivities.get(arg0);
+      int sport =
+          ai.getSport() == null
+              ? DB.ACTIVITY.SPORT_RUNNING
+              : Sport.valueOf(ai.getSport()).getDbValue();
 
       Double d = ai.getDistance();
       Long t = ai.getDuration();
@@ -376,7 +380,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
       if (d != null && t != null && t != 0) {
         viewHolder.tvPace.setText(
-            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t));
+            formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, d / t, sport));
       } else {
         viewHolder.tvPace.setText("");
       }
@@ -384,7 +388,6 @@ public class UploadActivity extends AppCompatActivity implements Constants {
       if (ai.getSport() == null) {
         viewHolder.tvSport.setText(Sport.textOf(getResources(), DB.ACTIVITY.SPORT_RUNNING));
       } else {
-        int sport = Sport.valueOf(ai.getSport()).getDbValue();
         viewHolder.tvSport.setText(Sport.textOf(getResources(), sport));
       }
 
