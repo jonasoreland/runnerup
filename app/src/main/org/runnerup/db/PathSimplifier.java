@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.util.SafeParse;
 
 /** Wrapper for com.goebl.simplify.Simplify. */
 public class PathSimplifier {
@@ -82,16 +83,13 @@ public class PathSimplifier {
     // get user settings
 
     // tolerance in meters (default to R.string.path_simplification_default_tolerance)
-    double tolerance;
-    try {
-      tolerance =
-          Double.parseDouble(
-              prefs.getString(
-                  res.getString(R.string.pref_path_simplification_tolerance),
-                  res.getString(R.string.path_simplification_default_tolerance)));
-    } catch (Exception ex) {
-      tolerance = Double.parseDouble(res.getString(R.string.path_simplification_default_tolerance));
-    }
+    double tolerance =
+        SafeParse.parseDouble(
+            prefs.getString(
+                res.getString(R.string.pref_path_simplification_tolerance),
+                res.getString(R.string.path_simplification_default_tolerance)),
+            SafeParse.parseDouble(
+                res.getString(R.string.path_simplification_default_tolerance), 3.0));
     // squared tolerance in meters has to be transformed to tolerance in degrees
     this.toleranceDeg = tolerance / ONE_DEGREE;
 
