@@ -564,6 +564,10 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   private void saveActivity(Double manualDistance) {
+    if (mDB == null) {
+      android.util.Log.e("Tracker", "saveActivity called but mDB is null");
+      return;
+    }
     ContentValues tmp = new ContentValues();
     if (mHeartbeatNanos > 0) {
       long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
