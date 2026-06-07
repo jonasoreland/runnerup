@@ -185,7 +185,7 @@ public class ManualActivity extends AppCompatActivity {
     }
     double dist = 0;
     if (distance.length() > 0) {
-      dist = Double.parseDouble(distance.toString()); // convert to
+      dist = SafeParse.parseDouble(distance.toString(), 0.0); // convert to
       // meters
       save.put(DB.ACTIVITY.DISTANCE, dist);
     }
