@@ -164,6 +164,8 @@
   <string name="Heart_Rate_Monitor">Heart rate monitor</string>
   <string name="Heart_Rate_Zones">Heart rate zones</string>
   <string name="Autolap">Autolap</string>
+  <string name="Enable_autolap_time">Enable autolap by time</string>
+  <string name="Autolap_time">time</string>
   <string name="Autolap_m">Autolap (m)</string>
   <string name="Autopause">Autopause</string>
   <string name="Autopause_summary">Autopause in basic workouts and Warmup and Cooldown steps</string>
