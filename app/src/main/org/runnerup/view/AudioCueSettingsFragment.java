@@ -320,11 +320,15 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
             org.runnerup.common.R.string.OK,
             (dialog, which) -> {
               String scheme = editText.getText().toString();
-              if (!scheme.contentEquals("")) {
-                createNewAudioScheme(scheme);
-                updateSortOrder(scheme);
-                switchTo(scheme);
+              if (scheme.isEmpty()
+                  || scheme.contains("/")
+                  || scheme.contains("\\")
+                  || scheme.contains("..")) {
+                return;
               }
+              createNewAudioScheme(scheme);
+              updateSortOrder(scheme);
+              switchTo(scheme);
             })
         .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> {})
         .show();
