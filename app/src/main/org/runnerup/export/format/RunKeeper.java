@@ -48,6 +48,7 @@ import org.runnerup.db.entities.LapEntity;
 import org.runnerup.db.entities.LocationEntity;
 import org.runnerup.export.RunKeeperSynchronizer;
 import org.runnerup.util.JsonWriter;
+import org.runnerup.util.SafeParse;
 import org.runnerup.workout.Sport;
 
 /**
@@ -182,7 +183,7 @@ public class RunKeeper {
       newActivity.setComment(response.getString("notes"));
     }
     newActivity.setTime((long) Float.parseFloat(response.getString("duration")));
-    newActivity.setDistance(Double.parseDouble(response.getString("total_distance")));
+    newActivity.setDistance(SafeParse.parseDouble(response.getString("total_distance"), 0.0));
 
     String startTime = response.getString("start_time");
     SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss", Locale.US);

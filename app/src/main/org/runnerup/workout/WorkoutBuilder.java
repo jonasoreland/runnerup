@@ -579,13 +579,8 @@ public class WorkoutBuilder {
             ? prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)
             : prefs.getBoolean(res.getString(R.string.pref_step_autolap_active), false);
     if (autolap) {
-      double val;
       String vals = prefs.getString(res.getString(R.string.pref_autolap), "1000");
-      try {
-        val = Double.parseDouble(vals);
-      } catch (NumberFormatException e) {
-        val = 0;
-      }
+      double val = SafeParse.parseDouble(vals, 0.0);
       Log.d("WorkoutBuilder", "setAutolap(" + val + ")");
       for (StepListEntry s : steps) {
         if (basic

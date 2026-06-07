@@ -36,11 +36,14 @@ public class SafeParse {
   }
 
   public static double parseDouble(String string, double defaultValue) {
+    if (string == null) return defaultValue;
     try {
-      return Double.parseDouble(string);
+      // Normalize input: replace comma with dot to support international format
+      String normalized = string.replace(',', '.');
+      return Double.parseDouble(normalized);
     } catch (Exception ex) {
+      return defaultValue;
     }
-    return defaultValue;
   }
 
   /**
