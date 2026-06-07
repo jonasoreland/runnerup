@@ -135,7 +135,7 @@ public class EndurainLoginActivity extends AppCompatActivity {
             String sessionId = uri.getQueryParameter("session_id");
 
             if (sessionId == null || sessionId.trim().isEmpty()) {
-                Log.e("EndurainLoginActivity", "SSO redirect missing valid session_id");
+                Log.i("EndurainLoginActivity", "SSO redirect missing valid session_id");
                 setResult(Activity.RESULT_CANCELED);
                 finish();
                 return true;
@@ -176,7 +176,7 @@ public class EndurainLoginActivity extends AppCompatActivity {
 
         if (url.contains("/api/v1/public/idp/login/")) {
             if (!url.contains("code_challenge=" + challenge)) {
-                Log.d("EndurainLoginActivity", "Intercepted SSO login load, reloading with Android PKCE");
+                Log.i("EndurainLoginActivity", "Intercepted SSO login load, reloading with Android PKCE");
                 view.stopLoading();
 
                 Uri baseUri = Uri.parse(url);
@@ -191,7 +191,7 @@ public class EndurainLoginActivity extends AppCompatActivity {
         }
 
         if (url.equals(instanceUrl + "/") || url.equals(instanceUrl) || (url.startsWith(instanceUrl) && !url.contains("/login") && !url.contains("/api/"))) {
-            Log.d("EndurainLogin", "Detected authenticated page load: " + url);
+            Log.i("EndurainLogin", "Detected authenticated page load: " + url);
 
             view.evaluateJavascript(
                     "(function() { return localStorage.getItem('access_token'); })();",
@@ -256,7 +256,7 @@ public class EndurainLoginActivity extends AppCompatActivity {
             try {
                 jsonBody.put("code_verifier", verifier);
             } catch (JSONException e) {
-                Log.e("EndurainLoginActivity", "JSON issue", e);
+                Log.i("EndurainLoginActivity", "JSON issue", e);
             }
 
             RequestBody body = RequestBody.create(JSON, jsonBody.toString());
@@ -279,10 +279,10 @@ public class EndurainLoginActivity extends AppCompatActivity {
                     success = true;
                 } else {
                     String errorBody = response.body() != null ? response.body().string() : "";
-                    Log.e("EndurainLoginActivity", "Token exchange failed: " + response.code() + " " + response.message() + " Body: " + errorBody);
+                    Log.i("EndurainLoginActivity", "Token exchange failed: " + response.code() + " " + response.message() + " Body: " + errorBody);
                 }
             } catch (IOException | JSONException e) {
-                Log.e("EndurainLoginActivity", "Token exchange failed", e);
+                Log.i("EndurainLoginActivity", "Token exchange failed", e);
             }
 
             if (!success) {
