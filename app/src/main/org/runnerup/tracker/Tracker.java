@@ -554,7 +554,12 @@ public class Tracker extends android.app.Service implements LocationListener, Co
       ContentValues tmp = new ContentValues();
       tmp.put("deleted", 1);
       String[] key = {Long.toString(mActivityId)};
-      mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+
+      if (mDB == null) {
+        android.util.Log.e("Tracker", "completeActivity called but mDB is null");
+      } else {
+        mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+      }
       liveLog(DB.LOCATION.TYPE_DISCARD);
     }
 
@@ -564,6 +569,10 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   private void saveActivity(Double manualDistance) {
+    if (mDB == null) {
+      android.util.Log.e("Tracker", "saveActivity called but mDB is null");
+      return;
+    }
     ContentValues tmp = new ContentValues();
     if (mHeartbeatNanos > 0) {
       long avgHR = Math.round(60 * mHeartbeats * 1000 * NANO_IN_MILLI / mHeartbeatNanos); // BPM
