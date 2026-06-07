@@ -38,6 +38,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TableRow;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
@@ -78,15 +79,18 @@ public class SyncManager {
   public static final long ERROR_ACTIVITY_ID = -1L;
   // Id to identify a permission request.
   private static final int REQUEST_STORAGE = 3003;
+  private static final String TAG = "SyncManager";
   private final Map<String, Synchronizer> synchronizers = new HashMap<>();
   private final LongSparseArray<Synchronizer> synchronizersById = new LongSparseArray<>();
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private final Handler mainHandler = new Handler(Looper.getMainLooper());
   PathSimplifier simplifier;
+
   private SQLiteDatabase mDB = null;
   private AppCompatActivity mActivity = null;
   private Context mContext = null;
   private ProgressDialog mSpinner = null;
+
   private Synchronizer authSynchronizer = null;
   private Callback authCallback = null;
   private long mID = 0;
@@ -334,10 +338,12 @@ public class SyncManager {
   }
 
   private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
+    Log.d(TAG, "handleAuth: " + l.getName() + ", method=" + authMethod);
     authSynchronizer = l;
     authCallback = callback;
     switch (authMethod) {
       case OAUTH2:
+        Log.d(TAG, "handleAuth: starting OAUTH2 activity");
         mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
         return;
       case USER_PASS:
@@ -347,6 +353,22 @@ public class SyncManager {
       case FILEPERMISSION:
         checkStoragePermissions(mActivity);
         askFileUrl(l);
+        return;
+      case MFA:
+        askMfaCode(l);
+        return;
+      case NONE:
+        // Handle unexpected NONE state, likely error or rate limit
+        if (mSpinner != null && mSpinner.isShowing()) {
+            mSpinner.dismiss();
+        }
+        // Maybe show an error dialog?
+        new AlertDialog.Builder(mActivity)
+            .setTitle(getResources().getString(org.runnerup.common.R.string.Error))
+            .setMessage(getResources().getString(org.runnerup.common.R.string.auth_failed_try_again_later))
+            .setPositiveButton(android.R.string.ok, null)
+            .show();
+        return;
     }
   }
 
@@ -354,7 +376,8 @@ public class SyncManager {
     Callback cb = authCallback;
     authCallback = null;
     authSynchronizer = null;
-    if (s == Status.OK) {
+
+    if (s == Status.OK || s == Status.NEED_AUTH) {
       ContentValues tmp = new ContentValues();
       tmp.put("_id", synchronizer.getId());
       tmp.put(DB.ACCOUNT.AUTH_CONFIG, synchronizer.getAuthConfig());
@@ -367,19 +390,69 @@ public class SyncManager {
         s = Status.ERROR;
       }
     }
-    if (s != Status.OK) {
+    
+    if (s != Status.OK && s != Status.NEED_AUTH) {
       synchronizer.reset();
     }
-    cb.run(synchronizer.getName(), s);
+
+    if (s == Status.NEED_AUTH && cb != null) {
+
+        if (mActivity != null) {
+            final Callback originalCallback = cb;
+            final Status authStatus = s;
+            authCallback = originalCallback;
+            authSynchronizer = synchronizer;
+            
+            mSpinner.show();
+            
+            executor.execute(() -> {
+                mActivity.runOnUiThread(() ->
+                        handleAuth(originalCallback, synchronizer, authStatus.authMethod)
+                );
+            });
+            
+            return;
+        }
+    }
+    
+    if (cb != null) {
+        cb.run(synchronizer.getName(), s);
+    }
   }
 
   private JSONObject newObj(String str) {
     try {
       return new JSONObject(str);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(getClass().getName(), "JSON issue", e);
     }
     return null;
+  }
+
+  private void askMfaCode(final Synchronizer sync) {
+      final EditText input = new EditText(mActivity);
+      input.setInputType(InputType.TYPE_CLASS_NUMBER);
+      
+      new AlertDialog.Builder(mActivity)
+          .setTitle("MFA Verification")
+          .setMessage("Enter the 6-digit code from your authenticator app")
+          .setView(input)
+          .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> {
+              String code = input.getText().toString();
+              String authConfigStr = sync.getAuthConfig();
+              JSONObject authConfig = newObj(authConfigStr);
+              if (authConfig == null) authConfig = new JSONObject();
+              
+              try {
+                  authConfig.put("mfa_code", code);
+              } catch (JSONException e) {
+                Log.e(getClass().getName(), "JSON issue", e);
+              }
+              
+              testUserPass(sync, authConfig);
+          })
+          .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> handleAuthComplete(sync, Status.CANCEL))
+          .show();
   }
 
   private void askUsernamePassword(final Synchronizer sync, final AuthMethod authMethod) {
@@ -439,7 +512,31 @@ public class SyncManager {
               }
               testUserPass(sync, authConfig);
             })
-        .setNeutralButton("Skip", (dialog, which) -> handleAuthComplete(sync, Status.SKIP))
+        .setNeutralButton(
+                (authSynchronizer.getName().equals(EndurainSynchronizer.NAME))
+                        ? "Web Login" : "Skip",
+                (dialog, which) ->
+                  {
+                    if (authSynchronizer.getName().equals(EndurainSynchronizer.NAME)) {
+                      try {
+                        //noinspection ConstantConditions
+                        authConfig.remove("username");
+                        authConfig.remove("password");
+                        authConfig.remove("access_token");
+                        authConfig.remove("refresh_token");
+                        authConfig.remove("csrf_token");
+
+                        if (authMethod == AuthMethod.USER_PASS_URL) {
+                          authConfig.put(DB.ACCOUNT.URL, urlInput.getText());
+                        }
+                      } catch (JSONException e) {
+                        e.printStackTrace();
+                      }
+                      testUserPass(sync, authConfig);
+                    } else {
+                      handleAuthComplete(sync, Status.SKIP);
+                    }
+                  })
         .setNegativeButton(
             org.runnerup.common.R.string.Cancel,
             (dialog, which) -> handleAuthComplete(sync, Status.SKIP))

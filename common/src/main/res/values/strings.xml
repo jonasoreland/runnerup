@@ -382,4 +382,6 @@
   <string name="import_cancelled">Import cancelled</string>
   <string name="export_cancelled">Export cancelled</string>
   <string name="import_error_invalid_database">Selected file is not a valid RunnerUp database!</string>
+
+  <string name="auth_failed_try_again_later">Authentication failed or rate limit exceeded. Please try again later.</string>
 </resources>

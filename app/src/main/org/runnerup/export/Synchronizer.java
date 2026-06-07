@@ -45,7 +45,8 @@ public interface Synchronizer {
     OAUTH2,
     USER_PASS,
     FILEPERMISSION,
-    USER_PASS_URL
+    USER_PASS_URL,
+    MFA
   }
 
   enum Status {

@@ -355,4 +355,5 @@
   <string name="SPORT_RUNNING">Corsa</string>
   <string name="SPORT_BIKING">Bici</string>
   <string name="SPORT_OTHER">Altro</string>
+    <string name="auth_failed_try_again_later">Autenticazione fallita o limite di frequenza superato. Si prega di riprovare più tardi.</string>
 </resources>

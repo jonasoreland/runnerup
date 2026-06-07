@@ -197,6 +197,15 @@
         </activity>
 
         <activity
+            android:name=".view.EndurainLoginActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".view.AccountListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".view.AccountListActivity"/>
+        </activity>
+
+        <activity
             android:name=".view.HRSettingsActivity"
             android:label="@string/Heart_Rate_Monitor"
             android:parentActivityName=".view.MainLayout"
