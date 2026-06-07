@@ -636,6 +636,8 @@ public class WorkoutBuilder {
       if (val > 0) {
         StepListEntry[] stepArr = new StepListEntry[steps.size()];
         steps.toArray(stepArr);
+        // Keep track of how many steps we've inserted to adjust the index
+        int addedSteps = 0;
         for (int i = 0; i < stepArr.length; i++) {
           Step step = stepArr[i].step();
 
@@ -650,15 +652,19 @@ public class WorkoutBuilder {
 
           Step s = Step.createRestStep(Dimension.TIME, val, convertRestToRecovery);
           if (stepArr[i].parent() == null) {
-            w.steps.add(i + 1, s);
-            Log.d("WorkoutBuilder", "Added step at index: " + (i + 1));
+            w.steps.add(i + 1 + addedSteps, s);
+            addedSteps++;
+            Log.d("WorkoutBuilder", "Added step at index: " + (i + 1 + addedSteps));
           } else {
             RepeatStep rs = (RepeatStep) stepArr[i].parent();
             int idx = rs.steps.indexOf(step);
-            rs.steps.add(idx, s);
-            Log.d(
-                "WorkoutBuilder",
-                "Added step at index: " + (i + 1) + " repeat index: " + (idx + 1));
+            // Assuming rs.steps is a List we can modify directly
+            if (idx != -1 && idx + 1 <= rs.steps.size()) {
+              rs.steps.add(idx + 1, s);
+              Log.d(
+                  "WorkoutBuilder",
+                  "Added step at index: " + (i + 1 + addedSteps) + " repeat index: " + (idx + 1));
+            }
           }
         }
       }
