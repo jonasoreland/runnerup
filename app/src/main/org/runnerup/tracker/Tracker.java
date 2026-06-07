@@ -595,6 +595,9 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   }
 
   private void setNextLocationType(int newType) {
+    if (mDBWriter == null) {
+      return;
+    }
     ContentValues key = mDBWriter.getKey();
     key.put(DB.LOCATION.TYPE, newType);
     mDBWriter.setKey(key);
