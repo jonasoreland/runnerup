@@ -327,7 +327,6 @@
   <string name="check_internet_connection">Пожалуйста, проверьте ваше интернет-соединение</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Пульс</string>
-  <string name="Lock_activity_buttons_category">Блокировка кнопок</string>
   <string name="GPS_recording_category">Запись GPS</string>
   <string name="Phone_sensors_category">Датчики телефона</string>
   <string name="Database_category">Ведение базы данных</string>

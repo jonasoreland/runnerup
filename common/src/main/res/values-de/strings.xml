@@ -344,7 +344,6 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Herzfrequenz</string>
-  <string name="Lock_activity_buttons_category">Sperre Tasten</string>
   <string name="GPS_recording_category">GPS Aufnahme</string>
   <string name="Phone_sensors_category">Handy Sensoren</string>
   <string name="Database_category">Datenbank Wartung</string>
