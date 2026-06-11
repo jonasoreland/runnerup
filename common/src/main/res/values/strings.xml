@@ -19,6 +19,7 @@
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
+  <string name="metrics_distance_ft">ft</string>
   <string name="metrics_elapsed_h">h</string>
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
@@ -51,6 +52,7 @@
   <string name="Start_hour">Start hour</string>
   <string name="Heart_rate">Heart rate</string>
   <string name="Pace">Pace</string>
+  <string name="Elevation">Elevation</string>
   <string name="Scan">Scan</string>
   <string name="Connect">Connect</string>
   <string name="Connecting">Connecting</string>
