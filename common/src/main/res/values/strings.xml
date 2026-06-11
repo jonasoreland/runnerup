@@ -23,6 +23,8 @@
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
   <string name="metrics_elapsed_s">s</string>
+  <string name="metrics_elevation_meters">meters</string>
+  <string name="metrics_elevation_feet">feet</string>
   <string name="metrics_heartrate">HR</string>
   <string name="Maximum_heart_rate_MHR">Maximum heart rate (MHR)</string>
   <string name="Target_pace_HHMMSS">Target pace</string>
@@ -51,6 +53,7 @@
   <string name="Start_hour">Start hour</string>
   <string name="Heart_rate">Heart rate</string>
   <string name="Pace">Pace</string>
+  <string name="Elevation">Elevation</string>
   <string name="Scan">Scan</string>
   <string name="Connect">Connect</string>
   <string name="Connecting">Connecting</string>

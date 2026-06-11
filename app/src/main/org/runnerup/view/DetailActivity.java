@@ -313,7 +313,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           }
         });
 
-    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout graphTabLayout = findViewById(R.id.graphview);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
     // variable not needed
