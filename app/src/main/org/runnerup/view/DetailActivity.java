@@ -316,11 +316,20 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
             ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
             mlp.topMargin = insets.top;
+
+            View graphScroll = findViewById(R.id.tab_graph);
+            if (graphScroll != null) {
+              graphScroll.setPadding(
+                  graphScroll.getPaddingLeft(),
+                  graphScroll.getPaddingTop(),
+                  graphScroll.getPaddingRight(),
+                  Math.max(0, insets.bottom - bottomPadding));
+            }
             return WindowInsetsCompat.CONSUMED;
           }
         });
 
-    LinearLayout graphTabLayout = findViewById(R.id.tab_graph);
+    LinearLayout graphTabLayout = findViewById(R.id.graphview);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
     // variable not needed

@@ -556,6 +556,16 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
+   * @return elevation unit string
+   */
+  String getElevationUnit() {
+    return resources.getString(
+        metric
+            ? org.runnerup.common.R.string.metrics_distance_m
+            : org.runnerup.common.R.string.metrics_distance_ft);
+  }
+
+  /**
    * @param meters_per_second
    * @return string suitable for printing according to settings
    */
@@ -720,10 +730,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   public String formatElevation(Format target, double meters) {
     // TODO add (plural) strings and handle Format, cues
     DecimalFormat df = new DecimalFormat("#.0");
-    if (metric) {
-      return df.format(meters) + " m";
+    String value = metric ? df.format(meters) : df.format(meters / meters_per_foot);
+
+    if (target == Format.TXT || target == Format.TXT_SHORT) {
+      return value;
     } else {
-      return df.format(meters / meters_per_foot) + " ft";
+      return value + " " + getElevationUnit();
     }
   }
 
