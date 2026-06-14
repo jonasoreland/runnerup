@@ -336,7 +336,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Frequência cardíaca</string>
-  <string name="Lock_activity_buttons_category">Bloquear botões</string>
   <string name="GPS_recording_category">Registo GPS</string>
   <string name="Phone_sensors_category">Sensores do telemóvel</string>
   <string name="Database_category">Manutenção da base de dados</string>
