@@ -18,6 +18,7 @@
 package org.runnerup.view;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -829,9 +830,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           builder
               .setPositiveButton(
                   org.runnerup.common.R.string.OK,
-                  (dialog, id) ->
-                      ActivityCompat.requestPermissions(
-                          requireActivity(), permissions, REQUEST_LOCATION))
+                  (dialog, id) -> {
+                    Activity activity = getActivity();
+                    if (activity != null) {
+                      ActivityCompat.requestPermissions(activity, permissions, REQUEST_LOCATION);
+                    }
+                  })
               .setMessage(
                   baseMessage
                       + "\n"
