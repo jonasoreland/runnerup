@@ -316,6 +316,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
             ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
             mlp.topMargin = insets.top;
+
+            View graphScroll = findViewById(R.id.tab_graph);
+            if (graphScroll != null) {
+                graphScroll.setPadding(graphScroll.getPaddingLeft(), graphScroll.getPaddingTop(), graphScroll.getPaddingRight(), insets.bottom);
+            }
             return WindowInsetsCompat.CONSUMED;
           }
         });

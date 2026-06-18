@@ -193,7 +193,8 @@
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scrollbars="none">
+                    android:scrollbars="none"
+                    android:clipToPadding="false">
 
                     <LinearLayout
                         android:id="@+id/graphview"
