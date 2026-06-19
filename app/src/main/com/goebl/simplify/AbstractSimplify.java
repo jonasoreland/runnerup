@@ -96,9 +96,7 @@ abstract class AbstractSimplify<T> {
     return newPoints.toArray(sampleArray);
   }
 
-    private record Range(int first,int last) {
-
-    }
+  private record Range(int first, int last) {}
 
   T[] simplifyDouglasPeucker(T[] points, double sqTolerance) {
 

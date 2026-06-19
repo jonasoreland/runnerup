@@ -134,28 +134,31 @@ public class ActivityProvider extends ContentProvider {
 
         try {
           switch (res) {
-            case TCX:{
-              var options = ExportOptions.builder();
-              TCX tcx = new TCX(mDB, options.build(), simplifier);
-              tcx.export(activityId, new OutputStreamWriter(out.second));
-              Log.d(getClass().getName(), "export tcx");
-              break;
-            }
-            case GPX:{
-              final SharedPreferences prefs =
-                  PreferenceManager.getDefaultSharedPreferences(this.getContext());
-              // The data must exist if log, use the log option as a possibility to "deactivate" too
-              boolean extraData =
-                  prefs.getBoolean(
-                      this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy),
-                      false);
-              var options = ExportOptions.builder();
-              options.accuracyExtensions = extraData;
-              GPX gpx = new GPX(mDB, options.build(), simplifier);
-              gpx.export(activityId, new OutputStreamWriter(out.second));
-              Log.d(getClass().getName(), "export gpx");
-              break;
-            }
+            case TCX:
+              {
+                var options = ExportOptions.builder();
+                TCX tcx = new TCX(mDB, options.build(), simplifier);
+                tcx.export(activityId, new OutputStreamWriter(out.second));
+                Log.d(getClass().getName(), "export tcx");
+                break;
+              }
+            case GPX:
+              {
+                final SharedPreferences prefs =
+                    PreferenceManager.getDefaultSharedPreferences(this.getContext());
+                // The data must exist if log, use the log option as a possibility to "deactivate"
+                // too
+                boolean extraData =
+                    prefs.getBoolean(
+                        this.getContext().getString(org.runnerup.R.string.pref_log_gpx_accuracy),
+                        false);
+                var options = ExportOptions.builder();
+                options.accuracyExtensions = extraData;
+                GPX gpx = new GPX(mDB, options.build(), simplifier);
+                gpx.export(activityId, new OutputStreamWriter(out.second));
+                Log.d(getClass().getName(), "export gpx");
+                break;
+              }
           }
           out.second.flush();
           out.second.close();

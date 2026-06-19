@@ -17,7 +17,6 @@
 
 package org.runnerup.util;
 
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -25,8 +24,7 @@ import android.os.Bundle;
 public class MapWrapper {
 
   public MapWrapper(
-      Context context, SQLiteDatabase mDB, long mID, Formatter formatter, Object mapView) {
-  }
+      Context context, SQLiteDatabase mDB, long mID, Formatter formatter, Object mapView) {}
 
   public static void start(Context context) {}
 

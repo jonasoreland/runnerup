@@ -420,7 +420,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity(/* manualDistance= */null);
+    saveActivity(/* manualDistance= */ null);
     components.onPause();
   }
 
@@ -449,7 +449,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
 
-    saveActivity(/* manualDistance= */null);
+    saveActivity(/* manualDistance= */ null);
     components.onPause(); // TODO add new callback for this
   }
 

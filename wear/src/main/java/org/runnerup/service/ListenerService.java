@@ -16,7 +16,6 @@
  */
 package org.runnerup.service;
 
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -50,35 +49,43 @@ public class ListenerService extends WearableListenerService {
   private WearableClient mGoogleApiClient = null;
   private Notification notification = null;
   private TrackerState trackerState = null;
-  private Boolean phoneRunning = null;  // TrackerWear
+  private Boolean phoneRunning = null; // TrackerWear
   private Boolean mainActivityRunning = null;
-  private Boolean phoneApp = null;  // StartActivity
+  private Boolean phoneApp = null; // StartActivity
 
   @Override
   public void onCreate() {
     super.onCreate();
     Log.i(TAG, "ListenerService.onCreate()");
     mGoogleApiClient = new WearableClient(getApplicationContext());
-    mGoogleApiClient.readData(Constants.Wear.Path.WEAR_APP, dataItem -> {
-        mainActivityRunning = (dataItem != null);
-        maybeShowNotification();
-      });
-    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_NODE_ID, dataItem -> {
-        phoneRunning = (dataItem != null);
-        maybeShowNotification();
-      });
-    mGoogleApiClient.readData(Constants.Wear.Path.TRACKER_STATE, dataItem -> {
-        if (dataItem != null) {
-          trackerState = StateService.getTrackerStateFromDataItem(dataItem);
-        } else {
-          trackerState = null;
-        }
-        maybeShowNotification();
-      });
-    mGoogleApiClient.readData(Constants.Wear.Path.PHONE_APP, dataItem -> {
-        phoneApp = (dataItem != null);
-        maybeShowNotification();
-      });
+    mGoogleApiClient.readData(
+        Constants.Wear.Path.WEAR_APP,
+        dataItem -> {
+          mainActivityRunning = (dataItem != null);
+          maybeShowNotification();
+        });
+    mGoogleApiClient.readData(
+        Constants.Wear.Path.PHONE_NODE_ID,
+        dataItem -> {
+          phoneRunning = (dataItem != null);
+          maybeShowNotification();
+        });
+    mGoogleApiClient.readData(
+        Constants.Wear.Path.TRACKER_STATE,
+        dataItem -> {
+          if (dataItem != null) {
+            trackerState = StateService.getTrackerStateFromDataItem(dataItem);
+          } else {
+            trackerState = null;
+          }
+          maybeShowNotification();
+        });
+    mGoogleApiClient.readData(
+        Constants.Wear.Path.PHONE_APP,
+        dataItem -> {
+          phoneApp = (dataItem != null);
+          maybeShowNotification();
+        });
   }
 
   @Override
@@ -108,9 +115,9 @@ public class ListenerService extends WearableListenerService {
       }
       boolean deleted = (type == DataEvent.TYPE_DELETED);
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
-          phoneRunning = !deleted;
+        phoneRunning = !deleted;
       } else if (Constants.Wear.Path.WEAR_APP.contentEquals(path)) {
-          mainActivityRunning = !deleted;
+        mainActivityRunning = !deleted;
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
         if (deleted) {
           trackerState = null;
@@ -219,43 +226,40 @@ public class ListenerService extends WearableListenerService {
 
     Intent viewIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingViewIntent =
-        PendingIntent.getActivity(this, 0, viewIntent,
-                                  PendingIntent.FLAG_IMMUTABLE |
-                                  PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent.getActivity(
+            this, 0, viewIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     String chanId = getChannelId(this);
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(this, chanId)
-        .setSmallIcon(R.drawable.ic_ongoing_notification)
-        .setContentTitle(getString(org.runnerup.common.R.string.app_name))
-        .setContentText(getString(org.runnerup.common.R.string.Start))
-        .setContentIntent(pendingViewIntent)
-        .setOngoing(true)
-        .setLocalOnly(true);
-
-    var status = getStatusString();
+            .setSmallIcon(R.drawable.ic_ongoing_notification)
+            .setContentTitle(getString(org.runnerup.common.R.string.app_name))
+            .setContentText(getString(org.runnerup.common.R.string.Start))
+            .setContentIntent(pendingViewIntent)
+            .setOngoing(true)
+            .setLocalOnly(true);
 
     OngoingActivity ongoingActivity =
         new OngoingActivity.Builder(this, notificationId, builder)
-        // Sets the animated icon that will appear on the watch face in
-        // active mode.
-        // If it isn't set, the watch face will use the static icon in
-        // active mode.
-        // .setAnimatedIcon(R.drawable.ic_walk)
-        // Sets the icon that will appear on the watch face in ambient mode.
-        // Falls back to Notification's smallIcon if not set.
-        // If neither is set, an Exception is thrown.
-        .setStaticIcon(R.drawable.ic_ongoing_notification)
-        // Sets the tap/touch event so users can re-enter your app from the
-        // other surfaces.
-        // Falls back to Notification's contentIntent if not set.
-        // If neither is set, an Exception is thrown.
-        .setTouchIntent(pendingViewIntent)
-        // Here, sets the text used for the Ongoing Activity (more
-        // options are available for timers and stopwatches).
-        .setStatus(new Status.Builder().addPart("Status",
-                                                new TextPart(getStatusString())).build())
-        .setCategory(NotificationCompat.CATEGORY_WORKOUT)
-        .build();
+            // Sets the animated icon that will appear on the watch face in
+            // active mode.
+            // If it isn't set, the watch face will use the static icon in
+            // active mode.
+            // .setAnimatedIcon(R.drawable.ic_walk)
+            // Sets the icon that will appear on the watch face in ambient mode.
+            // Falls back to Notification's smallIcon if not set.
+            // If neither is set, an Exception is thrown.
+            .setStaticIcon(R.drawable.ic_ongoing_notification)
+            // Sets the tap/touch event so users can re-enter your app from the
+            // other surfaces.
+            // Falls back to Notification's contentIntent if not set.
+            // If neither is set, an Exception is thrown.
+            .setTouchIntent(pendingViewIntent)
+            // Here, sets the text used for the Ongoing Activity (more
+            // options are available for timers and stopwatches).
+            .setStatus(
+                new Status.Builder().addPart("Status", new TextPart(getStatusString())).build())
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+            .build();
     ongoingActivity.apply(this);
 
     this.notification = builder.build();

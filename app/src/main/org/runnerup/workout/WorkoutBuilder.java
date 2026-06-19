@@ -185,14 +185,16 @@ public class WorkoutBuilder {
       }
       repeat.steps.add(step);
 
-      Step rest = switch (intervalRestType) {
-          case 0 -> // Time
-                  Step.createRestStep(Dimension.TIME, intervalRestTime, convertRestToRecovery);
-          case 1 -> // Distance
-                  Step.createRestStep(Dimension.DISTANCE, intervalRestDistance, convertRestToRecovery);
-          default -> null;
-      };
-        repeat.steps.add(rest);
+      Step rest =
+          switch (intervalRestType) {
+            case 0 -> // Time
+                Step.createRestStep(Dimension.TIME, intervalRestTime, convertRestToRecovery);
+            case 1 -> // Distance
+                Step.createRestStep(
+                    Dimension.DISTANCE, intervalRestDistance, convertRestToRecovery);
+            default -> null;
+          };
+      repeat.steps.add(rest);
     }
     w.steps.add(repeat);
 

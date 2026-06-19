@@ -106,19 +106,20 @@ public class MainActivity extends Activity
 
     // Permission has already been granted
     if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-            == PackageManager.PERMISSION_GRANTED) {
+        == PackageManager.PERMISSION_GRANTED) {
       Log.d(getClass().getSimpleName(), "POST_NOTIFICATIONS permission already granted.");
       return;
     }
 
     // Permission is needed and not yet granted
-    Log.d(getClass().getSimpleName(),
-            "POST_NOTIFICATIONS permission is not granted. Launching RequestPermissionActivity.");
+    Log.d(
+        getClass().getSimpleName(),
+        "POST_NOTIFICATIONS permission is not granted. Launching RequestPermissionActivity.");
 
     // Prepare and launch the activity responsible for handling the permission request
     Intent permissionIntent = new Intent(this, RequestPermissionActivity.class);
     permissionIntent.putExtra( // Pass the permission being requested as an extra
-            Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, Manifest.permission.POST_NOTIFICATIONS);
+        Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, Manifest.permission.POST_NOTIFICATIONS);
 
     startActivity(permissionIntent);
   }

@@ -55,7 +55,7 @@ public final class SyncHelper {
   }
 
   public static String URLEncode(String s) {
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
       return URLEncoder.encode(s, StandardCharsets.UTF_8);
     } else {
       try {

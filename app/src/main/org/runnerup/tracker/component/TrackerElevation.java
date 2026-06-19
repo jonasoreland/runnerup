@@ -74,11 +74,10 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
           SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
       if (mPressureOffset == null) {
         double mslOffset =
-            (mAverageGpsElevation != null)
-                ? (mAverageGpsElevation - pressureElevation)
-                : 0D;
+            (mAverageGpsElevation != null) ? (mAverageGpsElevation - pressureElevation) : 0D;
         // Apply correction to mean-sea-level
-        Double offset = mAltitudeConverter == null
+        Double offset =
+            mAltitudeConverter == null
                 ? Double.valueOf(0D)
                 : mAltitudeConverter.getOffset(lastLocation);
         if (offset != null) {
@@ -140,7 +139,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     boolean altitudeAdjust =
         prefs.getBoolean(context.getString(R.string.pref_altitude_adjust), true);
     if (altitudeAdjust) {
-       mAltitudeConverter = new AltitudeConverterWrapper(context);
+      mAltitudeConverter = new AltitudeConverterWrapper(context);
     }
     return ResultCode.RESULT_OK;
   }
@@ -243,7 +242,9 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
 
     /** Initiates a calculation of the last known offset without blocking if needed. */
     synchronized void calcOffset(Location location) {
-      if (location == null || !location.hasAltitude() || !LocationCompat.hasVerticalAccuracy(location)) {
+      if (location == null
+          || !location.hasAltitude()
+          || !LocationCompat.hasVerticalAccuracy(location)) {
         return;
       }
 

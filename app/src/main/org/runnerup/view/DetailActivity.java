@@ -175,38 +175,40 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     activityPace = findViewById(R.id.activity_pace);
     activityPaceSeparator = findViewById(R.id.activity_pace_separator);
     sport = findViewById(R.id.summary_sport);
-    sport.setOnSetValueListener(new OnSetValueListener() {
-        @Override
-        public String preSetValue(String newValue) throws IllegalArgumentException {
-          return newValue;
-        }
+    sport.setOnSetValueListener(
+        new OnSetValueListener() {
+          @Override
+          public String preSetValue(String newValue) throws IllegalArgumentException {
+            return newValue;
+          }
 
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-          updateViewForSport(newValue);
-          ViewCompat.requestApplyInsets(rootView);
-          headerData.put(DB.ACTIVITY.SPORT, newValue);
-          return newValue;
-        }
-      });
+          @Override
+          public int preSetValue(int newValue) throws IllegalArgumentException {
+            updateViewForSport(newValue);
+            ViewCompat.requestApplyInsets(rootView);
+            headerData.put(DB.ACTIVITY.SPORT, newValue);
+            return newValue;
+          }
+        });
 
     sport.setArrayEntries(Sport.getStringArray(getResources()));
 
     manualDistance = findViewById(R.id.summary_manual_distance);
-    manualDistance.setOnSetValueListener(new OnSetValueListener() {
-        @Override
-        public String preSetValue(String newValue) throws IllegalArgumentException {
-          double dist = SafeParse.parseDouble(newValue, 0); // convert to meters
-          headerData.put(DB.ACTIVITY.DISTANCE, dist);
-          updateHeader(headerData, /* fromManualDistance= */true);
-          return newValue;
-        }
+    manualDistance.setOnSetValueListener(
+        new OnSetValueListener() {
+          @Override
+          public String preSetValue(String newValue) throws IllegalArgumentException {
+            double dist = SafeParse.parseDouble(newValue, 0); // convert to meters
+            headerData.put(DB.ACTIVITY.DISTANCE, dist);
+            updateHeader(headerData, /* fromManualDistance= */ true);
+            return newValue;
+          }
 
-        @Override
-        public int preSetValue(int newValue) throws IllegalArgumentException {
-          return newValue;
-        }
-      });
+          @Override
+          public int preSetValue(int newValue) throws IllegalArgumentException {
+            return newValue;
+          }
+        });
     notes = findViewById(R.id.notes_text);
 
     if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
@@ -317,8 +319,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
     // variable not needed
-    new GraphWrapper(this, graphTabLayout, hrzonesBarLayout,
-                     formatter, mDB, mID, use_distance_as_x);
+    new GraphWrapper(
+        this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID, use_distance_as_x);
 
     if (this.mode == MODE_SAVE) {
       resumeButton.setOnClickListener(resumeButtonClick);
@@ -624,7 +626,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     headerData = tmp;
-    updateHeader(tmp, /* fromManualDistance= */false);
+    updateHeader(tmp, /* fromManualDistance= */ false);
   }
 
   private void updateHeader(ContentValues data, boolean fromManualDistance) {
@@ -635,13 +637,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       activityDistance.setText(s);
       if (!fromManualDistance) {
         /**
-         * IF !fromManualDistance (e.g. from database)
-         *   update the manual distance field in case (if it might be needed)
-         * ELSE
-         *   fromManualDistance=true
-         *   e.g. from spinner, don't update or else it will recurse
+         * IF !fromManualDistance (e.g. from database) update the manual distance field in case (if
+         * it might be needed) ELSE fromManualDistance=true e.g. from spinner, don't update or else
+         * it will recurse
          */
-        int distance = (int)d;
+        int distance = (int) d;
         manualDistance.setValue(Long.toString(distance));
         manualDistance.setValue(distance);
       }

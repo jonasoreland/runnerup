@@ -120,7 +120,7 @@ public class AudioFeedback extends Feedback {
       if (BuildConfig.DEBUG) {
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
       }
-      textToSpeech.speak(msg, UtterancePrio.PRIO_CUE, /* flush= */false, null);
+      textToSpeech.speak(msg, UtterancePrio.PRIO_CUE, /* flush= */ false, null);
     }
   }
 }

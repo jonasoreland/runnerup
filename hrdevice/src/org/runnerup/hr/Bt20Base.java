@@ -50,7 +50,8 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   public static boolean isEnabledImpl() {
-    return BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled();
+    return BluetoothAdapter.getDefaultAdapter() != null
+        && BluetoothAdapter.getDefaultAdapter().isEnabled();
   }
 
   public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {

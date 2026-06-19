@@ -16,6 +16,7 @@
  */
 
 package org.runnerup.export.format;
+
 import org.runnerup.workout.Sport;
 
 public class ExportOptions {
@@ -32,6 +33,7 @@ public class ExportOptions {
     public ExportOptions build() {
       return new ExportOptions(this);
     }
+
     private Builder() {}
   }
 

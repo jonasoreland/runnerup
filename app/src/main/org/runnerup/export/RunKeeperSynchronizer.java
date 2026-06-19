@@ -513,10 +513,10 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
 
   @Override
   public boolean checkSupport(Synchronizer.Feature f) {
-      return switch (f) {
-          case UPLOAD, ACTIVITY_LIST, GET_ACTIVITY -> true;
-          default -> false;
-      };
+    return switch (f) {
+      case UPLOAD, ACTIVITY_LIST, GET_ACTIVITY -> true;
+      default -> false;
+    };
   }
 
   @Override
@@ -546,7 +546,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
       Log.e(Constants.LOG, e.getMessage());
       return activity;
     }
-      return activity;
+    return activity;
   }
 
   private double getLapLength() {

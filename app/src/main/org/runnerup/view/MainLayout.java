@@ -40,7 +40,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -209,7 +208,8 @@ public class MainLayout extends AppCompatActivity {
   }
 
   private boolean isLargeScreen() {
-    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    int screenSize =
+        getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
     return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
