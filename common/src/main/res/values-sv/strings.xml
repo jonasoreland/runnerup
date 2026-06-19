@@ -339,14 +339,12 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Puls</string>
-  <string name="Lock_activity_buttons_category">Lås aktivitetsknappar</string>
   <string name="GPS_recording_category">GPS inspelning</string>
   <string name="Phone_sensors_category">Telefon sensorer</string>
   <string name="Database_category">Databasunderhåll</string>
   <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
   <string name="User_interface">Användarinterface</string>
-  <string name="User_interface_pref_summary">Lås aktivitetsknappar, synlighet</string>
   <string name="Workout_pref_summary">Hantera träningspass, varv och målcoachning</string>
   <string name="Visibility_category">Synlighet</string>
   <string name="Manage_workouts_category">Avancerat träningspass</string>

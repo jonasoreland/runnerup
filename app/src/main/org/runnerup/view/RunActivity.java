@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -209,7 +210,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     ViewUtil.Insets(findViewById(R.id.start_view), true);
 
     showOnLockScreen(showOnLockScreen);
-
     if (keepScreenOn) {
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
@@ -330,24 +330,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
   }
 
-  private void doStop() {
-    if (timer != null) {
-      workout.onStop(workout);
-      stopTimer(); // set timer=null;
-      mTracker.stopForeground(true); // remove notification
-      Intent intent = new Intent(RunActivity.this, DetailActivity.class);
-      /*
-       * The same activity is used to show details and to save
-       * activity they show almost the same information
-       */
-      intent.putExtra("mode", "save");
-      intent.putExtra("ID", mTracker.getActivityId());
-      RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
-    }
-  }
-
-  private final OnClickListener stopButtonClick = v -> doStop();
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
@@ -391,35 +373,93 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
   }
 
-  private final OnClickListener pauseButtonClick =
-      v -> {
-        if (workout == null) {
-          // "should not happen"
-          return;
-        }
-
-        if (workout.isPaused()) {
-          workout.onResume(workout);
-        } else {
-          workout.onPause(workout);
-        }
-        setPauseButtonEnabled(!workout.isPaused());
-      };
+  private void newLap() {
+    if (workout != null) {
+      workout.onNewLapOrNextStep();
+    }
+  }
 
   private void setPauseButtonEnabled(boolean enabled) {
     if (enabled) {
       pauseButton.setText(org.runnerup.common.R.string.Pause);
       ViewCompat.setBackground(
-          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
+              pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-          0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
+              0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
     } else {
       pauseButton.setText(org.runnerup.common.R.string.Resume);
       ViewCompat.setBackground(
-          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
+              pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-          0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
+              0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
     }
+  }
+
+  private void togglePause() {
+    if (workout == null) {
+      // "should not happen"
+      return;
+    }
+
+    if (workout.isPaused()) {
+      workout.onResume(workout);
+    } else {
+      workout.onPause(workout);
+    }
+    setPauseButtonEnabled(!workout.isPaused());
+  }
+
+  private void doStop() {
+    if (timer != null) {
+      workout.onStop(workout);
+      stopTimer(); // set timer=null;
+      mTracker.stopForeground(true); // remove notification
+      Intent intent = new Intent(RunActivity.this, DetailActivity.class);
+      /*
+       * The same activity is used to show details and to save
+       * activity they show almost the same information
+       */
+      intent.putExtra("mode", "save");
+      intent.putExtra("ID", mTracker.getActivityId());
+      RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
+    }
+  }
+
+  private final OnClickListener newLapButtonClick = v -> newLap();
+  private final OnClickListener pauseButtonClick = v -> togglePause();
+  private final OnClickListener stopButtonClick = v -> doStop();
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    final Resources res = this.getResources();
+    final boolean volumeButtonControls = prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
+
+    if (volumeButtonControls &&
+            (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+      return true;
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  @Override
+  public boolean onKeyUp(int keyCode, KeyEvent event) {
+    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    final Resources res = this.getResources();
+    final boolean volumeButtonControls = prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
+
+    if (volumeButtonControls &&
+            (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+      switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_UP:
+          newLap();
+          break;
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+          togglePause();
+      }
+      return true;
+    }
+    return super.onKeyUp(keyCode, event);
   }
 
   private void showOnLockScreen(boolean enabled) {
@@ -433,8 +473,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       }
     }
   }
-
-  private final OnClickListener newLapButtonClick = v -> workout.onNewLapOrNextStep();
 
   private void updateView() {
     boolean isPaused = workout != null && workout.isPaused();

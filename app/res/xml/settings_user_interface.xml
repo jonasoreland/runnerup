@@ -21,8 +21,8 @@
     android:layout_height="fill_parent">
 
     <PreferenceCategory
-        android:key="@string/Lock_activity_buttons_category"
-        android:title="@string/Lock_activity_buttons_category"
+        android:key="@string/Buttons_category"
+        android:title="@string/Buttons_category"
         app:iconSpaceReserved="false">
 
         <CheckBoxPreference
@@ -31,6 +31,14 @@
             android:persistent="true"
             android:summary="@string/Lock_activity_buttons_message"
             android:title="@string/Lock_activity_buttons"
+            app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_volume_button_controls"
+            android:persistent="true"
+            android:summary="@string/Volume_button_controls_summary"
+            android:title="@string/Volume_button_controls"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 

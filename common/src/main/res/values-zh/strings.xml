@@ -336,7 +336,6 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">心率</string>
-  <string name="Lock_activity_buttons_category">锁定按钮</string>
   <string name="GPS_recording_category">GPS记录</string>
   <string name="Phone_sensors_category">手机传感器</string>
   <string name="Database_category">数据库维护</string>

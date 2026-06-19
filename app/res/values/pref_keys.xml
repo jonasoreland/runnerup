@@ -116,6 +116,7 @@
     <string name="pref_runneruplive_serveradress">pref_runneruplive_serveradress</string>
 
     <string name="pref_lock_run">pref_lock_run</string>
+    <string name="pref_volume_button_controls">pref_volume_button_controls</string>
     <string name="pref_show_on_lock_screen">pref_show_on_lock_screen</string>
     <string name="pref_keep_screen_on">pref_keep_screen_on</string>
 
