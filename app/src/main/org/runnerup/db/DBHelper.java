@@ -700,41 +700,43 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
     if (!isValidRunnerUpDatabase(ctx, from)) {
       Log.e(TAG, "Selected Uri is not a valid RunnerUp database: " + from);
-        new AlertDialog.Builder(ctx)
-              .setTitle("Import " + DBNAME)
-              .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
-              .setPositiveButton(org.runnerup.common.R.string.OK, listener)
-              .show();
+      new AlertDialog.Builder(ctx)
+          .setTitle("Import " + DBNAME)
+          .setMessage(org.runnerup.common.R.string.import_error_invalid_database)
+          .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+          .show();
       return;
     }
 
-      new AlertDialog.Builder(ctx)
-            .setTitle("Overwrite database")
-            .setMessage("This will overwrite your current database. Are you sure?")
-            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+    new AlertDialog.Builder(ctx)
+        .setTitle("Overwrite database")
+        .setMessage("This will overwrite your current database. Are you sure?")
+        .setPositiveButton(
+            android.R.string.yes,
+            (dialog, which) -> {
               try {
                 Uri to = getDbUri(ctx);
                 int cnt = FileUtil.copyFile(ctx, to, from);
                 new AlertDialog.Builder(ctx)
-                        .setTitle("Import " + DBNAME)
-                        .setMessage(
-                                "Copied "
-                                        + cnt
-                                        + " bytes from "
-                                        + Uri.decode(from.toString())
-                                        + "Restart app to use the database")
-                        .setPositiveButton(org.runnerup.common.R.string.OK, listener)
-                        .show();
+                    .setTitle("Import " + DBNAME)
+                    .setMessage(
+                        "Copied "
+                            + cnt
+                            + " bytes from "
+                            + Uri.decode(from.toString())
+                            + "Restart app to use the database")
+                    .setPositiveButton(org.runnerup.common.R.string.OK, listener)
+                    .show();
               } catch (IOException | NullPointerException e) {
                 new AlertDialog.Builder(ctx)
-                        .setTitle("Import " + DBNAME)
-                        .setMessage("Exception: " + e + " for " + from)
-                        .setNegativeButton(org.runnerup.common.R.string.Cancel, listener)
-                        .show();
+                    .setTitle("Import " + DBNAME)
+                    .setMessage("Exception: " + e + " for " + from)
+                    .setNegativeButton(org.runnerup.common.R.string.Cancel, listener)
+                    .show();
               }
             })
-            .setNegativeButton(android.R.string.no, listener)
-            .show();
+        .setNegativeButton(android.R.string.no, listener)
+        .show();
   }
 
   public static void exportDatabase(Context ctx, Uri to) {

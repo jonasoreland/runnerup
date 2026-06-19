@@ -591,10 +591,8 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
     return steps.get(currentStepNo).isLastStep();
   }
 
-    /** flattened list of all steps in workout */
-      public record StepListEntry(int index, Step step, int level, Step parent) {
-
-    }
+  /** flattened list of all steps in workout */
+  public record StepListEntry(int index, Step step, int level, Step parent) {}
 
   public void addStep(Step s) {
     steps.add(s);

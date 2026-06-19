@@ -167,10 +167,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     try {
       OkHttpClient client = getAuthClient();
       RequestBody formBody =
-          new FormBody.Builder()
-              .add("username", username)
-              .add("password", password)
-              .build();
+          new FormBody.Builder().add("username", username).add("password", password).build();
 
       Request request = new Request.Builder().url(url + TOKEN_URL_PATH).post(formBody).build();
 

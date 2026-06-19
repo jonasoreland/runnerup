@@ -100,7 +100,7 @@ public class StateService extends Service
     return "mGoogleApiClient="
         + mGoogleApiClient
         + ", isConnected="
-        + (mGoogleApiClient != null ? mGoogleApiClient.isConnected(): false)
+        + (mGoogleApiClient != null ? mGoogleApiClient.isConnected() : false)
         + ", phoneNode="
         + phoneNode;
   }
@@ -239,7 +239,8 @@ public class StateService extends Service
   }
 
   private void setPhoneNode(DataEvent ev) {
-    if (ev.getType() == DataEvent.TYPE_CHANGED && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
+    if (ev.getType() == DataEvent.TYPE_CHANGED
+        && Objects.requireNonNull(ev.getDataItem().getData()).length > 0) {
       phoneNode = new String(ev.getDataItem().getData());
       Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=" + phoneNode);
       readDataIfMissing();

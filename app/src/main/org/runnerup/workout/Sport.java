@@ -53,15 +53,17 @@ public enum Sport {
     result.put(DB.ACTIVITY.SPORT_WALKING, org.runnerup.common.R.string.SPORT_WALKING);
     result.put(DB.ACTIVITY.SPORT_TREADMILL, org.runnerup.common.R.string.SPORT_TREADMILL);
     result.put(DB.ACTIVITY.SPORT_GYM, org.runnerup.common.R.string.SPORT_GYM);
-    result.put(DB.ACTIVITY.SPORT_STATIONARY_BIKE, org.runnerup.common.R.string.SPORT_STATIONARY_BIKE);
+    result.put(
+        DB.ACTIVITY.SPORT_STATIONARY_BIKE, org.runnerup.common.R.string.SPORT_STATIONARY_BIKE);
     return Collections.unmodifiableMap(result);
   }
-  private static final Map<Integer,Integer> gSportToStringMap = createSportToStringMap();
+
+  private static final Map<Integer, Integer> gSportToStringMap = createSportToStringMap();
 
   public static String[] getStringArray(Resources res) {
     String[] ret = new String[DB.ACTIVITY.SPORT_MAX + 1];
 
-    {  // Backward compability. TODO: Remove once new sport strings are translated.
+    { // Backward compability. TODO: Remove once new sport strings are translated.
       int resId = org.runnerup.common.R.array.sportEntries;
       String[] org = res.getStringArray(resId);
       for (int i = 0; i < org.length && i < ret.length; i++) {
@@ -187,8 +189,9 @@ public enum Sport {
   }
 
   public boolean IsRunning() {
-    return dbValue == DB.ACTIVITY.SPORT_RUNNING || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING ||
-        dbValue == DB.ACTIVITY.SPORT_TREADMILL;
+    return dbValue == DB.ACTIVITY.SPORT_RUNNING
+        || dbValue == DB.ACTIVITY.SPORT_ORIENTEERING
+        || dbValue == DB.ACTIVITY.SPORT_TREADMILL;
   }
 
   public boolean IsCycling() {

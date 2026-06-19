@@ -158,8 +158,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     final Resources res = this.getResources();
     final KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
-    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
-    final boolean keepScreenOn = prefs.getBoolean(res.getString(R.string.pref_keep_screen_on), false);
+    final boolean showOnLockScreen =
+        prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+    final boolean keepScreenOn =
+        prefs.getBoolean(res.getString(R.string.pref_keep_screen_on), false);
 
     if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
@@ -218,7 +220,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   }
 
   private boolean isLargeScreen() {
-    int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    int screenSize =
+        getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
     return screenSize >= Configuration.SCREENLAYOUT_SIZE_LARGE;
   }
 
@@ -237,7 +240,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   public void onResume() {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
-    final boolean showOnLockScreen = prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
+    final boolean showOnLockScreen =
+        prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
 
     super.onResume();
     showOnLockScreen(showOnLockScreen);
@@ -348,7 +352,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       }
       workout.onComplete(Scope.ACTIVITY, workout);
       if (mTracker != null) {
-        mTracker.completeActivity(/* save= */true, manualDistance);
+        mTracker.completeActivity(/* save= */ true, manualDistance);
       }
       mTracker = null;
       finish();
@@ -357,7 +361,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
        * they discarded
        */
       workout.onComplete(Scope.ACTIVITY, workout);
-      mTracker.completeActivity(/* save= */false, /* manualDistance= */null);
+      mTracker.completeActivity(/* save= */ false, /* manualDistance= */ null);
       mTracker = null;
       finish();
     } else if (resultCode == AppCompatActivity.RESULT_FIRST_USER) {
@@ -383,15 +387,15 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     if (enabled) {
       pauseButton.setText(org.runnerup.common.R.string.Pause);
       ViewCompat.setBackground(
-              pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
+          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-              0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
+          0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
     } else {
       pauseButton.setText(org.runnerup.common.R.string.Resume);
       ViewCompat.setBackground(
-              pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
+          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-              0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
+          0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
     }
   }
 
@@ -433,10 +437,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
-    final boolean volumeButtonControls = prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
+    final boolean volumeButtonControls =
+        prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
 
-    if (volumeButtonControls &&
-            (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+    if (volumeButtonControls
+        && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
       return true;
     }
     return super.onKeyDown(keyCode, event);
@@ -446,10 +451,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
-    final boolean volumeButtonControls = prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
+    final boolean volumeButtonControls =
+        prefs.getBoolean(res.getString(R.string.pref_volume_button_controls), false);
 
-    if (volumeButtonControls &&
-            (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
+    if (volumeButtonControls
+        && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)) {
       switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_UP:
           newLap();

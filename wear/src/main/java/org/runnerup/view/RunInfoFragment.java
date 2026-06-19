@@ -88,20 +88,21 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
     int[] ids = null;
-    int card = switch (rowsOnScreen) {
-        case 2 -> {
+    int card =
+        switch (rowsOnScreen) {
+          case 2 -> {
             ids = card2ids;
             yield R.layout.card2;
-        }
-        case 1 -> {
+          }
+          case 1 -> {
             ids = card1ids;
             yield R.layout.card1;
-        }
-        default -> {
+          }
+          default -> {
             ids = card3ids;
             yield R.layout.card3;
-        }
-    };
+          }
+        };
     View view = inflater.inflate(card, container, false);
     for (int i = 0; i < rowsOnScreen; i++) {
       textViews.add(

@@ -94,7 +94,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
       return false;
     }
 
-      if (it.dimension != Dimension.DISTANCE) {
+    if (it.dimension != Dimension.DISTANCE) {
       return false;
     }
 
@@ -115,7 +115,7 @@ public class EndOfLapSuppression extends TriggerSuppression {
       return false;
     }
 
-      if (et.scope != Scope.LAP || et.event != Event.COMPLETED) return false;
+    if (et.scope != Scope.LAP || et.event != Event.COMPLETED) return false;
 
     Step s = w.getCurrentStep();
     if (s == null || s.getDurationType() == null) return false;

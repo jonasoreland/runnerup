@@ -51,8 +51,7 @@ public class TCX {
   private final ExportOptions exportOptions;
   private final PathSimplifier simplifier;
 
-  public TCX(SQLiteDatabase mDB, ExportOptions exportOptions,
-             PathSimplifier simplifier) {
+  public TCX(SQLiteDatabase mDB, ExportOptions exportOptions, PathSimplifier simplifier) {
     this.mDB = mDB;
     this.exportOptions = exportOptions;
     this.simplifier = simplifier;
@@ -75,8 +74,7 @@ public class TCX {
    * @return TCX id
    * @throws IOException
    */
-  public Pair<String, Sport> exportWithSport(long activityId, Writer writer)
-      throws IOException {
+  public Pair<String, Sport> exportWithSport(long activityId, Writer writer) throws IOException {
 
     String[] aColumns = {
       DB.ACTIVITY.NAME,
@@ -264,8 +262,7 @@ public class TCX {
     c.close();
   }
 
-  private void exportLaps(long activityId, long startTime, Sport sport)
-      throws IOException {
+  private void exportLaps(long activityId, long startTime, Sport sport) throws IOException {
     String[] lColumns = {DB.LAP.LAP, DB.LAP.TIME, DB.LAP.DISTANCE, DB.LAP.INTENSITY};
     Cursor cLap =
         mDB.query(
@@ -302,9 +299,8 @@ public class TCX {
 
     double totalDistance = 0;
     while (lok) {
-      if (exportOptions.shouldExportLap(sport.getDbValue(),
-                                        /* distance= */cLap.getFloat(1),
-                                        /* time= */cLap.getLong(2))) {
+      if (exportOptions.shouldExportLap(
+          sport.getDbValue(), /* distance= */ cLap.getFloat(1), /* time= */ cLap.getLong(2))) {
         long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();

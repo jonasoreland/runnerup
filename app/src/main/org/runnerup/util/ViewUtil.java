@@ -19,7 +19,6 @@ package org.runnerup.util;
 
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
@@ -27,7 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class ViewUtil {
-  public static void Insets(View rootView, boolean marginLayout){
+  public static void Insets(View rootView, boolean marginLayout) {
     ViewCompat.setOnApplyWindowInsetsListener(
         rootView,
         new OnApplyWindowInsetsListener() {
@@ -36,13 +35,13 @@ public class ViewUtil {
           public WindowInsetsCompat onApplyWindowInsets(
               @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
 
-              // Pad the root layout for navigation bar
+            // Pad the root layout for navigation bar
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
             int top = marginLayout ? 0 : insets.top;
             v.setPadding(insets.left, top, insets.right, insets.bottom);
 
-            if (marginLayout){
-                // Adjust margins to avoid gesture conflicts
+            if (marginLayout) {
+              // Adjust margins to avoid gesture conflicts
               ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
               mlp.topMargin = insets.top;
             }

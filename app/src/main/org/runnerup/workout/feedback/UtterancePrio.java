@@ -23,6 +23,9 @@ enum UtterancePrio {
   PRIO_COACH(1),
   PRIO_COUNTDOWN(2);
 
-  UtterancePrio(int val) { value = val; }
+  UtterancePrio(int val) {
+    value = val;
+  }
+
   final int value;
 }

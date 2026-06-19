@@ -46,7 +46,8 @@ public class RUTextToSpeech {
     final HashMap<String, String> params;
     final String id;
 
-    public Entry(String text, UtterancePrio prio, boolean flush, HashMap<String, String> params, String id) {
+    public Entry(
+        String text, UtterancePrio prio, boolean flush, HashMap<String, String> params, String id) {
       this.text = text;
       this.flush = flush;
       this.prio = prio.value;
@@ -167,7 +168,7 @@ public class RUTextToSpeech {
     }
 
     // Sort pending utterances accoring to prio.
-    Collections.sort(cueList, (x,y) -> -Integer.compare(x.prio, y.prio));
+    Collections.sort(cueList, (x, y) -> -Integer.compare(x.prio, y.prio));
 
     int mode = TextToSpeech.QUEUE_ADD;
     int maxPrio = cueList.get(0).prio;
@@ -193,12 +194,12 @@ public class RUTextToSpeech {
       if (res == TextToSpeech.ERROR) {
         Log.i(
             getClass().getName(),
-              "res == ERROR emit() text: "
-              + e.text
-              + ", utId: "
-              + e.id
-              + ") outstanding.size(): "
-              + outstanding.size());
+            "res == ERROR emit() text: "
+                + e.text
+                + ", utId: "
+                + e.id
+                + ") outstanding.size(): "
+                + outstanding.size());
       } else {
         outstanding.put(e.id, e);
         // Subsequent utterances will be added.

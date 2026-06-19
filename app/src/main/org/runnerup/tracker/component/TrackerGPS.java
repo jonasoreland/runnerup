@@ -28,7 +28,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.text.TextUtils;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -122,12 +121,15 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     String[] list = {GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER};
     Location lastLocation = null;
     for (String s : list) {
-        if (s.equals(GPS_PROVIDER)
-                && (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-          continue;
-        }
-        Location tmp = lm.getLastKnownLocation(s);
+      if (s.equals(GPS_PROVIDER)
+          && (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                  != PackageManager.PERMISSION_GRANTED
+              && ActivityCompat.checkSelfPermission(
+                      context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                  != PackageManager.PERMISSION_GRANTED)) {
+        continue;
+      }
+      Location tmp = lm.getLastKnownLocation(s);
       if (tmp == null) {
         continue;
       }
@@ -151,9 +153,9 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
 
   @Override
   public ResultCode onConnecting(final Callback callback, Context context) {
-    if (!mWithoutGps &&
-        ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
-        != PackageManager.PERMISSION_GRANTED) {
+    if (!mWithoutGps
+        && ContextCompat.checkSelfPermission(this.tracker, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
       mWithoutGps = true;
     }
 
@@ -248,8 +250,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     }
   }
 
-    private final GpsLessLocationProvider gpsLessLocationProvider =
-      new GpsLessLocationProvider();
+  private final GpsLessLocationProvider gpsLessLocationProvider = new GpsLessLocationProvider();
 
   @Override
   public void onTick() {
