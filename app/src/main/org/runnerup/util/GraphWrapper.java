@@ -168,7 +168,7 @@ public class GraphWrapper implements Constants {
     elevationGraphView.setTitle(context.getString(org.runnerup.common.R.string.Elevation));
     elevationGraphView
         .getGridLabelRenderer()
-        .setVerticalAxisTitle(formatter.getElevationUnit(context));
+        .setVerticalAxisTitle(formatter.getElevationUnit());
     elevationGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.label());
     elevationGraphView
         .getGridLabelRenderer()
@@ -179,7 +179,7 @@ public class GraphWrapper implements Constants {
                 if (isValueX) {
                   return xAxis.formatValue(value);
                 } else {
-                  return formatter.formatElevation(Formatter.Format.TXT, value);
+                  return formatter.formatElevation(Formatter.Format.TXT_LONG, value);
                 }
               }
             });

@@ -558,11 +558,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   /**
    * @return elevation unit string
    */
-  String getElevationUnit(Context context) {
+  String getElevationUnit() {
     return resources.getString(
         metric
-            ? org.runnerup.common.R.string.metrics_elevation_meters
-            : org.runnerup.common.R.string.metrics_elevation_feet);
+            ? org.runnerup.common.R.string.metrics_distance_m
+            : org.runnerup.common.R.string.metrics_distance_ft);
   }
 
   /**
@@ -732,10 +732,10 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     DecimalFormat df = new DecimalFormat("#.0");
     String value = metric ? df.format(meters) : df.format(meters / meters_per_foot);
 
-    if (target == Format.TXT) {
+    if (target == Format.TXT || target == Format.TXT_SHORT) {
       return value;
     } else {
-      return value + (metric ? " m" : " ft");
+      return value + " " + getElevationUnit();
     }
   }
 
