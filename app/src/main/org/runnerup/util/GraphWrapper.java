@@ -83,14 +83,28 @@ public class GraphWrapper implements Constants {
             return context.getString(org.runnerup.common.R.string.Distance);
           }
 
+          public String labelLong() {
+            return label() + " " + formatter.getDistanceUnit();
+          }
+
+          @Override
+          public String formatLongValue(double value) {
+            return formatter.getDistanceDisplay(value) + " " + formatter.getDistanceUnit();
+          }
+
           @Override
           public String formatValue(double value) {
-            return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long) value);
+            return formatter.getDistanceDisplay(value);
           }
 
           @Override
           public double getX(double distance, double time_ms) {
             return distance;
+          }
+
+          @Override
+          public String unit() {
+            return formatter.getDistanceUnit();
           }
         };
 
@@ -101,6 +115,15 @@ public class GraphWrapper implements Constants {
             return context.getString(org.runnerup.common.R.string.Time);
           }
 
+          public String labelLong() {
+            return label();
+          }
+
+          @Override
+          public String formatLongValue(double value) {
+            return formatValue(value);
+          }
+
           @Override
           public String formatValue(double value) {
             return formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) value);
@@ -109,6 +132,11 @@ public class GraphWrapper implements Constants {
           @Override
           public double getX(double distance, double time_ms) {
             return time_ms / 1000;
+          }
+
+          @Override
+          public String unit() {
+            return "";
           }
         };
 
@@ -136,10 +164,8 @@ public class GraphWrapper implements Constants {
                 }
               }
             });
-    velocityGraphView
-        .getGridLabelRenderer()
-        .setVerticalAxisTitle(formatter.getVelocityUnit(context));
-    velocityGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.label());
+    velocityGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit());
+    velocityGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
     // enable zoom
     velocityGraphView.getViewport().setScalable(true);
     velocityGraphView.getViewport().setScrollable(true);
@@ -147,7 +173,7 @@ public class GraphWrapper implements Constants {
     hrGraphView = new GraphView(context);
     hrGraphView.setTitle(context.getString(org.runnerup.common.R.string.Heart_rate));
     hrGraphView.getGridLabelRenderer().setVerticalAxisTitle("bpm");
-    hrGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.label());
+    hrGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
     hrGraphView
         .getGridLabelRenderer()
         .setLabelFormatter(
@@ -166,10 +192,8 @@ public class GraphWrapper implements Constants {
 
     elevationGraphView = new GraphView(context);
     elevationGraphView.setTitle(context.getString(org.runnerup.common.R.string.Elevation));
-    elevationGraphView
-        .getGridLabelRenderer()
-        .setVerticalAxisTitle(formatter.getElevationUnit());
-    elevationGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.label());
+    elevationGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getElevationUnit());
+    elevationGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
     elevationGraphView
         .getGridLabelRenderer()
         .setLabelFormatter(
@@ -179,7 +203,7 @@ public class GraphWrapper implements Constants {
                 if (isValueX) {
                   return xAxis.formatValue(value);
                 } else {
-                  return formatter.formatElevation(Formatter.Format.TXT_LONG, value);
+                  return formatter.formatElevation(Formatter.Format.TXT_SHORT, value);
                 }
               }
             });
@@ -301,12 +325,18 @@ public class GraphWrapper implements Constants {
   interface XAxis {
     String label();
 
+    String labelLong();
 
+    String formatLongValue(double val);
 
     String formatValue(double val);
 
     double getX(double distance, double time_ms);
+
+    String unit();
   }
+
+  record LoadParam(Context context, SQLiteDatabase mDB, long mID) {}
 
   class GraphProducer {
     final int interval;
@@ -366,7 +396,7 @@ public class GraphWrapper implements Constants {
         Arrays.fill(this.hrzHist, 0);
         showHRZhist = true;
       }
-      this.preferred_speedunit = Formatter.getPreferredSpeedUnit(context);
+      this.preferred_speedunit = formatter.getPreferredSpeedUnit();
 
       clearSmooth(0);
     }
@@ -546,13 +576,12 @@ public class GraphWrapper implements Constants {
           (series, dataPoint) -> {
             String msg =
                 String.format(
-                    "%s: %s\n%s: %s %s",
-                    graphView.getContext().getString(org.runnerup.common.R.string.Distance),
-                    xAxis.formatValue(dataPoint.getX()),
+                    "%s: %s\n%s: %s",
+                    xAxis.label(),
+                    xAxis.formatLongValue(dataPoint.getX()),
                     formatter.formatVelocityLabel(),
                     formatter.formatVelocityByPreferredUnit(
-                        Formatter.Format.TXT_SHORT, dataPoint.getY()),
-                    formatter.getVelocityUnit(graphView.getContext()));
+                        Formatter.Format.TXT_LONG, dataPoint.getY()));
             Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
           });
       if (showHR) {
@@ -566,10 +595,10 @@ public class GraphWrapper implements Constants {
               String msg =
                   String.format(
                       "%s: %s\n%s: %s",
-                      graphView.getContext().getString(org.runnerup.common.R.string.Distance),
-                      xAxis.formatValue(dataPoint.getX()),
+                      xAxis.label(),
+                      xAxis.formatLongValue(dataPoint.getX()),
                       graphView.getContext().getString(org.runnerup.common.R.string.Heart_rate),
-                      formatter.formatHeartRate(Formatter.Format.TXT_SHORT, dataPoint.getY()));
+                      formatter.formatHeartRate(Formatter.Format.TXT_LONG, dataPoint.getY()));
               Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
             });
 
@@ -600,10 +629,10 @@ public class GraphWrapper implements Constants {
               String msg =
                   String.format(
                       "%s: %s\n%s: %s",
-                      graphView.getContext().getString(org.runnerup.common.R.string.Distance),
-                      xAxis.formatValue(dataPoint.getX()),
+                      xAxis.label(),
+                      xAxis.formatLongValue(dataPoint.getX()),
                       graphView.getContext().getString(org.runnerup.common.R.string.Elevation),
-                      formatter.formatElevation(Formatter.Format.TXT_SHORT, dataPoint.getY()));
+                      formatter.formatElevation(Formatter.Format.TXT_LONG, dataPoint.getY()));
               Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
             });
       }
@@ -757,6 +786,4 @@ public class GraphWrapper implements Constants {
       }
     }
   }
-
-  record LoadParam(Context context, SQLiteDatabase mDB, long mID) {}
 }
