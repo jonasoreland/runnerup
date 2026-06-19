@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -58,6 +59,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +136,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
+    Window window = getWindow();
+    WindowCompat.getInsetsController(window, window.getDecorView())
+        .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
     if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
       // MapBox or Osmdroid, set mapWrapper.
@@ -146,7 +151,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    WidgetUtil.addLegacyOverflowButton(getWindow());
+    WidgetUtil.addLegacyOverflowButton(window);
 
     Intent intent = getIntent();
     mID = intent.getLongExtra("ID", -1);

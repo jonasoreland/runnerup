@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -14,6 +15,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.WindowCompat;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +39,9 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
+    Window window = getWindow();
+    WindowCompat.getInsetsController(window, window.getDecorView())
+        .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
 
     AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

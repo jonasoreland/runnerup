@@ -20,12 +20,14 @@ package org.runnerup.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import org.runnerup.R;
 import org.runnerup.widget.WidgetUtil;
@@ -35,8 +37,11 @@ public class AudioCueSettingsActivity extends AppCompatActivity {
 
   public void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
+    Window window = getWindow();
+    WindowCompat.getInsetsController(window, window.getDecorView())
+        .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
-    WidgetUtil.addLegacyOverflowButton(getWindow());
+    WidgetUtil.addLegacyOverflowButton(window);
     setContentView(R.layout.settings_activity);
 
     Intent intent = getIntent();

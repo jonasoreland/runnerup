@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TableLayout;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
 import java.util.Locale;
 import java.util.Vector;
 import org.runnerup.R;
@@ -167,9 +169,12 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
+    Window window = getWindow();
+    WindowCompat.getInsetsController(window, window.getDecorView())
+        .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.heartratezones);
-    WidgetUtil.addLegacyOverflowButton(getWindow());
+    WidgetUtil.addLegacyOverflowButton(window);
 
     hrZones = new HRZones(this);
     hrZoneCalculator = new HRZoneCalculator(this);
