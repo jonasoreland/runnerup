@@ -193,16 +193,15 @@
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/activity_margin"
-                    android:clipToPadding="false"
-                    android:paddingBottom="48dp"
                     android:scrollbars="none">
 
                     <LinearLayout
                         android:id="@+id/graphview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" />
+                        android:layout_margin="@dimen/activity_margin"
+                        android:orientation="vertical"
+                        android:weightSum="1" />
                 </ScrollView>
 
                 <LinearLayout
