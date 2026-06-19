@@ -18,11 +18,13 @@
 package org.runnerup.export;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import java.io.StringWriter;
 import okhttp3.FormBody;
 import okhttp3.MediaType;
@@ -39,15 +41,17 @@ import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.format.ExportOptions;
 import org.runnerup.export.format.GPX;
 import org.runnerup.util.FileNameHelper;
+import org.runnerup.view.EndurainLoginActivity;
 import org.runnerup.workout.FileFormats;
 import org.runnerup.workout.Sport;
 
 public class EndurainSynchronizer extends DefaultSynchronizer {
 
   public static final String NAME = "Endurain";
-
   private static final String TOKEN_URL_PATH = "/api/v1/auth/login";
+  private static final String MFA_URL_PATH = "/api/v1/auth/mfa/verify";
   private static final String UPLOAD_URL_PATH = "/api/v1/activities/create/upload";
+  private static final String REFRESH_URL_PATH = "/api/v1/auth/refresh";
 
   private long id = 0;
 
@@ -55,9 +59,12 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   private String username;
   private String password;
   private String url;
+  private String mfaCode; // Temporary storage for MFA code
   private boolean hasCorrectConfig;
 
   private String access_token = null;
+  private String refresh_token = null;
+  private String csrf_token = null;
 
   public EndurainSynchronizer() {
     super();
@@ -82,7 +89,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @Override
   public String getPublicUrl() {
     if (url == null || url.isEmpty()) {
-      return "https://your-endurain.local:98";
+      return "https://endurain.example.com";
     }
     return url;
   }
@@ -90,6 +97,36 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
   @Override
   public int getIconId() {
     return R.drawable.service_endurain;
+  }
+
+  private String sanitizeUrl(String input) {
+    if (input == null) return null;
+    String res = input.trim();
+    while (res.endsWith("/")) {
+      res = res.substring(0, res.length() - 1);
+    }
+    return res;
+  }
+
+  private String getEndpoint(String path) {
+    if (url == null) return "";
+    String baseUrl = url;
+    if (baseUrl.endsWith("/api/v1")) {
+      baseUrl = baseUrl.substring(0, baseUrl.length() - 7);
+    }
+    return baseUrl + path;
+  }
+
+  private Status getNeedAuthStatus() {
+    Status needAuth = Status.NEED_AUTH;
+    if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(url)) {
+      needAuth.authMethod = AuthMethod.USER_PASS_URL;
+    } else if (!TextUtils.isEmpty(url)) {
+      needAuth.authMethod = AuthMethod.OAUTH2;
+    } else {
+      needAuth.authMethod = AuthMethod.USER_PASS_URL;
+    }
+    return needAuth;
   }
 
   @Override
@@ -101,8 +138,14 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
         JSONObject tmp = new JSONObject(authToken);
         username = tmp.optString("username", null);
         password = tmp.optString("password", null);
-        url = tmp.optString("url", null);
+        url = sanitizeUrl(tmp.optString("url", null));
+        mfaCode = tmp.optString("mfa_code", null); // Read MFA code if present
         hasCorrectConfig = tmp.optBoolean("hasCorrectConfig", false);
+        
+        access_token = tmp.optString("access_token", null);
+        refresh_token = tmp.optString("refresh_token", null);
+        csrf_token = tmp.optString("csrf_token", null);
+
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -111,7 +154,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   @Override
   public boolean isConfigured() {
-    return username != null && password != null && url != null && hasCorrectConfig;
+    return url != null && !url.isEmpty();
   }
 
   @NonNull
@@ -122,7 +165,11 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
       tmp.put("username", username);
       tmp.put("password", password);
       tmp.put("url", url);
+      // Do NOT persist mfaCode
       tmp.put("hasCorrectConfig", hasCorrectConfig);
+      tmp.put("access_token", access_token);
+      tmp.put("refresh_token", refresh_token);
+      tmp.put("csrf_token", csrf_token);
     } catch (JSONException e) {
       e.printStackTrace();
     }
@@ -131,8 +178,20 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
 
   private Status parseAuthData(JSONObject obj) {
     try {
+      if (obj.has("mfa_required") && obj.getBoolean("mfa_required")) {
+          Status s = Status.NEED_AUTH;
+          s.authMethod = AuthMethod.MFA;
+          return s;
+      }
+        
       if (obj.has("access_token")) {
         access_token = obj.getString("access_token");
+      }
+      if (obj.has("refresh_token")) {
+        refresh_token = obj.getString("refresh_token");
+      }
+      if (obj.has("csrf_token")) {
+        csrf_token = obj.getString("csrf_token");
       }
       hasCorrectConfig = true;
       return Status.OK;
@@ -148,45 +207,99 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
     username = null;
     password = null;
     url = null;
+    mfaCode = null;
     hasCorrectConfig = false;
+    access_token = null;
+    refresh_token = null;
+    csrf_token = null;
+  }
+
+  @NonNull
+  @Override
+  public Intent getAuthIntent(AppCompatActivity activity) {
+      Intent intent = new Intent(activity, EndurainLoginActivity.class);
+      intent.putExtra(EndurainLoginActivity.EXTRA_URL, url);
+      return intent;
+  }
+
+  @NonNull
+  @Override
+  public Status getAuthResult(int resultCode, Intent data) {
+      if (resultCode == AppCompatActivity.RESULT_OK && data != null) {
+          access_token = data.getStringExtra(EndurainLoginActivity.EXTRA_ACCESS_TOKEN);
+          refresh_token = data.getStringExtra(EndurainLoginActivity.EXTRA_REFRESH_TOKEN);
+          csrf_token = data.getStringExtra(EndurainLoginActivity.EXTRA_CSRF_TOKEN);
+          hasCorrectConfig = true;
+          return Status.OK;
+      }
+      return Status.ERROR;
   }
 
   @NonNull
   @Override
   public Status connect() {
     Status s = Status.NEED_AUTH;
-    s.authMethod = AuthMethod.USER_PASS_URL;
-    if (username == null || password == null || url == null) {
-      return s;
-    }
 
     if (access_token != null) {
       return Status.OK;
     }
 
-    try {
-      OkHttpClient client = getAuthClient();
-      RequestBody formBody =
-          new FormBody.Builder()
-              .add("username", username)
-              .add("password", password)
-              .build();
-
-      Request request = new Request.Builder().url(url + TOKEN_URL_PATH).post(formBody).build();
-
-      Response response = client.newCall(request).execute();
-
-      if (response.isSuccessful()) {
-        JSONObject obj = new JSONObject(response.body() != null ? response.body().string() : "");
-        response.close();
-        return parseAuthData(obj);
-      }
-
-      response.close();
-      return Status.ERROR;
-    } catch (Exception e) {
-      return Status.ERROR;
+    if (refresh_token != null) {
+      return Status.NEED_REFRESH;
     }
+
+    if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password) && !TextUtils.isEmpty(url)) {
+        s.authMethod = AuthMethod.USER_PASS_URL;
+        try {
+          OkHttpClient client = getAuthClient();
+
+          String endpoint;
+          RequestBody formBody;
+          
+          if (!TextUtils.isEmpty(mfaCode)) {
+              endpoint = getEndpoint(MFA_URL_PATH);
+              
+              JSONObject json = new JSONObject();
+              json.put("username", username);
+              json.put("mfa_code", mfaCode);
+              
+              formBody = RequestBody.create(MediaType.parse("application/json"), json.toString());
+              
+          } else {
+              endpoint = getEndpoint(TOKEN_URL_PATH);
+
+              formBody = new FormBody.Builder()
+                  .add("username", username)
+                  .add("password", password)
+                  .build();
+          }
+
+          Request request = new Request.Builder()
+                  .url(endpoint)
+                  .addHeader("X-Client-Type", "mobile") // Required by API
+                  .post(formBody)
+                  .build();
+    
+          try (Response response = client.newCall(request).execute()) {
+              String responseBody = response.body() != null ? response.body().string() : "";
+        
+              if (response.isSuccessful() || response.code() == 202 || response.code() == 200) {
+                JSONObject obj = new JSONObject(responseBody);
+                return parseAuthData(obj);
+              }
+        
+              return Status.ERROR;
+          }
+        } catch (Exception e) {
+          return Status.ERROR;
+        }
+    } else if (!TextUtils.isEmpty(url)) {
+        s.authMethod = AuthMethod.OAUTH2;
+    } else {
+        s.authMethod = AuthMethod.USER_PASS_URL;
+    }
+    
+    return s;
   }
 
   private OkHttpClient getAuthClient() {
@@ -198,15 +311,14 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
                     chain.request().newBuilder().addHeader("X-Client-Type", "mobile").build()))
         .addInterceptor(
             chain -> {
+              Request.Builder builder = chain.request().newBuilder();
               if (!TextUtils.isEmpty(access_token)) {
-                return chain.proceed(
-                    chain
-                        .request()
-                        .newBuilder()
-                        .header("Authorization", "Bearer " + access_token)
-                        .build());
+                builder.header("Authorization", "Bearer " + access_token);
               }
-              return chain.proceed(chain.request());
+              if (!TextUtils.isEmpty(csrf_token)) {
+                builder.header("X-CSRF-Token", csrf_token);
+              }
+              return chain.proceed(builder.build());
             })
         .build();
   }
@@ -263,22 +375,74 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
                       MediaType.parse("application/" + fileExt + "+xml"), writer.toString()))
               .build();
 
+      String uploadUrl = getEndpoint(UPLOAD_URL_PATH);
+
       Request request =
           new Request.Builder()
-              .url(url + UPLOAD_URL_PATH)
-              .addHeader("Content-Type", "application/json")
+              .url(uploadUrl)
               .method("POST", requestBody)
               .build();
 
-      int responseCode;
-      Response response = client.newCall(request).execute();
+      try (Response response = client.newCall(request).execute()) {
+        if (response.isSuccessful()) {
+          s = Status.OK;
+        } else if (response.code() == 401) {
+          // clear token
+          access_token = null;
+          csrf_token = null;
 
-      s = response.isSuccessful() ? Status.OK : Status.ERROR;
+          s = Status.NEED_REFRESH;
+        } else {
+          s = Status.ERROR;
+        }
+      }
     } catch (Exception e) {
       s = Status.ERROR;
     }
 
     return s;
+  }
+
+  @NonNull
+  @Override
+  public Status refreshToken() {
+    if (TextUtils.isEmpty(refresh_token)) {
+      return getNeedAuthStatus();
+    }
+
+    String endpoint = getEndpoint(REFRESH_URL_PATH);
+
+    try {
+      OkHttpClient client = new OkHttpClient();
+      RequestBody body = RequestBody.create(MediaType.parse("application/json"), "{}");
+      Request request = new Request.Builder()
+          .url(endpoint)
+          .addHeader("X-Client-Type", "mobile")
+          .addHeader("Authorization", "Bearer " + refresh_token)
+          .post(body)
+          .build();
+
+      try (Response response = client.newCall(request).execute()) {
+        String responseBody = response.body() != null ? response.body().string() : "";
+
+        if (response.isSuccessful()) {
+          JSONObject obj = new JSONObject(responseBody);
+          return parseAuthData(obj);
+        }
+
+        // clear token if response is not successful
+        access_token = null;
+        csrf_token = null;
+      }
+    } catch (Exception e) {
+      Log.e(getName(), "refreshToken: exception during request", e);
+
+      // clear token
+      access_token = null;
+      csrf_token = null;
+    }
+
+    return getNeedAuthStatus();
   }
 
   @Override
