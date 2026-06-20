@@ -147,9 +147,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
   public String getDistanceUnit() {
     return resources.getString(
-            metric
-                ? org.runnerup.common.R.string.metrics_distance_km
-                : org.runnerup.common.R.string.metrics_distance_mi);
+        metric
+            ? org.runnerup.common.R.string.metrics_distance_km
+            : org.runnerup.common.R.string.metrics_distance_mi);
   }
 
   /**
@@ -160,7 +160,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   public SpeedUnit getPreferredSpeedUnit() {
     // use either pace or speed according to the user's preference
     String speedUnit =
-            sharedPreferences.getString(
+        sharedPreferences.getString(
             resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
     assert speedUnit != null; // may not happen
     switch (speedUnit) {
@@ -478,24 +478,25 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       case PACE:
       default:
         return getPaceUnit();
-     }
+    }
   }
 
   private String getPaceUnit() {
     int du =
-            metric
-                    ? org.runnerup.common.R.string.metrics_distance_km
-                    : org.runnerup.common.R.string.metrics_distance_mi;
+        metric
+            ? org.runnerup.common.R.string.metrics_distance_km
+            : org.runnerup.common.R.string.metrics_distance_mi;
     return "/" + resources.getString(du);
   }
+
   private String getSpeedUnit() {
     int du =
-            metric
-                    ? org.runnerup.common.R.string.metrics_distance_km
-                    : org.runnerup.common.R.string.metrics_distance_mi;
+        metric
+            ? org.runnerup.common.R.string.metrics_distance_km
+            : org.runnerup.common.R.string.metrics_distance_mi;
     return resources.getString(du)
-            + "/"
-            + resources.getString(org.runnerup.common.R.string.metrics_elapsed_h);
+        + "/"
+        + resources.getString(org.runnerup.common.R.string.metrics_elapsed_h);
   }
 
   /**
@@ -522,9 +523,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       str = DateUtils.formatElapsedTime(val);
     }
     if (includeUnit) {
-      str =
-          str
-              + " " + getPaceUnit();
+      str = str + " " + getPaceUnit();
     }
     return str;
   }
@@ -572,7 +571,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @param meters_per_second
    * @return
    */
-  private String formatSpeed(Format target, double meters_per_second) {
+  public String formatSpeed(Format target, double meters_per_second) {
     switch (target) {
       case CUE:
       case CUE_SHORT:
@@ -601,8 +600,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     String str = String.format(cueResources.defaultLocale, "%.1f", distance_per_hour);
     if (!includeUnit) return str;
     else {
-      return str
-          + " " + getSpeedUnit();
+      return str + " " + getSpeedUnit();
     }
   }
 
@@ -693,8 +691,9 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Distance in consistent km/miles for e.g. graph, as formatDistance
-   * formats shorter distances in meters.
+   * Distance in consistent km/miles for e.g. graph, as formatDistance formats shorter distances in
+   * meters.
+   *
    * @param meters
    * @return
    */
@@ -719,12 +718,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     if (meters >= base_meters * 0.99) {
       double val = getRoundedDistanceInKmOrMiles(meters);
       if (txt) {
-        res =
-            String.format(
-                cueResources.defaultLocale,
-                "%.2f %s",
-                val,
-                getDistanceUnit());
+        res = String.format(cueResources.defaultLocale, "%.2f %s", val, getDistanceUnit());
       } else {
         // Get a localized presentation string, used with the localized plurals string
         String val2;

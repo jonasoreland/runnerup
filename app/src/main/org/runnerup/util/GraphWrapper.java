@@ -84,14 +84,12 @@ public class GraphWrapper implements Constants {
           }
 
           public String labelLong() {
-            return label()
-                    + " "
-                    + formatter.getDistanceUnit();
+            return label() + " " + formatter.getDistanceUnit();
           }
 
           @Override
           public String formatLongValue(double value) {
-            return formatter.formatDistance(Formatter.Format.TXT_SHORT, (long)value);
+            return formatter.getDistanceDisplay(value) + " " + formatter.getDistanceUnit();
           }
 
           @Override
@@ -166,9 +164,7 @@ public class GraphWrapper implements Constants {
                 }
               }
             });
-    velocityGraphView
-        .getGridLabelRenderer()
-        .setVerticalAxisTitle(formatter.getVelocityUnit());
+    velocityGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit());
     velocityGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
     // enable zoom
     velocityGraphView.getViewport().setScalable(true);
@@ -196,9 +192,7 @@ public class GraphWrapper implements Constants {
 
     elevationGraphView = new GraphView(context);
     elevationGraphView.setTitle(context.getString(org.runnerup.common.R.string.Elevation));
-    elevationGraphView
-        .getGridLabelRenderer()
-        .setVerticalAxisTitle(formatter.getElevationUnit());
+    elevationGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getElevationUnit());
     elevationGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
     elevationGraphView
         .getGridLabelRenderer()
@@ -330,9 +324,11 @@ public class GraphWrapper implements Constants {
 
   interface XAxis {
     String label();
+
     String labelLong();
 
     String formatLongValue(double val);
+
     String formatValue(double val);
 
     double getX(double distance, double time_ms);
@@ -598,9 +594,9 @@ public class GraphWrapper implements Constants {
             (series, dataPoint) -> {
               String msg =
                   String.format(
-                          "%s: %s\n%s: %s",
-                          xAxis.label(),
-                          xAxis.formatLongValue(dataPoint.getX()),
+                      "%s: %s\n%s: %s",
+                      xAxis.label(),
+                      xAxis.formatLongValue(dataPoint.getX()),
                       graphView.getContext().getString(org.runnerup.common.R.string.Heart_rate),
                       formatter.formatHeartRate(Formatter.Format.TXT_LONG, dataPoint.getY()));
               Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
@@ -632,9 +628,9 @@ public class GraphWrapper implements Constants {
             (series, dataPoint) -> {
               String msg =
                   String.format(
-                          "%s: %s\n%s: %s",
-                          xAxis.label(),
-                          xAxis.formatLongValue(dataPoint.getX()),
+                      "%s: %s\n%s: %s",
+                      xAxis.label(),
+                      xAxis.formatLongValue(dataPoint.getX()),
                       graphView.getContext().getString(org.runnerup.common.R.string.Elevation),
                       formatter.formatElevation(Formatter.Format.TXT_LONG, dataPoint.getY()));
               Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();

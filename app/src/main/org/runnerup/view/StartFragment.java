@@ -1178,12 +1178,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           res +=
               String.format(
                   Locale.getDefault(),
-                  " [%1$s, %2$s/%3$s/s, %4$.1f/%5$.1f deg]",
+                  " [%1$s, %2$s/%3$s, %4$.1f/%5$.1f deg]",
                   formatter.formatElevation(
-                          Formatter.Format.TXT_SHORT, l.getVerticalAccuracyMeters()),
-                  formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, l.getSpeed()),
-                  formatter.formatVelocityByPreferredUnit(
-                          Formatter.Format.TXT_LONG, l.getSpeedAccuracyMetersPerSecond()),
+                      Formatter.Format.TXT_LONG, l.getVerticalAccuracyMeters()),
+                  formatter.formatSpeed(Formatter.Format.TXT_SHORT, l.getSpeed()),
+                  formatter.formatSpeed(
+                      Formatter.Format.TXT_LONG, l.getSpeedAccuracyMetersPerSecond()),
                   l.getBearing(),
                   l.getBearingAccuracyDegrees());
         }
