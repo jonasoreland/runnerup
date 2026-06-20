@@ -319,7 +319,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
             View graphScroll = findViewById(R.id.tab_graph);
             if (graphScroll != null) {
-                graphScroll.setPadding(graphScroll.getPaddingLeft(), graphScroll.getPaddingTop(), graphScroll.getPaddingRight(), insets.bottom);
+              graphScroll.setPadding(
+                  graphScroll.getPaddingLeft(),
+                  graphScroll.getPaddingTop(),
+                  graphScroll.getPaddingRight(),
+                  Math.max(0, insets.bottom - bottomPadding));
             }
             return WindowInsetsCompat.CONSUMED;
           }

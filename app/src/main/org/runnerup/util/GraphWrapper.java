@@ -257,7 +257,10 @@ public class GraphWrapper implements Constants {
     graphTab.removeView(hrGraphView);
     graphTab.removeView(elevationGraphView);
 
-    LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, 800);
+    LayoutParams layout =
+        new LayoutParams(
+            LayoutParams.MATCH_PARENT,
+            (int) (250 * graphTab.getResources().getDisplayMetrics().density));
 
     if (graphData.HasPaceInfo()) graphTab.addView(velocityGraphView, layout);
     if (graphData.HasHRInfo()) graphTab.addView(hrGraphView, layout);
@@ -297,6 +300,8 @@ public class GraphWrapper implements Constants {
 
   interface XAxis {
     String label();
+
+
 
     String formatValue(double val);
 
@@ -411,11 +416,13 @@ public class GraphWrapper implements Constants {
         this.hr[p] = 0;
       }
 
-      this.elevation[p] = loc.getAltitude();
+      Double altitude = loc.getAltitude();
+      this.elevation[p] = altitude != null ? altitude : 0.0;
 
       if (delta_distance > 0 && delta_time > 0) {
         showPace = true;
-        showElevation = true;
+        if (altitude != null) showElevation = true;
+        ;
       }
 
       pos += 1;
@@ -466,7 +473,6 @@ public class GraphWrapper implements Constants {
 
       if (sum_distance > 0 && sum_time > 0) {
         showPace = true;
-        showElevation = true;
       }
     }
 
