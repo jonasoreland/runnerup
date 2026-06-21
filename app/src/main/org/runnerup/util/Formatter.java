@@ -32,6 +32,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Dimension;
@@ -163,13 +164,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         sharedPreferences.getString(
             resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
     assert speedUnit != null; // may not happen
-    switch (speedUnit) {
-      case Constants.SPEED_UNIT.SPEED:
-        return SpeedUnit.SPEED;
-      case Constants.SPEED_UNIT.PACE:
-      default:
-        return SpeedUnit.PACE;
-    }
+    return speedUnit.equals(Constants.SPEED_UNIT.SPEED) ? SpeedUnit.SPEED : SpeedUnit.PACE;
   }
 
   public double getUnitMeters() {
@@ -181,45 +176,27 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   public String format(Format target, Dimension dimension, double value) {
-    switch (dimension) {
-      case DISTANCE:
-        return formatDistance(target, Math.round(value));
-      case TIME:
-        return formatElapsedTime(target, Math.round(value));
-      case PACE:
-        return formatPace(target, value);
-      case HR:
-        return formatHeartRate(target, value);
-      case HRZ:
-        return formatHeartRateZone(target, value);
-      case SPEED:
-        return formatSpeed(target, value);
-      case CAD:
-        return formatCadence(target, value);
-      case TEMPERATURE:
-        return formatCadence(target, value); // TODO
-      case PRESSURE:
-        return formatCadence(target, value); // TODO
-    }
-    return "";
+    return switch (dimension) {
+      case DISTANCE -> formatDistance(target, Math.round(value));
+      case TIME -> formatElapsedTime(target, Math.round(value));
+      case PACE -> formatPace(target, value);
+      case HR -> formatHeartRate(target, value);
+      case HRZ -> formatHeartRateZone(target, value);
+      case SPEED -> formatSpeed(target, value);
+      case CAD -> formatCadence(target, value);
+      case TEMPERATURE -> formatCadence(target, value); // TODO
+      case PRESSURE -> formatCadence(target, value); // TODO
+    };
   }
 
   public String formatElapsedTime(Format target, long seconds) {
-    switch (target) {
-      case CUE:
-      case CUE_SHORT:
-        return cueElapsedTime(seconds, false);
-      case CUE_LONG:
-        return cueElapsedTime(seconds, true);
-      case TXT:
-      case TXT_SHORT:
-        return DateUtils.formatElapsedTime(seconds);
-      case TXT_LONG:
-        return txtElapsedTime(seconds);
-      case TXT_TIMESTAMP:
-        return formatTime(seconds);
-    }
-    return "";
+    return switch (target) {
+      case CUE, CUE_SHORT -> cueElapsedTime(seconds, false);
+      case CUE_LONG -> cueElapsedTime(seconds, true);
+      case TXT, TXT_SHORT -> DateUtils.formatElapsedTime(seconds);
+      case TXT_LONG -> txtElapsedTime(seconds);
+      case TXT_TIMESTAMP -> formatTime(seconds);
+    };
   }
 
   private String cueElapsedTime(long seconds, boolean includeDimension) {
@@ -394,22 +371,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Format pace from raw pace Most of RU handles pace separately instead of just storing speed and
-   * formatting
-   *
-   * @param target
-   * @param seconds_per_meter
-   * @return
-   */
-  public String formatPace(Format target, double seconds_per_meter) {
-    double meters_per_second =
-        (seconds_per_meter == 0 || Double.isNaN(seconds_per_meter))
-            ? Double.NaN
-            : 1 / seconds_per_meter;
-    return formatPaceSpeed(target, meters_per_second);
-  }
-
-  /**
    * Returns either a formatted value in minutes per kilometer or kilometer per hour depending on
    * the user's preference
    *
@@ -418,12 +379,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return display value
    */
   public String formatVelocityByPreferredUnit(Format target, double meters_per_second) {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
-      return this.formatPaceSpeed(target, meters_per_second);
+    return formatVelocity(target, meters_per_second, getPreferredSpeedUnit());
+  }
+
+  public String formatVelocity(Format target, double meters_per_second, SpeedUnit unit) {
+    if (unit == SpeedUnit.PACE) {
+      return this.formatPace(target, meters_per_second);
     } else {
       return this.formatSpeed(target, meters_per_second);
     }
@@ -435,11 +396,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return value
    */
   public String formatVelocityLabel() {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+    return formatVelocityLabel(getPreferredSpeedUnit());
+  }
+
+  public String formatVelocityLabel(SpeedUnit unit) {
+    if (unit == SpeedUnit.PACE) {
       return this.resources.getString(org.runnerup.common.R.string.Pace);
     } else {
       return this.resources.getString(org.runnerup.common.R.string.Speed);
@@ -453,32 +414,23 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @param meters_per_second speed in m/s
    * @return
    */
-  public String formatPaceSpeed(Format target, double meters_per_second) {
-    switch (target) {
-      case CUE:
-      case CUE_SHORT:
-      case CUE_LONG:
-        return cuePace(meters_per_second);
-      case TXT:
-      case TXT_SHORT:
-        return txtPace(meters_per_second, false);
-      case TXT_LONG:
-        return txtPace(meters_per_second, true);
-    }
-    return "";
+  public String formatPace(Format target, double meters_per_second) {
+    return switch (target) {
+      case CUE, CUE_SHORT, CUE_LONG -> cuePace(meters_per_second);
+      case TXT, TXT_SHORT -> txtPace(meters_per_second, false);
+      case TXT_LONG -> txtPace(meters_per_second, true);
+      default -> "";
+    };
   }
 
   /**
    * @return pace/speed unit string
    */
   String getVelocityUnit() { // Resources resources, SharedPreferences sharedPreferences) {
-    switch (getPreferredSpeedUnit()) {
-      case SPEED:
-        return getSpeedUnit();
-      case PACE:
-      default:
-        return getPaceUnit();
-    }
+    SpeedUnit preferredSpeedUnit = getPreferredSpeedUnit();
+    return Objects.requireNonNull(preferredSpeedUnit) == SpeedUnit.SPEED
+        ? getSpeedUnit()
+        : getPaceUnit();
   }
 
   private String getPaceUnit() {
