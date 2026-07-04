@@ -596,7 +596,9 @@ public class SyncManager {
       return;
     }
 
-    mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
+    if (mSpinner != null && mSpinner.isShowing()) {
+      mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
+    }
     final Synchronizer synchronizer = synchronizers.get(pendingSynchronizers.iterator().next());
     pendingSynchronizers.remove(synchronizer.getName());
     doUpload(synchronizer);
