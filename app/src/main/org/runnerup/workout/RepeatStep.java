@@ -167,6 +167,9 @@ public class RepeatStep extends Step {
 
   @Override
   public double getTime(Workout w, Scope s) {
+    if (currentStep < 0 || currentStep >= steps.size()) {
+      return 0.0;
+    }
     return steps.get(currentStep).getTime(w, s);
   }
 
