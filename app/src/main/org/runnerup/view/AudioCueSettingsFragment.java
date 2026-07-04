@@ -59,9 +59,14 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     setHasOptionsMenu(true); // this fragment has menu items
   }
 
+  private String sanitizeSettingsName(String name) {
+    if (name == null) return null;
+    return name.replaceAll("[^a-zA-Z0-9.-]", "_");
+  }
+
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-    settingsName = requireArguments().getString("name");
+    settingsName = sanitizeSettingsName(requireArguments().getString("name"));
 
     if (settingsName != null) {
       PreferenceManager prefMgr = getPreferenceManager();
@@ -223,7 +228,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
                 + File.separator
                 + PREFS_DIR
                 + "/"
-                + name
+                + sanitizeSettingsName(name)
                 + SUFFIX
                 + ".xml");
     //noinspection ResultOfMethodCallIgnored
@@ -359,9 +364,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
               if (settingsName == null || settingsName.contentEquals(DEFAULT))
                 prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
               else
-                prefs =
-                    requireContext()
-                        .getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
+                prefs = context.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
               final boolean mute =
                   prefs.getBoolean(getResources().getString(R.string.pref_mute_bool), false);
 
