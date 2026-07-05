@@ -360,9 +360,11 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
                 return;
               }
 
+              Context context = getContext();
+              if (context == null) return;
               SharedPreferences prefs;
               if (settingsName == null || settingsName.contentEquals(DEFAULT))
-                prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
               else
                 prefs = context.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
               final boolean mute =
