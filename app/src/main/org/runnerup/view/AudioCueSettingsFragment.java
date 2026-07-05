@@ -360,13 +360,15 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
                 return;
               }
 
+              Context context = getContext();
+              if (context == null) return;
               SharedPreferences prefs;
               if (settingsName == null || settingsName.contentEquals(DEFAULT))
-                prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
               else
                 prefs =
-                    requireContext()
-                        .getSharedPreferences(sanitizeSettingsName(settingsName) + SUFFIX, Context.MODE_PRIVATE);
+                    context.getSharedPreferences(
+                        sanitizeSettingsName(settingsName) + SUFFIX, Context.MODE_PRIVATE);
               final boolean mute =
                   prefs.getBoolean(getResources().getString(R.string.pref_mute_bool), false);
 
