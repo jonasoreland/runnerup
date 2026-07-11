@@ -2,20 +2,26 @@ package org.runnerup.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TableRow;
+import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.WindowCompat;
+import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +56,8 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
 
     Intent intent = getIntent();
     String advWorkoutName = intent.getStringExtra(ManageWorkoutsActivity.WORKOUT_NAME);
-    boolean workoutExists = intent.getBooleanExtra(ManageWorkoutsActivity.WORKOUT_EXISTS, false);
+    boolean workoutEditMode =
+        intent.getBooleanExtra(ManageWorkoutsActivity.WORKOUT_EDIT_MODE, false);
 
     advancedWorkoutSpinner = findViewById(R.id.new_workout_spinner);
     advancedWorkoutSpinner.setValue(advWorkoutName);
@@ -74,24 +81,56 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
     Button discardWorkoutButton = findViewById(R.id.workout_discard_button);
     discardWorkoutButton.setOnClickListener(discardWorkoutButtonClick);
 
-    if (workoutExists) {
+    Button renameWorkoutButton = findViewById(R.id.workout_rename_button);
+    renameWorkoutButton.setVisibility(View.GONE);
+
+    if (workoutEditMode) {
       // Avoid users inadvertently deleting existing workouts while editing:
       // (discard button should only be available when creating a workout)
       discardWorkoutButton.setVisibility(View.GONE);
+      renameWorkoutButton.setVisibility(View.VISIBLE);
+      renameWorkoutButton.setOnClickListener(renameWorkoutButtonClick);
     }
 
     try {
-      createAdvancedWorkout(advWorkoutName, workoutExists);
+      createAdvancedWorkout(advWorkoutName, workoutEditMode);
     } catch (Exception e) {
       handleWorkoutFileException(e);
     }
 
+    // Persist the currently displayed workout name when leaving via the back button so that
+    // StartFragment's advanced tab points at (and shows) this workout when we return.
+    getOnBackPressedDispatcher()
+        .addCallback(
+            this,
+            new OnBackPressedCallback(true) {
+              @Override
+              public void handleOnBackPressed() {
+                persistCurrentWorkoutName();
+                finish();
+              }
+            });
+
     ViewUtil.Insets(findViewById(R.id.create_advanced_workout_view), true);
   }
 
-  private void createAdvancedWorkout(String name, boolean workoutExists)
+  private void persistCurrentWorkoutName() {
+    if (advancedWorkoutSpinner == null) {
+      return;
+    }
+    try {
+      String curName = advancedWorkoutSpinner.getValue().toString();
+      SharedPreferences prefs =
+          PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+      prefs.edit().putString(getString(R.string.pref_advanced_workout), curName).apply();
+    } catch (Exception ignored) {
+      // If the spinner value can't be read, fall back to the default back behaviour.
+    }
+  }
+
+  private void createAdvancedWorkout(String name, boolean workoutEditMode)
       throws JSONException, IOException {
-    if (workoutExists) {
+    if (workoutEditMode) {
       advancedWorkout = WorkoutSerializer.readFile(getApplicationContext(), name);
     } else {
       advancedWorkout = new Workout();
@@ -306,4 +345,74 @@ public class CreateAdvancedWorkout extends AppCompatActivity {
               .setNegativeButton(
                   org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
               .show();
+
+  private final View.OnClickListener renameWorkoutButtonClick =
+      view -> {
+        final EditText newWorkoutNameEditText = new EditText(CreateAdvancedWorkout.this);
+        newWorkoutNameEditText.setHint(org.runnerup.common.R.string.Enter_new_workout_name);
+        newWorkoutNameEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        newWorkoutNameEditText.setSingleLine(true);
+        newWorkoutNameEditText.setMaxLines(1);
+        newWorkoutNameEditText.setText(advancedWorkoutSpinner.getValue().toString());
+
+        new AlertDialog.Builder(CreateAdvancedWorkout.this)
+            .setView(newWorkoutNameEditText)
+            .setPositiveButton(
+                org.runnerup.common.R.string.OK,
+                (dialog, which) -> {
+                  String newWorkoutName = newWorkoutNameEditText.getText().toString().trim();
+                  String oldWorkoutName = advancedWorkoutSpinner.getValue().toString().trim();
+                  if (newWorkoutName.isEmpty()
+                      || newWorkoutName.contains("/")
+                      || newWorkoutName.contains("\\")
+                      || newWorkoutName.contains("..")) {
+                    Toast.makeText(
+                            CreateAdvancedWorkout.this,
+                            org.runnerup.common.R.string.Invalid_workout_name,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
+                  if (newWorkoutName.equals(oldWorkoutName)) {
+                    Toast.makeText(
+                            CreateAdvancedWorkout.this,
+                            org.runnerup.common.R.string
+                                .New_workout_name_is_the_same_as_the_old_one,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
+                  File f = WorkoutSerializer.getFile(getApplicationContext(), newWorkoutName);
+                  if (f.exists()) {
+                    Toast.makeText(
+                            CreateAdvancedWorkout.this,
+                            org.runnerup.common.R.string.Workout_name_already_in_use,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
+                  try {
+                    WorkoutSerializer.writeFile(
+                        getApplicationContext(), newWorkoutName, advancedWorkout);
+                    File oldFile =
+                        WorkoutSerializer.getFile(getApplicationContext(), oldWorkoutName);
+                    if (!oldFile.delete())
+                      throw new IOException("Failed to delete old workout file");
+                    SharedPreferences prefs =
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String key = getString(R.string.pref_advanced_workout);
+                    if (oldWorkoutName.contentEquals(prefs.getString(key, ""))) {
+                      prefs.edit().putString(key, newWorkoutName).apply();
+                    }
+                    advancedWorkoutSpinner.setValue(newWorkoutName);
+                    dialog.dismiss();
+                    finish();
+                  } catch (Exception e) {
+                    handleWorkoutFileException(e);
+                  }
+                })
+            .setNegativeButton(
+                org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
+            .show();
+      };
 }

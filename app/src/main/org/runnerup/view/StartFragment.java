@@ -177,6 +177,23 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private static final int REQUEST_LOCATION = 3000;
   private static final int START_ACTIVITY = 112;
 
+  private final SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener =
+      (sharedPrefs, key) -> {
+        assert key != null;
+        if (key.equals(getString(R.string.pref_advanced_workout))) {
+          String newName = sharedPrefs.getString(key, "");
+          if (!newName.isEmpty()) {
+            loadAdvanced(newName);
+            if (advancedWorkoutSpinner != null) {
+              advancedWorkoutSpinner.setValue(newName);
+            }
+            if (advancedWorkoutListAdapter != null) {
+              advancedWorkoutListAdapter.reload();
+            }
+          }
+        }
+      };
+
   public StartFragment() {
     super(R.layout.start);
   }
@@ -430,6 +447,13 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     intervalAudioListAdapter.reload();
     advancedAudioListAdapter.reload();
     advancedWorkoutListAdapter.reload();
+
+    // Ensure spinner reflects current preference after returning from CreateAdvancedWorkout
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+    String currentWorkoutName = prefs.getString(getString(R.string.pref_advanced_workout), "");
+    if (!currentWorkoutName.isEmpty() && advancedWorkoutSpinner != null) {
+      advancedWorkoutSpinner.setValue(currentWorkoutName);
+    }
     hrZonesAdapter.reload();
     simpleTargetHrz.setAdapter(hrZonesAdapter);
     if (!hrZonesAdapter.hrZones.isConfigured()) {
@@ -448,12 +472,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       onGpsTrackerBound();
     }
     this.updateView();
+    PreferenceManager.getDefaultSharedPreferences(requireContext())
+        .registerOnSharedPreferenceChangeListener(prefChangeListener);
     mWearNotifier.onResume();
   }
 
   @Override
   public void onPause() {
     super.onPause();
+    PreferenceManager.getDefaultSharedPreferences(requireContext())
+        .unregisterOnSharedPreferenceChangeListener(prefChangeListener);
 
     if (getAutoStartGps()) {
       // If autoStartGps, then stop it during pause

@@ -75,6 +75,14 @@
         android:layout_weight="1"
         style="@style/ButtonText"
         android:background="@drawable/btn_red"/>
+      <Button
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:text="@string/Rename"
+          android:id="@+id/workout_rename_button"
+          android:layout_weight="1"
+          style="@style/ButtonText"
+          android:background="@drawable/btn_blue"/>
     </TableRow>
   </TableLayout>
 

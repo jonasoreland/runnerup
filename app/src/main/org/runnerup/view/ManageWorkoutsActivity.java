@@ -79,7 +79,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
   private String PHONE_STRING = "My phone";
   public static final String WORKOUT_NAME = "";
-  public static final String WORKOUT_EXISTS = "workout_exists";
+  public static final String WORKOUT_EDIT_MODE = "workout_edit_mode";
 
   private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
   private final ArrayList<ContentValues> providers = new ArrayList<>();
@@ -403,9 +403,29 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             .setPositiveButton(
                 org.runnerup.common.R.string.OK,
                 (dialog, whichButton) -> {
-                  String value = input.getText().toString();
+                  String value = input.getText().toString().trim();
+                  if (value.isEmpty()
+                      || value.contains("/")
+                      || value.contains("\\")
+                      || value.contains("..")) {
+                    Toast.makeText(
+                            ManageWorkoutsActivity.this,
+                            org.runnerup.common.R.string.Invalid_workout_name,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
+                  File f = WorkoutSerializer.getFile(getApplicationContext(), value);
+                  if (f.exists()) {
+                    Toast.makeText(
+                            ManageWorkoutsActivity.this,
+                            org.runnerup.common.R.string.Workout_name_already_in_use,
+                            Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
                   intent.putExtra(WORKOUT_NAME, value);
-                  intent.putExtra(WORKOUT_EXISTS, false);
+                  intent.putExtra(WORKOUT_EDIT_MODE, false);
                   startActivity(intent);
                 })
             .setNegativeButton(
@@ -496,7 +516,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
 
         intent.putExtra(WORKOUT_NAME, selected.workoutName());
-        intent.putExtra(WORKOUT_EXISTS, true);
+        intent.putExtra(WORKOUT_EDIT_MODE, true);
         startActivity(intent);
       };
 

@@ -27,7 +27,7 @@ project.ext {
     appcompat_version = "1.7.1"
     annotation_version = "1.9.1"
     preference_version = "1.2.1"
-    googlePlayServicesVersion = '21.3.0'
+    googlePlayServicesVersion = '21.4.0'
     googlePlayServicesWearableVersion = '20.0.1'
     googleWearVersion = '2.9.0'
 
