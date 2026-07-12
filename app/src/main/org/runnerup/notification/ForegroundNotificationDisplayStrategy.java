@@ -3,6 +3,7 @@ package org.runnerup.notification;
 import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
@@ -16,21 +17,30 @@ public class ForegroundNotificationDisplayStrategy implements NotificationDispla
     this.service = service;
   }
 
+  private boolean isForeground = false;
+
   @Override
   public void notify(int notificationId, Notification notification) {
-    int type = 0;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      if (ContextCompat.checkSelfPermission(service, Manifest.permission.ACCESS_FINE_LOCATION)
-          == PackageManager.PERMISSION_GRANTED) {
-        type = ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+    if (!isForeground) {
+      int type = 0;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (ContextCompat.checkSelfPermission(service, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+          type = ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+            && ContextCompat.checkSelfPermission(service, Manifest.permission.ACTIVITY_RECOGNITION)
+                == PackageManager.PERMISSION_GRANTED) {
+          type |= ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH;
+        }
       }
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-          && ContextCompat.checkSelfPermission(service, Manifest.permission.ACTIVITY_RECOGNITION)
-              == PackageManager.PERMISSION_GRANTED) {
-        type |= ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH;
-      }
+      ServiceCompat.startForeground(service, notificationId, notification, type);
+      isForeground = true;
+    } else {
+      android.app.NotificationManager notificationManager =
+          (android.app.NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+      notificationManager.notify(notificationId, notification);
     }
-    ServiceCompat.startForeground(service, notificationId, notification, type);
   }
 
   @Override

@@ -61,6 +61,7 @@ import org.runnerup.export.oauth2client.OAuth2Activity;
 import org.runnerup.export.oauth2client.OAuth2Server;
 import org.runnerup.export.util.SyncHelper;
 import org.runnerup.util.Formatter;
+import org.runnerup.util.SafeParse;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.Sport;
 
@@ -556,11 +557,7 @@ public class RunKeeperSynchronizer extends DefaultSynchronizer
     if (prefs.getBoolean(res.getString(R.string.pref_autolap_active), false)) {
       String autoLap =
           prefs.getString(res.getString(R.string.pref_autolap), String.valueOf(lapLength));
-      try {
-        lapLength = Double.parseDouble(autoLap);
-      } catch (NumberFormatException e) {
-        return lapLength;
-      }
+      lapLength = SafeParse.parseDouble(autoLap, lapLength);
       return lapLength;
     }
     return lapLength;
