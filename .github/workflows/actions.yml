@@ -132,3 +132,11 @@ jobs:
           name: fdroid-logs
           path: |
             build/reports/problems/
+            
+      - name: Upload F-Droid APK
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fdroid-apk
+          path: |
+            app/build/outputs/apk/latestRelease/*.apk
