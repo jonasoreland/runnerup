@@ -77,6 +77,8 @@ jobs:
           # possibly include: app/build/outputs/bundle/latestRelease/ wear/build/outputs/bundle/release/
           path: |
             **/build/outputs/logs/
+            app/build/outputs/bundle/latestRelease/*.aab
+            wear/build/outputs/bundle/release/*.aab
 
       - name: Test
         run: ./gradlew test
