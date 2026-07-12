@@ -49,7 +49,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
-          cmdline-tools-version: '9.0'
+          cmdline-tools-version: '9477386'
 
       - name: Install Android SDK components
         run: |
