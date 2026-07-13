@@ -68,8 +68,8 @@ jobs:
           echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
           chmod +x gradlew
 
-      - name: Build bundle
-        run: ./gradlew :app:bundleLatestRelease :wear:bundleRelease
+      - name: Build bundle and APK
+        run: ./gradlew :app:bundleLatestRelease :app:assembleLatestRelease :wear:bundleRelease
 
       - name: Upload build logs
         if: always()
