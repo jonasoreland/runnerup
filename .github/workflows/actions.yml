@@ -68,29 +68,29 @@ jobs:
           echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
           chmod +x gradlew
 
-      - name: Build bundle and APK
+            - name: Build AAB and APK
         run: ./gradlew :app:bundleLatestRelease :app:assembleLatestRelease :wear:bundleRelease
 
-      - name: Upload build logs
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-bundle
-          # possibly include: app/build/outputs/bundle/latestRelease/ wear/build/outputs/bundle/release/
-          path: |
-            **/build/outputs/logs/
-            app/build/outputs/bundle/latestRelease/*.aab
-            app/build/outputs/apk/latestRelease/*.apk
-            wear/build/outputs/bundle/release/*.aab
       - name: Find APK files
         run: |
           echo "Searching for all APK files..."
           find app/build -name "*.apk" -type f
           echo "Listing apk directory structure..."
           ls -la app/build/outputs/apk/ || echo "APK directory not found"
-            - name: Test
-              run: ./gradlew test
 
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-bundle
+          path: |
+            **/build/outputs/logs/
+            app/build/outputs/bundle/latestRelease/*.aab
+            app/build/outputs/apk/latestRelease/*.apk
+            wear/build/outputs/bundle/release/*.aab
+
+      - name: Test
+        run: ./gradlew test
       - name: Upload test logs
         if: always()
         uses: actions/upload-artifact@v7
