@@ -86,7 +86,7 @@ jobs:
           path: |
             **/build/outputs/logs/
             app/build/outputs/bundle/latestRelease/*.aab
-            app/build/outputs/apk/latestRelease/*.apk
+            app/build/outputs/apk/latest/release/*.apk
             wear/build/outputs/bundle/release/*.aab
 
       - name: Test
@@ -148,5 +148,5 @@ jobs:
         with:
           name: fdroid-apk
           path: |
-            app/build/outputs/apk/latestRelease/*.apk
+            app/build/outputs/apk/latest/release/*.apk
 
