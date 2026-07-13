@@ -82,9 +82,14 @@ jobs:
             app/build/outputs/bundle/latestRelease/*.aab
             app/build/outputs/apk/latestRelease/*.apk
             wear/build/outputs/bundle/release/*.aab
-
-      - name: Test
-        run: ./gradlew test
+      - name: Find APK files
+        run: |
+          echo "Searching for all APK files..."
+          find app/build -name "*.apk" -type f
+          echo "Listing apk directory structure..."
+          ls -la app/build/outputs/apk/ || echo "APK directory not found"
+            - name: Test
+              run: ./gradlew test
 
       - name: Upload test logs
         if: always()
