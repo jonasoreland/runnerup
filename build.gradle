@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
     }
 }
 
@@ -105,6 +106,9 @@ project.ext {
     } else {
         applicationId = "org.runnerup"
     }
+
+    composeBomVersion = '2024.04.01'
+    kotlinCompilerExtensionVersion = '1.5.4'
 }
 
 // Special setup for antPlusLib, not allowed to copy the .aar and create mavenLocal
