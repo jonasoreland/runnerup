@@ -80,6 +80,7 @@ jobs:
           path: |
             **/build/outputs/logs/
             app/build/outputs/bundle/latestRelease/*.aab
+            app/build/outputs/apk/latestRelease/*.apk
             wear/build/outputs/bundle/release/*.aab
 
       - name: Test
