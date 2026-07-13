@@ -133,6 +133,9 @@ jobs:
           path: |
             build/reports/problems/
             
+      - name: List F-Droid APK (for debug)
+        run: ls -la app/build/outputs/apk/latestRelease/ || echo "Directory not found"
+
       - name: Upload F-Droid APK
         if: always()
         uses: actions/upload-artifact@v7
@@ -140,3 +143,4 @@ jobs:
           name: fdroid-apk
           path: |
             app/build/outputs/apk/latestRelease/*.apk
+
