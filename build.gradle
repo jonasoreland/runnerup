@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     id "com.diffplug.spotless" version "8.6.0"
-    id 'org.jetbrains.kotlin.plugin.compose' version '1.9.0'
+    // 移除了错误的 'org.jetbrains.kotlin.kapt' 插件声明
 }
 
 repositories {
@@ -108,6 +108,7 @@ project.ext {
         applicationId = "org.runnerup"
     }
 
+    // 保留了 Compose 版本变量，供 app/build.gradle 引用
     composeBomVersion = '2024.04.01'
     kotlinCompilerExtensionVersion = '1.5.4'
 }
