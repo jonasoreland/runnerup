@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'kotlin-kapt'
+// 已移除 'kotlin-kapt' 插件
 
 def getGitHash = providers.exec {
     commandLine('git', 'rev-parse', '--short', 'HEAD')
 }.standardOutput.asText.get().strip()
 
 android {
-    compileSdk 34  // 添加这一行，直接指定 compileSdk
+    compileSdk 34
     buildToolsVersion = rootProject.ext.buildToolsVersion
     namespace = 'org.runnerup'
 
@@ -36,7 +36,6 @@ android {
             } else {
                 java.srcDirs += ['src/osmdroid']
             }
-            // renderscript.srcDirs = java.srcDirs
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
@@ -47,7 +46,6 @@ android {
     productFlavors {
         latest {
             dimension = "all"
-            // multidexing support, min play support
             minSdk = rootProject.ext.minSdk
             compileSdk = rootProject.ext.compileSdk
             targetSdk = rootProject.ext.targetSdk
@@ -57,10 +55,6 @@ android {
     }
 
     defaultConfig {
-        // Set a separate applicationId to allow variant installations
-        // The applicationId is also used in some xml files (android:targetPackage)
-        // The packageId (in the manifest) is never changed
-        // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
     }
@@ -72,20 +66,19 @@ android {
 
     buildTypes {
         debug {
-            // Separate the debug build, sync with common/build.gradle
             applicationIdSuffix ".debug"
             versionNameSuffix = "-${getGitHash}"
         }
         release {
             debuggable = false
             applicationIdSuffix = ""
-
             minifyEnabled = rootProject.ext.allowNonFree
             shrinkResources = rootProject.ext.allowNonFree
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
             signingConfig = signingConfigs.release
         }
     }
+
     buildTypes.configureEach {
         buildConfigField 'boolean', 'MAPBOX_ENABLED', "${rootProject.ext.mapboxEnabled}"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', "\"${rootProject.ext.mapboxAccessToken}\""
@@ -99,6 +92,7 @@ android {
         buildConfigField 'String', 'DROPBOX_ID', "\"${rootProject.ext.dropboxId}\""
         buildConfigField 'String', 'DROPBOX_SECRET', "\"${rootProject.ext.dropboxSecret}\""
     }
+
     lint {
         baseline = file('lint-baseline.xml')
         checkReleaseBuilds = true
@@ -108,28 +102,28 @@ android {
             lintConfig = file('lint-osmdroid.xml')
         }
         showAll = true
-        //textOutput = 'stdout'
         textReport = true
-        // Treat all warnings as errors
         warningsAsErrors = true
-        // Halt the build if any errors are found
         abortOnError = true
     }
+
     bundle {
         language {
-            // Language can be set for audio cues, include all locales
             enableSplit = false
         }
     }
+
     buildFeatures {
         aidl = true
         buildConfig = true
         resValues = true
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
+
     androidResources {
         generateLocaleConfig = true
     }
@@ -137,7 +131,7 @@ android {
 
 repositories {
     google()
-    mavenCentral() //MapBox GraphView
+    mavenCentral()
     if (rootProject.ext.mapboxEnabled) {
         maven {
             url = 'https://api.mapbox.com/downloads/v2/releases/maven'
@@ -145,10 +139,7 @@ repositories {
                 basic(BasicAuthentication)
             }
             credentials {
-                // Do not change the username below.
-                // This should always be `mapbox` (not your username).
                 username = 'mapbox'
-                // Use the secret token you stored in gradle.properties as the password
                 def props = new Properties()
                 props.load(new FileInputStream(rootProject.file("mapbox.properties")))
                 password = props.mapboxDownloadToken
@@ -175,7 +166,6 @@ dependencies {
 
     implementation "com.squareup.okhttp3:okhttp:5.4.0"
     if (rootProject.ext.allowNonFree) {
-        // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
     }
     if (rootProject.ext.mapboxEnabled) {
@@ -188,18 +178,14 @@ dependencies {
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 
-    // 新增 kapt 依赖，用于 Compose 编译器
-    //kapt "androidx.compose.compiler:compiler:1.5.4"
-
-    // 新增 Jetpack Compose 依赖
+    // Jetpack Compose 依赖
     implementation platform('androidx.compose:compose-bom:2024.04.01')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.runtime:runtime-livedata' // 如果你需要与 LiveData 交互
+    implementation 'androidx.compose.runtime:runtime-livedata'
 
-    // Debug 依赖 (仅在调试时使用)
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }
@@ -207,17 +193,14 @@ dependencies {
 allprojects {
     tasks.withType(JavaCompile).tap {
         configureEach {
-            // options.compilerArgs << "-Xlint:deprecation";
             options.compilerArgs << "-Xlint:unchecked"
         }
     }
 }
 
 def props = new Properties()
-// For locally signed builds only, Google Play signs the bundle
 if (rootProject.file("release.properties").exists()) {
     props.load(new FileInputStream(rootProject.file("release.properties")))
-
     android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
     android.signingConfigs.release.storePassword props.keyStorePassword
     android.signingConfigs.release.keyAlias props.keyAlias
