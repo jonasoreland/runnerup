@@ -68,13 +68,22 @@
         android:dataExtractionRules="@xml/data_extraction_rules">
         <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="true" />
         <activity
+           android:name=".compose.ComposeMainActivity"
+           android:exported="true"
+           android:theme="@style/AppTheme.NoActionBar">
+           <intent-filter>
+               <action android:name="android.intent.action.MAIN"/>
+               <category android:name="android.intent.category.LAUNCHER"/>
+           </intent-filter>
+        </activity>
+        <activity
             android:exported="true"
             android:name=".view.MainLayout"
             android:theme="@style/MainLayoutTheme">
-            <intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+            </intent-filter> -->
 
             <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW"/>
