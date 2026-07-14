@@ -70,7 +70,7 @@ jobs:
           chmod +x gradlew
 
       - name: Build AAB and APK
-        run: ./gradlew :app:bundleLatestRelease :app:assembleLatestRelease :wear:bundleRelease
+        run: ./gradlew :app:bundleLatestRelease :app:assembleLatestRelease :wear:bundleRelease --stacktrace --info
 
       - name: Find APK files
         run: |
