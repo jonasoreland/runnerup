@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/compose-ui
       - test/**
   pull_request:
     types: [opened, synchronize, reopened]
