@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-kapt'
+//apply plugin: 'kotlin-kapt'
 
 def getGitHash = providers.exec {
     commandLine('git', 'rev-parse', '--short', 'HEAD')
@@ -189,7 +189,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 
     // 新增 kapt 依赖，用于 Compose 编译器
-    kapt "androidx.compose.compiler:compiler:1.5.4"
+    //kapt "androidx.compose.compiler:compiler:1.5.4"
 
     // 新增 Jetpack Compose 依赖
     implementation platform('androidx.compose:compose-bom:2024.04.01')
