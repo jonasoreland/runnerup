@@ -11,6 +11,7 @@ buildscript {
 
 plugins {
     id "com.diffplug.spotless" version "8.6.0"
+    id 'org.jetbrains.kotlin.plugin.compose' version '1.9.0'
 }
 
 repositories {
