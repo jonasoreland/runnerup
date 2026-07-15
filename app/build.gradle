@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-// 已移除 'kotlin-kapt' 插件
+apply plugin: 'kotlin-android'
 
 def getGitHash = providers.exec {
     commandLine('git', 'rev-parse', '--short', 'HEAD')
@@ -112,7 +112,11 @@ android {
             enableSplit = false
         }
     }
-
+    // 关键：显式设置 JVM 目标
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    
     buildFeatures {
         aidl = true
         buildConfig = true
@@ -120,9 +124,9 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
-    }
+    // composeOptions {
+    //     kotlinCompilerExtensionVersion = "1.5.4"
+    // }
 
     androidResources {
         generateLocaleConfig = true
