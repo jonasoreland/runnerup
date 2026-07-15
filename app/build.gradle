@@ -124,9 +124,9 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
-    }
+    // composeOptions {
+    //     kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
+    // }
 
     androidResources {
         generateLocaleConfig = true
