@@ -12,7 +12,7 @@ buildscript {
 plugins {
     id "com.diffplug.spotless" version "8.6.0"
     // 移除了错误的 'org.jetbrains.kotlin.kapt' 插件声明
-    //id 'org.jetbrains.kotlin.plugin.compose' version '1.9.0'  // 添加这一行
+    id 'org.jetbrains.kotlin.plugin.compose' version '1.8.10'  // 添加这一行
 }
 
 repositories {
