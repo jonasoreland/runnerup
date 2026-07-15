@@ -5,14 +5,14 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:9.2.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10"
     }
 }
 
 plugins {
     id "com.diffplug.spotless" version "8.6.0"
     // 移除了错误的 'org.jetbrains.kotlin.kapt' 插件声明
-    id 'org.jetbrains.kotlin.plugin.compose' version '1.9.0'  // 添加这一行
+    //id 'org.jetbrains.kotlin.plugin.compose' version '1.9.0'  // 添加这一行
 }
 
 repositories {
@@ -110,8 +110,10 @@ project.ext {
     }
 
     // 保留了 Compose 版本变量，供 app/build.gradle 引用
-    composeBomVersion = '2024.04.01'
-    kotlinCompilerExtensionVersion = '1.5.4'
+    // composeBomVersion = '2024.04.01'
+    // kotlinCompilerExtensionVersion = '1.5.4'
+    composeBomVersion = '2023.03.00'
+    kotlinCompilerExtensionVersion = '1.4.3'
 }
 
 // Special setup for antPlusLib, not allowed to copy the .aar and create mavenLocal
