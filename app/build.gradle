@@ -1,5 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+// apply plugin: 'com.android.application'
+// apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 def getGitHash = providers.exec {
     commandLine('git', 'rev-parse', '--short', 'HEAD')
