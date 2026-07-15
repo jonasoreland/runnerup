@@ -24,26 +24,50 @@ android {
     }
 
     sourceSets {
+        // main {
+        //     manifest.srcFile 'AndroidManifest.xml'
+        //     java.srcDirs = ['src/main']
+        //     if (rootProject.ext.allowNonFree) {
+        //         java.srcDirs += ['src/play']
+        //     } else {
+        //         java.srcDirs += ['src/nonplay']
+        //     }
+        //     if (rootProject.ext.enableWear) {
+        //         java.srcDirs += ['src/wear']
+        //     } else {
+        //         java.srcDirs += ['src/nonwear']
+        //     }
+        //     if (rootProject.ext.noMap) {
+        //         java.srcDirs += ['src/nomap']
+        //     } else if (rootProject.ext.mapboxEnabled) {
+        //         java.srcDirs += ['src/mapbox']
+        //     } else {
+        //         java.srcDirs += ['src/osmdroid']
+        //     }
+        //     res.srcDirs = ['res']
+        //     assets.srcDirs = ['assets']
+        // }
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src/main']
+            java.srcDirs = ['src/main/java']  // 明确指定
             if (rootProject.ext.allowNonFree) {
-                java.srcDirs += ['src/play']
+                java.srcDirs += ['src/play/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/nonplay']
+                java.srcDirs += ['src/nonplay/java']  // 明确指定
             }
             if (rootProject.ext.enableWear) {
-                java.srcDirs += ['src/wear']
+                java.srcDirs += ['src/wear/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/nonwear']
+                java.srcDirs += ['src/nonwear/java']  // 明确指定
             }
             if (rootProject.ext.noMap) {
-                java.srcDirs += ['src/nomap']
+                java.srcDirs += ['src/nomap/java']  // 明确指定
             } else if (rootProject.ext.mapboxEnabled) {
-                java.srcDirs += ['src/mapbox']
+                java.srcDirs += ['src/mapbox/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/osmdroid']
+                java.srcDirs += ['src/osmdroid/java']  // 明确指定
             }
+            // 资源目录保持不变
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
