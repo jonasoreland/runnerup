@@ -51,7 +51,7 @@ android {
         latest {
             dimension = "all"
             minSdk = rootProject.ext.minSdk
-            compileSdk = rootProject.ext.compileSdk
+            //compileSdk = rootProject.ext.compileSdk
             targetSdk = rootProject.ext.targetSdk
             versionName = rootProject.ext.versionName
             versionCode = rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
@@ -124,10 +124,17 @@ android {
         compose = true
     }
 
-    // composeOptions {
-    //     kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
-    // }
+    // 1. 启用 composeOptions（关键）
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
+    }
 
+    // 2. 添加 packaging 配置（与参考项目对齐）
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
     androidResources {
         generateLocaleConfig = true
     }
