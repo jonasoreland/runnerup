@@ -15,6 +15,10 @@ android {
         targetCompatibility = JavaVersion.toVersion("17")
     }
 
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -112,11 +116,7 @@ android {
             enableSplit = false
         }
     }
-    // 关键：显式设置 JVM 目标
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    
+
     buildFeatures {
         aidl = true
         buildConfig = true
@@ -124,9 +124,9 @@ android {
         compose = true
     }
 
-    // composeOptions {
-    //     kotlinCompilerExtensionVersion = "1.5.4"
-    // }
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
+    }
 
     androidResources {
         generateLocaleConfig = true
@@ -182,8 +182,8 @@ dependencies {
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 
-    // Jetpack Compose 依赖
-    implementation platform('androidx.compose:compose-bom:2024.04.01')
+    // Jetpack Compose 依赖 - 使用根目录定义的 BOM 版本
+    implementation platform("androidx.compose:compose-bom:${rootProject.ext.composeBomVersion}")
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
