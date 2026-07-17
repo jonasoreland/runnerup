@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/compose-ui
       - test/**
   pull_request:
     types: [opened, synchronize, reopened]
@@ -48,6 +49,8 @@ jobs:
  
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: '9477386'
 
       - name: Install Android SDK components
         run: |
@@ -66,21 +69,29 @@ jobs:
           echo "${{ secrets.RUNALYZE }}" > $GITHUB_WORKSPACE/runalyze.properties
           chmod +x gradlew
 
-      - name: Build bundle
-        run: ./gradlew :app:bundleLatestRelease :wear:bundleRelease
+      - name: Build AAB and APK
+        run: ./gradlew :app:bundleLatestRelease :app:assembleLatestRelease :wear:bundleRelease --stacktrace --info
+
+      - name: Find APK files
+        run: |
+          echo "Searching for all APK files..."
+          find app/build -name "*.apk" -type f
+          echo "Listing apk directory structure..."
+          ls -la app/build/outputs/apk/ || echo "APK directory not found"
 
       - name: Upload build logs
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: build-bundle
-          # possibly include: app/build/outputs/bundle/latestRelease/ wear/build/outputs/bundle/release/
           path: |
             **/build/outputs/logs/
+            app/build/outputs/bundle/latestRelease/*.aab
+            app/build/outputs/apk/latest/release/*.apk
+            wear/build/outputs/bundle/release/*.aab
 
       - name: Test
         run: ./gradlew test
-
       - name: Upload test logs
         if: always()
         uses: actions/upload-artifact@v7
@@ -128,3 +139,15 @@ jobs:
           name: fdroid-logs
           path: |
             build/reports/problems/
+            
+      - name: List F-Droid APK (for debug)
+        run: ls -la app/build/outputs/apk/latestRelease/ || echo "Directory not found"
+
+      - name: Upload F-Droid APK
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fdroid-apk
+          path: |
+            app/build/outputs/apk/latest/release/*.apk
+

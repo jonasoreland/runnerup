@@ -1,10 +1,16 @@
-apply plugin: 'com.android.application'
+// apply plugin: 'com.android.application'
+// apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 def getGitHash = providers.exec {
     commandLine('git', 'rev-parse', '--short', 'HEAD')
 }.standardOutput.asText.get().strip()
 
 android {
+    compileSdk 34
     buildToolsVersion = rootProject.ext.buildToolsVersion
     namespace = 'org.runnerup'
 
@@ -13,28 +19,55 @@ android {
         targetCompatibility = JavaVersion.toVersion("17")
     }
 
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     sourceSets {
+        // main {
+        //     manifest.srcFile 'AndroidManifest.xml'
+        //     java.srcDirs = ['src/main']
+        //     if (rootProject.ext.allowNonFree) {
+        //         java.srcDirs += ['src/play']
+        //     } else {
+        //         java.srcDirs += ['src/nonplay']
+        //     }
+        //     if (rootProject.ext.enableWear) {
+        //         java.srcDirs += ['src/wear']
+        //     } else {
+        //         java.srcDirs += ['src/nonwear']
+        //     }
+        //     if (rootProject.ext.noMap) {
+        //         java.srcDirs += ['src/nomap']
+        //     } else if (rootProject.ext.mapboxEnabled) {
+        //         java.srcDirs += ['src/mapbox']
+        //     } else {
+        //         java.srcDirs += ['src/osmdroid']
+        //     }
+        //     res.srcDirs = ['res']
+        //     assets.srcDirs = ['assets']
+        // }
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src/main']
+            java.srcDirs = ['src/main/java']  // 明确指定
             if (rootProject.ext.allowNonFree) {
-                java.srcDirs += ['src/play']
+                java.srcDirs += ['src/play/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/nonplay']
+                java.srcDirs += ['src/nonplay/java']  // 明确指定
             }
             if (rootProject.ext.enableWear) {
-                java.srcDirs += ['src/wear']
+                java.srcDirs += ['src/wear/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/nonwear']
+                java.srcDirs += ['src/nonwear/java']  // 明确指定
             }
             if (rootProject.ext.noMap) {
-                java.srcDirs += ['src/nomap']
+                java.srcDirs += ['src/nomap/java']  // 明确指定
             } else if (rootProject.ext.mapboxEnabled) {
-                java.srcDirs += ['src/mapbox']
+                java.srcDirs += ['src/mapbox/java']  // 明确指定
             } else {
-                java.srcDirs += ['src/osmdroid']
+                java.srcDirs += ['src/osmdroid/java']  // 明确指定
             }
-            // renderscript.srcDirs = java.srcDirs
+            // 资源目录保持不变
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
@@ -45,9 +78,8 @@ android {
     productFlavors {
         latest {
             dimension = "all"
-            // multidexing support, min play support
             minSdk = rootProject.ext.minSdk
-            compileSdk = rootProject.ext.compileSdk
+            //compileSdk = rootProject.ext.compileSdk
             targetSdk = rootProject.ext.targetSdk
             versionName = rootProject.ext.versionName
             versionCode = rootProject.ext.latestBaseVersionCode + rootProject.ext.versionCode
@@ -55,10 +87,6 @@ android {
     }
 
     defaultConfig {
-        // Set a separate applicationId to allow variant installations
-        // The applicationId is also used in some xml files (android:targetPackage)
-        // The packageId (in the manifest) is never changed
-        // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
         vectorDrawables.useSupportLibrary = true
     }
@@ -70,20 +98,19 @@ android {
 
     buildTypes {
         debug {
-            // Separate the debug build, sync with common/build.gradle
             applicationIdSuffix ".debug"
             versionNameSuffix = "-${getGitHash}"
         }
         release {
             debuggable = false
             applicationIdSuffix = ""
-
             minifyEnabled = rootProject.ext.allowNonFree
             shrinkResources = rootProject.ext.allowNonFree
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
             signingConfig = signingConfigs.release
         }
     }
+
     buildTypes.configureEach {
         buildConfigField 'boolean', 'MAPBOX_ENABLED', "${rootProject.ext.mapboxEnabled}"
         buildConfigField 'String', 'MAPBOX_ACCESS_TOKEN', "\"${rootProject.ext.mapboxAccessToken}\""
@@ -97,6 +124,7 @@ android {
         buildConfigField 'String', 'DROPBOX_ID', "\"${rootProject.ext.dropboxId}\""
         buildConfigField 'String', 'DROPBOX_SECRET', "\"${rootProject.ext.dropboxSecret}\""
     }
+
     lint {
         baseline = file('lint-baseline.xml')
         checkReleaseBuilds = true
@@ -106,23 +134,34 @@ android {
             lintConfig = file('lint-osmdroid.xml')
         }
         showAll = true
-        //textOutput = 'stdout'
         textReport = true
-        // Treat all warnings as errors
         warningsAsErrors = true
-        // Halt the build if any errors are found
         abortOnError = true
     }
+
     bundle {
         language {
-            // Language can be set for audio cues, include all locales
             enableSplit = false
         }
     }
+
     buildFeatures {
         aidl = true
         buildConfig = true
         resValues = true
+        compose = true
+    }
+
+    // 1. 启用 composeOptions（关键）
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.kotlinCompilerExtensionVersion
+    }
+
+    // 2. 添加 packaging 配置（与参考项目对齐）
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
     androidResources {
         generateLocaleConfig = true
@@ -131,7 +170,7 @@ android {
 
 repositories {
     google()
-    mavenCentral() //MapBox GraphView
+    mavenCentral()
     if (rootProject.ext.mapboxEnabled) {
         maven {
             url = 'https://api.mapbox.com/downloads/v2/releases/maven'
@@ -139,10 +178,7 @@ repositories {
                 basic(BasicAuthentication)
             }
             credentials {
-                // Do not change the username below.
-                // This should always be `mapbox` (not your username).
                 username = 'mapbox'
-                // Use the secret token you stored in gradle.properties as the password
                 def props = new Properties()
                 props.load(new FileInputStream(rootProject.file("mapbox.properties")))
                 password = props.mapboxDownloadToken
@@ -169,7 +205,6 @@ dependencies {
 
     implementation "com.squareup.okhttp3:okhttp:5.4.0"
     if (rootProject.ext.allowNonFree) {
-        // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
     }
     if (rootProject.ext.mapboxEnabled) {
@@ -181,22 +216,30 @@ dependencies {
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
+
+    // Jetpack Compose 依赖 - 使用根目录定义的 BOM 版本
+    implementation platform("androidx.compose:compose-bom:${rootProject.ext.composeBomVersion}")
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.runtime:runtime-livedata'
+
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }
 
 allprojects {
     tasks.withType(JavaCompile).tap {
         configureEach {
-            // options.compilerArgs << "-Xlint:deprecation";
             options.compilerArgs << "-Xlint:unchecked"
         }
     }
 }
 
 def props = new Properties()
-// For locally signed builds only, Google Play signs the bundle
 if (rootProject.file("release.properties").exists()) {
     props.load(new FileInputStream(rootProject.file("release.properties")))
-
     android.signingConfigs.release.storeFile rootProject.file(props.keyStore)
     android.signingConfigs.release.storePassword props.keyStorePassword
     android.signingConfigs.release.keyAlias props.keyAlias
