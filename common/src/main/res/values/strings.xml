@@ -59,6 +59,7 @@
   <string name="Download">Download</string>
   <string name="Share">Share</string>
   <string name="Edit">Edit</string>
+  <string name="Rename">Rename</string>
   <string name="Delete">Delete</string>
   <string name="Total">Total</string>
   <string name="Interval">Interval</string>
@@ -130,6 +131,10 @@
   <string name="Manage_audio_cues">Manage audio cues</string>
   <string name="dialog_ellipsis" translatable="false">%s…</string>
   <string name="Manage_workouts">Manage workouts</string>
+  <string name="Enter_new_workout_name">Enter a new workout name</string>
+  <string name="Invalid_workout_name">Invalid workout name</string>
+  <string name="New_workout_name_is_the_same_as_the_old_one">New workout name is the same as the old one</string>
+  <string name="Workout_name_already_in_use">Workout name is already in use</string>
   <string name="Settings">Settings</string>
   <string name="Whats_new">What\'s new</string>
   <string name="Rate_RunnerUp">Rate RunnerUp</string>
