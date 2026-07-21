@@ -45,8 +45,20 @@ import java.util.UUID;
  */
 public abstract class Bt20Base extends BtHRBase {
 
-  public boolean isEnabled() {
-    return isEnabledImpl();
+  // UUID
+  private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+  private ConnectThread connectThread;
+  private ConnectedThread connectedThread;
+  private int hrValue = 0;
+  private long hrTimestamp = 0;
+  private long hrElapsedRealtime = 0;
+  private BluetoothAdapter btAdapter = null;
+  private boolean mIsConnecting;
+  private boolean mIsConnected;
+  private boolean mIsScanning;
+
+  Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
+    // context = ctx;
   }
 
   public static boolean isEnabledImpl() {
@@ -54,9 +66,7 @@ public abstract class Bt20Base extends BtHRBase {
         && BluetoothAdapter.getDefaultAdapter().isEnabled();
   }
 
-  public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
-    return startEnableIntentImpl(activity, requestCode);
-  }
+  // private Context context = null;
 
   @SuppressWarnings("SameReturnValue")
   public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
@@ -77,20 +87,87 @@ public abstract class Bt20Base extends BtHRBase {
     return true;
   }
 
-  // UUID
-  private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-  private ConnectThread connectThread;
-  private ConnectedThread connectedThread;
+  private static void closeSocket(BluetoothSocket bluetoothSocket) {
+    if (bluetoothSocket != null) {
+      try {
+        bluetoothSocket.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-  private int hrValue = 0;
-  private long hrTimestamp = 0;
-  private long hrElapsedRealtime = 0;
-  private BluetoothAdapter btAdapter = null;
+  private static void closeStream(InputStream stream) {
+    if (stream != null) {
+      try {
+        stream.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-  // private Context context = null;
+  @SuppressLint("MissingPermission")
+  private static BluetoothSocket tryConnect(BtHRBase base, final BluetoothDevice device, int i)
+      throws IOException {
+    BluetoothSocket sock = null;
+    base.log("tryConnect(method: " + i + ")");
 
-  Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
-    // context = ctx;
+    switch (i) {
+      case 0:
+        // No BLUETOOTH_CONNECT permission will throw IOException
+        sock = device.createRfcommSocketToServiceRecord(MY_UUID);
+        break;
+      case 1:
+        // No BLUETOOTH_CONNECT permission will throw IOException
+        sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+        break;
+      case 2:
+        {
+          Method m;
+          try {
+            m = device.getClass().getMethod("createInsecureRfcommSocket", int.class);
+            m.setAccessible(true);
+            sock = (BluetoothSocket) m.invoke(device, 1);
+          } catch (NoSuchMethodException
+              | IllegalArgumentException
+              | InvocationTargetException
+              | IllegalAccessException e) {
+            e.printStackTrace();
+          }
+        }
+    }
+
+    if (sock == null) {
+      throw new IOException("Create socket failed!");
+    }
+
+    try {
+      // No BLUETOOTH_CONNECT permission will throw IOException
+      sock.connect();
+      return sock;
+    } catch (IOException ex) {
+      base.log("closeSocket");
+      closeSocket(sock);
+      throw ex;
+    }
+  }
+
+  private static int getByte(byte b) {
+    return b & 0xFF;
+  }
+
+  @SuppressLint("MissingPermission")
+  public static HRDeviceRef createDeviceRef(String providerName, BluetoothDevice device) {
+    return HRDeviceRef.create(providerName, device.getName(), device.getAddress());
+  }
+
+  public boolean isEnabled() {
+    return isEnabledImpl();
+  }
+
+  public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
+    return startEnableIntentImpl(activity, requestCode);
   }
 
   @Override
@@ -114,10 +191,6 @@ public abstract class Bt20Base extends BtHRBase {
     reset();
     btAdapter = null;
   }
-
-  private boolean mIsConnecting;
-  private boolean mIsConnected;
-  private boolean mIsScanning;
 
   public void disconnect() {
     reset();
@@ -265,26 +338,6 @@ public abstract class Bt20Base extends BtHRBase {
     }
   }
 
-  private static void closeSocket(BluetoothSocket bluetoothSocket) {
-    if (bluetoothSocket != null) {
-      try {
-        bluetoothSocket.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  private static void closeStream(InputStream stream) {
-    if (stream != null) {
-      try {
-        stream.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
   private void reportConnected(final boolean result) {
     log(
         "reportConnected("
@@ -314,57 +367,275 @@ public abstract class Bt20Base extends BtHRBase {
     }
   }
 
-  @SuppressLint("MissingPermission")
-  private static BluetoothSocket tryConnect(BtHRBase base, final BluetoothDevice device, int i)
-      throws IOException {
-    BluetoothSocket sock = null;
-    base.log("tryConnect(method: " + i + ")");
+  private void reportDisconnected(@SuppressWarnings("SameParameterValue") final boolean ok) {
+    log("reportDisconnect(" + ok + ")");
+    if (hrClientHandler != null) {
+      hrClientHandler.post(
+          () -> {
+            if (hrClient == null) {
+              log("reportDisconnect() hrClient == null");
+              return;
+            }
 
-    switch (i) {
-      case 0:
-        // No BLUETOOTH_CONNECT permission will throw IOException
-        sock = device.createRfcommSocketToServiceRecord(MY_UUID);
-        break;
-      case 1:
-        // No BLUETOOTH_CONNECT permission will throw IOException
-        sock = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
-        break;
-      case 2:
-        {
-          Method m;
-          try {
-            m = device.getClass().getMethod("createInsecureRfcommSocket", int.class);
-            m.setAccessible(true);
-            sock = (BluetoothSocket) m.invoke(device, 1);
-          } catch (NoSuchMethodException
-              | IllegalArgumentException
-              | InvocationTargetException
-              | IllegalAccessException e) {
-            e.printStackTrace();
+            hrClient.onDisconnectResult(ok);
+          });
+    } else {
+      log("reportDisconnect() hrClientHandler == null");
+    }
+  }
+
+  protected abstract int getFrameSize();
+
+  protected abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
+
+  abstract static class Bt20BaseOld extends Bt20Base {
+
+    public Bt20BaseOld(Context ctx) {
+      super(ctx);
+    }
+
+    @Override
+    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr) {
+      hr[0] = null;
+      if (bytesInBuffer < getFrameSize()) return 0;
+
+      int hrValue = parseBuffer(buffer);
+      if (hrValue > 0) {
+        hr[0] = hrValue;
+        return bytesInBuffer; // use all of buffer
+      } else {
+        int index = findNextAlignment(buffer);
+        if (index < 0) return bytesInBuffer;
+        return index;
+      }
+    }
+
+    public abstract int getFrameSize();
+
+    public abstract int parseBuffer(byte[] buffer);
+
+    public abstract int findNextAlignment(byte[] buffer);
+  }
+
+  public static class ZephyrHRM extends Bt20BaseOld {
+
+    public static final String NAME = "Zephyr";
+    static final byte ZEPHYR_HXM_BYTE_STX = 0;
+    static final byte ZEPHYR_HXM_BYTE_HR = 12;
+    static final byte ZEPHYR_HXM_BYTE_CRC = 58;
+    static final byte ZEPHYR_HXM_BYTE_ETX = 59;
+    static final byte ZEPHYR_START_BYTE = 0x02;
+    static final byte ZEPHYR_END_BYTE = 0x03;
+
+    public ZephyrHRM(Context ctx) {
+      super(ctx);
+    }
+
+    private static int calcCrc8(
+        byte[] buffer,
+        @SuppressWarnings("SameParameterValue") int start,
+        @SuppressWarnings("SameParameterValue") int length) {
+      int crc = 0x0;
+
+      for (int i = start; i < (start + length); i++) {
+        crc ^= getByte(buffer[i]);
+        for (int b = 0; b <= 7; b++) {
+          if ((crc & 1) != 0) {
+            crc = ((crc >> 1) ^ 0x8c);
+          } else {
+            crc = (crc >> 1);
           }
         }
+      }
+      return crc;
     }
 
-    if (sock == null) {
-      throw new IOException("Create socket failed!");
+    @Override
+    public String getName() {
+      return NAME;
     }
 
-    try {
-      // No BLUETOOTH_CONNECT permission will throw IOException
-      sock.connect();
-      return sock;
-    } catch (IOException ex) {
-      base.log("closeSocket");
-      closeSocket(sock);
-      throw ex;
+    @Override
+    public String getProviderName() {
+      return NAME;
+    }
+
+    @Override
+    public int getFrameSize() {
+      return ZEPHYR_HXM_BYTE_ETX + 1;
+    }
+
+    @Override
+    public int parseBuffer(byte[] buffer) {
+      // Check STX (Start of Text), ETX (End of Text) and CRC Checksum
+      boolean ok =
+          buffer.length > ZEPHYR_HXM_BYTE_ETX
+              && getByte(buffer[ZEPHYR_HXM_BYTE_STX]) == ZEPHYR_START_BYTE
+              && getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) == ZEPHYR_END_BYTE
+              && calcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
+
+      if (!ok) {
+        log(
+            "HxM insanity! "
+                + (buffer.length > ZEPHYR_HXM_BYTE_ETX)
+                + " "
+                + getByte(buffer[ZEPHYR_HXM_BYTE_STX])
+                + "=="
+                + ZEPHYR_START_BYTE
+                + " "
+                + getByte(buffer[ZEPHYR_HXM_BYTE_ETX])
+                + "=="
+                + ZEPHYR_END_BYTE
+                + " "
+                + "calc="
+                + calcCrc8(buffer, 3, 55)
+                + " "
+                + "given="
+                + getByte(buffer[ZEPHYR_HXM_BYTE_CRC]));
+        return -1;
+      }
+
+      return getByte(buffer[ZEPHYR_HXM_BYTE_HR]);
+    }
+
+    @Override
+    public int findNextAlignment(byte[] buffer) {
+      for (int i = 0; i < buffer.length - 1; i++) {
+        if (getByte(buffer[i]) == ZEPHYR_END_BYTE && getByte(buffer[i + 1]) == ZEPHYR_START_BYTE) {
+          return i;
+        }
+      }
+      return -1;
+    }
+  }
+
+  public static class PolarHRM extends Bt20Base {
+
+    public static final String NAME = "Polar WearLink";
+
+    public PolarHRM(Context ctx) {
+      super(ctx);
+    }
+
+    @Override
+    public String getName() {
+      return NAME;
+    }
+
+    @Override
+    public String getProviderName() {
+      return NAME;
+    }
+
+    @Override
+    public int getFrameSize() {
+      return 16;
+    }
+
+    private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
+      if (bytesInBuffer < pos + 4) return false;
+
+      int b0 = getByte(buffer[pos]);
+      int b1 = getByte(buffer[pos + 1]); // len
+      int b2 = getByte(buffer[pos + 2]);
+      int b3 = getByte(buffer[pos + 3]);
+      if (b0 != 0xFE) {
+        return false;
+      }
+
+      if ((0xFF - b1) != b2) {
+        return false;
+      }
+
+      if (b3 >= 16) {
+        return false;
+      }
+
+      return bytesInBuffer >= pos + b1;
+    }
+
+    @Override
+    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
+      hrVal[0] = null;
+      for (int i = 0; i < bytesInBuffer; i++) {
+        if (startOfMessage(buffer, bytesInBuffer, i)) {
+          int bytesUsed = getByte(buffer[i + 1]);
+          hrVal[0] = getByte(buffer[i + 5]);
+          return bytesUsed;
+        }
+      }
+      return 0;
+    }
+  }
+
+  public static class StHRMv1 extends Bt20Base {
+
+    public static final String NAME = "SportTracker HRM v1";
+    static final int FRAME_SIZE = 17;
+    static final int START_BYTE = 250;
+
+    public StHRMv1(Context ctx) {
+      super(ctx);
+    }
+
+    @Override
+    public String getName() {
+      return NAME;
+    }
+
+    @Override
+    public String getProviderName() {
+      return NAME;
+    }
+
+    @Override
+    public int getFrameSize() {
+      return FRAME_SIZE;
+    }
+
+    private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
+      if (bytesInBuffer < pos + FRAME_SIZE) return false;
+
+      //noinspection PointlessArithmeticExpression
+      int b0 = getByte(buffer[pos + 0]);
+      int b1 = getByte(buffer[pos + 1]);
+      int b2 = getByte(buffer[pos + 2]);
+      if (b0 != START_BYTE) {
+        return false;
+      }
+
+      if ((0xFF - b1) != b2) {
+        return false;
+      }
+
+      int len = b1 >> 2;
+      //noinspection RedundantIfStatement
+      if (bytesInBuffer < pos + len) {
+        return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
+      hrVal[0] = null;
+      for (int i = 0; i < bytesInBuffer; i++) {
+        if (startOfMessage(buffer, bytesInBuffer, i)) {
+          int bytesUsed = getByte(buffer[i + 1]) >> 2;
+          hrVal[0] = getByte(buffer[i + 5]);
+          return bytesUsed;
+        }
+      }
+      return 0;
     }
   }
 
   /** A thread to connect to a bluetooth device. */
   private class ConnectThread extends Thread {
-    private BluetoothSocket bluetoothSocket;
     private final BluetoothDevice bluetoothDevice;
     private final String deviceName;
+    private BluetoothSocket bluetoothSocket;
 
     @SuppressLint("MissingPermission")
     public ConnectThread(BluetoothDevice device, String deviceName) {
@@ -529,279 +800,5 @@ public abstract class Bt20Base extends BtHRBase {
       closeStream(inputStream);
       closeSocket(bluetoothSocket);
     }
-  }
-
-  private void reportDisconnected(@SuppressWarnings("SameParameterValue") final boolean ok) {
-    log("reportDisconnect(" + ok + ")");
-    if (hrClientHandler != null) {
-      hrClientHandler.post(
-          () -> {
-            if (hrClient == null) {
-              log("reportDisconnect() hrClient == null");
-              return;
-            }
-
-            hrClient.onDisconnectResult(ok);
-          });
-    } else {
-      log("reportDisconnect() hrClientHandler == null");
-    }
-  }
-
-  abstract static class Bt20BaseOld extends Bt20Base {
-
-    public Bt20BaseOld(Context ctx) {
-      super(ctx);
-    }
-
-    @Override
-    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr) {
-      hr[0] = null;
-      if (bytesInBuffer < getFrameSize()) return 0;
-
-      int hrValue = parseBuffer(buffer);
-      if (hrValue > 0) {
-        hr[0] = hrValue;
-        return bytesInBuffer; // use all of buffer
-      } else {
-        int index = findNextAlignment(buffer);
-        if (index < 0) return bytesInBuffer;
-        return index;
-      }
-    }
-
-    public abstract int getFrameSize();
-
-    public abstract int parseBuffer(byte[] buffer);
-
-    public abstract int findNextAlignment(byte[] buffer);
-  }
-
-  protected abstract int getFrameSize();
-
-  protected abstract int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hr);
-
-  public static class ZephyrHRM extends Bt20BaseOld {
-
-    static final byte ZEPHYR_HXM_BYTE_STX = 0;
-    static final byte ZEPHYR_HXM_BYTE_HR = 12;
-    static final byte ZEPHYR_HXM_BYTE_CRC = 58;
-    static final byte ZEPHYR_HXM_BYTE_ETX = 59;
-
-    static final byte ZEPHYR_START_BYTE = 0x02;
-    static final byte ZEPHYR_END_BYTE = 0x03;
-    public static final String NAME = "Zephyr";
-
-    public ZephyrHRM(Context ctx) {
-      super(ctx);
-    }
-
-    @Override
-    public String getName() {
-      return NAME;
-    }
-
-    @Override
-    public String getProviderName() {
-      return NAME;
-    }
-
-    @Override
-    public int getFrameSize() {
-      return ZEPHYR_HXM_BYTE_ETX + 1;
-    }
-
-    @Override
-    public int parseBuffer(byte[] buffer) {
-      // Check STX (Start of Text), ETX (End of Text) and CRC Checksum
-      boolean ok =
-          buffer.length > ZEPHYR_HXM_BYTE_ETX
-              && getByte(buffer[ZEPHYR_HXM_BYTE_STX]) == ZEPHYR_START_BYTE
-              && getByte(buffer[ZEPHYR_HXM_BYTE_ETX]) == ZEPHYR_END_BYTE
-              && calcCrc8(buffer, 3, 55) == getByte(buffer[ZEPHYR_HXM_BYTE_CRC]);
-
-      if (!ok) {
-        log(
-            "HxM insanity! "
-                + (buffer.length > ZEPHYR_HXM_BYTE_ETX)
-                + " "
-                + getByte(buffer[ZEPHYR_HXM_BYTE_STX])
-                + "=="
-                + ZEPHYR_START_BYTE
-                + " "
-                + getByte(buffer[ZEPHYR_HXM_BYTE_ETX])
-                + "=="
-                + ZEPHYR_END_BYTE
-                + " "
-                + "calc="
-                + calcCrc8(buffer, 3, 55)
-                + " "
-                + "given="
-                + getByte(buffer[ZEPHYR_HXM_BYTE_CRC]));
-        return -1;
-      }
-
-      return getByte(buffer[ZEPHYR_HXM_BYTE_HR]);
-    }
-
-    @Override
-    public int findNextAlignment(byte[] buffer) {
-      for (int i = 0; i < buffer.length - 1; i++) {
-        if (getByte(buffer[i]) == ZEPHYR_END_BYTE && getByte(buffer[i + 1]) == ZEPHYR_START_BYTE) {
-          return i;
-        }
-      }
-      return -1;
-    }
-
-    private static int calcCrc8(
-        byte[] buffer,
-        @SuppressWarnings("SameParameterValue") int start,
-        @SuppressWarnings("SameParameterValue") int length) {
-      int crc = 0x0;
-
-      for (int i = start; i < (start + length); i++) {
-        crc ^= getByte(buffer[i]);
-        for (int b = 0; b <= 7; b++) {
-          if ((crc & 1) != 0) {
-            crc = ((crc >> 1) ^ 0x8c);
-          } else {
-            crc = (crc >> 1);
-          }
-        }
-      }
-      return crc;
-    }
-  }
-
-  public static class PolarHRM extends Bt20Base {
-
-    public static final String NAME = "Polar WearLink";
-
-    public PolarHRM(Context ctx) {
-      super(ctx);
-    }
-
-    @Override
-    public String getName() {
-      return NAME;
-    }
-
-    @Override
-    public String getProviderName() {
-      return NAME;
-    }
-
-    @Override
-    public int getFrameSize() {
-      return 16;
-    }
-
-    private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
-      if (bytesInBuffer < pos + 4) return false;
-
-      int b0 = getByte(buffer[pos]);
-      int b1 = getByte(buffer[pos + 1]); // len
-      int b2 = getByte(buffer[pos + 2]);
-      int b3 = getByte(buffer[pos + 3]);
-      if (b0 != 0xFE) {
-        return false;
-      }
-
-      if ((0xFF - b1) != b2) {
-        return false;
-      }
-
-      if (b3 >= 16) {
-        return false;
-      }
-
-      return bytesInBuffer >= pos + b1;
-    }
-
-    @Override
-    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
-      hrVal[0] = null;
-      for (int i = 0; i < bytesInBuffer; i++) {
-        if (startOfMessage(buffer, bytesInBuffer, i)) {
-          int bytesUsed = getByte(buffer[i + 1]);
-          hrVal[0] = getByte(buffer[i + 5]);
-          return bytesUsed;
-        }
-      }
-      return 0;
-    }
-  }
-
-  public static class StHRMv1 extends Bt20Base {
-
-    static final int FRAME_SIZE = 17;
-    static final int START_BYTE = 250;
-    public static final String NAME = "SportTracker HRM v1";
-
-    public StHRMv1(Context ctx) {
-      super(ctx);
-    }
-
-    @Override
-    public String getName() {
-      return NAME;
-    }
-
-    @Override
-    public String getProviderName() {
-      return NAME;
-    }
-
-    @Override
-    public int getFrameSize() {
-      return FRAME_SIZE;
-    }
-
-    private boolean startOfMessage(byte[] buffer, int bytesInBuffer, int pos) {
-      if (bytesInBuffer < pos + FRAME_SIZE) return false;
-
-      //noinspection PointlessArithmeticExpression
-      int b0 = getByte(buffer[pos + 0]);
-      int b1 = getByte(buffer[pos + 1]);
-      int b2 = getByte(buffer[pos + 2]);
-      if (b0 != START_BYTE) {
-        return false;
-      }
-
-      if ((0xFF - b1) != b2) {
-        return false;
-      }
-
-      int len = b1 >> 2;
-      //noinspection RedundantIfStatement
-      if (bytesInBuffer < pos + len) {
-        return false;
-      }
-
-      return true;
-    }
-
-    @Override
-    public int parseBuffer(byte[] buffer, int bytesInBuffer, Integer[] hrVal) {
-      hrVal[0] = null;
-      for (int i = 0; i < bytesInBuffer; i++) {
-        if (startOfMessage(buffer, bytesInBuffer, i)) {
-          int bytesUsed = getByte(buffer[i + 1]) >> 2;
-          hrVal[0] = getByte(buffer[i + 5]);
-          return bytesUsed;
-        }
-      }
-      return 0;
-    }
-  }
-
-  private static int getByte(byte b) {
-    return b & 0xFF;
-  }
-
-  @SuppressLint("MissingPermission")
-  public static HRDeviceRef createDeviceRef(String providerName, BluetoothDevice device) {
-    return HRDeviceRef.create(providerName, device.getName(), device.getAddress());
   }
 }

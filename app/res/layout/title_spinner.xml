@@ -19,17 +19,17 @@
     android:id="@+id/title_spinner_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_marginBottom="4dp"
     android:layout_marginTop="4dp"
-    android:minWidth="48dp"
-    android:minHeight="48dp"
+    android:layout_marginBottom="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_vertical"
+    android:minWidth="48dp"
+    android:minHeight="48dp"
     android:orientation="horizontal"
-    android:paddingBottom="12dp"
-    android:paddingTop="12dp">
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/title"
@@ -58,6 +58,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@null"
-        tools:ignore="UnusedAttribute"
-        android:spinnerMode="dialog" />
+        android:spinnerMode="dialog"
+        tools:ignore="UnusedAttribute" />
 </LinearLayout>

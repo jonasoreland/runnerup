@@ -14,14 +14,14 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<LinearLayout android:id="@+id/start_tab1_layout"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context=".view.StartFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/start_tab1_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.StartFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/start_actionbar"
@@ -65,7 +65,7 @@
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@android:id/tabs" >
+                android:layout_below="@android:id/tabs">
 
                 <include layout="@layout/start_basic" />
 
@@ -90,8 +90,8 @@
                     android:id="@+id/status_frame"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -105,8 +105,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/No_devices_connected"
-                            android:visibility="gone"
-                            />
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/hr_indicator"
@@ -115,7 +114,7 @@
                             android:layout_marginEnd="4dp"
                             android:contentDescription="@string/Heart_Rate_Monitor"
                             android:visibility="gone"
-                            app:srcCompat="@drawable/ic_heartrate_white_24dp"/>
+                            app:srcCompat="@drawable/ic_heartrate_white_24dp" />
 
                         <TextView
                             android:id="@+id/hr_message"
@@ -123,8 +122,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:visibility="gone"
-                            />
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/wearos_indicator"
@@ -133,7 +131,7 @@
                             android:layout_marginEnd="4dp"
                             android:contentDescription="@string/Wear_OS_Device"
                             android:visibility="gone"
-                            app:srcCompat="@drawable/ic_watch_white_24dp"/>
+                            app:srcCompat="@drawable/ic_watch_white_24dp" />
 
                         <TextView
                             android:id="@+id/wearos_message"
@@ -148,14 +146,13 @@
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
-                            tools:ignore="ContentDescription"/>
+                            tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/gps_message"
                             style="@style/StatusText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
@@ -174,14 +171,13 @@
                             android:layout_height="14dp"
                             android:layout_marginEnd="4dp"
                             app:srcCompat="@drawable/ic_gps_1"
-                            tools:ignore="ContentDescription"/>
+                            tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/gps_detail_message"
                             style="@style/StatusText"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
@@ -213,10 +209,10 @@
                 layout="@layout/start_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginBottom="20dp"
-                android:layout_marginStart="@dimen/activity_margin" />
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginBottom="20dp" />
 
         </RelativeLayout>
     </TabHost>

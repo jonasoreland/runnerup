@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 ~ Copyright (C) 2014 jonas.oreland@gmail.com
 ~
 ~  This program is free software: you can redistribute it and/or modify
@@ -16,85 +15,84 @@
 ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<android.support.wearable.view.BoxInsetLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="0dp">
 
-  <LinearLayout
-      android:orientation="vertical"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_gravity="center"
-      android:gravity="center" >
-
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:gravity="center"
+        android:orientation="vertical">
 
-      <TextView
-          android:id="@+id/textViewHeader32"
-          android:text="@string/distance"
-          style="@style/Card3TextSmall" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-      <TextView
-          android:id="@+id/textView32"
-          style="@style/Card3TextMedium"
-          android:text="-.--"
-          android:textAlignment="center"
-          tools:ignore="HardcodedText" />
+            <TextView
+                android:id="@+id/textViewHeader32"
+                style="@style/Card3TextSmall"
+                android:text="@string/distance" />
+
+            <TextView
+                android:id="@+id/textView32"
+                style="@style/Card3TextMedium"
+                android:text="-.--"
+                android:textAlignment="center"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/border"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewHeader31"
+                style="@style/Card3TextSmall"
+                android:text="@string/time" />
+
+            <TextView
+                android:id="@+id/textView31"
+                style="@style/Card3TextLarge"
+                android:text="--:--"
+                android:textAlignment="center"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/border"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewHeader33"
+                style="@style/Card3TextSmall"
+                android:text="@string/Lap_pace" />
+
+            <TextView
+                android:id="@+id/textView33"
+                style="@style/Card3TextMedium"
+                android:text="-:--"
+                android:textAlignment="center"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:background="@drawable/border" >
-
-      <TextView
-          android:id="@+id/textViewHeader31"
-          android:text="@string/time"
-          style="@style/Card3TextSmall" />
-
-      <TextView
-          android:id="@+id/textView31"
-          style="@style/Card3TextLarge"
-          android:text="--:--"
-          android:textAlignment="center"
-          tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:background="@drawable/border" >
-
-      <TextView
-          android:id="@+id/textViewHeader33"
-          android:text="@string/Lap_pace"
-          style="@style/Card3TextSmall" />
-
-      <TextView
-          android:id="@+id/textView33"
-          style="@style/Card3TextMedium"
-          android:text="-:--"
-          android:textAlignment="center"
-          tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-  </LinearLayout>
 
 </android.support.wearable.view.BoxInsetLayout>

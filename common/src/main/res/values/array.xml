@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2016 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,63 +15,63 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string-array name="unitEntries">
-    <item>Miles</item>
-    <item>Kilometers</item>
-  </string-array>
-  <string-array name="unitValues" translatable="false">
-    <item>mi</item>
-    <item>km</item>
-  </string-array>
-  <string-array name="speedUnitEntries">
-    <item>Pace</item>
-    <item>Speed</item>
-  </string-array>
-  <string-array name="speedUnitValues" translatable="false">
-    <item>pace</item>
-    <item>speed</item>
-  </string-array>
-  <!--Note: keep in same order as DB.INTENSITY-->
-  <string-array name="step_intensity_types">
-    <item>Warmup</item>
-    <item>Active</item>
-    <item>Rest</item>
-    <item>Recovery</item>
-    <item>Cooldown</item>
-  </string-array>
-  <string-array name="duration_types">
-    <item>Until pressed</item>
-    <item>Time</item>
-    <item>Distance</item>
-  </string-array>
-  <string-array name="target_types">
-    <item>None</item>
-    <item>Pace</item>
-    <item>Heart rate zone</item>
-  </string-array>
-  <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
-  <string-array name="sportEntries">
-    <item>Running</item>
-    <item>Biking</item>
-    <item>Other</item>
-    <item>Orienteering</item>
-    <item>Walking</item>
-  </string-array>
-  <string-array name="types">
-    <item>Time</item>
-    <item>Distance</item>
-  </string-array>
-  <string-array name="sexes">
-    <item>Male</item>
-    <item>Female</item>
-  </string-array>
-  <!--Note: keep in same order as DB-->
-  <string-array name="path_simplification_algorithm_titles">
-    <item>Radial-Distance (fast)</item>
-    <item>Ramer-Douglas-Peucker (high quality)</item>
-  </string-array>
-  <string-array name="path_simplification_algorithm_values" translatable="false">
-    <item>radial_distance</item>
-    <item>ramer_douglas_peucker</item>
-  </string-array>
+    <string-array name="unitEntries">
+        <item>Miles</item>
+        <item>Kilometers</item>
+    </string-array>
+    <string-array name="unitValues" translatable="false">
+        <item>mi</item>
+        <item>km</item>
+    </string-array>
+    <string-array name="speedUnitEntries">
+        <item>Pace</item>
+        <item>Speed</item>
+    </string-array>
+    <string-array name="speedUnitValues" translatable="false">
+        <item>pace</item>
+        <item>speed</item>
+    </string-array>
+    <!--Note: keep in same order as DB.INTENSITY-->
+    <string-array name="step_intensity_types">
+        <item>Warmup</item>
+        <item>Active</item>
+        <item>Rest</item>
+        <item>Recovery</item>
+        <item>Cooldown</item>
+    </string-array>
+    <string-array name="duration_types">
+        <item>Until pressed</item>
+        <item>Time</item>
+        <item>Distance</item>
+    </string-array>
+    <string-array name="target_types">
+        <item>None</item>
+        <item>Pace</item>
+        <item>Heart rate zone</item>
+    </string-array>
+    <!--Note: keep in same order as DB.ACCOUNT.SPORT_-->
+    <string-array name="sportEntries">
+        <item>Running</item>
+        <item>Biking</item>
+        <item>Other</item>
+        <item>Orienteering</item>
+        <item>Walking</item>
+    </string-array>
+    <string-array name="types">
+        <item>Time</item>
+        <item>Distance</item>
+    </string-array>
+    <string-array name="sexes">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <!--Note: keep in same order as DB-->
+    <string-array name="path_simplification_algorithm_titles">
+        <item>Radial-Distance (fast)</item>
+        <item>Ramer-Douglas-Peucker (high quality)</item>
+    </string-array>
+    <string-array name="path_simplification_algorithm_values" translatable="false">
+        <item>radial_distance</item>
+        <item>ramer_douglas_peucker</item>
+    </string-array>
 </resources>

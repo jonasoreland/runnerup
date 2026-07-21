@@ -1,89 +1,88 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:runnerup="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/create_advanced_workout_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="org.runnerup.view.CreateAdvancedWorkout">
-
-  <org.runnerup.widget.TitleSpinner
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/new_workout_spinner"
-    android:text="@string/Workout"
-    runnerup:type="spinner_txt"
-    android:orientation="horizontal" />
-
-  <ListView
-    android:id="@+id/new_advnced_workout_steps"
+    xmlns:runnerup="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/create_advanced_workout_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="8dp"
-    android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:layout_below="@id/new_workout_spinner"
-    android:layout_above="@id/create_button_table"/>
+    tools:context="org.runnerup.view.CreateAdvancedWorkout">
 
-  <TableLayout
-    android:id="@+id/create_button_table"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    >
-
-    <TableRow
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      >
-
-      <Button
-        android:layout_width="0dp"
+    <org.runnerup.widget.TitleSpinner
+        android:id="@+id/new_workout_spinner"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Add_step"
-        android:id="@+id/add_step_button"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_blue"
-        android:layout_weight="1"/>
+        android:orientation="horizontal"
+        android:text="@string/Workout"
+        runnerup:type="spinner_txt" />
 
-      <Button
-        android:layout_width="0dp"
+    <ListView
+        android:id="@+id/new_advnced_workout_steps"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/create_button_table"
+        android:layout_below="@id/new_workout_spinner"
+        android:paddingTop="8dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true" />
+
+    <TableLayout
+        android:id="@+id/create_button_table"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/Add_repeat"
-        android:id="@+id/add_repeat_button"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_blue"
-        android:layout_weight="1"/>
-    </TableRow>
+        android:layout_alignParentBottom="true">
 
-    <TableRow
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent">
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-      <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/Save"
-        android:id="@+id/workout_save_button"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_green"
-        android:layout_weight="1"/>
+            <Button
+                android:id="@+id/add_step_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Add_step" />
 
-      <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/Discard"
-        android:id="@+id/workout_discard_button"
-        android:layout_weight="1"
-        style="@style/ButtonText"
-        android:background="@drawable/btn_red"/>
-      <Button
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:text="@string/Rename"
-          android:id="@+id/workout_rename_button"
-          android:layout_weight="1"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_blue"/>
-    </TableRow>
-  </TableLayout>
+            <Button
+                android:id="@+id/add_repeat_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Add_repeat" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <Button
+                android:id="@+id/workout_save_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_green"
+                android:text="@string/Save" />
+
+            <Button
+                android:id="@+id/workout_discard_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_red"
+                android:text="@string/Discard" />
+
+            <Button
+                android:id="@+id/workout_rename_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Rename" />
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

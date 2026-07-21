@@ -54,121 +54,26 @@ import java.util.UUID;
  */
 public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
-  public static boolean checkLibrary(Context ctx) {
-    return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
-  }
-
   static final String NAME = "AndroidBLE";
   private static final String DISPLAY_NAME = "Bluetooth LE";
-
   private final Context context;
+  private final boolean mSupportPaired;
+  private final HashSet<String> mScanDevices = new HashSet<>();
   private BluetoothAdapter btAdapter = null;
   private BluetoothGatt btGatt = null;
   private BluetoothDevice btDevice = null;
   private BluetoothLeScanner btScanner = null;
-
   private int hrValue = 0;
   private long hrTimestamp = 0;
   private long hrElapsedRealtime = 0;
   private int batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
   private boolean hasBatteryService = false;
-
   private long mPrevHrTimestampNotZero = 0;
-
   private boolean mIsScanning = false;
   private boolean mIsConnected = false;
   private boolean mIsConnecting = false;
   private boolean mIsDisconnecting = false;
   private boolean mNotificationsOn = false;
-  private final boolean mSupportPaired;
-
-  public AndroidBLEHRProvider(Context ctx) {
-    context = ctx;
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-    Resources res = context.getResources();
-    mSupportPaired = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
-  }
-
-  @Override
-  public String getName() {
-    return DISPLAY_NAME;
-  }
-
-  @Override
-  public String getProviderName() {
-    return NAME;
-  }
-
-  public boolean isEnabled() {
-    return Bt20Base.isEnabledImpl();
-  }
-
-  public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
-    return Bt20Base.startEnableIntentImpl(activity, requestCode);
-  }
-
-  private static String statusToString(int status) {
-    if (status == BluetoothGatt.GATT_SUCCESS) {
-      return "GATT_SUCCESS";
-    } else if (status == BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED) {
-      return "GATT_REQUEST_NOT_SUPPORTED";
-    } else if (status == BluetoothGatt.GATT_CONNECTION_TIMEOUT) {
-      return "GATT_CONNECTION_TIMEOUT";
-    } else if (status == BluetoothGatt.GATT_FAILURE) {
-      return "GATT_FAILURE";
-    } else if (status == BluetoothGatt.GATT_CONNECTION_CONGESTED) {
-      return "GATT_CONNECTION_CONGESTED";
-    } else if (status == BluetoothGatt.GATT_READ_NOT_PERMITTED) {
-      return "GATT_READ_NOT_PERMITTED";
-    }
-    return "<unknown status: " + status + " >";
-  }
-
-  private static String stateToString(int state) {
-    if (state == BluetoothProfile.STATE_DISCONNECTED) {
-      return "DISCONNECTED";
-    } else if (state == BluetoothProfile.STATE_CONNECTED) {
-      return "CONNECTED";
-    }
-    return "<unknown state: " + state + " >";
-  }
-
-  @Override
-  public void open(Handler handler, HRClient hrClient) {
-    this.hrClient = hrClient;
-    this.hrClientHandler = handler;
-    if (btAdapter == null) {
-      btAdapter = BluetoothAdapter.getDefaultAdapter();
-    }
-
-    hrClient.onOpenResult(btAdapter != null);
-  }
-
-  @Override
-  public void close(String from) {
-    var client = hrClient;
-    var handler = hrClientHandler;
-    log("close, from: " + from);
-    stopScan();
-    disconnect();
-
-    close(btGatt);
-    btGatt = null;
-    btAdapter = null;
-    btDevice = null;
-    hrClient = null;
-    hrClientHandler = null;
-    if (client != null && handler != null) {
-      handler.post(
-          () -> {
-            log("close(" + from + ") => onCloseResult(true)");
-            client.onCloseResult(true);
-          });
-    } else {
-      log("close(" + from + ") with client: " + client + ", handler: " + handler + " => nothing");
-    }
-  }
-
   private final BluetoothGattCallback btGattCallbacks =
       new BluetoothGattCallback() {
 
@@ -446,6 +351,109 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
       };
 
+  public AndroidBLEHRProvider(Context ctx) {
+    context = ctx;
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    Resources res = context.getResources();
+    mSupportPaired = prefs.getBoolean(res.getString(R.string.pref_bt_paired_ble), false);
+  }
+
+  public static boolean checkLibrary(Context ctx) {
+    return ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
+  }
+
+  private static String statusToString(int status) {
+    if (status == BluetoothGatt.GATT_SUCCESS) {
+      return "GATT_SUCCESS";
+    } else if (status == BluetoothGatt.GATT_REQUEST_NOT_SUPPORTED) {
+      return "GATT_REQUEST_NOT_SUPPORTED";
+    } else if (status == BluetoothGatt.GATT_CONNECTION_TIMEOUT) {
+      return "GATT_CONNECTION_TIMEOUT";
+    } else if (status == BluetoothGatt.GATT_FAILURE) {
+      return "GATT_FAILURE";
+    } else if (status == BluetoothGatt.GATT_CONNECTION_CONGESTED) {
+      return "GATT_CONNECTION_CONGESTED";
+    } else if (status == BluetoothGatt.GATT_READ_NOT_PERMITTED) {
+      return "GATT_READ_NOT_PERMITTED";
+    }
+    return "<unknown status: " + status + " >";
+  }
+
+  private static String stateToString(int state) {
+    if (state == BluetoothProfile.STATE_DISCONNECTED) {
+      return "DISCONNECTED";
+    } else if (state == BluetoothProfile.STATE_CONNECTED) {
+      return "CONNECTED";
+    }
+    return "<unknown state: " + state + " >";
+  }
+
+  private static BluetoothGattCharacteristic getHeartrateCharacteristic(BluetoothGatt gatt) {
+    if (gatt == null) {
+      return null;
+    }
+    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
+    if (mHRP == null) {
+      return null;
+    }
+
+    return mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
+  }
+
+  @Override
+  public String getName() {
+    return DISPLAY_NAME;
+  }
+
+  @Override
+  public String getProviderName() {
+    return NAME;
+  }
+
+  public boolean isEnabled() {
+    return Bt20Base.isEnabledImpl();
+  }
+
+  public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
+    return Bt20Base.startEnableIntentImpl(activity, requestCode);
+  }
+
+  @Override
+  public void open(Handler handler, HRClient hrClient) {
+    this.hrClient = hrClient;
+    this.hrClientHandler = handler;
+    if (btAdapter == null) {
+      btAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    hrClient.onOpenResult(btAdapter != null);
+  }
+
+  @Override
+  public void close(String from) {
+    var client = hrClient;
+    var handler = hrClientHandler;
+    log("close, from: " + from);
+    stopScan();
+    disconnect();
+
+    close(btGatt);
+    btGatt = null;
+    btAdapter = null;
+    btDevice = null;
+    hrClient = null;
+    hrClientHandler = null;
+    if (client != null && handler != null) {
+      handler.post(
+          () -> {
+            log("close(" + from + ") => onCloseResult(true)");
+            client.onCloseResult(true);
+          });
+    } else {
+      log("close(" + from + ") with client: " + client + ", handler: " + handler + " => nothing");
+    }
+  }
+
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   private boolean enableNotification(
       BluetoothGatt gatt, boolean onoff, BluetoothGattCharacteristic charac) {
@@ -478,11 +486,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     return result;
   }
 
-  @Override
-  public boolean isScanning() {
-    return mIsScanning;
-  }
-
   private final ScanCallback mLeScanCallback =
       new ScanCallback() {
         @Override
@@ -508,6 +511,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
           }
         }
       };
+
+  @Override
+  public boolean isScanning() {
+    return mIsScanning;
+  }
 
   private void addScanResult(int callbackType, BluetoothDevice device) {
     if (hrClient == null) {
@@ -554,8 +562,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
           }
         });
   }
-
-  private final HashSet<String> mScanDevices = new HashSet<>();
 
   @Override
   public void startScan() {
@@ -698,18 +704,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       return;
     }
     gatt.close();
-  }
-
-  private static BluetoothGattCharacteristic getHeartrateCharacteristic(BluetoothGatt gatt) {
-    if (gatt == null) {
-      return null;
-    }
-    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
-    if (mHRP == null) {
-      return null;
-    }
-
-    return mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
   }
 
   @Override

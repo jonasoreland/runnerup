@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -21,8 +20,8 @@
     android:id="@+id/tab_manual"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="@dimen/activity_margin">
+    android:layout_margin="@dimen/activity_margin"
+    android:orientation="vertical">
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_sport"
@@ -38,8 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/manual_sport"
-        android:prompt="@string/Type"
         android:defaultValue="today"
+        android:prompt="@string/Type"
         android:text="@string/Date"
         runnerup:type="datepicker" />
 
@@ -47,34 +46,34 @@
         android:id="@+id/manual_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/manual_date"
+        android:layout_alignParentStart="true"
+        android:defaultValue="now"
         android:prompt="@string/Type"
         android:text="@string/Start_hour"
-        runnerup:type="timepicker"
-        android:defaultValue="now"/>
+        runnerup:type="timepicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/manual_time"
+        android:layout_alignParentStart="true"
+        android:defaultValue="00:00:00"
         android:prompt="@string/Type"
         android:text="@string/Duration"
-        android:defaultValue="00:00:00"
         runnerup:type="durationpicker" />
 
     <org.runnerup.widget.TitleSpinner
         android:id="@+id/manual_distance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/manual_duration"
+        android:layout_alignParentStart="true"
+        android:inputType="numberDecimal"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:prompt="@string/Type"
-        android:inputType="numberDecimal"
         android:text="@string/Distance"
         runnerup:type="distancepicker" />
 
@@ -82,10 +81,10 @@
         android:id="@+id/manual_pace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/manual_distance"
-        android:prompt="@string/Type"
+        android:layout_alignParentStart="true"
         android:inputType="numberDecimal"
+        android:prompt="@string/Type"
         android:text="@string/pace"
         runnerup:type="durationpicker" />
 
@@ -93,12 +92,12 @@
         android:id="@+id/manual_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/manual_pace"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:ems="10"
         android:gravity="top|start"
-        android:inputType="textMultiLine"
         android:hint="@string/Add_workout_notes"
+        android:inputType="textMultiLine"
         tools:ignore="AutoFill" />
 </RelativeLayout>

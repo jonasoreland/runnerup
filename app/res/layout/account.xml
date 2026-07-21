@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -24,12 +23,12 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_margin="@dimen/activity_margin"
         android:id="@+id/account_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:gravity="center|center_horizontal|center_vertical" >
+        android:layout_margin="@dimen/activity_margin"
+        android:gravity="center|center_horizontal|center_vertical">
 
         <TextView
             android:id="@+id/account_name"
@@ -49,15 +48,15 @@
             android:minWidth="48dp"
             android:minHeight="48dp"
             android:scaleType="center"
-            tools:ignore="ContentDescription"/>
+            tools:ignore="ContentDescription" />
     </LinearLayout>
 
-   	<TableLayout
-        android:layout_margin="@dimen/activity_margin"
-		android:id="@+id/account_table"
+    <TableLayout
+        android:id="@+id/account_table"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/account_view" >
+        android:layout_below="@id/account_view"
+        android:layout_margin="@dimen/activity_margin">
 
         <TableRow
             android:id="@+id/account_table_row1"
@@ -71,10 +70,10 @@
     <Button
         android:id="@+id/disconnect_account_button"
         style="@style/ButtonText"
-        android:background="@drawable/btn_red"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/account_upload_button"
+        android:background="@drawable/btn_red"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="@string/Disconnect" />
@@ -82,35 +81,35 @@
     <Button
         android:id="@+id/account_upload_button"
         style="@style/ButtonText"
-        android:background="@drawable/btn_blue"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/account_download_button"
+        android:background="@drawable/btn_blue"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="@string/Upload" />
 
-  <Button
-      style="@style/ButtonText"
-      android:id="@+id/account_download_button"
-      android:background="@drawable/btn_blue"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="false"
-      android:minWidth="48dp"
-      android:minHeight="48dp"
-      android:text="@string/Download"
-      android:layout_above="@id/ok_account_button" />
+    <Button
+        android:id="@+id/account_download_button"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ok_account_button"
+        android:layout_alignParentBottom="false"
+        android:background="@drawable/btn_blue"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:text="@string/Download" />
 
-  <Button
-      android:id="@+id/ok_account_button"
-      style="@style/ButtonText"
-      android:background="@drawable/btn_green"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:minWidth="48dp"
-      android:minHeight="48dp"
-      android:text="@string/OK" />
+    <Button
+        android:id="@+id/ok_account_button"
+        style="@style/ButtonText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_green"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:text="@string/OK" />
 
 </RelativeLayout>
