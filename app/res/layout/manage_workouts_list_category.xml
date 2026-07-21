@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -20,16 +19,16 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="12dp"
     android:paddingLeft="@dimen/activity_margin"
+    android:paddingTop="12dp"
     android:paddingRight="@dimen/activity_margin"
-    android:paddingTop="12dp">
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/category_text"
         style="@style/ListItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
 </LinearLayout>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 - 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -15,39 +14,39 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menu_hrzones"
         android:orderInCategory="100"
-        android:title="@string/Configure_heart_rate_zones"/>
+        android:title="@string/Configure_heart_rate_zones" />
 
     <item
         android:id="@+id/menu_hrsettings_clear"
         android:orderInCategory="100"
-        android:title="@string/Clear_HR_settings"/>
+        android:title="@string/Clear_HR_settings" />
 
     <item
         android:id="@+id/menu_hrdevice_paired_ble"
+        android:checkable="true"
         android:orderInCategory="100"
-        android:title="@string/Paired_BLE_devices"
-        android:checkable="true"/>
+        android:title="@string/Paired_BLE_devices" />
 
     <item
         android:id="@+id/menu_hrdevice_experimental"
+        android:checkable="true"
         android:orderInCategory="100"
-        android:title="@string/Experimental_HRM_devices"
-        android:checkable="true"/>
+        android:title="@string/Experimental_HRM_devices" />
 
     <item
         android:id="@+id/menu_hrdevice_mock"
+        android:checkable="true"
         android:orderInCategory="100"
-        android:title="@string/Mock_HRM_devices"
-        android:checkable="true"/>
+        android:title="@string/Mock_HRM_devices" />
 
     <item
         android:id="@+id/menu_hrdevice_debug"
+        android:checkable="true"
         android:orderInCategory="100"
-        android:title="@string/Debug_HRM"
-        android:checkable="true"/>
+        android:title="@string/Debug_HRM" />
 </menu>

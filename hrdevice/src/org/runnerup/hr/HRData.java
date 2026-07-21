@@ -34,8 +34,8 @@ public class HRData {
 
   public boolean hasHeartRate = false;
   public long hrValue = -1;
-  private boolean timeStampIsFromDevice = false;
   public long timestamp = -1;
+  private boolean timeStampIsFromDevice = false;
   private boolean hasRrIntervals = false;
   private long[] rrIntervals = null;
 

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,21 +15,21 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/dialog_padding_vert"
-              android:paddingLeft="@dimen/dialog_padding_horiz"
-              android:paddingRight="@dimen/dialog_padding_horiz"
-              android:paddingTop="@dimen/dialog_padding_vert">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/dialog_padding_horiz"
+    android:paddingTop="@dimen/dialog_padding_vert"
+    android:paddingRight="@dimen/dialog_padding_horiz"
+    android:paddingBottom="@dimen/dialog_padding_vert">
 
     <TextView
         android:id="@+id/filepermission_textViewAuthNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TableRow
         android:id="@+id/filepermission_table_row1"
@@ -42,18 +41,18 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="URI"
-            tools:ignore="HardcodedText"/>
+            tools:ignore="HardcodedText" />
 
         <EditText
             android:id="@+id/fileuri"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
             android:hint="URL"
             android:inputType="textUri"
-            tools:ignore="HardcodedText,AutoFill"/>
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            tools:ignore="HardcodedText,AutoFill" />
 
     </TableRow>
 

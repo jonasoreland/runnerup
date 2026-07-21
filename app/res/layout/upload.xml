@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -22,90 +21,90 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-  <LinearLayout
-    android:id="@+id/upload_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentTop="true"
-    android:layout_marginTop="@dimen/activity_margin"
-    android:layout_marginRight="@dimen/activity_margin"
-    android:layout_marginLeft="@dimen/activity_margin"
-    android:gravity="center|center_horizontal|center_vertical">
+    <LinearLayout
+        android:id="@+id/upload_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginRight="@dimen/activity_margin"
+        android:gravity="center|center_horizontal|center_vertical">
 
-    <TextView
-      android:id="@+id/upload_account_list_name"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      style="@style/AccountListText"/>
+        <TextView
+            android:id="@+id/upload_account_list_name"
+            style="@style/AccountListText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-    <ImageView
-      android:id="@+id/upload_account_list_icon"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:scaleType="center"
-      tools:ignore="ContentDescription"/>
-  </LinearLayout>
+        <ImageView
+            android:id="@+id/upload_account_list_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
 
-  <ListView
-    android:layout_margin="@dimen/activity_margin"
-    android:id="@+id/upload_view"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_above="@id/upload_account_button_layout"
-    android:layout_alignParentStart="true"
-    android:layout_below="@id/upload_layout"
-    android:scrollbarAlwaysDrawVerticalTrack="true">
+    <ListView
+        android:id="@+id/upload_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/upload_account_button_layout"
+        android:layout_below="@id/upload_layout"
+        android:layout_alignParentStart="true"
+        android:layout_margin="@dimen/activity_margin"
+        android:scrollbarAlwaysDrawVerticalTrack="true">
 
-  </ListView>
+    </ListView>
 
-  <LinearLayout
-    android:id="@+id/upload_account_button_layout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:layout_alignParentEnd="true"
-    android:layout_above="@id/upload_account_action_buttons">
+    <LinearLayout
+        android:id="@+id/upload_account_button_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/upload_account_action_buttons"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
 
-    <Button
-      android:id="@+id/upload_account_set_all"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:text="@string/Select_all"
-      tools:ignore="ButtonStyle" />
+        <Button
+            android:id="@+id/upload_account_set_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Select_all"
+            tools:ignore="ButtonStyle" />
 
-    <Button
-      android:id="@+id/upload_account_clear_all"
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:text="@string/Clear_all"
-      tools:ignore="ButtonStyle" />
-  </LinearLayout>
+        <Button
+            android:id="@+id/upload_account_clear_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Clear_all"
+            tools:ignore="ButtonStyle" />
+    </LinearLayout>
 
-  <LinearLayout
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/upload_account_action_buttons"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentBottom="true">
+    <LinearLayout
+        android:id="@+id/upload_account_action_buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
-    <Button
-      android:id="@+id/upload_account_button"
-      style="@style/ButtonText"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:background="@drawable/btn_blue"
-      android:text="@string/Upload" />
+        <Button
+            android:id="@+id/upload_account_button"
+            style="@style/ButtonText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_blue"
+            android:text="@string/Upload" />
 
-    <Button
-      android:id="@+id/upload_account_download_button"
-      style="@style/ButtonText"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:background="@drawable/btn_blue"
-      android:text="@string/Download" />
-  </LinearLayout>
+        <Button
+            android:id="@+id/upload_account_download_button"
+            style="@style/ButtonText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_blue"
+            android:text="@string/Download" />
+    </LinearLayout>
 
 </RelativeLayout>

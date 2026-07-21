@@ -18,17 +18,17 @@
     android:id="@+id/step_button_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
     android:layout_marginTop="4dp"
-    android:minWidth="48dp"
-    android:minHeight="48dp"
+    android:layout_marginBottom="4dp"
     android:background="@drawable/title_spinner"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="horizontal"
-    android:paddingBottom="12dp"
     android:gravity="center_vertical"
-    android:paddingTop="12dp">
+    android:minWidth="48dp"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
     <TextView
         android:id="@+id/step_duration_value"

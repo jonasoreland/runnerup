@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 ~ Copyright (C) 2014 jonas.oreland@gmail.com
 ~
 ~  This program is free software: you can redistribute it and/or modify
@@ -16,41 +15,40 @@
 ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<android.support.wearable.view.BoxInsetLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.wearable.view.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp">
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_gravity="center"
-      android:padding="0dp"
-      app:layout_box="all"
-      android:gravity="center"
-      android:orientation="vertical">
-
-    <android.support.wearable.view.CircledImageView
-        android:id="@+id/icon_searching"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:foreground="@drawable/searching_animation"
-        app:circle_border_width="0dp"
-        app:circle_color="@color/action_button"
-        app:circle_radius="32dp" />
-
-    <TextView
-        android:id="@+id/txt_search_gps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/Searching_for_GPS"
-        android:textColor="@android:color/white"
-	android:textAlignment="center"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="0dp"
+        app:layout_box="all">
 
-  </LinearLayout>
+        <android.support.wearable.view.CircledImageView
+            android:id="@+id/icon_searching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="@drawable/searching_animation"
+            app:circle_border_width="0dp"
+            app:circle_color="@color/action_button"
+            app:circle_radius="32dp" />
+
+        <TextView
+            android:id="@+id/txt_search_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/Searching_for_GPS"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </android.support.wearable.view.BoxInsetLayout>

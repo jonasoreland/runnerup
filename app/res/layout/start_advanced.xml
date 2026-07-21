@@ -27,9 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:key="@string/pref_advanced_audio"
-        android:layout_marginEnd="@dimen/activity_margin"
         android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:key="@string/pref_advanced_audio"
         android:text="@string/Audio_cue_settings"
         runnerup:type="spinner_txt" />
 
@@ -37,12 +37,12 @@
         android:id="@+id/advanced_workout_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@id/advanced_audio_cue_spinner"
-        android:key="@string/pref_advanced_workout"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentStart="true"
         android:layout_marginStart="@dimen/activity_margin"
         android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginBottom="16dp"
+        android:key="@string/pref_advanced_workout"
         android:text="@string/Workout"
         runnerup:type="spinner_txt" />
 
@@ -50,16 +50,16 @@
         android:id="@+id/advanced_step_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_below="@id/advanced_workout_spinner"
+        android:layout_alignParentBottom="true"
         android:background="@color/subsectionBg"
         android:cacheColorHint="@color/subsectionBg"
         android:clipToPadding="false"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:paddingLeft="@dimen/activity_margin"
-        android:paddingRight="@dimen/activity_margin"
         android:paddingTop="@dimen/activity_margin"
+        android:paddingRight="@dimen/activity_margin"
         android:paddingBottom="@dimen/margin_for_fab"
         android:scrollbarAlwaysDrawVerticalTrack="true" />
 

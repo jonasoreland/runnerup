@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -15,21 +14,21 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menu_clear_uploads"
         android:orderInCategory="100"
-        android:title="@string/Clear_uploads"/>
+        android:title="@string/Clear_uploads" />
 
     <item
         android:id="@+id/menu_upload_workouts"
         android:orderInCategory="100"
-        android:title="@string/Upload_missing_workouts"/>
+        android:title="@string/Upload_missing_workouts" />
 
     <item
         android:id="@+id/menu_disconnect_account"
         android:orderInCategory="100"
-        android:title="@string/Disconnect_account"/>
+        android:title="@string/Disconnect_account" />
 
 </menu>

@@ -28,7 +28,7 @@
         <Preference
             android:key="cue_configure_hr"
             android:title="@string/Heart_Rate_Monitor"
-            app:iconSpaceReserved="false" >
+            app:iconSpaceReserved="false">
             <intent
                 android:targetClass="org.runnerup.view.HRSettingsActivity"
                 android:targetPackage="@string/applicationIdFull" />
@@ -37,7 +37,7 @@
         <Preference
             android:key="@string/cue_configure_hrzones"
             android:title="@string/Heart_Rate_Zones"
-            app:iconSpaceReserved="false" >
+            app:iconSpaceReserved="false">
             <intent
                 android:targetClass="org.runnerup.view.HRZonesActivity"
                 android:targetPackage="@string/applicationIdFull" />
@@ -178,7 +178,7 @@
     <PreferenceCategory
         android:key="@string/Autopause_category"
         android:title="@string/Autopause_category"
-        app:iconSpaceReserved="false" >
+        app:iconSpaceReserved="false">
 
         <!-- Enabled state depends upon pref_autopause_active (set in SettingsSensorsFragment). -->
         <org.runnerup.widget.TextPreference

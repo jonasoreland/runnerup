@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -24,21 +23,21 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:padding="0px"
         android:layout_marginTop="0px"
         android:layout_marginBottom="0px"
         android:background="@color/colorBottomNav"
         android:elevation="8dp"
-        app:tabIndicatorHeight="0dp"
+        android:padding="0px"
         app:tabIconTint="@color/bottom_tabs"
+        app:tabIndicatorHeight="0dp"
         app:tabRippleColor="@null" />
 
 </LinearLayout>

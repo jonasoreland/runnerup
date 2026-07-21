@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -19,22 +18,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.type.watch" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
-        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
         android:keepScreenOn="true"
+        android:label="@string/app_name"
         android:supportsRtl="true"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
-        <meta-data android:name="com.google.android.wearable.standalone" android:value="false"/>
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="false" />
 
         <activity
-            android:exported="true"
             android:name=".view.MainActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             tools:ignore="WearRecents">
             <intent-filter>
@@ -43,22 +44,25 @@
             </intent-filter>
 
             <intent-filter>
-                <action android:name="org.runnerup."/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="org.runnerup." />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".view.RequestPermissionActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:taskAffinity="" />
+            android:taskAffinity=""
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <service
-            android:exported="true"
-            android:name=".service.ListenerService">
+            android:name=".service.ListenerService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                <data android:host="*" android:pathPrefix="/org.runnerup" android:scheme="wear" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/org.runnerup"
+                    android:scheme="wear" />
             </intent-filter>
         </service>
 
