@@ -74,8 +74,8 @@
                 android:id="@+id/activity_pace_separator"
                 android:layout_width="1dp"
                 android:layout_height="16dp"
-                android:gravity="center"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/activity_pace"
@@ -114,8 +114,8 @@
                     android:id="@+id/tab_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_margin="@dimen/activity_margin">
+                    android:layout_margin="@dimen/activity_margin"
+                    android:orientation="vertical">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -125,16 +125,16 @@
                         android:prompt="@string/Type"
                         android:text="@string/Sport" />
 
-		    <org.runnerup.widget.TitleSpinner
-			android:id="@+id/summary_manual_distance"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:minWidth="48dp"
-			android:minHeight="48dp"
-			android:prompt="@string/Type"
-			android:inputType="numberDecimal"
-			android:text="@string/Distance"
-			runnerup:type="distancepicker" />
+                    <org.runnerup.widget.TitleSpinner
+                        android:id="@+id/summary_manual_distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="numberDecimal"
+                        android:minWidth="48dp"
+                        android:minHeight="48dp"
+                        android:prompt="@string/Type"
+                        android:text="@string/Distance"
+                        runnerup:type="distancepicker" />
 
                     <EditText
                         android:id="@+id/notes_text"
@@ -169,8 +169,8 @@
                     android:id="@+id/tab_lap"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:baselineAligned="false"
-                    android:layout_margin="@dimen/activity_margin">
+                    android:layout_margin="@dimen/activity_margin"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/laplist"
@@ -179,22 +179,23 @@
                         android:layout_weight="1" />
                 </LinearLayout>
 
-		<LinearLayout
+                <LinearLayout
                     android:id="@+id/tab_map"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content">
-		  <org.runnerup.util.MapViewWrapper
-		      android:id="@+id/mapview"
-		      android:layout_width="match_parent"
-		      android:layout_height="match_parent" />
-		  </LinearLayout>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <org.runnerup.util.MapViewWrapper
+                        android:id="@+id/mapview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
 
                 <ScrollView
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scrollbars="none"
-                    android:clipToPadding="false">
+                    android:clipToPadding="false"
+                    android:scrollbars="none">
 
                     <LinearLayout
                         android:id="@+id/graphview"
@@ -209,8 +210,8 @@
                     android:id="@+id/tab_upload"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:baselineAligned="false"
-                    android:layout_margin="@dimen/activity_margin">
+                    android:layout_margin="@dimen/activity_margin"
+                    android:baselineAligned="false">
 
                     <ListView
                         android:id="@+id/report_list"
@@ -235,8 +236,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_blue"
-            android:drawablePadding="-32dp"
             android:drawableEnd="@drawable/ic_av_play_arrow"
+            android:drawablePadding="-32dp"
             android:text="@string/Resume" />
 
         <Button

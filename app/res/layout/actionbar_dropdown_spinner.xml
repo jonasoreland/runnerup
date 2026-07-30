@@ -3,5 +3,5 @@
     style="@style/TextAppearance.AppCompat.Title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:gravity="start" />
+    android:gravity="start"
+    android:padding="8dp" />

@@ -34,39 +34,6 @@ import java.util.List;
  */
 public class HRManager {
 
-  static class AntPlusProxy {
-    // AntPlus module may be disabled when building, only available in a few phones
-    private static final String Lib = "org.runnerup.hr.AntPlus";
-    static final String Name = "AntPlus";
-
-    static boolean checkAntPlusLibrary(Context ctx) {
-      if (BuildConfig.ANTPLUS_ENABLED) {
-        try {
-          Class<?> clazz = Class.forName(Lib);
-          Method method = clazz.getDeclaredMethod("checkLibrary", Context.class);
-          return (boolean) method.invoke(null, ctx);
-        } catch (Exception e) {
-          Log.d(Lib, Name + "Library is not loaded " + e);
-        }
-      }
-      return false;
-    }
-
-    static HRProvider createProviderByReflection(Context ctx) {
-      try {
-        Class<?> classDefinition = Class.forName(Lib);
-        Constructor<?> cons = classDefinition.getConstructor(Context.class);
-        HRProvider ap = (HRProvider) cons.newInstance(ctx);
-        if (!ap.isEnabled()) {
-          return null;
-        }
-        return ap;
-      } catch (Exception e) {
-        return null;
-      }
-    }
-  }
-
   /**
    * Creates an {@link HRProvider}. This will be wrapped in a {@link RetryingHRProviderProxy}. *
    *
@@ -163,5 +130,38 @@ public class HRManager {
     }
 
     return providers;
+  }
+
+  static class AntPlusProxy {
+    static final String Name = "AntPlus";
+    // AntPlus module may be disabled when building, only available in a few phones
+    private static final String Lib = "org.runnerup.hr.AntPlus";
+
+    static boolean checkAntPlusLibrary(Context ctx) {
+      if (BuildConfig.ANTPLUS_ENABLED) {
+        try {
+          Class<?> clazz = Class.forName(Lib);
+          Method method = clazz.getDeclaredMethod("checkLibrary", Context.class);
+          return (boolean) method.invoke(null, ctx);
+        } catch (Exception e) {
+          Log.d(Lib, Name + "Library is not loaded " + e);
+        }
+      }
+      return false;
+    }
+
+    static HRProvider createProviderByReflection(Context ctx) {
+      try {
+        Class<?> classDefinition = Class.forName(Lib);
+        Constructor<?> cons = classDefinition.getConstructor(Context.class);
+        HRProvider ap = (HRProvider) cons.newInstance(ctx);
+        if (!ap.isEnabled()) {
+          return null;
+        }
+        return ap;
+      } catch (Exception e) {
+        return null;
+      }
+    }
   }
 }

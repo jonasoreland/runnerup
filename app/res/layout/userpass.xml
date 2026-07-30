@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,36 +15,36 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingLeft="@dimen/dialog_padding_horiz"
+    android:paddingTop="@dimen/dialog_padding_vert"
     android:paddingRight="@dimen/dialog_padding_horiz"
-    android:paddingBottom="@dimen/dialog_padding_vert"
-    android:paddingTop="@dimen/dialog_padding_vert">
+    android:paddingBottom="@dimen/dialog_padding_vert">
 
     <TextView
+        android:id="@+id/userpass_textViewAuthNotice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/userpass_textViewAuthNotice"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TableLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <TableRow
             android:id="@+id/table_row_url"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
-                android:importantForAccessibility="no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
                 android:text="@string/Website" />
 
             <EditText
@@ -53,10 +52,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:hint="@string/Website"
+                android:inputType="textUri"
                 android:minWidth="48dp"
                 android:minHeight="48dp"
-                android:inputType="textUri"
-                android:hint="@string/Website"
                 tools:ignore="AutoFill" />
 
         </TableRow>
@@ -64,13 +63,13 @@
         <TableRow
             android:id="@+id/userpass_table_row1"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
-                android:importantForAccessibility="no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
                 android:text="@string/Username" />
 
             <EditText
@@ -78,11 +77,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:inputType="textEmailAddress"
                 android:autofillHints="emailAddress"
                 android:hint="@string/Username"
+                android:inputType="textEmailAddress"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 tools:ignore="UnusedAttribute" />
 
         </TableRow>
@@ -90,13 +89,13 @@
         <TableRow
             android:id="@+id/userpass_table_row2"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content">
 
             <TextView
-                android:importantForAccessibility="no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
                 android:text="@string/Password" />
 
             <EditText
@@ -104,11 +103,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
-                android:inputType="textPassword"
                 android:autofillHints="password"
                 android:hint="@string/Password"
+                android:inputType="textPassword"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 tools:ignore="UnusedAttribute" />
 
         </TableRow>
@@ -116,11 +115,11 @@
     </TableLayout>
 
     <CheckBox
-        android:layout_marginTop="8dp"
         android:id="@+id/showpass"
-        android:layout_gravity="end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="8dp"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:text="@string/Show_password" />

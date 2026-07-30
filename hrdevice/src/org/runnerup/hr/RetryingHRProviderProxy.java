@@ -16,29 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient {
 
-  private HRDeviceRef connectRef;
-
-  // What has been request by us.
-  enum State {
-    INITIAL,
-    OPEN,
-    CLOSE,
-    START_SCAN,
-    STOP_SCAN,
-    CONNECT,
-    DISCONNECT,
-  };
-
   private final HRProvider provider;
+  // If we stayed connected for 30s after a reconnect
+  // then reset the attempt which affect how quickly we reconnect.
+  private final int kResetAttemptCounterDelay = 30000;
+  ;
+  private HRDeviceRef connectRef;
   private int attempt = 0;
   private HRClient client = null;
   private Handler handler = null;
   private DefaultProxy proxy = new DefaultProxy();
   private State requested = State.INITIAL; // What has been last requested.
-
-  // If we stayed connected for 30s after a reconnect
-  // then reset the attempt which affect how quickly we reconnect.
-  private final int kResetAttemptCounterDelay = 30000;
 
   public RetryingHRProviderProxy(HRProvider src) {
     this.provider = src;
@@ -367,6 +355,34 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
     log(this, res);
   }
 
+  void registerDefault() {
+    setProxy(new DefaultProxy());
+  }
+
+  synchronized DefaultProxy getProxy() {
+    if (proxy != null) {
+      return proxy;
+    }
+    return new DefaultProxy();
+  }
+  ;
+
+  synchronized void setProxy(DefaultProxy p) {
+    log("Update proxy from: " + proxy + ", to: " + p);
+    proxy = p;
+  }
+
+  // What has been request by us.
+  enum State {
+    INITIAL,
+    OPEN,
+    CLOSE,
+    START_SCAN,
+    STOP_SCAN,
+    CONNECT,
+    DISCONNECT,
+  }
+
   class DefaultProxy implements HRProvider.HRClient {
     DefaultProxy() {}
 
@@ -418,22 +434,5 @@ public class RetryingHRProviderProxy implements HRProvider, HRProvider.HRClient 
       RetryingHRProviderProxy.this.log((client != null ? "proxy: " : "null: ") + msg);
       return client;
     }
-  }
-  ;
-
-  void registerDefault() {
-    setProxy(new DefaultProxy());
-  }
-
-  synchronized void setProxy(DefaultProxy p) {
-    log("Update proxy from: " + proxy + ", to: " + p);
-    proxy = p;
-  }
-
-  synchronized DefaultProxy getProxy() {
-    if (proxy != null) {
-      return proxy;
-    }
-    return new DefaultProxy();
   }
 }

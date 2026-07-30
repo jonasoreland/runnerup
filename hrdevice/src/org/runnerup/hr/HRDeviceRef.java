@@ -25,9 +25,9 @@ package org.runnerup.hr;
  */
 public class HRDeviceRef {
 
-  private final String provider;
   public final String deviceName;
   public final String deviceAddress;
+  private final String provider;
 
   private HRDeviceRef(final String provider, final String name, final String address) {
     this.provider = provider;

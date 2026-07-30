@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -18,9 +17,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:orientation="horizontal">
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/lap_list_id"
@@ -61,6 +60,7 @@
         android:layout_weight="1"
         android:gravity="end"
         android:text="@string/pace" />
+
     <TextView
         android:id="@+id/lap_list_hr"
         android:layout_width="0dp"

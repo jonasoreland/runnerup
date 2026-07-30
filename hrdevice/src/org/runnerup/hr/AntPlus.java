@@ -48,108 +48,126 @@ public class AntPlus extends BtHRBase {
   private static final String DISPLAY_NAME = "ANT+";
 
   private final Context context;
+  private final HashSet<String> mScanDevices = new HashSet<>();
   private int hrValue;
   private long hrTimestamp;
   private long hrElapsedRealtime = 0;
-
   private HRDeviceRef connectRef = null;
-
   private AsyncScanController<AntPlusHeartRatePcc> hrScanCtrl = null;
-
   private boolean mIsScanning = false;
   private boolean mIsConnected = false;
   private boolean mIsConnecting = false;
   private PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle;
+  private AntPlusHeartRatePcc antDevice = null;
+  private final IHeartRateDataReceiver heartRateDataReceiver =
+      new IHeartRateDataReceiver() {
 
-  public AntPlus(Context ctx) {
-    this.context = ctx;
-  }
+        @Override
+        public void onNewHeartRateData(
+            long arg0,
+            EnumSet<EventFlag> arg1,
+            int arg2,
+            long arg3,
+            BigDecimal bigDecimal,
+            AntPlusHeartRatePcc.DataState dataState) {
 
-  @Override
-  public String getName() {
-    return DISPLAY_NAME;
-  }
+          switch (dataState) {
+            case LIVE_DATA:
+              break;
+            case INITIAL_VALUE:
+              break;
+            case ZERO_DETECTED:
+              break;
+            case UNRECOGNIZED:
+              break;
+          }
 
-  @Override
-  public String getProviderName() {
-    return NAME;
-  }
+          if (arg2 == 0) {
+            log("got hrValue == 0 => aborting");
+            if (mIsConnecting) reportConnected(false);
+            else if (mIsConnected) reportDisconnected(true);
+            return;
+          }
 
-  @Override
-  public void open(Handler handler, HRClient hrClient) {
-    log("open()");
-    this.hrClientHandler = handler;
-    this.hrClient = hrClient;
-    hrClient.onOpenResult(true);
-  }
+          hrValue = arg2;
+          hrTimestamp = System.currentTimeMillis();
+          hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
 
-  @Override
-  public void close(String from) {
-    HRClient client = hrClient;
-    hrClient = null;
-    stopScan();
-    disconnect();
-    if (client != null) {
-      client.onCloseResult(true);
-    }
-  }
+          if (mIsConnecting) {
+            reportConnected(true);
+          }
+        }
+      };
+  private final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver =
+      new IPluginAccessResultReceiver<>() {
 
-  public static boolean checkLibrary(Context ctx) {
-    try {
-      // A few required libs
-      Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
-      Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
-      Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
-      Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
+        @Override
+        public void onResultReceived(
+            AntPlusHeartRatePcc arg0, RequestAccessResult arg1, DeviceState arg2) {
 
-      // The system libraries must be installed
-      return AntPluginPcc.getInstalledPluginsVersionNumber(ctx) >= 0;
-    } catch (Exception ignored) {
-    }
-    return false;
-  }
+          log("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
 
-  @Override
-  public boolean includePairingBLE() {
-    return false;
-  }
+          antDevice = arg0;
+          switch (arg1) {
+            case ALREADY_SUBSCRIBED:
+            case CHANNEL_NOT_AVAILABLE:
+            case DEPENDENCY_NOT_INSTALLED:
+            case DEVICE_ALREADY_IN_USE:
+            case OTHER_FAILURE:
+            case SEARCH_TIMEOUT:
+            case UNRECOGNIZED:
+            case USER_CANCELLED:
+              reportConnectFailed(arg1);
+              return;
+            case SUCCESS:
+              break;
+          }
 
-  @Override
-  public boolean isScanning() {
-    return mIsScanning;
-  }
+          switch (arg2) {
+            case UNRECOGNIZED:
+            case CLOSED:
+            case DEAD:
+            case PROCESSING_REQUEST:
+            case SEARCHING:
+              reportConnectFailed(arg1);
+              return;
+            case TRACKING:
+              break;
+            default:
+              // ???
+              break;
+          }
 
-  @Override
-  public boolean isConnected() {
-    return mIsConnected;
-  }
-
-  @Override
-  public boolean isConnecting() {
-    return mIsConnecting;
-  }
-
-  @Override
-  public void startScan() {
-    stopScan();
-    log("startScan()");
-    mIsScanning = true;
-    mScanDevices.clear();
-    hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(context, 0, scanReceiver);
-  }
-
-  @Override
-  public void stopScan() {
-    if (mIsScanning || hrScanCtrl != null) log("stopScan()");
-
-    mIsScanning = false;
-    if (hrScanCtrl != null) {
-      hrScanCtrl.closeScanController();
-      hrScanCtrl = null;
-    }
-  }
-
-  private final HashSet<String> mScanDevices = new HashSet<>();
+          antDevice.subscribeHeartRateDataEvent(heartRateDataReceiver);
+        }
+      };
+  private final IDeviceStateChangeReceiver stateReceiver =
+      arg0 -> {
+        log("onDeviceStateChange(" + arg0 + ")");
+        switch (arg0) {
+          case CLOSED:
+            break;
+          case DEAD:
+            if (mIsConnected) {
+              /* don't silent reconnect, let upper lay handle that */
+              reportDisconnected(true);
+              return;
+            }
+            if (mIsConnecting) {
+              reportConnectFailed(null);
+              return;
+            }
+            break;
+          case PROCESSING_REQUEST:
+            break;
+          case SEARCHING:
+            break;
+          case TRACKING:
+            break;
+          case UNRECOGNIZED:
+            break;
+        }
+      };
   private final IAsyncScanResultReceiver scanReceiver =
       new IAsyncScanResultReceiver() {
 
@@ -197,6 +215,94 @@ public class AntPlus extends BtHRBase {
         }
       };
 
+  public AntPlus(Context ctx) {
+    this.context = ctx;
+  }
+
+  public static boolean checkLibrary(Context ctx) {
+    try {
+      // A few required libs
+      Class.forName("com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc");
+      Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.DeviceState");
+      Class.forName("com.dsi.ant.plugins.antplus.pcc.defines.RequestAccessResult");
+      Class.forName("com.dsi.ant.plugins.antplus.pccbase.AsyncScanController");
+
+      // The system libraries must be installed
+      return AntPluginPcc.getInstalledPluginsVersionNumber(ctx) >= 0;
+    } catch (Exception ignored) {
+    }
+    return false;
+  }
+
+  @Override
+  public String getName() {
+    return DISPLAY_NAME;
+  }
+
+  @Override
+  public String getProviderName() {
+    return NAME;
+  }
+
+  @Override
+  public void open(Handler handler, HRClient hrClient) {
+    log("open()");
+    this.hrClientHandler = handler;
+    this.hrClient = hrClient;
+    hrClient.onOpenResult(true);
+  }
+
+  @Override
+  public void close(String from) {
+    HRClient client = hrClient;
+    hrClient = null;
+    stopScan();
+    disconnect();
+    if (client != null) {
+      client.onCloseResult(true);
+    }
+  }
+
+  @Override
+  public boolean includePairingBLE() {
+    return false;
+  }
+
+  @Override
+  public boolean isScanning() {
+    return mIsScanning;
+  }
+
+  @Override
+  public boolean isConnected() {
+    return mIsConnected;
+  }
+
+  @Override
+  public boolean isConnecting() {
+    return mIsConnecting;
+  }
+
+  @Override
+  public void startScan() {
+    stopScan();
+    log("startScan()");
+    mIsScanning = true;
+    mScanDevices.clear();
+    hrScanCtrl = AntPlusHeartRatePcc.requestAsyncScanController(context, 0, scanReceiver);
+  }
+
+  @Override
+  public void stopScan() {
+    if (mIsScanning || hrScanCtrl != null) log("stopScan()");
+
+    mIsScanning = false;
+    if (hrScanCtrl != null) {
+      hrScanCtrl.closeScanController();
+      hrScanCtrl = null;
+    }
+  }
+
   @Override
   public void connect(HRDeviceRef ref) {
     stopScan();
@@ -208,120 +314,6 @@ public class AntPlus extends BtHRBase {
         AntPlusHeartRatePcc.requestAccess(
             context, Integer.parseInt(ref.deviceAddress), 0, resultReceiver, stateReceiver);
   }
-
-  private AntPlusHeartRatePcc antDevice = null;
-
-  private final IPluginAccessResultReceiver<AntPlusHeartRatePcc> resultReceiver =
-      new IPluginAccessResultReceiver<>() {
-
-        @Override
-        public void onResultReceived(
-            AntPlusHeartRatePcc arg0, RequestAccessResult arg1, DeviceState arg2) {
-
-          log("onResultReceived(" + arg0 + ", " + arg1 + ", " + arg2 + ")");
-
-          antDevice = arg0;
-          switch (arg1) {
-            case ALREADY_SUBSCRIBED:
-            case CHANNEL_NOT_AVAILABLE:
-            case DEPENDENCY_NOT_INSTALLED:
-            case DEVICE_ALREADY_IN_USE:
-            case OTHER_FAILURE:
-            case SEARCH_TIMEOUT:
-            case UNRECOGNIZED:
-            case USER_CANCELLED:
-              reportConnectFailed(arg1);
-              return;
-            case SUCCESS:
-              break;
-          }
-
-          switch (arg2) {
-            case UNRECOGNIZED:
-            case CLOSED:
-            case DEAD:
-            case PROCESSING_REQUEST:
-            case SEARCHING:
-              reportConnectFailed(arg1);
-              return;
-            case TRACKING:
-              break;
-            default:
-              // ???
-              break;
-          }
-
-          antDevice.subscribeHeartRateDataEvent(heartRateDataReceiver);
-        }
-      };
-
-  private final IHeartRateDataReceiver heartRateDataReceiver =
-      new IHeartRateDataReceiver() {
-
-        @Override
-        public void onNewHeartRateData(
-            long arg0,
-            EnumSet<EventFlag> arg1,
-            int arg2,
-            long arg3,
-            BigDecimal bigDecimal,
-            AntPlusHeartRatePcc.DataState dataState) {
-
-          switch (dataState) {
-            case LIVE_DATA:
-              break;
-            case INITIAL_VALUE:
-              break;
-            case ZERO_DETECTED:
-              break;
-            case UNRECOGNIZED:
-              break;
-          }
-
-          if (arg2 == 0) {
-            log("got hrValue == 0 => aborting");
-            if (mIsConnecting) reportConnected(false);
-            else if (mIsConnected) reportDisconnected(true);
-            return;
-          }
-
-          hrValue = arg2;
-          hrTimestamp = System.currentTimeMillis();
-          hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-
-          if (mIsConnecting) {
-            reportConnected(true);
-          }
-        }
-      };
-
-  private final IDeviceStateChangeReceiver stateReceiver =
-      arg0 -> {
-        log("onDeviceStateChange(" + arg0 + ")");
-        switch (arg0) {
-          case CLOSED:
-            break;
-          case DEAD:
-            if (mIsConnected) {
-              /* don't silent reconnect, let upper lay handle that */
-              reportDisconnected(true);
-              return;
-            }
-            if (mIsConnecting) {
-              reportConnectFailed(null);
-              return;
-            }
-            break;
-          case PROCESSING_REQUEST:
-            break;
-          case SEARCHING:
-            break;
-          case TRACKING:
-            break;
-          case UNRECOGNIZED:
-            break;
-        }
-      };
 
   private void reportConnectFailed(RequestAccessResult arg1) {
     disconnectImpl();

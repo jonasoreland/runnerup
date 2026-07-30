@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -25,73 +24,69 @@
         android:id="@+id/expandable_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="false"
+        android:layout_above="@id/manage_button_table"
         android:layout_alignParentStart="false"
-        android:layout_above="@id/manage_button_table" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="false" />
 
-  <TableLayout
-    android:id="@+id/manage_button_table"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true">
+    <TableLayout
+        android:id="@+id/manage_button_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
-    <TableRow
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-      <Button
-          android:id="@+id/share_workout_button"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_blue"
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:layout_height="match_parent"
-          android:text="@string/Share"
-          android:textSize="16sp"
-      />
+            <Button
+                android:id="@+id/share_workout_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Share"
+                android:textSize="16sp" />
 
-      <Button
-          android:id="@+id/edit_workout_button"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_blue"
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:layout_height="match_parent"
-          android:text="@string/Edit"
-          android:textSize="16sp"
-      />
-    </TableRow>
+            <Button
+                android:id="@+id/edit_workout_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Edit"
+                android:textSize="16sp" />
+        </TableRow>
 
-    <TableRow
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-      <Button
-          android:id="@+id/create_workout_button"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_green"
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:layout_height="match_parent"
-          android:text="@string/Create"
-          android:textSize="16sp"
-          android:clickable="false"
-        />
+            <Button
+                android:id="@+id/create_workout_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_green"
+                android:clickable="false"
+                android:text="@string/Create"
+                android:textSize="16sp" />
 
-      <Button
-          android:id="@+id/delete_workout_button"
-          style="@style/ButtonText"
-          android:background="@drawable/btn_red"
-          android:layout_width="0dp"
-          android:layout_weight="1"
-          android:layout_height="match_parent"
-          android:text="@string/Delete"
-          android:textSize="16sp"
-          />
+            <Button
+                android:id="@+id/delete_workout_button"
+                style="@style/ButtonText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/btn_red"
+                android:text="@string/Delete"
+                android:textSize="16sp" />
 
-    </TableRow>
+        </TableRow>
 
-  </TableLayout>
+    </TableLayout>
 
 </RelativeLayout>

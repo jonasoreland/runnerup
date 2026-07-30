@@ -34,24 +34,6 @@ public interface HRProvider {
   int BATTERY_LEVEL_UNAVAILABLE = -1;
 
   /**
-   * An interface through which the client of the {@link HRProvider} is notified of changes to the
-   * state of the {@link HRProvider}
-   */
-  interface HRClient {
-    void onOpenResult(boolean ok);
-
-    void onScanResult(HRDeviceRef device);
-
-    void onConnectResult(boolean connectOK);
-
-    void onDisconnectResult(boolean disconnectOK);
-
-    void onCloseResult(boolean closeOK);
-
-    void log(HRProvider src, String msg);
-  }
-
-  /**
    * @return A human readable name for the {@link HRProvider}
    */
   String getName();
@@ -171,4 +153,22 @@ public interface HRProvider {
    *     battery information.
    */
   int getBatteryLevel();
+
+  /**
+   * An interface through which the client of the {@link HRProvider} is notified of changes to the
+   * state of the {@link HRProvider}
+   */
+  interface HRClient {
+    void onOpenResult(boolean ok);
+
+    void onScanResult(HRDeviceRef device);
+
+    void onConnectResult(boolean connectOK);
+
+    void onDisconnectResult(boolean disconnectOK);
+
+    void onCloseResult(boolean closeOK);
+
+    void log(HRProvider src, String msg);
+  }
 }

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -36,9 +35,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:minHeight="48dp"
-        android:minWidth="48dp"
         android:inputType="number"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         tools:ignore="labelFor,AutoFill" />
 
     <TextView
@@ -51,9 +50,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:minHeight="48dp"
+        android:inputType="number"
         android:minWidth="48dp"
-		android:inputType="number"
+        android:minHeight="48dp"
         tools:ignore="labelFor,AutoFill" />
 
     <TextView

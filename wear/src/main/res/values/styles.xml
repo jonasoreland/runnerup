@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,6 +15,7 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+
     <style name="Card3TextSmall">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -26,6 +26,7 @@
         <item name="android:layout_marginBottom">-2sp</item>
         <item name="android:textColor">#999999</item>
     </style>
+
     <style name="Card3TextMedium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -36,6 +37,7 @@
         <item name="android:layout_marginBottom">-5sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="Card3TextLarge">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -47,6 +49,7 @@
         <item name="android:textColor">#33FF00</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="Card2TextSmall">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -57,6 +60,7 @@
         <item name="android:layout_marginBottom">-2sp</item>
         <item name="android:textColor">#999999</item>
     </style>
+
     <style name="Card2TextMedium">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -67,6 +71,7 @@
         <item name="android:layout_marginBottom">-5sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="Card2TextLarge">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -78,6 +83,7 @@
         <item name="android:textColor">#33FF00</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="Card1TextSmall">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -88,6 +94,7 @@
         <item name="android:layout_marginBottom">-2sp</item>
         <item name="android:textColor">#999999</item>
     </style>
+
     <style name="Card1TextLarge">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -99,6 +106,7 @@
         <item name="android:textColor">#33FF00</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="Countdown">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

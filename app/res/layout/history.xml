@@ -17,10 +17,10 @@
       ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
       -->
 
-<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/history_tab1_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/history_tab1_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.HistoryFragment">
@@ -31,11 +31,11 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        app:title="@string/History"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="UnusedAttribute"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/History"
+        tools:ignore="UnusedAttribute" />
 
     <ListView
         android:id="@+id/history_list"
@@ -44,23 +44,23 @@
         android:clipToPadding="false"
         android:paddingBottom="@dimen/margin_for_fab"
         android:scrollbarStyle="outsideOverlay"
-        app:layout_constraintTop_toBottomOf="@id/history_actionbar"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/history_actionbar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/history_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="16dp"
         android:contentDescription="@string/Add_manual_entry"
         android:tooltipText="@string/Add_manual_entry"
         app:backgroundTint="@color/colorPrimaryFab"
         app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_add_white_24dp"
-        tools:ignore="UnusedAttribute"/>
+        tools:ignore="UnusedAttribute" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

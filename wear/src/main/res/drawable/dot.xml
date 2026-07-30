@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2014 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -17,9 +16,10 @@
   -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <solid android:color="#eeffffff"  />
-    <corners android:bottomRightRadius="200dip"
+    <solid android:color="#eeffffff" />
+    <corners
         android:bottomLeftRadius="200dip"
-        android:topRightRadius="200dip"
-        android:topLeftRadius="200dip"/>
+        android:bottomRightRadius="200dip"
+        android:topLeftRadius="200dip"
+        android:topRightRadius="200dip" />
 </shape>

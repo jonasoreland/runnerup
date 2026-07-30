@@ -20,10 +20,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:paddingBottom="@dimen/margin_for_fab"
     android:paddingLeft="@dimen/activity_margin"
+    android:paddingTop="@dimen/activity_margin"
     android:paddingRight="@dimen/activity_margin"
-    android:paddingTop="@dimen/activity_margin"> <!--todo test if it scrolls on smaller screens-->
+    android:paddingBottom="@dimen/margin_for_fab"> <!--todo test if it scrolls on smaller screens-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,8 +52,8 @@
             android:id="@+id/interval_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/types"
             android:defaultValue="1"
+            android:entries="@array/types"
             android:key="@string/pref_interval_type"
             android:prompt="@string/Type"
             android:text="@string/Interval_type" />
@@ -120,20 +120,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
                 android:checked="true"
                 android:enabled="false"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:text="@string/warm_up" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:minWidth="48dp"
-                android:minHeight="48dp"
                 android:checked="true"
                 android:enabled="false"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:text="@string/cool_down" />
         </LinearLayout>
     </LinearLayout>

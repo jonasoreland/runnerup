@@ -1,50 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <TableRow
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:orientation="horizontal"
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
 
     <Button
-      android:layout_width="32dp"
-      android:layout_height="32dp"
-      android:text="@string/_sign_minus"
-      android:id="@+id/del_button"
-      android:paddingTop="4dp"
-      android:paddingBottom="4dp"
-      android:layout_gravity="center"
-      android:gravity="center_vertical|center_horizontal"
-      android:background="@drawable/btn_red"
-      android:textColor="@color/btn_text_color"
-      android:textStyle="bold"
-      android:shadowColor="#000000"
-      android:shadowDx="1"
-      android:shadowDy="1"
-      android:shadowRadius="2"
-      />
+        android:id="@+id/del_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_red"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/_sign_minus"
+        android:textColor="@color/btn_text_color"
+        android:textStyle="bold" />
 
     <view
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      class="org.runnerup.view.StepButton"
-      android:id="@+id/workout_step_button"
-      android:layout_weight="1"/>
+        android:id="@+id/workout_step_button"
+        class="org.runnerup.view.StepButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
     <Button
-      android:layout_width="32dp"
-      android:layout_height="32dp"
-      android:text="@string/_sign_plus"
-      android:id="@+id/add_button"
-      android:paddingTop="4dp"
-      android:paddingBottom="4dp"
-      android:layout_gravity="center"
-      android:gravity="center_vertical|center_horizontal"
-      android:background="@drawable/btn_green"
-      android:textColor="@color/btn_text_color"
-      android:textStyle="bold"
-      android:shadowColor="#000000"
-      android:shadowDx="1"
-      android:shadowDy="1"
-      android:shadowRadius="2"
-      />
+        android:id="@+id/add_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_green"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/_sign_plus"
+        android:textColor="@color/btn_text_color"
+        android:textStyle="bold" />
 </TableRow>

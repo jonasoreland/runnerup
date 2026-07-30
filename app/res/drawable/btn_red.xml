@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -15,32 +14,23 @@
   ~  You should have received a copy of the GNU General Public License
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android" >
-	<item android:state_pressed="true" >
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
         <shape>
-            <gradient
-                android:startColor="#7b2641"
-                android:endColor="#ab373a"
-                android:angle="270" />
-            <corners android:radius="5dp"/>
+            <gradient android:angle="270" android:endColor="#ab373a" android:startColor="#7b2641" />
+            <corners android:radius="5dp" />
         </shape>
     </item>
     <item android:state_enabled="false">
         <shape>
-            <gradient
-                android:startColor="#777777"
-                android:endColor="#171717"
-                android:angle="270" />
-            <corners android:radius="5dp"/>
+            <gradient android:angle="270" android:endColor="#171717" android:startColor="#777777" />
+            <corners android:radius="5dp" />
         </shape>
     </item>
-	<item>
+    <item>
         <shape>
-            <gradient
-                android:startColor="#ab5671"
-                android:endColor="#ab373a"
-                android:angle="270" />
-            <corners android:radius="5dp"/>
+            <gradient android:angle="270" android:endColor="#ab373a" android:startColor="#ab5671" />
+            <corners android:radius="5dp" />
         </shape>
     </item>
 </selector>

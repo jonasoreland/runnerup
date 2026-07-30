@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2012 jonas.oreland@gmail.com
   ~
   ~  This program is free software: you can redistribute it and/or modify
@@ -16,34 +15,34 @@
   ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-     <color name="subsectionBg">#212121</color>
-     <color name="colorPrimaryDark">#003366</color>
-     <color name="colorPrimary">#004282</color>
-     <color name="colorAccent">#53B1FC</color>
-     <color name="colorText">#ffffff</color>
-     <color name="colorTextSecondary">#b3ffffff</color>
+    <color name="subsectionBg">#212121</color>
+    <color name="colorPrimaryDark">#003366</color>
+    <color name="colorPrimary">#004282</color>
+    <color name="colorAccent">#53B1FC</color>
+    <color name="colorText">#ffffff</color>
+    <color name="colorTextSecondary">#b3ffffff</color>
 
-     <color name="colorPrimaryFab">#0066B7</color>
-     <color name="colorBottomNav">#212121</color>
+    <color name="colorPrimaryFab">#0066B7</color>
+    <color name="colorBottomNav">#212121</color>
 
-     <color name="serviceDefault">#003366</color>
-     <color name="serviceDropbox">#0D2481</color>
-     <color name="serviceRunalyze">#67B14C</color>
-     <color name="serviceRunkeeper">#3CC2D2</color>
-     <color name="serviceRunnerUpLive">#003366</color>
-     <color name="serviceRunningAhead">#336699</color>
-     <color name="serviceStrava">#FC4C02</color>
-  
-     <color name="stepActive">#ff978e</color>
-     <color name="stepCooldown">#80DEEA</color>
-     <color name="stepRecovery">#DCE775</color>
-     <color name="stepRepeat">#E0E0E0</color>
-     <color name="stepResting">#75D4FF</color>
-     <color name="stepWarmup">#FFB74D</color>
+    <color name="serviceDefault">#003366</color>
+    <color name="serviceDropbox">#0D2481</color>
+    <color name="serviceRunalyze">#67B14C</color>
+    <color name="serviceRunkeeper">#3CC2D2</color>
+    <color name="serviceRunnerUpLive">#003366</color>
+    <color name="serviceRunningAhead">#336699</color>
+    <color name="serviceStrava">#FC4C02</color>
 
-     <color name="sportBiking">#FEBC5A</color>
-     <color name="sportOrienteering">#FFB38E</color>
-     <color name="sportRunning">#46FFBE</color>
-     <color name="sportWalking">#ACBFFF</color>
-     <color name="sportOther">#FFD95C</color>
+    <color name="stepActive">#ff978e</color>
+    <color name="stepCooldown">#80DEEA</color>
+    <color name="stepRecovery">#DCE775</color>
+    <color name="stepRepeat">#E0E0E0</color>
+    <color name="stepResting">#75D4FF</color>
+    <color name="stepWarmup">#FFB74D</color>
+
+    <color name="sportBiking">#FEBC5A</color>
+    <color name="sportOrienteering">#FFB38E</color>
+    <color name="sportRunning">#46FFBE</color>
+    <color name="sportWalking">#ACBFFF</color>
+    <color name="sportOther">#FFD95C</color>
 </resources>
