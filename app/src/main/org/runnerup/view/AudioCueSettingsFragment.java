@@ -59,9 +59,14 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     setHasOptionsMenu(true); // this fragment has menu items
   }
 
+  private String sanitizeSettingsName(String name) {
+    if (name == null) return null;
+    return name.replaceAll("[^a-zA-Z0-9.-]", "_");
+  }
+
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-    settingsName = requireArguments().getString("name");
+    settingsName = sanitizeSettingsName(requireArguments().getString("name"));
 
     if (settingsName != null) {
       PreferenceManager prefMgr = getPreferenceManager();
@@ -223,7 +228,7 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
                 + File.separator
                 + PREFS_DIR
                 + "/"
-                + name
+                + sanitizeSettingsName(name)
                 + SUFFIX
                 + ".xml");
     //noinspection ResultOfMethodCallIgnored
@@ -320,11 +325,15 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
             org.runnerup.common.R.string.OK,
             (dialog, which) -> {
               String scheme = editText.getText().toString();
-              if (!scheme.contentEquals("")) {
-                createNewAudioScheme(scheme);
-                updateSortOrder(scheme);
-                switchTo(scheme);
+              if (scheme.isEmpty()
+                  || scheme.contains("/")
+                  || scheme.contains("\\")
+                  || scheme.contains("..")) {
+                return;
               }
+              createNewAudioScheme(scheme);
+              updateSortOrder(scheme);
+              switchTo(scheme);
             })
         .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> {})
         .show();
@@ -351,13 +360,13 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
                 return;
               }
 
+              Context context = getContext();
+              if (context == null) return;
               SharedPreferences prefs;
               if (settingsName == null || settingsName.contentEquals(DEFAULT))
-                prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
               else
-                prefs =
-                    requireContext()
-                        .getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
+                prefs = context.getSharedPreferences(settingsName + SUFFIX, Context.MODE_PRIVATE);
               final boolean mute =
                   prefs.getBoolean(getResources().getString(R.string.pref_mute_bool), false);
 

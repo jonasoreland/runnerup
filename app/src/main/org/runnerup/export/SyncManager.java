@@ -338,7 +338,12 @@ public class SyncManager {
     authCallback = callback;
     switch (authMethod) {
       case OAUTH2:
-        mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
+        if (mActivity != null) {
+          mActivity.startActivityForResult(l.getAuthIntent(mActivity), CONFIGURE_REQUEST);
+        } else {
+          Log.e(getClass().getName(), "Cannot start auth activity, no Activity context");
+          handleAuthComplete(l, Status.ERROR);
+        }
         return;
       case USER_PASS:
       case USER_PASS_URL:
@@ -591,7 +596,9 @@ public class SyncManager {
       return;
     }
 
-    mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
+    if (mSpinner != null && mSpinner.isShowing()) {
+      mSpinner.setTitle("Uploading (" + pendingSynchronizers.size() + ")");
+    }
     final Synchronizer synchronizer = synchronizers.get(pendingSynchronizers.iterator().next());
     pendingSynchronizers.remove(synchronizer.getName());
     doUpload(synchronizer);

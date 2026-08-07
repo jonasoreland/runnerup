@@ -354,7 +354,11 @@ public class Step implements TickComponent {
     for (Trigger t : triggers) {
       t.onResume(s);
     }
-    s.tracker.resume();
+    if (s.tracker != null) {
+      s.tracker.resume();
+    } else {
+      android.util.Log.w("Step", "onResume: s.tracker is null");
+    }
   }
 
   @Override
