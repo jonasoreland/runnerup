@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  ANDROID_API: 36.1
+  ANDROID_API: 37
   ANDROID_BUILD_TOOLS: 37.0.0
   ADB_INSTALL_TIMEOUT: 5
 
@@ -48,12 +48,14 @@ jobs:
  
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-
+        with:
+          # Accept SDK licenses and enable preview channel dependencies
+          cmdline-tools-version: 'latest'
       - name: Install Android SDK components
         run: |
           sdkmanager "tools"
           sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
-          sdkmanager "platforms;android-${ANDROID_API}"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --channel=3 "platforms;android-37"
           sdkmanager "extras;android;m2repository"
           sdkmanager "extras;google;m2repository"
           sdkmanager "extras;google;google_play_services"
