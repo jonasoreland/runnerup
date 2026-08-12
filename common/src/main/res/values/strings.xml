@@ -156,7 +156,7 @@
     <string name="Loading">Loading</string>
     <string name="Saving">Saving</string>
     <string name="Cancellingplease_wait">Cancelling, please wait…</string>
-    <string name="Are_you_sure">Are_you_sure</string>
+    <string name="Are_you_sure">Are you sure?</string>
     <string name="Delete_audio_cue">Delete audio cue?</string>
     <string name="Configure_audio_cues">Configure audio cues</string>
     <string name="Downloadeditremove_workouts">Edit workouts</string>
