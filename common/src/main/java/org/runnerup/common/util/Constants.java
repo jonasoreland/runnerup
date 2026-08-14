@@ -205,8 +205,10 @@ public interface Constants {
     String START_WORKOUT = BuildConfig.applicationIdFull + ".START_WORKOUT";
     String PAUSE_WORKOUT = BuildConfig.applicationIdFull + ".PAUSE_WORKOUT";
     String RESUME_WORKOUT = BuildConfig.applicationIdFull + ".RESUME_WORKOUT";
+
     /** ID of the node (device) that sent the message/data */
     String EXTRA_SOURCE_NODE_ID = BuildConfig.applicationIdFull + ".EXTRA_SOURCE_NODE_ID";
+
     // Used from Wear: Request permission
     String EXTRA_PERMISSION_TO_REQUEST =
         BuildConfig.applicationIdFull + ".EXTRA_PERMISSION_TO_REQUEST";

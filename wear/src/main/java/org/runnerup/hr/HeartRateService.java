@@ -52,10 +52,11 @@ public class HeartRateService extends Service implements SensorEventListener {
   // android.health.connect classes may trigger class-loading failures on older
   // Wear OS versions where those classes are unavailable.
   private static final String READ_HEART_RATE_PERMISSION =
-          "android.permission.health.READ_HEART_RATE";
+      "android.permission.health.READ_HEART_RATE";
 
   /** Node ID of the connected phone. */
   private String sourceNodeId;
+
   private SensorManager sensorManager;
   private Sensor heartRateSensor;
 
@@ -112,8 +113,8 @@ public class HeartRateService extends Service implements SensorEventListener {
     Log.d(TAG, "startHeartRateMonitoring");
 
     if (sensorManager != null && heartRateSensor != null) {
-      boolean registered = sensorManager.registerListener(
-              this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+      boolean registered =
+          sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
       if (registered) {
         Log.d(TAG, "startHeartRateMonitoring: Heart rate sensor listener registered.");
       } else {
@@ -121,7 +122,9 @@ public class HeartRateService extends Service implements SensorEventListener {
         stopSelf(); // Stop if registration fails
       }
     } else {
-      Log.e(TAG, "startHeartRateMonitoring: SensorManager or HeartRateSensor is null in startHeartRateMonitoring.");
+      Log.e(
+          TAG,
+          "startHeartRateMonitoring: SensorManager or HeartRateSensor is null in startHeartRateMonitoring.");
       stopSelf();
     }
   }
@@ -154,7 +157,9 @@ public class HeartRateService extends Service implements SensorEventListener {
     if (checkHeartRatePermission()) {
       startHeartRateMonitoring();
     } else {
-      Log.w(TAG, "attemptToStartHeartRateMonitoring: Permission not granted for HR monitoring. Requesting...");
+      Log.w(
+          TAG,
+          "attemptToStartHeartRateMonitoring: Permission not granted for HR monitoring. Requesting...");
       launchPermissionActivity(); // The result will be handled by hrPermissionReceiver
     }
   }
@@ -172,18 +177,21 @@ public class HeartRateService extends Service implements SensorEventListener {
    * Checks if the app has the necessary permission to access heart rate data.
    *
    * <p>The required permission depends on the Android version:
+   *
    * <ul>
-   *   <li>Wear OS 6 (API 36) and higher: {@code android.permission.health.READ_HEART_RATE}</li>
-   *   <li>Wear OS 5 (API 35) and lower: {@link Manifest.permission#BODY_SENSORS}</li>
+   *   <li>Wear OS 6 (API 36) and higher: {@code android.permission.health.READ_HEART_RATE}
+   *   <li>Wear OS 5 (API 35) and lower: {@link Manifest.permission#BODY_SENSORS}
    * </ul>
    *
    * @return {@code true} if the required permission is granted, {@code false} otherwise.
    */
   private boolean checkHeartRatePermission() {
     String permission = getRequiredHeartRatePermission();
-    boolean permissionGranted = ContextCompat.checkSelfPermission(this, permission) ==
-            PackageManager.PERMISSION_GRANTED;
-    Log.d(TAG, "checkHeartRatePermission: permission=" + permission + ", granted=" + permissionGranted);
+    boolean permissionGranted =
+        ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    Log.d(
+        TAG,
+        "checkHeartRatePermission: permission=" + permission + ", granted=" + permissionGranted);
     return permissionGranted;
   }
 
@@ -199,8 +207,10 @@ public class HeartRateService extends Service implements SensorEventListener {
   private void launchPermissionActivity() {
     Log.d(TAG, "launchPermissionActivity");
     Intent intent = new Intent(this, RequestPermissionActivity.class);
-    intent.putExtra(Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, getRequiredHeartRatePermission());
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary when starting activity from a service
+    intent.putExtra(
+        Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, getRequiredHeartRatePermission());
+    intent.addFlags(
+        Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary when starting activity from a service
     startActivity(intent);
   }
 
@@ -213,7 +223,7 @@ public class HeartRateService extends Service implements SensorEventListener {
       // the heart rate value should be discarded.
       // https://developer.android.com/reference/android/hardware/Sensor#TYPE_HEART_RATE
       if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE
-              || event.accuracy == SensorManager.SENSOR_STATUS_NO_CONTACT) {
+          || event.accuracy == SensorManager.SENSOR_STATUS_NO_CONTACT) {
         Log.d(TAG, "onSensorChanged: HR value accuracy is unreliable or no contact.");
         return;
       }
@@ -245,13 +255,16 @@ public class HeartRateService extends Service implements SensorEventListener {
     // Wearable API clients, such as DataClient and MessageClient, are inexpensive to create.
     // So instead of holding onto the clients, recreate them when needed.
     // https://developer.android.com/training/wearables/data/overview#recreate-client-instances
-    Wearable.getMessageClient(this).sendMessage(sourceNodeId, Constants.Wear.Path.MSG_HEART_RATE, payload)
-            .addOnSuccessListener(integer -> Log.d(TAG, "HR sent successfully: " + bpm))
-            .addOnFailureListener(e -> Log.e(TAG, "Error sending HR: " + e.getMessage()));
+    Wearable.getMessageClient(this)
+        .sendMessage(sourceNodeId, Constants.Wear.Path.MSG_HEART_RATE, payload)
+        .addOnSuccessListener(integer -> Log.d(TAG, "HR sent successfully: " + bpm))
+        .addOnFailureListener(e -> Log.e(TAG, "Error sending HR: " + e.getMessage()));
   }
 
   private void sendBatteryLevelToPhone(int batteryLevel) {
-    Log.d(TAG, "sendBatteryLevelToPhone: batteryLevel=" + batteryLevel + ", sourceNodeId=" + sourceNodeId);
+    Log.d(
+        TAG,
+        "sendBatteryLevelToPhone: batteryLevel=" + batteryLevel + ", sourceNodeId=" + sourceNodeId);
 
     if (sourceNodeId == null) {
       Log.e(TAG, "sendBatteryLevelToPhone: sourceNodeId is null. Not sending battery level.");
@@ -263,37 +276,39 @@ public class HeartRateService extends Service implements SensorEventListener {
     // Wearable API clients, such as DataClient and MessageClient, are inexpensive to create.
     // So instead of holding onto the clients, recreate them when needed.
     // https://developer.android.com/training/wearables/data/overview#recreate-client-instances
-    Wearable.getMessageClient(this).sendMessage(sourceNodeId, Constants.Wear.Path.MSG_BATTERY_LEVEL, payload)
-            .addOnSuccessListener(integer -> Log.d(TAG, "Battery level sent successfully: " + batteryLevel))
-            .addOnFailureListener(e -> Log.e(TAG, "Error sending battery level: " + e.getMessage()));
+    Wearable.getMessageClient(this)
+        .sendMessage(sourceNodeId, Constants.Wear.Path.MSG_BATTERY_LEVEL, payload)
+        .addOnSuccessListener(
+            integer -> Log.d(TAG, "Battery level sent successfully: " + batteryLevel))
+        .addOnFailureListener(e -> Log.e(TAG, "Error sending battery level: " + e.getMessage()));
   }
 
   private void setupPermissionReceiver() {
     Log.d(TAG, "setupPermissionReceiver");
 
-    hrPermissionReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        Log.d(TAG, "onReceive: action=" + action);
+    hrPermissionReceiver =
+        new BroadcastReceiver() {
+          @Override
+          public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "onReceive: action=" + action);
 
-        if (Constants.Intents.ACTION_PERMISSION_RESULT.equals(action)) {
-          boolean permissionGranted = intent.getBooleanExtra(
-                  Constants.Intents.EXTRA_PERMISSION_GRANTED, false);
+            if (Constants.Intents.ACTION_PERMISSION_RESULT.equals(action)) {
+              boolean permissionGranted =
+                  intent.getBooleanExtra(Constants.Intents.EXTRA_PERMISSION_GRANTED, false);
 
-          Log.d(TAG, "onReceive: permissionGranted=" + permissionGranted);
+              Log.d(TAG, "onReceive: permissionGranted=" + permissionGranted);
 
-          if (permissionGranted) {
-            startHeartRateMonitoring();
+              if (permissionGranted) {
+                startHeartRateMonitoring();
+              } else {
+                Log.w(TAG, "onReceive: stopping service due to missing permission");
+                stopSelf(); // Stop if permission is not granted
+                // TODO: Notify phone app that permission is missing?
+              }
+            }
           }
-          else {
-            Log.w(TAG, "onReceive: stopping service due to missing permission");
-            stopSelf(); // Stop if permission is not granted
-            // TODO: Notify phone app that permission is missing?
-          }
-        }
-      }
-    };
+        };
 
     // Register the receiver
     IntentFilter filter = new IntentFilter(Constants.Intents.ACTION_PERMISSION_RESULT);
@@ -304,27 +319,33 @@ public class HeartRateService extends Service implements SensorEventListener {
   private void setupBatteryChangedReceiver() {
     Log.d(TAG, "setupBatteryChangedReceiver");
 
-    batteryChangedReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        Log.d(TAG, "batteryChangedReceiver.onReceive: action=" + action);
+    batteryChangedReceiver =
+        new BroadcastReceiver() {
+          @Override
+          public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "batteryChangedReceiver.onReceive: action=" + action);
 
-        if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
-          int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-          int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-          if (level < 0 || scale <= 0) {
-            Log.w(TAG, "batteryChangedReceiver.onReceive: unknown battery level/scale: level=" + level + ", scale=" + scale);
-            return;
+            if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
+              int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+              int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+              if (level < 0 || scale <= 0) {
+                Log.w(
+                    TAG,
+                    "batteryChangedReceiver.onReceive: unknown battery level/scale: level="
+                        + level
+                        + ", scale="
+                        + scale);
+                return;
+              }
+              int batteryPercent = (int) ((level / (float) scale) * 100);
+
+              Log.d(TAG, "batteryChangedReceiver.onReceive: battery level=" + batteryPercent + "%");
+
+              sendBatteryLevelToPhone(batteryPercent);
+            }
           }
-          int batteryPercent = (int) ((level / (float) scale) * 100);
-
-          Log.d(TAG, "batteryChangedReceiver.onReceive: battery level=" + batteryPercent + "%");
-
-          sendBatteryLevelToPhone(batteryPercent);
-        }
-      }
-    };
+        };
 
     // Register the receiver
     IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
