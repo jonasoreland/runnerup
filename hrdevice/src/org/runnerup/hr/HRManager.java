@@ -131,7 +131,7 @@ public class HRManager {
       }
     }
 
-    if (wear_os) {
+    if (wear_os && WearHRProvider.checkLibrary(ctx)) {
       providers.add(new WearHRProvider(ctx));
     }
 
