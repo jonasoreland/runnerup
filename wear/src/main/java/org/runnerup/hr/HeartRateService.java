@@ -18,6 +18,7 @@
 package org.runnerup.hr;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -194,6 +195,7 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
   }
 
+  @SuppressLint("WearRecents")
   private void launchPermissionActivity() {
     Log.d(TAG, "launchPermissionActivity");
     Intent intent = new Intent(this, RequestPermissionActivity.class);
