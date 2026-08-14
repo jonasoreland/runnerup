@@ -87,7 +87,14 @@ public class WearHRProvider implements HRProvider {
     }
 
     @Override
-    public void close(String from) {}
+    public void close(String from) {
+        Log.d(TAG, "close: from=" + from);
+        // Best-effort cleanup even if we never reached a fully connected state.
+        Wearable.getMessageClient(context).removeListener(onHRMessageListener);
+        reset();
+        hrClient = null;
+        hrClientHandler = null;
+    }
 
     @Override
     public boolean includePairingBLE() {
@@ -183,7 +190,7 @@ public class WearHRProvider implements HRProvider {
         .sendMessage(
             connectedNodeId,
             Constants.Wear.Path.MSG_CMD_HR_START,
-            null // No payload needed for the start command
+            new byte[0] // No payload needed for the start command
             )
         .addOnSuccessListener(
             integer -> {
@@ -223,7 +230,7 @@ public class WearHRProvider implements HRProvider {
             Wearable.getMessageClient(context).sendMessage(
                             connectedNodeId,
                             Constants.Wear.Path.MSG_CMD_HR_STOP,
-                            null // No payload needed for the stop command
+                            new byte[0] // No payload needed for the stop command
                     );
 
             // Regardless of success or failure, consider us to be disconnected
@@ -300,15 +307,23 @@ public class WearHRProvider implements HRProvider {
 
         if (Constants.Wear.Path.MSG_HEART_RATE.equals(path)) {
             byte[] payload = messageEvent.getData();
-            hrValue = Integer.parseInt(new String(payload));
-            hrTimestamp = System.currentTimeMillis();
-            hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
+            try {
+                hrValue = Integer.parseInt(new String(payload));
+                hrTimestamp = System.currentTimeMillis();
+                hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
+                Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "onMessageReceived: invalid HR payload", e);
+            }
         }
         else if (Constants.Wear.Path.MSG_BATTERY_LEVEL.equals(path)) {
             byte[] payload = messageEvent.getData();
-            batteryLevel = Integer.parseInt(new String(payload));
-            Log.d(TAG, "onMessageReceived: battery level: " + batteryLevel);
+            try {
+                batteryLevel = Integer.parseInt(new String(payload));
+                Log.d(TAG, "onMessageReceived: battery level: " + batteryLevel);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "onMessageReceived: invalid battery payload", e);
+            }
         }
     };
 

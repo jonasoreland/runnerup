@@ -85,6 +85,11 @@
         </service>
 
         <service android:name=".service.StateService" />
+
+        <meta-data
+            android:name="com.google.android.gms.wearable.capabilities"
+            android:resource="@array/android_wear_capabilities" />
+
         <service android:name=".hr.HeartRateService" />
 
         <service

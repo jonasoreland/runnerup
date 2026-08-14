@@ -28,7 +28,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.health.connect.HealthPermissions;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
@@ -46,6 +45,13 @@ import org.runnerup.view.RequestPermissionActivity;
  */
 public class HeartRateService extends Service implements SensorEventListener {
   private static final String TAG = "HeartRateService";
+
+  // API 36+ requires READ_HEART_RATE. We intentionally use the literal permission
+  // string rather than HealthPermissions.READ_HEART_RATE because referencing
+  // android.health.connect classes may trigger class-loading failures on older
+  // Wear OS versions where those classes are unavailable.
+  private static final String READ_HEART_RATE_PERMISSION =
+          "android.permission.health.READ_HEART_RATE";
 
   /** Node ID of the connected phone. */
   private String sourceNodeId;
@@ -166,7 +172,7 @@ public class HeartRateService extends Service implements SensorEventListener {
    *
    * <p>The required permission depends on the Android version:
    * <ul>
-   *   <li>Wear OS 6 (API 36) and higher: {@link HealthPermissions#READ_HEART_RATE}</li>
+   *   <li>Wear OS 6 (API 36) and higher: {@code android.permission.health.READ_HEART_RATE}</li>
    *   <li>Wear OS 5 (API 35) and lower: {@link Manifest.permission#BODY_SENSORS}</li>
    * </ul>
    *
@@ -182,7 +188,7 @@ public class HeartRateService extends Service implements SensorEventListener {
 
   private String getRequiredHeartRatePermission() {
     if (Build.VERSION.SDK_INT >= 36) {
-      return HealthPermissions.READ_HEART_RATE;
+      return READ_HEART_RATE_PERMISSION;
     } else {
       return Manifest.permission.BODY_SENSORS;
     }
@@ -305,6 +311,10 @@ public class HeartRateService extends Service implements SensorEventListener {
         if (Intent.ACTION_BATTERY_CHANGED.equals(intent.getAction())) {
           int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
           int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+          if (level < 0 || scale <= 0) {
+            Log.w(TAG, "batteryChangedReceiver.onReceive: unknown battery level/scale: level=" + level + ", scale=" + scale);
+            return;
+          }
           int batteryPercent = (int) ((level / (float) scale) * 100);
 
           Log.d(TAG, "batteryChangedReceiver.onReceive: battery level=" + batteryPercent + "%");
