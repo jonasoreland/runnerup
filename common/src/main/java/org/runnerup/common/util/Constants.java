@@ -205,6 +205,10 @@ public interface Constants {
     String START_WORKOUT = BuildConfig.applicationIdFull + ".START_WORKOUT";
     String PAUSE_WORKOUT = BuildConfig.applicationIdFull + ".PAUSE_WORKOUT";
     String RESUME_WORKOUT = BuildConfig.applicationIdFull + ".RESUME_WORKOUT";
+
+    /** ID of the node (device) that sent the message/data */
+    String EXTRA_SOURCE_NODE_ID = BuildConfig.applicationIdFull + ".EXTRA_SOURCE_NODE_ID";
+
     // Used from Wear: Request permission
     String EXTRA_PERMISSION_TO_REQUEST =
         BuildConfig.applicationIdFull + ".EXTRA_PERMISSION_TO_REQUEST";
@@ -260,6 +264,16 @@ public interface Constants {
       String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
       String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
       String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
+
+      /* Msg: start/stop HR from phone to wear */
+      String MSG_CMD_HR_START = PREFIX + "/hr/start";
+      String MSG_CMD_HR_STOP = PREFIX + "/hr/stop";
+
+      /* Msg: Heart rate data from wear to phone */
+      String MSG_HEART_RATE = PREFIX + "/hr/data";
+
+      /* Msg: Battery level from wear to phone */
+      String MSG_BATTERY_LEVEL = PREFIX + "/battery/level";
     }
 
     interface RunInfo {
@@ -273,6 +287,12 @@ public interface Constants {
 
     interface TrackerState {
       String STATE = "state";
+    }
+
+    interface Capability {
+      // Important: The wear app must advertise this exact same capability name in its
+      // res/values/wear.xml file.
+      String HEART_RATE_PROVIDER = "runnerup_hr_provider";
     }
   }
 }

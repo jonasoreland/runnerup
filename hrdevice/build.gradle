@@ -60,8 +60,11 @@ repositories {
 }
 
 dependencies {
+    implementation project(':common')
+    
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
+    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
 
     if (rootProject.ext.antPlusLibName) {
         implementation(name: rootProject.ext.antPlusLibName, ext: 'aar')
