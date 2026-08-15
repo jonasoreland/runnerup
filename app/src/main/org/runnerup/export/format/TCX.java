@@ -300,7 +300,7 @@ public class TCX {
     double totalDistance = 0;
     while (lok) {
       if (exportOptions.shouldExportLap(
-          sport.getDbValue(), /* distance= */ cLap.getFloat(1), /* time= */ cLap.getLong(2))) {
+          sport.getDbValue(), /* distance= */ cLap.getFloat(2), /* time= */ cLap.getLong(1))) {
         long lap = cLap.getLong(0);
         while (pok && cLocation.getLong(0) != lap) {
           pok = cLocation.moveToNext();
