@@ -167,7 +167,7 @@ dependencies {
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
     }
 
-    implementation "com.squareup.okhttp3:okhttp:5.4.0"
+    implementation "com.squareup.okhttp3:okhttp:5.5.0"
     if (rootProject.ext.allowNonFree) {
         // MapBox uses telemetry, without Play there may be exceptions from mapbox (OK to ignore)
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
