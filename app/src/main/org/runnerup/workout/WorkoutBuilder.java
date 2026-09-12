@@ -232,7 +232,13 @@ public class WorkoutBuilder {
     if (name == null || name.contentEquals(defaultVal)) {
       return pref;
     }
-    return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
+    try {
+      return ctx.getSharedPreferences(name + suffix, Context.MODE_PRIVATE);
+    } catch (Exception e) {
+      // bad preference names etc
+      Log.w("WorkoutBuilder", "Cannot load preferences for " + name);
+      return pref;
+    }
   }
 
   public static void addAudioCuesToWorkout(
