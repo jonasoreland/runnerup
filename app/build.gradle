@@ -100,7 +100,7 @@ android {
     lint {
         baseline = file('lint-baseline.xml')
         checkReleaseBuilds = true
-        if (mapboxEnabled) {
+        if (rootProject.ext.mapboxEnabled) {
             lintConfig = file('lint.xml')
         } else {
             lintConfig = file('lint-osmdroid.xml')
@@ -131,7 +131,8 @@ android {
 
 repositories {
     google()
-    mavenCentral() //MapBox GraphView
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
     if (rootProject.ext.mapboxEnabled) {
         maven {
             url = 'https://api.mapbox.com/downloads/v2/releases/maven'
@@ -181,15 +182,6 @@ dependencies {
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
-}
-
-allprojects {
-    tasks.withType(JavaCompile).tap {
-        configureEach {
-            // options.compilerArgs << "-Xlint:deprecation";
-            options.compilerArgs << "-Xlint:unchecked"
-        }
-    }
 }
 
 def props = new Properties()
