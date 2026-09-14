@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.spotless" version "8.6.0"
+    id "com.diffplug.spotless" version "8.10.2"
 }
 
 repositories {
@@ -107,29 +107,37 @@ project.ext {
     }
 }
 
-// Special setup for antPlusLib, not allowed to copy the .aar and create mavenLocal
-// Raises warning:
-// AGPBI: {"kind":"warning","text":"Using flatDir should be avoided because it doesn't support any meta-data formats.","sources":[{}]}
 allprojects {
     repositories {
+        google()
+        mavenCentral()
         if (rootProject.ext.antPlusLibName) {
-            flatDir { dirs rootProject.ext.antPlusLibPath }
+            ivy {
+                url = uri(rootProject.ext.antPlusLibPath)
+                patternLayout {
+                    artifact '[artifact].[ext]'
+                }
+                metadataSources {
+                    artifact()
+                }
+            }
+        }
+    }
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            // if (project.name != 'wear') {
+            //    options.compilerArgs << "-Xlint:deprecation";
+            // }
+            options.compilerArgs << "-Xlint:unchecked"
         }
     }
 }
 
 spotless {
-    lineEndings 'UNIX'
+    lineEndings = 'UNIX'
     java {
         googleJavaFormat()
         target '**/*.java'
         targetExclude '**/ANT-Android-SDKs/**', '**/build/**'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
     }
 }
