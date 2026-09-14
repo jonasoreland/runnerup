@@ -26,6 +26,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothStatusCodes;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -48,7 +49,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Connects to a Bluetooth Low Energy module for Android versions >= 5.0
+ * Connects to a Bluetooth Low Energy module for Android versions >= 5.0 This implementation
+ * suppresses some deprecated, keep compatibility with versions before api-33/android-13
  *
  * @author jonas
  */
@@ -78,28 +80,37 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       new BluetoothGattCallback() {
 
         @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic arg0) {
+        @SuppressWarnings("deprecation")
+        public void onCharacteristicChanged(
+            BluetoothGatt gatt, BluetoothGattCharacteristic btChar) {
+          byte[] value = btChar.getValue();
+          onCharacteristicChanged(gatt, btChar, value);
+        }
+
+        @Override
+        public void onCharacteristicChanged(
+            BluetoothGatt gatt, BluetoothGattCharacteristic btChar, byte[] value) {
           try {
-            if (!checkBtGattOnlyLogError(gatt)) {
+            if (!checkBtGatt(gatt, true)) {
               return;
             }
 
-            if (!arg0.getUuid().equals(HEART_RATE_MEASUREMENT_CHARAC)) {
-              log("onCharacteristicChanged(" + arg0 + ") != HEART_RATE ??");
+            if (!btChar.getUuid().equals(HEART_RATE_MEASUREMENT_CHARAC)) {
+              log("onCharacteristicChanged(" + btChar + ") != HEART_RATE ??");
               return;
             }
 
-            int length = arg0.getValue().length;
-            if (length == 0) {
-              log("onCharacteristicChanged length = 0");
+            int length = value.length;
+            if (length < 2 || length < 3 && isHeartRateInUINT16(value[0])) {
+              log("onCharacteristicChanged: insufficient data, length=" + length);
               return;
             }
 
             int val;
-            if (isHeartRateInUINT16(arg0.getValue()[0])) {
-              val = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 1);
+            if (isHeartRateInUINT16(value[0])) {
+              val = ((value[2] & 0xFF) << 8) | (value[1] & 0xFF);
             } else {
-              val = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 1);
+              val = value[1] & 0xFF;
             }
 
             hrTimestamp = System.currentTimeMillis();
@@ -133,38 +144,44 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         @Override
+        @SuppressWarnings("deprecation")
         public void onCharacteristicRead(
-            BluetoothGatt gatt, BluetoothGattCharacteristic arg0, int status) {
-          try {
-            log(
-                "onCharacteristicRead(): "
-                    + gatt
-                    + ", char: "
-                    + arg0.getUuid()
-                    + ", status: "
-                    + status);
+            BluetoothGatt gatt, BluetoothGattCharacteristic btChar, int status) {
+          byte[] value = btChar.getValue();
+          onCharacteristicRead(gatt, btChar, value, status);
+        }
 
-            if (!checkBtGatt(gatt)) {
+        @Override
+        public void onCharacteristicRead(
+            BluetoothGatt gatt, BluetoothGattCharacteristic btChar, byte[] value, int status) {
+          try {
+            UUID charUuid = btChar.getUuid();
+            log("onCharacteristicRead(): " + gatt + ", char: " + charUuid + ", status: " + status);
+
+            if (!checkBtGatt(gatt, false)) {
               return;
             }
 
-            UUID charUuid = arg0.getUuid();
             if (charUuid.equals(FIRMWARE_REVISON_UUID)) {
               log("firmware => startHR()");
-              // triggered from DummyReadForSecLevelCheck
+              // triggered from ReadDeviceInfoServices
               startHR();
             } else if (mSupportPaired && charUuid.equals(HARDWARE_REVISON_UUID)) {
               // Some paired devices like Huami (MiBand) has no firmware uuid
               log("BLE hardware rev => startHR()");
-              // triggered from DummyReadForSecLevelCheck
+              // triggered from ReadDeviceInfoServices
               startHR();
             } else if (charUuid.equals(BATTERY_LEVEL_CHARAC)) {
-              log("batterylevel: " + arg0);
-              batteryLevel = arg0.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0);
-              log("Battery level: " + batteryLevel);
+              if (value != null && value.length >= 1) {
+                batteryLevel = value[0] & 0xFF;
+                log("Battery level: " + batteryLevel);
+              } else {
+                batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
+                log("Battery level unavailable");
+              }
 
-              log(" => startHR()");
-              // triggered from DummyReadForSecLevelCheck
+              log("battery level => startHR()");
+              // triggered from ReadDeviceInfoServices
               startHR();
 
             } else {
@@ -192,7 +209,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
                     + mIsConnected
                     + ", mIsDisconnecting: "
                     + mIsDisconnecting);
-            if (!checkBtGatt(gatt)) {
+            if (!checkBtGatt(gatt, false)) {
               log("checkBtGatt => return");
               return;
             }
@@ -231,9 +248,16 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         @Override
-        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor arg0, int status) {
+        @SuppressWarnings("deprecation")
+        public void onDescriptorRead(
+            BluetoothGatt gatt, BluetoothGattDescriptor btDesc, int status) {
+          onDescriptorRead(gatt, btDesc, status, btDesc.getValue());
+        }
 
-          BluetoothGattCharacteristic mHRMcharac = arg0.getCharacteristic();
+        @Override
+        public void onDescriptorRead(
+            BluetoothGatt gatt, BluetoothGattDescriptor btDesc, int status, byte[] value) {
+          BluetoothGattCharacteristic mHRMcharac = btDesc.getCharacteristic();
           if (!enableNotification(gatt, true, mHRMcharac)) {
             reportConnectFailed("Failed to enable notification in onDescriptorRead");
           }
@@ -243,11 +267,11 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
           log("onServicesDiscoverd(): " + gatt + ", status: " + status);
 
-          if (!checkBtGatt(gatt)) {
+          if (!checkBtGatt(gatt, false)) {
             return;
           }
 
-          List<BluetoothGattService> list = btGatt.getServices();
+          List<BluetoothGattService> list = gatt.getServices();
           for (BluetoothGattService s : list) {
             log("Found service: " + s.getType() + ", " + s.getInstanceId() + ", " + s.getUuid());
             for (BluetoothGattCharacteristic a : s.getCharacteristics()) {
@@ -257,13 +281,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
               log("  serv: " + a.getUuid());
             }
 
-            if (s.getUuid().equals(BATTERY_SERVICE)) {
+            if (s.getUuid().equals(BATTERY_SERVICE_UUID)) {
               hasBatteryService = true;
             }
           }
 
-          log(" => DummyRead");
-          DummyReadForSecLevelCheck(gatt);
+          log(" => ReadDeviceInfoServices");
+          ReadDeviceInfoServices(gatt);
           // if GATT_SUCCESS, continue in onCharacteristicRead
           // no report on error
         }
@@ -271,7 +295,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         /*
          * from Samsung HRPService.java
          */
-        private void DummyReadForSecLevelCheck(BluetoothGatt btGatt) {
+        private void ReadDeviceInfoServices(BluetoothGatt btGatt) {
           if (btGatt == null) {
             return;
           }
@@ -280,9 +304,13 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             return;
           }
 
-          BluetoothGattService disService = btGatt.getService(DIS_UUID);
+          BluetoothGattService disService = btGatt.getService(DEVICE_INFORMATION_SERVICE_UUID);
           if (disService == null) {
-            reportConnectFailed("Dis service not found");
+            log("Device Information service not found");
+            // This occurs for e.g. Garmin devices transmitting HR from a watch.
+            // Start HR (check HRP service) without reading characteristic (no trigger of
+            // onCharacteristicRead())
+            startHR();
             return;
           }
           BluetoothGattCharacteristic firmwareIdCharc =
@@ -302,11 +330,12 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         private boolean isHeartRateInUINT16(byte b) {
+          // Bluetooth SIG UUID 0x2A37 first bit in first byte describes the length
           return (b & 1) != 0;
         }
 
         private void startHR() {
-          BluetoothGattService mHRP = btGatt.getService(HRP_SERVICE);
+          BluetoothGattService mHRP = btGatt.getService(HEART_RATE_SERVICE_UUID);
           if (mHRP == null) {
             reportConnectFailed("HRP service not found!");
             return;
@@ -318,7 +347,8 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
             reportConnectFailed("HEART RATE MEASUREMENT charateristic not found!");
             return;
           }
-          BluetoothGattDescriptor mHRMccc = mHRMcharac.getDescriptor(CCC);
+          BluetoothGattDescriptor mHRMccc =
+              mHRMcharac.getDescriptor(CLIENT_CHARACTERISTIC_CONFIGURATION);
           if (mHRMccc == null) {
             reportConnectFailed("CCC for HEART RATE MEASUREMENT charateristic not found!");
             return;
@@ -330,7 +360,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
         }
 
         private boolean readBatteryLevel() {
-          BluetoothGattService mBS = btGatt.getService(BATTERY_SERVICE);
+          BluetoothGattService mBS = btGatt.getService(BATTERY_SERVICE_UUID);
           if (mBS == null) {
             log("Battery service not found.");
             return false;
@@ -392,7 +422,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     if (gatt == null) {
       return null;
     }
-    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
+    BluetoothGattService mHRP = gatt.getService(HEART_RATE_SERVICE_UUID);
     if (mHRP == null) {
       return null;
     }
@@ -423,7 +453,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     this.hrClient = hrClient;
     this.hrClientHandler = handler;
     if (btAdapter == null) {
-      btAdapter = BluetoothAdapter.getDefaultAdapter();
+      @SuppressWarnings("deprecation")
+      BluetoothAdapter adapterDeprecated = BluetoothAdapter.getDefaultAdapter();
+      btAdapter = adapterDeprecated;
     }
 
     hrClient.onOpenResult(btAdapter != null);
@@ -468,18 +500,27 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       return false;
     }
 
-    BluetoothGattDescriptor clientConfig = charac.getDescriptor(CCC);
+    BluetoothGattDescriptor clientConfig =
+        charac.getDescriptor(CLIENT_CHARACTERISTIC_CONFIGURATION);
     if (clientConfig == null) {
       log("clientConfig == null");
       return false;
     }
 
-    if (onoff) {
-      clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+    boolean result;
+    byte[] notifValue =
+        onoff
+            ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+            : BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      result = gatt.writeDescriptor(clientConfig, notifValue) == BluetoothStatusCodes.SUCCESS;
     } else {
-      clientConfig.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);
+      @SuppressWarnings("deprecation")
+      boolean setValueResult = clientConfig.setValue(notifValue);
+      @SuppressWarnings("deprecation")
+      boolean writeDescResult = gatt.writeDescriptor(clientConfig);
+      result = setValueResult && writeDescResult;
     }
-    boolean result = gatt.writeDescriptor(clientConfig);
     if (result) {
       mNotificationsOn = onoff;
     }
@@ -592,7 +633,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       mIsScanning = true;
       btScanner.startScan(
           Collections.singletonList(
-              new ScanFilter.Builder().setServiceUuid(new ParcelUuid(HRP_SERVICE)).build()),
+              new ScanFilter.Builder()
+                  .setServiceUuid(new ParcelUuid(HEART_RATE_SERVICE_UUID))
+                  .build()),
           new ScanSettings.Builder().build(),
           mLeScanCallback);
     }
@@ -636,7 +679,9 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
     if (!checkPermission(Manifest.permission.BLUETOOTH_CONNECT, "connectGatt")) {
       return null;
     }
-    return device.connectGatt(context, false, callbacks);
+    @SuppressWarnings("deprecation")
+    BluetoothGatt gattDeprecated = device.connectGatt(context, false, callbacks);
+    return gattDeprecated;
   }
 
   private boolean connect(BluetoothGatt gatt) {
@@ -843,7 +888,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
       return false;
     }
 
-    BluetoothGattService mHRP = gatt.getService(HRP_SERVICE);
+    BluetoothGattService mHRP = gatt.getService(HEART_RATE_SERVICE_UUID);
     if (mHRP == null) {
       log("disableNotification: HRP service not found!");
       return false;
@@ -851,7 +896,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
 
     BluetoothGattCharacteristic mHRMcharac = mHRP.getCharacteristic(HEART_RATE_MEASUREMENT_CHARAC);
     if (mHRMcharac == null) {
-      log("disableNotification: HEART RATE MEASUREMENT charateristic not found!");
+      log("disableNotification: HEART RATE MEASUREMENT characteristic not found!");
       return false;
     }
 
@@ -941,16 +986,6 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   @Override
   public int getBatteryLevel() {
     return this.batteryLevel;
-  }
-
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private boolean checkBtGatt(BluetoothGatt gatt) {
-    return checkBtGatt(gatt, false);
-  }
-
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  private boolean checkBtGattOnlyLogError(BluetoothGatt gatt) {
-    return checkBtGatt(gatt, true);
   }
 
   private synchronized boolean checkBtGatt(BluetoothGatt gatt, boolean onlyLogError) {
