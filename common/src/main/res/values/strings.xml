@@ -206,6 +206,7 @@
     <string name="Experimental_HRM_devices">Experimental HRM devices</string>
     <string name="Paired_BLE_devices">Paired BLE devices</string>
     <string name="Experimental_features">Experimental features</string>
+    <string name="Wear_OS_devices">Wear OS devices</string>
     <string name="Mock_HRM_devices">Mock HRM devices</string>
     <string name="Debug_HRM">Debug HRM</string>
     <string name="About_RunnerUp">About RunnerUp</string>

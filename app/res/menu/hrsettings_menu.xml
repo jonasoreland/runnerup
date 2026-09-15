@@ -39,6 +39,12 @@
         android:title="@string/Experimental_HRM_devices" />
 
     <item
+        android:id="@+id/menu_hrdevice_wear_os"
+        android:orderInCategory="100"
+        android:title="@string/Wear_OS_devices"
+        android:checkable="true"/>
+
+    <item
         android:id="@+id/menu_hrdevice_mock"
         android:checkable="true"
         android:orderInCategory="100"
