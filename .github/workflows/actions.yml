@@ -45,19 +45,23 @@ jobs:
 
       - name: Git LFS Pull
         run: git lfs pull
- 
+
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4
+        run: |
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
 
       - name: Install Android SDK components
         run: |
-          sdkmanager "tools"
-          sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}"
-          sdkmanager "platforms;android-${ANDROID_API}"
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-${{ env.ANDROID_API }}"
+          sdkmanager "build-tools;${{ env.ANDROID_BUILD_TOOLS }}"
           sdkmanager "extras;android;m2repository"
           sdkmanager "extras;google;m2repository"
           sdkmanager "extras;google;google_play_services"
-          
+
       - name: Prepare builddir
         run: |
           # secrets are only available for collabrators, other will build with OsmDroid (but a few more options than F-Droid still)
