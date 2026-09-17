@@ -31,6 +31,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -61,6 +63,16 @@ public class HistoryFragment extends Fragment
   CursorAdapter cursorAdapter = null;
   View fab = null;
 
+  private final ActivityResultLauncher<Intent> manualActivityLauncher =
+      registerForActivityResult(
+          new StartActivityForResult(),
+          result -> LoaderManager.getInstance(this).restartLoader(0, null, this));
+
+  private final ActivityResultLauncher<Intent> detailActivityLauncher =
+      registerForActivityResult(
+          new StartActivityForResult(),
+          result -> LoaderManager.getInstance(this).restartLoader(0, null, this));
+
   public HistoryFragment() {
     super(R.layout.history);
   }
@@ -76,8 +88,7 @@ public class HistoryFragment extends Fragment
     fab.setOnClickListener(
         v -> {
           Intent i = new Intent(context, ManualActivity.class);
-          // TODO: Use the Activity Result API
-          startActivityForResult(i, 0);
+          manualActivityLauncher.launch(i);
         });
 
     mDB = DBHelper.getReadableDatabase(context);
@@ -138,14 +149,7 @@ public class HistoryFragment extends Fragment
     Intent intent = new Intent(requireContext(), DetailActivity.class);
     intent.putExtra("ID", id);
     intent.putExtra("mode", "details");
-    startActivityForResult(intent, 0);
-  }
-
-  // TODO: Use Activity Result API
-  @Override
-  public void onActivityResult(int arg0, int arg1, Intent arg2) {
-    super.onActivityResult(arg0, arg1, arg2);
-    LoaderManager.getInstance(this).restartLoader(0, null, this);
+    detailActivityLauncher.launch(intent);
   }
 
   class HistoryListAdapter extends CursorAdapter {
