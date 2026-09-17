@@ -290,6 +290,7 @@ public interface Constants {
     }
 
     interface Capability {
+      int VERSION = 1;
       // Important: The wear app must advertise this exact same capability name in its
       // res/values/wear.xml file.
       String HEART_RATE_PROVIDER = "runnerup_hr_provider";

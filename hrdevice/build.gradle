@@ -52,6 +52,13 @@ android {
         aidl = true
         buildConfig = true
     }
+
+    flavorDimensions = [ "all" ]
+    productFlavors {
+        latest {
+            dimension = "all"
+        }
+    }
 }
 
 repositories {
@@ -64,7 +71,9 @@ dependencies {
     
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"
     implementation "androidx.preference:preference:${rootProject.ext.preference_version}"
-    implementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
+    if (rootProject.ext.enableWear) {
+        latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
+    }
 
     if (rootProject.ext.antPlusLibName) {
         implementation "local:${rootProject.ext.antPlusLibName}:1.0@aar"

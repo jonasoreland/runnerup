@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 robert.jonsson75@gmail.com
+ * Copyright (C) 2026 robert.jonsson75@gmail.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -52,7 +52,6 @@ public class WearHRProvider implements HRProvider {
   private int batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
 
   public WearHRProvider(Context context) {
-    Log.d(TAG, "WearHRProvider: context=" + context);
     this.context = context;
   }
 
@@ -78,8 +77,6 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void open(Handler handler, HRClient hrClient) {
-    Log.d(TAG, "open: handler=" + handler + ", hrClient=" + hrClient);
-
     this.hrClient = hrClient;
     this.hrClientHandler = handler;
 
@@ -88,8 +85,6 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void close(String from) {
-    Log.d(TAG, "close: from=" + from);
-    // Best-effort cleanup even if we never reached a fully connected state.
     Wearable.getMessageClient(context).removeListener(onHRMessageListener);
     reset();
     hrClient = null;
@@ -118,10 +113,7 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void startScan() {
-    Log.d(TAG, "startScan");
-
     if (isScanning) {
-      Log.d(TAG, "startScan: Scan already in progress.");
       return;
     }
 
@@ -131,34 +123,14 @@ public class WearHRProvider implements HRProvider {
     CapabilityClient capabilityClient = Wearable.getCapabilityClient(context);
     Task<CapabilityInfo> capabilityInfoTask =
         capabilityClient.getCapability(
-            Constants.Wear.Capability.HEART_RATE_PROVIDER,
-            CapabilityClient.FILTER_REACHABLE // Only currently connected and reachable nodes
-            );
+            Constants.Wear.Capability.HEART_RATE_PROVIDER, CapabilityClient.FILTER_REACHABLE);
 
     capabilityInfoTask.addOnSuccessListener(
         capabilityInfo -> {
           Set<Node> connectedNodes = capabilityInfo.getNodes();
-          Log.d(
-              TAG,
-              "startScan: Successfully fetched capability info. Nodes found: "
-                  + connectedNodes.size());
-
           if (!connectedNodes.isEmpty()) {
             for (Node node : connectedNodes) {
-              Log.d(
-                  TAG,
-                  "startScan: Found capable node: "
-                      + node.getDisplayName()
-                      + " ("
-                      + node.getId()
-                      + ")");
-              // Create an HRDeviceRef for each found node
-              HRDeviceRef deviceRef =
-                  HRDeviceRef.create(
-                      NAME, // Provider name
-                      node.getDisplayName(), // Device name
-                      node.getId() // Device address (using node ID as address)
-                      );
+              HRDeviceRef deviceRef = HRDeviceRef.create(NAME, node.getDisplayName(), node.getId());
 
               postToHRClient(() -> hrClient.onScanResult(deviceRef));
             }
@@ -171,7 +143,7 @@ public class WearHRProvider implements HRProvider {
 
     capabilityInfoTask.addOnFailureListener(
         e -> {
-          Log.e(TAG, "startScan: Failed to get capabilities. Error message: " + e.getMessage());
+          Log.e(TAG, "startScan failed: " + e.getMessage());
           postToHRClient(() -> hrClient.log(this, e.getMessage()));
           stopScan();
         });
@@ -179,54 +151,32 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void stopScan() {
-    Log.d(TAG, "stopScan");
     isScanning = false;
   }
 
   @Override
   public void connect(HRDeviceRef ref) {
-    Log.d(TAG, "connect: device name=" + ref.getName() + ", address=" + ref.getAddress());
-
     if (isConnecting || isConnected) {
-      Log.d(TAG, "connect: Already connecting or connected.");
       return;
     }
 
-    // "Connecting" means sending a message to the Wear OS app to start sending HR data
     isConnecting = true;
-    connectedNodeId = ref.getAddress(); // Store the node ID we are trying to connect to
+    connectedNodeId = ref.getAddress();
 
-    // Send a message to the Wear OS app to start sending HR
-    Log.d(
-        TAG,
-        "connect: Sending "
-            + Constants.Wear.Path.MSG_CMD_HR_START
-            + " message to node: "
-            + connectedNodeId);
     Wearable.getMessageClient(context)
-        .sendMessage(
-            connectedNodeId,
-            Constants.Wear.Path.MSG_CMD_HR_START,
-            new byte[0] // No payload needed for the start command
-            )
+        .sendMessage(connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_START, new byte[0])
         .addOnSuccessListener(
             integer -> {
-              Log.d(TAG, "connect: Start HR message sent successfully to " + connectedNodeId);
               if (isConnecting) {
                 isConnected = true;
                 isConnecting = false;
                 postToHRClient(() -> hrClient.onConnectResult(true));
-
-                // Start listening for HR data
-                // Important: Don't forget to remove the listener to avoid leaking resources.
                 Wearable.getMessageClient(context).addListener(onHRMessageListener);
               }
             })
         .addOnFailureListener(
             e -> {
-              Log.e(
-                  TAG,
-                  "Failed to send Start HR message to " + connectedNodeId + ": " + e.getMessage());
+              Log.e(TAG, "Failed to send Start HR message: " + e.getMessage());
               isConnected = false;
               isConnecting = false;
               postToHRClient(() -> hrClient.onConnectResult(false));
@@ -235,41 +185,22 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void disconnect() {
-    Log.d(TAG, "disconnect");
-
     if (!isConnected || isDisconnecting) {
-      Log.d(TAG, "disconnect: Not connected or already disconnecting.");
       return;
     }
 
-    // Send a message to the Wear OS app to stop sending HR
     isDisconnecting = true;
     if (connectedNodeId != null) {
-      Log.d(
-          TAG,
-          "disconnect: Sending "
-              + Constants.Wear.Path.MSG_CMD_HR_STOP
-              + " message to node: "
-              + connectedNodeId);
       Wearable.getMessageClient(context)
-          .sendMessage(
-              connectedNodeId,
-              Constants.Wear.Path.MSG_CMD_HR_STOP,
-              new byte[0] // No payload needed for the stop command
-              );
+          .sendMessage(connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_STOP, new byte[0]);
 
-      // Regardless of success or failure, consider us to be disconnected
-      Log.d(TAG, "disconnect: Disconnected from " + connectedNodeId);
       postToHRClient(() -> hrClient.onDisconnectResult(true));
       reset();
-
-      // Stop listening for HR data
       Wearable.getMessageClient(context).removeListener(onHRMessageListener);
     }
   }
 
   private void reset() {
-    Log.d(TAG, "reset");
     isConnecting = false;
     isConnected = false;
     isDisconnecting = false;
@@ -306,32 +237,24 @@ public class WearHRProvider implements HRProvider {
     return batteryLevel;
   }
 
-  /**
-   * Helper method to safely post actions to be executed on the {@link HRClient}'s handler thread.
-   *
-   * @param action The action to perform on the hrClient.
-   */
   private void postToHRClient(Runnable action) {
     if (hrClientHandler != null && hrClient != null) {
       hrClientHandler.post(
           () -> {
-            // Re-check hrClient as it might have been nulled out between posting and execution
             if (hrClient != null) {
               action.run();
             } else {
-              Log.w(
-                  TAG, "postToHRClient: hrClient became null before action execution on handler.");
+              Log.w(TAG, "postToHRClient: hrClient became null before action execution.");
             }
           });
     } else {
-      Log.w(TAG, "postToHRClient: Cannot post to hrClient: hrClientHandler or hrClient is null.");
+      Log.w(TAG, "postToHRClient: hrClientHandler or hrClient is null.");
     }
   }
 
   private final MessageClient.OnMessageReceivedListener onHRMessageListener =
       messageEvent -> {
         String path = messageEvent.getPath();
-        Log.d(TAG, "onMessageReceived: " + path);
 
         if (Constants.Wear.Path.MSG_HEART_RATE.equals(path)) {
           byte[] payload = messageEvent.getData();
@@ -339,7 +262,6 @@ public class WearHRProvider implements HRProvider {
             hrValue = Integer.parseInt(new String(payload));
             hrTimestamp = System.currentTimeMillis();
             hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            Log.d(TAG, "onMessageReceived: hrValue: " + hrValue);
           } catch (NumberFormatException e) {
             Log.w(TAG, "onMessageReceived: invalid HR payload", e);
           }
@@ -347,7 +269,6 @@ public class WearHRProvider implements HRProvider {
           byte[] payload = messageEvent.getData();
           try {
             batteryLevel = Integer.parseInt(new String(payload));
-            Log.d(TAG, "onMessageReceived: battery level: " + batteryLevel);
           } catch (NumberFormatException e) {
             Log.w(TAG, "onMessageReceived: invalid battery payload", e);
           }
