@@ -24,6 +24,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
@@ -52,8 +53,7 @@ public class AboutPreference extends DialogPreference {
               + " v"
               + pInfo.versionName);
     } catch (NameNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Log.e(getClass().getName(), "Failed to get package info", e);
     }
     setNegativeButtonText(context.getString(org.runnerup.common.R.string.OK));
     if (GoogleApiHelper.isGooglePlayServicesAvailable(context)) {
@@ -92,7 +92,7 @@ public class AboutPreference extends DialogPreference {
           Uri uri = Uri.parse("market://details?id=" + applicationId);
           this.requireContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (Exception ex) {
-          ex.printStackTrace();
+          Log.e(AboutDialogFragment.class.getName(), "Failed to open Play Store", ex);
         }
       }
     }
