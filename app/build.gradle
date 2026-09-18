@@ -131,7 +131,6 @@ android {
 
 repositories {
     google()
-    mavenCentral()
     maven { url = 'https://jitpack.io' }
     if (rootProject.ext.mapboxEnabled) {
         maven {
@@ -178,7 +177,7 @@ dependencies {
     } else {
         implementation 'org.osmdroid:osmdroid-android:6.1.20'
     }
-    latestImplementation 'com.jjoe64:graphview:4.2.2'
+    latestImplementation 'com.github.AppDevNext:AndroidChart:5.2.1'
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"

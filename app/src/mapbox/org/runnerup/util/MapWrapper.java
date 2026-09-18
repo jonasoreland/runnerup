@@ -176,7 +176,7 @@ public class MapWrapper implements Constants {
                     + "\n")
                 + (formatter.formatDateTime(loc.getTime() / 1000) + "\n")
                 + (loc.getSpeed() != null
-                    ? formatter.formatPaceSpeed(TXT_LONG, loc.getSpeed()) + "\n"
+                    ? formatter.formatVelocityByPreferredUnit(TXT_LONG, loc.getSpeed()) + "\n"
                     : "")
                 + (loc.getAltitude() != null
                     ? formatter.formatElevation(TXT_LONG, loc.getAltitude()) + "\n"

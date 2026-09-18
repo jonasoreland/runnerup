@@ -21,18 +21,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import info.appdev.charting.charts.LineChart;
+import info.appdev.charting.components.AxisBase;
+import info.appdev.charting.components.YAxis;
+import info.appdev.charting.data.EntryFloat;
+import info.appdev.charting.data.LineData;
+import info.appdev.charting.data.LineDataSet;
+import info.appdev.charting.formatter.IAxisValueFormatter;
+import info.appdev.charting.highlight.Highlight;
+import info.appdev.charting.interfaces.datasets.ILineDataSet;
+import info.appdev.charting.listener.OnChartValueSelectedListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,10 +56,7 @@ import org.runnerup.view.HRZonesBar;
 import org.runnerup.workout.SpeedUnit;
 
 public class GraphWrapper implements Constants {
-  private final GraphView velocityGraphView;
-  private final GraphView hrGraphView;
-  private final GraphView elevationGraphView;
-
+  private final LineChart chart;
   private final LinearLayout graphTab;
   private final HRZonesBar hrzonesBar;
   private final Formatter formatter;
@@ -147,69 +155,9 @@ public class GraphWrapper implements Constants {
       this.xAxis = timeXAxis;
     }
 
-    loadParam = new LoadParam(context, mDB, mID);
+    this.loadParam = new LoadParam(context, mDB, mID);
 
-    velocityGraphView = new GraphView(context);
-    velocityGraphView.setTitle(formatter.formatVelocityLabel());
-    velocityGraphView
-        .getGridLabelRenderer()
-        .setLabelFormatter(
-            new DefaultLabelFormatter() {
-              @Override
-              public String formatLabel(double value, boolean isValueX) {
-                if (isValueX) {
-                  return xAxis.formatValue(value);
-                } else {
-                  return formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, value);
-                }
-              }
-            });
-    velocityGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getVelocityUnit());
-    velocityGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
-    // enable zoom
-    velocityGraphView.getViewport().setScalable(true);
-    velocityGraphView.getViewport().setScrollable(true);
-
-    hrGraphView = new GraphView(context);
-    hrGraphView.setTitle(context.getString(org.runnerup.common.R.string.Heart_rate));
-    hrGraphView.getGridLabelRenderer().setVerticalAxisTitle("bpm");
-    hrGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
-    hrGraphView
-        .getGridLabelRenderer()
-        .setLabelFormatter(
-            new DefaultLabelFormatter() {
-              @Override
-              public String formatLabel(double value, boolean isValueX) {
-                if (isValueX) {
-                  return xAxis.formatValue(value);
-                } else {
-                  return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
-                }
-              }
-            });
-    hrGraphView.getViewport().setScalable(true);
-    hrGraphView.getViewport().setScrollable(true);
-
-    elevationGraphView = new GraphView(context);
-    elevationGraphView.setTitle(context.getString(org.runnerup.common.R.string.Elevation));
-    elevationGraphView.getGridLabelRenderer().setVerticalAxisTitle(formatter.getElevationUnit());
-    elevationGraphView.getGridLabelRenderer().setHorizontalAxisTitle(xAxis.labelLong());
-    elevationGraphView
-        .getGridLabelRenderer()
-        .setLabelFormatter(
-            new DefaultLabelFormatter() {
-              @Override
-              public String formatLabel(double value, boolean isValueX) {
-                if (isValueX) {
-                  return xAxis.formatValue(value);
-                } else {
-                  return formatter.formatElevation(Formatter.Format.TXT_SHORT, value);
-                }
-              }
-            });
-    elevationGraphView.getViewport().setScalable(true);
-    elevationGraphView.getViewport().setScrollable(true);
-
+    chart = new LineChart(context);
     hrzonesBar = new HRZonesBar(context);
     loadGraph();
   }
@@ -224,9 +172,7 @@ public class GraphWrapper implements Constants {
     } else {
       xAxis = timeXAxis;
     }
-    velocityGraphView.removeAllSeries();
-    hrGraphView.removeAllSeries();
-    elevationGraphView.removeAllSeries();
+    chart.clear();
     loadGraph();
   }
 
@@ -276,20 +222,14 @@ public class GraphWrapper implements Constants {
   private void onPostExecute(GraphProducer graphData) {
     if (graphData == null) return;
 
-    graphData.complete(velocityGraphView);
-    graphTab.removeView(velocityGraphView);
-    graphTab.removeView(hrGraphView);
-    graphTab.removeView(elevationGraphView);
+    graphData.complete(chart);
+    chart.invalidate();
+    chart.setVisibility(View.VISIBLE);
+    graphTab.removeView(chart);
 
-    LayoutParams layout =
-        new LayoutParams(
-            LayoutParams.MATCH_PARENT,
-            (int) (250 * graphTab.getResources().getDisplayMetrics().density));
+    LayoutParams layout = new LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f);
 
-    if (graphData.HasPaceInfo()) graphTab.addView(velocityGraphView, layout);
-    if (graphData.HasHRInfo()) graphTab.addView(hrGraphView, layout);
-    if (graphData.HasElevationInfo()) graphTab.addView(elevationGraphView, layout);
-
+    graphTab.addView(chart, layout);
     hrzonesBarLayout.removeView(hrzonesBar);
     if (graphData.HasHRZHist()) {
       hrzonesBarLayout.setVisibility(View.VISIBLE);
@@ -297,6 +237,18 @@ public class GraphWrapper implements Constants {
     } else {
       hrzonesBarLayout.setVisibility(View.GONE);
     }
+
+    // Add legend container to bottom of the view
+    LinearLayout legend = new LinearLayout(graphTab.getContext());
+    legend.setOrientation(LinearLayout.HORIZONTAL);
+    android.widget.HorizontalScrollView scroll =
+        new android.widget.HorizontalScrollView(graphTab.getContext());
+    scroll.addView(legend);
+    graphTab.addView(scroll, 0);
+    for (CheckBox cb : graphData.legendBoxes) {
+      legend.addView(cb);
+    }
+
     if (!firstLoad) {
       graphTab.invalidate();
     } else {
@@ -349,12 +301,13 @@ public class GraphWrapper implements Constants {
     final List<DataPoint> elevationList;
     final HRZones hrCalc;
     final SpeedUnit preferred_speedunit;
+    final List<CheckBox> legendBoxes = new ArrayList<>();
     boolean first = true;
     int pos = 0;
     double sum_time = 0;
     double sum_distance = 0;
     double acc_time = 0;
-    double[] hrzHist = null;
+    double[] hrzHist = null; // no chart displayed
     double tot_avg_hr = 0;
     double avg_velocity = 0;
     double min_velocity = Double.MAX_VALUE;
@@ -452,7 +405,6 @@ public class GraphWrapper implements Constants {
       if (delta_distance > 0 && delta_time > 0) {
         showPace = true;
         if (altitude != null) showElevation = true;
-        ;
       }
 
       pos += 1;
@@ -506,7 +458,51 @@ public class GraphWrapper implements Constants {
       }
     }
 
-    public void complete(final GraphView graphView) {
+    private void setAxisAndLegend(
+        LineDataSet<EntryFloat> dataSet, int color, IAxisValueFormatter valueFormatter) {
+      dataSet.setColor(color);
+      dataSet.setLineWidth(1.5f);
+      dataSet.setDrawValues(false);
+      dataSet.setDrawCircles(false);
+
+      YAxis axis = null;
+      if (!chart.getAxisLeft().isEnabled()) {
+        axis = chart.getAxisLeft();
+        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+      } else {
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        if (!chart.getAxisRight().isEnabled()) {
+          axis = chart.getAxisRight();
+        }
+      }
+      if (axis != null) {
+        axis.setEnabled(true);
+        axis.setTextColor(color);
+        axis.setAxisLineColor(color);
+        axis.setTextSize(14f);
+        axis.setValueFormatter(valueFormatter);
+      }
+
+      CheckBox cB = new CheckBox(graphTab.getContext());
+      cB.setText(dataSet.getLabel());
+      cB.setTextColor(color);
+      cB.setTextSize(12f);
+      cB.setChecked(true);
+      cB.setOnCheckedChangeListener(
+          (btn, checked) -> {
+            if (chart.getData() != null) {
+              ILineDataSet<EntryFloat> ds =
+                  chart.getData().getDataSetByLabel(dataSet.getLabel(), false);
+              if (ds != null) {
+                ds.setVisible(checked);
+                chart.invalidate();
+              }
+            }
+          });
+      legendBoxes.add(cB);
+    }
+
+    public void complete(LineChart chart) {
       if (velocityList.isEmpty()) {
         avg_velocity = 0;
       } else {
@@ -515,9 +511,9 @@ public class GraphWrapper implements Constants {
       Log.d(getClass().getName(), "graph: " + velocityList.size() + " points");
 
       boolean smoothData =
-          PreferenceManager.getDefaultSharedPreferences(graphView.getContext())
+          PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
               .getBoolean(
-                  graphView
+                  graphTab
                       .getContext()
                       .getResources()
                       .getString(R.string.pref_pace_graph_smoothing),
@@ -525,11 +521,11 @@ public class GraphWrapper implements Constants {
       if (!velocityList.isEmpty() && smoothData) {
         GraphFilter f = new GraphFilter(velocityList);
         final String defaultFilterList =
-            graphView.getContext().getResources().getString(R.string.mm31kz513sg5);
+            graphTab.getContext().getResources().getString(R.string.mm31kz513sg5);
         final String filterList =
-            PreferenceManager.getDefaultSharedPreferences(graphView.getContext())
+            PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
                 .getString(
-                    graphView
+                    graphTab
                         .getContext()
                         .getResources()
                         .getString(R.string.pref_pace_graph_smoothing_filters),
@@ -567,75 +563,256 @@ public class GraphWrapper implements Constants {
         Log.d(getClass().getName(), s.toString());
         f.complete();
       }
-      LineGraphSeries<DataPoint> velocityGraphViewData =
-          new LineGraphSeries<>(velocityList.toArray(new DataPoint[0]));
-      graphView.addSeries(velocityGraphViewData); // data
-      graphView.getViewport().setMinX(graphView.getViewport().getMinX(true));
-      graphView.getViewport().setMaxX(graphView.getViewport().getMaxX(true));
-      velocityGraphViewData.setOnDataPointTapListener(
-          (series, dataPoint) -> {
-            String msg =
-                String.format(
-                    "%s: %s\n%s: %s",
-                    xAxis.label(),
-                    xAxis.formatLongValue(dataPoint.getX()),
-                    formatter.formatVelocityLabel(),
-                    formatter.formatVelocityByPreferredUnit(
-                        Formatter.Format.TXT_LONG, dataPoint.getY()));
-            Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-          });
-      if (showHR) {
-        LineGraphSeries<DataPoint> hrGraphViewData =
-            new LineGraphSeries<>(hrList.toArray(new DataPoint[0]));
-        hrGraphView.addSeries(hrGraphViewData); // data
-        hrGraphView.getViewport().setMinX(hrGraphView.getViewport().getMinX(true));
-        hrGraphView.getViewport().setMaxX(hrGraphView.getViewport().getMaxX(true));
-        hrGraphViewData.setOnDataPointTapListener(
-            (series, dataPoint) -> {
-              String msg =
-                  String.format(
-                      "%s: %s\n%s: %s",
-                      xAxis.label(),
-                      xAxis.formatLongValue(dataPoint.getX()),
-                      graphView.getContext().getString(org.runnerup.common.R.string.Heart_rate),
-                      formatter.formatHeartRate(Formatter.Format.TXT_LONG, dataPoint.getY()));
-              Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-            });
 
-        if (showHRZhist) {
-          StringBuilder s = new StringBuilder("HR Zones:");
-          double sum = 0;
-          for (double aHrzHist : hrzHist) {
-            sum += aHrzHist;
+      if (showHRZhist && hrzHist != null) {
+        StringBuilder s = new StringBuilder("HR Zones:");
+        double sum = 0;
+        for (double aHrzHist : hrzHist) {
+          sum += aHrzHist;
+        }
+        if (sum > 0) {
+          for (int i = 0; i < hrzHist.length; i++) {
+            hrzHist[i] = hrzHist[i] / sum;
+            s.append(" ").append(hrzHist[i]);
           }
-          if (sum > 0) {
-            for (int i = 0; i < hrzHist.length; i++) {
-              hrzHist[i] = hrzHist[i] / sum;
-              s.append(" ").append(hrzHist[i]);
+        }
+        Log.d(getClass().getName(), s.toString());
+        hrzonesBar.pushHrzData(hrzHist);
+        hrzonesBar.invalidate();
+      }
+
+      int chartBackColor = Color.BLACK;
+      if (chart.getBackground() instanceof android.graphics.drawable.ColorDrawable) {
+        chartBackColor =
+            ((android.graphics.drawable.ColorDrawable) chart.getBackground()).getColor();
+      }
+      int chartForeColor = Color.WHITE;
+      if (chart.getForeground() instanceof android.graphics.drawable.ColorDrawable) {
+        chartForeColor =
+            ((android.graphics.drawable.ColorDrawable) chart.getForeground()).getColor();
+      }
+      // Data mapping to MPAndroidChart
+
+      // dataSets and axisFormatters are added in pairs
+      List<ILineDataSet<EntryFloat>> dataSets = new ArrayList<>();
+      List<IAxisValueFormatter> axisFormatters = new ArrayList<>();
+      chart.getAxisLeft().setEnabled(false);
+      chart.getAxisRight().setEnabled(false);
+
+      if (showPace && !velocityList.isEmpty()) {
+        List<EntryFloat> entries = new ArrayList<>();
+        for (DataPoint p : velocityList) {
+          entries.add(new EntryFloat((float) p.getX(), (float) p.getY()));
+        }
+        LineDataSet<EntryFloat> velocityDataSet =
+            new LineDataSet<>(
+                entries,
+                formatter.formatVelocityLabel(preferred_speedunit)
+                    + " ("
+                    + formatter.getVelocityUnit()
+                    + ")");
+        axisFormatters.add(
+            0,
+            new IAxisValueFormatter() {
+              @NonNull
+              @Override
+              public String getFormattedValue(float value, AxisBase axis) {
+                return formatter.formatVelocity(
+                    Formatter.Format.TXT_SHORT, value, preferred_speedunit);
+              }
+            });
+        setAxisAndLegend(
+            velocityDataSet,
+            ColorUtils.blendARGB(Color.BLUE, chartForeColor, 0.5f),
+            axisFormatters.get(axisFormatters.size() - 1));
+        dataSets.add(velocityDataSet);
+      }
+
+      if (showHR && !hrList.isEmpty()) {
+        List<EntryFloat> hrEntries = new ArrayList<>();
+        for (DataPoint p : hrList) {
+          hrEntries.add(new EntryFloat((float) p.getX(), (float) p.getY()));
+        }
+        LineDataSet<EntryFloat> hrDataSet =
+            new LineDataSet<>(
+                hrEntries,
+                graphTab.getContext().getString(org.runnerup.common.R.string.Heart_rate)
+                    + " (bpm)");
+        axisFormatters.add(
+            new IAxisValueFormatter() {
+              @NonNull
+              @Override
+              public String getFormattedValue(float value, AxisBase axis) {
+                return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
+              }
+            });
+        dataSets.add(hrDataSet);
+        setAxisAndLegend(
+            hrDataSet,
+            ColorUtils.blendARGB(Color.RED, chartForeColor, 0.5f),
+            axisFormatters.get(axisFormatters.size() - 1));
+      }
+
+      if (showElevation && !elevationList.isEmpty()) {
+        List<DataPoint> plottedElevation = elevationList;
+        double[] inverseScaleParams = null;
+        if (dataSets.size() >= 2) {
+          // only one right axis supported, fake it by scaling the formatter series to previous
+          ILineDataSet<EntryFloat> targetSeries = dataSets.get(1);
+          double[] sourceMinMax = getMinMax(elevationList);
+          plottedElevation =
+              scaleToRange(
+                  elevationList,
+                  sourceMinMax[0],
+                  sourceMinMax[1],
+                  targetSeries.getYMin(),
+                  targetSeries.getYMax());
+          // Keep inverse mapping local so formatter can convert scaled values back.
+          inverseScaleParams =
+              new double[] {
+                targetSeries.getYMin(), targetSeries.getYMax(), sourceMinMax[0], sourceMinMax[1]
+              };
+        }
+        List<EntryFloat> elevationEntries = new ArrayList<>();
+        for (DataPoint p : plottedElevation) {
+          elevationEntries.add(new EntryFloat((float) p.getX(), (float) p.getY()));
+        }
+        LineDataSet<EntryFloat> elevationDataSet =
+            new LineDataSet<>(
+                elevationEntries,
+                graphTab.getContext().getString(org.runnerup.common.R.string.Elevation)
+                    + " ("
+                    + formatter.getElevationUnit()
+                    + ")");
+        elevationDataSet.setDrawFilled(true);
+        elevationDataSet.setFillDrawable(
+            new android.graphics.drawable.ColorDrawable(
+                ColorUtils.blendARGB(elevationDataSet.getColor(), chartBackColor, 0.5f)));
+        final double[] finalInverseScaleParams = inverseScaleParams;
+        axisFormatters.add(
+            new IAxisValueFormatter() {
+              @NonNull
+              @Override
+              public String getFormattedValue(float value, AxisBase axis) {
+                double displayValue = value;
+                if (finalInverseScaleParams != null) {
+                  displayValue =
+                      scaleValueToRange(
+                          value,
+                          finalInverseScaleParams[0],
+                          finalInverseScaleParams[1],
+                          finalInverseScaleParams[2],
+                          finalInverseScaleParams[3]);
+                }
+                return formatter.formatElevation(Formatter.Format.TXT_SHORT, displayValue);
+              }
+            });
+        setAxisAndLegend(
+            elevationDataSet,
+            ColorUtils.setAlphaComponent(Color.GREEN, 64),
+            axisFormatters.get(axisFormatters.size() - 1));
+        dataSets.add(elevationDataSet);
+      }
+
+      chart.getLegend().setEnabled(false);
+      chart.getDescription().setEnabled(false);
+      chart.getXAxis().setTextColor(chartForeColor);
+      chart.getXAxis().setTextSize(14f);
+      chart.getXAxis().setPosition(info.appdev.charting.components.XAxis.XAxisPosition.BOTTOM);
+      IAxisValueFormatter xAxisFormatter =
+          new IAxisValueFormatter() {
+            @NonNull
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+              return xAxis.formatValue(value);
             }
-          }
-          Log.d(getClass().getName(), s.toString());
-          hrzonesBar.pushHrzData(hrzHist);
+          };
+      chart.getXAxis().setValueFormatter(xAxisFormatter);
+
+      chart.setOnChartValueSelectedListener(
+          new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(@NonNull EntryFloat e, @NonNull Highlight h) {
+              // Find out the dataset line that was tapped
+              int datasetIndex = h.getDataSetIndex();
+              int axisIndex = axisFormatters.size() - 1 - datasetIndex;
+              if (datasetIndex >= axisFormatters.size()
+                  || axisIndex >= axisFormatters.size()
+                  || axisIndex < 0) {
+                return;
+              }
+
+              // Display the results
+              assert chart.getData() != null;
+              String message =
+                  chart.getData().getDataSetByIndex(datasetIndex).getLabel()
+                      + ": "
+                      + axisFormatters.get(axisIndex).getFormattedValue(e.getY(), null)
+                      + "\n"
+                      + xAxis.formatLongValue(e.getX());
+
+              Toast.makeText(chart.getContext(), message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected() {}
+          });
+
+      // reverse the order so first chart is rendered on top
+      List<ILineDataSet<EntryFloat>> chartSets = new ArrayList<>();
+      for (int i = dataSets.size() - 1; i >= 0; i--) {
+        chartSets.add(dataSets.get(i));
+      }
+      chart.setData(new LineData(chartSets));
+    }
+
+    private double[] getMinMax(List<DataPoint> series) {
+      double min = Double.POSITIVE_INFINITY;
+      double max = Double.NEGATIVE_INFINITY;
+      for (DataPoint point : series) {
+        double y = point.getY();
+        if (y < min) {
+          min = y;
+        }
+        if (y > max) {
+          max = y;
         }
       }
-      if (showElevation) {
-        LineGraphSeries<DataPoint> elevationGraphViewData =
-            new LineGraphSeries<>(elevationList.toArray(new DataPoint[0]));
-        elevationGraphView.addSeries(elevationGraphViewData); // data
-        elevationGraphView.getViewport().setMinX(elevationGraphView.getViewport().getMinX(true));
-        elevationGraphView.getViewport().setMaxX(elevationGraphView.getViewport().getMaxX(true));
-        elevationGraphViewData.setOnDataPointTapListener(
-            (series, dataPoint) -> {
-              String msg =
-                  String.format(
-                      "%s: %s\n%s: %s",
-                      xAxis.label(),
-                      xAxis.formatLongValue(dataPoint.getX()),
-                      graphView.getContext().getString(org.runnerup.common.R.string.Elevation),
-                      formatter.formatElevation(Formatter.Format.TXT_LONG, dataPoint.getY()));
-              Toast.makeText(graphView.getContext(), msg, Toast.LENGTH_SHORT).show();
-            });
+      if (!Double.isFinite(min) || !Double.isFinite(max)) {
+        return new double[] {0.0, 0.0};
       }
+      return new double[] {min, max};
+    }
+
+    private List<DataPoint> scaleToRange(
+        List<DataPoint> source,
+        double sourceMin,
+        double sourceMax,
+        double targetMin,
+        double targetMax) {
+      List<DataPoint> scaled = new ArrayList<>(source.size());
+      if (sourceMax - sourceMin <= 0) {
+        double mapped = targetMin + ((targetMax - targetMin) / 2.0);
+        for (DataPoint point : source) {
+          scaled.add(new DataPoint(point.getX(), mapped));
+        }
+        return scaled;
+      }
+
+      for (DataPoint point : source) {
+        double mapped = scaleValueToRange(point.getY(), sourceMin, sourceMax, targetMin, targetMax);
+        scaled.add(new DataPoint(point.getX(), mapped));
+      }
+      return scaled;
+    }
+
+    private double scaleValueToRange(
+        double value, double sourceMin, double sourceMax, double targetMin, double targetMax) {
+      double sourceRange = sourceMax - sourceMin;
+      if (sourceRange <= 0) {
+        return targetMin + ((targetMax - targetMin) / 2.0);
+      }
+      return targetMin + ((value - sourceMin) * (targetMax - targetMin) / sourceRange);
     }
 
     private int[] getArgs(String s) {
@@ -652,18 +829,6 @@ public class GraphWrapper implements Constants {
         e.printStackTrace();
         return new int[0];
       }
-    }
-
-    public boolean HasPaceInfo() {
-      return showPace;
-    }
-
-    public boolean HasElevationInfo() {
-      return showElevation;
-    }
-
-    public boolean HasHRInfo() {
-      return showHR;
     }
 
     public boolean HasHRZHist() {
