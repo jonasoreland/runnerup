@@ -194,6 +194,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
           put(R.id.menu_hrdevice_paired_ble, R.string.pref_bt_paired_ble);
           put(R.id.menu_hrdevice_experimental, R.string.pref_bt_experimental);
           put(R.id.menu_hrdevice_mock, R.string.pref_bt_mock);
+          put(R.id.menu_hrdevice_wear_os, R.string.pref_bt_wear_os);
           put(R.id.menu_hrdevice_debug, R.string.pref_bt_debug);
         }
       };
