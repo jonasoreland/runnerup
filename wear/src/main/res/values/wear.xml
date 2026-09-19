@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="android_wear_capabilities">
+        <!-- Important: The value must match Constants.Wear.Capability.HEART_RATE_PROVIDER -->
+        <item>runnerup_hr_provider</item>
+    </string-array>
+</resources>
