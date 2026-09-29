@@ -23,20 +23,20 @@ import android.content.pm.PackageManager;
 import android.location.GnssStatus;
 import android.location.GpsSatellite;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationListenerCompat;
 import java.util.Objects;
 import org.runnerup.util.TickListener;
 
 /**
  * This is a helper class that is used to determine when the GPS status is good enough (isFixed())
  */
-public class GpsStatus implements LocationListener {
+public class GpsStatus implements LocationListenerCompat {
 
   private static final int HIST_LEN = 3;
 
@@ -61,7 +61,9 @@ public class GpsStatus implements LocationListener {
   private int mKnownSatellites = 0;
   private int mUsedInLastFixSatellites = 0;
   private GnssStatus.Callback mGnssStatusCallback;
+
   // Before Android N
+  @SuppressWarnings("deprecation")
   private gpsStatusListener mGpsStatusListener;
 
   public GpsStatus(Context ctx) {
@@ -69,6 +71,7 @@ public class GpsStatus implements LocationListener {
     mHistory = new Location[HIST_LEN];
   }
 
+  @SuppressWarnings("deprecation")
   public void start(TickListener listener) {
     clear(true);
     this.listener = listener;
@@ -96,13 +99,18 @@ public class GpsStatus implements LocationListener {
               }
             }
           };
-      locationManager.registerGnssStatusCallback(mGnssStatusCallback);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        locationManager.registerGnssStatusCallback(context.getMainExecutor(), mGnssStatusCallback);
+      } else {
+        locationManager.registerGnssStatusCallback(mGnssStatusCallback);
+      }
     } else {
       mGpsStatusListener = new gpsStatusListener();
       locationManager.addGpsStatusListener(mGpsStatusListener);
     }
   }
 
+  @SuppressWarnings("deprecation")
   public void stop(TickListener listener) {
     this.listener = null;
     if (locationManager != null) {
@@ -126,6 +134,17 @@ public class GpsStatus implements LocationListener {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
+  public void onStatusChanged(String provider, int status, Bundle extras) {
+    if (provider.equalsIgnoreCase("gps")) {
+      if (status == LocationProvider.OUT_OF_SERVICE
+          || status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
+        clear(true);
+      }
+      if (listener != null) listener.onTick();
+    }
+  }
+
   public void onLocationChanged(Location location) {
     System.arraycopy(mHistory, 0, mHistory, 1, HIST_LEN - 1);
     mHistory[0] = location;
@@ -156,18 +175,8 @@ public class GpsStatus implements LocationListener {
     }
   }
 
-  @Override
-  public void onStatusChanged(String provider, int status, Bundle extras) {
-    if (provider.equalsIgnoreCase("gps")) {
-      if (status == LocationProvider.OUT_OF_SERVICE
-          || status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-        clear(true);
-      }
-      if (listener != null) listener.onTick();
-    }
-  }
-
   // Android before N
+  @SuppressWarnings("deprecation")
   private class gpsStatusListener implements android.location.GpsStatus.Listener {
     @Override
     public void onGpsStatusChanged(int event) {

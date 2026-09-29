@@ -68,7 +68,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     double val;
     Float pressure = tracker.getCurrentPressure();
     // pressure only ignore pressure if in mock mode
-    if (pressure != null && !lastLocation.isFromMockProvider()) {
+    if (pressure != null && !LocationCompat.isMock(lastLocation)) {
       // Pressure available - use it for elevation
       float pressureElevation =
           SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
