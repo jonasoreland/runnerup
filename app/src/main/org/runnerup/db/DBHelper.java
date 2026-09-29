@@ -17,7 +17,6 @@
 
 package org.runnerup.db;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,6 +48,7 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.util.FileUtil;
+import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.workout.FileFormats;
 
 public class DBHelper extends SQLiteOpenHelper implements Constants {
@@ -614,7 +614,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   }
 
   public static void purgeDeletedActivities(
-      Context ctx, final ProgressDialog dialog, final Runnable onComplete) {
+      Context ctx, final ProgressDialogCompat dialog, final Runnable onComplete) {
 
     final DBHelper mDBHelper = DBHelper.getHelper(ctx);
     final SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -712,7 +712,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
         .setTitle("Overwrite database")
         .setMessage("This will overwrite your current database. Are you sure?")
         .setPositiveButton(
-            android.R.string.yes,
+            org.runnerup.common.R.string.Yes,
             (dialog, which) -> {
               try {
                 Uri to = getDbUri(ctx);
@@ -735,7 +735,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
                     .show();
               }
             })
-        .setNegativeButton(android.R.string.no, listener)
+        .setNegativeButton(org.runnerup.common.R.string.No, listener)
         .show();
   }
 

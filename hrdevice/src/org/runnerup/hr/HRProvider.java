@@ -17,7 +17,9 @@
 
 package org.runnerup.hr;
 
+import android.content.Intent;
 import android.os.Handler;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
@@ -58,10 +60,10 @@ public interface HRProvider {
    * 'activity' will have called
    *
    * @param activity The {@link AppCompatActivity} currently being displayed to the user
-   * @param requestCode An arbitrary code that will be given to
+   * @param launcher The activity result launcher
    * @return true if the intent was sent
    */
-  boolean startEnableIntent(AppCompatActivity activity, int requestCode);
+  boolean startEnableIntent(AppCompatActivity activity, ActivityResultLauncher<Intent> launcher);
 
   /**
    * Initialises the wireless module, allowing device scanning/connection

@@ -21,6 +21,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -259,7 +260,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   }
 
   private void recomputeMaxHR() {
-    new Handler()
+    new Handler(Looper.getMainLooper())
         .post(
             () -> {
               try {
@@ -275,7 +276,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   }
 
   private void recomputeZones() {
-    new Handler()
+    new Handler(Looper.getMainLooper())
         .post(
             () -> {
               try {

@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import org.runnerup.R;
@@ -95,16 +96,18 @@ public class OngoingState implements NotificationState {
     Notification n = builder.build();
     if (workoutInfo.isPaused()) {
       n.actions[1] =
-          new Notification.Action(
-              org.runnerup.common.R.drawable.ic_av_play_arrow,
-              context.getString(org.runnerup.common.R.string.Resume),
-              n.actions[1].actionIntent);
+          new Notification.Action.Builder(
+                  Icon.createWithResource(context, org.runnerup.common.R.drawable.ic_av_play_arrow),
+                  context.getString(org.runnerup.common.R.string.Resume),
+                  n.actions[1].actionIntent)
+              .build();
     } else {
       n.actions[1] =
-          new Notification.Action(
-              org.runnerup.common.R.drawable.ic_av_pause,
-              context.getString(org.runnerup.common.R.string.Pause),
-              n.actions[1].actionIntent);
+          new Notification.Action.Builder(
+                  Icon.createWithResource(context, org.runnerup.common.R.drawable.ic_av_pause),
+                  context.getString(org.runnerup.common.R.string.Pause),
+                  n.actions[1].actionIntent)
+              .build();
     }
     return n;
   }

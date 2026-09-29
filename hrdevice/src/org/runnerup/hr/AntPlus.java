@@ -18,8 +18,10 @@
 package org.runnerup.hr;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.IHeartRateDataReceiver;
@@ -409,11 +411,12 @@ public class AntPlus extends BtHRBase {
 
   @Override
   public boolean isEnabled() {
-    return Bt20Base.isEnabledImpl();
+    return Bt20Base.isEnabledImpl(context);
   }
 
   @Override
-  public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
-    return Bt20Base.startEnableIntentImpl(activity, requestCode);
+  public boolean startEnableIntent(
+      AppCompatActivity activity, ActivityResultLauncher<Intent> launcher) {
+    return Bt20Base.startEnableIntentImpl(activity, launcher);
   }
 }
