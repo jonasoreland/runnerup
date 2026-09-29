@@ -40,13 +40,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.WindowCompat;
+import androidx.core.widget.TextViewCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
@@ -67,7 +71,13 @@ public class AccountListActivity extends AppCompatActivity
   private SyncManager mSyncManager = null;
   private boolean mShowDisabled = false;
   private CursorAdapter mCursorAdapter;
-  private static final int EDIT_REQUEST = 1001;
+  private final ActivityResultLauncher<Intent> editAccountLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> {
+            mSyncManager.clear();
+            androidx.loader.app.LoaderManager.getInstance(this).restartLoader(0, null, this);
+          });
 
   /** Called when the activity is first created. */
   @Override
@@ -87,8 +97,8 @@ public class AccountListActivity extends AppCompatActivity
 
     // button footer
     Button showDisabledBtn = new Button(this);
-    showDisabledBtn.setTextAppearance(
-        this, androidx.appcompat.R.style.TextAppearance_AppCompat_Button);
+    TextViewCompat.setTextAppearance(
+        showDisabledBtn, androidx.appcompat.R.style.TextAppearance_AppCompat_Button);
     showDisabledBtn.setText(org.runnerup.common.R.string.Show_disabled_accounts);
     showDisabledBtn.setBackgroundResource(0);
     showDisabledBtn.setOnClickListener(
@@ -99,14 +109,15 @@ public class AccountListActivity extends AppCompatActivity
           } else {
             ((Button) view).setText(org.runnerup.common.R.string.Show_disabled_accounts);
           }
-          getSupportLoaderManager().restartLoader(0, null, AccountListActivity.this);
+          androidx.loader.app.LoaderManager.getInstance(AccountListActivity.this)
+              .restartLoader(0, null, AccountListActivity.this);
         });
     listView.addFooterView(showDisabledBtn);
 
     // adapter
     mCursorAdapter = new AccountListAdapter(this, null);
     listView.setAdapter(mCursorAdapter);
-    getSupportLoaderManager().initLoader(0, null, this);
+    androidx.loader.app.LoaderManager.getInstance(this).initLoader(0, null, this);
 
     listView.setOnItemClickListener(configureItemClick);
 
@@ -245,8 +256,7 @@ public class AccountListActivity extends AppCompatActivity
       int synchronizerIcon = synchronizer.getIconId();
       if (synchronizerIcon == 0) {
         Drawable circle = AppCompatResources.getDrawable(context, R.drawable.circle_40dp);
-        circle.setColorFilter(
-            ContextCompat.getColor(context, synchronizer.getColorId()), PorterDuff.Mode.SRC_IN);
+        DrawableCompat.setTint(circle, ContextCompat.getColor(context, synchronizer.getColorId()));
         accountIcon.setImageDrawable(circle);
         accountIconText.setText(name.substring(0, 1));
       } else {
@@ -355,18 +365,16 @@ public class AccountListActivity extends AppCompatActivity
     Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
     intent.putExtra("synchronizer", synchronizerName);
     // intent.putExtra("edit", edit);
-    AccountListActivity.this.startActivityForResult(intent, EDIT_REQUEST);
+    editAccountLauncher.launch(intent);
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == SyncManager.CONFIGURE_REQUEST) {
       mSyncManager.onActivityResult(requestCode, resultCode, data);
       this.mCursorAdapter.notifyDataSetChanged();
-    } else if (requestCode == EDIT_REQUEST) {
-      mSyncManager.clear();
-      getSupportLoaderManager().restartLoader(0, null, this);
     }
   }
 }

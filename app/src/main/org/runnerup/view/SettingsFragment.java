@@ -26,8 +26,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
       // The about preference was clicked, show the about dialog
       AboutPreference.AboutDialogFragment aboutDialogFragment =
           AboutPreference.AboutDialogFragment.newInstance(preference.getKey());
-      aboutDialogFragment.setTargetFragment(this, 0);
-      aboutDialogFragment.show(getParentFragmentManager(), AboutPreference.AboutDialogFragment.TAG);
+      aboutDialogFragment.show(
+          this.getParentFragmentManager(), AboutPreference.AboutDialogFragment.TAG);
     } else {
       super.onDisplayPreferenceDialog(preference);
     }

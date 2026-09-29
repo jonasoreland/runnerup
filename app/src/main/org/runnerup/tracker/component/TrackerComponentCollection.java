@@ -30,7 +30,7 @@ import org.runnerup.BuildConfig;
  */
 public class TrackerComponentCollection implements TrackerComponent {
 
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(android.os.Looper.getMainLooper());
   private final HashMap<String, Pair<TrackerComponent, ResultCode>> components = new HashMap<>();
   private final HashMap<String, TrackerComponent> pending = new HashMap<>();
 
