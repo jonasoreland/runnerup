@@ -43,178 +43,173 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <TabHost
+    <RelativeLayout
         android:id="@+id/tabhost_start"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <RelativeLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/start_tabs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp" />
 
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/start_tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/start_tabs">
+
+            <include layout="@layout/start_basic" />
+
+            <include layout="@layout/start_interval" />
+
+            <include layout="@layout/start_advanced" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:animateLayoutChanges="true"
+            android:background="#424242"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            tools:ignore="UnusedAttribute">
+
+            <LinearLayout
+                android:id="@+id/status_frame"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:minWidth="48dp"
-                android:minHeight="48dp" />
-
-            <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@android:id/tabs">
-
-                <include layout="@layout/start_basic" />
-
-                <include layout="@layout/start_interval" />
-
-                <include layout="@layout/start_advanced" />
-            </FrameLayout>
-
-            <RelativeLayout
-                android:id="@+id/status_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:animateLayoutChanges="true"
-                android:background="#424242"
-                android:clickable="true"
-                android:focusable="true"
                 android:orientation="vertical"
-                tools:ignore="UnusedAttribute">
+                android:padding="16dp">
 
                 <LinearLayout
-                    android:id="@+id/status_frame"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:gravity="bottom|start"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/device_status"
+                        style="@style/StatusText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="bottom|start"
-                        android:orientation="horizontal">
+                        android:text="@string/No_devices_connected"
+                        android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/device_status"
-                            style="@style/StatusText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/No_devices_connected"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/hr_indicator"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="4dp"
-                            android:contentDescription="@string/Heart_Rate_Monitor"
-                            android:visibility="gone"
-                            app:srcCompat="@drawable/ic_heartrate_white_24dp" />
-
-                        <TextView
-                            android:id="@+id/hr_message"
-                            style="@style/StatusText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/wearos_indicator"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="4dp"
-                            android:contentDescription="@string/Wear_OS_Device"
-                            android:visibility="gone"
-                            app:srcCompat="@drawable/ic_watch_white_24dp" />
-
-                        <TextView
-                            android:id="@+id/wearos_message"
-                            style="@style/StatusText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp" />
-
-                        <ImageView
-                            android:id="@+id/gps_indicator"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="4dp"
-                            app:srcCompat="@drawable/ic_gps_1"
-                            tools:ignore="ContentDescription" />
-
-                        <TextView
-                            android:id="@+id/gps_message"
-                            style="@style/StatusText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/gps_detail_row"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="bottom|start"
+                    <ImageView
+                        android:id="@+id/hr_indicator"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="@string/Heart_Rate_Monitor"
                         android:visibility="gone"
-                        tools:ignore="UseCompoundDrawables">
+                        app:srcCompat="@drawable/ic_heartrate_white_24dp" />
 
-                        <ImageView
-                            android:id="@+id/gps_detail_indicator"
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginEnd="4dp"
-                            app:srcCompat="@drawable/ic_gps_1"
-                            tools:ignore="ContentDescription" />
+                    <TextView
+                        android:id="@+id/hr_message"
+                        style="@style/StatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/gps_detail_message"
-                            style="@style/StatusText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                    <ImageView
+                        android:id="@+id/wearos_indicator"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="@string/Wear_OS_Device"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/ic_watch_white_24dp" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/wearos_message"
+                        style="@style/StatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageView
+                        android:id="@+id/gps_indicator"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="4dp"
+                        app:srcCompat="@drawable/ic_gps_1"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/gps_message"
+                        style="@style/StatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/expand_icon"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/status_frame"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    app:srcCompat="@drawable/ic_expand_up_white_24dp"
-                    tools:ignore="ContentDescription" />
-
-                <Button
-                    android:id="@+id/gps_enable_button"
-                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                <LinearLayout
+                    android:id="@+id/gps_detail_row"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    tools:ignore="RelativeOverlap" />
+                    android:layout_marginTop="8dp"
+                    android:gravity="bottom|start"
+                    android:visibility="gone"
+                    tools:ignore="UseCompoundDrawables">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/gps_detail_indicator"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginEnd="4dp"
+                        app:srcCompat="@drawable/ic_gps_1"
+                        tools:ignore="ContentDescription" />
 
-            <include
-                layout="@layout/start_fab"
+                    <TextView
+                        android:id="@+id/gps_detail_message"
+                        style="@style/StatusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/expand_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/status_frame"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                app:srcCompat="@drawable/ic_expand_up_white_24dp"
+                tools:ignore="ContentDescription" />
+
+            <Button
+                android:id="@+id/gps_enable_button"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="@dimen/activity_margin"
-                android:layout_marginBottom="20dp" />
+                android:layout_centerVertical="true"
+                tools:ignore="RelativeOverlap" />
 
         </RelativeLayout>
-    </TabHost>
+
+        <include
+            layout="@layout/start_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginBottom="20dp" />
+
+    </RelativeLayout>
 
 </LinearLayout>
