@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,10 +50,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.ViewCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
@@ -79,7 +82,15 @@ import org.runnerup.workout.Workout;
 public class RunActivity extends AppCompatActivity implements TickListener {
   private Workout workout = null;
   private Tracker mTracker = null;
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private final ActivityResultLauncher<Intent> detailActivityLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> handleActivityResult(0, result.getResultCode(), result.getData()));
+  private final ActivityResultLauncher<Intent> pausedDetailActivityLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> handleActivityResult(1, result.getResultCode(), result.getData()));
 
   private Button pauseButton = null;
   private Button newLapButton = null;
@@ -339,9 +350,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
   }
 
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
+  private void handleActivityResult(int requestCode, int resultCode, Intent data) {
     if (workout == null) {
       // "should not happen"
       finish();
@@ -391,14 +400,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private void setPauseButtonEnabled(boolean enabled) {
     if (enabled) {
       pauseButton.setText(org.runnerup.common.R.string.Pause);
-      ViewCompat.setBackground(
-          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_blue));
+      pauseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_blue));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
           0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
     } else {
       pauseButton.setText(org.runnerup.common.R.string.Resume);
-      ViewCompat.setBackground(
-          pauseButton, AppCompatResources.getDrawable(this, R.drawable.btn_green));
+      pauseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_green));
       pauseButton.setCompoundDrawablesWithIntrinsicBounds(
           0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
     }
@@ -422,7 +429,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     if (timer != null) {
       workout.onStop(workout);
       stopTimer(); // set timer=null;
-      mTracker.stopForeground(true); // remove notification
+      ServiceCompat.stopForeground(mTracker, ServiceCompat.STOP_FOREGROUND_REMOVE);
       Intent intent = new Intent(RunActivity.this, DetailActivity.class);
       /*
        * The same activity is used to show details and to save
@@ -430,7 +437,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
        */
       intent.putExtra("mode", "save");
       intent.putExtra("ID", mTracker.getActivityId());
-      RunActivity.this.startActivityForResult(intent, workout.isPaused() ? 1 : 0);
+      if (workout.isPaused()) {
+        pausedDetailActivityLauncher.launch(intent);
+      } else {
+        detailActivityLauncher.launch(intent);
+      }
     }
   }
 
@@ -473,6 +484,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     return super.onKeyUp(keyCode, event);
   }
 
+  @SuppressWarnings("deprecation")
   private void showOnLockScreen(boolean enabled) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
       setShowWhenLocked(enabled);

@@ -18,7 +18,11 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
@@ -36,6 +40,7 @@ public class RUTextToSpeech {
   private final boolean mute;
   private final TextToSpeech textToSpeech;
   private final AudioManager audioManager;
+  private AudioFocusRequest audioFocusRequest;
   private final AtomicBoolean hasAudioFocus = new AtomicBoolean(false);
   private long id = (long) (System.nanoTime() + (1000 * Math.random()));
 
@@ -134,11 +139,20 @@ public class RUTextToSpeech {
     if (hasAudioFocus.get()) {
       return true;
     }
-    int result =
-        audioManager.requestAudioFocus(
-            null, // afChangeListener,
-            AudioManager.STREAM_MUSIC,
-            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+    int result;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      audioFocusRequest =
+          new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+              .setAudioAttributes(
+                  new AudioAttributes.Builder()
+                      .setUsage(AudioAttributes.USAGE_MEDIA)
+                      .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                      .build())
+              .build();
+      result = audioManager.requestAudioFocus(audioFocusRequest);
+    } else {
+      result = requestLegacyAudioFocus();
+    }
     var granted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     hasAudioFocus.set(granted);
     return granted;
@@ -152,6 +166,22 @@ public class RUTextToSpeech {
       return;
     }
     hasAudioFocus.set(false);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      audioManager.abandonAudioFocusRequest(audioFocusRequest);
+      audioFocusRequest = null;
+    } else {
+      abandonLegacyAudioFocus();
+    }
+  }
+
+  @SuppressWarnings("deprecation")
+  private int requestLegacyAudioFocus() {
+    return audioManager.requestAudioFocus(
+        null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK);
+  }
+
+  @SuppressWarnings("deprecation")
+  private void abandonLegacyAudioFocus() {
     audioManager.abandonAudioFocus(null);
   }
 
@@ -188,9 +218,11 @@ public class RUTextToSpeech {
         params = new HashMap<>();
       }
 
-      params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, e.id);
-
-      int res = textToSpeech.speak(e.text, mode, params);
+      Bundle speechParams = new Bundle();
+      for (var entry : params.entrySet()) {
+        speechParams.putString(entry.getKey(), entry.getValue());
+      }
+      int res = textToSpeech.speak(e.text, mode, speechParams, e.id);
       if (res == TextToSpeech.ERROR) {
         Log.i(
             getClass().getName(),
@@ -233,7 +265,13 @@ class UtteranceCompletion {
           }
 
           @Override
+          @SuppressWarnings("deprecation")
           public void onError(String utteranceId) {
+            ruTextToSpeech.utteranceCompleted(utteranceId);
+          }
+
+          @Override
+          public void onError(String utteranceId, int errorCode) {
             ruTextToSpeech.utteranceCompleted(utteranceId);
           }
 

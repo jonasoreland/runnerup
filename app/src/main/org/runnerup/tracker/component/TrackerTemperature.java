@@ -24,6 +24,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import androidx.preference.PreferenceManager;
+
+import org.runnerup.R;
+
 import java.util.Random;
 
 public class TrackerTemperature extends DefaultTrackerComponent implements SensorEventListener {
@@ -73,18 +76,19 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
   }
 
   private Sensor getSensor(final Context context) {
-    Sensor sensor;
     if (sensorManager == null) {
       sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
-    sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+    Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     if (sensor == null) {
-      sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+      @SuppressWarnings("deprecation")
+      Sensor tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+      sensor = tempSensor;
     }
 
     if (sensor == null) {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-      isMockSensor = prefs.getBoolean(context.getString(org.runnerup.R.string.pref_bt_mock), false);
+      isMockSensor = prefs.getBoolean(context.getString(R.string.pref_bt_mock), false);
     }
 
     return sensor;

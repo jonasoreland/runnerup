@@ -20,6 +20,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void onDisplayPreferenceDialog(@NonNull Preference preference) {
     if (preference instanceof AboutPreference) {

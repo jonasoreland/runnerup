@@ -441,7 +441,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   }
 
   public boolean isEnabled() {
-    return Bt20Base.isEnabledImpl();
+    return Bt20Base.isEnabledImpl(context);
   }
 
   public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
@@ -755,7 +755,7 @@ public class AndroidBLEHRProvider extends BtHRBase implements HRProvider {
   public void connect(HRDeviceRef ref) {
     stopScan();
 
-    if (!Bt20Base.isEnabledImpl() || btAdapter == null) {
+    if (!Bt20Base.isEnabledImpl(context) || btAdapter == null) {
       reportConnectFailed("BT is not enabled");
       return;
     }
