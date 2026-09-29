@@ -88,20 +88,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TabHost
+    <LinearLayout
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/buttons"
-        android:layout_below="@id/appbarlayout">
+        android:layout_below="@id/appbarlayout"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TabWidget
-                android:id="@android:id/tabs"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/detail_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -220,8 +216,7 @@
                         android:layout_weight="1" />
                 </LinearLayout>
             </FrameLayout>
-        </LinearLayout>
-    </TabHost>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/buttons"

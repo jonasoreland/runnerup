@@ -43,18 +43,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <TabHost
+    <RelativeLayout
         android:id="@+id/tabhost_start"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TabWidget
-                android:id="@android:id/tabs"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/start_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -62,10 +58,10 @@
                 android:minHeight="48dp" />
 
             <FrameLayout
-                android:id="@android:id/tabcontent"
+                android:id="@+id/start_tabcontent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@android:id/tabs">
+                android:layout_below="@id/start_tabs">
 
                 <include layout="@layout/start_basic" />
 
@@ -214,7 +210,6 @@
                 android:layout_marginStart="@dimen/activity_margin"
                 android:layout_marginBottom="20dp" />
 
-        </RelativeLayout>
-    </TabHost>
+    </RelativeLayout>
 
 </LinearLayout>
