@@ -18,7 +18,6 @@
 package org.runnerup.export.oauth2client;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -29,7 +28,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.activity.EdgeToEdge;
@@ -47,6 +47,7 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.util.FormValues;
 import org.runnerup.export.util.SyncHelper;
+import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.util.ViewUtil;
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -70,13 +71,9 @@ public class OAuth2Activity extends AppCompatActivity {
 
   private boolean mFinished = false;
   private String mRedirectUri = null;
-  private ProgressDialog mSpinner = null;
+  private ProgressDialogCompat mSpinner = null;
   private Bundle mArgs = null;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-  private void setSavedPassword(WebView wv, boolean val) {
-    wv.getSettings().setSavePassword(false);
-  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -94,8 +91,7 @@ public class OAuth2Activity extends AppCompatActivity {
     if (b.containsKey(OAuth2ServerCredentials.AUTH_EXTRA))
       auth_extra = b.getString(OAuth2ServerCredentials.AUTH_EXTRA);
 
-    mSpinner = new ProgressDialog(this);
-    mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    mSpinner = new ProgressDialogCompat(this);
     mSpinner.setMessage(getString(org.runnerup.common.R.string.Loading));
 
     // https://stackoverflow.com/questions/41025200/android-view-inflateexception-error-inflating-class-android-webkit-webview/58131421#58131421
@@ -115,7 +111,6 @@ public class OAuth2Activity extends AppCompatActivity {
         .setUserAgentString(
             "Mozilla/5.0 (Linux; Android 10; Android SDK built for x86) AppleWebKit/537.36 (KHTML,"
                 + " like Gecko) Chrome/74.0.3729.185 Mobile Safari/537.36");
-    setSavedPassword(wv, false);
 
     StringBuilder tmp = new StringBuilder();
     tmp.append(auth_url);
@@ -127,25 +122,37 @@ public class OAuth2Activity extends AppCompatActivity {
     }
     final String url = tmp.toString();
 
-    CookieSyncManager.createInstance(this);
-    CookieManager.getInstance().removeAllCookie();
-    wv.loadUrl(url);
-
     wv.setWebViewClient(
         new WebViewClient() {
+          // Used before Android N
+          @SuppressWarnings("deprecation")
           @Override
-          public boolean shouldOverrideUrlLoading(WebView view, String loadurl) {
-            if (loadurl.startsWith("https://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp")
-                || loadurl.startsWith("https://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
-              wv.loadUrl("https://runkeeper.com/facebookSignIn");
+          public boolean shouldOverrideUrlLoading(WebView view, String loadUrl) {
+            if (handleRunkeeperRedirect(view, loadUrl)) {
               return true;
             }
-            if (loadurl.startsWith("https://runkeeper.com/home")) {
-              wv.loadUrl(url);
-              return true;
-            }
+            return super.shouldOverrideUrlLoading(view, loadUrl);
+          }
 
-            return super.shouldOverrideUrlLoading(view, loadurl);
+          @Override
+          public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            if (handleRunkeeperRedirect(view, request.getUrl().toString())) {
+              return true;
+            }
+            return super.shouldOverrideUrlLoading(view, request);
+          }
+
+          private boolean handleRunkeeperRedirect(WebView view, String loadUrl) {
+            if (loadUrl.startsWith("https://runkeeper.com/jsp/widgets/streetTeamWidgetClose.jsp")
+                || loadUrl.startsWith("https://runkeeper.com/jsp/widgets/friendWidgetClose.jsp")) {
+              view.loadUrl("https://runkeeper.com/facebookSignIn");
+              return true;
+            }
+            if (loadUrl.startsWith("https://runkeeper.com/home")) {
+              view.loadUrl(url);
+              return true;
+            }
+            return false;
           }
 
           @Override
@@ -196,18 +203,23 @@ public class OAuth2Activity extends AppCompatActivity {
           }
 
           public void onReceivedError(
-              WebView view, int errorCode, String description, String failingUrl) {
+              WebView view, WebResourceRequest request, WebResourceError error) {
+            if (!request.isForMainFrame()) {
+              return;
+            }
+            String failingUrl = request.getUrl().toString();
             if (failingUrl.startsWith(mRedirectUri)) {
               view.setVisibility(View.INVISIBLE);
               return; // we know this is will give error...
             }
-            super.onReceivedError(view, errorCode, description, failingUrl);
+            super.onReceivedError(view, request, error);
             finish();
           }
         });
 
     setContentView(wv);
     ViewUtil.Insets(wv, true);
+    CookieManager.getInstance().removeAllCookies(ignored -> wv.loadUrl(url));
   }
 
   private void exchangeCodeForToken(Uri uri) {

@@ -257,7 +257,7 @@ public class EndurainSynchronizer extends DefaultSynchronizer {
                   "file",
                   (fileBase.replace("/", "") + fileExt),
                   RequestBody.create(
-                      MediaType.parse("application/" + fileExt + "+xml"), writer.toString()))
+                      writer.toString(), MediaType.parse("application/" + fileExt + "+xml")))
               .build();
 
       Request request =

@@ -17,7 +17,7 @@
 
 package org.runnerup.export;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,15 +25,19 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
+import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.runnerup.BuildConfig;
@@ -209,7 +213,7 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     }
   }
 
-  public static class LiveService extends IntentService {
+  public static class LiveService extends Service {
 
     public static final String PARAM_IN_ELAPSED_DISTANCE = "dist";
     public static final String PARAM_IN_ELAPSED_TIME = "time";
@@ -222,12 +226,38 @@ public class RunnerUpLiveSynchronizer extends DefaultSynchronizer implements Wor
     public static final String PARAM_IN_ALTITUDE = "altitude";
     public static final String PARAM_IN_TYPE = "type";
 
-    public LiveService() {
-      super("LiveService");
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+      if (intent != null) {
+        executor.execute(
+            () -> {
+              try {
+                handleIntent(intent);
+              } finally {
+                stopSelfResult(startId);
+              }
+            });
+      } else {
+        stopSelfResult(startId);
+      }
+      return START_NOT_STICKY;
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+      return null;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onDestroy() {
+      executor.shutdown();
+      super.onDestroy();
+    }
+
+    private void handleIntent(Intent intent) {
 
       String mElapsedDistance = intent.getStringExtra(PARAM_IN_ELAPSED_DISTANCE);
       String mElapsedTime = intent.getStringExtra(PARAM_IN_ELAPSED_TIME);

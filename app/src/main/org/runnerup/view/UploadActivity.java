@@ -37,6 +37,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.WindowCompat;
@@ -73,6 +75,9 @@ public class UploadActivity extends AppCompatActivity implements Constants {
 
   private boolean fetching = false;
   private final StringBuffer cancelSync = new StringBuffer();
+  private final ActivityResultLauncher<Intent> detailActivityLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(), result -> fillData());
 
   /** Called when the activity is first created. */
   @Override
@@ -297,7 +302,7 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
         intent.putExtra("ID", id);
         intent.putExtra("mode", "details");
-        startActivityForResult(intent, 100);
+        detailActivityLauncher.launch(intent);
       };
 
   class UploadListAdapter extends BaseAdapter {
@@ -503,9 +508,4 @@ public class UploadActivity extends AppCompatActivity implements Constants {
         updateSyncCount();
         requery();
       };
-
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    fillData();
-  }
 }

@@ -21,9 +21,8 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import org.runnerup.common.util.Constants;
-import org.runnerup.tracker.LocationListenerBase;
 
-public class PersistentGpsLoggerListener extends LocationListenerBase implements Constants {
+public class PersistentGpsLoggerListener implements Constants {
   private final java.lang.Object mLock;
   private SQLiteDatabase mDB;
   private java.lang.String mTable;
