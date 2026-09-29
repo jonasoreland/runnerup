@@ -44,6 +44,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -71,6 +73,8 @@ public class AccountActivity extends AppCompatActivity implements Constants {
   private FileFormats format;
   private SyncManager syncManager = null;
   private EditText mRunnerUpLiveApiAddress = null;
+  private final ActivityResultLauncher<Intent> uploadActivityLauncher =
+      registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {});
 
   /** Called when the activity is first created. */
   @Override
@@ -298,7 +302,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
         intent.putExtra("synchronizer", mSynchronizerName);
         intent.putExtra("mode", SyncManager.SyncMode.UPLOAD.name());
-        AccountActivity.this.startActivityForResult(intent, 113);
+        uploadActivityLauncher.launch(intent);
       };
 
   private final OnClickListener downloadButtonClick =
@@ -306,7 +310,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
         final Intent intent = new Intent(AccountActivity.this, UploadActivity.class);
         intent.putExtra("synchronizer", mSynchronizerName);
         intent.putExtra("mode", SyncManager.SyncMode.DOWNLOAD.name());
-        AccountActivity.this.startActivityForResult(intent, 113);
+        uploadActivityLauncher.launch(intent);
       };
 
   private final OnClickListener urlButtonClick =

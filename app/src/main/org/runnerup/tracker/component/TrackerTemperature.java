@@ -78,9 +78,6 @@ public class TrackerTemperature extends DefaultTrackerComponent implements Senso
       sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
     sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-    if (sensor == null) {
-      sensor = sensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
-    }
 
     if (sensor == null) {
       final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

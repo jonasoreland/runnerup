@@ -409,7 +409,7 @@ public class AntPlus extends BtHRBase {
 
   @Override
   public boolean isEnabled() {
-    return Bt20Base.isEnabledImpl();
+    return Bt20Base.isEnabledImpl(context);
   }
 
   @Override

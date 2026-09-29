@@ -22,7 +22,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -242,10 +241,10 @@ public class GraphWrapper implements Constants {
     // Add legend container to top of the view
     LinearLayout legend = new LinearLayout(graphTab.getContext());
     legend.setOrientation(LinearLayout.HORIZONTAL);
-    HorizontalScrollView scroll =
-        new HorizontalScrollView(graphTab.getContext());
+    HorizontalScrollView scroll = new HorizontalScrollView(graphTab.getContext());
     scroll.addView(legend);
-    LayoutParams scrollParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    LayoutParams scrollParams =
+        new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     scroll.setLayoutParams(scrollParams);
     graphTab.addView(scroll, 0);
     for (CheckBox cb : graphData.legendBoxes) {

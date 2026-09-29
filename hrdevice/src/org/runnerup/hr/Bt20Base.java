@@ -21,6 +21,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +46,6 @@ import java.util.UUID;
  */
 public abstract class Bt20Base extends BtHRBase {
 
-  // UUID
   private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
   private ConnectThread connectThread;
   private ConnectedThread connectedThread;
@@ -56,19 +56,19 @@ public abstract class Bt20Base extends BtHRBase {
   private boolean mIsConnecting;
   private boolean mIsConnected;
   private boolean mIsScanning;
+  private final Context context;
 
-  Bt20Base(@SuppressWarnings("UnusedParameters") Context ctx) {
-    // context = ctx;
+  Bt20Base(Context ctx) {
+    context = ctx;
   }
 
-  public static boolean isEnabledImpl() {
-    return BluetoothAdapter.getDefaultAdapter() != null
-        && BluetoothAdapter.getDefaultAdapter().isEnabled();
+  public static boolean isEnabledImpl(Context context) {
+    BluetoothManager manager = context.getSystemService(BluetoothManager.class);
+    BluetoothAdapter adapter = manager == null ? null : manager.getAdapter();
+    return adapter != null && adapter.isEnabled();
   }
 
-  // private Context context = null;
-
-  @SuppressWarnings("SameReturnValue")
+  @SuppressWarnings({"SameReturnValue", "deprecation"})
   public static boolean startEnableIntentImpl(AppCompatActivity activity, int requestCode) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         && ActivityCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT)
@@ -82,8 +82,6 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   public static boolean checkLibrary(@SuppressWarnings("UnusedParameters") Context ctx) {
-
-    // was not possible in older minSDK
     return true;
   }
 
@@ -163,7 +161,7 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   public boolean isEnabled() {
-    return isEnabledImpl();
+    return isEnabledImpl(context);
   }
 
   public boolean startEnableIntent(AppCompatActivity activity, int requestCode) {
@@ -176,7 +174,8 @@ public abstract class Bt20Base extends BtHRBase {
     this.hrClientHandler = handler;
 
     if (btAdapter == null) {
-      btAdapter = BluetoothAdapter.getDefaultAdapter();
+      BluetoothManager manager = context.getSystemService(BluetoothManager.class);
+      btAdapter = manager == null ? null : manager.getAdapter();
     }
     if (btAdapter == null) {
       hrClient.onOpenResult(false);
@@ -304,7 +303,7 @@ public abstract class Bt20Base extends BtHRBase {
   public void connect(HRDeviceRef ref) {
     cancelThreads();
 
-    if (ref == null || btAdapter == null || !isEnabledImpl()) {
+    if (ref == null || btAdapter == null || !isEnabledImpl(context)) {
       reportConnected(false);
       return;
     }
