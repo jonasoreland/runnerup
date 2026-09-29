@@ -27,9 +27,7 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="MainLayoutTheme" parent="AppTheme.NoActionBar">
-        <item name="android:tabWidgetStyle">@style/BottomNavigationTabWidget</item>
-    </style>
+    <style name="MainLayoutTheme" parent="AppTheme.NoActionBar" />
 
     <style name="ButtonText" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@color/btn_text_color</item>
@@ -53,14 +51,6 @@
         <item name="android:gravity">right</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="BottomNavigationTabWidget" parent="android:Widget.TabWidget">
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:tabStripEnabled">false</item>
-        <item name="divider">@null</item>
-        <item name="android:gravity">fill_horizontal|center_vertical</item>
     </style>
 
     <style name="BottomNavigationTabText" tools:ignore="UnusedResources">
