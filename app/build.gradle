@@ -112,6 +112,8 @@ android {
         warningsAsErrors = true
         // Halt the build if any errors are found
         abortOnError = true
+        // pops up without any reason
+        disable 'LogNotTimber'
     }
     bundle {
         language {
