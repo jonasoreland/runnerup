@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -77,7 +78,7 @@ import org.runnerup.widget.WidgetUtil;
 
 public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(Looper.getMainLooper());
   private final StringBuffer logBuffer = new StringBuffer();
 
   private List<HRProvider> providers = null;
@@ -165,7 +166,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
       dataSet.setLineWidth(1.5f);
       dataSet.setDrawValues(false);
       dataSet.setDrawCircles(false);
-      chart.setData(new LineData(dataSet));
+      LineData lineData = new LineData();
+      lineData.addDataSet(dataSet);
+      chart.setData(lineData);
 
       chart.getDescription().setEnabled(false);
       chart.getLegend().setTextColor(android.graphics.Color.WHITE);

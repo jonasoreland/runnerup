@@ -23,9 +23,9 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.text.format.DateUtils;
 import android.util.Log;
+import androidx.core.os.ConfigurationCompat;
 import androidx.preference.PreferenceManager;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -75,7 +75,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     Resources res = ctx.getResources();
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     if (prefs.contains(res.getString(R.string.pref_audio_lang))) {
-      return new Locale(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
+      return Locale.forLanguageTag(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
     }
     return null;
   }
@@ -122,7 +122,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
   private LocaleResources getCueLangResources(Context ctx) {
     Locale loc = getAudioLocale(ctx);
-    return new LocaleResources(resources, loc);
+    return new LocaleResources(ctx, loc);
   }
 
   public String getCueString(int msgId) {
@@ -384,7 +384,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
   public String formatVelocity(Format target, double meters_per_second, SpeedUnit unit) {
     if (unit == SpeedUnit.PACE) {
-      return this.formatPace(target, meters_per_second);
+      return formatPaceFromVelocity(target, meters_per_second);
     } else {
       return this.formatSpeed(target, meters_per_second);
     }
@@ -408,13 +408,19 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Format pace from speed
+   * Format a pace value expressed in seconds per meter.
    *
    * @param target
-   * @param meters_per_second speed in m/s
+   * @param seconds_per_meter pace in seconds per meter
    * @return
    */
-  public String formatPace(Format target, double meters_per_second) {
+  public String formatPace(Format target, double seconds_per_meter) {
+    double meters_per_second =
+        seconds_per_meter > 0 && Double.isFinite(seconds_per_meter) ? 1.0 / seconds_per_meter : 0;
+    return formatPaceFromVelocity(target, meters_per_second);
+  }
+
+  private String formatPaceFromVelocity(Format target, double meters_per_second) {
     return switch (target) {
       case CUE, CUE_SHORT, CUE_LONG -> cuePace(meters_per_second);
       case TXT, TXT_SHORT -> txtPace(meters_per_second, false);
@@ -755,20 +761,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   private static class LocaleResources {
+    final Context context;
     final Resources resources;
     final Configuration configuration;
     final Locale defaultLocale;
     final Locale audioLocale;
 
-    LocaleResources(Resources resources, Locale configAudioLocale) {
-      this.resources = resources;
-      configuration = resources.getConfiguration();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-          && !resources.getConfiguration().getLocales().isEmpty()) {
-        defaultLocale = configuration.getLocales().get(0);
-      } else {
-        defaultLocale = configuration.locale;
-      }
+    LocaleResources(Context context, Locale configAudioLocale) {
+      this.context = context;
+      resources = context.getResources();
+      configuration = new Configuration(resources.getConfiguration());
+      Locale configuredLocale = ConfigurationCompat.getLocales(configuration).get(0);
+      defaultLocale = configuredLocale == null ? Locale.getDefault() : configuredLocale;
 
       if (configAudioLocale == null) {
         audioLocale = defaultLocale;
@@ -777,28 +781,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       }
     }
 
-    void setLang(Locale locale) {
-      // enableSplit = false set in build.gradle
-      configuration.setLocale(locale);
-      resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+    Resources getResources(Locale locale) {
+      Configuration localizedConfiguration = new Configuration(configuration);
+      localizedConfiguration.setLocale(locale);
+      return context.createConfigurationContext(localizedConfiguration).getResources();
     }
 
     public String getString(int id) throws Resources.NotFoundException {
-      setLang(audioLocale);
-      String result = resources.getString(id);
-
-      setLang(defaultLocale);
-      return result;
+      return getResources(audioLocale).getString(id);
     }
 
     // General getQuantityString accepts "Object ...", limit to exactly one argument (current use)
     // to avoid runtime crashes
     public String getQuantityString(int id, int quantity, Object formatArgs)
         throws Resources.NotFoundException {
-      setLang(audioLocale);
-      String result = resources.getQuantityString(id, quantity, formatArgs);
-      setLang(defaultLocale);
-      return result;
+      return getResources(audioLocale).getQuantityString(id, quantity, formatArgs);
     }
   }
 }

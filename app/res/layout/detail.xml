@@ -110,12 +110,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/tab_main"
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/activity_margin"
-                    android:orientation="vertical">
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:id="@+id/tab_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_margin"
+                        android:orientation="vertical">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -150,7 +155,7 @@
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@android:color/black"
                         android:orientation="vertical"
                         android:visibility="gone">
@@ -164,6 +169,7 @@
                             android:textColor="@android:color/white" />
                     </LinearLayout>
                 </LinearLayout>
+                </ScrollView>
 
                 <LinearLayout
                     android:id="@+id/tab_lap"
@@ -202,8 +208,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="@dimen/activity_margin"
-                        android:orientation="vertical"
-                        android:weightSum="1" />
+                        android:orientation="vertical" />
                 </LinearLayout>
 
                 <LinearLayout

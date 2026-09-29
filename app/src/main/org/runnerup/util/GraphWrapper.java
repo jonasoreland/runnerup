@@ -28,6 +28,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
@@ -238,12 +239,14 @@ public class GraphWrapper implements Constants {
       hrzonesBarLayout.setVisibility(View.GONE);
     }
 
-    // Add legend container to bottom of the view
+    // Add legend container to top of the view
     LinearLayout legend = new LinearLayout(graphTab.getContext());
     legend.setOrientation(LinearLayout.HORIZONTAL);
-    android.widget.HorizontalScrollView scroll =
-        new android.widget.HorizontalScrollView(graphTab.getContext());
+    HorizontalScrollView scroll =
+        new HorizontalScrollView(graphTab.getContext());
     scroll.addView(legend);
+    LayoutParams scrollParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    scroll.setLayoutParams(scrollParams);
     graphTab.addView(scroll, 0);
     for (CheckBox cb : graphData.legendBoxes) {
       legend.addView(cb);
