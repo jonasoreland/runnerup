@@ -18,7 +18,6 @@
 package org.runnerup.export;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -69,6 +68,7 @@ import org.runnerup.export.Synchronizer.AuthMethod;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Encryption;
+import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.util.SyncActivityItem;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -86,7 +86,7 @@ public class SyncManager {
   private SQLiteDatabase mDB = null;
   private AppCompatActivity mActivity = null;
   private Context mContext = null;
-  private ProgressDialog mSpinner = null;
+  private ProgressDialogCompat mSpinner = null;
   private Synchronizer authSynchronizer = null;
   private Callback authCallback = null;
   private long mID = 0;
@@ -105,14 +105,14 @@ public class SyncManager {
   private StringBuffer cancelSync = null;
 
   public SyncManager(AppCompatActivity activity) {
-    init(activity, activity, new ProgressDialog(activity));
+    init(activity, activity, new ProgressDialogCompat(activity));
   }
 
   public SyncManager(Context context) {
-    init(null, context, new ProgressDialog(context));
+    init(null, context, new ProgressDialogCompat(context));
   }
 
-  public SyncManager(Context context, ProgressDialog spinner) {
+  public SyncManager(Context context, ProgressDialogCompat spinner) {
     init(null, context, spinner);
   }
 
@@ -170,7 +170,7 @@ public class SyncManager {
     return cmp;
   }
 
-  private void init(AppCompatActivity activity, Context context, ProgressDialog spinner) {
+  private void init(AppCompatActivity activity, Context context, ProgressDialogCompat spinner) {
     this.mActivity = activity;
     this.mContext = context;
     mDB = DBHelper.getWritableDatabase(context);
@@ -333,6 +333,7 @@ public class SyncManager {
     return s;
   }
 
+  @SuppressWarnings("deprecation")
   private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
     authSynchronizer = l;
     authCallback = callback;
@@ -605,7 +606,7 @@ public class SyncManager {
   }
 
   private void doUpload(final Synchronizer synchronizer) {
-    final ProgressDialog copySpinner = mSpinner;
+    final ProgressDialogCompat copySpinner = mSpinner;
     final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
 
     copySpinner.setMessage(
@@ -689,7 +690,7 @@ public class SyncManager {
 
   private void syncOK(
       Synchronizer synchronizer,
-      ProgressDialog copySpinner,
+      ProgressDialogCompat copySpinner,
       SQLiteDatabase copyDB,
       Synchronizer.Status status) {
     copySpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Saving));
@@ -840,7 +841,7 @@ public class SyncManager {
   }
 
   private void doListWorkout(final Synchronizer synchronizer) {
-    final ProgressDialog copySpinner = mSpinner;
+    final ProgressDialogCompat copySpinner = mSpinner;
     copySpinner.setMessage("Listing from " + synchronizer.getName());
 
     executor.execute(
@@ -1069,7 +1070,7 @@ public class SyncManager {
 
   private void doSyncMulti(
       final Synchronizer synchronizer, final SyncMode mode, final SyncActivityItem activityItem) {
-    final ProgressDialog copySpinner = mSpinner;
+    final ProgressDialogCompat copySpinner = mSpinner;
     final SQLiteDatabase copyDB = DBHelper.getWritableDatabase(mContext);
 
     copySpinner.setMessage((1 + syncActivitiesList.size()) + " remaining");

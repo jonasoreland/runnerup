@@ -1,7 +1,6 @@
 package org.runnerup.view;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -17,6 +16,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.util.ProgressDialogCompat;
 
 public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
 
@@ -98,7 +98,7 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
       };
   private final Preference.OnPreferenceClickListener onPruneClick =
       preference -> {
-        final ProgressDialog dialog = new ProgressDialog(requireContext());
+        final ProgressDialogCompat dialog = new ProgressDialogCompat(requireContext());
         dialog.setTitle(org.runnerup.common.R.string.Pruning_deleted_activities_from_database);
         dialog.show();
         DBHelper.purgeDeletedActivities(requireContext(), dialog, dialog::dismiss);

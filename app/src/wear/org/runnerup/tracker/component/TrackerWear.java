@@ -50,6 +50,7 @@ import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutInfo;
 import org.runnerup.workout.WorkoutStepListener;
 
+@SuppressWarnings("deprecation")
 public class TrackerWear extends DefaultTrackerComponent
     implements Constants,
         TrackerComponent,
