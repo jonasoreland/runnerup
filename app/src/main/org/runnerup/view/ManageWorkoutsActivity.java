@@ -44,6 +44,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -67,7 +69,6 @@ import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
-import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Workout;
@@ -81,9 +82,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   public static final String WORKOUT_NAME = "";
   public static final String WORKOUT_EDIT_MODE = "workout_edit_mode";
 
-  private final HashSet<SyncManager.WorkoutRef> pendingWorkouts = new HashSet<>();
+  private final HashSet<WorkoutRef> pendingWorkouts = new HashSet<>();
   private final ArrayList<ContentValues> providers = new ArrayList<>();
-  private final HashMap<String, ArrayList<SyncManager.WorkoutRef>> workouts = new HashMap<>();
+  private final HashMap<String, ArrayList<WorkoutRef>> workouts = new HashMap<>();
   private WorkoutAccountListAdapter adapter = null;
 
   private final HashSet<String> loadedProviders = new HashSet<>();
@@ -96,6 +97,15 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   private Button createButton = null;
 
   private SyncManager syncManager = null;
+
+  private final ActivityResultLauncher<Intent> configureLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> {
+            syncManager.onActivityResult(
+                SyncManager.CONFIGURE_REQUEST, result.getResultCode(), result.getData());
+            requery();
+          });
 
   /** Called when the activity is first created. */
   @Override
@@ -111,6 +121,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     mDB = DBHelper.getReadableDatabase(this);
     syncManager = new SyncManager(this);
+    syncManager.setAuthLauncher(configureLauncher);
     adapter = new WorkoutAccountListAdapter(this);
     ExpandableListView list = findViewById(R.id.expandable_list_view);
     list.setAdapter(adapter);
@@ -300,12 +311,11 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   }
 
   private void listLocal() {
-    ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
-    String[] list = org.runnerup.view.WorkoutListAdapter.load(this);
+    ArrayList<WorkoutRef> newlist = new ArrayList<>();
+    String[] list = WorkoutListAdapter.load(this);
     if (list != null) {
       for (String s : list) {
-        newlist.add(
-            new SyncManager.WorkoutRef(PHONE_STRING, null, s.substring(0, s.lastIndexOf('.'))));
+        newlist.add(new WorkoutRef(PHONE_STRING, null, s.substring(0, s.lastIndexOf('.'))));
       }
     }
 
@@ -374,17 +384,14 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     boolean match(T t);
   }
 
-  ArrayList<SyncManager.WorkoutRef> filter(
-      List<SyncManager.WorkoutRef> list, Filter<SyncManager.WorkoutRef> f) {
-    ArrayList<SyncManager.WorkoutRef> newlist = new ArrayList<>();
+  ArrayList<WorkoutRef> filter(List<WorkoutRef> list, Filter<WorkoutRef> f) {
+    ArrayList<WorkoutRef> newlist = new ArrayList<>();
     return filter(list, newlist, f);
   }
 
-  private ArrayList<SyncManager.WorkoutRef> filter(
-      List<SyncManager.WorkoutRef> list,
-      ArrayList<WorkoutRef> newlist,
-      Filter<SyncManager.WorkoutRef> f) {
-    for (SyncManager.WorkoutRef w : list) {
+  private ArrayList<WorkoutRef> filter(
+      List<WorkoutRef> list, ArrayList<WorkoutRef> newlist, Filter<WorkoutRef> f) {
+    for (WorkoutRef w : list) {
       if (f.match(w)) newlist.add(w);
     }
     return newlist;
@@ -647,7 +654,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       if (!syncManager.isConfigured(provider)) {
         syncManager.connect(onSynchronizerConfiguredCallback, provider);
       } else {
-        onSynchronizerConfiguredCallback.run(provider, Synchronizer.Status.OK);
+        onSynchronizerConfiguredCallback.run(provider, Status.OK);
       }
     }
 
@@ -656,7 +663,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
           @Override
           public void run(String synchronizerName, Status status) {
             Log.i(getClass().getName(), "status: " + status);
-            if (status != Synchronizer.Status.OK) {
+            if (status != Status.OK) {
               uploading = false;
               return;
             }
