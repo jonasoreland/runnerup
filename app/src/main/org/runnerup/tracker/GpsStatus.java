@@ -36,6 +36,7 @@ import org.runnerup.util.TickListener;
 /**
  * This is a helper class that is used to determine when the GPS status is good enough (isFixed())
  */
+@SuppressWarnings("deprecation")
 public class GpsStatus implements LocationListener {
 
   private static final int HIST_LEN = 3;

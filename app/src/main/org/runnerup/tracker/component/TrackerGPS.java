@@ -27,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -73,7 +74,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       return ResultCode.RESULT_OK;
     }
     try {
-      if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+      if (!locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
     } catch (Exception ex) {
@@ -218,7 +219,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     // increased higher than we started.
     int onEndCounter = 0;
 
-    final Handler handler = new Handler();
+    final Handler handler = new Handler(Looper.getMainLooper());
 
     public void start(int onEndCounter) {
       this.onEndCounter = onEndCounter;

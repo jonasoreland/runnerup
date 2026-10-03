@@ -23,15 +23,16 @@ import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.text.format.DateUtils;
 import android.util.Log;
+import androidx.core.os.ConfigurationCompat;
 import androidx.preference.PreferenceManager;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.workout.Dimension;
@@ -74,7 +75,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
     Resources res = ctx.getResources();
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     if (prefs.contains(res.getString(R.string.pref_audio_lang))) {
-      return new Locale(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
+      return Locale.forLanguageTag(prefs.getString(res.getString(R.string.pref_audio_lang), "en"));
     }
     return null;
   }
@@ -121,7 +122,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
 
   private LocaleResources getCueLangResources(Context ctx) {
     Locale loc = getAudioLocale(ctx);
-    return new LocaleResources(resources, loc);
+    return new LocaleResources(ctx, loc);
   }
 
   public String getCueString(int msgId) {
@@ -163,13 +164,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
         sharedPreferences.getString(
             resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
     assert speedUnit != null; // may not happen
-    switch (speedUnit) {
-      case Constants.SPEED_UNIT.SPEED:
-        return SpeedUnit.SPEED;
-      case Constants.SPEED_UNIT.PACE:
-      default:
-        return SpeedUnit.PACE;
-    }
+    return speedUnit.equals(Constants.SPEED_UNIT.SPEED) ? SpeedUnit.SPEED : SpeedUnit.PACE;
   }
 
   public double getUnitMeters() {
@@ -181,45 +176,27 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   public String format(Format target, Dimension dimension, double value) {
-    switch (dimension) {
-      case DISTANCE:
-        return formatDistance(target, Math.round(value));
-      case TIME:
-        return formatElapsedTime(target, Math.round(value));
-      case PACE:
-        return formatPace(target, value);
-      case HR:
-        return formatHeartRate(target, value);
-      case HRZ:
-        return formatHeartRateZone(target, value);
-      case SPEED:
-        return formatSpeed(target, value);
-      case CAD:
-        return formatCadence(target, value);
-      case TEMPERATURE:
-        return formatCadence(target, value); // TODO
-      case PRESSURE:
-        return formatCadence(target, value); // TODO
-    }
-    return "";
+    return switch (dimension) {
+      case DISTANCE -> formatDistance(target, Math.round(value));
+      case TIME -> formatElapsedTime(target, Math.round(value));
+      case PACE -> formatPace(target, value);
+      case HR -> formatHeartRate(target, value);
+      case HRZ -> formatHeartRateZone(target, value);
+      case SPEED -> formatSpeed(target, value);
+      case CAD -> formatCadence(target, value);
+      case TEMPERATURE -> formatCadence(target, value); // TODO
+      case PRESSURE -> formatCadence(target, value); // TODO
+    };
   }
 
   public String formatElapsedTime(Format target, long seconds) {
-    switch (target) {
-      case CUE:
-      case CUE_SHORT:
-        return cueElapsedTime(seconds, false);
-      case CUE_LONG:
-        return cueElapsedTime(seconds, true);
-      case TXT:
-      case TXT_SHORT:
-        return DateUtils.formatElapsedTime(seconds);
-      case TXT_LONG:
-        return txtElapsedTime(seconds);
-      case TXT_TIMESTAMP:
-        return formatTime(seconds);
-    }
-    return "";
+    return switch (target) {
+      case CUE, CUE_SHORT -> cueElapsedTime(seconds, false);
+      case CUE_LONG -> cueElapsedTime(seconds, true);
+      case TXT, TXT_SHORT -> DateUtils.formatElapsedTime(seconds);
+      case TXT_LONG -> txtElapsedTime(seconds);
+      case TXT_TIMESTAMP -> formatTime(seconds);
+    };
   }
 
   private String cueElapsedTime(long seconds, boolean includeDimension) {
@@ -394,22 +371,6 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Format pace from raw pace Most of RU handles pace separately instead of just storing speed and
-   * formatting
-   *
-   * @param target
-   * @param seconds_per_meter
-   * @return
-   */
-  public String formatPace(Format target, double seconds_per_meter) {
-    double meters_per_second =
-        (seconds_per_meter == 0 || Double.isNaN(seconds_per_meter))
-            ? Double.NaN
-            : 1 / seconds_per_meter;
-    return formatPaceSpeed(target, meters_per_second);
-  }
-
-  /**
    * Returns either a formatted value in minutes per kilometer or kilometer per hour depending on
    * the user's preference
    *
@@ -418,12 +379,12 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return display value
    */
   public String formatVelocityByPreferredUnit(Format target, double meters_per_second) {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
-      return this.formatPaceSpeed(target, meters_per_second);
+    return formatVelocity(target, meters_per_second, getPreferredSpeedUnit());
+  }
+
+  public String formatVelocity(Format target, double meters_per_second, SpeedUnit unit) {
+    if (unit == SpeedUnit.PACE) {
+      return formatPaceFromVelocity(target, meters_per_second);
     } else {
       return this.formatSpeed(target, meters_per_second);
     }
@@ -435,11 +396,11 @@ public class Formatter implements OnSharedPreferenceChangeListener {
    * @return value
    */
   public String formatVelocityLabel() {
-    String paceTextUnit =
-        this.sharedPreferences.getString(
-            resources.getString(R.string.pref_speedunit), SpeedUnit.PACE.getValue());
-    assert paceTextUnit != null;
-    if (paceTextUnit.contentEquals(SpeedUnit.PACE.getValue())) {
+    return formatVelocityLabel(getPreferredSpeedUnit());
+  }
+
+  public String formatVelocityLabel(SpeedUnit unit) {
+    if (unit == SpeedUnit.PACE) {
       return this.resources.getString(org.runnerup.common.R.string.Pace);
     } else {
       return this.resources.getString(org.runnerup.common.R.string.Speed);
@@ -447,38 +408,35 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Format pace from speed
+   * Format a pace value expressed in seconds per meter.
    *
    * @param target
-   * @param meters_per_second speed in m/s
+   * @param seconds_per_meter pace in seconds per meter
    * @return
    */
-  public String formatPaceSpeed(Format target, double meters_per_second) {
-    switch (target) {
-      case CUE:
-      case CUE_SHORT:
-      case CUE_LONG:
-        return cuePace(meters_per_second);
-      case TXT:
-      case TXT_SHORT:
-        return txtPace(meters_per_second, false);
-      case TXT_LONG:
-        return txtPace(meters_per_second, true);
-    }
-    return "";
+  public String formatPace(Format target, double seconds_per_meter) {
+    double meters_per_second =
+        seconds_per_meter > 0 && Double.isFinite(seconds_per_meter) ? 1.0 / seconds_per_meter : 0;
+    return formatPaceFromVelocity(target, meters_per_second);
+  }
+
+  private String formatPaceFromVelocity(Format target, double meters_per_second) {
+    return switch (target) {
+      case CUE, CUE_SHORT, CUE_LONG -> cuePace(meters_per_second);
+      case TXT, TXT_SHORT -> txtPace(meters_per_second, false);
+      case TXT_LONG -> txtPace(meters_per_second, true);
+      default -> "";
+    };
   }
 
   /**
    * @return pace/speed unit string
    */
   String getVelocityUnit() { // Resources resources, SharedPreferences sharedPreferences) {
-    switch (getPreferredSpeedUnit()) {
-      case SPEED:
-        return getSpeedUnit();
-      case PACE:
-      default:
-        return getPaceUnit();
-    }
+    SpeedUnit preferredSpeedUnit = getPreferredSpeedUnit();
+    return Objects.requireNonNull(preferredSpeedUnit) == SpeedUnit.SPEED
+        ? getSpeedUnit()
+        : getPaceUnit();
   }
 
   private String getPaceUnit() {
@@ -803,20 +761,18 @@ public class Formatter implements OnSharedPreferenceChangeListener {
   }
 
   private static class LocaleResources {
+    final Context context;
     final Resources resources;
     final Configuration configuration;
     final Locale defaultLocale;
     final Locale audioLocale;
 
-    LocaleResources(Resources resources, Locale configAudioLocale) {
-      this.resources = resources;
-      configuration = resources.getConfiguration();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-          && !resources.getConfiguration().getLocales().isEmpty()) {
-        defaultLocale = configuration.getLocales().get(0);
-      } else {
-        defaultLocale = configuration.locale;
-      }
+    LocaleResources(Context context, Locale configAudioLocale) {
+      this.context = context;
+      resources = context.getResources();
+      configuration = new Configuration(resources.getConfiguration());
+      Locale configuredLocale = ConfigurationCompat.getLocales(configuration).get(0);
+      defaultLocale = configuredLocale == null ? Locale.getDefault() : configuredLocale;
 
       if (configAudioLocale == null) {
         audioLocale = defaultLocale;
@@ -825,28 +781,21 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       }
     }
 
-    void setLang(Locale locale) {
-      // enableSplit = false set in build.gradle
-      configuration.setLocale(locale);
-      resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+    Resources getResources(Locale locale) {
+      Configuration localizedConfiguration = new Configuration(configuration);
+      localizedConfiguration.setLocale(locale);
+      return context.createConfigurationContext(localizedConfiguration).getResources();
     }
 
     public String getString(int id) throws Resources.NotFoundException {
-      setLang(audioLocale);
-      String result = resources.getString(id);
-
-      setLang(defaultLocale);
-      return result;
+      return getResources(audioLocale).getString(id);
     }
 
     // General getQuantityString accepts "Object ...", limit to exactly one argument (current use)
     // to avoid runtime crashes
     public String getQuantityString(int id, int quantity, Object formatArgs)
         throws Resources.NotFoundException {
-      setLang(audioLocale);
-      String result = resources.getQuantityString(id, quantity, formatArgs);
-      setLang(defaultLocale);
-      return result;
+      return getResources(audioLocale).getQuantityString(id, quantity, formatArgs);
     }
   }
 }

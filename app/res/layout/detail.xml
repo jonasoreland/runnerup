@@ -88,20 +88,16 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TabHost
+    <LinearLayout
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/buttons"
-        android:layout_below="@id/appbarlayout">
+        android:layout_below="@id/appbarlayout"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TabWidget
-                android:id="@android:id/tabs"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/detail_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -110,12 +106,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/tab_main"
+                <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/activity_margin"
-                    android:orientation="vertical">
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:id="@+id/tab_main"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_margin"
+                        android:orientation="vertical">
 
                     <org.runnerup.widget.TitleSpinner
                         android:id="@+id/summary_sport"
@@ -150,7 +151,7 @@
                     <LinearLayout
                         android:id="@+id/hrzonesBarLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@android:color/black"
                         android:orientation="vertical"
                         android:visibility="gone">
@@ -164,6 +165,7 @@
                             android:textColor="@android:color/white" />
                     </LinearLayout>
                 </LinearLayout>
+                </ScrollView>
 
                 <LinearLayout
                     android:id="@+id/tab_lap"
@@ -190,21 +192,20 @@
                         android:layout_height="match_parent" />
                 </LinearLayout>
 
-                <ScrollView
+                <LinearLayout
                     android:id="@+id/tab_graph"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:scrollbars="none">
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/graphview"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_margin="@dimen/activity_margin"
-                        android:orientation="vertical"
-                        android:weightSum="1" />
-                </ScrollView>
+                        android:orientation="vertical" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab_upload"
@@ -220,8 +221,7 @@
                         android:layout_weight="1" />
                 </LinearLayout>
             </FrameLayout>
-        </LinearLayout>
-    </TabHost>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/buttons"

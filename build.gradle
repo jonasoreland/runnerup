@@ -125,9 +125,9 @@ allprojects {
     }
     tasks.withType(JavaCompile).tap {
         configureEach {
-            // if (project.name != 'wear') {
-            //    options.compilerArgs << "-Xlint:deprecation";
-            // }
+            if (project.name != 'wear') {
+                options.compilerArgs << "-Xlint:deprecation";
+            }
             options.compilerArgs << "-Xlint:unchecked"
         }
     }

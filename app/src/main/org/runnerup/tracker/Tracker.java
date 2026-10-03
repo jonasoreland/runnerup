@@ -81,7 +81,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   private static final int MAX_CURRENT_AGE = 15000;
   private static final long NANO_IN_MILLI = 1000000;
 
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(android.os.Looper.getMainLooper());
 
   private final TrackerComponentCollection components = new TrackerComponentCollection();
   // Some trackers may select separate sensors depending on sport, handled in onBind()
@@ -741,6 +741,7 @@ public class Tracker extends android.app.Service implements LocationListener, Co
   public void onProviderEnabled(@NonNull String arg0) {}
 
   @Override
+  @SuppressWarnings("deprecation")
   public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 
   public TrackerState getState() {

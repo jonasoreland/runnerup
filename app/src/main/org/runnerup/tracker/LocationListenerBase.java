@@ -71,6 +71,7 @@ public class LocationListenerBase implements LocationListener {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
   public void onStatusChanged(String provider, int status, Bundle extras) {
     synchronized (mClients) {
       for (LocationListener g : mClients) {

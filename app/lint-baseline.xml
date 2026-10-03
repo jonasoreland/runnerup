@@ -19,7 +19,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/view/MainLayout.java"
-            line="88"
+            line="90"
             column="7"/>
     </issue>
 
@@ -30,7 +30,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/view/RunActivity.java"
-            line="127"
+            line="138"
             column="7"/>
     </issue>
 
