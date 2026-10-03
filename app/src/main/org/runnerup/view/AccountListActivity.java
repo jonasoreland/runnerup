@@ -52,6 +52,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.loader.app.LoaderManager;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import org.runnerup.R;
@@ -71,12 +72,21 @@ public class AccountListActivity extends AppCompatActivity
   private SyncManager mSyncManager = null;
   private boolean mShowDisabled = false;
   private CursorAdapter mCursorAdapter;
+  private final ActivityResultLauncher<Intent> authLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> {
+            mSyncManager.onActivityResult(
+                SyncManager.CONFIGURE_REQUEST, result.getResultCode(), result.getData());
+            this.mCursorAdapter.notifyDataSetChanged();
+          });
+
   private final ActivityResultLauncher<Intent> editAccountLauncher =
       registerForActivityResult(
           new ActivityResultContracts.StartActivityForResult(),
           result -> {
             mSyncManager.clear();
-            androidx.loader.app.LoaderManager.getInstance(this).restartLoader(0, null, this);
+            LoaderManager.getInstance(this).restartLoader(0, null, this);
           });
 
   /** Called when the activity is first created. */
@@ -93,6 +103,7 @@ public class AccountListActivity extends AppCompatActivity
 
     mDB = DBHelper.getReadableDatabase(this);
     mSyncManager = new SyncManager(this);
+    mSyncManager.setAuthLauncher(authLauncher);
     ListView listView = findViewById(R.id.account_list_list);
 
     // button footer
@@ -109,7 +120,7 @@ public class AccountListActivity extends AppCompatActivity
           } else {
             ((Button) view).setText(org.runnerup.common.R.string.Show_disabled_accounts);
           }
-          androidx.loader.app.LoaderManager.getInstance(AccountListActivity.this)
+          LoaderManager.getInstance(AccountListActivity.this)
               .restartLoader(0, null, AccountListActivity.this);
         });
     listView.addFooterView(showDisabledBtn);
@@ -117,7 +128,7 @@ public class AccountListActivity extends AppCompatActivity
     // adapter
     mCursorAdapter = new AccountListAdapter(this, null);
     listView.setAdapter(mCursorAdapter);
-    androidx.loader.app.LoaderManager.getInstance(this).initLoader(0, null, this);
+    LoaderManager.getInstance(this).initLoader(0, null, this);
 
     listView.setOnItemClickListener(configureItemClick);
 
@@ -366,15 +377,5 @@ public class AccountListActivity extends AppCompatActivity
     intent.putExtra("synchronizer", synchronizerName);
     // intent.putExtra("edit", edit);
     editAccountLauncher.launch(intent);
-  }
-
-  @SuppressWarnings("deprecation")
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == SyncManager.CONFIGURE_REQUEST) {
-      mSyncManager.onActivityResult(requestCode, resultCode, data);
-      this.mCursorAdapter.notifyDataSetChanged();
-    }
   }
 }
