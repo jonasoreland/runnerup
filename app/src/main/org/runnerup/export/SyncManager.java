@@ -39,6 +39,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TableRow;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.LongSparseArray;
@@ -51,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -115,7 +117,7 @@ public class SyncManager {
   }
 
   private static void externalIdCompleted(
-      Synchronizer synchronizer, SQLiteDatabase copyDB, Synchronizer.Status status) {
+      Synchronizer synchronizer, SQLiteDatabase copyDB, Status status) {
     ContentValues tmp = new ContentValues();
     tmp.put(DB.EXPORT.STATUS, status.externalIdStatus.getInt());
     tmp.put(DB.EXPORT.EXTERNAL_ID, status.externalId);
@@ -141,7 +143,7 @@ public class SyncManager {
         int cnt2 = f2.read(buf2);
         if (cnt1 <= 0 || cnt2 <= 0) break;
 
-        if (!java.util.Arrays.equals(buf1, buf2)) {
+        if (!Arrays.equals(buf1, buf2)) {
           cmp = false;
           break;
         }
@@ -288,11 +290,11 @@ public class SyncManager {
   public void connect(final Callback callback, final String name) {
     Synchronizer synchronizer = synchronizers.get(name);
     if (synchronizer == null) {
-      callback.run(name, Synchronizer.Status.INCORRECT_USAGE);
+      callback.run(name, Status.INCORRECT_USAGE);
       return;
     }
     Status s = synchronizer.connect();
-    if (s == Synchronizer.Status.NEED_REFRESH) {
+    if (s == Status.NEED_REFRESH) {
       s = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
     }
     switch (s) {
@@ -329,6 +331,12 @@ public class SyncManager {
     // default: No reset, refresh_token should still be valid
 
     return s;
+  }
+
+  private ActivityResultLauncher<Intent> authLauncher = null;
+
+  public void setAuthLauncher(ActivityResultLauncher<Intent> launcher) {
+    this.authLauncher = launcher;
   }
 
   private void handleAuth(Callback callback, final Synchronizer l, AuthMethod authMethod) {
@@ -471,7 +479,7 @@ public class SyncManager {
             result = l.connect();
           } catch (Exception ex) {
             Log.e(getClass().getName(), "Connection test failed", ex);
-            result = Synchronizer.Status.ERROR;
+            result = Status.ERROR;
           }
 
           final Status finalResult = result;
@@ -615,15 +623,15 @@ public class SyncManager {
           try {
             result = synchronizer.upload(copyDB, mID);
             // See doUpload() for motivation
-            if (result == Synchronizer.Status.NEED_REFRESH) {
+            if (result == Status.NEED_REFRESH) {
               result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-              if (result == Synchronizer.Status.OK) {
+              if (result == Status.OK) {
                 result = synchronizer.upload(copyDB, mID);
               }
             }
           } catch (Exception ex) {
             Log.e(getClass().getName(), "Upload failed", ex);
-            result = Synchronizer.Status.ERROR;
+            result = Status.ERROR;
           }
 
           final Status finalResult = result;
@@ -638,7 +646,7 @@ public class SyncManager {
                   case NEED_AUTH:
                     handleAuth(
                         (synchronizerName, status) -> {
-                          if (status == Synchronizer.Status.OK) {
+                          if (status == Status.OK) {
                             doUpload(synchronizer);
                           } else {
                             nextSynchronizer();
@@ -668,9 +676,7 @@ public class SyncManager {
    * @param status
    */
   private void getExternalId(
-      final Synchronizer synchronizer,
-      final SQLiteDatabase copyDB,
-      final Synchronizer.Status status) {
+      final Synchronizer synchronizer, final SQLiteDatabase copyDB, final Status status) {
     if (status.externalIdStatus == Synchronizer.ExternalIdStatus.PENDING) {
       executor.execute(
           () -> {
@@ -689,7 +695,7 @@ public class SyncManager {
       Synchronizer synchronizer,
       ProgressDialogCompat copySpinner,
       SQLiteDatabase copyDB,
-      Synchronizer.Status status) {
+      Status status) {
     copySpinner.setMessage(getResources().getString(org.runnerup.common.R.string.Saving));
     status.activityId = mID; // Not always set
 
@@ -757,7 +763,7 @@ public class SyncManager {
           mainHandler.post(
               () -> {
                 mSpinner.dismiss();
-                callback.run(synchronizer.getName(), Synchronizer.Status.OK);
+                callback.run(synchronizer.getName(), Status.OK);
               });
         });
   }
@@ -766,7 +772,7 @@ public class SyncManager {
     Synchronizer synchronizer = synchronizers.get(synchronizerName);
     final String[] args = {Long.toString(synchronizer.getId())};
     mDB.delete(DB.EXPORT.TABLE, DB.EXPORT.ACCOUNT + " = ?", args);
-    callback.run(synchronizerName, Synchronizer.Status.OK);
+    callback.run(synchronizerName, Status.OK);
   }
 
   public void clearUpload(String name, long id) {
@@ -847,15 +853,15 @@ public class SyncManager {
           Status result;
           try {
             result = synchronizer.listWorkouts(list);
-            if (result == Synchronizer.Status.NEED_REFRESH) {
+            if (result == Status.NEED_REFRESH) {
               result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-              if (result == Synchronizer.Status.OK) {
+              if (result == Status.OK) {
                 result = synchronizer.listWorkouts(list);
               }
             }
           } catch (Exception ex) {
             Log.e(getClass().getName(), "List workouts failed", ex);
-            result = Synchronizer.Status.ERROR;
+            result = Status.ERROR;
           }
 
           final Status finalResult = result;
@@ -872,7 +878,7 @@ public class SyncManager {
                   case NEED_AUTH:
                     handleAuth(
                         (synchronizerName, status) -> {
-                          if (status == Synchronizer.Status.OK) {
+                          if (status == Status.OK) {
                             doListWorkout(synchronizer);
                           } else {
                             // Unexpected result, nothing to do
@@ -943,7 +949,7 @@ public class SyncManager {
               () -> {
                 mSpinner.dismiss();
                 if (callback != null) {
-                  callback.run(null, Synchronizer.Status.OK);
+                  callback.run(null, Status.OK);
                 }
               });
         });
@@ -1042,7 +1048,7 @@ public class SyncManager {
   private void syncNextActivity(final Synchronizer synchronizer, SyncMode mode) {
     if (checkCancel(cancelSync)) {
       mSpinner.cancel();
-      syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.CANCEL);
+      syncActivityCallback.run(synchronizer.getName(), Status.CANCEL);
       return;
     }
 
@@ -1054,7 +1060,7 @@ public class SyncManager {
         return;
       }
 
-      syncActivityCallback.run(synchronizer.getName(), Synchronizer.Status.OK);
+      syncActivityCallback.run(synchronizer.getName(), Status.OK);
       return;
     }
 
@@ -1084,13 +1090,13 @@ public class SyncManager {
                 result = synchronizer.download(copyDB, activityItem);
                 break;
               default:
-                result = Synchronizer.Status.INCORRECT_USAGE;
+                result = Status.INCORRECT_USAGE;
             }
 
             // See doUpload() for motivation
-            if (result == Synchronizer.Status.NEED_REFRESH) {
+            if (result == Status.NEED_REFRESH) {
               result = handleRefreshComplete(synchronizer, synchronizer.refreshToken());
-              if (result == Synchronizer.Status.OK) {
+              if (result == Status.OK) {
                 switch (mode) {
                   case UPLOAD:
                     result = synchronizer.upload(copyDB, activityItem.getId());
@@ -1099,13 +1105,13 @@ public class SyncManager {
                     result = synchronizer.download(copyDB, activityItem);
                     break;
                   default:
-                    result = Synchronizer.Status.INCORRECT_USAGE;
+                    result = Status.INCORRECT_USAGE;
                 }
               }
             }
           } catch (Exception ex) {
             Log.e(getClass().getName(), "Sync (multi) failed", ex);
-            result = Synchronizer.Status.ERROR;
+            result = Status.ERROR;
           }
 
           final Status finalResult = result;
@@ -1120,7 +1126,7 @@ public class SyncManager {
                   case NEED_AUTH:
                     handleAuth(
                         (synchronizerName, s2) -> {
-                          if (s2 == Synchronizer.Status.OK) {
+                          if (s2 == Status.OK) {
                             doSyncMulti(synchronizer, mode, activityItem);
                           } else {
                             syncNextActivity(synchronizer, mode);
@@ -1198,7 +1204,7 @@ public class SyncManager {
   }
 
   public interface Callback {
-    void run(String synchronizerName, Synchronizer.Status status);
+    void run(String synchronizerName, Status status);
   }
 
   public record WorkoutRef(String synchronizer, String workoutKey, String workoutName) {}
