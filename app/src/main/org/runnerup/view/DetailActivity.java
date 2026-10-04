@@ -140,7 +140,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           });
 
   private MapWrapper mapWrapper = null;
-  private final GraphWrapper graphWrapper = null;
+  private GraphWrapper graphWrapper;
   private long mStartTime = 0; // activity start time in unix timestamp
   private ContentValues headerData = new ContentValues();
 
@@ -333,8 +333,8 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     LinearLayout graphTabLayout = findViewById(R.id.graphview);
     LinearLayout hrzonesBarLayout = findViewById(R.id.hrzonesBarLayout);
     boolean use_distance_as_x = !Sport.isWithoutGps(sport.getValueInt());
-    // variable not needed
-    new GraphWrapper(
+    graphWrapper =
+      new GraphWrapper(
         this, graphTabLayout, hrzonesBarLayout, formatter, mDB, mID, use_distance_as_x);
 
     if (this.mode == MODE_SAVE) {

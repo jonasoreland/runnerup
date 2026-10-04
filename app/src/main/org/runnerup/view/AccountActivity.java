@@ -322,7 +322,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
           try {
             startActivity(intent);
           } catch (Exception e) {
-            Log.i(getClass().getName(), "No handler for file intent installed? " + e.getMessage());
+            Log.e(getClass().getName(), "No handler for file intent installed", e);
           }
         }
       };
