@@ -136,7 +136,7 @@ allprojects {
 spotless {
     lineEndings = 'UNIX'
     java {
-        googleJavaFormat()
+        googleJavaFormat('1.28.0')
         target '**/*.java'
         targetExclude '**/ANT-Android-SDKs/**', '**/build/**'
     }
