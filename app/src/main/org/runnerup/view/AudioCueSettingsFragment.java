@@ -22,6 +22,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.MenuHost;
+import androidx.core.view.MenuProvider;
 import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceFragmentCompat;
@@ -57,7 +59,6 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
     super.onCreate(savedInstanceState);
     mDB = DBHelper.getWritableDatabase(requireContext());
     DEFAULT = getString(org.runnerup.common.R.string.Default);
-    setHasOptionsMenu(true); // this fragment has menu items
   }
 
   private String sanitizeSettingsName(String name) {
@@ -165,6 +166,37 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    MenuHost menuHost = requireActivity();
+    menuHost.addMenuProvider(
+        new MenuProvider() {
+          @Override
+          public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+            newSettings = menu.add("New settings");
+            MenuItem deleteMenuItem = menu.add("Delete settings");
+            if (settingsName == null) deleteMenuItem.setEnabled(false);
+          }
+
+          @Override
+          public boolean onMenuItemSelected(@NonNull MenuItem item) {
+            if (item == newSettings) {
+              createNewAudioSchemeDialog();
+              return true;
+            }
+            new AlertDialog.Builder(requireContext())
+                .setMessage(org.runnerup.common.R.string.Delete_audio_cue)
+                .setPositiveButton(
+                    org.runnerup.common.R.string.Yes,
+                    (dialog, which) -> {
+                      dialog.dismiss();
+                      deleteAudioScheme();
+                    })
+                .setNegativeButton(
+                    org.runnerup.common.R.string.No, (dialog, which) -> dialog.dismiss())
+                .show();
+            return true;
+          }
+        },
+        getViewLifecycleOwner());
 
     {
       TitleSpinner spinner = view.findViewById(R.id.settings_spinner);
@@ -196,38 +228,6 @@ public class AudioCueSettingsFragment extends PreferenceFragmentCompat {
   public void onDestroy() {
     super.onDestroy();
     DBHelper.closeDB(mDB);
-  }
-
-  @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    newSettings = menu.add("New settings");
-    MenuItem deleteMenuItem = menu.add("Delete settings");
-    if (settingsName == null) deleteMenuItem.setEnabled(false);
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (item == newSettings) {
-      createNewAudioSchemeDialog();
-      return true;
-    }
-    // deleteMenuItem selected
-    new AlertDialog.Builder(requireContext())
-        .setMessage(org.runnerup.common.R.string.Delete_audio_cue)
-        .setPositiveButton(
-            org.runnerup.common.R.string.Yes,
-            (dialog, which) -> {
-              dialog.dismiss();
-              deleteAudioScheme();
-            })
-        .setNegativeButton(
-            org.runnerup.common.R.string.No,
-            (dialog, which) -> {
-              // Do nothing but close the dialog
-              dialog.dismiss();
-            })
-        .show();
-    return true;
   }
 
   private void createNewAudioScheme(String scheme) {

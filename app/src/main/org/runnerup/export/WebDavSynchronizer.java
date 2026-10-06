@@ -249,7 +249,7 @@ public class WebDavSynchronizer extends DefaultSynchronizer {
     try {
       OkHttpClient client = getAuthClient();
       RequestBody body =
-          RequestBody.create(MediaType.parse("application/" + fileExt + "+xml"), writer.toString());
+          RequestBody.create(writer.toString(), MediaType.parse("application/" + fileExt + "+xml"));
       Request request =
           new Request.Builder().url(url + fileBase + fileExt).method("PUT", body).build();
 

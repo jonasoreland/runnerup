@@ -88,140 +88,135 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TabHost
+    <LinearLayout
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/buttons"
-        android:layout_below="@id/appbarlayout">
+        android:layout_below="@id/appbarlayout"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/detail_tabs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content" />
 
-            <TabWidget
-                android:id="@android:id/tabs"
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/tab_main"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_margin"
+                android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@android:id/tabcontent"
+                <org.runnerup.widget.TitleSpinner
+                    android:id="@+id/summary_sport"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1px"
+                    android:prompt="@string/Type"
+                    android:text="@string/Sport" />
+
+                <org.runnerup.widget.TitleSpinner
+                    android:id="@+id/summary_manual_distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    android:prompt="@string/Type"
+                    android:text="@string/Distance"
+                    runnerup:type="distancepicker" />
+
+                <EditText
+                    android:id="@+id/notes_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:hint="@string/Notes_about_your_workout"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:minLines="4"
+                    android:singleLine="false"
+                    tools:ignore="AutoFill" />
+
+                <LinearLayout
+                    android:id="@+id/hrzonesBarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/Heartrate_zones_distribution"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab_lap"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_margin"
+                android:baselineAligned="false">
+
+                <ListView
+                    android:id="@+id/laplist"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/tab_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <org.runnerup.util.MapViewWrapper
+                    android:id="@+id/mapview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/tab_graph"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/tab_main"
+                    android:id="@+id/graphview"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_margin"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1" />
+            </ScrollView>
 
-                    <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/summary_sport"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1px"
-                        android:prompt="@string/Type"
-                        android:text="@string/Sport" />
+            <LinearLayout
+                android:id="@+id/tab_upload"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_margin"
+                android:baselineAligned="false">
 
-                    <org.runnerup.widget.TitleSpinner
-                        android:id="@+id/summary_manual_distance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
-                        android:minWidth="48dp"
-                        android:minHeight="48dp"
-                        android:prompt="@string/Type"
-                        android:text="@string/Distance"
-                        runnerup:type="distancepicker" />
-
-                    <EditText
-                        android:id="@+id/notes_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="top|start"
-                        android:hint="@string/Notes_about_your_workout"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:minLines="4"
-                        android:singleLine="false"
-                        tools:ignore="AutoFill" />
-
-                    <LinearLayout
-                        android:id="@+id/hrzonesBarLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/black"
-                        android:orientation="vertical"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/Heartrate_zones_distribution"
-                            android:textAlignment="center"
-                            android:textColor="@android:color/white" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab_lap"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/activity_margin"
-                    android:baselineAligned="false">
-
-                    <ListView
-                        android:id="@+id/laplist"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab_map"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <org.runnerup.util.MapViewWrapper
-                        android:id="@+id/mapview"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-
-                <ScrollView
-                    android:id="@+id/tab_graph"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/graphview"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_margin"
-                        android:orientation="vertical"
-                        android:weightSum="1" />
-                </ScrollView>
-
-                <LinearLayout
-                    android:id="@+id/tab_upload"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/activity_margin"
-                    android:baselineAligned="false">
-
-                    <ListView
-                        android:id="@+id/report_list"
-                        android:layout_width="0dip"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
-            </FrameLayout>
-        </LinearLayout>
-    </TabHost>
+                <ListView
+                    android:id="@+id/report_list"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/buttons"
