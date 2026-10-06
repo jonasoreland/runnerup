@@ -47,5 +47,10 @@ public class ForegroundNotificationDisplayStrategy implements NotificationDispla
   public void cancel(int notificationId) {
     isForeground = false;
     ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE);
+    // Updates after the first are posted with notify(), and the service may already have
+    // left the foreground (RunActivity.doStop), so remove the notification explicitly too.
+    android.app.NotificationManager notificationManager =
+        (android.app.NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.cancel(notificationId);
   }
 }
