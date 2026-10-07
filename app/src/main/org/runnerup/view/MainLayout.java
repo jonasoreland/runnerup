@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,6 +45,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.PackageInfoCompat;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
@@ -393,7 +393,7 @@ public class MainLayout extends AppCompatActivity {
       };
 
   private void whatsNew() {
-    LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+    LayoutInflater inflater = ContextCompat.getSystemService(this, LayoutInflater.class);
     @SuppressLint("InflateParams")
     View view = inflater.inflate(R.layout.whatsnew, null);
     WebView wv = view.findViewById(R.id.web_view1);

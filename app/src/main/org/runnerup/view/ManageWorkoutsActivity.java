@@ -48,6 +48,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedInputStream;
@@ -564,7 +565,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
       if (!(view instanceof LinearLayout)) {
         LayoutInflater infalInflater =
-            (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ContextCompat.getSystemService(context, LayoutInflater.class);
         view = infalInflater.inflate(R.layout.manage_workouts_list_row, parent, false);
       }
 

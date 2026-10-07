@@ -64,7 +64,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
   @Override
   public ResultCode onInit(final Callback callback, Context context) {
     try {
-      LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+      LocationManager lm = ContextCompat.getSystemService(context, LocationManager.class);
       if (lm == null) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
