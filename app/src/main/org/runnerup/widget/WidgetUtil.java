@@ -17,16 +17,9 @@
 
 package org.runnerup.widget;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.TextView;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.ViewCompat;
-import org.runnerup.R;
 
 public class WidgetUtil {
 
@@ -37,21 +30,6 @@ public class WidgetUtil {
       //noinspection ConstantConditions
       editText.setFocusableInTouchMode(onoff);
     }
-  }
-
-  public static View createHoloTabIndicator(Context ctx, String title) {
-    TextView txtTab = new TextView(ctx);
-    txtTab.setText(title);
-    // txtTab.setTextColor(Color.WHITE);
-    // txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
-    Drawable drawable = AppCompatResources.getDrawable(ctx, R.drawable.tab_indicator_holo);
-    ViewCompat.setBackground(txtTab, drawable);
-
-    int h = (25 * drawable.getIntrinsicHeight()) / 10;
-    txtTab.setPadding(0, h, 0, h);
-    // txtTab.setHeight(1 + 10 * drawable.getIntrinsicHeight());
-    // txtTab.setLineSpacing(1 + 5 * drawable.getIntrinsicHeight(), 1);
-    return txtTab;
   }
 
   public static void addLegacyOverflowButton(Window window) {
