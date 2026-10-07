@@ -3,7 +3,6 @@ package org.runnerup.notification;
 import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
@@ -38,7 +37,7 @@ public class ForegroundNotificationDisplayStrategy implements NotificationDispla
       isForeground = true;
     } else {
       android.app.NotificationManager notificationManager =
-          (android.app.NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+          ContextCompat.getSystemService(service, android.app.NotificationManager.class);
       notificationManager.notify(notificationId, notification);
     }
   }
@@ -50,7 +49,7 @@ public class ForegroundNotificationDisplayStrategy implements NotificationDispla
     // Updates after the first are posted with notify(), and the service may already have
     // left the foreground (RunActivity.doStop), so remove the notification explicitly too.
     android.app.NotificationManager notificationManager =
-        (android.app.NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+        ContextCompat.getSystemService(service, android.app.NotificationManager.class);
     notificationManager.cancel(notificationId);
   }
 }

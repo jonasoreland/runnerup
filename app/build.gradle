@@ -131,7 +131,6 @@ android {
 
 repositories {
     google()
-    mavenCentral()
     maven { url = 'https://jitpack.io' }
     if (rootProject.ext.mapboxEnabled) {
         maven {
@@ -162,6 +161,7 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation "androidx.constraintlayout:constraintlayout:2.2.2"
     implementation "androidx.core:core-location-altitude:1.0.0"
+    implementation "androidx.core:core:1.19.1"
 
     latestImplementation "com.google.android.material:material:1.14.0"
     if (rootProject.ext.enableWear) {
@@ -178,7 +178,7 @@ dependencies {
     } else {
         implementation 'org.osmdroid:osmdroid-android:6.1.20'
     }
-    latestImplementation 'com.jjoe64:graphview:4.2.2'
+    latestImplementation("com.github.PhilJay.MPAndroidChart:MPChartLib:v4.0.1")
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"

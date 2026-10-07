@@ -18,9 +18,9 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -38,6 +38,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import java.util.Locale;
 import java.util.Vector;
@@ -184,7 +185,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
     TableLayout zonesTable = findViewById(R.id.zones_table);
     {
       int zoneCount = hrZoneCalculator.getZoneCount();
-      LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater inflator = ContextCompat.getSystemService(this, LayoutInflater.class);
       zones.clear();
       for (int i = 0; i < zoneCount; i++) {
         View row = addZoneRow(inflator, zonesTable, i + 1);
@@ -259,7 +260,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   }
 
   private void recomputeMaxHR() {
-    new Handler()
+    new Handler(Looper.getMainLooper())
         .post(
             () -> {
               try {
@@ -275,7 +276,7 @@ public class HRZonesActivity extends AppCompatActivity implements Constants {
   }
 
   private void recomputeZones() {
-    new Handler()
+    new Handler(Looper.getMainLooper())
         .post(
             () -> {
               try {

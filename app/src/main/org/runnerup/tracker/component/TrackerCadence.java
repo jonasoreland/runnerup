@@ -129,7 +129,7 @@ public class TrackerCadence extends DefaultTrackerComponent implements SensorEve
 
   private Sensor getSensor(final Context context) {
     if (mSensorManager == null && context != null) {
-      mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+      mSensorManager = ContextCompat.getSystemService(context, SensorManager.class);
     }
 
     Sensor sensor =

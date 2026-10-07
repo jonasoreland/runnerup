@@ -18,7 +18,6 @@
 package org.runnerup.view;
 
 import android.annotation.SuppressLint;
-import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +45,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.pm.PackageInfoCompat;
 import androidx.core.view.WindowCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -95,7 +97,7 @@ public class MainLayout extends AppCompatActivity {
     Editor editor = pref.edit();
     try {
       PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-      versionCode = pInfo.versionCode;
+      versionCode = (int) PackageInfoCompat.getLongVersionCode(pInfo);
       int version = pref.getInt("app-version", -1);
       if (version == -1) {
         upgradeState = UpgradeState.NEW;
@@ -259,7 +261,7 @@ public class MainLayout extends AppCompatActivity {
                   Toast.LENGTH_SHORT)
               .show();
 
-          new Handler().postDelayed(() -> this.setEnabled(true), 3 * 1000);
+          new Handler(Looper.getMainLooper()).postDelayed(() -> this.setEnabled(true), 3 * 1000);
         }
       };
 
@@ -391,7 +393,7 @@ public class MainLayout extends AppCompatActivity {
       };
 
   private void whatsNew() {
-    LayoutInflater inflater = (LayoutInflater) getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+    LayoutInflater inflater = ContextCompat.getSystemService(this, LayoutInflater.class);
     @SuppressLint("InflateParams")
     View view = inflater.inflate(R.layout.whatsnew, null);
     WebView wv = view.findViewById(R.id.web_view1);

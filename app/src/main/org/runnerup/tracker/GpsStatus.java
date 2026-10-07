@@ -20,23 +20,21 @@ package org.runnerup.tracker;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.GnssStatus;
-import android.location.GpsSatellite;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Build;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.GnssStatusCompat;
+import androidx.core.location.LocationListenerCompat;
+import androidx.core.location.LocationManagerCompat;
+import androidx.core.location.LocationRequestCompat;
 import java.util.Objects;
 import org.runnerup.util.TickListener;
 
 /**
  * This is a helper class that is used to determine when the GPS status is good enough (isFixed())
  */
-public class GpsStatus implements LocationListener {
+public class GpsStatus implements LocationListenerCompat {
 
   private static final int HIST_LEN = 3;
 
@@ -46,23 +44,9 @@ public class GpsStatus implements LocationListener {
   private LocationManager locationManager = null;
   private TickListener listener = null;
 
-  /** If we get a location with accurancy <= mFixAccurancy mFixed => true */
-  @SuppressWarnings("FieldCanBeLocal")
-  private final float mFixAccurancy = 10;
-
-  /** If we get fixed satellites >= mFixSatellites mFixed => true */
-  @SuppressWarnings("FieldCanBeLocal")
-  private final int mFixSatellites = 2;
-
-  /** If we get location updates with time difference <= mFixTime mFixed => true */
-  @SuppressWarnings("FieldCanBeLocal")
-  private final int mFixTime = 3;
-
   private int mKnownSatellites = 0;
   private int mUsedInLastFixSatellites = 0;
-  private GnssStatus.Callback mGnssStatusCallback;
-  // Before Android N
-  private gpsStatusListener mGpsStatusListener;
+  private GnssStatusCompat.Callback mGnssStatusCallback;
 
   public GpsStatus(Context ctx) {
     this.context = ctx;
@@ -76,44 +60,45 @@ public class GpsStatus implements LocationListener {
         != PackageManager.PERMISSION_GRANTED) {
       return;
     }
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    LocationManager lm = ContextCompat.getSystemService(context, LocationManager.class);
     try {
-      Objects.requireNonNull(lm).requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+      LocationManagerCompat.requestLocationUpdates(
+          lm,
+          LocationManager.GPS_PROVIDER,
+          new LocationRequestCompat.Builder(0)
+              .setQuality(LocationRequestCompat.QUALITY_HIGH_ACCURACY)
+              .build(),
+          ContextCompat.getMainExecutor(context),
+          this);
+
     } catch (Exception ex) {
       return;
     }
     locationManager = lm;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      mGnssStatusCallback =
-          new GnssStatus.Callback() {
-            public void onSatelliteStatusChanged(@NonNull GnssStatus status) {
-              mKnownSatellites = status.getSatelliteCount();
-              mUsedInLastFixSatellites = 0;
-              for (int i = 0; i < mKnownSatellites; i++) {
-                if (status.usedInFix(i)) {
-                  mUsedInLastFixSatellites++;
-                }
+    mGnssStatusCallback =
+        new GnssStatusCompat.Callback() {
+          public void onSatelliteStatusChanged(@NonNull GnssStatusCompat status) {
+            mKnownSatellites = status.getSatelliteCount();
+            mUsedInLastFixSatellites = 0;
+            for (int i = 0; i < mKnownSatellites; i++) {
+              if (status.usedInFix(i)) {
+                mUsedInLastFixSatellites++;
               }
             }
-          };
-      locationManager.registerGnssStatusCallback(mGnssStatusCallback);
-    } else {
-      mGpsStatusListener = new gpsStatusListener();
-      locationManager.addGpsStatusListener(mGpsStatusListener);
-    }
+          }
+        };
+
+    LocationManagerCompat.registerGnssStatusCallback(
+        locationManager, ContextCompat.getMainExecutor(context), mGnssStatusCallback);
   }
 
   public void stop(TickListener listener) {
     this.listener = null;
     if (locationManager != null) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        locationManager.unregisterGnssStatusCallback(mGnssStatusCallback);
-      } else {
-        locationManager.removeGpsStatusListener(mGpsStatusListener);
-      }
+      LocationManagerCompat.unregisterGnssStatusCallback(locationManager, mGnssStatusCallback);
 
       try {
-        locationManager.removeUpdates(this);
+        LocationManagerCompat.removeUpdates(locationManager, this);
       } catch (SecurityException ex) {
         // Ignore if user turn off GPS
       }
@@ -125,8 +110,14 @@ public class GpsStatus implements LocationListener {
     return listener != null;
   }
 
-  @Override
   public void onLocationChanged(Location location) {
+    // If we get a location with accuracy <= mFixAccurancy mFixed => true
+    final float mFixAccurancy = 10;
+    // If we get fixed satellites >= mFixSatellites mFixed => true
+    final int mFixSatellites = 2;
+    // If we get location updates with time difference <= mFixTime mFixed => true
+    final int mFixTime = 3;
+
     System.arraycopy(mHistory, 0, mHistory, 1, HIST_LEN - 1);
     mHistory[0] = location;
     if (location.hasAccuracy() && location.getAccuracy() < mFixAccurancy) {
@@ -152,46 +143,6 @@ public class GpsStatus implements LocationListener {
   public void onProviderEnabled(String provider) {
     if (provider.equalsIgnoreCase("gps")) {
       clear(false);
-      if (listener != null) listener.onTick();
-    }
-  }
-
-  @Override
-  public void onStatusChanged(String provider, int status, Bundle extras) {
-    if (provider.equalsIgnoreCase("gps")) {
-      if (status == LocationProvider.OUT_OF_SERVICE
-          || status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
-        clear(true);
-      }
-      if (listener != null) listener.onTick();
-    }
-  }
-
-  // Android before N
-  private class gpsStatusListener implements android.location.GpsStatus.Listener {
-    @Override
-    public void onGpsStatusChanged(int event) {
-      if (locationManager == null) return;
-
-      android.location.GpsStatus gpsStatus;
-      try {
-        gpsStatus = locationManager.getGpsStatus(null);
-      } catch (SecurityException ex) {
-        gpsStatus = null;
-      }
-
-      if (gpsStatus == null) return;
-
-      int cnt0 = 0, cnt1 = 0;
-      Iterable<GpsSatellite> list = gpsStatus.getSatellites();
-      for (GpsSatellite satellite : list) {
-        cnt0++;
-        if (satellite.usedInFix()) {
-          cnt1++;
-        }
-      }
-      mKnownSatellites = cnt0;
-      mUsedInLastFixSatellites = cnt1;
       if (listener != null) listener.onTick();
     }
   }
@@ -223,7 +174,7 @@ public class GpsStatus implements LocationListener {
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isEnabled() {
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    LocationManager lm = ContextCompat.getSystemService(context, LocationManager.class);
     return Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
   }
 }

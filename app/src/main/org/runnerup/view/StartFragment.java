@@ -50,10 +50,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -62,6 +61,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -91,7 +91,6 @@ import org.runnerup.widget.ClassicSpinner;
 import org.runnerup.widget.SpinnerInterface.OnCloseDialogListener;
 import org.runnerup.widget.SpinnerInterface.OnSetValueListener;
 import org.runnerup.widget.TitleSpinner;
-import org.runnerup.widget.WidgetUtil;
 import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Sport;
 import org.runnerup.workout.Workout;
@@ -122,7 +121,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private Tracker mTracker = null;
   private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
-  private TabHost tabHost = null;
+  private TabLayout tabLayout = null;
+  private final ActivityResultLauncher<Intent> runActivityLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.StartActivityForResult(),
+          result -> handleActivityResult(START_ACTIVITY, result.getResultCode(), result.getData()));
+  private View basicTabView;
+  private View intervalTabView;
+  private View advancedTabView;
   private View startButton = null;
 
   private ImageView expandIcon = null;
@@ -251,31 +257,34 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     view.findViewById(R.id.status_layout).setOnClickListener(v -> toggleStatusDetails());
 
-    // TODO: Replace TabHost with ViewPager2 and TabLayout
-    tabHost = view.findViewById(R.id.tabhost_start);
-    tabHost.setup();
-    TabSpec tabSpec = tabHost.newTabSpec(TAB_BASIC);
-    tabSpec.setIndicator(
-        WidgetUtil.createHoloTabIndicator(context, getString(org.runnerup.common.R.string.Basic)));
-    tabSpec.setContent(R.id.start_basic_tab);
-    tabHost.addTab(tabSpec);
+    tabLayout = view.findViewById(R.id.start_tabs);
+    basicTabView = view.findViewById(R.id.start_basic_tab);
+    intervalTabView = view.findViewById(R.id.start_interval_tab);
+    advancedTabView = view.findViewById(R.id.start_advanced_tab);
+    setWorkoutTabVisibility(0);
+    tabLayout.addTab(
+        tabLayout.newTab().setText(org.runnerup.common.R.string.Basic).setTag(TAB_BASIC));
+    tabLayout.addTab(
+        tabLayout.newTab().setText(org.runnerup.common.R.string.Interval).setTag(TAB_INTERVAL));
+    tabLayout.addTab(
+        tabLayout.newTab().setText(org.runnerup.common.R.string.Advanced).setTag(TAB_ADVANCED));
+    tabLayout.addOnTabSelectedListener(
+        new TabLayout.OnTabSelectedListener() {
+          @Override
+          public void onTabSelected(@NonNull TabLayout.Tab tab) {
+            setWorkoutTabVisibility(tab.getPosition());
+            if (TAB_ADVANCED.equals(tab.getTag())) {
+              loadAdvanced(null);
+            }
+            updateView();
+          }
 
-    tabSpec = tabHost.newTabSpec(TAB_INTERVAL);
-    tabSpec.setIndicator(
-        WidgetUtil.createHoloTabIndicator(
-            context, getString(org.runnerup.common.R.string.Interval)));
-    tabSpec.setContent(R.id.start_interval_tab);
-    tabHost.addTab(tabSpec);
+          @Override
+          public void onTabUnselected(@NonNull TabLayout.Tab tab) {}
 
-    tabSpec = tabHost.newTabSpec(TAB_ADVANCED);
-    tabSpec.setIndicator(
-        WidgetUtil.createHoloTabIndicator(
-            context, getString(org.runnerup.common.R.string.Advanced)));
-    tabSpec.setContent(R.id.start_advanced_tab);
-    tabHost.addTab(tabSpec);
-
-    tabHost.setOnTabChangedListener(onTabChangeListener);
-    // tabHost.getTabWidget().setBackgroundColor(Color.DKGRAY);
+          @Override
+          public void onTabReselected(@NonNull TabLayout.Tab tab) {}
+        });
 
     LayoutInflater inflater = getLayoutInflater();
     simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
@@ -328,7 +337,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     if (i != null) {
       if (i.hasExtra("mode")) {
         if (Objects.equals(i.getStringExtra("mode"), TAB_ADVANCED)) {
-          tabHost.setCurrentTab(2);
+          tabLayout.selectTab(tabLayout.getTabAt(2));
           i.removeExtra("mode");
         }
       }
@@ -463,7 +472,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       simpleTargetType.clearDisabled();
     }
 
-    if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)) {
+    if (getSelectedTabTag().contentEquals(TAB_ADVANCED)) {
       loadAdvanced(null);
     }
 
@@ -685,13 +694,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         .show();
   }
 
-  private final OnTabChangeListener onTabChangeListener =
-      tabId -> {
-        if (tabId.contentEquals(TAB_ADVANCED)) {
-          loadAdvanced(null);
-        }
-        updateView();
-      };
+  private String getSelectedTabTag() {
+    TabLayout.Tab selectedTab = tabLayout.getTabAt(tabLayout.getSelectedTabPosition());
+    return selectedTab == null ? TAB_BASIC : (String) selectedTab.getTag();
+  }
+
+  private void setWorkoutTabVisibility(int selectedPosition) {
+    basicTabView.setVisibility(selectedPosition == 0 ? View.VISIBLE : View.GONE);
+    intervalTabView.setVisibility(selectedPosition == 1 ? View.VISIBLE : View.GONE);
+    advancedTabView.setVisibility(selectedPosition == 2 ? View.VISIBLE : View.GONE);
+  }
 
   private Workout prepareWorkout() {
     Context ctx = requireActivity().getApplicationContext();
@@ -699,16 +711,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     SharedPreferences audioPref;
     Workout w;
 
-    if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_BASIC)) {
+    if (getSelectedTabTag().contentEquals(TAB_BASIC)) {
       audioPref =
           WorkoutBuilder.getAudioCuePreferences(ctx, pref, getString(R.string.pref_basic_audio));
       Dimension target = Dimension.valueOf(simpleTargetType.getValueInt());
       w = WorkoutBuilder.createDefaultWorkout(getResources(), pref, target);
-    } else if (tabHost.getCurrentTabTag().contentEquals(TAB_INTERVAL)) {
+    } else if (getSelectedTabTag().contentEquals(TAB_INTERVAL)) {
       audioPref =
           WorkoutBuilder.getAudioCuePreferences(ctx, pref, getString(R.string.pref_interval_audio));
       w = WorkoutBuilder.createDefaultIntervalWorkout(getResources(), pref);
-    } else if (tabHost.getCurrentTabTag().contentEquals(TAB_ADVANCED)) {
+    } else if (getSelectedTabTag().contentEquals(TAB_ADVANCED)) {
       audioPref =
           WorkoutBuilder.getAudioCuePreferences(ctx, pref, getString(R.string.pref_advanced_audio));
       w = advancedWorkout;
@@ -735,8 +747,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     runActivityPending = true;
     Intent intent = new Intent(requireContext(), RunActivity.class);
-    // TODO: Use the Activity Result API
-    StartFragment.this.startActivityForResult(intent, START_ACTIVITY);
+    runActivityLauncher.launch(intent);
     notificationStateManager.cancelNotification(); // will be added by RunActivity
   }
 
@@ -892,7 +903,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     final Resources res = this.getResources();
     final boolean suppressOptimizeBatteryPopup =
         prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
-    PowerManager pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+    PowerManager pm = ContextCompat.getSystemService(ctx, PowerManager.class);
     if ((popup || getAutoStartGps())
         && !suppressOptimizeBatteryPopup
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
@@ -1005,8 +1016,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         break;
       }
 
-      if (Objects.requireNonNull(tabHost.getCurrentTabTag()).contentEquals(TAB_ADVANCED)
-          && advancedWorkout == null) {
+      if (getSelectedTabTag().contentEquals(TAB_ADVANCED) && advancedWorkout == null) {
         break;
       }
 
@@ -1304,10 +1314,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     mTracker = null;
   }
 
-  // TODO: Use Activity Result API
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
+  private void handleActivityResult(int requestCode, int resultCode, Intent data) {
     registerStartEventListener();
 
     if (data != null) {
