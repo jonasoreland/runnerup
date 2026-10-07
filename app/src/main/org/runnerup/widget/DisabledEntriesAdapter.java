@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import androidx.core.content.ContextCompat;
 import java.util.HashSet;
 
 class DisabledEntriesAdapter extends BaseAdapter {
@@ -32,7 +33,7 @@ class DisabledEntriesAdapter extends BaseAdapter {
   private HashSet<String> disabled;
 
   public DisabledEntriesAdapter(Context ctx, int id) {
-    inflator = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    inflator = ContextCompat.getSystemService(ctx, LayoutInflater.class);
     entries = ctx.getResources().getStringArray(id);
   }
 

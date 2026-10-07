@@ -3,11 +3,11 @@ package org.runnerup.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import androidx.core.content.ContextCompat;
 
 public class NetworkUtils {
   public static boolean isNetworkAvailable(Context context) {
-    ConnectivityManager cm =
-        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    ConnectivityManager cm = ContextCompat.getSystemService(context, ConnectivityManager.class);
     if (cm == null) {
       return false;
     }

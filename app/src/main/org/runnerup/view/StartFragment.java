@@ -903,7 +903,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     final Resources res = this.getResources();
     final boolean suppressOptimizeBatteryPopup =
         prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
-    PowerManager pm = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+    PowerManager pm = ContextCompat.getSystemService(ctx, PowerManager.class);
     if ((popup || getAutoStartGps())
         && !suppressOptimizeBatteryPopup
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M

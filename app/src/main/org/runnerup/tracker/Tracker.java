@@ -36,6 +36,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationListenerCompat;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
@@ -781,7 +782,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       mWakeLock = null;
     }
     if (get) {
-      PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+      PowerManager pm = ContextCompat.getSystemService(this, PowerManager.class);
       mWakeLock =
           Objects.requireNonNull(pm)
               .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "RunnerUp:wakeLock");

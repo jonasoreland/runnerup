@@ -56,6 +56,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ServiceCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
-    final KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+    final KeyguardManager km = ContextCompat.getSystemService(this, KeyguardManager.class);
     final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
     final boolean showOnLockScreen =
         prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);

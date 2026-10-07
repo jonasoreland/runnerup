@@ -823,7 +823,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     // --Commented out by Inspection (2017-08-11 13:06):Resources resources = null;
 
     DeviceAdapter(Context ctx) {
-      inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      inflater = ContextCompat.getSystemService(ctx, LayoutInflater.class);
       // resources = ctx.getResources();
     }
 

@@ -60,7 +60,7 @@ public class GpsStatus implements LocationListenerCompat {
         != PackageManager.PERMISSION_GRANTED) {
       return;
     }
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    LocationManager lm = ContextCompat.getSystemService(context, LocationManager.class);
     try {
       LocationManagerCompat.requestLocationUpdates(
           lm,
@@ -174,7 +174,7 @@ public class GpsStatus implements LocationListenerCompat {
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isEnabled() {
-    LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    LocationManager lm = ContextCompat.getSystemService(context, LocationManager.class);
     return Objects.requireNonNull(lm).isProviderEnabled(LocationManager.GPS_PROVIDER);
   }
 }

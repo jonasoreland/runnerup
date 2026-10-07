@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import androidx.core.content.ContextCompat;
 
 public class NotificationStateManager {
   private static final int NOTIFICATION_ID = 1;
@@ -22,7 +23,7 @@ public class NotificationStateManager {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       if (mChannel == null) {
         NotificationManager notificationManager =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            ContextCompat.getSystemService(context, android.app.NotificationManager.class);
         String id = "runnerup_ongoing";
         CharSequence name = context.getString(org.runnerup.common.R.string.app_name);
         String description =

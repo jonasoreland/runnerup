@@ -33,6 +33,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -64,7 +65,7 @@ public abstract class Bt20Base extends BtHRBase {
   }
 
   public static boolean isEnabledImpl(Context context) {
-    BluetoothManager manager = context.getSystemService(BluetoothManager.class);
+    BluetoothManager manager = ContextCompat.getSystemService(context, BluetoothManager.class);
     BluetoothAdapter adapter = manager == null ? null : manager.getAdapter();
     return adapter != null && adapter.isEnabled();
   }
@@ -176,7 +177,7 @@ public abstract class Bt20Base extends BtHRBase {
     this.hrClientHandler = handler;
 
     if (btAdapter == null) {
-      BluetoothManager manager = context.getSystemService(BluetoothManager.class);
+      BluetoothManager manager = ContextCompat.getSystemService(context, BluetoothManager.class);
       btAdapter = manager == null ? null : manager.getAdapter();
     }
     if (btAdapter == null) {

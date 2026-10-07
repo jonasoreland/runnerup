@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class RUTextToSpeech {
 
   public RUTextToSpeech(TextToSpeech tts, boolean mute_, Context context) {
     this.textToSpeech = tts;
-    this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+    this.audioManager = ContextCompat.getSystemService(context, AudioManager.class);
     this.mute = mute_;
     Locale locale = Formatter.getAudioLocale(context);
     if (tts != null && locale != null) {
