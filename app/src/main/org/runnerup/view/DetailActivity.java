@@ -238,7 +238,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
 
     if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
       addDetailTab(org.runnerup.common.R.string.Map, R.id.tab_map);
-      mapTab = (View) detailTabs.getTabAt(2).getCustomView().getParent();
+      mapTab = detailTabs.getTabAt(2).view;
     }
 
     addDetailTab(org.runnerup.common.R.string.Graph, R.id.tab_graph);
@@ -378,9 +378,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   }
 
   private void addDetailTab(int titleId, int contentId) {
-    TabLayout.Tab tab = detailTabs.newTab();
-    tab.setCustomView(WidgetUtil.createHoloTabIndicator(this, getString(titleId)));
-    detailTabs.addTab(tab);
+    detailTabs.addTab(detailTabs.newTab().setText(titleId));
     tabContents.add(findViewById(contentId));
   }
 
