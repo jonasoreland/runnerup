@@ -136,6 +136,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private long mStartTime = 0; // activity start time in unix timestamp
   private ContentValues headerData = new ContentValues();
   private static final int EDIT_ACCOUNT_REQUEST = 2;
+  private static final String STATE_SELECTED_TAB_POSITION = "selectedTab";
 
   /** Called when the activity is first created. */
   @Override
@@ -257,6 +258,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           public void onTabReselected(@NonNull TabLayout.Tab tab) {}
         });
     showDetailTab(0);
+    if (savedInstanceState != null) {
+      TabLayout.Tab tab =
+          detailTabs.getTabAt(savedInstanceState.getInt(STATE_SELECTED_TAB_POSITION, 0));
+      if (tab != null) {
+        detailTabs.selectTab(tab);
+      }
+    }
 
     fillHeaderData();
     requery();
@@ -492,6 +500,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
+    outState.putInt(STATE_SELECTED_TAB_POSITION, detailTabs.getSelectedTabPosition());
     if (mapWrapper != null) {
       mapWrapper.onSaveInstanceState(outState);
     }
