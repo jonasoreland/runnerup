@@ -34,7 +34,7 @@ import org.runnerup.hr.HRProvider;
 
 public class TrackerHRM extends DefaultTrackerComponent {
 
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(android.os.Looper.getMainLooper());
   private HRProvider hrProvider;
 
   private int lineNo = 0;

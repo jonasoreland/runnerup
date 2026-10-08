@@ -25,7 +25,6 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.view.ViewCompat;
 import org.runnerup.R;
 
 public class WidgetUtil {
@@ -45,7 +44,7 @@ public class WidgetUtil {
     // txtTab.setTextColor(Color.WHITE);
     // txtTab.setGravity(Gravity.CENTER_HORIZONTAL);
     Drawable drawable = AppCompatResources.getDrawable(ctx, R.drawable.tab_indicator_holo);
-    ViewCompat.setBackground(txtTab, drawable);
+    txtTab.setBackground(drawable);
 
     int h = (25 * drawable.getIntrinsicHeight()) / 10;
     txtTab.setPadding(0, h, 0, h);

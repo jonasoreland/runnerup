@@ -32,7 +32,7 @@ project.ext {
     googleWearVersion = '2.9.0'
 
     junitVersion = '4.13.2'
-    mockitoVersion = '5.23.0'
+    mockitoVersion = '5.24.0'
 
     //The Git tag for the release must be identical for F-Droid
     versionName = '2.11.0.1'
@@ -125,9 +125,9 @@ allprojects {
     }
     tasks.withType(JavaCompile).tap {
         configureEach {
-            // if (project.name != 'wear') {
-            //    options.compilerArgs << "-Xlint:deprecation";
-            // }
+            if (project.name != 'wear') {
+               options.compilerArgs << "-Xlint:deprecation";
+            }
             options.compilerArgs << "-Xlint:unchecked"
         }
     }
