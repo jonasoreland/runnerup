@@ -73,7 +73,7 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
       return ResultCode.RESULT_OK;
     }
     try {
-      if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null) {
+      if (!LocationManagerCompat.hasProvider(locationManager, GPS_PROVIDER)) {
         return ResultCode.RESULT_NOT_SUPPORTED;
       }
     } catch (Exception ex) {
