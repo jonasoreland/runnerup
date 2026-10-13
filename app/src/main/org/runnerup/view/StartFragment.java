@@ -110,6 +110,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private static final String TAB_BASIC = "basic";
   private static final String TAB_INTERVAL = "interval";
   static final String TAB_ADVANCED = "advanced";
+  private static final String STATE_SELECTED_TAB_POSITION = "selectedTab";
 
   private boolean statusDetailsShown = false;
 
@@ -333,6 +334,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     advancedStepList.setDividerHeight(0);
     advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
+    if (savedInstanceState != null) {
+      TabLayout.Tab tab =
+          tabLayout.getTabAt(savedInstanceState.getInt(STATE_SELECTED_TAB_POSITION, 0));
+      if (tab != null) {
+        tabLayout.selectTab(tab);
+      }
+    }
+
     Intent i = requireActivity().getIntent();
     if (i != null) {
       if (i.hasExtra("mode")) {
@@ -505,6 +514,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       }
     }
     mWearNotifier.onPause();
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (tabLayout != null) {
+      outState.putInt(STATE_SELECTED_TAB_POSITION, tabLayout.getSelectedTabPosition());
+    }
   }
 
   @Override
