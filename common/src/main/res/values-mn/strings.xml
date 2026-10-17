@@ -113,4 +113,5 @@
   <!--Preference categories & summaries-->
   <string name="HRM_category">Зүрхний хэмнэл</string>
   <string name="Autopause_category">Автоматаар түр зогсоох</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
 </resources>

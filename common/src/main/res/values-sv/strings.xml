@@ -1,23 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
   <string name="metrics_distance_m">m</string>
+  <string name="metrics_distance_ft">fot</string>
   <string name="metrics_elapsed_h">h</string>
   <string name="metrics_elapsed_m">m</string>
   <string name="metrics_elapsed_min">min</string>
@@ -50,12 +51,14 @@
   <string name="Start_hour">Starttid</string>
   <string name="Heart_rate">Puls</string>
   <string name="Pace">Tempo</string>
+  <string name="Elevation">Höjd</string>
   <string name="Scan">Skanna</string>
   <string name="Connect">Anslut</string>
   <string name="Connecting">Ansluter</string>
   <string name="Download">Ladda ner</string>
   <string name="Share">Dela</string>
   <string name="Edit">Ändra</string>
+  <string name="Rename">Byt namn</string>
   <string name="Delete">Ta bort</string>
   <string name="Total">Total</string>
   <string name="Interval">Intervall</string>
@@ -126,6 +129,10 @@
   <string name="Clear_heart_rate_zone_settings">Rensa inställningar för pulszon</string>
   <string name="Manage_audio_cues">Hantera ljudmeddelanden</string>
   <string name="Manage_workouts">Hantera träningspass</string>
+  <string name="Enter_new_workout_name">Skriv det nya träningspassets namn</string>
+  <string name="Invalid_workout_name">Oglitligt namn på träningspasset</string>
+  <string name="New_workout_name_is_the_same_as_the_old_one">Det nya namnet på träningspasset är samma som det gamla</string>
+  <string name="Workout_name_already_in_use">Namnet på träningspasset används redan</string>
   <string name="Settings">Inställningar</string>
   <string name="Whats_new">Nyheter</string>
   <string name="Rate_RunnerUp">Recensera RunnerUp</string>
@@ -148,6 +155,7 @@
   <string name="Saving">Sparar</string>
   <string name="Cancellingplease_wait">Avbryter, vänta…</string>
   <string name="Are_you_sure">Är du säker?</string>
+  <string name="Delete_audio_cue">Ta bort ljudmeddelande?</string>
   <string name="Configure_audio_cues">Konfigurera ljudmeddelanden</string>
   <string name="Downloadeditremove_workouts">Ändra träningspass</string>
   <string name="Convert_reststep_with_type_distance_to_recoverystep_for_Intervaltab">För Interval-tabben, använd Återhämting för Vila (paus) steg</string>
@@ -319,7 +327,9 @@
   <string name="Lap_start">Varv start</string>
   <string name="Lap_start_summary">Meddelande vid start av varv och Aktiv, Uppvärmning och Nedvarvning steg</string>
   <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
-  <string name="Lock_activity_buttons_message">Lås aktivitetsknappar genom att knacka på tabellhuvudet</string>
+  <string name="Lock_activity_buttons_message">Byt låsmod för stop/pause med att knacka snabbt på skärmen</string>
+  <string name="Volume_button_controls">Volym knappar</string>
+  <string name="Volume_button_controls_summary">Använd volym upp för att skapa varv och volym ner för att pausa</string>
   <string name="Speed">Hastighet</string>
   <string name="Speed_unit_preference">Hastighetsenhet</string>
   <string name="path_simplification">GPS-spår förenkling</string>
@@ -339,12 +349,14 @@
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">Puls</string>
+  <string name="Buttons_category">Knappar</string>
   <string name="GPS_recording_category">GPS inspelning</string>
   <string name="Phone_sensors_category">Telefon sensorer</string>
   <string name="Database_category">Databasunderhåll</string>
   <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
   <string name="User_interface">Användarinterface</string>
+  <string name="User_interface_pref_summary">Knappar och synlighet</string>
   <string name="Workout_pref_summary">Hantera träningspass, varv och målcoachning</string>
   <string name="Visibility_category">Synlighet</string>
   <string name="Manage_workouts_category">Avancerat träningspass</string>
@@ -362,6 +374,8 @@
   <string name="Activity_stopped">Aktivitet stoppad</string>
   <string name="Show_on_lock_screen">Visa på låsskärmen</string>
   <string name="Show_on_lock_screen_summary">Visa aktivitet på låsskärmen då enheten är låst</string>
+  <string name="Keep_screen_on">Håll skärm på</string>
+  <string name="Keep_screen_on_summary">Håll skärm på då inspelning pågår</string>
   <!--Name of sports, these deprecate array.sportEntries-->
   <string name="SPORT_RUNNING">Löpning</string>
   <string name="SPORT_BIKING">Cykel</string>
@@ -373,5 +387,5 @@
   <string name="SPORT_STATIONARY_BIKE">Träningscykel</string>
   <string name="import_cancelled">Import avbruten</string>
   <string name="export_cancelled">Export avbruten</string>
-  <string name="import_error_invalid_database">Den valda filen är inte en RunnerUp databas!</string>
+  <string name="import_error_invalid_database">Den valda filen är inte en giltlig RunnerUp databas!</string>
 </resources>
