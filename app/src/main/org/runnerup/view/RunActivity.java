@@ -17,6 +17,7 @@
 
 package org.runnerup.view;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -45,7 +46,6 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -108,7 +108,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private TextView countdownView = null;
   private ListView workoutList = null;
   private View tableRowInterval = null;
-  private org.runnerup.workout.Step currentStep = null;
+  private Step currentStep = null;
   private Formatter formatter = null;
   private TextView activityHr;
   private TextView lapHr;
@@ -117,17 +117,19 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private TextView activityHeaderHr;
   private TextView hrDebug;
   // A circular buffer for tap events
-  private final long[] mTapArray = {0, 0, 0, 0};
+  private final long[] mTapArray = {0, 0};
   private int mTapIndex = 0;
+  private boolean buttonsLocked = false;
 
   class WorkoutRow {
-    org.runnerup.workout.Step step = null;
+    Step step = null;
     ContentValues lap = null;
     public int level;
   }
 
   private final ArrayList<WorkoutRow> workoutRows = new ArrayList<>();
 
+  @SuppressLint("SourceLockedOrientationActivity")
   @Override
   public void onCreate(Bundle savedInstanceState) {
     EdgeToEdge.enable(this);
@@ -174,29 +176,41 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
     final KeyguardManager km = ContextCompat.getSystemService(this, KeyguardManager.class);
-    final boolean active = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
+    final boolean lockButtons = prefs.getBoolean(res.getString(R.string.pref_lock_run), false);
     final boolean showOnLockScreen =
         prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
     final boolean keepScreenOn =
         prefs.getBoolean(res.getString(R.string.pref_keep_screen_on), false);
+    buttonsLocked = lockButtons && showOnLockScreen;
+    if (buttonsLocked) {
+      stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_gray));
+    }
 
     if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
     }
 
-    TableLayout t = findViewById(R.id.table_layout1);
-    t.setOnTouchListener(
+    View root = findViewById(R.id.start_view);
+    bindGpsTracker();
+
+    View.OnTouchListener touchListener =
         (v, event) -> {
-          // Detect tapping on the header
+          // Detect tapping on the view
           int action = event.getAction();
-          if (active && action == MotionEvent.ACTION_DOWN) {
+          if (lockButtons && action == MotionEvent.ACTION_DOWN) {
+            // Check circular buffer for mTapArray.length+1 tap events within time
             final int maxTapTime = 1000;
             long time = event.getEventTime();
             if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
-              boolean enabled = !pauseButton.isEnabled();
-              pauseButton.setEnabled(enabled);
-              stopButton.setEnabled(enabled);
+              buttonsLocked = !buttonsLocked;
+              if (buttonsLocked) {
+                stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_gray));
+              } else {
+                stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_red));
+              }
               Arrays.fill(mTapArray, 0);
+              // set index so next tap is not message
+              mTapIndex = 1;
             } else {
               if (mTapIndex == 0) {
                 Toast.makeText(
@@ -210,8 +224,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             }
           }
           return false;
-        });
-    bindGpsTracker();
+        };
+
+    root.setOnTouchListener(touchListener);
+    stopButton.setOnTouchListener(touchListener);
+    pauseButton.setOnTouchListener(touchListener);
 
     getOnBackPressedDispatcher()
         .addCallback(
@@ -220,6 +237,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
               @Override
               public void handleOnBackPressed() {
                 // Ignore back while in an activity and the device is unlocked
+                assert km != null;
                 if (km.isKeyguardLocked()) {
                   // Original state is re-enabled on resume
                   showOnLockScreen(false);
@@ -361,10 +379,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       /*
        * they saved
        */
-      Double manualDistance = null;
-      if (data != null && data.hasExtra("MANUAL_DISTANCE")) {
-        manualDistance = data.getDoubleExtra("MANUAL_DISTANCE", 0);
-      }
+      Double manualDistance =
+          data != null && data.hasExtra("MANUAL_DISTANCE")
+              ? data.getDoubleExtra("MANUAL_DISTANCE", 0)
+              : null;
       workout.onComplete(Scope.ACTIVITY, workout);
       if (mTracker != null) {
         mTracker.completeActivity(/* save= */ true, manualDistance);
@@ -447,8 +465,33 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   }
 
   private final OnClickListener newLapButtonClick = v -> newLap();
-  private final OnClickListener pauseButtonClick = v -> togglePause();
-  private final OnClickListener stopButtonClick = v -> doStop();
+  private final OnClickListener pauseButtonClick =
+      v -> {
+        if (buttonsLocked) {
+          Toast.makeText(
+                  getApplicationContext(),
+                  getResources()
+                      .getString(org.runnerup.common.R.string.Lock_activity_buttons_message),
+                  Toast.LENGTH_SHORT)
+              .show();
+        } else {
+          togglePause();
+        }
+      };
+
+  private final OnClickListener stopButtonClick =
+      v -> {
+        if (buttonsLocked) {
+          Toast.makeText(
+                  getApplicationContext(),
+                  getResources()
+                      .getString(org.runnerup.common.R.string.Lock_activity_buttons_message),
+                  Toast.LENGTH_SHORT)
+              .show();
+        } else {
+          doStop();
+        }
+      };
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -587,8 +630,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
   }
 
-  private int getPosition(
-      ArrayList<WorkoutRow> workoutRows, org.runnerup.workout.Step currentActivity) {
+  private int getPosition(ArrayList<WorkoutRow> workoutRows, Step currentActivity) {
     for (int i = 0; i < workoutRows.size(); i++) {
       if (workoutRows.get(i).step == currentActivity) return i;
     }
@@ -673,8 +715,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       }
     }
 
-    private View getWorkoutRow(
-        org.runnerup.workout.Step step, int level, View convertView, ViewGroup parent) {
+    private View getWorkoutRow(Step step, int level, View convertView, ViewGroup parent) {
       LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
       View view = inflater.inflate(R.layout.workout_row, parent, false);
       TextView intensity = view.findViewById(R.id.workout_step_intensity);
