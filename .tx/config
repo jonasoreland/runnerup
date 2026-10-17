@@ -1,6 +1,9 @@
 [main]
 host = https://app.transifex.com
-lang_map = fr_CA:fr-rCA,pt_BR:pt-rBR,pt_PT:pt,zh_CN:zh,zh_HK:zh-rHK,zh_TW:zh-rTW,da_DK:da-rDK,de_DE:de,tr_TR:tr,fr_FR:fr,es_ES:es,hu_HU:hu,he:iw,sv_SE:sv,bg_BG:bg,el_GR:el,kn_IN:kn-rIN,cs_CZ:cs,mn_MN:mn-rMN,nl_BE:nl-rBE,nl_NL:nl-rNL,lt_LT:lt,nb_NO:nb-rNO,ru_RU:ru-rRU,id:in
+; Map known empty and unwanted (like en_NL) to map to a dummy language
+; there is no simple way to not download or to ignore them when building,
+; this just makes it easier to delete them without review.
+lang_map = fr_CA:fr-rCA,pt_BR:pt-rBR,pt_PT:pt,zh_CN:zh,zh_HK:zh-rHK,zh_TW:zh-rTW,da_DK:da-rDK,de_DE:de,tr_TR:tr,fr_FR:fr,es_ES:es,hu_HU:hu,he:iw,sv_SE:sv,bg_BG:bg,el_GR:el,kn_IN:kn-rIN,cs_CZ:cs,mn_MN:mn,nl_BE:nl-rBE,nl_NL:nl-rNL,lt_LT:lt,nb_NO:nb-rNO,ru_RU:ru-rRU,id:in,ar:ignore_ar,ar_AA:ignore_ar_AA,ar_EG:ignore_ar_EG,ar_SA:ignore_ar_SA,ar_SY:ignore_ar_SY,de_CH:ignore_de_CH,el:ignore_el,en_NL:ignore_en_NL,en_US:ignore_en_US,eu_ES:ignore_eu_ES,hi_IN:ignore_hi_IN,hr:ignore_hr,it_CH:ignore_it_CH,it_IT:ignore_it_IT,ku_IQ:ignore_ku_IQ,nb:ignore_nb,nl_BE:ignore_nl_BE,ru_RU:ignore_ru_RU,sr:ignore_sr,zh_TW:ignore_zh_TW
 minimum_perc = 10
 
 [o:runner-up:p:runner-up-android:r:stringsxml]

@@ -336,7 +336,6 @@
   <string name="GPS_recording_category">Registrazione GPS</string>
   <string name="Phone_sensors_category">Sensori telefono</string>
   <string name="Database_category">Manutenzione database</string>
-  <string name="Maintenance_explanation_summary">RunnerUp salva gli allenamenti in un database SQL.\nPer manutenzione, il file runnerup.db.export può essere importato o esportato da/verso\n%1$s</string>
   <string name="Map_pref_summary">Stile mappa</string>
   <string name="Workout_pref_summary">Gestisci allenamenti, giri, riposo, obiettivi allenamento</string>
   <string name="Manage_workouts_category">Allenamenti avanzati</string>
