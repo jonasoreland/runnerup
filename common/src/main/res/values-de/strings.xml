@@ -347,7 +347,7 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="GPS_recording_category">GPS Aufnahme</string>
   <string name="Phone_sensors_category">Handy Sensoren</string>
   <string name="Database_category">Datenbank Wartung</string>
-  <string name="Maintenance_explanation_summary">RunnerUp speichert Trainingseinheiten in einer SQL-Datenbank.
+  <string name="Maintenance_explanation_summary_v2">RunnerUp speichert Trainingseinheiten in einer SQL-Datenbank.
 Für die Wartung der Daten kann die Datei runnerup.db.export von/nach %1$s im-/exportiert werden</string>
   <string name="Map_pref_summary">Kartenstil</string>
   <string name="Workout_pref_summary">Bearbeite Einheiten, Runden, Ruhe und Zieltraining</string>

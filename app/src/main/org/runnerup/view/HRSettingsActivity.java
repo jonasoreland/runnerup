@@ -26,10 +26,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -43,20 +45,25 @@ import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +82,7 @@ import org.runnerup.widget.WidgetUtil;
 
 public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
-  private final Handler handler = new Handler();
+  private final Handler handler = new Handler(Looper.getMainLooper());
   private final StringBuffer logBuffer = new StringBuffer();
 
   private List<HRProvider> providers = null;
@@ -92,13 +99,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   private TextView tvBatteryLevel = null;
 
   private Formatter formatter = null;
-  private GraphView graphView = null;
-  private LineGraphSeries<DataPoint> graphViewSeries = null;
+  private LineChart chart = null;
+  private LineDataSet<Void> dataSet = null;
+  private long lastTimestamp = 0;
+  private long timerStartTime = 0;
+  private float minHrSeen = Float.POSITIVE_INFINITY;
+  private float maxHrSeen = Float.NEGATIVE_INFINITY;
   private static final int GRAPH_HISTORY_SIZE = 180;
-  private static final double xInterval = 60;
+  private static final double X_INTERVAL_SECONDS = 60;
 
   private static final int REQUEST_BLUETOOTH_SETTINGS = 123;
-  private static final int REQUEST_BLUETOOTH_ENABLE = 3002;
   private static final int REQUEST_BLUETOOTH_PERM = 3001;
 
   private final ActivityResultLauncher<Intent> bluetoothEnableLauncher =
@@ -167,33 +177,68 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
 
     formatter = new Formatter(this);
     {
-      graphView = new GraphView(this);
-      graphView.setTitle(getString(org.runnerup.common.R.string.Heart_rate));
-      DataPoint[] empty = {};
-      graphViewSeries = new LineGraphSeries<>(empty);
-      graphView.addSeries(graphViewSeries);
-      graphView.getViewport().setXAxisBoundsManual(true);
-      graphView.getViewport().setMinX(0);
-      graphView.getViewport().setMaxX(xInterval);
-      graphView.getViewport().setYAxisBoundsManual(true);
-      graphView.getViewport().setMinY(40);
-      graphView.getViewport().setMaxY(200);
-      graphView
-          .getGridLabelRenderer()
-          .setLabelFormatter(
-              new DefaultLabelFormatter() {
+      chart = new LineChart(this);
+      chart.getDescription().setEnabled(false);
+
+      dataSet =
+          new LineDataSet<>(
+              new ArrayList<>(), getString(org.runnerup.common.R.string.Heart_rate) + " (bpm)");
+      dataSet.setColor(Color.RED);
+      dataSet.setLineWidth(1.5f);
+      dataSet.setDrawValuesEnabled(false);
+      dataSet.setDrawCirclesEnabled(false);
+      chart.setData(new LineData(dataSet));
+
+      chart.getDescription().setEnabled(false);
+      chart.getLegend().setTextColor(Color.WHITE);
+
+      int axisTextColor = tvHR.getCurrentTextColor();
+      if (axisTextColor == 0) {
+        axisTextColor = Color.WHITE;
+      }
+
+      chart.getAxisLeft().setEnabled(true);
+      chart.getAxisLeft().setTextColor(axisTextColor);
+      chart.getAxisLeft().setAxisLineColor(axisTextColor);
+      chart.getAxisLeft().setTextSize(12f);
+      chart.getAxisLeft().setAxisMinimum(40f);
+      chart.getAxisLeft().setAxisMaximum(200f);
+      chart
+          .getAxisLeft()
+          .setValueFormatter(
+              new IAxisValueFormatter() {
+                @NonNull
                 @Override
-                public String formatLabel(double value, boolean isValueX) {
-                  if (isValueX) {
-                    return formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) value);
-                  } else {
-                    return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
-                  }
+                public String getFormattedValue(float value, AxisBase axis) {
+                  return formatter.formatHeartRate(Formatter.Format.TXT_SHORT, value);
                 }
               });
 
+      chart.getAxisRight().setEnabled(false);
+      chart.getAxisRight().setTextColor(axisTextColor);
+
+      chart.getXAxis().setTextColor(axisTextColor);
+      chart.getXAxis().setAxisLineColor(axisTextColor);
+      chart.getXAxis().setTextSize(12f);
+      chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+      chart.getXAxis().setAxisMinimum(0f);
+      chart.getXAxis().setAxisMaximum((float) X_INTERVAL_SECONDS);
+      chart
+          .getXAxis()
+          .setValueFormatter(
+              new IAxisValueFormatter() {
+                @NonNull
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                  return formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, (long) value);
+                }
+              });
+      chart.setMinOffset(8f);
+      chart.setExtraLeftOffset(8f);
+
       LinearLayout graphLayout = findViewById(R.id.hr_graph_layout);
-      graphLayout.addView(graphView);
+      graphLayout.addView(
+          chart, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
     }
 
     load();
@@ -263,17 +308,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode == REQUEST_BLUETOOTH_ENABLE) {
-      if (!hrProvider.isEnabled()) {
-        log("Bluetooth not enabled!");
-        scanButton.setEnabled(false);
-        connectButton.setEnabled(false);
-        return;
-      }
-      load();
-      open();
-      return;
-    }
     if (requestCode == REQUEST_BLUETOOTH_SETTINGS) {
       startScan();
     }
@@ -364,9 +398,36 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   }
 
   private void clearGraph() {
-    DataPoint[] empty = {};
-    graphViewSeries.resetData(empty);
     timerStartTime = 0;
+    lastTimestamp = 0;
+    minHrSeen = Float.POSITIVE_INFINITY;
+    maxHrSeen = Float.NEGATIVE_INFINITY;
+    if (dataSet != null) {
+      dataSet.clear();
+    }
+    if (chart != null) {
+      chart.getXAxis().setAxisMinimum(0f);
+      chart.getXAxis().setAxisMaximum((float) X_INTERVAL_SECONDS);
+      chart.notifyDataSetChanged();
+      chart.invalidate();
+    }
+  }
+
+  private void updateYAxisRange(float hrValue) {
+    minHrSeen = Math.min(minHrSeen, hrValue);
+    maxHrSeen = Math.max(maxHrSeen, hrValue);
+
+    float min = minHrSeen - 5f;
+    float max = maxHrSeen + 5f;
+
+    if (max - min < 20f) {
+      float center = (min + max) / 2f;
+      min = center - 10f;
+      max = center + 10f;
+    }
+
+    chart.getAxisLeft().setAxisMinimum(min);
+    chart.getAxisLeft().setAxisMaximum(max);
   }
 
   private void updateView() {
@@ -650,9 +711,6 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     hrReader = null;
   }
 
-  private long lastTimestamp = 0;
-  private long timerStartTime = 0;
-
   private void readHR() {
     if (hrProvider == null) {
       return;
@@ -667,23 +725,33 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     long hrValue = data.hrValue;
     if (timerStartTime == 0) {
       timerStartTime = age;
-      DataPoint[] empty = {};
-      graphViewSeries.resetData(empty);
+      minHrSeen = Float.POSITIVE_INFINITY;
+      maxHrSeen = Float.NEGATIVE_INFINITY;
+      if (dataSet != null) {
+        dataSet.clear();
+      }
     }
 
     tvHR.setText(String.format(Locale.getDefault(), "%d", hrValue));
     if (age != lastTimestamp) {
       double x = (age - timerStartTime) / 1000.0;
-      graphViewSeries.appendData(new DataPoint(x, hrValue), true, GRAPH_HISTORY_SIZE);
-      lastTimestamp = age;
+      if (dataSet != null) {
+        float hr = (float) hrValue;
+        dataSet.addEntry(new Entry<>((float) x, hr, null, null));
+        updateYAxisRange(hr);
+        while (dataSet.getEntryCount() > GRAPH_HISTORY_SIZE) {
+          dataSet.removeEntry(0);
+        }
 
-      // graphView works weird with live data
-      graphView.getViewport().setMinY(graphViewSeries.getLowestValueY());
-      graphView.getViewport().setMaxY(graphViewSeries.getHighestValueY());
-      if (x > xInterval) {
-        graphView.getViewport().setMinX(x - xInterval);
-        graphView.getViewport().setMaxX(x);
+        if (x > X_INTERVAL_SECONDS) {
+          chart.getXAxis().setAxisMinimum((float) (x - X_INTERVAL_SECONDS));
+          chart.getXAxis().setAxisMaximum((float) x);
+        }
+
+        chart.notifyDataSetChanged();
+        chart.invalidate();
       }
+      lastTimestamp = age;
     }
   }
 

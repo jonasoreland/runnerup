@@ -339,7 +339,7 @@
   <string name="GPS_recording_category">GPS记录</string>
   <string name="Phone_sensors_category">手机传感器</string>
   <string name="Database_category">数据库维护</string>
-  <string name="Maintenance_explanation_summary">RunnerUp会把训练数据保存到一个SQL数据库。\n为了维护，可以把runnerup.db.export文件从\n%1$s导入/导出</string>
+  <string name="Maintenance_explanation_summary_v2">RunnerUp会把训练数据保存到一个SQL数据库。\n为了维护，可以把runnerup.db.export文件从\n%1$s导入/导出</string>
   <string name="Map_pref_summary">地图风格</string>
   <string name="Workout_pref_summary">管理训练、分段、休息、虚拟兔子</string>
   <string name="Manage_workouts_category">高级训练</string>
@@ -353,4 +353,5 @@
   <string name="Current_speed_from_GPS_points_summary">使用GPS传感器获取速度而非根据GPS位置计算速度</string>
   <string name="Target_coaching_summary">设置计算目标反馈的移动平均值的周期和音频提示的宽限期</string>
   <string name="Activity_ongoing">运动开始</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
 </resources>

@@ -17,8 +17,6 @@
   <string name="cue_activity">aktivitet</string>
   <string name="cue_interval">intervall</string>
   <string name="cue_lap">runde</string>
-  <string name="cue_warmup">oppvarming</string>
-  <string name="cue_cooldown">nedkjøling</string>
   <string name="cue_current">nåværende</string>
   <string name="cue_perkilometer">per kilometer</string>
   <string name="cue_permile">per mil</string>

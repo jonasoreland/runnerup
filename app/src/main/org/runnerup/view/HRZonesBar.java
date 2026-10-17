@@ -21,11 +21,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import org.runnerup.R;
 
 public class HRZonesBar extends View {
 
@@ -42,11 +38,12 @@ public class HRZonesBar extends View {
         Color.blue(colorHigh) - dColorLow[2]
       };
 
-  private static final float borderSize = 10; // Border around the chart
+  private static final float borderSize = 6; // Border around the chart
   private static final float separatorSize = 2; // Separator between two zones
-  private static final int minBarHeight = 15;
-  private static final int maxBarHeight = 40;
-  private static final double chartSize = 0.8;
+  private static final int minBarHeight = 32;
+  private static final int maxBarHeight = 64;
+  private static final int preferredBarHeight = 48;
+  private static final float minChartWidth = 120f;
 
   private final Paint paint = new Paint();
   private final Paint fontPaint = new Paint();
@@ -59,6 +56,20 @@ public class HRZonesBar extends View {
 
   public void pushHrzData(double[] data) {
     this.hrzData = data;
+    requestLayout();
+    invalidate();
+  }
+
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int zoneCount = hrzData != null && hrzData.length > 0 ? hrzData.length : 6;
+    int desiredHeight =
+        (int)
+            Math.ceil(
+                2 * borderSize + zoneCount * preferredBarHeight + (zoneCount - 1) * separatorSize);
+    int measuredWidth = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+    int measuredHeight = resolveSize(desiredHeight, heightMeasureSpec);
+    setMeasuredDimension(measuredWidth, measuredHeight);
   }
 
   public void onDraw(Canvas canvas) {
@@ -67,25 +78,21 @@ public class HRZonesBar extends View {
     }
 
     // calculate bar height and chart offset
-    AppCompatActivity activity = (AppCompatActivity) getContext();
-    LinearLayout buttons = activity.findViewById(R.id.buttons);
-
-    int actualHeight = getHeight() - buttons.getHeight();
+    int actualHeight = getHeight();
     float calculatedBarHeight =
         (actualHeight - 2 * borderSize - (hrzData.length - 1) * separatorSize)
             / hrzData.length; // Height of the bar
-    calculatedBarHeight = calculatedBarHeight > maxBarHeight ? maxBarHeight : calculatedBarHeight;
-    int topOffset = getTop();
+    calculatedBarHeight = Math.min(calculatedBarHeight, maxBarHeight);
+    calculatedBarHeight = Math.max(calculatedBarHeight, minBarHeight);
+    int topOffset = 0;
 
     float totalWidth = getWidth();
-    if (totalWidth <= 0 || calculatedBarHeight < 10) {
-      Log.i(getClass().getName(), "Not enough space to display the heart-rate zone bar");
-      activity.findViewById(R.id.hrzonesBarLayout).setVisibility(View.GONE);
+    if (totalWidth <= 0 || calculatedBarHeight <= 0) {
       return;
     }
 
     // Font size and style
-    int fontSize = (int) calculatedBarHeight / 2;
+    int fontSize = Math.max(15, (int) (calculatedBarHeight * 0.675f));
     fontPaint.setTextSize(fontSize);
     fontPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
     fontPaint.setColor(Color.WHITE);
@@ -103,6 +110,20 @@ public class HRZonesBar extends View {
       sum += aHrzData;
     }
 
+    float maxLabelWidth = 0;
+    for (int i = 0; i < hrzData.length; i++) {
+      String zoneName = getResources().getString(org.runnerup.common.R.string.Zone) + " " + i;
+      maxLabelWidth = Math.max(maxLabelWidth, fontPaint.measureText(zoneName));
+    }
+    float percentTextWidth = fontPaint.measureText("100%");
+    float chartWidth = Math.max(0f, totalWidth - maxLabelWidth - percentTextWidth - 5 * borderSize);
+    float requiredWidth = maxLabelWidth + percentTextWidth + minChartWidth + 5 * borderSize;
+    int requiredWidthPx = (int) Math.ceil(requiredWidth);
+    if (getMinimumWidth() != requiredWidthPx) {
+      setMinimumWidth(requiredWidthPx);
+      requestLayout();
+    }
+
     // do the drawing
     for (int i = 0; i < hrzData.length; i++) {
       int rectColor =
@@ -113,26 +134,36 @@ public class HRZonesBar extends View {
       paint.setColor(rectColor);
 
       // calculate per cent value of Zone duration
-      double hrzPart = hrzData[i] / sum;
+      double hrzPart = sum > 0 ? hrzData[i] / sum : 0.0;
       float percent = Math.round((float) hrzPart * 100);
 
       // calculate text and bar length
       String zoneName = getResources().getString(org.runnerup.common.R.string.Zone) + " " + i;
-      float textLen = fontPaint.measureText(zoneName);
-      float chartWidth = (float) ((totalWidth - textLen - 4 * borderSize) * chartSize);
+      String percentText = percent + "%";
       float barLen = (float) (chartWidth * hrzPart);
 
       // elements x-offset
       float zoneOffset = borderSize;
-      float barOffset = zoneOffset + textLen + borderSize;
+      float barOffset = zoneOffset + maxLabelWidth + borderSize;
       float percentOffset = barOffset + chartWidth + borderSize;
+      float percentWidth = fontPaint.measureText(percentText);
+      float extraInsideInset =
+          percent >= 100
+              ? fontPaint.measureText("100.0%")
+              : percent >= 10 ? fontPaint.measureText("20.0%") : fontPaint.measureText("2.0%");
+      float percentInsideOffset =
+          Math.max(
+              barOffset + borderSize,
+              barOffset + chartWidth - percentWidth - borderSize + extraInsideInset);
       //noinspection IntegerDivisionInFloatingPointContext
       float y = topOffset + (i + 1) * borderSize + calculatedBarHeight * (i + 1) - fontSize / 2;
 
       // draw actual values and bars
-      if (calculatedBarHeight > minBarHeight) {
-        canvas.drawText(zoneName, zoneOffset, y, fontPaint);
-        canvas.drawText(percent + "%", percentOffset, y, fontPaint);
+      canvas.drawText(zoneName, zoneOffset, y, fontPaint);
+      if (percentOffset + percentWidth <= totalWidth - borderSize) {
+        canvas.drawText(percentText, percentOffset, y, fontPaint);
+      } else {
+        canvas.drawText(percentText, percentInsideOffset, y, fontPaint);
       }
 
       if (hrzPart >= 0) {
