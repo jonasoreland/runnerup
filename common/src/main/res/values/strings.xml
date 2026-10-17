@@ -329,7 +329,7 @@
     <string name="Lap_start">Lap start</string>
     <string name="Lap_start_summary">Cue for start of laps and Active, Warmup, and Cooldown steps</string>
     <string name="Lock_activity_buttons">Lock activity buttons</string>
-    <string name="Lock_activity_buttons_message">Lock activity buttons by fast tapping the header</string>
+    <string name="Lock_activity_buttons_message">Toggle lock stop/pause buttons by fast tapping the screen</string>
     <string name="Volume_button_controls">Volume button controls</string>
     <string name="Volume_button_controls_summary">Use volume up to lap and volume down to pause</string>
     <string name="Speed">Speed</string>
