@@ -4,7 +4,6 @@ import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,13 +33,11 @@ public class WearableClient {
               public void onComplete(@NonNull Task<DataItemBuffer> task) {
                 if (task.isSuccessful()) {
                   DataItemBuffer dataItems = task.getResult();
-                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    if (dataItems.getCount() == 0) {
-                      consumer.accept(null);
-                    } else {
-                      for (DataItem dataItem : dataItems) {
-                        consumer.accept(dataItem);
-                      }
+                  if (dataItems.getCount() == 0) {
+                    consumer.accept(null);
+                  } else {
+                    for (DataItem dataItem : dataItems) {
+                      consumer.accept(dataItem);
                     }
                   }
                   dataItems.release();

@@ -24,7 +24,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -171,8 +170,7 @@ public class AccountActivity extends AppCompatActivity implements Constants {
             tv.setTag(synchronizer.getPublicUrl());
             // FileSynchronizer: SDK 24 requires the file URI to be handled as FileProvider
             // Something like OI File Manager is needed too
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N
-                || !synchronizer.getName().equals(FileSynchronizer.NAME)) {
+            if (!synchronizer.getName().equals(FileSynchronizer.NAME)) {
               tv.setOnClickListener(urlButtonClick);
             }
           } else {
