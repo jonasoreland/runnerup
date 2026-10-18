@@ -36,11 +36,6 @@
 -dontwarn com.dsi.ant.**
 
 ############################
-# GraphView
-
--dontnote com.jjoe64.graphview.LegendRenderer
-
-############################
 # other, unknown
 -dontnote Object
 

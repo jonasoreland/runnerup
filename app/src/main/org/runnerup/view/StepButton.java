@@ -303,9 +303,11 @@ public class StepButton extends LinearLayout {
                 targetPaceHi.setVisibility(View.VISIBLE);
                 if (target != null) {
                   targetPaceLo.setValue(
-                      formatter.formatPace(Formatter.Format.TXT_SHORT, target.minValue));
+                      formatter.format(
+                          Formatter.Format.TXT_SHORT, Dimension.PACE, target.minValue));
                   targetPaceHi.setValue(
-                      formatter.formatPace(Formatter.Format.TXT_SHORT, target.maxValue));
+                      formatter.format(
+                          Formatter.Format.TXT_SHORT, Dimension.PACE, target.maxValue));
                 }
                 targetHrz.setVisibility(View.GONE);
                 break;
