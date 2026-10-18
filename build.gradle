@@ -20,9 +20,9 @@ project.ext {
     //Common settings for most builds
     //Note that Android Studio does not know about the 'ext' module and will warn
     buildToolsVersion = '37.0.0' // also .github/workflows/actions.yml
-    compileSdk = 37.2 // also .github/workflows/actions.yml
-    targetSdk = 37.2
-    minSdk = 23
+    compileSdk = 37.1 // also .github/workflows/actions.yml
+    targetSdk = 37.1
+    minSdk = 24
 
     appcompat_version = "1.8.0"
     annotation_version = "1.9.1"
@@ -35,7 +35,7 @@ project.ext {
     mockitoVersion = '5.24.0'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.12.0.0'
+    versionName = '2.12.0.1'
     // wear uses +1, only set even codes
     versionCode = 374
     latestBaseVersionCode = minSdk * 1000000
