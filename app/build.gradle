@@ -174,7 +174,7 @@ dependencies {
         latestImplementation "com.google.android.gms:play-services-location:${rootProject.ext.googlePlayServicesVersion}"
     }
     if (rootProject.ext.mapboxEnabled) {
-        latestImplementation 'com.mapbox.maps:android-ndk27:11.17.1'
+        latestImplementation 'com.mapbox.maps:android-ndk27:11.32.1'
     } else {
         implementation 'org.osmdroid:osmdroid-android:6.1.20'
     }
