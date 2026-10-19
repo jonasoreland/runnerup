@@ -173,6 +173,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   private void handleImportUri(Uri data) {
     String fileName = getFilename(data);
     if (fileName == null) fileName = "noname";
+    fileName = fileName.replace('/', '_').replace('\\', '_').trim();
+    if (fileName.isEmpty()) fileName = "noname";
+    if (fileName.length() > 128) fileName = fileName.substring(0, 128);
     try {
       importData(fileName, data);
     } catch (Exception e) {
