@@ -102,7 +102,7 @@
   <string name="Manage_workouts">Kelola latihan</string>
   <string name="Settings">Setelan</string>
   <string name="Whats_new">Apa yang baru</string>
-  <string name="Rate_RunnerUp">Menilai RunnerUp</string>
+  <string name="Rate_RunnerUp">Menilai Relven</string>
   <string name="Enable_GPS">Hidupkan GPS</string>
   <string name="Waiting_for_GPS">Menunggu GPS</string>
   <string name="Start_activity">Mulai aktivitas</string>
@@ -143,7 +143,7 @@
   <string name="Experimental_HRM_devices">Gawai MDJ eksperimental</string>
   <string name="Experimental_features">Fitur eksperimental</string>
   <string name="Mock_HRM_devices">Tirukan peranti MDJ</string>
-  <string name="About_RunnerUp">Tentang RunnerUp</string>
+  <string name="About_RunnerUp">Tentang Relven</string>
   <string name="Triggers">Picu</string>
   <string name="Cue_interval_s">Interval isyarat</string>
   <string name="Cue_intervall_m">Interval isyarat (m)</string>
@@ -185,7 +185,7 @@
   <string name="Activity_ready">Aktivitas siap</string>
   <string name="Ready_to_start_running">Siap untuk berlari!</string>
   <string name="Searching_for_GPS">Mencari GPS</string>
-  <string name="RunnerUp_activity_started">Aktivitas RunnerUp dimulai</string>
+  <string name="RunnerUp_activity_started">Aktivitas Relven dimulai</string>
   <string name="Low_HRM_battery_level">Sisa baterai MDJ rendah</string>
   <string name="High_HRM_battery_level">Sisa baterai MDJ tinggi</string>
   <string name="Warning">Peringatan</string>

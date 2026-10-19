@@ -119,7 +119,7 @@
   <string name="Manage_workouts">Hallitse harjoituksia</string>
   <string name="Settings">Asetukset</string>
   <string name="Whats_new">Uusia ominaisuuksia</string>
-  <string name="Rate_RunnerUp">Arvioi RunnerUp</string>
+  <string name="Rate_RunnerUp">Arvioi Relven</string>
   <string name="Enable_GPS">Kytke GPS päälle</string>
   <string name="Waiting_for_GPS">Odotetaan GPS signaalia...</string>
   <string name="Start_activity">Aloita harjoitus</string>
@@ -163,7 +163,7 @@
   <string name="Experimental_HRM_devices">Kokeelliset sykemittarit</string>
   <string name="Experimental_features">Kokeelliset ominaisuudet</string>
   <string name="Mock_HRM_devices">Feikkaa sykemittari</string>
-  <string name="About_RunnerUp">Tietoja RunnerUp sovelluksesta</string>
+  <string name="About_RunnerUp">Tietoja Relven sovelluksesta</string>
   <string name="Triggers">Aktivoinnit</string>
   <string name="Cue_interval_s">Äänipalautteen intervalli (s)</string>
   <string name="Cue_intervall_m">Äänipalautteen intervalli (m)</string>
@@ -209,7 +209,7 @@
   <string name="Activity_ready">Harjoitus valmis</string>
   <string name="Ready_to_start_running">Valmistaudu juoksemaan!</string>
   <string name="Searching_for_GPS">Etsitään GPS signaalia</string>
-  <string name="RunnerUp_activity_started">RunnerUp harjoitus käynnissä</string>
+  <string name="RunnerUp_activity_started">Relven harjoitus käynnissä</string>
   <string name="Low_HRM_battery_level">Sykemittarin akun varaus alhainen</string>
   <string name="High_HRM_battery_level">Sykemittarin akun varaus ok</string>
   <string name="Warning">Varoitus</string>

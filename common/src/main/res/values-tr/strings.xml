@@ -109,7 +109,7 @@
   <string name="Manage_workouts">Çalışmaları yönet</string>
   <string name="Settings">Ayarlar</string>
   <string name="Whats_new">Yenilikler neler</string>
-  <string name="Rate_RunnerUp">RunnerUp\'ı Puanla</string>
+  <string name="Rate_RunnerUp">Relven\'ı Puanla</string>
   <string name="Enable_GPS">GPS\'i Etkinleştir</string>
   <string name="Waiting_for_GPS">GPS bekleniyor...</string>
   <string name="Start_activity">Etkinliğe başla</string>
@@ -179,7 +179,7 @@
   <string name="Activity_ready">Etkinlik hazır</string>
   <string name="Ready_to_start_running">Koşuya başlamaya hazır!</string>
   <string name="Searching_for_GPS">GPS Aranıyor</string>
-  <string name="RunnerUp_activity_started">RunnerUp etkinliği başladı</string>
+  <string name="RunnerUp_activity_started">Relven etkinliği başladı</string>
   <string name="Low_HRM_battery_level">Düşük nabız izleyici pil düzeyi</string>
   <string name="High_HRM_battery_level">Yüksek nabız izleyici pil düzeyi</string>
   <string name="Warning">Uyarı</string>

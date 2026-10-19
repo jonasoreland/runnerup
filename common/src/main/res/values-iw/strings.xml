@@ -126,7 +126,7 @@
   <string name="Manage_workouts">ניהול אימונים</string>
   <string name="Settings">הגדרות</string>
   <string name="Whats_new">מה חדש</string>
-  <string name="Rate_RunnerUp">דירוג RunnerUp</string>
+  <string name="Rate_RunnerUp">דירוג Relven</string>
   <string name="Enable_GPS">הפעלת GPS</string>
   <string name="Waiting_for_GPS">ממתין ל-GPS…</string>
   <string name="Start_activity">התחלת פעילות</string>
@@ -195,7 +195,7 @@
   <string name="Paired_BLE_devices">התקני BLE מותאמים</string>
   <string name="Experimental_features">תכונות ניסיוניות</string>
   <string name="Mock_HRM_devices">מכשיר דופק מדומים</string>
-  <string name="About_RunnerUp">אודות RunnerUp</string>
+  <string name="About_RunnerUp">אודות Relven</string>
   <string name="Triggers">מניעים</string>
   <string name="Time_triggered_audio_cue">מניע זמן</string>
   <string name="Time_triggered_audio_cue_summary">משוב תקופתי</string>
@@ -250,7 +250,7 @@
   <string name="Activity_ready">פעילות מוכנה</string>
   <string name="Ready_to_start_running">מוכן להתחלת הריצה!</string>
   <string name="Searching_for_GPS">מחפש GPS</string>
-  <string name="RunnerUp_activity_started">פעילות RunnerUp החלה</string>
+  <string name="RunnerUp_activity_started">פעילות Relven החלה</string>
   <string name="Low_HRM_battery_level">רמת סוללה במד הדופק נמוכה</string>
   <string name="High_HRM_battery_level">רמת סוללה במד הדופק גבוהה</string>
   <string name="Warning">אזהרה</string>
@@ -275,7 +275,7 @@
   <string name="Create_new_workout">יצירת אימון חדש</string>
   <string name="Set_workout_name">הגדרת שם אימון</string>
   <string name="Delete_workout">מחיקת אימון</string>
-  <string name="RunnerUp_workout">אימון RunnerUp</string>
+  <string name="RunnerUp_workout">אימון Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">היי\nיש לי הרגשה שהאימון הזה בשבילך.</string>
   <string name="Share_workout">שיתוף אימון…</string>
   <string name="New_audio_scheme">ערכת אודיו חדשה</string>
@@ -284,7 +284,7 @@
   <string name="GPS_permission_text_pre_Android10">נדרשת הרשאת מיקום בהגדרות המערכת</string>
   <string name="Request_permission_text">התר הרשאות בלחיצה על \"אישור\".</string>
   <string name="Battery_optimization_check">אופטימיזציית סוללה מופעלת</string>
-  <string name="Battery_optimization_check_text">אופטימיזציית סוללה תפחית את הדיוק.\nלחץ על אישור כדי לעבור להגדרות המערכת \"כל היישומים\", חפש את \"RunnerUp\", ובחר \"אל תבצע אופטימיזציה\".</string>
+  <string name="Battery_optimization_check_text">אופטימיזציית סוללה תפחית את הדיוק.\nלחץ על אישור כדי לעבור להגדרות המערכת \"כל היישומים\", חפש את \"Relven\", ובחר \"אל תבצע אופטימיזציה\".</string>
   <string name="Default">ברירת מחדל</string>
   <string name="Notes_about_your_workout">הערות אימון</string>
   <string name="Downloading_from_1s">מוריד מ-%1$s</string>
@@ -308,7 +308,7 @@
   <string name="use_temperature_sensor">חיישן טמפרטורה</string>
   <string name="use_pressure_sensor_title">חיישן לחץ</string>
   <string name="use_pressure_sensor_summary">השתמש בברומטר לחישוב הגובה</string>
-  <string name="channel_notification_ongoing">התראות GPS ופעילויות RunnerUp</string>
+  <string name="channel_notification_ongoing">התראות GPS ופעילויות Relven</string>
   <string name="Lap_start">התחלת הקפה</string>
   <string name="Lap_start_summary">רמז לתחילת הקפות ושלבי פעילות, חימום והתקררות</string>
   <string name="Lock_activity_buttons">נעילת מקשי פעילות</string>
@@ -325,7 +325,7 @@
   <string name="File_format">העלאת קובץ כ:</string>
   <string name="File_need_one_format">יש לציין פורמט אחד לפחות</string>
   <string name="tts_not_available_title">טקסט לדיבור אינו זמין</string>
-  <string name="tts_not_available">RunnerUp דורש מנוע טקסט לדיבור פועל להשמעת רמזי האודיו. נא לוודא כי התקנת מנוע טקסט לדיבור אחד לפחות.</string>
+  <string name="tts_not_available">Relven דורש מנוע טקסט לדיבור פועל להשמעת רמזי האודיו. נא לוודא כי התקנת מנוע טקסט לדיבור אחד לפחות.</string>
   <!--Preference categories & summaries-->
   <string name="GPS_category">GPS</string>
   <string name="HRM_category">קצב לב</string>

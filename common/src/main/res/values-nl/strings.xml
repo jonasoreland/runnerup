@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Trainingen beheren</string>
   <string name="Settings">Instellingen</string>
   <string name="Whats_new">Wat is nieuw</string>
-  <string name="Rate_RunnerUp">RunnerUp beoordelen</string>
+  <string name="Rate_RunnerUp">Relven beoordelen</string>
   <string name="Enable_GPS">GPS inschakelen</string>
   <string name="Waiting_for_GPS">Wachten op GPS signaal</string>
   <string name="Start_activity">Activiteit starten</string>
@@ -192,7 +192,7 @@
   <string name="Experimental_HRM_devices">Experimentele HRM apparaten</string>
   <string name="Experimental_features">Experimentele functies</string>
   <string name="Mock_HRM_devices">Onechte HRM apparaten</string>
-  <string name="About_RunnerUp">Over RunnerUp</string>
+  <string name="About_RunnerUp">Over Relven</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Tijdtrigger</string>
   <string name="Time_triggered_audio_cue_summary">Periodieke feedback</string>
@@ -247,7 +247,7 @@
   <string name="Activity_ready">Activiteit is gereed</string>
   <string name="Ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
   <string name="Searching_for_GPS">Zoeken naar GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp activiteit gestart</string>
+  <string name="RunnerUp_activity_started">Relven activiteit gestart</string>
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
@@ -272,14 +272,14 @@
   <string name="Create_new_workout">Nieuwe training maken</string>
   <string name="Set_workout_name">Training naam instellen</string>
   <string name="Delete_workout">Verwijder training</string>
-  <string name="RunnerUp_workout">RunnerUp-training</string>
+  <string name="RunnerUp_workout">Relven-training</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hoi\nIk denk dat je deze training leuk zal vinden.</string>
   <string name="Share_workout">Deel training...</string>
   <string name="New_audio_scheme">Nieuw audio schema</string>
   <string name="GPS_permission_text_pre_Android10">Locatie machtiging vereist in systeeminstellingen</string>
   <string name="Request_permission_text">Sta machtiging toe door op \"OK\" te drukken.</string>
   <string name="Battery_optimization_check">Batterijoptimalisatie actief</string>
-  <string name="Battery_optimization_check_text">Batterijoptimalisatie zal de nauwkeurigheid afnemen.\nDruk OK om in de systeem instellingen te gaan en selecteer \\"Alle apps\\", zoek naar \\"RunnerUp\\", selecteer \\"Niet optimaliseren\\".</string>
+  <string name="Battery_optimization_check_text">Batterijoptimalisatie zal de nauwkeurigheid afnemen.\nDruk OK om in de systeem instellingen te gaan en selecteer \\"Alle apps\\", zoek naar \\"Relven\\", selecteer \\"Niet optimaliseren\\".</string>
   <string name="Default">Standaard</string>
   <string name="Notes_about_your_workout">Trainingopmerkingen</string>
   <string name="Downloading_from_1s">Downloaden van %1$s</string>
@@ -303,7 +303,7 @@
   <string name="use_temperature_sensor">Temperatuur sensor</string>
   <string name="use_pressure_sensor_title">Druk sensor</string>
   <string name="use_pressure_sensor_summary">Gebruik barometer om hoogte te berekenen</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS en activiteitsmeldingen</string>
+  <string name="channel_notification_ongoing">Relven GPS en activiteitsmeldingen</string>
   <string name="Lap_start">Rondestart</string>
   <string name="Lap_start_summary">Cue voor starten rondes en stappen \"Actief\", \"Warming-up\" en \"Cooling-down\"</string>
   <string name="Lock_activity_buttons">Activiteitsknoppen vergrendelen</string>
@@ -320,7 +320,7 @@
   <string name="File_format">Upload bestanden als:</string>
   <string name="File_need_one_format">Je moet tenminste een formaat kiezen</string>
   <string name="tts_not_available_title">Spraakinstellingen zijn niet beschikbaar</string>
-  <string name="tts_not_available">RunnerUp vereist een werkende Text naar Spraak om de audio cues af te spelen. Gelieve er voor te zorgen dat minstens één Tekst naar Spraak geïnstalleerd is.</string>
+  <string name="tts_not_available">Relven vereist een werkende Text naar Spraak om de audio cues af te spelen. Gelieve er voor te zorgen dat minstens één Tekst naar Spraak geïnstalleerd is.</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Hartslag</string>
   <string name="Autopause_category">Automatische pauze</string>

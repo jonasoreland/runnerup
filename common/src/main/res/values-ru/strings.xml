@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Управление тренировкой</string>
   <string name="Settings">Настройки</string>
   <string name="Whats_new">Что нового</string>
-  <string name="Rate_RunnerUp">Оценить RunnerUp</string>
+  <string name="Rate_RunnerUp">Оценить Relven</string>
   <string name="Enable_GPS">Включить GPS</string>
   <string name="Waiting_for_GPS">Ожидание GPS</string>
   <string name="Start_activity">Старт</string>
@@ -190,7 +190,7 @@
   <string name="Paired_BLE_devices">Сопряженные BLE-устройства</string>
   <string name="Experimental_features">Экспериментальные функции</string>
   <string name="Mock_HRM_devices">Имитировать датчик HRM</string>
-  <string name="About_RunnerUp">О RunnerUp</string>
+  <string name="About_RunnerUp">О Relven</string>
   <string name="Triggers">Получать информацию через интервалы:</string>
   <string name="Time_triggered_audio_cue">Сигнал по времени</string>
   <string name="Time_triggered_audio_cue_summary">Периодический отчет</string>
@@ -270,7 +270,7 @@
   <string name="Create_new_workout">Создать новую тренировку</string>
   <string name="Set_workout_name">Название тренировки</string>
   <string name="Delete_workout">Удалить тренировку</string>
-  <string name="RunnerUp_workout">Тренировка RunnerUp:</string>
+  <string name="RunnerUp_workout">Тренировка Relven:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Привет!\nМне кажется, вам может понравиться эта тренировка.</string>
   <string name="Share_workout">Опубликовать</string>
   <string name="New_audio_scheme">Новая голосовая схема</string>
@@ -279,7 +279,7 @@
   <string name="GPS_permission_text_pre_Android10">Требуется разрешение на определение местоположения через настройки системы</string>
   <string name="Request_permission_text">Нажмите \"ОК\", что бы разрешить.</string>
   <string name="Battery_optimization_check">Оптимизация батареи включена</string>
-  <string name="Battery_optimization_check_text">Экономия заряда батареи снижает точность.\nЧтобы исправить, нажмите OK для перехода к системным настройкам \"Экономия заряда батарей\", затем переключите на \"Все приложения\", в списке найдите \"RunnerUp\" и выберите его, далее выберите \"Не экономить\" и нажмите \"Готово\".</string>
+  <string name="Battery_optimization_check_text">Экономия заряда батареи снижает точность.\nЧтобы исправить, нажмите OK для перехода к системным настройкам \"Экономия заряда батарей\", затем переключите на \"Все приложения\", в списке найдите \"Relven\" и выберите его, далее выберите \"Не экономить\" и нажмите \"Готово\".</string>
   <string name="Battery_optimization_check_text_Android9">Оптимизация батареи снизит точность.\nНажмите OK, чтобы перейти к настройкам приложения, выберите \"Использование батареи\" и выберите \"Неограниченно\" или \"Не оптимизировать\".</string>
   <string name="Default">По умолчанию</string>
   <string name="Notes_about_your_workout">Заметка к тренировке</string>
@@ -304,7 +304,7 @@
   <string name="use_temperature_sensor">Датчик температуры</string>
   <string name="use_pressure_sensor_title">Датчик давления</string>
   <string name="use_pressure_sensor_summary">Использовать барометр для вычисления перепадов высот</string>
-  <string name="channel_notification_ongoing">RunnerUp: уведомления об активности</string>
+  <string name="channel_notification_ongoing">Relven: уведомления об активности</string>
   <string name="Lap_start">Новый круг</string>
   <string name="Lap_start_summary">Сигнал для начала кругов и этапов Движения, Разминки и Заминки</string>
   <string name="Lock_activity_buttons">Блокировка кнопок</string>
@@ -322,7 +322,7 @@
   <string name="File_format">Загрузить файлы:</string>
   <string name="File_need_one_format">Вы должны выбрать хотя бы один из форматов</string>
   <string name="tts_not_available_title">TTS не доступен</string>
-  <string name="tts_not_available">RunnerUp требует работающего TTS для воспроизведения звуковых сигналов. Убедитесь, что у вас установлен хотя бы один работающий TTS.</string>
+  <string name="tts_not_available">Relven требует работающего TTS для воспроизведения звуковых сигналов. Убедитесь, что у вас установлен хотя бы один работающий TTS.</string>
   <string name="Catch_backbuttonpress">Для выхода нажмите еще раз Назад</string>
   <string name="check_internet_connection">Пожалуйста, проверьте ваше интернет-соединение</string>
   <!--Preference categories & summaries-->

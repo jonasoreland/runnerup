@@ -135,7 +135,7 @@
   <string name="Workout_name_already_in_use">Namnet på träningspasset används redan</string>
   <string name="Settings">Inställningar</string>
   <string name="Whats_new">Nyheter</string>
-  <string name="Rate_RunnerUp">Recensera RunnerUp</string>
+  <string name="Rate_RunnerUp">Recensera Relven</string>
   <string name="Enable_GPS">Slå på GPS</string>
   <string name="Waiting_for_GPS">Väntar på GPS</string>
   <string name="Start_activity">Starta aktivitet</string>
@@ -206,7 +206,7 @@
   <string name="Experimental_features">Experimentella funktioner</string>
   <string name="Mock_HRM_devices">Sken-pulsmätare</string>
   <string name="Debug_HRM">Debugga HR</string>
-  <string name="About_RunnerUp">Om RunnerUp</string>
+  <string name="About_RunnerUp">Om Relven</string>
   <string name="Triggers">Starta ljud vid</string>
   <string name="Time_triggered_audio_cue">Tid trigger</string>
   <string name="Time_triggered_audio_cue_summary">Periodisk återkoppling</string>
@@ -261,7 +261,7 @@
   <string name="Activity_ready">Aktivitet redo</string>
   <string name="Ready_to_start_running">Redo att springa!</string>
   <string name="Searching_for_GPS">Söker efter GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startad</string>
+  <string name="RunnerUp_activity_started">Relven-aktivitet startad</string>
   <string name="Low_HRM_battery_level">Låg batterinivå i pulsmätare</string>
   <string name="High_HRM_battery_level">Hög batterinivå i pulsmätare</string>
   <string name="Warning">Varning</string>
@@ -286,7 +286,7 @@
   <string name="Create_new_workout">Skapa nytt träningspass</string>
   <string name="Set_workout_name">Ange namn för träningspass</string>
   <string name="Delete_workout">Ta bort träningspass</string>
-  <string name="RunnerUp_workout">RunnerUp träningspass</string>
+  <string name="RunnerUp_workout">Relven träningspass</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hej\nHär är ett träningspass jag tror du skulle gilla.</string>
   <string name="Share_workout">Dela träningspass…</string>
   <string name="New_audio_scheme">Nytt ljudschema</string>
@@ -297,7 +297,7 @@
   <string name="GPS_permission_text_Android12">Behörighet för Plats behövs i systeminställningar, också då appen är i bakgrunden (\"Tillåt alltid\" i inställningarna).\nFör stegfrekvens behövs behörighet för Kroppssensorer och Bluetooth behöver \"Enheter i närheten\".</string>
   <string name="Request_permission_text">Tillåt behörighet genom att klicka OK.</string>
   <string name="Battery_optimization_check">Batterioptimering aktiverad</string>
-  <string name="Battery_optimization_check_text">Batterioptimering minskar noggrannheten.\nVälj OK för att gå till inställningar, välj \"Alla appar\", sök efter \"RunnerUp\", välj \"Optimera inte\".</string>
+  <string name="Battery_optimization_check_text">Batterioptimering minskar noggrannheten.\nVälj OK för att gå till inställningar, välj \"Alla appar\", sök efter \"Relven\", välj \"Optimera inte\".</string>
   <string name="Battery_optimization_check_text_Android9">Batterioptimering kan få Android att stoppa inspelningar som kör i bakgrunden.\nVälj OK för att gå till app inställningar, välj \\"Batteri användning\\", välj \\"Tillåt bakgrundsaktivitet\\", välj \\"Optimera inte\\" eller \\"Obegränsad\\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Anteckningar om träningspasset</string>
@@ -323,7 +323,7 @@
   <string name="use_temperature_sensor">Temperatursensor</string>
   <string name="use_pressure_sensor_title">Trycksensor</string>
   <string name="use_pressure_sensor_summary">Använd barometer för höjd</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS och aktivtets notifikationer</string>
+  <string name="channel_notification_ongoing">Relven GPS och aktivtets notifikationer</string>
   <string name="Lap_start">Varv start</string>
   <string name="Lap_start_summary">Meddelande vid start av varv och Aktiv, Uppvärmning och Nedvarvning steg</string>
   <string name="Lock_activity_buttons">Lås aktivitetsknappar</string>
@@ -343,7 +343,7 @@
   <string name="File_format">Uppladdningsformat:</string>
   <string name="File_need_one_format">Åtminstone ett format behövs</string>
   <string name="tts_not_available_title">Text-till-tal inte tillgänglig</string>
-  <string name="tts_not_available">RunnerUp behöver en text-till-tal motor för att kunna spela upp ljudmeddelanden. Se till att du har åtminstone en fungerande text-till-tall motor installerad.</string>
+  <string name="tts_not_available">Relven behöver en text-till-tal motor för att kunna spela upp ljudmeddelanden. Se till att du har åtminstone en fungerande text-till-tall motor installerad.</string>
   <string name="Catch_backbuttonpress">Tillbaka igen för att avsluta</string>
   <string name="check_internet_connection">Kan inte nå internet</string>
   <!--Preference categories & summaries-->
@@ -353,7 +353,7 @@
   <string name="GPS_recording_category">GPS inspelning</string>
   <string name="Phone_sensors_category">Telefon sensorer</string>
   <string name="Database_category">Databasunderhåll</string>
-  <string name="Maintenance_explanation_summary_v2">RunnerUp sparar aktiviteter i en SQL databas som kan importeras och exporteras.</string>
+  <string name="Maintenance_explanation_summary_v2">Relven sparar aktiviteter i en lokal SQL-databas som kan importeras och exporteras.</string>
   <string name="Map_pref_summary">Karttyp</string>
   <string name="User_interface">Användarinterface</string>
   <string name="User_interface_pref_summary">Knappar och synlighet</string>
@@ -387,5 +387,5 @@
   <string name="SPORT_STATIONARY_BIKE">Träningscykel</string>
   <string name="import_cancelled">Import avbruten</string>
   <string name="export_cancelled">Export avbruten</string>
-  <string name="import_error_invalid_database">Den valda filen är inte en giltlig RunnerUp databas!</string>
+  <string name="import_error_invalid_database">Den valda filen är inte en databas som stöds för säkerhetskopiering.</string>
 </resources>

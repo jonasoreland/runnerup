@@ -1,1 +1,1 @@
-RunnerUp - an open source GPS tracker with advanced workout and audio cues.
+Free running and interval training with GPS and Wear OS companion.

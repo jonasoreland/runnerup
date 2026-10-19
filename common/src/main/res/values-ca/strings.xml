@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Gestiona entrenaments</string>
   <string name="Settings">Configuració</string>
   <string name="Whats_new">Novetats</string>
-  <string name="Rate_RunnerUp">Puntueu RunnerUp</string>
+  <string name="Rate_RunnerUp">Puntueu Relven</string>
   <string name="Enable_GPS">Activa el GPS</string>
   <string name="Waiting_for_GPS">S\'està esperant el GPS</string>
   <string name="Start_activity">Inicia l\'activitat</string>
@@ -192,7 +192,7 @@
   <string name="Experimental_HRM_devices">Dispositius MFC experimentals</string>
   <string name="Experimental_features">Característiques experimentals</string>
   <string name="Mock_HRM_devices">Dispositius MFC simulats</string>
-  <string name="About_RunnerUp">Quant a RunnerUp</string>
+  <string name="About_RunnerUp">Quant a Relven</string>
   <string name="Triggers">Activadors</string>
   <string name="Time_triggered_audio_cue">Activador de temps</string>
   <string name="Time_triggered_audio_cue_summary">Feedback periòdic</string>
@@ -247,7 +247,7 @@
   <string name="Activity_ready">Activitat a punt</string>
   <string name="Ready_to_start_running">A punt per començar a córrer!</string>
   <string name="Searching_for_GPS">S\'està cercant el GPS…</string>
-  <string name="RunnerUp_activity_started">Activitat RunnerUp iniciada</string>
+  <string name="RunnerUp_activity_started">Activitat Relven iniciada</string>
   <string name="Low_HRM_battery_level">Bateria MFC baixa</string>
   <string name="High_HRM_battery_level">Bateria MFC alta</string>
   <string name="Warning">Atenció</string>
@@ -272,14 +272,14 @@
   <string name="Create_new_workout">Nou entrenament</string>
   <string name="Set_workout_name">Nom de l\'entrenament</string>
   <string name="Delete_workout">Suprimeix l\'entrenament</string>
-  <string name="RunnerUp_workout">Entrenament RunnerUp</string>
+  <string name="RunnerUp_workout">Entrenament Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nCrec que aquest entrenament podria agradar-te.</string>
   <string name="Share_workout">Comparteix l\'entrenament…</string>
   <string name="New_audio_scheme">Nou esquema d\'àudio</string>
   <string name="GPS_permission_text_pre_Android10">Habiliteu el permís d\'ubicació a les opcions del sistema</string>
   <string name="Request_permission_text">Habiliteu el permís tocant «D\'acord».</string>
   <string name="Battery_optimization_check">Optimització de bateria habilitada</string>
-  <string name="Battery_optimization_check_text">L\'optimització de la bateria disminueix la precisió.\nToqueu «D\'acord» o bé cerqueu el «RunnerUp» a l\'apartat «Aplicacions» de les opcions del sistema i seleccioneu «No optimitzis».</string>
+  <string name="Battery_optimization_check_text">L\'optimització de la bateria disminueix la precisió.\nToqueu «D\'acord» o bé cerqueu el «Relven» a l\'apartat «Aplicacions» de les opcions del sistema i seleccioneu «No optimitzis».</string>
   <string name="Default">Per defecte</string>
   <string name="Notes_about_your_workout">Notes d\'entrenament</string>
   <string name="Downloading_from_1s">Descarregant des de %1$s</string>
@@ -303,7 +303,7 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressió</string>
   <string name="use_pressure_sensor_summary">Utilitzeu el baròmetre per calcular l\'elevació</string>
-  <string name="channel_notification_ongoing">Notificacions GPS i activitat RunnerUp</string>
+  <string name="channel_notification_ongoing">Notificacions GPS i activitat Relven</string>
   <string name="Lap_start">Inici de tram</string>
   <string name="Lap_start_summary">Pista per a inici de trams i etapes Activitat, Escalfament i Refredament</string>
   <string name="Lock_activity_buttons">Bloqueja els botons d\'activitat</string>
@@ -320,7 +320,7 @@
   <string name="File_format">Carrega els fitxers com a:</string>
   <string name="File_need_one_format">Heu d\'especificar almenys un format.</string>
   <string name="tts_not_available_title">Text a veu no està disponible</string>
-  <string name="tts_not_available">El RunnerUp necessita un motor Text a veu per reproduir senyals d\'àudio. Assegureu-vos que teniu almenys un instal·lat correctament per utilitzar aquesta característica.</string>
+  <string name="tts_not_available">El Relven necessita un motor Text a veu per reproduir senyals d\'àudio. Assegureu-vos que teniu almenys un instal·lat correctament per utilitzar aquesta característica.</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Freqüència cardíaca</string>
   <string name="Autopause_category">Pausa automàtica</string>

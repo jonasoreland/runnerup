@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Zarządzaj treningami</string>
   <string name="Settings">Ustawienia</string>
   <string name="Whats_new">Co nowego</string>
-  <string name="Rate_RunnerUp">Oceń RunnerUp</string>
+  <string name="Rate_RunnerUp">Oceń Relven</string>
   <string name="Enable_GPS">Włącz GPS</string>
   <string name="Waiting_for_GPS">Oczekuję na GPS</string>
   <string name="Start_activity">Rozpocznij</string>
@@ -182,7 +182,7 @@
   <string name="Experimental_HRM_devices">Eksperymentalne urządzenia HRM</string>
   <string name="Experimental_features">Eksperymentalne funkcje</string>
   <string name="Mock_HRM_devices">Imituj urządzenie HRM</string>
-  <string name="About_RunnerUp">O RunnerUp</string>
+  <string name="About_RunnerUp">O Relven</string>
   <string name="Triggers">Wyzwalacze</string>
   <string name="Cue_interval_s">Interwał wskazówek (s)</string>
   <string name="Cue_intervall_m">Interwał wskazówek (m)</string>
@@ -232,7 +232,7 @@
   <string name="Activity_ready">Gotowy</string>
   <string name="Ready_to_start_running">Czas rozpocząć trening!</string>
   <string name="Searching_for_GPS">Szukam GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp trening rozpoczęty</string>
+  <string name="RunnerUp_activity_started">Relven trening rozpoczęty</string>
   <string name="Low_HRM_battery_level">Niski poziom baterii HRM</string>
   <string name="High_HRM_battery_level">Wysoki poziom baterii HRM</string>
   <string name="Warning">Uwaga</string>
@@ -257,7 +257,7 @@
   <string name="Create_new_workout">Utwórz nowy trening</string>
   <string name="Set_workout_name">Nazwa treningu</string>
   <string name="Delete_workout">Usuń aktywność</string>
-  <string name="RunnerUp_workout">Trening RunnerUp</string>
+  <string name="RunnerUp_workout">Trening Relven</string>
   <string name="Share_workout">Podziel się treningiem…</string>
   <string name="New_audio_scheme">Nowy schemat wskazówek</string>
   <string name="GPS_permission_text_pre_Android10">Wymagane uprawnienie do lokalizacji w ustawieniach systemowych</string>
@@ -285,7 +285,7 @@
   <string name="use_temperature_sensor">Czujnik temperatury</string>
   <string name="use_pressure_sensor_title">Czujnik ciśnienia</string>
   <string name="use_pressure_sensor_summary">Użyj barometru do obliczenia wzniesienia</string>
-  <string name="channel_notification_ongoing">Powiadomienie z RunnerUp o GPS i o treningu</string>
+  <string name="channel_notification_ongoing">Powiadomienie z Relven o GPS i o treningu</string>
   <string name="Lap_start">Start okrążenia</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Tętno</string>

@@ -1,28 +1,5 @@
-Track your sport activities with RunnerUp using the GPS in your Android phone:
+Relven is a free and open-source workout tracker for Android, derived from RunnerUp.
 
-* See detailed stats around your pace, distance and time.
-* Get stats and progress with built-in highly configurable audio cues.
-* Run free runs with target pace or target heart rate zone
-* Easily configure and run effective interval workouts modeled after Garmin
-* Share your favorite workouts with friends (using email)
-* Heart rate monitor: Bluetooth SMART (BLE)
-* Configure and use heart rate zones
+Record runs with GPS, pace, distance, heart-rate targets, intervals and spoken feedback. Review activity history and export recordings using the inherited formats. A companion Wear OS app displays workout information while the phone runs the recording session.
 
-Upload your activities to a variety of running sites with a single click:
-
-* Strava
-* RunKeeper
-* RunningAHEAD
-
-Explanation to anti-features:
-
-* NonFreeNet: Uploading to Strava and other services makes use of non free net services. (The uploading is open similar to uploading a .tcx file, but the services are not open.)
-* UpstreamNonFree: The Play version (can be installed at the same time as the F-Droid version) has additional features using non free libraries, see below
-
-Features removed compared to Play version:
-
-* Map view (OsmDroid instead of MapBox, no MapBox API key in free)
-* WearOS app (requires non-free Play services)
-* HR ANT+ connectivity (requires closed source lib)
-* Runalyze and Dropbox upload (Requires API keys. Runalyze test upload possible.)
-* Download customized apk to device (F-Droid binary is universal for all supported binaries).
+Training-plan import, watch heart-rate capture, strength workouts and a new interface are under development. No subscription or account is required for local recording. Optional external sync services may require their own accounts.

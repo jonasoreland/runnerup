@@ -126,7 +126,7 @@
   <string name="Manage_workouts">管理训练</string>
   <string name="Settings">设置</string>
   <string name="Whats_new">更新日志</string>
-  <string name="Rate_RunnerUp">评价RunnerUp</string>
+  <string name="Rate_RunnerUp">评价Relven</string>
   <string name="Enable_GPS">GPS 启用</string>
   <string name="Waiting_for_GPS">GPS 等待中</string>
   <string name="Start_activity">开始活动</string>
@@ -195,7 +195,7 @@
   <string name="Paired_BLE_devices">已配对蓝牙设备</string>
   <string name="Experimental_features">试验性特性</string>
   <string name="Mock_HRM_devices">模拟心率设备</string>
-  <string name="About_RunnerUp">关于RunnerUp</string>
+  <string name="About_RunnerUp">关于Relven</string>
   <string name="Triggers">触发器</string>
   <string name="Time_triggered_audio_cue">时间触发语音提示</string>
   <string name="Time_triggered_audio_cue_summary">基于时间的周期性反馈</string>
@@ -250,7 +250,7 @@
   <string name="Activity_ready">活动准备好了</string>
   <string name="Ready_to_start_running">准备开始跑步!</string>
   <string name="Searching_for_GPS">搜索GPS中</string>
-  <string name="RunnerUp_activity_started">RunnerUp运动已经开始</string>
+  <string name="RunnerUp_activity_started">Relven运动已经开始</string>
   <string name="Low_HRM_battery_level">心率设备低电量</string>
   <string name="High_HRM_battery_level">心率设备高电量</string>
   <string name="Warning">警告</string>
@@ -275,7 +275,7 @@
   <string name="Create_new_workout">创建新的训练</string>
   <string name="Set_workout_name">设置训练的名字</string>
   <string name="Delete_workout">删除训练</string>
-  <string name="RunnerUp_workout">RunnerUp训练:</string>
+  <string name="RunnerUp_workout">Relven训练:</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">这里有个训练，我觉得你应该会喜欢。</string>
   <string name="Share_workout">分享训练...</string>
   <string name="New_audio_scheme">新建语音模版</string>
@@ -286,7 +286,7 @@
   <string name="GPS_permission_text_Android12">本APP收集位置数据以便在APP被关闭或未使用时（APP处于后台）实现运动追踪。\n当关闭屏幕或其他APP在前台时为了记录运动需要这样做。\n\n你需要在系统设置中明确设置为“始终允许”。\n跑步节奏也需要“体育活动”权限，另外蓝牙功能需要获取“附近设备”权限。</string>
   <string name="Request_permission_text">点击“确定”以授权</string>
   <string name="Battery_optimization_check">开启了电池优化</string>
-  <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“RunnerUp”并选择“不要优化”。</string>
+  <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“Relven”并选择“不要优化”。</string>
   <string name="Battery_optimization_check_text_Android9">电池优化将会降低精度。\n按OK前往设置并选择“电池优化”，然后选择“不限制”或“不优化”。</string>
   <string name="Default">默认</string>
   <string name="Notes_about_your_workout">训练备注</string>
@@ -312,7 +312,7 @@
   <string name="use_temperature_sensor">温度传感器</string>
   <string name="use_pressure_sensor_title">气压传感器</string>
   <string name="use_pressure_sensor_summary">使用气压计计算海拔</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS和运动通知</string>
+  <string name="channel_notification_ongoing">Relven GPS和运动通知</string>
   <string name="Lap_start">分段开始</string>
   <string name="Lap_start_summary">在记圈开始、开始活动、热身、冷身时语音提示</string>
   <string name="Lock_activity_buttons">锁定活动按钮</string>
@@ -330,7 +330,7 @@
   <string name="File_format">上传文件为:</string>
   <string name="File_need_one_format">你必须选择至少一种格式</string>
   <string name="tts_not_available_title">当前“文字转语音”TTS引擎不可用</string>
-  <string name="tts_not_available">RunnerUp需要一个“文字转语音”TTS引擎以播放语音提示。请确保你至少安装有一个可用的TTS引擎。</string>
+  <string name="tts_not_available">Relven需要一个“文字转语音”TTS引擎以播放语音提示。请确保你至少安装有一个可用的TTS引擎。</string>
   <string name="Catch_backbuttonpress">再次点击返回以退出</string>
   <string name="check_internet_connection">请检查你的网络连接</string>
   <!--Preference categories & summaries-->

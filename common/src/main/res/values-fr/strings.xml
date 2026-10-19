@@ -127,7 +127,7 @@
   <string name="Manage_workouts">Gérer les entraînements</string>
   <string name="Settings">Paramètres</string>
   <string name="Whats_new">Quoi de neuf ?</string>
-  <string name="Rate_RunnerUp">Noter RunnerUp</string>
+  <string name="Rate_RunnerUp">Noter Relven</string>
   <string name="Enable_GPS">Activer le GPS</string>
   <string name="Waiting_for_GPS">En attente du GPS...</string>
   <string name="Start_activity">Démarrer la séance</string>
@@ -196,7 +196,7 @@
   <string name="Paired_BLE_devices">Appareils BLE appairés</string>
   <string name="Experimental_features">Fonctionnalités experimentales</string>
   <string name="Mock_HRM_devices">Simuler cardiofréquencemètres</string>
-  <string name="About_RunnerUp">À propos de RunnerUp</string>
+  <string name="About_RunnerUp">À propos de Relven</string>
   <string name="Triggers">Déclencheurs</string>
   <string name="Time_triggered_audio_cue">Déclenchement par le temps</string>
   <string name="Time_triggered_audio_cue_summary">Signal récurrent</string>
@@ -251,7 +251,7 @@
   <string name="Activity_ready">Séance prête</string>
   <string name="Ready_to_start_running">Prêt à courir !</string>
   <string name="Searching_for_GPS">Recherche de signaux GPS</string>
-  <string name="RunnerUp_activity_started">Activité RunnerUp démarrée</string>
+  <string name="RunnerUp_activity_started">Activité Relven démarrée</string>
   <string name="Low_HRM_battery_level">Batterie du cardiofréquencemètre faible</string>
   <string name="High_HRM_battery_level">Batterie du cardiofréquencemètre pleine</string>
   <string name="Warning">Attention</string>
@@ -276,7 +276,7 @@
   <string name="Create_new_workout">Créer un nouvel entraînement</string>
   <string name="Set_workout_name">Nom de l\'entraînement</string>
   <string name="Delete_workout">Supprimer l\'entraînement</string>
-  <string name="RunnerUp_workout">Entraînement RunnerUp</string>
+  <string name="RunnerUp_workout">Entraînement Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Bonjour\nVoici un entraînement que vous pourriez aimer.</string>
   <string name="Share_workout">Partager l\'entraînement</string>
   <string name="New_audio_scheme">Nouveau profile de suivi audio</string>
@@ -287,7 +287,7 @@
   <string name="GPS_permission_text_Android12">Cette application collecte des données de localisation pour permettre le suivi des activités même lorsque l\'application est fermée ou inutilisée (l\'application est en arrière-plan).\nCeci est nécessaire pour enregistrer les activités lorsque l\'écran est éteint ou qu\'une autre application est au premier plan.\n \nVous devez définir explicitement \"Toujours autoriser\" dans les paramètres système.\nPour la cadence de course, l\'autorisation \"Activité physique\" est également requise et BlueTooth nécessite \"Appareils à proximité\".</string>
   <string name="Request_permission_text">Donnez l\'autorisation en cliquant sur \"OK\".</string>
   <string name="Battery_optimization_check">Optimisation de la batterie activée.</string>
-  <string name="Battery_optimization_check_text">L\'optimisation de la batterie va diminuer la précision.\nAppuyez sur OK pour aller dans les Paramètres système et sélectionnez \"Toutes les applis\", cherchez \"RunnerUp\" sélectionnez \"Ne pas optimiser\".</string>
+  <string name="Battery_optimization_check_text">L\'optimisation de la batterie va diminuer la précision.\nAppuyez sur OK pour aller dans les Paramètres système et sélectionnez \"Toutes les applis\", cherchez \"Relven\" sélectionnez \"Ne pas optimiser\".</string>
   <string name="Battery_optimization_check_text_Android9">L\'optimisation de la batterie réduira la précision.\nAppuyez sur OK pour accéder aux paramètres de l\'application et sélectionnez \"Utilisation de la batterie\", puis sélectionnez \"Sans restriction\" ou \"Ne pas optimiser\".</string>
   <string name="Default">Défaut</string>
   <string name="Notes_about_your_workout">Notes sur l\'entraînement</string>
@@ -313,7 +313,7 @@
   <string name="use_temperature_sensor">Capteur de température</string>
   <string name="use_pressure_sensor_title">Capteur de pression</string>
   <string name="use_pressure_sensor_summary">Utiliser le baromètre pour calculer l\'altitude</string>
-  <string name="channel_notification_ongoing">Notifications de GPS et activité RunnerUp</string>
+  <string name="channel_notification_ongoing">Notifications de GPS et activité Relven</string>
   <string name="Lap_start">Début du tour</string>
   <string name="Lap_start_summary">Suivi audio pour démarrage d\'étapes Actives, Échauffement et Récupération</string>
   <string name="Lock_activity_buttons">Verrouiller les boutons d\'activité</string>
@@ -331,7 +331,7 @@
   <string name="File_format">Format de téléchargement :</string>
   <string name="File_need_one_format">Vous devez spécifier au moins un format</string>
   <string name="tts_not_available_title">La synthèse vocale n\'est pas disponible.</string>
-  <string name="tts_not_available">RunnerUp nécessite un moteur de synthèse vocale fonctionnel pour le suivi audio. Assurez-vous d\'avoir installé au moins un moteur de synthèse vocale fonctionnel.</string>
+  <string name="tts_not_available">Relven nécessite un moteur de synthèse vocale fonctionnel pour le suivi audio. Assurez-vous d\'avoir installé au moins un moteur de synthèse vocale fonctionnel.</string>
   <string name="Catch_backbuttonpress">Appuyez à nouveau sur Retour pour quitter</string>
   <string name="check_internet_connection">Vérifiez votre connexion internet</string>
   <!--Preference categories & summaries-->

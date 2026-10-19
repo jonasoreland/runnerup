@@ -120,7 +120,7 @@
   <string name="Manage_workouts">ワークアウトの管理</string>
   <string name="Settings">設定</string>
   <string name="Whats_new">新着情報</string>
-  <string name="Rate_RunnerUp">RunnerUp を評価</string>
+  <string name="Rate_RunnerUp">Relven を評価</string>
   <string name="Enable_GPS">GPS を有効にする</string>
   <string name="Waiting_for_GPS">GPS の待機中</string>
   <string name="Start_activity">アクティビティの開始</string>
@@ -172,7 +172,7 @@
   <string name="Experimental_HRM_devices">実験的な HRM デバイス</string>
   <string name="Experimental_features">実験的な機能</string>
   <string name="Mock_HRM_devices">モックの HRM デバイス</string>
-  <string name="About_RunnerUp">RunnerUp について</string>
+  <string name="About_RunnerUp">Relven について</string>
   <string name="Triggers">トリガー</string>
   <string name="Time_triggered_audio_cue">時間トリガー</string>
   <string name="Time_triggered_audio_cue_summary">周期フィードバック</string>
@@ -223,7 +223,7 @@
   <string name="Activity_ready">アクティビティ準備完了</string>
   <string name="Ready_to_start_running">ランニング準備完了</string>
   <string name="Searching_for_GPS">GPS を検索中</string>
-  <string name="RunnerUp_activity_started">RunnerUp アクティビティが開始しました</string>
+  <string name="RunnerUp_activity_started">Relven アクティビティが開始しました</string>
   <string name="Low_HRM_battery_level">低 HRM バッテリーレベル</string>
   <string name="High_HRM_battery_level">高 HRM バッテリーレベル</string>
   <string name="Warning">警告</string>
@@ -247,7 +247,7 @@
   <string name="Create_new_workout">新しいワークアウトを作成</string>
   <string name="Set_workout_name">ワークアウト名を設定</string>
   <string name="Delete_workout">ワークアウトを削除</string>
-  <string name="RunnerUp_workout">RunnerUp ワークアウト</string>
+  <string name="RunnerUp_workout">Relven ワークアウト</string>
   <string name="Share_workout">ワークアウトを共有…</string>
   <string name="New_audio_scheme">新しい音声合図スキーム</string>
   <string name="Default">デフォルト</string>
@@ -267,7 +267,7 @@
   <string name="use_step_sensor_summary">ケイデンスの使用</string>
   <string name="use_temperature_sensor">気温センサー</string>
   <string name="use_pressure_sensor_title">気圧センサー</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS とアクティビティ通知</string>
+  <string name="channel_notification_ongoing">Relven GPS とアクティビティ通知</string>
   <string name="Lap_start">ラップ開始</string>
   <string name="Lock_activity_buttons">アクティビティボタンをロックする</string>
   <string name="Speed">スピード</string>

@@ -116,7 +116,7 @@
   <string name="Manage_workouts">Управление тренировкой</string>
   <string name="Settings">Настройки</string>
   <string name="Whats_new">Что нового</string>
-  <string name="Rate_RunnerUp">Оценить RunnerUp</string>
+  <string name="Rate_RunnerUp">Оценить Relven</string>
   <string name="Enable_GPS">Включить GPS</string>
   <string name="Waiting_for_GPS">Ожидание GPS</string>
   <string name="Start_activity">Старт</string>
@@ -164,7 +164,7 @@
   <string name="Experimental_HRM_devices">Тестовые HRM датчики</string>
   <string name="Experimental_features">Экспериментальные возможности</string>
   <string name="Mock_HRM_devices">Имитировать датчик HRM</string>
-  <string name="About_RunnerUp">О RunnerUp</string>
+  <string name="About_RunnerUp">О Relven</string>
   <string name="Triggers">Получать информацию через интервалы:</string>
   <string name="Time_triggered_audio_cue_summary">Периодическая обратная связь</string>
   <string name="Cue_interval_s">Каждые N секунд (с)</string>
@@ -239,12 +239,12 @@
   <string name="Create_new_workout">Создать новую тренировку</string>
   <string name="Set_workout_name">Называние тренировки</string>
   <string name="Delete_workout">Удалить тренировку</string>
-  <string name="RunnerUp_workout">Тренировка RunnerUp</string>
+  <string name="RunnerUp_workout">Тренировка Relven</string>
   <string name="Share_workout">Опубликовать</string>
   <string name="New_audio_scheme">Новая голосовая схема</string>
   <string name="GPS_permission_text_pre_Android10">Требуется разрешение доступа к местоположению из настроек системы</string>
   <string name="Battery_optimization_check">Оптимизация батареи включена</string>
-  <string name="Battery_optimization_check_text">Оптимизация батареи снизит точность.\nНажмите OK, чтобы перейти к системным настройкам и выберите \"Все приложения\", найдите \"RunnerUp\", выберите \"Не оптимизировать\".</string>
+  <string name="Battery_optimization_check_text">Оптимизация батареи снизит точность.\nНажмите OK, чтобы перейти к системным настройкам и выберите \"Все приложения\", найдите \"Relven\", выберите \"Не оптимизировать\".</string>
   <string name="Default">Стандартная</string>
   <string name="Notes_about_your_workout">Заметки о тренировках</string>
   <string name="Downloading_from_1s">Загрузка из %1$s</string>
@@ -272,7 +272,7 @@
   <string name="File_format">Загружать файлы как:</string>
   <string name="File_need_one_format">Необходимо указать хотя бы один формат</string>
   <string name="tts_not_available_title">Синтезатор речи недоступен</string>
-  <string name="tts_not_available">RunnerUp требует наличия работающего механизма Синтезатор речи для воспроизведения звуковых подсказок. Пожалуйста, убедитесь, что у вас установлен хотя бы один рабочий движок Синтезатора речи.</string>
+  <string name="tts_not_available">Relven требует наличия работающего механизма Синтезатор речи для воспроизведения звуковых подсказок. Пожалуйста, убедитесь, что у вас установлен хотя бы один рабочий движок Синтезатора речи.</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Пульс</string>
   <string name="Autopause_category">Авто пауза</string>

@@ -126,7 +126,7 @@
   <string name="Manage_workouts">Trainingen beheren</string>
   <string name="Settings">Instellingen</string>
   <string name="Whats_new">Wat is er nieuw?</string>
-  <string name="Rate_RunnerUp">RunnerUp beoordelen</string>
+  <string name="Rate_RunnerUp">Relven beoordelen</string>
   <string name="Enable_GPS">Schakel gps in</string>
   <string name="Waiting_for_GPS">Op gps-signaal aan het wachten...</string>
   <string name="Start_activity">Activiteit starten</string>
@@ -181,7 +181,7 @@
   <string name="Experimental_HRM_devices">Experimentele HRM-apparaten</string>
   <string name="Experimental_features">Experimentele functies</string>
   <string name="Mock_HRM_devices">Nep-HRM-apparaten</string>
-  <string name="About_RunnerUp">Over RunnerUp</string>
+  <string name="About_RunnerUp">Over Relven</string>
   <string name="Triggers">Triggers</string>
   <string name="Time_triggered_audio_cue">Tijdtrigger</string>
   <string name="Time_triggered_audio_cue_summary">Periodieke feedback</string>
@@ -234,7 +234,7 @@
   <string name="Activity_ready">Activiteit is gereed</string>
   <string name="Ready_to_start_running">Klaar om te beginnen met hardlopen!</string>
   <string name="Searching_for_GPS">Naar gps aan het zoeken</string>
-  <string name="RunnerUp_activity_started">RunnerUp-activiteit gestart</string>
+  <string name="RunnerUp_activity_started">Relven-activiteit gestart</string>
   <string name="Low_HRM_battery_level">Laag batterijniveau HRM </string>
   <string name="High_HRM_battery_level">Hoog batterijniveau HRM</string>
   <string name="Warning">Waarschuwing</string>
@@ -259,7 +259,7 @@
   <string name="Create_new_workout">Nieuwe training creëren</string>
   <string name="Set_workout_name">Naam van training</string>
   <string name="Delete_workout">Verwijder workout</string>
-  <string name="RunnerUp_workout">RunnerUp-workout</string>
+  <string name="RunnerUp_workout">Relven-workout</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hoi\nIk denk dat je deze training waarschijnlijk leuk vindt.</string>
   <string name="Share_workout">Training delen…</string>
   <string name="New_audio_scheme">Nieuw audioschema</string>
@@ -285,7 +285,7 @@
   <string name="use_temperature_sensor">Temperatuursensor</string>
   <string name="use_pressure_sensor_title">Druksensor</string>
   <string name="use_pressure_sensor_summary">Gebruik barometer om hoogte te berekenen</string>
-  <string name="channel_notification_ongoing">RunnerUp gps- en activiteitsmeldingen</string>
+  <string name="channel_notification_ongoing">Relven gps- en activiteitsmeldingen</string>
   <string name="Lap_start">Ronde starten</string>
   <string name="Lock_activity_buttons">Activiteitsknoppen vergrendelen</string>
   <string name="Speed">Snelheid</string>
