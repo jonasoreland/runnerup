@@ -11,7 +11,7 @@ Relven is a free, open-source fitness app for Android with a phone-dependent Wea
 - Use the Wear OS companion for live workout display and remote actions. The phone owns the workout and GPS recording.
 - Import or share the workout formats currently supported by RunnerUp.
 
-FIT Workout and Relven JSON training-plan imports, watch heart-rate capture, strength tracking, a unified calendar, AI Plan Kit, route coloring and the new Compose UI are **not yet implemented**. The current screens still use the inherited layout beneath Relven launcher branding.
+An initial Wear heart-rate provider is integrated behind an experimental setting, but it has not been tested on a watch and screen-off/background capture is unsupported. FIT Workout and Relven JSON training-plan imports, strength tracking, a unified calendar, AI Plan Kit, route coloring and the new Compose UI are **not yet implemented**. The current screens still use the inherited layout beneath Relven launcher branding.
 
 ## Build and install
 
@@ -36,7 +36,7 @@ Workout and activity data is stored locally by the inherited engine. Local recor
 
 ## Status and limitations
 
-See [implementation status](docs/implementation-status.md), [roadmap](docs/roadmap.md) and [migration notes](docs/migration.md). The untouched and initially branded phone/watch APKs and selected tests built on 19 October 2026. The shared Play ID change still needs a fresh build. GPS, audio, import/export and watch behavior still need emulator and device smoke tests. Samsung Galaxy Watch6 Classic heart-rate behavior is unverified.
+See [implementation status](docs/implementation-status.md), [roadmap](docs/roadmap.md), [migration notes](docs/migration.md) and [Wear HR audit](docs/wear-hr-audit.md). Phone/watch debug APKs, selected unit tests and lint pass after the shared Play ID and initial HR changes. GPS, audio, import/export and watch behavior still need emulator and device smoke tests. Samsung Galaxy Watch6 Classic heart-rate behavior is unverified.
 
 ## Upstream, license and contributions
 
