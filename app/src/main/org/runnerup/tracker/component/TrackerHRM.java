@@ -31,6 +31,7 @@ import org.runnerup.R;
 import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
+import org.runnerup.hr.WearHRProvider;
 
 public class TrackerHRM extends DefaultTrackerComponent {
 
@@ -63,7 +64,8 @@ public class TrackerHRM extends DefaultTrackerComponent {
 
     hrProvider = HRManager.getHRProvider(context, btProviderName);
     if (hrProvider != null) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+      if (!WearHRProvider.NAME.equals(btProviderName)
+          && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
           && (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT)
                   != PackageManager.PERMISSION_GRANTED
               || ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN)

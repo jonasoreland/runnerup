@@ -10,8 +10,28 @@
 - **Emulator:** Not run. `adb devices -l` showed no devices.
 - **Physical devices:** Phone and Samsung Galaxy Watch6 Classic unverified.
 - **Known issues:** Same-ID upgrade cannot read the old Relven Room data without migration; signing identity and published version-code floor require verification before upload. Optional legacy Mapbox and upstream integrations remain. Some legacy UI and provider-specific strings still show upstream terminology. Runtime GPS, audio, export and wearable paths remain unverified.
-- **Next step:** Audit workout and wearable paths and PR #1378; design an explicit migration for the old Relven Room data before any Play update.
+- **Next step:** Design an explicit migration for the old Relven Room data before any Play update.
+
+## Phase One — engine audit
+
+- **Completed:** Source owners for workout steps, triggers, session state, GPS, activity persistence, voice feedback, import/export, maps and wearable messages are recorded in [engine audit](engine-audit.md). The existing phone `Tracker` remains the authoritative session owner.
+- **Pending:** Device-level recording, pause/resume, GPS, Swedish voice, export round-trip and process recovery checks.
+- **Changed modules:** Documentation only.
+- **Build/test status:** No engine refactor was made; Phase Zero build remains the baseline.
+- **Emulator/physical devices:** None connected.
+- **Known issues:** This is a source-level map, not a functional acceptance test.
+- **Next step:** Preserve the engine while adding tested import adapters and UI observation.
+
+## Phase Two — Wear heart-rate integration
+
+- **Completed:** Reviewed and integrated upstream PR #1378 as an initial branch, adapted provider signatures and Bluetooth gating, added source-node validation, first-reading connection confirmation, 15-second stale sample expiry, a 30-second initial timeout and unit tests. See [Wear HR audit](wear-hr-audit.md).
+- **Pending:** Watch foreground/background sensor lifecycle, permission request flow, visible sensor status, Galaxy Watch6 Classic tests and reconnection proof.
+- **Changed modules:** `hrdevice`, `wear`, `app` HR settings/tracker, and shared message constants.
+- **Build/test status:** Phone/watch debug builds, app/Wear/HR unit targets and lint passed after service hardening. App lint has 23 inherited baseline-filtered errors; Wear has none and HR library has one inherited baseline-filtered error. No new issues were reported.
+- **Emulator/physical devices:** None connected.
+- **Known issues:** Screen-off/background HR is unsupported in the current started-service implementation. Do not present it as release-ready.
+- **Next step:** Make watch sensor collection lifecycle compliant, then test with a paired watch and phone.
 
 ## Later phases
 
-Wear HR, Stitch UI, FIT/JSON import, AI Plan Kit, strength library, map coloring and unified calendar are pending. See [roadmap](roadmap.md) and [feature parity](feature-parity.md).
+Stitch UI, FIT/JSON import, AI Plan Kit, strength library, map coloring and unified calendar are pending. See [roadmap](roadmap.md) and [feature parity](feature-parity.md).
