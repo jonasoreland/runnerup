@@ -34,7 +34,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,24 +124,31 @@ public final class SyncHelper {
   }
 
   public static JSONObject parse(String in) throws JSONException {
-    final Scanner s = new Scanner(in);
-    final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
-    s.close();
-    return o;
+    return new JSONObject(in);
   }
 
   public static JSONObject parse(InputStream in) throws JSONException {
-    final Scanner s = new Scanner(in);
-    final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
-    s.close();
-    return o;
+    return parse(
+        new BufferedReader(new InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)));
   }
 
   public static JSONObject parse(Reader in) throws JSONException {
-    final Scanner s = new Scanner(in);
-    final JSONObject o = new JSONObject(s.useDelimiter("\\A").next());
-    s.close();
-    return o;
+    BufferedReader reader =
+        in instanceof BufferedReader ? (BufferedReader) in : new BufferedReader(in);
+    StringBuilder sb = new StringBuilder();
+    String line;
+    try {
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append('\n');
+      }
+    } catch (IOException e) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        throw new JSONException(e);
+      } else {
+        throw new JSONException(e.getMessage());
+      }
+    }
+    return new JSONObject(sb.toString());
   }
 
   public static JSONObject parse(HttpURLConnection conn, String name)
