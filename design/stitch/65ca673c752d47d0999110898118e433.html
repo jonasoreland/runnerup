@@ -1,0 +1,195 @@
+<!DOCTYPE html><html class="h-full bg-slate-950" lang="sv"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Relven Run Workout - Wear OS Interface</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            wearOled: '#000000',
+            relvenBlue: '#2563EB',
+            metricTimer: '#DDEBFF',
+            metricHeart: '#FACC15',
+            metricPace: '#FFFFFF',
+            metricLabel: '#9CA3AF'
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Roboto', 'system-ui', 'sans-serif'],
+            mono: ['SF Mono', 'Roboto Mono', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Smartwatch Styles -->
+<style data-purpose="watch-bezel-and-layout">
+    /* Smartwatch curved surface lighting and radial clipping */
+    .watch-bezel-shadow {
+      box-shadow: 
+        0 25px 60px -15px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 2px rgba(255, 255, 255, 0.25),
+        inset 0 -4px 10px rgba(0, 0, 0, 0.8);
+    }
+
+    .watch-screen-glass {
+      box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Prevent accidental highlight / scroll bounce on smartwatches */
+    .no-select {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  </style>
+<style data-purpose="glow-and-typography">
+    .glow-subtle {
+      text-shadow: 0 0 12px rgba(221, 235, 255, 0.25);
+    }
+    .glow-heart {
+      text-shadow: 0 0 14px rgba(250, 204, 21, 0.3);
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+<!-- END: Custom Smartwatch Styles -->
+</head>
+<body class="h-full flex items-center justify-center p-2 sm:p-4 bg-slate-950 font-sans text-white antialiased overflow-hidden select-none">
+<!-- BEGIN: Smartwatch Hardware Casing Mockup -->
+<!-- Outer silicone band and watch chassis wrapper -->
+<div class="relative flex flex-col items-center justify-center" data-purpose="watch-hardware-container">
+<!-- Top Watch Strap Segment -->
+<div class="w-36 h-12 rounded-t-3xl bg-slate-800/80 -mb-2 border-t border-slate-700/40 opacity-70" data-purpose="top-strap"></div>
+<!-- Watch Body (Circular Chassis) -->
+<div class="relative w-[380px] h-[380px] sm:w-[420px] sm:h-[420px] rounded-full bg-gradient-to-b from-slate-800 via-slate-900 to-black p-3 watch-bezel-shadow flex items-center justify-center">
+<!-- Physical Rotating Crown Dial (Right side) -->
+<div class="absolute -right-3 top-1/2 -translate-y-1/2 w-4 h-12 bg-gradient-to-r from-slate-700 via-slate-500 to-slate-800 rounded-r-md border border-slate-600/60 shadow-lg flex flex-col justify-around py-1" data-purpose="hardware-crown">
+<span class="w-full h-0.5 bg-slate-900/60"></span>
+<span class="w-full h-0.5 bg-slate-900/60"></span>
+<span class="w-full h-0.5 bg-slate-900/60"></span>
+<span class="w-full h-0.5 bg-slate-900/60"></span>
+</div>
+<!-- Secondary Hardware Button -->
+<div class="absolute -right-1.5 top-[34%] w-2 h-7 bg-slate-700 rounded-r-sm opacity-60"></div>
+<!-- BEGIN: Active AMOLED 450x450 Round Screen -->
+<main class="relative w-full h-full rounded-full bg-wearOled watch-screen-glass overflow-hidden flex flex-col items-center justify-between px-7 py-5 text-center" data-purpose="smartwatch-screen">
+<!-- Outer Progress Arc Ring (SVG overlay hugging the round perimeter) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none -rotate-90" data-purpose="circular-progress-arc" viewBox="0 0 100 100">
+<!-- Background Track -->
+<circle cx="50" cy="50" fill="none" r="47.5" stroke="#22262d" stroke-width="1.8"></circle>
+<!-- Active Segment Indicator (Interval completion ~ 85%) -->
+<circle cx="50" cy="50" fill="none" r="47.5" stroke="#93c5fd" stroke-dasharray="298.45" stroke-dashoffset="65" stroke-linecap="round" stroke-width="2.5"></circle>
+</svg>
+<!-- BEGIN: Screen Top Header -->
+<header class="w-full pt-1.5 flex flex-col items-center relative z-10" data-purpose="top-safe-area">
+<!-- Digital Real-time Clock -->
+<div class="text-[13px] tracking-tight font-medium text-slate-300/90 leading-tight">
+            09:30
+          </div>
+<!-- Activity Phase Pill Badge (Uppvärmning / Warm-up) -->
+<div class="mt-1 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-800/85 backdrop-blur-md border border-slate-700/50">
+<!-- Relven Activity Sparkle Icon -->
+<svg class="w-2.5 h-2.5 text-blue-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"></path>
+</svg>
+<span class="text-[11px] font-semibold text-slate-200 tracking-wide uppercase">Uppvärmning</span>
+</div>
+</header>
+<!-- END: Screen Top Header -->
+<!-- BEGIN: Primary Fitness Metrics Cluster -->
+<section class="w-full flex-1 flex flex-col justify-center items-center py-0.5 -mt-1 space-y-0.5 z-10" data-purpose="workout-telemetry">
+<!-- Metric 1: Main Timer (Elapsed / Remaining interval) -->
+<div class="flex items-baseline justify-center tracking-tight text-metricTimer glow-subtle">
+<span class="text-[44px] sm:text-[48px] font-extrabold leading-none tabular-nums font-sans">
+              04:57
+            </span>
+<div class="flex items-baseline ml-1">
+<span class="text-xs font-bold leading-none align-top text-blue-200">6</span>
+<span class="text-[11px] font-semibold text-slate-400 ml-0.5">/5 min</span>
+</div>
+</div>
+<!-- Metric 2: Current Pace -->
+<div class="flex items-baseline justify-center space-x-1.5 text-metricPace">
+<span class="text-[34px] sm:text-[38px] font-bold leading-none tracking-tight tabular-nums">
+              15’32”
+            </span>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-[11px] font-medium text-slate-300">lätt</span>
+<span class="text-[10px] font-semibold text-slate-400 uppercase -mt-0.5">km</span>
+</div>
+</div>
+<!-- Metric 3: Heart Rate (BPM) with High-Visibility Yellow Accent -->
+<div class="flex items-baseline justify-center space-x-1.5 text-metricHeart glow-heart">
+<span class="text-[34px] sm:text-[38px] font-bold leading-none tracking-tight tabular-nums">
+              120
+            </span>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-[11px] font-medium text-amber-200/90">medel</span>
+<span class="text-[10px] font-semibold text-amber-300/80 uppercase -mt-0.5">bpm</span>
+</div>
+</div>
+<!-- Metric 4: Accumulated Distance -->
+<div class="flex items-baseline justify-center space-x-2 text-white">
+<span class="text-[32px] sm:text-[36px] font-extrabold leading-none tracking-tight tabular-nums">
+              0.12
+            </span>
+<span class="text-xs font-semibold text-slate-300 tracking-wide">
+              kilometer
+            </span>
+</div>
+</section>
+<!-- END: Primary Fitness Metrics Cluster -->
+<!-- Left Peripheral Interval Gauge Pill -->
+<div class="absolute left-4 top-[56%] -translate-y-1/2 w-3 h-8 bg-blue-200/95 rounded-full shadow-[0_0_10px_rgba(191,219,254,0.4)] rotate-[24deg] pointer-events-none" data-purpose="interval-pill-indicator"></div>
+<!-- Right Edge Navigation Pagination Dots (Wear OS Pages: Metrics, Zones, Map) -->
+<aside class="absolute right-3.5 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1.5 pointer-events-none" data-purpose="screen-vertical-dots">
+<span class="w-1.5 h-1.5 rounded-full bg-white shadow-sm"></span>
+<span class="w-1 h-1 rounded-full bg-slate-600"></span>
+<span class="w-1 h-1 rounded-full bg-slate-600"></span>
+</aside>
+<!-- BEGIN: Screen Bottom Footer Area -->
+<footer class="w-full pb-2 flex flex-col items-center justify-end z-10" data-purpose="bottom-safe-area">
+<!-- Wear OS Carousel Horizontal Dots -->
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+</div>
+<!-- Subtle Relven Branding Emblem -->
+<div class="mt-1 flex items-center gap-1 opacity-75">
+<img alt="Relven Icon" class="w-3 h-3 object-contain inline-block filter brightness-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8GkI6J4V-E9k-35ZGlqAGbmQgyOKtjclOhsPemgULsZBZr_t9T051ZK-ee2HGvhHNM0VK-qrEed7zZTH8IcSI51ejrTGhCgBHnNsZSEyniDcNw-2ai4i2LYEJqsnIWBH2pbiYViYzW4cZ81axry-ycBEHNkAs0g1HkDxEpCmZulCgx5hGmXIgrppTFQfEQ4QdKIJ2sSkjBkHvoSkNSUd5ZaHZiAhrmtf9gF_RDhf74BPfzxNrE5cSyH-7g0EpCLjxi5E">
+<span class="text-[8px] tracking-widest font-bold text-slate-400 uppercase">RELVEN</span>
+</div>
+</footer>
+<!-- END: Screen Bottom Footer Area -->
+</main>
+<!-- END: AMOLED Round Screen -->
+</div>
+<!-- Bottom Watch Strap Segment -->
+<div class="w-36 h-12 rounded-b-3xl bg-slate-800/80 -mt-2 border-b border-slate-700/40 opacity-70" data-purpose="bottom-strap"></div>
+</div>
+<!-- END: Smartwatch Hardware Casing Mockup -->
+<!-- BEGIN: Interactive Watch Demonstration Scripts -->
+<script data-purpose="live-haptics-and-time">
+    // Keep top clock synchronized with actual minutes if desired
+    document.addEventListener('DOMContentLoaded', () => {
+      const clockElement = document.querySelector('[data-purpose="top-safe-area"] div');
+      if (clockElement) {
+        const updateWatchTime = () => {
+          const now = new Date();
+          const hours = String(now.getHours()).padStart(2, '0');
+          const minutes = String(now.getMinutes()).padStart(2, '0');
+          clockElement.textContent = `${hours}:${minutes}`;
+        };
+        // Initialize once to retain 09:30 or dynamic
+        // updateWatchTime();
+      }
+    });
+  </script>
+<!-- END: Interactive Watch Demonstration Scripts -->
+</body></html>

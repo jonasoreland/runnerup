@@ -1,0 +1,370 @@
+<!DOCTYPE html><html class="h-full" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Relven - Train Smart Stay Strong</title>
+<!-- Google Fonts: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#FF5722',
+              coral: '#FF7043',
+              dark: '#0B0F17',
+              surface: 'rgba(255, 255, 255, 0.08)',
+              glass: 'rgba(16, 24, 38, 0.65)'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            inter: ['Inter', 'sans-serif']
+          },
+          boxShadow: {
+            'glow-orange': '0 8px 24px -4px rgba(255, 87, 34, 0.55)',
+            'glass-inset': 'inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)',
+            'card-glass': '0 20px 40px -15px rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Glassmorphism & Visual Effects -->
+<style data-purpose="glassmorphic-effects">
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(26, 38, 57, 0.72) 0%, rgba(13, 20, 32, 0.82) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    
+    .glass-btn {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .glass-pill {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .pulse-glow {
+      animation: pulseGlow 2.5s infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.6);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(255, 87, 34, 0);
+      }
+    }
+  </style>
+<!-- END: Custom Glassmorphism & Visual Effects -->
+</head>
+<body class="bg-[#05080E] text-white flex justify-center items-center min-h-full p-0 sm:p-6 font-sans select-none antialiased">
+<!-- BEGIN: Phone Frame Device Container -->
+<main class="relative w-full max-w-[412px] h-[100dvh] sm:h-[880px] bg-[#0C121D] sm:rounded-[44px] overflow-hidden flex flex-col justify-between shadow-2xl border-0 sm:border-[8px] sm:border-[#1E2638] shadow-black/80" data-purpose="mobile-screen-wrapper">
+<!-- Hero Athlete Background Graphic with Layered Gradient Overlays -->
+<div class="absolute inset-0 z-0 pointer-events-none" data-purpose="background-layers">
+<!-- Dark contrast gradients for top and bottom visibility -->
+<div class="absolute inset-0 bg-gradient-to-b from-[#0B111D] via-[#0F192B]/60 to-[#0A101A] z-10"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0A101A] via-transparent to-transparent z-10"></div>
+<!-- Sprinting Athlete Silhouette / Graphic Canvas Illustration -->
+<div class="absolute top-16 left-0 right-0 h-[68%] z-0 flex items-center justify-center opacity-85 overflow-hidden">
+<!-- Runner Vector Art Composition mimicking dynamic motion -->
+<svg class="w-full h-full object-cover transform translate-x-3 scale-110" fill="none" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialGradient cx="50%" cy="50%" id="runnerGlow" r="50%">
+<stop offset="0%" stop-color="#2563EB" stop-opacity="0.35"></stop>
+<stop offset="70%" stop-color="#0E7490" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#0B111D" stop-opacity="0"></stop>
+</radialGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="bodyGradient" x1="120" x2="300" y1="100" y2="400">
+<stop offset="0%" stop-color="#38BDF8"></stop>
+<stop offset="40%" stop-color="#0284C7"></stop>
+<stop offset="85%" stop-color="#0369A1"></stop>
+<stop offset="100%" stop-color="#075985"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="skinTone" x1="140" x2="260" y1="90" y2="280">
+<stop offset="0%" stop-color="#FDBA74"></stop>
+<stop offset="60%" stop-color="#EA580C"></stop>
+<stop offset="100%" stop-color="#9A3412"></stop>
+</linearGradient>
+<filter id="motionBlurGlow">
+<feGaussianBlur result="blur" stdDeviation="3"></feGaussianBlur>
+<feMerge>
+<feMergeNode in="blur"></feMergeNode>
+<feMergeNode in="SourceGraphic"></feMergeNode>
+</feMerge>
+</filter>
+</defs>
+<!-- Dynamic radial atmosphere glow behind runner -->
+<circle cx="210" cy="270" fill="url(#runnerGlow)" r="190"></circle>
+<!-- Speed lines & Kinetic Particles -->
+<path d="M40 220 L150 220" stroke="rgba(56,189,248,0.25)" stroke-dasharray="8 12" stroke-linecap="round" stroke-width="2"></path>
+<path d="M20 280 L180 280" stroke="rgba(255,87,34,0.3)" stroke-dasharray="12 16" stroke-linecap="round" stroke-width="1.5"></path>
+<path d="M90 340 L210 340" stroke="rgba(56,189,248,0.2)" stroke-dasharray="6 14" stroke-linecap="round" stroke-width="2"></path>
+<!-- Runner's back arm reaching back dynamically -->
+<path d="M120 230 C80 230 45 270 28 290 C22 296 35 306 44 298 C65 280 98 252 140 252 Z" fill="url(#skinTone)" opacity="0.8"></path>
+<!-- Runner Hand fingers spread -->
+<path d="M25 292 L15 278 M22 296 L10 292 M26 300 L16 306 M29 303 L24 314" stroke="#EA580C" stroke-linecap="round" stroke-width="3"></path>
+<!-- Back Leg in trailing sprint extension -->
+<path d="M110 320 L50 365 C40 372 25 385 10 405 C25 412 45 408 65 388 L125 332 Z" fill="#0284C7" opacity="0.6"></path>
+<!-- Muscular Torso & Blue Technical Athletic Shirt -->
+<path d="M145 200 C155 185 185 180 225 195 C250 205 268 225 272 255 L245 350 C215 355 170 345 135 335 L125 235 C132 215 138 205 145 200 Z" fill="url(#bodyGradient)" filter="url(#motionBlurGlow)"></path>
+<!-- Shirt creases and muscle shading lines -->
+<path d="M175 220 C200 240 220 270 230 310" opacity="0.7" stroke="#0369A1" stroke-linecap="round" stroke-width="4"></path>
+<path d="M150 245 C180 260 200 285 208 330" opacity="0.6" stroke="#075985" stroke-linecap="round" stroke-width="3"></path>
+<!-- Athletic Shorts -->
+<path d="M135 335 L245 350 L248 395 C215 410 180 405 130 395 Z" fill="#080E18"></path>
+<!-- Powerful Forward Chest & Neck -->
+<path d="M205 160 L240 168 L248 208 L208 198 Z" fill="url(#skinTone)"></path>
+<!-- Athletic Head, Jawline and Hair (side profile turned forward) -->
+<path d="M232 135 C232 118 244 100 265 102 C285 104 296 118 296 138 C296 154 286 166 270 166 C255 166 244 162 238 152 Z" fill="url(#skinTone)"></path>
+<!-- Hair styling -->
+<path d="M235 132 C236 108 252 95 278 95 C295 95 304 105 302 124 C292 120 282 120 274 125 C266 122 250 125 235 132 Z" fill="#261B16"></path>
+<!-- Chiseled facial features -->
+<polygon fill="url(#skinTone)" points="296,135 306,144 295,148 292,158 276,162 274,152"></polygon>
+<path d="M280 132 L290 133" stroke="#5B2C15" stroke-linecap="round" stroke-width="2"></path>
+<!-- Forward Arm Sprinting Forward Angle -->
+<path d="M245 210 C270 215 315 235 345 260 C352 266 360 258 355 250 C330 220 290 195 260 190 Z" fill="url(#skinTone)"></path>
+<path d="M345 260 L390 295 C398 302 405 300 406 288 C400 272 375 250 355 250 Z" fill="url(#skinTone)"></path>
+<!-- Front Hand in motion -->
+<circle cx="395" cy="285" fill="#EA580C" opacity="0.9" r="10"></circle>
+<path d="M398 275 L412 265 M402 280 L416 274 M404 288 L418 286" stroke="#EA580C" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+<!-- BEGIN: Android System Status Bar -->
+<header class="relative z-30 pt-3 px-6 flex justify-between items-center text-xs text-slate-300 font-medium tracking-tight" data-purpose="android-status-bar">
+<!-- Time Clock -->
+<span class="text-[13px] font-semibold tracking-normal text-slate-200">9:40 PM</span>
+<!-- Android Status Icons: Network, Wifi, Battery -->
+<div class="flex items-center space-x-2 text-slate-300">
+<!-- Cellular Signal -->
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9zm0 2c3.87 0 7 3.13 7 7 0 1.48-.46 2.85-1.25 3.99L12 19.53l-5.75-3.54C5.46 14.85 5 13.48 5 12c0-3.87 3.13-7 7-7z" opacity="0.3"></path>
+<path d="M2 22h20L12 2z" opacity="0.2"></path>
+<path d="M17 10L12 3 7 10h10z" opacity="0.4"></path>
+<!-- Minimal signal bars -->
+<rect height="6" rx="0.75" width="3" x="2" y="16"></rect>
+<rect height="10" rx="0.75" width="3" x="7" y="12"></rect>
+<rect height="14" rx="0.75" width="3" x="12" y="8"></rect>
+<rect height="18" rx="0.75" width="3" x="17" y="4"></rect>
+</svg>
+<!-- WiFi Icon -->
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.5c3.5 0 6.74 1.34 9.21 3.55L12 19.3 2.79 11.05C5.26 8.84 8.5 7.5 12 7.5z"></path>
+</svg>
+<!-- Battery Icon with full charge indicator -->
+<div class="flex items-center">
+<div class="w-5 h-2.5 border border-slate-300 rounded-[2.5px] p-[1px] flex items-center">
+<div class="h-full w-full bg-slate-200 rounded-[1px]"></div>
+</div>
+<div class="w-[1.5px] h-1 bg-slate-300 rounded-r-xs ml-[0.5px]"></div>
+</div>
+</div>
+</header>
+<!-- END: Android System Status Bar -->
+<!-- BEGIN: Top Navigation Bar -->
+<nav class="relative z-30 px-6 pt-3 pb-1 flex justify-between items-center" data-purpose="app-navigation-bar">
+<!-- Back Button -->
+<button aria-label="Go back" class="w-10 h-10 rounded-full glass-btn flex items-center justify-center text-slate-200 shadow-sm">
+<svg class="w-5 h-5 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M19 12H5M12 19l-7-7 7-7"></path>
+</svg>
+</button>
+<!-- Center Pill: Mode & Relven Badge -->
+<div class="glass-pill px-4 py-1.5 rounded-full flex items-center space-x-2 border border-white/10 shadow-inner">
+<!-- Relven Official Logo Badge -->
+<img alt="Relven Logo" class="w-4 h-4 object-contain brightness-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8GkI6J4V-E9k-35ZGlqAGbmQgyOKtjclOhsPemgULsZBZr_t9T051ZK-ee2HGvhHNM0VK-qrEed7zZTH8IcSI51ejrTGhCgBHnNsZSEyniDcNw-2ai4i2LYEJqsnIWBH2pbiYViYzW4cZ81axry-ycBEHNkAs0g1HkDxEpCmZulCgx5hGmXIgrppTFQfEQ4QdKIJ2sSkjBkHvoSkNSUd5ZaHZiAhrmtf9gF_RDhf74BPfzxNrE5cSyH-7g0EpCLjxi5E">
+<span class="text-xs font-semibold tracking-wide text-slate-200">Axion 2.5</span>
+</div>
+<!-- Hamburger Menu Button -->
+<button aria-label="Menu options" class="w-10 h-10 rounded-full glass-btn flex items-center justify-center text-slate-200 shadow-sm">
+<svg class="w-5 h-5 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<line x1="4" x2="20" y1="7" y2="7"></line>
+<line x1="4" x2="20" y1="12" y2="12"></line>
+<line x1="4" x2="20" y1="17" y2="17"></line>
+</svg>
+</button>
+</nav>
+<!-- END: Top Navigation Bar -->
+<!-- BEGIN: Main Content Area -->
+<section class="relative z-20 px-6 pt-5 flex-1 flex flex-col justify-between" data-purpose="hero-and-metrics">
+<!-- Hero Headline Typography -->
+<div class="space-y-1">
+<h1 class="text-[34px] sm:text-[38px] font-extrabold tracking-tight leading-[1.08] text-white">
+          Train Smart<br>
+<span class="inline-flex items-center mt-1">
+            Stay&nbsp;
+            <!-- Radiant Orange Highlight Box around Strong -->
+<span class="relative inline-block bg-[#FF5722] text-white px-3 py-0.5 rounded-xl font-black shadow-lg shadow-[#FF5722]/30 transform -rotate-1">
+              Strong
+            </span>
+</span>
+</h1>
+</div>
+<!-- Floating Heart Rate Metric Indicator (Overlayed in sprint trajectory) -->
+<div class="my-auto pt-24 pr-2 flex justify-end" data-purpose="heart-rate-tracker-node">
+<div class="glass-pill bg-[#0C1523]/80 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center space-x-2.5 border border-white/15 shadow-xl">
+<!-- Pulse Dot -->
+<div class="relative flex items-center justify-center">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-orange pulse-glow"></span>
+</div>
+<!-- Dashed Path Arrow Indicator -->
+<div class="flex items-center space-x-1 opacity-60">
+<span class="w-1.5 h-0.5 bg-slate-300 rounded"></span>
+<span class="w-1.5 h-0.5 bg-slate-300 rounded"></span>
+<span class="w-1.5 h-0.5 bg-slate-300 rounded"></span>
+<svg class="w-2.5 h-2.5 text-slate-300 -ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+<path d="M5 12h14M12 5l7 7-7 7"></path>
+</svg>
+</div>
+<!-- ECG Pulse Waveform -->
+<svg class="w-4 h-4 text-slate-300 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+<path d="M2 12h3l2-5 4 10 3-7 2 3h4"></path>
+</svg>
+<!-- BPM Value -->
+<span class="text-sm font-bold text-white tracking-tight">160</span>
+<!-- Running Man Icon -->
+<svg class="w-3.5 h-3.5 text-slate-300 fill-current" viewBox="0 0 24 24">
+<circle cx="13.5" cy="5.5" r="2.5"></circle>
+<path d="M19 10l-4.5 2-2.5-3-3 1.5 2 4.5-3.5 4.5 1.5 1.5 3.5-3.5 2 2.5v4.5h2v-6l-2-2.5 1-1.5 3.5 1.5V10z"></path>
+</svg>
+</div>
+</div>
+</section>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Floating Glassmorphism Workout Assistant Panel -->
+<section class="relative z-30 p-4 pb-6" data-purpose="ai-workout-assistant-dock">
+<div class="glass-panel rounded-[32px] p-4 shadow-card-glass flex flex-col space-y-3.5">
+<!-- Mode Selector Chips: Power, Mindset, Balance -->
+<div class="flex items-center justify-between gap-2" data-purpose="mode-selectors">
+<!-- Power Tab (Active Accent) -->
+<button class="flex-1 py-2 px-2.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 flex items-center justify-center space-x-1.5 text-white transition">
+<!-- Flame Icon -->
+<svg class="w-3.5 h-3.5 text-brand-orange fill-current" viewBox="0 0 24 24">
+<path d="M12 23c-4.97 0-9-3.69-9-8.5C3 9.4 7.2 4.2 11.2.3c.4-.4 1.1-.3 1.3.2 1.3 3.1 3.5 5.5 5.7 7.7 2.4 2.4 3.8 5 3.8 8.3 0 4.81-4.03 8.5-9 8.5zm0-14.8c-2.4 2.6-4.5 5.6-4.5 8.3 0 2.8 2.2 4.8 4.5 4.8s4.5-2 4.5-4.8c0-1.8-.9-3.5-2.2-4.9-.4-.4-.5-1-.2-1.5.3-.5.9-.9 1.4-.9h.2C14.7 10.5 13.3 9.3 12 8.2z"></path>
+</svg>
+<span class="text-xs font-semibold tracking-wide">Power</span>
+</button>
+<!-- Mindset Tab -->
+<button class="flex-1 py-2 px-2.5 rounded-full bg-white/[0.04] hover:bg-white/10 border border-white/10 flex items-center justify-center space-x-1.5 text-slate-300 transition">
+<!-- Mindset / Brain Focus Icon -->
+<svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+</svg>
+<span class="text-xs font-semibold tracking-wide">Mindset</span>
+</button>
+<!-- Balance Tab -->
+<button class="flex-1 py-2 px-2.5 rounded-full bg-white/[0.04] hover:bg-white/10 border border-white/10 flex items-center justify-center space-x-1.5 text-slate-300 transition">
+<!-- Balance / Zen Icon -->
+<svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 3v18"></path>
+<path d="M4 8l8-2 8 2"></path>
+<path d="M4 8l3 7a3 3 0 0 0 6 0L10 8"></path>
+<path d="M20 8l-3 7a3 3 0 0 1-6 0L14 8"></path>
+</svg>
+<span class="text-xs font-semibold tracking-wide">Balance</span>
+</button>
+</div>
+<!-- AI Workout Voice / Text Command Bar -->
+<div class="bg-[#121B2A]/90 rounded-2xl p-3 border border-white/10 flex flex-col space-y-3" data-purpose="chat-input-wrapper">
+<!-- Top Row: Prompt Placeholder & Sparkle -->
+<div class="flex items-center space-x-2 text-slate-400 text-xs px-1">
+<svg class="w-3.5 h-3.5 text-brand-orange" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"></path>
+</svg>
+<input class="bg-transparent border-0 p-0 text-xs text-white placeholder-slate-400 focus:ring-0 w-full" placeholder="Ask me anything..." type="text">
+</div>
+<!-- Bottom Row: Input Utilities & Action Trigger -->
+<div class="flex items-center justify-between pt-1 border-t border-white/5">
+<!-- Left Action Icons (+ button, mic, clean prompt) -->
+<div class="flex items-center space-x-2">
+<!-- Add Button -->
+<button aria-label="Add attachment" class="w-8 h-8 rounded-full glass-btn flex items-center justify-center text-slate-300 hover:text-white">
+<svg class="w-4 h-4 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+<line x1="12" x2="12" y1="5" y2="19"></line>
+<line x1="5" x2="19" y1="12" y2="12"></line>
+</svg>
+</button>
+<!-- Microphone Voice Assistant Button -->
+<button aria-label="Voice input" class="w-8 h-8 rounded-full glass-btn flex items-center justify-center text-slate-300 hover:text-white">
+<svg class="w-4 h-4 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+<path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+<line x1="12" x2="12" y1="19" y2="22"></line>
+</svg>
+</button>
+<!-- Magic Wand / Prompt Enhance Button -->
+<button aria-label="Enhance prompt" class="w-8 h-8 rounded-full glass-btn flex items-center justify-center text-slate-300 hover:text-white">
+<svg class="w-4 h-4 stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15 4V2"></path>
+<path d="M15 16v-2"></path>
+<path d="M8 9h2"></path>
+<path d="M20 9h2"></path>
+<path d="M17.8 11.8 19 13"></path>
+<path d="M15 9h0"></path>
+<path d="M17.8 6.2 19 5"></path>
+<path d="m3 21 9-9"></path>
+<path d="M12.2 6.2 11 5"></path>
+</svg>
+</button>
+</div>
+<!-- Glowing Launch Action Button (Right circular orange node with Relven accent) -->
+<button aria-label="Submit workout query" class="w-11 h-11 rounded-full bg-gradient-to-tr from-[#FF5722] to-[#FF8A65] p-0.5 flex items-center justify-center shadow-glow-orange active:scale-95 transition-transform">
+<div class="w-full h-full rounded-full flex items-center justify-center bg-transparent">
+<!-- Forward paperplane/arrow mark -->
+<svg class="w-5 h-5 text-white transform rotate-45 -translate-y-0.5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24">
+<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+</svg>
+</div>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Floating Glassmorphism Workout Assistant Panel -->
+<!-- BEGIN: Android System Gesture Bar -->
+<div class="relative z-30 w-full pb-2.5 pt-1 flex justify-center items-center" data-purpose="android-gesture-navigation">
+<div class="w-32 h-1 bg-white/30 rounded-full"></div>
+</div>
+<!-- END: Android System Gesture Bar -->
+</main>
+<!-- END: Phone Frame Device Container -->
+<!-- BEGIN: Interactive Feedback Handling Script -->
+<script data-purpose="micro-interactions">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toggle mode button active states
+      const modeButtons = document.querySelectorAll('[data-purpose="mode-selectors"] button');
+      modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          modeButtons.forEach(b => {
+            b.classList.remove('bg-white/10', 'border-white/20', 'text-white');
+            b.classList.add('bg-white/[0.04]', 'border-white/10', 'text-slate-300');
+          });
+          btn.classList.add('bg-white/10', 'border-white/20', 'text-white');
+          btn.classList.remove('bg-white/[0.04]', 'border-white/10', 'text-slate-300');
+        });
+      });
+    });
+  </script>
+<!-- END: Interactive Feedback Handling Script -->
+</body></html>

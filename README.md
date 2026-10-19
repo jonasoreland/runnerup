@@ -11,7 +11,7 @@ Relven is a free, open-source fitness app for Android with a phone-dependent Wea
 - Use the Wear OS companion for live workout display and remote actions. The phone owns the workout and GPS recording.
 - Import or share the workout formats currently supported by RunnerUp.
 
-An initial Wear heart-rate provider is integrated behind an experimental setting, but it has not been tested on a watch and screen-off/background capture is unsupported. FIT Workout and Relven JSON training-plan imports, strength tracking, a unified calendar, AI Plan Kit, route coloring and the new Compose UI are **not yet implemented**. The current screens still use the inherited layout beneath Relven launcher branding.
+An initial Wear heart-rate provider is integrated behind an experimental setting, but it has not been tested on a watch and screen-off/background capture is unsupported. FIT Workout and Relven JSON training-plan imports, strength tracking, a unified calendar, AI Plan Kit and route coloring are **not yet implemented**. A debug-only Compose screen previews the new visual foundation; the launcher and workout screens still use the inherited layout beneath Relven branding.
 
 ## Build and install
 
@@ -22,7 +22,7 @@ Requirements: JDK 17 or newer, Android SDK platform 37.1, Build Tools 37.0.0, an
 ./gradlew :app:testLatestDebugUnitTest :wear:testDebugUnitTest
 ```
 
-The phone APK is under `app/build/outputs/apk/latest/debug/`; the watch APK is under `wear/build/outputs/apk/debug/`. Install each APK on its matching device with `adb install` and pair the devices normally. No physical-device or emulator run has yet been verified for this fork.
+The phone APK is under `app/build/outputs/apk/latest/debug/`; the watch APK is under `wear/build/outputs/apk/debug/`. Install each APK on its matching device with `adb install` and pair the devices normally. The phone debug APK launched on a Samsung SM-S948B (API 37) on 19 October 2026; recording and permission behavior have not yet been tested. No Wear hardware run has been verified for this fork.
 
 Phone and watch share the original Relven Play application ID `se.hampusandersson.relven` (debug suffix `.debug`); the free variant uses `se.hampusandersson.relven.free`. Internal `org.runnerup` Java namespaces and wearable protocol paths remain for compatibility. An in-place upgrade needs the existing Play signing identity, a higher version code and a safe path for old app data; these release checks are pending.
 
@@ -36,7 +36,7 @@ Workout and activity data is stored locally by the inherited engine. Local recor
 
 ## Status and limitations
 
-See [implementation status](docs/implementation-status.md), [roadmap](docs/roadmap.md), [migration notes](docs/migration.md) and [Wear HR audit](docs/wear-hr-audit.md). Phone/watch debug APKs, selected unit tests and lint pass after the shared Play ID and initial HR changes. GPS, audio, import/export and watch behavior still need emulator and device smoke tests. Samsung Galaxy Watch6 Classic heart-rate behavior is unverified.
+See [implementation status](docs/implementation-status.md), [roadmap](docs/roadmap.md), [migration notes](docs/migration.md) and [Wear HR audit](docs/wear-hr-audit.md). Phone/watch debug APKs, selected unit tests and lint pass after the shared Play ID and initial HR changes. Phone startup passed on a physical device; GPS, audio, import/export and watch behavior still need device smoke tests. Samsung Galaxy Watch6 Classic heart-rate behavior is unverified.
 
 ## Upstream, license and contributions
 

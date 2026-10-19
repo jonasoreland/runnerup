@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="sv"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "background": "#0c1017",
+            "surface": "#0c1017",
+            "surface-card": "#131923",
+            "surface-container": "#18202d",
+            "surface-container-high": "#202a3a",
+            "surface-container-highest": "#283448",
+            "on-surface": "#e5ebf5",
+            "on-surface-variant": "#939eb5",
+            "primary": "#b3c5ff",
+            "primary-container": "#0066ff",
+            "brand-orange": "#FF6A00",
+            "brand-orange-light": "#FF7A1A",
+            "outline-dim": "#2d3748"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk", "sans-serif"],
+            "body": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #0c1017;
+      color: #e5ebf5;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col justify-between selection:bg-brand-orange selection:text-white">
+<!-- Android System Status Bar -->
+<div class="w-full pt-2 px-6 flex items-center justify-between text-on-surface-variant text-xs select-none">
+<span class="font-medium tracking-tight">9:40 PM</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[15px]">wifi</span>
+<span class="material-symbols-outlined text-[16px] rotate-90">battery_full</span>
+</div>
+</div>
+<!-- Top App Bar -->
+<header class="w-full px-5 py-3 flex items-center justify-between">
+<button aria-label="Tillbaka" class="w-10 h-10 rounded-full bg-surface-container/80 backdrop-blur-md border border-white/5 flex items-center justify-center text-on-surface hover:bg-surface-container-high active:scale-95 transition" onclick="history.back()" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<div class="px-4 py-1.5 rounded-full bg-surface-container/70 border border-white/5 text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-headline">
+      Löppass
+    </div>
+<button aria-label="Fler alternativ" class="w-10 h-10 rounded-full bg-surface-container/80 backdrop-blur-md border border-white/5 flex items-center justify-center text-on-surface hover:bg-surface-container-high active:scale-95 transition" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</header>
+<!-- Main Content Container -->
+<main class="flex-1 w-full max-w-md mx-auto px-5 py-2 flex flex-col gap-6">
+<!-- Workout Hero Header -->
+<div class="space-y-1">
+<div class="inline-flex items-center gap-1.5 text-xs text-brand-orange font-medium font-headline tracking-wide uppercase">
+<span class="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
+        Kondition &amp; VO2max
+      </div>
+<h1 class="text-3xl font-bold font-headline tracking-tight text-white">
+        Intervaller – Kondition
+      </h1>
+<p class="text-sm text-on-surface-variant font-medium">
+        Tisdag 15 okt · 45 min
+      </p>
+</div>
+<!-- Core Telemetry Metrics (Frosted Card) -->
+<div class="bg-surface-card/90 border border-white/5 rounded-3xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+<!-- Glow ambient backdrop -->
+<div class="absolute -right-10 -top-10 w-36 h-36 bg-brand-orange/10 rounded-full blur-3xl pointer-events-none"></div>
+<!-- 2x2 Grid -->
+<div class="grid grid-cols-2 gap-y-5 gap-x-4">
+<!-- Metric 1: Total Tid -->
+<div>
+<span class="text-[11px] font-medium text-on-surface-variant uppercase tracking-wider font-headline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+            Total tid
+          </span>
+<div class="text-3xl font-bold font-headline text-white mt-0.5 tracking-tight">
+            45 <span class="text-sm font-medium text-on-surface-variant">min</span>
+</div>
+</div>
+<!-- Metric 2: Estimerad distans -->
+<div>
+<span class="text-[11px] font-medium text-on-surface-variant uppercase tracking-wider font-headline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">straighten</span>
+            Est. distans
+          </span>
+<div class="text-3xl font-bold font-headline text-white mt-0.5 tracking-tight">
+            ~7,8 <span class="text-sm font-medium text-on-surface-variant">km</span>
+</div>
+</div>
+<!-- Metric 3: Intensitet -->
+<div>
+<span class="text-[11px] font-medium text-brand-orange uppercase tracking-wider font-headline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">favorite</span>
+            Intensitet
+          </span>
+<div class="text-xl font-bold font-headline text-brand-orange mt-0.5">
+            Zon 4
+          </div>
+<div class="text-[11px] text-on-surface-variant">Tröskel (165–178 BPM)</div>
+</div>
+<!-- Metric 4: Måltempo -->
+<div>
+<span class="text-[11px] font-medium text-on-surface-variant uppercase tracking-wider font-headline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">speed</span>
+            Måltempo
+          </span>
+<div class="text-xl font-bold font-headline text-primary mt-0.5">
+            4:15 <span class="text-xs font-normal text-on-surface-variant">min/km</span>
+</div>
+<div class="text-[11px] text-on-surface-variant">Genomsnittligt</div>
+</div>
+</div>
+<!-- Clean Visual Sequence Progress Bar -->
+<div class="mt-6 pt-5 border-t border-white/5">
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-medium font-headline uppercase mb-2">
+<span>Passprofil</span>
+<span class="text-on-surface">10m · 25m · 10m</span>
+</div>
+<div class="h-3 w-full bg-surface-container rounded-full p-0.5 flex items-center gap-1">
+<!-- Warmup -->
+<div class="h-full rounded-full bg-surface-container-highest" style="width: 22%;" title="Uppvärmning (10 min)"></div>
+<!-- 5 Intervaller -->
+<div class="h-full flex-1 flex items-center gap-1">
+<div class="h-full flex-1 rounded-sm bg-brand-orange shadow-sm shadow-brand-orange/40"></div>
+<div class="h-full w-1 rounded-sm bg-surface-container-highest"></div>
+<div class="h-full flex-1 rounded-sm bg-brand-orange shadow-sm shadow-brand-orange/40"></div>
+<div class="h-full w-1 rounded-sm bg-surface-container-highest"></div>
+<div class="h-full flex-1 rounded-sm bg-brand-orange shadow-sm shadow-brand-orange/40"></div>
+<div class="h-full w-1 rounded-sm bg-surface-container-highest"></div>
+<div class="h-full flex-1 rounded-sm bg-brand-orange shadow-sm shadow-brand-orange/40"></div>
+<div class="h-full w-1 rounded-sm bg-surface-container-highest"></div>
+<div class="h-full flex-1 rounded-sm bg-brand-orange shadow-sm shadow-brand-orange/40"></div>
+</div>
+<!-- Cooldown -->
+<div class="h-full rounded-full bg-surface-container-highest" style="width: 22%;" title="Nedvarvning (10 min)"></div>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-medium mt-2">
+<span>Uppvärmning (10m)</span>
+<span class="text-brand-orange font-headline">5× Intervaller (25m)</span>
+<span>Nedvarvning (10m)</span>
+</div>
+</div>
+</div>
+<!-- Structured Steps (Clean List) -->
+<div class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-sm font-semibold font-headline uppercase tracking-wider text-on-surface-variant">Strukturerade steg</h2>
+<span class="text-xs text-on-surface-variant font-medium">3 faser</span>
+</div>
+<div class="space-y-2">
+<!-- Step 1: Uppvärmning -->
+<div class="bg-surface-card border border-white/5 rounded-2xl p-4 flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant font-headline font-bold text-xs flex items-center justify-center shrink-0">
+            1
+          </div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-semibold text-white font-headline truncate">Uppvärmning</h3>
+<span class="text-xs font-semibold text-on-surface font-headline">10 min</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5 truncate">
+              Lätt progressiv jogg · Zon 2
+            </p>
+</div>
+</div>
+<!-- Step 2: Intervallblock -->
+<div class="bg-surface-card border border-brand-orange/20 rounded-2xl p-4 flex items-center gap-4 shadow-lg shadow-brand-orange/5">
+<div class="w-8 h-8 rounded-full bg-brand-orange text-white font-headline font-bold text-xs flex items-center justify-center shrink-0">
+            2
+          </div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-semibold text-white font-headline truncate">Intervallblock</h3>
+<span class="text-xs font-semibold text-brand-orange font-headline">25 min</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5 truncate">
+              5 × 3 min @ 4:05 min/km (2 min aktiv vila mellan)
+            </p>
+</div>
+</div>
+<!-- Step 3: Nedvarvning -->
+<div class="bg-surface-card border border-white/5 rounded-2xl p-4 flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant font-headline font-bold text-xs flex items-center justify-center shrink-0">
+            3
+          </div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-semibold text-white font-headline truncate">Nedvarvning &amp; Utjogg</h3>
+<span class="text-xs font-semibold text-on-surface font-headline">10 min</span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5 truncate">
+              Lugn utjogg och andning · Zon 1–2
+            </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action & Navigation Chrome -->
+<footer class="w-full max-w-md mx-auto px-5 pt-3 pb-3 flex flex-col items-center gap-3">
+<!-- Primary Start Button -->
+<button class="w-full h-14 rounded-full bg-gradient-to-r from-brand-orange-light to-brand-orange text-white font-headline font-bold text-lg flex items-center justify-center gap-2.5 shadow-[0_8px_28px_rgba(255,106,0,0.35)] active:scale-[0.98] transition-transform" type="button">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>Starta pass</span>
+</button>
+<!-- Secondary Action -->
+<button class="text-xs font-medium text-on-surface-variant hover:text-white transition-colors py-1" type="button">
+      Synkronisera med klocka
+    </button>
+<!-- Android Home Indicator Bar -->
+<div class="w-32 h-1 bg-white/20 rounded-full mt-1 mb-1"></div>
+</footer>
+</body></html>

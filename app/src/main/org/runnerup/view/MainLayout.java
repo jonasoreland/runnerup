@@ -65,6 +65,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.ViewUtil;
 
 public class MainLayout extends AppCompatActivity {
+  public static final String EXTRA_INITIAL_TAB = "org.runnerup.extra.INITIAL_TAB";
 
   private enum UpgradeState {
     UNKNOWN,
@@ -167,6 +168,11 @@ public class MainLayout extends AppCompatActivity {
             true, // Uses animation when switching tabs
             (tab, position) -> tab.setIcon(adapter.getIcon(position)))
         .attach();
+
+    int initialTab = getIntent().getIntExtra(EXTRA_INITIAL_TAB, 0);
+    if (initialTab >= 0 && initialTab < adapter.getItemCount()) {
+      pager.setCurrentItem(initialTab, false);
+    }
 
     if (upgradeState == UpgradeState.UPGRADE) {
       whatsNew();

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="sv"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_tab" name="shell-type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#0d141e",
+            "surface-dim": "#080d14",
+            "surface-container-lowest": "#060a10",
+            "surface-container-low": "#111823",
+            "surface-container": "#17202d",
+            "surface-container-high": "#1f2a3a",
+            "surface-container-highest": "#283549",
+            "on-surface": "#e6edf8",
+            "on-surface-variant": "#94a3b8",
+            "outline": "#334155",
+            "outline-variant": "rgba(255,255,255,0.08)",
+            "primary": "#38bdf8",
+            "primary-container": "#0284c7",
+            "secondary": "#ff6a00",
+            "secondary-container": "#ea580c"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            display: ["Space Grotesk", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: #0d141e;
+        color: #e6edf8;
+        font-family: 'Inter', sans-serif;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#0b111a] text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary/30">
+<!-- Top Wrapper: Android Status Bar + Header -->
+<div class="w-full flex flex-col z-40 bg-[#0b111a]">
+<!-- Android Status Bar -->
+<div class="w-full px-6 pt-3 pb-1 flex items-center justify-between text-xs text-on-surface-variant font-medium select-none">
+<span class="tracking-tight text-on-surface">9:40 PM</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">wifi</span>
+<span class="material-symbols-outlined text-[15px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[16px]">battery_full</span>
+</div>
+</div>
+<!-- Profile Header (identical to SCREEN_18) -->
+<header class="w-full px-6 py-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<!-- User Avatar with glowing status dot -->
+<div class="relative">
+<img alt="Michael David" class="w-11 h-11 rounded-full object-cover ring-2 ring-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHRi_rlgsb4pXDlH4eweK499IojhR-OUEl2iYqAjuw5ZuzppewzYhAixMZi_k4Gb0pMtwRnXm70l3tNB3De2YKCb5tapFHH824uxs90u99VS4EjMGUMjVM9BBvYU02O5EhGjjywE8hTQcj5piaT_T4qpXmd5MGqSziD3yHY_g-qJ10sfoNoV2gmSf4fjSSgXNQ2YAsDVP8FemG3Pdq5hcz9hcO8sao0lJChwz5w67sv6EzEK6wdIDfWg"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-[#0b111a] rounded-full shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-base font-bold text-white font-display tracking-tight leading-snug">Michael David</h2>
+<span class="text-xs text-on-surface-variant font-medium">Aktiv träningsplan</span>
+</div>
+</div>
+<!-- Notification Bell with Dot Badge -->
+<button aria-label="Notiser" class="relative w-10 h-10 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/5 flex items-center justify-center text-on-surface transition-colors active:scale-95" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#ff6a00] shadow-[0_0_6px_rgba(255,106,0,0.8)]"></span>
+</button>
+</header>
+</div>
+<!-- Main Content Container -->
+<main class="flex-1 w-full px-5 pt-3 pb-32 flex flex-col gap-6 max-w-md mx-auto">
+<!-- 2. Program Title & Context -->
+<section class="flex flex-col gap-1">
+<h1 class="text-3xl font-extrabold text-white font-display tracking-tight">Träningsplan</h1>
+<p class="text-xs text-on-surface-variant font-medium tracking-wide">
+        Fotbollsfys &amp; Uthållighet · Fas 2 <span class="text-slate-500">·</span> Vecka 4 av 8
+      </p>
+</section>
+<!-- 3. Clean Week Calendar -->
+<section class="flex flex-col gap-3">
+<!-- Week bar with simple arrows -->
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<button aria-label="Föregående vecka" class="w-7 h-7 rounded-full bg-white/[0.04] flex items-center justify-center text-on-surface-variant hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="text-sm font-semibold text-white font-display tracking-wide">V. 42 · 14–20 Okt</span>
+<button aria-label="Nästa vecka" class="w-7 h-7 rounded-full bg-white/[0.04] flex items-center justify-center text-on-surface-variant hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<span class="text-[11px] font-medium text-emerald-400/90 tracking-wide uppercase">På schema</span>
+</div>
+<!-- Minimalist 7-Day Selector -->
+<div class="grid grid-cols-7 gap-1.5 p-1.5 rounded-2xl bg-white/[0.03] border border-white/5">
+<!-- Mån 14 -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors" type="button">
+<span class="text-[10px] font-medium text-slate-400">MÅN</span>
+<span class="text-sm font-bold text-white my-1 font-display">14</span>
+<span class="material-symbols-outlined text-emerald-400 text-[12px]">check</span>
+</button>
+<!-- Tis 15 (Active/Selected) -->
+<button class="relative flex flex-col items-center py-2.5 rounded-xl bg-white/[0.1] border border-white/10 shadow-[0_0_16px_rgba(255,255,255,0.06)]" type="button">
+<span class="text-[10px] font-bold text-[#ff6a00]">TIS</span>
+<span class="text-sm font-extrabold text-white my-1 font-display">15</span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#ff6a00]"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+</div>
+</button>
+<!-- Ons 16 (Vila) -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors opacity-60" type="button">
+<span class="text-[10px] font-medium text-slate-400">ONS</span>
+<span class="text-sm font-semibold text-white my-1 font-display">16</span>
+<span class="w-1 h-1 rounded-full bg-slate-500"></span>
+</button>
+<!-- Tor 17 -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors" type="button">
+<span class="text-[10px] font-medium text-slate-400">TOR</span>
+<span class="text-sm font-semibold text-white my-1 font-display">17</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#ff6a00]"></span>
+</button>
+<!-- Fre 18 -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors" type="button">
+<span class="text-[10px] font-medium text-slate-400">FRE</span>
+<span class="text-sm font-semibold text-white my-1 font-display">18</span>
+<span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+</button>
+<!-- Lör 19 -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors" type="button">
+<span class="text-[10px] font-medium text-slate-400">LÖR</span>
+<span class="text-sm font-semibold text-white my-1 font-display">19</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#ff6a00]"></span>
+</button>
+<!-- Sön 20 (Vila) -->
+<button class="flex flex-col items-center py-2.5 rounded-xl hover:bg-white/[0.04] transition-colors opacity-60" type="button">
+<span class="text-[10px] font-medium text-slate-400">SÖN</span>
+<span class="text-sm font-semibold text-white my-1 font-display">20</span>
+<span class="w-1 h-1 rounded-full bg-slate-500"></span>
+</button>
+</div>
+</section>
+<!-- 4. Workout List (Tisdag 15 okt) -->
+<section class="flex flex-col gap-3">
+<div class="flex items-center justify-between px-1">
+<h2 class="text-sm font-bold text-white font-display uppercase tracking-wider text-slate-300">Tisdag 15 oktober</h2>
+<span class="text-xs text-slate-400 font-medium">2 pass inplanerade</span>
+</div>
+<!-- Workout Card 1: Morgonlöpning -->
+<div class="group relative rounded-3xl bg-[#121a24]/90 border border-white/5 p-4 flex flex-col gap-4 shadow-[0_8px_24px_rgba(0,0,0,0.3)] transition-all hover:border-white/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 rounded-2xl bg-[#ff6a00]/15 border border-[#ff6a00]/20 flex items-center justify-center text-[#ff6a00] shrink-0">
+<span class="material-symbols-outlined text-[22px]">directions_run</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] font-semibold text-[#ff6a00] uppercase tracking-wider">Löpning</span>
+<h3 class="text-base font-bold text-white font-display leading-tight">Morgonlöpning: Intervaller</h3>
+</div>
+</div>
+<button aria-label="Visa pass" class="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-slate-400 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-xs text-slate-300">
+<span class="font-medium text-slate-400">45 min · 7,8 km · Tröskelintervaller</span>
+<button class="px-3.5 py-1.5 rounded-full bg-[#ff6a00] text-white text-xs font-semibold shadow-[0_2px_12px_rgba(255,106,0,0.35)] active:scale-95 transition-transform" type="button">
+            Starta
+          </button>
+</div>
+</div>
+<!-- Workout Card 2: Gym: Underkropp & Core -->
+<div class="group relative rounded-3xl bg-[#121a24]/90 border border-white/5 p-4 flex flex-col gap-4 shadow-[0_8px_24px_rgba(0,0,0,0.3)] transition-all hover:border-white/10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3.5">
+<div class="w-11 h-11 rounded-2xl bg-sky-500/15 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+<span class="material-symbols-outlined text-[22px]">fitness_center</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] font-semibold text-sky-400 uppercase tracking-wider">Styrka</span>
+<h3 class="text-base font-bold text-white font-display leading-tight">Gym: Underkropp &amp; Core</h3>
+</div>
+</div>
+<button aria-label="Visa pass" class="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center text-slate-400 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-1 border-t border-white/[0.04] text-xs text-slate-300">
+<span class="font-medium text-slate-400">50 min · 5 övningar · Hypertrofi</span>
+<button class="px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/[0.12] text-white text-xs font-semibold transition-colors active:scale-95" type="button">
+            Öppna
+          </button>
+</div>
+</div>
+</section>
+</main>
+<!-- 5. Floating Bottom Navigation Dock & Android System Nav Bar -->
+<div class="fixed bottom-0 inset-x-0 z-50 pointer-events-none flex flex-col items-center pb-2 bg-gradient-to-t from-[#0b111a] via-[#0b111a]/80 to-transparent pt-6">
+<!-- Floating Pill Dock -->
+<nav class="pointer-events-auto h-16 px-4 rounded-full bg-[#121a24]/95 backdrop-blur-2xl border border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.6)] flex items-center gap-6">
+<!-- Home -->
+<button aria-label="Hem" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">home</span>
+</button>
+<!-- Route / Path -->
+<button aria-label="Rutter" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">route</span>
+</button>
+<!-- Lightning / Activity -->
+<button aria-label="Aktivitet" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white transition-colors" type="button">
+<span class="material-symbols-outlined text-[24px]">bolt</span>
+</button>
+<!-- Plan / Calendar (ACTIVE with glowing vibrant orange circle button) -->
+<button aria-label="Träningsplan" class="relative w-11 h-11 rounded-full bg-[#ff6a00] text-white flex items-center justify-center shadow-[0_0_18px_rgba(255,106,0,0.5)] active:scale-95 transition-transform" type="button">
+<span class="material-symbols-outlined text-[22px]">calendar_today</span>
+</button>
+</nav>
+<!-- Android System Navigation Bar Pill Indicator -->
+<div class="w-32 h-1 bg-white/20 rounded-full mt-3 pointer-events-none"></div>
+</div>
+</body></html>

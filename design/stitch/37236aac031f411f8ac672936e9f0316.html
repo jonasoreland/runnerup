@@ -1,0 +1,278 @@
+<!DOCTYPE html><html class="h-full" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Relven - Daily Activity</title>
+<!-- Tailwind CSS CDN with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              orange: '#FF5A1F',
+              accent: '#FF7337',
+              dark: '#0C121D',
+              surface: 'rgba(23, 33, 49, 0.72)',
+              surfaceHighlight: 'rgba(38, 52, 74, 0.55)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              subtext: '#8E9BAE',
+            }
+          },
+          boxShadow: {
+            'glow-orange': '0 0 24px -2px rgba(255, 90, 31, 0.45)',
+            'card': '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Glassmorphism and Layout Styles -->
+<style data-purpose="custom-glass-effects">
+    .glass-card {
+      background: linear-gradient(145deg, rgba(27, 39, 58, 0.65) 0%, rgba(15, 23, 35, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .inner-pill {
+      background: rgba(18, 26, 39, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .floating-nav {
+      background: rgba(14, 20, 30, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+<!-- END: Custom Glassmorphism and Layout Styles -->
+</head>
+<body class="bg-[#05080E] text-white font-sans min-h-full flex items-center justify-center p-0 md:p-6 select-none antialiased">
+<!-- BEGIN: Mobile Container Device Mockup -->
+<div class="relative w-full max-w-[412px] h-[892px] bg-[#0A0F18] overflow-hidden rounded-[44px] shadow-2xl border-[6px] border-[#18202F] flex flex-col justify-between" data-purpose="mobile-viewport">
+<!-- Background Ambient Glows -->
+<div class="absolute top-10 -left-20 w-72 h-72 bg-[#1A3353] rounded-full blur-[100px] pointer-events-none opacity-40"></div>
+<div class="absolute top-80 -right-20 w-80 h-80 bg-[#FF5A1F] rounded-full blur-[120px] pointer-events-none opacity-15"></div>
+<!-- BEGIN: Top Status & App Bar Area -->
+<div class="relative z-20 flex-shrink-0">
+<!-- Android Status Bar -->
+<div class="w-full pt-3 px-7 flex justify-between items-center text-xs tracking-wide text-gray-300 font-medium" data-purpose="status-bar">
+<span class="font-semibold text-sm">9:40 PM</span>
+<div class="flex items-center space-x-2">
+<!-- Cellular Network Indicator -->
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9zm0 2c3.87 0 7 3.13 7 7 0 1.54-.5 2.97-1.35 4.14L12 19.67l-5.65-3.53C5.5 14.97 5 13.54 5 12c0-3.87 3.13-7 7-7z"></path>
+</svg>
+<!-- Wi-Fi Icon -->
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4zm0 3.3c3.78 0 7.23 1.48 9.8 3.91L12 18.91 2.2 11.21C4.77 8.78 8.22 7.3 12 7.3z"></path>
+</svg>
+<!-- Battery Icon -->
+<div class="w-5 h-2.5 border border-gray-400 rounded-sm p-0.5 flex items-center">
+<div class="h-full bg-white rounded-2xs w-full"></div>
+</div>
+</div>
+</div>
+<!-- BEGIN: User Profile Header -->
+<header class="px-6 pt-4 pb-2 flex items-center justify-between" data-purpose="user-header">
+<div class="flex items-center space-x-3.5">
+<!-- User Profile Avatar with verified status ring -->
+<div class="relative">
+<img alt="Michael David Profile" class="w-12 h-12 rounded-full object-cover ring-2 ring-brand-orange/40 p-0.5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU8FZ-n04XPW3zqzsPNM3nibuXLUv321fFRQptxnDoEUPrhnkyMP8b44AjFw9zRGGp8L2U_WnTUUYIQqgUTey6jD3x-LhIsNPzOlRZfkmoAsi7sBigJJnp1rz9MuMza0a8tkSUtb-q35yXVhYwRU3wmjsih4i1BnpoptxGBMAxiTwoUsmpRNNRy7DKrb1t1QYPcTJUTmb04UgP8cwsrHOmODaHW0_nuXeHxWNvIj3FighGRt0QqwrE4A">
+</div>
+<div>
+<h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+              Michael David
+            </h1>
+<p class="text-xs font-medium text-brand-subtext tracking-normal">Welcome Back!</p>
+</div>
+</div>
+<!-- Notification Bell Button -->
+<button aria-label="Notifications" class="w-11 h-11 rounded-full inner-pill flex items-center justify-center text-gray-300 hover:text-white transition duration-200 relative group" type="button">
+<svg class="w-5 h-5 text-gray-300 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+<path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+</svg>
+<span class="absolute top-2.5 right-3 w-2 h-2 bg-brand-orange rounded-full ring-2 ring-[#0A0F18]"></span>
+</button>
+</header>
+<!-- END: User Profile Header -->
+</div>
+<!-- END: Top Status & App Bar Area -->
+<!-- BEGIN: Scrollable Dashboard Content Area -->
+<main class="flex-1 px-5 py-2 flex flex-col justify-between overflow-y-auto space-y-4 scrollbar-none z-10" data-purpose="dashboard-content">
+<!-- BEGIN: Main Daily Activity Card -->
+<section class="glass-card rounded-[32px] p-5 shadow-card relative overflow-hidden" data-purpose="daily-activity-card">
+<!-- Header of Card -->
+<div class="flex items-start space-x-3.5 mb-2">
+<div class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+<!-- Activity Wave Icon -->
+<svg class="w-5 h-5 text-[#88A3C7]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+</svg>
+</div>
+<div>
+<h2 class="text-base font-bold text-white tracking-wide">Daily Activity</h2>
+<p class="text-xs text-brand-subtext font-normal">Keep moving every day.</p>
+</div>
+</div>
+<!-- Radial Gauge & Activity Score -->
+<div class="relative flex flex-col items-center justify-center mt-3 mb-2">
+<!-- Semi-circular SVG Gauge -->
+<div class="relative w-64 h-36 flex items-center justify-center">
+<svg class="w-64 h-64 -rotate-90 transform translate-y-7" viewBox="0 0 200 200">
+<!-- Dashed tick mark guides on outer ring -->
+<circle cx="100" cy="100" fill="transparent" r="76" stroke="rgba(255,255,255,0.15)" stroke-dasharray="3, 7" stroke-dashoffset="0" stroke-linecap="round" stroke-width="9"></circle>
+<!-- Background semi-circle track -->
+<circle cx="100" cy="100" fill="transparent" r="66" stroke="rgba(255,255,255,0.06)" stroke-dasharray="314" stroke-dashoffset="157" stroke-linecap="round" stroke-width="15"></circle>
+<!-- Active Progress Arc (Orange Glow) -->
+<circle cx="100" cy="100" fill="transparent" r="66" stroke="url(#orangeGradient)" stroke-dasharray="314" stroke-dashoffset="220" stroke-linecap="round" stroke-width="15"></circle>
+<!-- End of arc highlight point -->
+<defs>
+<linearGradient id="orangeGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#FF7A00"></stop>
+<stop offset="100%" stop-color="#FF4D00"></stop>
+</linearGradient>
+</defs>
+</svg>
+<!-- White indicator dot on the gauge tip -->
+<div class="absolute top-5 right-[74px] w-3 h-3 bg-white rounded-full shadow-[0_0_8px_#ffffff]"></div>
+<!-- Score Center Display -->
+<div class="absolute bottom-1 text-center">
+<div class="text-[44px] font-extrabold tracking-tight text-white leading-none">80</div>
+<p class="text-[11px] font-semibold tracking-wider text-brand-subtext uppercase mt-1">Activity Score</p>
+</div>
+</div>
+</div>
+<!-- Sub-Metrics Inner Grid: Step Tracker & Fit Flow -->
+<div class="grid grid-cols-2 gap-3 mt-4">
+<!-- Metric 1: Step Tracker -->
+<div class="inner-pill rounded-2xl p-3 flex flex-col justify-between">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-300">
+<!-- Shoe / Footsteps icon -->
+<svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<span class="text-xs font-semibold text-gray-300 leading-tight">Step<br>Tracker</span>
+</div>
+<div class="mt-3">
+<span class="text-lg font-bold text-white tracking-tight">8792</span>
+<span class="text-xs font-medium text-brand-subtext ml-0.5">Step</span>
+</div>
+</div>
+<!-- Metric 2: Fit Flow -->
+<div class="inner-pill rounded-2xl p-3 flex flex-col justify-between">
+<div class="flex items-center space-x-2.5">
+<!-- Radial ring around small icon -->
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-8 h-8 -rotate-90">
+<circle cx="16" cy="16" fill="none" r="13" stroke="rgba(255,255,255,0.1)" stroke-width="2.5"></circle>
+<circle cx="16" cy="16" fill="none" r="13" stroke="#FF5A1F" stroke-dasharray="81" stroke-dashoffset="28" stroke-linecap="round" stroke-width="2.5"></circle>
+</svg>
+<!-- Dumbbell Icon -->
+<svg class="w-3.5 h-3.5 text-white absolute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M6.5 6.5l11 11M3 9l4-4 2 2-4 4zm12 12l4-4 2 2-4 4z"></path>
+</svg>
+</div>
+<span class="text-xs font-semibold text-gray-300 leading-tight">Fit<br>Flow</span>
+</div>
+<div class="mt-3">
+<span class="text-lg font-bold text-white tracking-tight">40</span>
+<span class="text-xs font-medium text-brand-subtext ml-0.5">/ 60 Min</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Main Daily Activity Card -->
+<!-- BEGIN: Morning Run Card with Background Image -->
+<section class="relative glass-card rounded-[32px] p-5 overflow-hidden shadow-card min-h-[170px] flex flex-col justify-between group cursor-pointer border border-white/10" data-purpose="morning-run-card">
+<!-- Background Imagery with Runner Silhouette -->
+<div class="absolute inset-0 z-0">
+<img alt="Morning Runner Silhouette in Fog" class="w-full h-full object-cover object-center opacity-30 mix-blend-luminosity scale-105 group-hover:scale-110 transition duration-700 ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwW313hVyN8ijTH-t-CySB1iDM6kf-RfliufdcVvaXNCtmi7YXLmCHXTzgR9PI2fzUs2LW0ZUN60_BbbJj0c07kVHoHgnCMgyiT_RrKnFBShPgF5X7zn0iHds8tO8ljwQEFmn0wQl_9THdY6GNLZDOyPFiduH6TDvQOF4WUgVTea7xV0gwXsfZOETOYvejC68jeR1eDnLHUdipi7xuRJr46x0Kd9dq2r3XvOsd_Xp7y2T2dJ5vmLfMIg">
+<div class="absolute inset-0 bg-gradient-to-t from-[#0C1420] via-[#0C1420]/75 to-transparent"></div>
+</div>
+<!-- Card Top Bar: Icon, Title & Diagonal Arrow Action -->
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/15">
+<!-- Running Person Icon -->
+<svg class="w-5 h-5 text-gray-200" fill="currentColor" viewBox="0 0 24 24">
+<path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"></path>
+</svg>
+</div>
+<div>
+<h3 class="text-base font-bold text-white tracking-wide">Morning Run</h3>
+<p class="text-xs text-brand-subtext font-medium">Start your day.</p>
+</div>
+</div>
+<!-- Circular Arrow Button -->
+<div class="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center text-white border border-white/20 group-hover:bg-white group-hover:text-black transition-colors duration-300">
+<svg class="w-4 h-4 transform -rotate-45" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+<!-- Large Distance Metrics -->
+<div class="relative z-10 pt-4">
+<div class="flex items-baseline space-x-1.5">
+<span class="text-3xl font-extrabold text-white tracking-tight">10,58</span>
+<span class="text-base font-semibold text-brand-subtext">Km</span>
+</div>
+</div>
+</section>
+<!-- END: Morning Run Card -->
+</main>
+<!-- END: Scrollable Dashboard Content Area -->
+<!-- BEGIN: Floating Bottom Navigation Dock -->
+<div class="px-5 pb-5 pt-2 flex-shrink-0 z-20" data-purpose="bottom-navigation-dock">
+<nav class="floating-nav h-16 rounded-[28px] px-3 flex items-center justify-between shadow-2xl relative">
+<!-- Home Button (Active with Orange Glow) -->
+<button aria-label="Home" class="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF4D00] to-[#FF7A00] shadow-glow-orange text-white transform active:scale-95 transition-all" type="button">
+<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+<path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+</svg>
+</button>
+<!-- Workout Activity Tab -->
+<button aria-label="Running Activity" class="w-12 h-12 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition duration-200" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+<path class="hidden" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+<!-- Runner silhouette icon -->
+<circle cx="14" cy="4" r="2"></circle>
+<path d="m15 8-4 4-3-1v4"></path>
+<path d="m9 15 3 5 4-2"></path>
+<path d="M6 13l3-1 2 2"></path>
+</svg>
+</button>
+<!-- Energy / Insights Tab -->
+<button aria-label="Energy" class="w-12 h-12 rounded-full flex items-center justify-center text-gray-400 hover:text-white transition duration-200" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24">
+<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+</svg>
+</button>
+<!-- Relven Spark / Assistant AI Dock Button -->
+<button aria-label="Relven AI" class="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF5A1F]/30 to-[#FF7A00]/20 border border-[#FF7A00]/40 flex items-center justify-center text-[#FF8540] hover:text-white hover:border-[#FF8540] transition duration-200 group" type="button">
+<svg class="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.286L13 21l-2.286-6.857L5 12l5.714-2.286L13 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</nav>
+<!-- Android Gesture Navigation Pill Bar -->
+<div class="w-full flex justify-center pt-2">
+<div class="w-32 h-1 bg-white/20 rounded-full"></div>
+</div>
+</div>
+<!-- END: Floating Bottom Navigation Dock -->
+</div>
+<!-- END: Mobile Container Device Mockup -->
+</body></html>

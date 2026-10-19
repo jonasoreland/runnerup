@@ -2,14 +2,90 @@
   "projectId": "15389433782836702529",
   "projectTitle": "Relven Fitness App UI Design",
   "verifiedOn": "2026-10-19",
-  "phase": "Phase Zero icon retrieval only; full screen inventory and exports pending",
+  "referencePriority": [
+    "Existing generated Android screens",
+    "Uploaded three-screen Android reference",
+    "Uploaded Wear OS reference",
+    "Uploaded Relven logo"
+  ],
+  "stitchCorrection": "Three planning/detail edits requested 2026-10-19; Stitch returned HTTP 502 and exported versions remain unchanged",
   "assets": [
+    {
+      "screenId": "0b7a6523ca3b4ebb841c435434071b89",
+      "title": "Relven Android - Training & Assistant",
+      "width": 780,
+      "height": 1768,
+      "screenshot": "0b7a6523ca3b4ebb841c435434071b89.png",
+      "html": "0b7a6523ca3b4ebb841c435434071b89.html"
+    },
     {
       "screenId": "15318243315829222097",
       "title": "relven-app-icon.png",
-      "localFile": "relven-app-icon-reference.png",
-      "sourceVector": "relven-app-icon-source.svg",
-      "launcherMark": "relven-mark-transparent.svg"
+      "width": 512,
+      "height": 512,
+      "screenshot": "15318243315829222097.png"
+    },
+    {
+      "screenId": "2b55738fd89c450f8d191677b633b7b2",
+      "title": "Relven Android - Löppass Detaljer",
+      "width": 780,
+      "height": 1892,
+      "screenshot": "2b55738fd89c450f8d191677b633b7b2.png",
+      "html": "2b55738fd89c450f8d191677b633b7b2.html"
+    },
+    {
+      "screenId": "15318243315829220303",
+      "title": "YxSOiAGLPVZAXTT6t-n468Z76UY5QCvgC4lnzioBjFr8-jGaz38nxeAqTaYEzIV7HCll2zgcSmRXNuPgJKP8w0wEtCD0i1bpS35lYvM3EmPbi4l2JtcADjPGsMnHyygwtY9PKhTb5x_krqR66t5kueUk6SysaqfPcbANNqSPtCz7QY4AXTfKNpj_6K3LfSDX.jpg",
+      "width": 2400,
+      "height": 1800,
+      "screenshot": "15318243315829220303.png"
+    },
+    {
+      "screenId": "15318243315829222605",
+      "title": "mE-Wc11Y6UepDSLcjf32CWEOBFRGayz6Gl_-yBIlJ6QcCHMoe7R3X-xl1-hHXBtkWJkcdKJb4tmL4dCJcgZe-aM6WPW0j-fag6tIfUPehjw3sHA2cU1mwPacHPzG7RMTOLFgSDsZy-k0D1zpMSR0-VGFP3SBxzHR6aMzPghdFvxg3P_3U-QaAVsxBjqHM3qc.jpg",
+      "width": 595,
+      "height": 590,
+      "screenshot": "15318243315829222605.png"
+    },
+    {
+      "screenId": "db471af17c814d9699e55f2cc9875a56",
+      "title": "Relven Android - Styrkepass Detaljer",
+      "width": 780,
+      "height": 1924,
+      "screenshot": "db471af17c814d9699e55f2cc9875a56.png",
+      "html": "db471af17c814d9699e55f2cc9875a56.html"
+    },
+    {
+      "screenId": "df1e58957bc2454a90fee8829b877f5f",
+      "title": "Relven Android - Running Mode & GPS Route",
+      "width": 780,
+      "height": 1768,
+      "screenshot": "df1e58957bc2454a90fee8829b877f5f.png",
+      "html": "df1e58957bc2454a90fee8829b877f5f.html"
+    },
+    {
+      "screenId": "37236aac031f411f8ac672936e9f0316",
+      "title": "Relven Android - Daily Activity Dashboard",
+      "width": 780,
+      "height": 1784,
+      "screenshot": "37236aac031f411f8ac672936e9f0316.png",
+      "html": "37236aac031f411f8ac672936e9f0316.html"
+    },
+    {
+      "screenId": "44995a55b9ec47e0852bcd48c1788689",
+      "title": "Relven Android - Träningsplan & Kalender",
+      "width": 780,
+      "height": 1768,
+      "screenshot": "44995a55b9ec47e0852bcd48c1788689.png",
+      "html": "44995a55b9ec47e0852bcd48c1788689.html"
+    },
+    {
+      "screenId": "65ca673c752d47d0999110898118e433",
+      "title": "Relven Wear OS - Workout Active Display",
+      "width": 780,
+      "height": 1768,
+      "screenshot": "65ca673c752d47d0999110898118e433.png",
+      "html": "65ca673c752d47d0999110898118e433.html"
     }
   ]
 }
