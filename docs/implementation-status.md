@@ -42,6 +42,12 @@
 - **Known issues:** Stitch edit of the three exact screens returned HTTP 502. A fresh read showed unchanged file entries; the edit may still be pending server-side. Current three exports are content inventory only.
 - **Next step:** Connect the home screen to real activity/session data, then migrate essential running UI while retaining the inherited `Tracker`.
 
+## Phase Four — workout import
+
+- **In progress:** Relven v3 running-workout JSON now enters through the inherited workout import activity. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
+- **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
+- **Pending:** FIT Workout decoding, richer schema validation, a full saved-file execution test, import UX review and activity export round trip.
+
 ## Later phases
 
-FIT/JSON import, AI Plan Kit, strength library, map coloring and unified calendar remain pending. See [roadmap](roadmap.md) and [feature parity](feature-parity.md).
+AI Plan Kit, strength library, map coloring and unified calendar remain pending. See [roadmap](roadmap.md) and [feature parity](feature-parity.md). Do not use the owner's phone via ADB again until all phases are complete and the app is ready for manual testing.

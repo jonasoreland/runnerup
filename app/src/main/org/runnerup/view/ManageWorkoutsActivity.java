@@ -53,12 +53,13 @@ import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,7 +74,9 @@ import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.WorkoutSerializer;
+import org.json.JSONObject;
 
 public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
 
@@ -157,7 +160,9 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       } catch (Exception e) {
         new AlertDialog.Builder(this)
             .setTitle(org.runnerup.common.R.string.Error)
-            .setMessage(getString(org.runnerup.common.R.string.Failed_to_import) + ": " + fileName)
+            .setMessage(
+                getString(org.runnerup.common.R.string.Failed_to_import)
+                    + ": " + fileName + "\n" + e.getMessage())
             .setPositiveButton(
                 org.runnerup.common.R.string.OK,
                 (dialog, which) -> {
@@ -185,19 +190,29 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         final int fileNameColumnId = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME);
         if (fileNameColumnId >= 0) name = c.getString(fileNameColumnId);
       }
-      c.close();
+      if (c != null) c.close();
     }
     return name;
   }
 
   private void importData(String fileName, final Uri data) throws Exception {
     final ContentResolver cr = getContentResolver();
-    InputStream is = cr.openInputStream(data);
-    if (is == null) {
-      throw new Exception("Failed to get input stream");
+    String raw;
+    try (InputStream input = cr.openInputStream(data);
+        ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      if (input == null) throw new IOException("Failed to get input stream");
+      byte[] buffer = new byte[8192];
+      int length;
+      while ((length = input.read(buffer)) != -1) {
+        if (output.size() + length > 1_048_576) throw new IOException("Workout file is too large");
+        output.write(buffer, 0, length);
+      }
+      raw = output.toString(StandardCharsets.UTF_8.name());
     }
-    Workout w = WorkoutSerializer.readJSON(new BufferedReader(new InputStreamReader(is)));
-    is.close();
+    boolean relven = new JSONObject(raw).has("schemaVersion");
+    Workout w = relven
+        ? RelvenWorkoutImporter.parse(raw)
+        : WorkoutSerializer.readJSON(new StringReader(raw));
     if (w == null) throw new Exception("Failed to parse content");
 
     if (fileName.endsWith(".json")) {
@@ -234,11 +249,20 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                               Toast.LENGTH_SHORT)
                           .show();
                     }
-                    saveImport(saveName, cr.openInputStream(data));
-                  } catch (IOException e) {
-                    e.printStackTrace();
+                    if (relven) {
+                      WorkoutSerializer.writeFile(ManageWorkoutsActivity.this, saveName, w);
+                    } else {
+                      saveImport(saveName, cr.openInputStream(data));
+                    }
+                    launchMain(saveName);
+                  } catch (Exception e) {
+                    Log.e(getClass().getName(), "Failed to save imported workout", e);
+                    Toast.makeText(
+                            ManageWorkoutsActivity.this,
+                            org.runnerup.common.R.string.Failed_to_import,
+                            Toast.LENGTH_LONG)
+                        .show();
                   }
-                  launchMain(saveName);
                 })
             .setNegativeButton(
                 org.runnerup.common.R.string.No,
