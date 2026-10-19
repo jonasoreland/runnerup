@@ -99,6 +99,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   private Button shareButton = null;
   private Button editButton = null;
   private Button createButton = null;
+  private Button importButton = null;
 
   private SyncManager syncManager = null;
 
@@ -109,6 +110,13 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             syncManager.onActivityResult(
                 SyncManager.CONFIGURE_REQUEST, result.getResultCode(), result.getData());
             requery();
+          });
+
+  private final ActivityResultLauncher<String[]> importLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.OpenDocument(),
+          uri -> {
+            if (uri != null) handleImportUri(uri);
           });
 
   /** Called when the activity is first created. */
@@ -134,6 +142,8 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     deleteButton.setOnClickListener(deleteButtonClick);
     createButton = findViewById(R.id.create_workout_button);
     createButton.setOnClickListener(createButtonClick);
+    importButton = findViewById(R.id.import_workout_button);
+    importButton.setOnClickListener(view -> importLauncher.launch(new String[] {"*/*"}));
 
     shareButton = findViewById(R.id.share_workout_button);
     shareButton.setOnClickListener(shareButtonClick);
@@ -152,30 +162,29 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     Uri data = getIntent().getData();
     if (data != null) {
       getIntent().setData(null);
-      String fileName = getFilename(data);
-      if (fileName == null) fileName = "noname";
-
-      try {
-        importData(fileName, data);
-      } catch (Exception e) {
-        new AlertDialog.Builder(this)
-            .setTitle(org.runnerup.common.R.string.Error)
-            .setMessage(
-                getString(org.runnerup.common.R.string.Failed_to_import)
-                    + ": " + fileName + "\n" + e.getMessage())
-            .setPositiveButton(
-                org.runnerup.common.R.string.OK,
-                (dialog, which) -> {
-                  dialog.dismiss();
-                  ManageWorkoutsActivity.this.finish();
-                })
-            .show();
-      }
+      handleImportUri(data);
     }
 
     ViewUtil.Insets(findViewById(R.id.manage_workouts_view), true);
 
     // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
+  }
+
+  private void handleImportUri(Uri data) {
+    String fileName = getFilename(data);
+    if (fileName == null) fileName = "noname";
+    try {
+      importData(fileName, data);
+    } catch (Exception e) {
+      Log.e(getClass().getName(), "Failed to import workout", e);
+      new AlertDialog.Builder(this)
+          .setTitle(org.runnerup.common.R.string.Error)
+          .setMessage(
+              getString(org.runnerup.common.R.string.Failed_to_import)
+                  + ": " + fileName + "\n" + e.getMessage())
+          .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+          .show();
+    }
   }
 
   private String getFilename(Uri data) {

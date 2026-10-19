@@ -28,7 +28,7 @@ Phone and watch share the original Relven Play application ID `se.hampusandersso
 
 ## Workouts, plans and exports
 
-Use the current workout management screen to create and share inherited RunnerUp-format workouts. It can also accept the executable subset of Relven v3 **running-workout** JSON: simple time, distance or manual steps, sequences, repeats, and numeric pace, speed or heart-rate targets. Unsupported conditions and strength workouts return an import error. Relven multiweek plans and FIT Workout files cannot yet be imported. Use activity details and export controls for available recording formats; installed options depend on the build variant and configured integrations. See [feature parity](docs/feature-parity.md).
+Use **Import workout** in the workout management screen to select an inherited RunnerUp-format workout or the executable subset of Relven v3 **running-workout** JSON. The latter supports simple time, distance or manual steps, sequences, repeats, and numeric pace, speed or heart-rate targets. Unsupported conditions and strength workouts return an import error. Relven multiweek plans and FIT Workout files cannot yet be imported. Use activity details and export controls for available recording formats; installed options depend on the build variant and configured integrations. See [feature parity](docs/feature-parity.md).
 
 ## Privacy and offline use
 

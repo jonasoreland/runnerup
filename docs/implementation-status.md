@@ -44,7 +44,7 @@
 
 ## Phase Four — workout import
 
-- **In progress:** Relven v3 running-workout JSON now enters through the inherited workout import activity. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
+- **In progress:** The workout library now has a system file-picker button. Relven v3 running-workout JSON enters through this picker or the inherited document intent. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
 - **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
 - **Pending:** FIT Workout decoding, richer schema validation, a full saved-file execution test, import UX review and activity export round trip.
 
