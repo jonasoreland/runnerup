@@ -86,6 +86,9 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     Workout workout = tracker.getWorkout();
     if (workout == null) return;
 
+    // Ensure database is available if we receive an action that might cause activity saving/pausing
+    tracker.getDatabase();
+
     if (Constants.Intents.PAUSE_RESUME.contentEquals(action)) {
       if (workout.isPaused()) workout.onResume(workout);
       else workout.onPause(workout);
