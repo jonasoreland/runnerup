@@ -92,6 +92,7 @@ class RelvenHomeActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
+    todayPlan = TodayPlanState.Loading
     lifecycleScope.launch {
       val homeData =
           withContext(Dispatchers.IO) {
