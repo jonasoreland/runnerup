@@ -17,8 +17,6 @@
 
 package org.runnerup.hr;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,17 +27,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.health.connect.HealthPermissions;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.google.android.gms.wearable.Wearable;
 import java.nio.charset.StandardCharsets;
 import org.runnerup.common.util.Constants;
-import org.runnerup.view.RequestPermissionActivity;
 
 /**
  * A {@link Service} that monitors heart rate data using the device's {@link Sensor#TYPE_HEART_RATE}
@@ -55,7 +50,6 @@ public class HeartRateService extends Service implements SensorEventListener {
   private SensorManager sensorManager;
   private Sensor heartRateSensor;
 
-  private BroadcastReceiver hrPermissionReceiver;
   private BroadcastReceiver batteryChangedReceiver;
 
   @Override
@@ -67,7 +61,6 @@ public class HeartRateService extends Service implements SensorEventListener {
   public void onCreate() {
     super.onCreate();
 
-    setupPermissionReceiver();
     setupBatteryChangedReceiver();
 
     sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -112,11 +105,6 @@ public class HeartRateService extends Service implements SensorEventListener {
 
   @Override
   public void onDestroy() {
-    if (hrPermissionReceiver != null) {
-      LocalBroadcastManager.getInstance(this).unregisterReceiver(hrPermissionReceiver);
-      hrPermissionReceiver = null;
-    }
-
     if (batteryChangedReceiver != null) {
       unregisterReceiver(batteryChangedReceiver);
       batteryChangedReceiver = null;
@@ -130,7 +118,10 @@ public class HeartRateService extends Service implements SensorEventListener {
     if (checkHeartRatePermission()) {
       startHeartRateMonitoring();
     } else {
-      launchPermissionActivity();
+      Log.w(
+          TAG,
+          "Heart rate permission is missing; grant it from the visible watch permission page.");
+      stopSelf();
     }
   }
 
@@ -140,38 +131,10 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
   }
 
-  /**
-   * Checks if the app has the necessary permission to access heart rate data.
-   *
-   * <p>The required permission depends on the Android version:
-   *
-   * <ul>
-   *   <li>Wear OS 6 (API 36) and higher: {@code android.permission.health.READ_HEART_RATE}
-   *   <li>Wear OS 5 (API 35) and lower: {@link Manifest.permission#BODY_SENSORS}
-   * </ul>
-   *
-   * @return {@code true} if the required permission is granted, {@code false} otherwise.
-   */
+  /** Checks if the version-appropriate heart-rate permission has been granted. */
   private boolean checkHeartRatePermission() {
-    String permission = getRequiredHeartRatePermission();
+    String permission = HeartRatePermissionState.permissionForSdk(Build.VERSION.SDK_INT);
     return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
-  }
-
-  private String getRequiredHeartRatePermission() {
-    if (Build.VERSION.SDK_INT >= 36) {
-      return HealthPermissions.READ_HEART_RATE;
-    }
-    return Manifest.permission.BODY_SENSORS;
-  }
-
-  @SuppressLint("WearRecents")
-  private void launchPermissionActivity() {
-    Intent intent = new Intent(this, RequestPermissionActivity.class);
-    intent.putExtra(
-        Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, getRequiredHeartRatePermission());
-    intent.addFlags(
-        Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary when starting activity from a service
-    startActivity(intent);
   }
 
   @Override
@@ -209,25 +172,6 @@ public class HeartRateService extends Service implements SensorEventListener {
     Wearable.getMessageClient(this)
         .sendMessage(sourceNodeId, Constants.Wear.Path.MSG_BATTERY_LEVEL, payload)
         .addOnFailureListener(e -> Log.e(TAG, "Error sending battery level: " + e.getMessage()));
-  }
-
-  private void setupPermissionReceiver() {
-    hrPermissionReceiver =
-        new BroadcastReceiver() {
-          @Override
-          public void onReceive(Context context, Intent intent) {
-            String permission =
-                intent.getStringExtra(Constants.Intents.EXTRA_REQUESTED_PERMISSION_NAME);
-            boolean granted =
-                intent.getBooleanExtra(Constants.Intents.EXTRA_PERMISSION_GRANTED, false);
-            if (getRequiredHeartRatePermission().equals(permission) && granted) {
-              startHeartRateMonitoring();
-            }
-          }
-        };
-    LocalBroadcastManager.getInstance(this)
-        .registerReceiver(
-            hrPermissionReceiver, new IntentFilter(Constants.Intents.ACTION_PERMISSION_RESULT));
   }
 
   private void setupBatteryChangedReceiver() {

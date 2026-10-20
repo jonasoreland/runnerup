@@ -432,6 +432,13 @@
     <string name="Plan_calendar_unit_speed">Range in meters per second</string>
     <string name="Plan_calendar_unit_heart_rate">Range in beats per minute (30–240)</string>
     <string name="Plan_calendar_edit_invalid">Enter positive values, and make sure the minimum does not exceed the maximum.</string>
+    <string name="wear_hr_sensor_unavailable">Heart rate unavailable</string>
+    <string name="wear_hr_sensor_unavailable_details">This watch does not expose a heart rate sensor.</string>
+    <string name="wear_hr_permission_needed">Allow heart rate</string>
+    <string name="wear_hr_permission_needed_details">Allow sensor access here before starting a phone workout.</string>
+    <string name="wear_hr_grant_permission">Allow access</string>
+    <string name="wear_hr_permission_ready">Heart rate ready</string>
+    <string name="wear_hr_permission_ready_details">The phone can use this watch sensor during a workout.</string>
     <string name="Plan_revision_named">%1$s · Revision %2$d</string>
     <string-array name="Plan_calendar_weekdays">
         <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>

@@ -56,7 +56,8 @@
 ## Phase Two — Wear heart-rate integration
 
 - **Completed:** Reviewed and integrated upstream PR #1378 as an initial branch, adapted provider signatures and Bluetooth gating, added source-node validation, first-reading connection confirmation, 15-second stale sample expiry, a 30-second initial timeout and unit tests. See [Wear HR audit](wear-hr-audit.md).
-- **Pending:** Watch foreground/background sensor lifecycle, permission request flow, visible sensor status, Galaxy Watch6 Classic tests and reconnection proof.
+- **Current increment — watch permission UX:** Adds a visible sensor/permission readiness page before and during workouts, API 35/36 permission selection, and a user-initiated permission action. The sensor service no longer launches UI. It remains without a health foreground service, so screen-off/background capture and physical-watch behavior are not release-ready.
+- **Pending:** Health foreground/background sensor lifecycle, phone-visible sensor status, Galaxy Watch6 Classic permission/screen-off/reconnection tests and reconnection proof.
 - **Changed modules:** `hrdevice`, `wear`, `app` HR settings/tracker, and shared message constants.
 - **Build/test status:** Phone/watch debug builds, app/Wear/HR unit targets and lint passed after service hardening. App lint has 23 inherited baseline-filtered errors; Wear has none and HR library has one inherited baseline-filtered error. No new issues were reported.
 - **Emulator/physical devices:** None connected.

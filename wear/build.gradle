@@ -76,6 +76,8 @@ dependencies {
 
     implementation "androidx.activity:activity:1.13.0"
     implementation "androidx.fragment:fragment:1.9.1"
+
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
 }
 
 def props = new Properties()

@@ -9,13 +9,14 @@ Upstream [PR #1378](https://github.com/jonasoreland/runnerup/pull/1378) was open
 - Phone rejects malformed/out-of-range samples and battery values. Its last HR sample expires after 15 seconds; `Tracker` then reports no current HR value. A 30-second first-reading timeout enters the existing provider retry flow.
 - Tracker's Bluetooth permission gate no longer blocks the Wear provider. Disconnecting HR does not stop the phone's GPS/workout service.
 - The watch service does not restart a stale sensor command after process death. The sample freshness rule has unit tests.
+- The watch now has a visible heart-rate readiness page before and during a workout. It checks for a sensor and the API-appropriate permission; the user starts the permission flow with an explicit button. The sensor service no longer launches permission UI from the background.
 
 ## Release blockers and limitations
 
 - **No physical watch test.** A Samsung Galaxy Watch6 Classic, paired phone, permission grant/revocation, screen-off operation, watch process termination, reconnection, battery behavior and interval controls remain unverified.
 - The imported watch implementation uses a plain started service and direct `SensorManager`. It does not hold a health foreground service or background body-sensor permission. Modern Wear OS can restrict collection when the UI is not foregrounded, so screen-off/background HR is **unsupported** until implemented and tested. [Android background sensor guidance](https://developer.android.com/health-and-fitness/health-services/background-body-sensors) and [foreground service guidance](https://developer.android.com/develop/background-work/services/fgs/service-types) inform this assessment.
-- The permission request is launched from a service and still carries the PR's `WearRecents` suppression. That flow needs a user-visible watch entry point and testing on supported Wear OS versions. [Android health permission guidance](https://developer.android.com/health-and-fitness/health-services/permissions) covers the API 36 transition.
+- The permission page and API 35/36 mapping have unit/build coverage but have not been exercised on a watch. Permission revocation, denial/rationale behavior and the page's fit on supported Wear OS versions remain unverified. [Android health permission guidance](https://developer.android.com/health-and-fitness/health-services/permissions) covers the API 36 transition.
 - Message delivery and sample timeout do not establish continuous sensor operation. The phone expires stale readings, but an automatic restart after a mid-session sensor stop is not proven.
-- This patch does not yet add a dedicated watch HR status screen or replace the inherited workout UI.
+- This patch does not yet show live heart-rate readings on a dedicated watch status screen or replace the inherited workout UI.
 
-Next: implement a watch-owned, visible exercise/foreground lifecycle with correct versioned permissions, expose sensor status on the watch and phone, then run an on-device screen-off/reconnect/permission test matrix. Consider Health Services after measuring direct-sensor behavior against the Galaxy Watch6 Classic baseline.
+Next: add the health foreground-service lifecycle and required background permission policy, then expose live sensor status on the phone and run the on-device screen-off/reconnect/permission test matrix. Consider Health Services after measuring direct-sensor behavior against the Galaxy Watch6 Classic baseline.

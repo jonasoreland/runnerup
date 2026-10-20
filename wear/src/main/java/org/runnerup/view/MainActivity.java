@@ -65,6 +65,7 @@ public class MainActivity extends Activity
 
   private static final int RUN_INFO_ROW = 0;
   private static final int PAUSE_RESUME_ROW = 1;
+  private static final int HEART_RATE_ROW = 2;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -194,14 +195,15 @@ public class MainActivity extends Activity
         case ERROR:
           return new ConnectToPhoneFragment();
         case INITIALIZED:
-          return new StartFragment();
+          return col == 0 ? new StartFragment() : new HeartRatePermissionFragment();
         case CONNECTING:
           return new SearchingFragment();
         case CONNECTED:
-          return new StartFragment();
+          return col == 0 ? new StartFragment() : new HeartRatePermissionFragment();
         case STARTED:
         case PAUSED:
         case STOPPED:
+          if (row == HEART_RATE_ROW) return new HeartRatePermissionFragment();
           if (row == RUN_INFO_ROW) {
             if (pauseStep) {
               if (col == 0) return new CountdownFragment();
@@ -225,7 +227,8 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public int getColumnCount(int i) {
+    public int getColumnCount(int row) {
+      if (row == HEART_RATE_ROW) return 1;
       if (pauseStep) return cols + 1;
       return cols;
     }
@@ -255,13 +258,14 @@ public class MainActivity extends Activity
         case INITIALIZED:
         case CONNECTING:
         case CONNECTED:
-          cols = rows = 1;
+          rows = 1;
+          cols = newValue == TrackerState.INITIALIZED || newValue == TrackerState.CONNECTED ? 2 : 1;
           break;
         case STARTED:
         case PAUSED:
         case STOPPED:
           cols = getScreensCount();
-          rows = 2;
+          rows = 3;
           break;
       }
     }
