@@ -26,6 +26,16 @@ public class RelvenPlanImporterTest {
   }
 
   @Test
+  public void keepsValidatedWorkoutNamesForPlanPresentation() {
+    RelvenPlanImporter.Plan plan =
+        RelvenPlanImporter.parse(
+            HEADER
+                + "[{\"id\":\"s1\",\"date\":\"2026-10-20\",\"kind\":\"workout\",\"workoutId\":\"run-a\"}]}");
+
+    assertEquals("Easy run", plan.workoutNames().get("run-a"));
+  }
+
+  @Test
   public void rejectsUnknownWorkoutReference() {
     String json =
         HEADER

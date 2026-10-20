@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,12 +53,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
+import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.view.MainLayout
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
 class RelvenHomeActivity : ComponentActivity() {
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
   private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
+  private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +70,7 @@ class RelvenHomeActivity : ComponentActivity() {
         RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
+            todayPlan = todayPlan,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
@@ -88,8 +92,23 @@ class RelvenHomeActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
+    todayPlan = TodayPlanState.Loading
     lifecycleScope.launch {
-      recentActivity = withContext(Dispatchers.IO) { loadRecentActivity() }
+      val homeData =
+          withContext(Dispatchers.IO) {
+            loadRecentActivity() to loadTodayPlan()
+          }
+      recentActivity = homeData.first
+      todayPlan = homeData.second
+    }
+  }
+
+  private fun loadTodayPlan(): TodayPlanState {
+    return try {
+      todayPlanState(RelvenPlanStore.activePlan(applicationContext), System.currentTimeMillis())
+    } catch (error: Exception) {
+      Log.w("RelvenHome", "Could not load today's plan", error)
+      TodayPlanState.Unavailable
     }
   }
 
@@ -127,6 +146,7 @@ private data class RecentActivity(
 private fun RelvenHome(
     recentActivity: RecentActivity?,
     sessionStatus: HomeSessionStatus?,
+    todayPlan: TodayPlanState,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit) {
@@ -177,6 +197,7 @@ private fun RelvenHome(
             fontSize = 15.sp,
             color = RelvenColors.MutedText)
       }
+      TodayPlanCard(todayPlan)
       Surface(
           shape = RoundedCornerShape(30.dp),
           color = RelvenColors.Surface,
@@ -242,5 +263,82 @@ private fun RelvenHome(
       }
     }
   }
+  }
+}
+
+@Composable
+private fun TodayPlanCard(state: TodayPlanState) {
+  Surface(
+      shape = RoundedCornerShape(24.dp),
+      color = RelvenColors.Surface,
+      border = BorderStroke(1.dp, RelvenColors.Orange.copy(alpha = 0.25f)),
+      modifier = Modifier.fillMaxWidth()) {
+    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Text(
+          stringResource(org.runnerup.common.R.string.Today_plan_title),
+          color = RelvenColors.Orange,
+          fontSize = 14.sp,
+          fontWeight = FontWeight.SemiBold)
+      when (state) {
+        TodayPlanState.Loading ->
+            Text(
+                stringResource(org.runnerup.common.R.string.Today_plan_loading),
+                color = RelvenColors.MutedText,
+                fontSize = 14.sp)
+        TodayPlanState.NoActivePlan -> {
+          Text(
+              stringResource(org.runnerup.common.R.string.No_active_plan),
+              fontSize = 18.sp,
+              fontWeight = FontWeight.Bold)
+          Text(
+              stringResource(org.runnerup.common.R.string.Activate_a_plan_hint),
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+        }
+        TodayPlanState.Unavailable -> {
+          Text(
+              stringResource(org.runnerup.common.R.string.Today_plan_unavailable),
+              fontSize = 18.sp,
+              fontWeight = FontWeight.Bold)
+          Text(
+              stringResource(org.runnerup.common.R.string.Today_plan_unavailable_hint),
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+        }
+        is TodayPlanState.NoPlannedItem -> {
+          Text(
+              stringResource(org.runnerup.common.R.string.No_plan_item_today),
+              fontSize = 18.sp,
+              fontWeight = FontWeight.Bold)
+          Text(
+              state.planName,
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+        }
+        is TodayPlanState.RestDay -> {
+          Text(
+              stringResource(org.runnerup.common.R.string.Rest_day),
+              fontSize = 18.sp,
+              fontWeight = FontWeight.Bold)
+          Text(
+              state.planName,
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+          if (state.notes.isNotBlank()) {
+            Text(state.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
+          }
+        }
+        is TodayPlanState.PlannedWorkout -> {
+          Text(state.workoutName, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+          Text(
+              stringResource(org.runnerup.common.R.string.Planned_run_in_plan, state.planName),
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+          if (state.notes.isNotBlank()) {
+            Text(state.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
+          }
+        }
+      }
+    }
   }
 }
