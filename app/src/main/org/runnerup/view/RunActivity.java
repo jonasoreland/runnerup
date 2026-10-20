@@ -70,6 +70,8 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
+import org.runnerup.hr.WearHRConnectionState;
+import org.runnerup.hr.WearHRProvider;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
@@ -596,6 +598,10 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       double cp = workout.getSpeed(Scope.CURRENT);
       currentPace.setText(formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, cp));
 
+      WearHRConnectionState.Status wearHrStatus = null;
+      if (mTracker.getHRProvider() instanceof WearHRProvider) {
+        wearHrStatus = ((WearHRProvider) mTracker.getHRProvider()).getConnectionStatus();
+      }
       if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
         double ahr = workout.getHeartRate(Scope.ACTIVITY);
         double ihr = workout.getHeartRate(Scope.STEP);
@@ -619,7 +625,17 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         lapHr.setVisibility(View.GONE);
         intervalHr.setVisibility(View.GONE);
         currentHr.setVisibility(View.GONE);
-        activityHeaderHr.setVisibility(View.GONE);
+        if (wearHrStatus == WearHRConnectionState.Status.CONNECTING
+            || wearHrStatus == WearHRConnectionState.Status.RECONNECTING
+            || wearHrStatus == WearHRConnectionState.Status.UNAVAILABLE) {
+          activityHeaderHr.setText(WearHRStatusText.resourceFor(wearHrStatus));
+          activityHeaderHr.setVisibility(View.VISIBLE);
+        } else {
+          activityHeaderHr.setVisibility(View.GONE);
+        }
+      }
+      if (mTracker.isComponentConnected(TrackerHRM.NAME)) {
+        activityHeaderHr.setText(org.runnerup.common.R.string.metrics_heartrate);
       }
 
       Step curr = workout.getCurrentStep();

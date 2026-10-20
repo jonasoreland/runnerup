@@ -453,6 +453,11 @@
   <string name="wear_hr_grant_background_permission">Tillåt åtkomst i bakgrunden</string>
   <string name="wear_hr_notification_title">Puls aktiv</string>
   <string name="wear_hr_notification_details">Pulsen delas med träningspasset på telefonen.</string>
+  <string name="wear_hr_status_disconnected">Klockan är frånkopplad</string>
+  <string name="wear_hr_status_connecting">Ansluter till klockan</string>
+  <string name="wear_hr_status_connected">Klockan är ansluten</string>
+  <string name="wear_hr_status_reconnecting">Återansluter till klockan</string>
+  <string name="wear_hr_status_unavailable">Puls från klockan är inte tillgänglig</string>
   <string name="Plan_revision_named">%1$s · Version %2$d</string>
   <string-array name="Plan_calendar_weekdays">
     <item>M</item><item>T</item><item>O</item><item>T</item><item>F</item><item>L</item><item>S</item>

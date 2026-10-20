@@ -70,6 +70,10 @@ public class WearHRProvider implements HRProvider {
     return false;
   }
 
+  public WearHRConnectionState.Status getConnectionStatus() {
+    return WearHRConnectionState.Status.DISCONNECTED;
+  }
+
   @Override
   public boolean isConnecting() {
     return false;

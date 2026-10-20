@@ -76,6 +76,8 @@ import org.runnerup.hr.HRDeviceRef;
 import org.runnerup.hr.HRManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.HRProvider.HRClient;
+import org.runnerup.hr.WearHRConnectionState;
+import org.runnerup.hr.WearHRProvider;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.widget.WidgetUtil;
@@ -97,6 +99,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
   private TextView tvHR = null;
   private TextView tvLog = null;
   private TextView tvBatteryLevel = null;
+  private TextView tvConnectionStatus = null;
 
   private Formatter formatter = null;
   private LineChart chart = null;
@@ -168,6 +171,7 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     tvBTName = findViewById(R.id.hr_device);
     tvHR = findViewById(R.id.hr_value);
     tvBatteryLevel = findViewById(R.id.hr_battery);
+    tvConnectionStatus = findViewById(R.id.hr_connection_status);
     tvBatteryLevel.setVisibility(View.GONE);
     scanButton = findViewById(R.id.scan_button);
     scanButton.setOnClickListener(scanButtonClick);
@@ -438,8 +442,11 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
       connectButton.setText(org.runnerup.common.R.string.Connect);
       tvBTName.setText("");
       tvHR.setText("");
+      tvConnectionStatus.setVisibility(View.GONE);
       return;
     }
+
+    updateWearConnectionStatus();
 
     if (btName != null) {
       tvBTName.setText(btName);
@@ -457,6 +464,16 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     } else {
       connectButton.setEnabled(btName != null);
       connectButton.setText(org.runnerup.common.R.string.Connect);
+    }
+  }
+
+  private void updateWearConnectionStatus() {
+    if (hrProvider instanceof WearHRProvider) {
+      WearHRConnectionState.Status status = ((WearHRProvider) hrProvider).getConnectionStatus();
+      tvConnectionStatus.setText(WearHRStatusText.resourceFor(status));
+      tvConnectionStatus.setVisibility(View.VISIBLE);
+    } else {
+      tvConnectionStatus.setVisibility(View.GONE);
     }
   }
 
@@ -718,7 +735,9 @@ public class HRSettingsActivity extends AppCompatActivity implements HRClient {
     }
 
     HRData data = hrProvider.getHRData();
+    updateWearConnectionStatus();
     if (data == null || !data.hasHeartRate) {
+      if (hrProvider instanceof WearHRProvider) tvHR.setText("");
       return;
     }
 

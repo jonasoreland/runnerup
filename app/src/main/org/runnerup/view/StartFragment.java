@@ -75,6 +75,8 @@ import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.hr.MockHRProvider;
+import org.runnerup.hr.WearHRConnectionState;
+import org.runnerup.hr.WearHRProvider;
 import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
@@ -1151,6 +1153,18 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       hrIndicator.setVisibility(View.GONE);
       hrMessage.setVisibility(View.GONE);
       return false;
+    }
+    if (mTracker.getHRProvider() instanceof WearHRProvider) {
+      WearHRConnectionState.Status status =
+          ((WearHRProvider) mTracker.getHRProvider()).getConnectionStatus();
+      if (status == WearHRConnectionState.Status.CONNECTING
+          || status == WearHRConnectionState.Status.RECONNECTING
+          || status == WearHRConnectionState.Status.UNAVAILABLE) {
+        hrIndicator.setVisibility(View.VISIBLE);
+        hrMessage.setText(WearHRStatusText.resourceFor(status));
+        hrMessage.setVisibility(View.VISIBLE);
+        return true;
+      }
     }
     Integer hrVal = null;
     if (mTracker.isComponentConnected(TrackerHRM.NAME)) {

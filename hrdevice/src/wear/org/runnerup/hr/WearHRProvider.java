@@ -38,6 +38,8 @@ import org.runnerup.common.util.Constants;
 
 public class WearHRProvider implements HRProvider {
   private static final String TAG = "WearHRProvider";
+  private static final long CONNECTION_TIMEOUT_MILLIS = 30_000;
+  private static final long SAMPLE_FRESHNESS_MILLIS = 15_001;
   public static final String NAME = "Wear OS";
 
   private final Context context;
@@ -48,14 +50,36 @@ public class WearHRProvider implements HRProvider {
   private volatile boolean isConnected;
   private volatile boolean isDisconnecting;
   private volatile String connectedNodeId;
+  private final WearHRConnectionState connectionState = new WearHRConnectionState();
 
   private final WearHeartRateSample sample = new WearHeartRateSample();
   private volatile long hrTimestamp = 0;
   private volatile long hrElapsedRealtime = 0;
   private volatile int batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
 
+  private final Runnable connectionTimeout;
+  private final Runnable sampleFreshnessWatchdog;
+
   public WearHRProvider(Context context) {
     this.context = context;
+    connectionTimeout =
+        () -> {
+          if (completeConnection(false)) {
+            Wearable.getMessageClient(this.context)
+                .sendMessage(connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_STOP, new byte[0]);
+            stopWatchService();
+            postToHRClient(() -> hrClient.onConnectResult(false));
+          }
+        };
+    sampleFreshnessWatchdog =
+        () -> {
+          if (connectionState.beginRecoveryIfStale(SystemClock.elapsedRealtime())) {
+            isConnected = false;
+            isConnecting = true;
+            log("Wear HR sample became stale; requesting one sensor restart");
+            startWatchService();
+          }
+        };
   }
 
   @Override
@@ -89,6 +113,11 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void close(String from) {
+    if (connectedNodeId != null) {
+      Wearable.getMessageClient(context)
+          .sendMessage(connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_STOP, new byte[0]);
+    }
+    cancelPendingRecovery();
     Wearable.getMessageClient(context).removeListener(onHRMessageListener);
     reset();
     HRClient oldClient = hrClient;
@@ -112,7 +141,13 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public boolean isConnected() {
+    checkSampleFreshness();
     return isConnected && sample.valueAt(SystemClock.elapsedRealtimeNanos()) > 0;
+  }
+
+  public WearHRConnectionState.Status getConnectionStatus() {
+    checkSampleFreshness();
+    return connectionState.getStatus();
   }
 
   @Override
@@ -165,47 +200,45 @@ public class WearHRProvider implements HRProvider {
 
   @Override
   public void connect(HRDeviceRef ref) {
-    if (isConnecting || isConnected) {
+    if (!connectionState.beginConnect()) {
       return;
     }
 
     isConnecting = true;
+    isDisconnecting = false;
     connectedNodeId = ref.getAddress();
     sample.clear();
     hrTimestamp = 0;
     hrElapsedRealtime = 0;
     Wearable.getMessageClient(context).addListener(onHRMessageListener);
+    startWatchService();
+  }
 
+  private void startWatchService() {
+    Handler handler = hrClientHandler;
+    if (handler != null) {
+      handler.removeCallbacks(connectionTimeout);
+      handler.postDelayed(connectionTimeout, CONNECTION_TIMEOUT_MILLIS);
+    }
     Wearable.getMessageClient(context)
         .sendMessage(connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_START, new byte[0])
         .addOnSuccessListener(
-            integer -> {
-              if (isConnecting) {
-                // Delivery confirms only that the message reached the watch, not that the sensor
-                // started. Wait for a valid measurement before reporting a connected HR source.
-                Handler handler = hrClientHandler;
-                if (handler == null) return;
-                handler.postDelayed(
-                    () -> {
-                      if (completeConnection(false)) {
-                        Wearable.getMessageClient(context)
-                            .sendMessage(
-                                connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_STOP, new byte[0]);
-                        Wearable.getMessageClient(context).removeListener(onHRMessageListener);
-                        postToHRClient(() -> hrClient.onConnectResult(false));
-                      }
-                    },
-                    30_000);
-              }
+            ignored -> {
+              // Delivery confirms only that the command reached the watch, not that the sensor
+              // restarted. Wait for another valid measurement before reporting recovery.
             })
         .addOnFailureListener(
-            e -> {
-              Log.e(TAG, "Failed to send Start HR message: " + e.getMessage());
+            error -> {
+              Log.e(TAG, "Failed to send Start HR message: " + error.getMessage());
               if (completeConnection(false)) {
-                Wearable.getMessageClient(context).removeListener(onHRMessageListener);
+                stopWatchService();
                 postToHRClient(() -> hrClient.onConnectResult(false));
               }
             });
+  }
+
+  private void stopWatchService() {
+    Wearable.getMessageClient(context).removeListener(onHRMessageListener);
   }
 
   @Override
@@ -226,6 +259,7 @@ public class WearHRProvider implements HRProvider {
   }
 
   private void reset() {
+    cancelPendingRecovery();
     isConnecting = false;
     isConnected = false;
     isDisconnecting = false;
@@ -235,19 +269,25 @@ public class WearHRProvider implements HRProvider {
     hrTimestamp = 0;
     hrElapsedRealtime = 0;
     batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
+    connectionState.disconnect();
   }
 
   private synchronized boolean completeConnection(boolean connected) {
-    if (!isConnecting) {
-      return false;
-    }
+    if (!connectionState.isConnecting()) return false;
     isConnecting = false;
     isConnected = connected;
+    if (connected) {
+      connectionState.onValidSample(SystemClock.elapsedRealtime());
+    } else {
+      connectionState.markUnavailable();
+      cancelPendingRecovery();
+    }
     return true;
   }
 
   @Override
   public int getHRValue() {
+    checkSampleFreshness();
     return sample.valueAt(SystemClock.elapsedRealtimeNanos());
   }
 
@@ -302,9 +342,15 @@ public class WearHRProvider implements HRProvider {
           if (sample.update(
               new String(messageEvent.getData(), StandardCharsets.US_ASCII),
               SystemClock.elapsedRealtimeNanos())) {
+            long elapsedRealtime = SystemClock.elapsedRealtime();
+            boolean notifyConnected = connectionState.onValidSample(elapsedRealtime);
+            isConnecting = false;
+            isConnected = true;
             hrTimestamp = System.currentTimeMillis();
             hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            if (completeConnection(true)) {
+            scheduleFreshnessCheck();
+            cancelConnectionTimeout();
+            if (notifyConnected) {
               postToHRClient(() -> hrClient.onConnectResult(true));
             }
           } else {
@@ -320,6 +366,40 @@ public class WearHRProvider implements HRProvider {
           }
         }
       };
+
+  private void checkSampleFreshness() {
+    if (connectionState.beginRecoveryIfStale(SystemClock.elapsedRealtime())) {
+      isConnected = false;
+      isConnecting = true;
+      log("Wear HR sample became stale; requesting one sensor restart");
+      startWatchService();
+    }
+  }
+
+  private void scheduleFreshnessCheck() {
+    Handler handler = hrClientHandler;
+    if (handler != null) {
+      handler.removeCallbacks(sampleFreshnessWatchdog);
+      handler.postDelayed(sampleFreshnessWatchdog, SAMPLE_FRESHNESS_MILLIS);
+    }
+  }
+
+  private void cancelPendingRecovery() {
+    Handler handler = hrClientHandler;
+    if (handler != null) {
+      handler.removeCallbacks(sampleFreshnessWatchdog);
+      handler.removeCallbacks(connectionTimeout);
+    }
+  }
+
+  private void cancelConnectionTimeout() {
+    Handler handler = hrClientHandler;
+    if (handler != null) handler.removeCallbacks(connectionTimeout);
+  }
+
+  private void log(String message) {
+    postToHRClient(() -> hrClient.log(this, message));
+  }
 
   public static boolean checkLibrary(Context ctx) {
     GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();

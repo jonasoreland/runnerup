@@ -61,9 +61,8 @@ public class WearHRProviderTimeoutTest {
       WearHRProvider provider = new WearHRProvider(context);
       provider.open(handler, hrClient);
       provider.connect(HRDeviceRef.create(WearHRProvider.NAME, "Watch", "watch-node"));
-      sendSuccess.get().onSuccess(1);
 
-      assertNotNull("connection timeout must be scheduled", timeout.get());
+      assertNotNull("connection timeout must start with the send request", timeout.get());
       timeout.get().run();
 
       verify(messageClient)

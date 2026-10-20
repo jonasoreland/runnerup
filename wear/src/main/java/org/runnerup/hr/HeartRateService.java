@@ -59,6 +59,7 @@ public class HeartRateService extends Service implements SensorEventListener {
 
   private SensorManager sensorManager;
   private Sensor heartRateSensor;
+  private boolean sensorRegistered;
 
   private BroadcastReceiver batteryChangedReceiver;
 
@@ -118,8 +119,13 @@ public class HeartRateService extends Service implements SensorEventListener {
 
   private boolean startHeartRateMonitoring() {
     if (sensorManager != null && heartRateSensor != null) {
-      return sensorManager.registerListener(
-          this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+      if (sensorRegistered) {
+        sensorManager.unregisterListener(this);
+        sensorRegistered = false;
+      }
+      sensorRegistered =
+          sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+      return sensorRegistered;
     }
     return false;
   }
@@ -201,6 +207,7 @@ public class HeartRateService extends Service implements SensorEventListener {
   private void stopHeartRateMonitoring() {
     if (sensorManager != null) {
       sensorManager.unregisterListener(this);
+      sensorRegistered = false;
     }
   }
 
