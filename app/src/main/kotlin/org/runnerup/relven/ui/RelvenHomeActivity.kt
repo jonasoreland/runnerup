@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.os.ConfigurationCompat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
@@ -60,6 +62,7 @@ import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.view.MainLayout
+import org.runnerup.relven.exercise.ExerciseCatalogRepository
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
 class RelvenHomeActivity : ComponentActivity() {
@@ -72,16 +75,15 @@ class RelvenHomeActivity : ComponentActivity() {
   private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
+  private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    destination =
-        savedInstanceState?.getString(HOME_DESTINATION_STATE)?.let { saved ->
-          HomeDestination.entries.firstOrNull { it.name == saved }
-        } ?: HomeDestination.Today
+    destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
+    loadExerciseCatalog()
     setContent {
       RelvenTheme {
         RelvenHome(
@@ -89,6 +91,7 @@ class RelvenHomeActivity : ComponentActivity() {
             sessionStatus = sessionStatus,
             todayPlan = todayPlan,
             activePlanState = activePlanState,
+            exerciseCatalogLoadState = exerciseCatalogLoadState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
@@ -104,7 +107,8 @@ class RelvenHomeActivity : ComponentActivity() {
             onAddWorkoutToPlan = ::addWorkoutToActivePlan,
             onAddRestToPlan = ::addRestToActivePlan,
             onRemovePlanEntry = ::removeActivePlanEntry,
-            onRenamePlan = ::renameActivePlan)
+            onRenamePlan = ::renameActivePlan,
+            onRetryExerciseCatalog = ::loadExerciseCatalog)
       }
     }
   }
@@ -153,6 +157,24 @@ class RelvenHomeActivity : ComponentActivity() {
     } catch (error: Exception) {
       Log.w("RelvenHome", "Could not load active plan", error)
       ActivePlanLoadState.Unavailable
+    }
+  }
+
+  private fun loadExerciseCatalog() {
+    exerciseCatalogLoadState = ExerciseCatalogLoadState.Loading
+    val languageTag =
+        ConfigurationCompat.getLocales(resources.configuration)
+            .get(0)
+            ?.toLanguageTag()
+            ?: Locale.getDefault().toLanguageTag()
+    lifecycleScope.launch {
+      exerciseCatalogLoadState =
+          withContext(Dispatchers.IO) {
+            loadExerciseCatalogState(
+                { ExerciseCatalogRepository(applicationContext).load(languageTag) }) { error ->
+                  Log.w("RelvenHome", "Could not load the bundled exercise catalog", error)
+                }
+          }
     }
   }
 
@@ -249,10 +271,15 @@ private data class RecentActivity(
     val distanceMeters: Double?,
     val durationSeconds: Long?)
 
-private enum class HomeDestination {
+internal enum class HomeDestination {
   Today,
-  Plan
+  Plan,
+  Exercises
 }
+
+internal fun homeDestinationFromSaved(saved: String?): HomeDestination =
+    saved?.let { value -> HomeDestination.entries.firstOrNull { it.name == value } }
+        ?: HomeDestination.Today
 
 @Composable
 private fun RelvenHome(
@@ -260,6 +287,7 @@ private fun RelvenHome(
     sessionStatus: HomeSessionStatus?,
     todayPlan: TodayPlanState,
     activePlanState: ActivePlanLoadState,
+    exerciseCatalogLoadState: ExerciseCatalogLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
@@ -271,7 +299,8 @@ private fun RelvenHome(
     onAddWorkoutToPlan: (String, String) -> Unit,
     onAddRestToPlan: (String) -> Unit,
     onRemovePlanEntry: (String) -> Unit,
-    onRenamePlan: (String) -> Unit) {
+    onRenamePlan: (String) -> Unit,
+    onRetryExerciseCatalog: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
@@ -362,7 +391,7 @@ private fun RelvenHome(
         }
       }
     }
-    } else {
+    } else if (destination == HomeDestination.Plan) {
       PlanCalendarScreen(
           loadState = activePlanState,
           revisionStatus = planRevisionStatus,
@@ -373,6 +402,8 @@ private fun RelvenHome(
           onAddRest = onAddRestToPlan,
           onRemoveEntry = onRemovePlanEntry,
           onRenamePlan = onRenamePlan)
+    } else {
+      ExerciseCatalogScreen(exerciseCatalogLoadState, onRetry = onRetryExerciseCatalog)
     }
     HomeNavigationBar(
         destination = destination,
@@ -412,6 +443,12 @@ private fun HomeNavigationBar(
           icon = { tint -> Icon(Icons.Default.DateRange, contentDescription = null, tint = tint) },
           label = stringResource(org.runnerup.common.R.string.Home_nav_plan),
           onClick = { onSelectDestination(HomeDestination.Plan) },
+          modifier = Modifier.weight(1f))
+      HomeNavigationItem(
+          selected = destination == HomeDestination.Exercises,
+          icon = { tint -> Icon(Icons.Default.FitnessCenter, contentDescription = null, tint = tint) },
+          label = stringResource(org.runnerup.common.R.string.Home_nav_exercises),
+          onClick = { onSelectDestination(HomeDestination.Exercises) },
           modifier = Modifier.weight(1f))
       HomeNavigationItem(
           selected = false,
