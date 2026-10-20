@@ -44,8 +44,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
@@ -57,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
+import java.text.NumberFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -67,6 +71,13 @@ import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.view.MainLayout
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
+import org.runnerup.relven.analysis.ProgressLoadState
+import org.runnerup.relven.analysis.ProgressRequestVersion
+import org.runnerup.relven.analysis.ProgressSummary
+import org.runnerup.relven.analysis.RecordedActivity
+import org.runnerup.relven.analysis.ActivityWindowSummary
+import org.runnerup.relven.analysis.progressLoadState
+import org.runnerup.relven.analysis.summarizeActivities
 import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
@@ -78,6 +89,8 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
+  private var progressState by mutableStateOf<ProgressLoadState>(ProgressLoadState.Loading)
+  private val progressRequests = ProgressRequestVersion()
   private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
   private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
@@ -126,10 +139,12 @@ class RelvenHomeActivity : ComponentActivity() {
             activePlanState = activePlanState,
             exerciseCatalogLoadState = exerciseCatalogLoadState,
             exerciseProgressionState = exerciseProgressionState,
+            progressState = progressState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
             onSelectDestination = { destination = it },
+            onRetryProgress = ::loadProgress,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
@@ -178,6 +193,9 @@ class RelvenHomeActivity : ComponentActivity() {
     activePlanState = ActivePlanLoadState.Loading
     planRevisionStatus = PlanRevisionStatus.Idle
     currentTimeMillis = System.currentTimeMillis()
+    progressState = ProgressLoadState.Loading
+    val progressRequest = progressRequests.begin()
+    val progressAsOfMillis = currentTimeMillis
     lifecycleScope.launch {
       val homeData =
           withContext(Dispatchers.IO) {
@@ -217,12 +235,16 @@ class RelvenHomeActivity : ComponentActivity() {
                 } catch (error: Exception) {
                   Log.w("RelvenHome", "Could not load strength progression history", error)
                   ExerciseProgressionLoadState.Unavailable
-                })
+                },
+                runCatching { loadProgressSummary(progressAsOfMillis) })
           }
       recentActivity = homeData.recentActivity
       activePlanState = homeData.activePlan
       completedStrengthSessions = homeData.completedStrengthSessions
       exerciseProgressionState = homeData.exerciseProgressionState
+      if (progressRequests.isCurrent(progressRequest)) {
+        progressState = progressLoadState(homeData.progressSummary)
+      }
       strengthSession = homeData.inProgressStrengthSession
       todayPlan =
           when (val planState = homeData.activePlan) {
@@ -380,6 +402,47 @@ class RelvenHomeActivity : ComponentActivity() {
     }
   }
 
+  private fun loadProgress() {
+    val progressRequest = progressRequests.begin()
+    progressState = ProgressLoadState.Loading
+    val nowMillis = System.currentTimeMillis()
+    currentTimeMillis = nowMillis
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) { runCatching { loadProgressSummary(nowMillis) } }
+      result.exceptionOrNull()?.let { error ->
+        Log.w("RelvenHome", "Could not load activity progress", error)
+      }
+      if (progressRequests.isCurrent(progressRequest)) {
+        progressState = progressLoadState(result)
+      }
+    }
+  }
+
+  private fun loadProgressSummary(nowMillis: Long): ProgressSummary {
+    val db = DBHelper.getReadableDatabase(applicationContext)
+    val cutoffSeconds = (nowMillis - 28L * 24 * 60 * 60 * 1000) / 1000
+    val rows = mutableListOf<RecordedActivity>()
+    db.query(
+            DB.ACTIVITY.TABLE,
+            arrayOf("_id", DB.ACTIVITY.START_TIME, DB.ACTIVITY.TIME, DB.ACTIVITY.DISTANCE),
+            "deleted = 0 AND ${DB.ACTIVITY.START_TIME} >= ? AND ${DB.ACTIVITY.START_TIME} <= ?",
+            arrayOf(cutoffSeconds.toString(), (nowMillis / 1000).toString()),
+            null,
+            null,
+            "${DB.ACTIVITY.START_TIME} DESC")
+        .use { cursor ->
+          while (cursor.moveToNext()) {
+            rows +=
+                RecordedActivity(
+                    id = cursor.getLong(0).toString(),
+                    startedAtMillis = cursor.getLong(1) * 1000,
+                    durationSeconds = if (cursor.isNull(2)) null else cursor.getLong(2),
+                    distanceMeters = if (cursor.isNull(3)) null else cursor.getDouble(3))
+          }
+        }
+    return summarizeActivities(rows, nowMillis)
+  }
+
   private fun reloadExerciseProgression() {
     exerciseProgressionState = ExerciseProgressionLoadState.Loading
     lifecycleScope.launch {
@@ -514,7 +577,8 @@ private data class HomeLoad(
     val activePlan: ActivePlanLoadState,
     val inProgressStrengthSession: StrengthSession?,
     val completedStrengthSessions: Map<String, CompletedStrengthSession>,
-    val exerciseProgressionState: ExerciseProgressionLoadState)
+    val exerciseProgressionState: ExerciseProgressionLoadState,
+    val progressSummary: Result<ProgressSummary>)
 
 private data class PendingStrengthSessionChoice(
     val session: StrengthSession,
@@ -523,7 +587,8 @@ private data class PendingStrengthSessionChoice(
 internal enum class HomeDestination {
   Today,
   Plan,
-  Exercises
+  Exercises,
+  Progress
 }
 
 internal fun homeDestinationFromSaved(saved: String?): HomeDestination =
@@ -538,10 +603,12 @@ private fun RelvenHome(
     activePlanState: ActivePlanLoadState,
     exerciseCatalogLoadState: ExerciseCatalogLoadState,
     exerciseProgressionState: ExerciseProgressionLoadState,
+    progressState: ProgressLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
     onSelectDestination: (HomeDestination) -> Unit,
+    onRetryProgress: () -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -613,6 +680,27 @@ private fun RelvenHome(
       }
       TodayPlanCard(todayPlan)
       Surface(
+          shape = RoundedCornerShape(16.dp),
+          color = RelvenColors.Surface,
+          border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+          modifier =
+              Modifier.fillMaxWidth().clickable(
+                  role = Role.Button, onClick = { onSelectDestination(HomeDestination.Progress) })) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
+          Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(org.runnerup.common.R.string.Progress_title), fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(org.runnerup.common.R.string.Progress_entry_summary),
+                color = RelvenColors.MutedText,
+                fontSize = 13.sp)
+          }
+          Text(stringResource(org.runnerup.common.R.string.Progress_open), color = RelvenColors.Orange)
+        }
+      }
+      Surface(
           shape = RoundedCornerShape(30.dp),
           color = RelvenColors.Surface,
           border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
@@ -653,6 +741,11 @@ private fun RelvenHome(
         }
       }
     }
+    } else if (destination == HomeDestination.Progress) {
+      ProgressScreen(
+          progressState = progressState,
+          onRetry = onRetryProgress,
+          onBack = { onSelectDestination(HomeDestination.Today) })
     } else if (destination == HomeDestination.Plan) {
       PlanCalendarScreen(
           loadState = activePlanState,
@@ -738,7 +831,7 @@ private fun HomeNavigationBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly) {
       HomeNavigationItem(
-          selected = destination == HomeDestination.Today,
+          selected = destination == HomeDestination.Today || destination == HomeDestination.Progress,
           icon = { tint -> Icon(Icons.Default.Home, contentDescription = null, tint = tint) },
           label = stringResource(org.runnerup.common.R.string.Home_nav_today),
           onClick = { onSelectDestination(HomeDestination.Today) },
@@ -769,6 +862,132 @@ private fun HomeNavigationBar(
           label = stringResource(org.runnerup.common.R.string.Home_nav_history),
           onClick = onOpenHistory,
           modifier = Modifier.weight(1f))
+    }
+  }
+}
+
+@Composable
+private fun ProgressScreen(
+    progressState: ProgressLoadState,
+    onRetry: () -> Unit,
+    onBack: () -> Unit) {
+  Column(
+      modifier =
+          Modifier.fillMaxSize()
+              .verticalScroll(rememberScrollState())
+              .padding(horizontal = 24.dp)
+              .padding(top = 20.dp, bottom = 120.dp),
+      verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    TextButton(onClick = onBack) {
+      Text(stringResource(org.runnerup.common.R.string.Progress_back))
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+      Text(
+          stringResource(org.runnerup.common.R.string.Progress_title),
+          fontSize = 30.sp,
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier.semantics { heading() })
+      Text(
+          stringResource(org.runnerup.common.R.string.Progress_subtitle),
+          color = RelvenColors.MutedText)
+    }
+    when (progressState) {
+      ProgressLoadState.Loading ->
+          Text(
+              stringResource(org.runnerup.common.R.string.Progress_loading),
+              color = RelvenColors.MutedText)
+      ProgressLoadState.Unavailable -> {
+        Text(
+            stringResource(org.runnerup.common.R.string.Progress_unavailable),
+            color = RelvenColors.MutedText)
+        Button(
+            onClick = onRetry,
+            colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
+          Text(stringResource(org.runnerup.common.R.string.Progress_retry))
+        }
+      }
+      is ProgressLoadState.Loaded -> {
+        val summary = progressState.summary
+        if (summary.twentyEightDays.sessionCount == 0) {
+          Text(
+              stringResource(org.runnerup.common.R.string.Progress_empty),
+              color = RelvenColors.MutedText)
+        }
+        ProgressWindowCard(
+            title = stringResource(org.runnerup.common.R.string.Progress_seven_days),
+            summary = summary.sevenDays)
+        ProgressWindowCard(
+            title = stringResource(org.runnerup.common.R.string.Progress_twenty_eight_days),
+            summary = summary.twentyEightDays)
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = RelvenColors.Surface,
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))) {
+          Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                stringResource(org.runnerup.common.R.string.Progress_load_title),
+                fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(org.runnerup.common.R.string.Progress_load_unavailable),
+                color = RelvenColors.MutedText)
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun ProgressWindowCard(title: String, summary: ActivityWindowSummary) {
+  val locale = ConfigurationCompat.getLocales(LocalConfiguration.current).get(0) ?: Locale.forLanguageTag("sv-SE")
+  Surface(
+      shape = RoundedCornerShape(20.dp),
+      color = RelvenColors.Surface,
+      border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))) {
+    Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Text(title, fontWeight = FontWeight.SemiBold)
+      Text(
+          stringResource(
+              org.runnerup.common.R.string.Progress_sessions,
+              summary.sessionCount),
+          color = RelvenColors.MutedText)
+      val durationLabel =
+          when {
+            summary.durationSeconds < 60 ->
+                stringResource(
+                    org.runnerup.common.R.string.Progress_duration_seconds,
+                    summary.durationSeconds)
+            summary.durationSeconds < 3600 ->
+                stringResource(
+                    org.runnerup.common.R.string.Progress_duration_minutes,
+                    summary.durationSeconds / 60,
+                    summary.durationSeconds % 60)
+            else ->
+                stringResource(
+                    org.runnerup.common.R.string.Progress_duration,
+                    summary.durationSeconds / 3600,
+                    (summary.durationSeconds % 3600) / 60)
+          }
+      Text(durationLabel, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+      val distance = summary.distanceMeters
+      if (distance != null) {
+        val distanceText =
+            remember(locale, distance) {
+              NumberFormat.getNumberInstance(locale).format(distance / 1000.0)
+            }
+        Text(
+            stringResource(
+                org.runnerup.common.R.string.Progress_distance,
+                distanceText,
+                summary.distanceSessionCount),
+            color = RelvenColors.MutedText)
+      } else if (summary.distanceSessionCount > 0) {
+        Text(
+            stringResource(
+                org.runnerup.common.R.string.Progress_distance_total_unavailable,
+                summary.distanceSessionCount),
+            color = RelvenColors.MutedText)
+      }
     }
   }
 }

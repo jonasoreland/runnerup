@@ -9,7 +9,7 @@ The square icon reference came from the verified current Stitch project. The ori
 
 The same-ID app upgrade retains the old private database, but the RunnerUp-derived app writes history to `runnerup.db`. The Maintenance importer now copies supported v3 workouts and eligible completed running activities from the read-only archive; it never activates plans, replays pending operations, or writes to or deletes `relven-workouts.db`. Unsupported workouts and activities, plans, active sessions, schedule changes, pending operations, and source JSON remain in the complete private archive, which stays exportable. Activity routes retain mapped location points and technical pause markers; extra recovery intervals and workout-step detail remain archived. This conversion is covered by synthetic v18 archive tests; a production-era v18 backup has not yet been exercised. Release metadata still uses `se.hampusandersson.relven`; actual Play version-code floor and existing signing identity must be confirmed before upload.
 
-Next: finish the Maintenance review/import UI and full local release verification. Then test an actual upgrade using the existing signing key and a copy of production-era data before Play upload.
+The Maintenance review/import UI and synthetic archive conversion tests are complete. The fork's hosted Android/F-Droid workflow passed for the migration PR. A copied production-era v18 backup and a signed same-ID upgrade still need validation after all product phases are complete; no Play upload is part of that check.
 
 ## Read-only legacy-data vault (20 October 2026)
 

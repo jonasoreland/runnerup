@@ -2,7 +2,9 @@
 
 ## 20 October 2026 serial integration checkpoint
 
-- **Current increment — strength progression history:** Exercise details show up to ten completed sessions newest first, with the exact recorded reps or timed duration for each set. History is loaded from validated private offline completion records and matched by stable exercise ID. Loading, empty, unavailable, and partial-corruption states are localized. This increment is being verified without ADB; hosted CI and manual device checks remain pending.
+- **Current increment — Progress overview:** Adds a Swedish-first home destination showing recorded session count and duration for rolling 7-day and 28-day windows, with distance totals labeled by the number of sessions that supplied valid distance. It reads RunnerUp's local activity database on an IO dispatcher, handles loading/empty/error/retry states, and leaves training load explicitly unavailable. App tests, latest debug/release builds, debug/release lint, Spotless, and release package verification passed; `aapt` reports `se.hampusandersson.relven` versionCode `24000374`. No ADB was used; hosted CI and manual visual checks remain pending.
+
+- **PR #41 — per-exercise strength history:** merged to `master` as `20d6cfd`. Exercise details show up to ten completed sessions newest first, with exact recorded reps or timed duration per set, matched by stable exercise ID. Local app/Wear/HR test/build/lint/style checks and free/F-Droid build passed; Play package ID was verified. Hosted build/test/release-lint/style/F-Droid CI passed. No ADB device was used.
 
 - **PR #40 — guided offline strength sessions:** merged to `master` as `69810a7`. Adds phone-guided reps/timed work, prescribed rest, pause/resume, offline persistence and plan-entry completion. Independent review approved after persist-before-display and different-entry confirmation fixes. Local app/Wear/HR tests and builds, debug/release lint, Spotless, free/F-Droid build, Play package-ID verification, and hosted build/test/lint/style/F-Droid CI passed. No ADB device was used.
 
@@ -28,11 +30,11 @@
 - The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
 - Work continues serially with no more than one open PR. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
 
-## Legacy data migration — in progress
+## Legacy data migration — implementation complete; upgrade verification pending
 
 - **Completed in the current migration branch:** Read-only archive preview; staged, hash-checked and idempotent legacy workout imports; conversion of eligible completed running activities into RunnerUp history with route and technical pause points; transactional source-identity ledger; synthetic archive and recovery tests.
-- **In progress:** Maintenance review/confirmation UI, localized import results and final documentation of supported and archived data.
-- **Verification still required:** Full local phone build/test/lint/style gate, independent branch review, one-at-a-time PR/CI/merge, and later signed upgrade testing against a copied production-era backup. Physical ADB remains unused until all product phases are complete and the app is ready for manual testing.
+- **Completed in PR #20:** Maintenance review/confirmation UI, localized import results, cancel/retry behavior, and exact documentation of supported and archived data. Hosted CI passed; the migration implementation plan records the focused and full local checks.
+- **Verification still required:** Exercise the importer against a copied production-era v18 backup and perform a signed same-ID upgrade with the existing upload key after all product phases are complete. Physical ADB remains unused until the app is ready for manual testing.
 ## Phase Zero — repository migration
 
 - **Completed:** Existing history-preserving GitHub fork checked out on `codex/phase-zero`; `upstream` remote added. Original Relven repository untouched. Baseline phone/watch APKs and selected tests passed before edits. The release ID now matches the old Relven Play ID per owner instruction. Relven launcher labels, uploaded icon, CI artifact labels, README and migration documents changed locally.
