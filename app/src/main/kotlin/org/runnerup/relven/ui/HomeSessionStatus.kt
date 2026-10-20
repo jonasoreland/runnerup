@@ -1,0 +1,87 @@
+package org.runnerup.relven.ui
+
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
+import org.runnerup.common.tracker.TrackerState
+import org.runnerup.common.util.ValueModel
+import org.runnerup.tracker.Tracker
+
+internal enum class HomeSessionStatus(val label: String) {
+  ACTIVE("Pågående pass"),
+  PAUSED("Pausat pass")
+}
+
+internal fun homeSessionStatus(state: TrackerState?): HomeSessionStatus? =
+    when (state) {
+      TrackerState.STARTED -> HomeSessionStatus.ACTIVE
+      TrackerState.PAUSED -> HomeSessionStatus.PAUSED
+      else -> null
+    }
+
+internal class HomeTrackerSessionObserver(
+    private val tracker: Tracker,
+    private val onStatusChanged: (HomeSessionStatus?) -> Unit
+) : AutoCloseable {
+  @Volatile private var closed = false
+
+  private val stateListener =
+      ValueModel.ChangeListener<TrackerState> { _, _, newState ->
+        if (!closed) onStatusChanged(homeSessionStatus(newState))
+      }
+
+  init {
+    tracker.registerTrackerStateListener(stateListener)
+    onStatusChanged(homeSessionStatus(tracker.state))
+  }
+
+  override fun close() {
+    if (closed) return
+    closed = true
+    tracker.unregisterTrackerStateListener(stateListener)
+  }
+}
+
+internal class HomeTrackerSessionBinding(
+    private val context: Context,
+    private val onStatusChanged: (HomeSessionStatus?) -> Unit
+) {
+  private var started = false
+  private var bound = false
+  private var observer: HomeTrackerSessionObserver? = null
+
+  private val connection =
+      object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+          if (!started || service !is Tracker.LocalBinder) return
+          observer?.close()
+          observer = HomeTrackerSessionObserver(service.service, onStatusChanged)
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+          observer?.close()
+          observer = null
+          if (started) onStatusChanged(null)
+        }
+      }
+
+  fun start() {
+    if (started) return
+    started = true
+    bound = context.bindService(Intent(context, Tracker::class.java), connection, Context.BIND_AUTO_CREATE)
+  }
+
+  fun stop() {
+    if (!started) return
+    started = false
+    observer?.close()
+    observer = null
+    onStatusChanged(null)
+    if (bound) {
+      context.unbindService(connection)
+      bound = false
+    }
+  }
+}

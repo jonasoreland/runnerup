@@ -2,7 +2,8 @@
 
 ## 20 October 2026 serial integration checkpoint
 
-- PR #20 (legacy migration review and confirmed import of supported workouts and eligible completed running activities) merged to `master` as `2b4198c`. Hosted build/test/lint/style/F-Droid checks passed. The next PR promotes the existing Compose Today screen to production launcher while keeping workout/history screens on RunnerUp.
+- PR #21 (production Today launcher with Start/History retained in RunnerUp) merged to `master` as `9335a6e`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed. The next single PR adds read-only live session status to Today.
+- PR #20 (legacy migration review and confirmed import of supported workouts and eligible completed running activities) merged to `master` as `2b4198c`. Hosted build/test/lint/style/F-Droid checks passed.
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`.
 - PR #16 (bounded FIT running-workout importer) merged as `19395fa`; local build, tests, lint and fixture checks passed, as did hosted build/test/lint/style/F-Droid CI. Real-device FIT samples and picker-to-execution verification remain pending.
@@ -51,13 +52,13 @@
 
 ## Phase Three — Stitch reference retrieval
 
-- **Completed:** Verified current project `15389433782836702529`; downloaded all ten screen screenshots and seven available HTML exports. The [Stitch manifest](../design/stitch/manifest.json) records IDs and local files. Extracted primary Android colors, font and shell elements in the [reference notes](../design/stitch/README.md). Added native Kotlin/Compose theme tokens, bundled licensed Plus Jakarta Sans, and a Today screen that reads the latest activity from the inherited local database. The production launcher now opens this screen; Start and History continue into RunnerUp's workout and history screens.
+- **Completed:** Verified current project `15389433782836702529`; downloaded all ten screen screenshots and seven available HTML exports. The [Stitch manifest](../design/stitch/manifest.json) records IDs and local files. Extracted primary Android colors, font and shell elements in the [reference notes](../design/stitch/README.md). Added native Kotlin/Compose theme tokens, bundled licensed Plus Jakarta Sans, and a Today screen that reads the latest activity from the inherited local database. The production launcher opens this screen; Start and History continue into RunnerUp's workout and history screens. Today now observes the authoritative Tracker state and displays an active or paused session badge.
 - **Pending:** Correct the three inconsistent planning/detail screens in Stitch; implement the remaining home data, phone screens, watch screens and production navigation.
 - **Changed modules:** `design/stitch`, root and app Gradle, app manifest, `app/src/main/kotlin`, a narrow legacy tab-intent hook and documentation.
-- **Build/test status:** Launcher manifest regression test, `:app:assembleLatestDebug`, `:app:assembleLatestRelease`, `:app:testLatestDebugUnitTest`, `:app:lintLatestDebug` and `spotlessCheck` pass. Lint reports no new issues; 23 inherited baseline-filtered errors remain.
-- **Emulator/physical devices:** No emulator or physical device used for this promotion. Physical device remains unused until all phases are complete and the app is ready for manual testing.
+- **Build/test status:** Launcher manifest regression test passed on PR #21. Focused Tracker status and binding lifecycle tests pass for the current increment. `:app:assembleLatestDebug`, `:app:assembleLatestRelease`, `:app:testLatestDebugUnitTest`, `:app:lintLatestDebug` and `spotlessCheck` all pass; lint reports no new issues and 23 inherited baseline-filtered errors remain.
+- **Emulator/physical devices:** No app visual run for the current increment. The first AVD was ARM and unsupported by this x86 host; the x86_64 Relven AVD appeared unauthorized to ADB because the server reported `ADB_VENDOR_KEYS` unset. No shared ADB server/key changes were made. The physical device remains unused until all phases are complete and the app is ready for manual testing.
 - **Known issues:** Stitch edit of the three exact screens returned HTTP 502. A fresh read showed unchanged file entries; the edit may still be pending server-side. Current three exports are content inventory only.
-- **Next step:** Continue migrating essential running UI while retaining the inherited `Tracker`.
+- **Next step:** Continue migrating essential running UI and navigation while retaining the inherited `Tracker`.
 
 ## Phase Four — workout import
 
