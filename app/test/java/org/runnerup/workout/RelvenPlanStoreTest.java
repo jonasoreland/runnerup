@@ -254,6 +254,25 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
+  public void renameWorkoutCreatesAndActivatesImmutableRevision() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+    File originalFile = directory.listFiles()[0];
+
+    RelvenPlanImporter.Plan renamed =
+        RelvenPlanStore.renameWorkoutInActivePlan(context, original, "run-a", "Tempo run");
+
+    assertEquals(JSON, Files.readString(originalFile.toPath()));
+    assertEquals("Tempo run", renamed.workoutNames().get("run-a"));
+    assertEquals("store-test", renamed.previousRevisionId());
+    assertEquals(1, renamed.revisionNumber());
+    assertEquals(renamed.id(), RelvenPlanStore.activePlan(context).id());
+    assertEquals(original.days(), renamed.days());
+    assertEquals(2, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
   public void rejectsRenamingWhenPlanIsNotCurrentActiveSnapshot() throws Exception {
     RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
     RelvenPlanStore.save(context, original);
@@ -340,13 +359,13 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
-  public void rejectsRevisionThatChangesWorkoutOrAddsAnotherScheduleEntry() throws Exception {
+  public void rejectsRevisionThatChangesWorkoutStepsOrAddsAnotherScheduleEntry() throws Exception {
     RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
     RelvenPlanStore.save(context, original);
     RelvenPlanImporter.Plan rescheduled =
         RelvenPlanRevision.reschedule(original, "session-a", "2026-10-22", "revision-1");
     RelvenPlanImporter.Plan changedWorkout =
-        RelvenPlanImporter.parse(rescheduled.sourceJson().replace("Easy run", "Tempo run"));
+        RelvenPlanImporter.parse(rescheduled.sourceJson().replace("1800", "900"));
     JSONObject expandedJson = new JSONObject(rescheduled.sourceJson());
     expandedJson
         .getJSONArray("days")

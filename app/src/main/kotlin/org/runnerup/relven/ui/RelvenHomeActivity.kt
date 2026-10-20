@@ -108,6 +108,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onAddRestToPlan = ::addRestToActivePlan,
             onRemovePlanEntry = ::removeActivePlanEntry,
             onRenamePlan = ::renameActivePlan,
+            onRenameWorkout = ::renameActivePlanWorkout,
             onRetryExerciseCatalog = ::loadExerciseCatalog)
       }
     }
@@ -210,6 +211,12 @@ class RelvenHomeActivity : ComponentActivity() {
     }
   }
 
+  private fun renameActivePlanWorkout(workoutId: String, name: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.renameWorkoutInActivePlan(applicationContext, plan, workoutId, name)
+    }
+  }
+
   private fun savePlanRevision(
       createRevision: (org.runnerup.workout.RelvenPlanImporter.Plan) ->
           org.runnerup.workout.RelvenPlanImporter.Plan) {
@@ -300,6 +307,7 @@ private fun RelvenHome(
     onAddRestToPlan: (String) -> Unit,
     onRemovePlanEntry: (String) -> Unit,
     onRenamePlan: (String) -> Unit,
+    onRenameWorkout: (String, String) -> Unit,
     onRetryExerciseCatalog: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
@@ -401,7 +409,8 @@ private fun RelvenHome(
           onAddWorkout = onAddWorkoutToPlan,
           onAddRest = onAddRestToPlan,
           onRemoveEntry = onRemovePlanEntry,
-          onRenamePlan = onRenamePlan)
+          onRenamePlan = onRenamePlan,
+          onRenameWorkout = onRenameWorkout)
     } else {
       ExerciseCatalogScreen(exerciseCatalogLoadState, onRetry = onRetryExerciseCatalog)
     }

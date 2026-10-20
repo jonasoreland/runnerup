@@ -221,6 +221,23 @@ public final class RelvenPlanStore {
     return revision;
   }
 
+  /** Renames one workout definition and activates a new immutable plan revision. */
+  public static synchronized RelvenPlanImporter.Plan renameWorkoutInActivePlan(
+      Context context, RelvenPlanImporter.Plan activePlan, String workoutId, String name)
+      throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.renameWorkout(
+            current,
+            workoutId,
+            name,
+            UUID.randomUUID().toString(),
+            nextRevisionNumber(context, current));
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
   private static RelvenPlanImporter.Plan requireCurrentActivePlan(
       Context context, RelvenPlanImporter.Plan activePlan) throws IOException {
     RelvenPlanImporter.Plan current = activePlan(context);
@@ -277,11 +294,13 @@ public final class RelvenPlanStore {
     try {
       JSONObject previousJson = new JSONObject(previous.sourceJson());
       JSONObject revisionJson = new JSONObject(revision.sourceJson());
-      if (!previous.timezone().equals(revision.timezone())
-          || !canonicalJson(previousJson.getJSONArray("workouts"))
-              .equals(canonicalJson(revisionJson.getJSONArray("workouts")))) {
+      if (!previous.timezone().equals(revision.timezone())) {
         throw new IOException("Plan revision changed immutable plan content");
       }
+      boolean sameWorkouts =
+          canonicalJson(previousJson.getJSONArray("workouts"))
+              .equals(canonicalJson(revisionJson.getJSONArray("workouts")));
+      boolean oneWorkoutNameChange = sameWorkoutsExceptOneName(previousJson, revisionJson);
 
       List<RelvenPlanImporter.Session> oldDays = previous.days();
       List<RelvenPlanImporter.Session> newDays = revision.days();
@@ -321,35 +340,69 @@ public final class RelvenPlanStore {
         if (!found) addedDays++;
       }
       boolean oneReschedule =
-          previous.name().equals(revision.name())
+          sameWorkouts
+              && previous.name().equals(revision.name())
               && oldDays.size() == newDays.size()
               && changedDates == 1
               && removedDays == 0;
       boolean oneAddition =
-          previous.name().equals(revision.name())
+          sameWorkouts
+              && previous.name().equals(revision.name())
               && newDays.size() == oldDays.size() + 1
               && addedDays == 1
               && changedDates == 0
               && removedDays == 0;
       boolean oneRemoval =
-          previous.name().equals(revision.name())
+          sameWorkouts
+              && previous.name().equals(revision.name())
               && oldDays.size() == newDays.size() + 1
               && removedDays == 1
               && addedDays == 0
               && changedDates == 0;
       boolean nameOnly =
-          !previous.name().equals(revision.name())
+          sameWorkouts
+              && !previous.name().equals(revision.name())
               && revision.name().equals(RelvenPlanRevision.normalizePlanName(revision.name()))
               && oldDays.size() == newDays.size()
               && addedDays == 0
               && removedDays == 0
               && changedDates == 0;
-      if (!oneReschedule && !oneAddition && !oneRemoval && !nameOnly) {
-        throw new IOException("Plan revision must move, add, or remove exactly one session");
+      boolean workoutNameOnly =
+          previous.name().equals(revision.name())
+              && !sameWorkouts
+              && oneWorkoutNameChange
+              && oldDays.size() == newDays.size()
+              && addedDays == 0
+              && removedDays == 0
+              && changedDates == 0;
+      if (!oneReschedule && !oneAddition && !oneRemoval && !nameOnly && !workoutNameOnly) {
+        throw new IOException("Plan revision must contain exactly one supported edit");
       }
     } catch (JSONException error) {
       throw new IOException("Plan revision snapshot is invalid", error);
     }
+  }
+
+  private static boolean sameWorkoutsExceptOneName(JSONObject previous, JSONObject revision)
+      throws JSONException {
+    JSONArray oldWorkouts = previous.getJSONArray("workouts");
+    JSONArray newWorkouts = revision.getJSONArray("workouts");
+    if (oldWorkouts.length() != newWorkouts.length()) return false;
+    int changedNames = 0;
+    for (int index = 0; index < oldWorkouts.length(); index++) {
+      JSONObject oldWorkout = new JSONObject(oldWorkouts.getJSONObject(index).toString());
+      JSONObject newWorkout = new JSONObject(newWorkouts.getJSONObject(index).toString());
+      String oldName = oldWorkout.getString("name");
+      String newName = newWorkout.getString("name");
+      oldWorkout.remove("name");
+      newWorkout.remove("name");
+      if (!canonicalJson(oldWorkout).equals(canonicalJson(newWorkout))) return false;
+      if (!oldName.equals(newName)) {
+        changedNames++;
+        if (newName.isBlank() || newName.length() > 160) return false;
+      }
+    }
+    return changedNames == 1;
   }
 
   private static String canonicalJson(Object value) throws JSONException {

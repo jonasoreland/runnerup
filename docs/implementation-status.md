@@ -2,10 +2,10 @@
 
 ## 20 October 2026 serial integration checkpoint
 
-- **Current increment — free route maps:** the existing free osmdroid route map supports pace, heart rate, speed, and elevation coloring with a green-to-red legend. Pace is derived from stored active distance and elapsed time; route speed is now loaded from the existing activity database. Missing samples render gray, and a metric with fewer than two values is reported unavailable. Unit tests cover availability and color buckets. Local device rendering and live OpenStreetMap tile availability remain unverified; no ADB device was used.
+- **Current increment — active plan workout names:** the Plan calendar can rename a running workout definition in an immutable active-plan revision. Workout IDs, prescriptions, schedule, imported plan, earlier revisions, and RunnerUp workout files stay unchanged. Step/target editing and strength authoring remain pending. Local debug/release builds, full app tests, debug lint (no new findings), Spotless, and diff checks pass; hosted CI is pending. No ADB device was used.
 
 - **PR #32 — free route maps:** merged to `master` as `a38cbe9`. Local debug/release builds, app unit tests, debug lint with no new findings, Spotless, and hosted Android/F-Droid CI passed. No emulator or physical ADB device was used.
-- **Current increment — offline exercise catalog:** adds 16 bilingual bodyweight exercises with stable UUIDs, strict local schema validation, offline search/category filters, details, and retryable loading errors. Focused tests and the complete local Latest debug/release build, app unit-test, debug lint (no new findings), Spotless, and `git diff --check` gates pass. Hosted CI is pending. No ADB device was used.
+- **PR #33 — offline exercise catalog:** merged to `master` as `abe7e06`. It adds 16 bilingual bodyweight exercises with stable UUIDs, strict local schema validation, offline search/category filters, details, and retryable loading errors. Local debug/release builds, app tests, debug lint, Spotless, and hosted Android/F-Droid CI passed. No ADB device was used.
 
 - PR #21 (production Today launcher with Start/History retained in RunnerUp) merged to `master` as `9335a6e`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.
 - PR #22 (lifecycle-bound, read-only Tracker session status on Today) merged to `master` as `dbaaee2`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.

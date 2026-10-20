@@ -70,7 +70,8 @@ internal fun PlanCalendarScreen(
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
     onRemoveEntry: (String) -> Unit,
-    onRenamePlan: (String) -> Unit
+    onRenamePlan: (String) -> Unit,
+    onRenameWorkout: (String, String) -> Unit
 ) {
   when (loadState) {
     ActivePlanLoadState.Loading -> PlanCalendarMessage(stringResource(R.string.Today_plan_loading))
@@ -92,7 +93,8 @@ internal fun PlanCalendarScreen(
             onAddWorkout,
             onAddRest,
             onRemoveEntry,
-            onRenamePlan)
+            onRenamePlan,
+            onRenameWorkout)
   }
 }
 
@@ -106,7 +108,8 @@ private fun LoadedPlanCalendar(
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
     onRemoveEntry: (String) -> Unit,
-    onRenamePlan: (String) -> Unit
+    onRenamePlan: (String) -> Unit,
+    onRenameWorkout: (String, String) -> Unit
 ) {
   val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
   var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
@@ -121,6 +124,9 @@ private fun LoadedPlanCalendar(
   var showRenameDialog by rememberSaveable(plan.id()) { mutableStateOf(false) }
   var editedPlanName by rememberSaveable(plan.id()) { mutableStateOf(plan.name()) }
   var planNameTouched by rememberSaveable(plan.id()) { mutableStateOf(false) }
+  var editingWorkoutId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
+  var editedWorkoutName by rememberSaveable(plan.id()) { mutableStateOf("") }
+  var workoutNameTouched by rememberSaveable(plan.id()) { mutableStateOf(false) }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale) {
     planCalendarState(plan, month, selectedDate, nowMillis, locale)
@@ -334,7 +340,12 @@ private fun LoadedPlanCalendar(
           rescheduleSourceDate = state.selectedDate
           rescheduleTargetDate = null
         },
-        onRemove = { sessionId -> pendingRemovalId = sessionId })
+        onRemove = { sessionId -> pendingRemovalId = sessionId },
+        onEditWorkout = { workoutId, currentName ->
+          editingWorkoutId = workoutId
+          editedWorkoutName = currentName
+          workoutNameTouched = false
+        })
   }
 
   if (showRenameDialog) {
@@ -370,6 +381,47 @@ private fun LoadedPlanCalendar(
         },
         dismissButton = {
           TextButton(onClick = { showRenameDialog = false }) {
+            Text(stringResource(R.string.Cancel))
+          }
+        })
+  }
+
+  val workoutBeingEdited = editingWorkoutId?.let { plan.workoutNames()[it] }
+  if (editingWorkoutId != null && workoutBeingEdited != null) {
+    val validName = canRenameWorkoutName(editedWorkoutName, workoutBeingEdited)
+    AlertDialog(
+        onDismissRequest = { editingWorkoutId = null },
+        title = { Text(stringResource(R.string.Plan_calendar_rename_workout_title)) },
+        text = {
+          OutlinedTextField(
+              value = editedWorkoutName,
+              onValueChange = {
+                editedWorkoutName = it
+                workoutNameTouched = true
+              },
+              label = { Text(stringResource(R.string.Plan_calendar_rename_workout_label)) },
+              singleLine = true,
+              isError = workoutNameTouched && !validName,
+              supportingText = {
+                if (workoutNameTouched && !validName) {
+                  Text(stringResource(R.string.Plan_calendar_rename_workout_invalid))
+                }
+              })
+        },
+        confirmButton = {
+          TextButton(
+              onClick = {
+                editingWorkoutId?.let { workoutId ->
+                  onRenameWorkout(workoutId, editedWorkoutName.trim())
+                }
+                editingWorkoutId = null
+              },
+              enabled = validName && revisionStatus !is PlanRevisionStatus.Saving) {
+            Text(stringResource(R.string.Plan_calendar_rename_workout_save))
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { editingWorkoutId = null }) {
             Text(stringResource(R.string.Cancel))
           }
         })
@@ -517,7 +569,8 @@ private fun SelectedPlanDay(
     enabled: Boolean,
     onAdd: () -> Unit,
     onReschedule: (String) -> Unit,
-    onRemove: (String) -> Unit
+    onRemove: (String) -> Unit,
+    onEditWorkout: (String, String) -> Unit
 ) {
   Surface(
       shape = RoundedCornerShape(24.dp),
@@ -542,6 +595,7 @@ private fun SelectedPlanDay(
                   Text(entry.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
                 }
                 if (reschedulingSessionId == null) {
+                  EditWorkoutAction(entry.workoutId, entry.workoutName, enabled, onEditWorkout)
                   RescheduleAction(entry.sessionId, entry.workoutName, enabled, onReschedule)
                   RemoveAction(entry.sessionId, entry.workoutName, totalEntries, enabled, onRemove)
                 }
@@ -570,6 +624,25 @@ private fun SelectedPlanDay(
         }
       }
     }
+  }
+}
+
+@Composable
+private fun EditWorkoutAction(
+    workoutId: String,
+    workoutName: String,
+    enabled: Boolean,
+    onEditWorkout: (String, String) -> Unit
+) {
+  val accessibilityLabel =
+      stringResource(R.string.Plan_calendar_rename_workout_accessibility, workoutName)
+  TextButton(
+      onClick = { onEditWorkout(workoutId, workoutName) },
+      enabled = enabled,
+      modifier = Modifier.semantics {
+        contentDescription = accessibilityLabel
+      }) {
+    Text(stringResource(R.string.Plan_calendar_rename_workout))
   }
 }
 

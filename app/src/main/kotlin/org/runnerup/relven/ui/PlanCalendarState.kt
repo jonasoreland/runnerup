@@ -72,6 +72,9 @@ internal fun canRemovePlanEntry(totalEntries: Int): Boolean = totalEntries > 1
 internal fun canRenamePlanName(name: String, currentName: String): Boolean =
     name.trim().isNotEmpty() && name.trim().length <= 160 && name.trim() != currentName
 
+internal fun canRenameWorkoutName(name: String, currentName: String): Boolean =
+    canRenamePlanName(name, currentName)
+
 internal sealed interface PlanRevisionStatus {
   data object Idle : PlanRevisionStatus
 

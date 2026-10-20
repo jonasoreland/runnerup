@@ -389,6 +389,12 @@
     <string name="Plan_calendar_rename_label">Plan name</string>
     <string name="Plan_calendar_rename_invalid">Enter a different name with 1–160 characters.</string>
     <string name="Plan_calendar_rename_save">Save name</string>
+    <string name="Plan_calendar_rename_workout">Edit workout name</string>
+    <string name="Plan_calendar_rename_workout_accessibility">Edit workout name: %1$s</string>
+    <string name="Plan_calendar_rename_workout_title">Edit workout name</string>
+    <string name="Plan_calendar_rename_workout_label">Workout name</string>
+    <string name="Plan_calendar_rename_workout_invalid">Enter a different name with 1–160 characters.</string>
+    <string name="Plan_calendar_rename_workout_save">Save workout name</string>
     <string name="Plan_revision_named">%1$s · Revision %2$d</string>
     <string-array name="Plan_calendar_weekdays">
         <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>

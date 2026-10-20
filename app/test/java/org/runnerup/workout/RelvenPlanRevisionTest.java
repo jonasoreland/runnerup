@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.List;
+import org.json.JSONObject;
 import org.junit.Test;
 
 public class RelvenPlanRevisionTest {
@@ -46,6 +47,52 @@ public class RelvenPlanRevisionTest {
         revision.days().stream().map(RelvenPlanImporter.Session::id).toList());
     assertEquals("Easy run", revision.workoutNames().get("easy"));
     assertNotEquals(original.sourceJson(), revision.sourceJson());
+  }
+
+  @Test
+  public void renameWorkoutChangesOnlyThatDefinitionAndPreservesAllSessions() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.renameWorkout(original, "easy", "Morning run", "revision-name");
+
+    assertEquals(SOURCE, original.sourceJson());
+    assertEquals("Easy run", original.workoutNames().get("easy"));
+    assertEquals("Morning run", revision.workoutNames().get("easy"));
+    assertEquals("easy", revision.days().get(0).workoutId());
+    assertEquals(original.days(), revision.days());
+    assertEquals(
+        new JSONObject(SOURCE)
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .toString(),
+        new JSONObject(revision.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .toString());
+    assertEquals("base-plan", revision.rootPlanId());
+    assertEquals("base-plan", revision.previousRevisionId());
+    assertEquals(1, revision.revisionNumber());
+  }
+
+  @Test
+  public void rejectsMissingOrUnchangedWorkoutNameEdits() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.renameWorkout(original, "missing", "New name", "revision"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.renameWorkout(original, "easy", " Easy run ", "revision"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.renameWorkout(original, "easy", "  ", "revision"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.renameWorkout(original, "easy", "x".repeat(161), "revision"));
   }
 
   @Test

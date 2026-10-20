@@ -138,6 +138,45 @@ public final class RelvenPlanRevision {
     }
   }
 
+  public static RelvenPlanImporter.Plan renameWorkout(
+      RelvenPlanImporter.Plan source, String workoutId, String name, String revisionId) {
+    return renameWorkout(
+        source, workoutId, name, revisionId, source == null ? 0 : source.revisionNumber() + 1);
+  }
+
+  static RelvenPlanImporter.Plan renameWorkout(
+      RelvenPlanImporter.Plan source,
+      String workoutId,
+      String name,
+      String revisionId,
+      int revisionNumber) {
+    requireRevisionInput(source, workoutId, revisionId, revisionNumber);
+    if (name == null) throw new IllegalArgumentException("Missing workout name");
+    String normalizedName = normalizePlanName(name);
+    if (normalizedName.isEmpty() || normalizedName.length() > 160) {
+      throw new IllegalArgumentException("Invalid workout name");
+    }
+    String currentName = source.workoutNames().get(workoutId);
+    if (currentName == null) throw new IllegalArgumentException("Unknown workout");
+    if (normalizedName.equals(currentName)) {
+      throw new IllegalArgumentException("Workout name is unchanged");
+    }
+    try {
+      JSONObject root = revisionRoot(source, revisionId, revisionNumber);
+      JSONArray workouts = root.getJSONArray("workouts");
+      for (int index = 0; index < workouts.length(); index++) {
+        JSONObject workout = workouts.getJSONObject(index);
+        if (workoutId.equals(workout.getString("id"))) {
+          workout.put("name", normalizedName);
+          return RelvenPlanImporter.parse(root.toString());
+        }
+      }
+      throw new IllegalArgumentException("Unknown workout");
+    } catch (JSONException error) {
+      throw new IllegalArgumentException("Invalid source plan", error);
+    }
+  }
+
   public static RelvenPlanImporter.Plan remove(
       RelvenPlanImporter.Plan source, String sessionId, String revisionId) {
     return remove(source, sessionId, revisionId, source == null ? 0 : source.revisionNumber() + 1);

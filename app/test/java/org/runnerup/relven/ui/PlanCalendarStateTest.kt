@@ -108,6 +108,15 @@ class PlanCalendarStateTest {
   }
 
   @Test
+  fun workoutNameValidationRequiresTrimmedDistinctTextWithinLimit() {
+    assertTrue(canRenameWorkoutName("Tempo run", "Easy run"))
+    assertTrue(canRenameWorkoutName("  Tempo run  ", "Easy run"))
+    assertFalse(canRenameWorkoutName("  ", "Easy run"))
+    assertFalse(canRenameWorkoutName("Easy run", "Easy run"))
+    assertFalse(canRenameWorkoutName("x".repeat(161), "Easy run"))
+  }
+
+  @Test
   fun formatsMonthAndDateLabelsForTheSelectedAppLocale() {
     val state =
         planCalendarState(
