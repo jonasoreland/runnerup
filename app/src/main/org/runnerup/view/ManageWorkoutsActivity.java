@@ -17,6 +17,8 @@
 
 package org.runnerup.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -49,6 +51,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedInputStream;
@@ -58,6 +61,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -80,6 +84,7 @@ import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.FitWorkoutImporter;
 import org.runnerup.workout.RelvenPlanImport;
 import org.runnerup.workout.RelvenPlanImporter;
+import org.runnerup.workout.RelvenPlanKit;
 import org.runnerup.workout.RelvenPlanStore;
 import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.Workout;
@@ -136,6 +141,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             if (uri != null) importPlan(uri);
           });
 
+  private final ActivityResultLauncher<String> savePlanKitLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.CreateDocument("application/zip"), this::savePlanKit);
+
   /** Called when the activity is first created. */
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -167,6 +176,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                 planImportLauncher.launch(
                     new String[] {"application/json", "text/json", "application/*+json", "*/*"}));
     findViewById(R.id.view_plans_button).setOnClickListener(view -> showSavedPlans());
+    findViewById(R.id.ai_plan_kit_button).setOnClickListener(view -> showPlanKitActions());
 
     shareButton = findViewById(R.id.share_workout_button);
     shareButton.setOnClickListener(shareButtonClick);
@@ -323,6 +333,121 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             Log.e(getClass().getName(), "Failed to read saved plans", error);
             runOnUiThread(() -> showPlanImportError(error));
           }
+        });
+  }
+
+  private void showPlanKitActions() {
+    String[] actions = {
+      getString(org.runnerup.common.R.string.AI_plan_kit_copy_prompt),
+      getString(org.runnerup.common.R.string.AI_plan_kit_share),
+      getString(org.runnerup.common.R.string.AI_plan_kit_save)
+    };
+    new AlertDialog.Builder(this)
+        .setTitle(org.runnerup.common.R.string.AI_plan_kit_title)
+        .setItems(
+            actions,
+            (dialog, which) -> {
+              if (which == 0) {
+                copyPlanKitInstructions();
+              } else if (which == 1) {
+                sharePlanKit();
+              } else if (which == 2) {
+                savePlanKitLauncher.launch("relven-ai-plan-kit-v1.zip");
+              }
+            })
+        .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
+        .show();
+  }
+
+  private void copyPlanKitInstructions() {
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            String instructions = RelvenPlanKit.readInstructions(getApplicationContext());
+            runOnUiThread(
+                () -> {
+                  if (isFinishing() || isDestroyed()) return;
+                  ClipboardManager clipboard =
+                      (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                  clipboard.setPrimaryClip(
+                      ClipData.newPlainText(
+                          getString(org.runnerup.common.R.string.AI_plan_kit_title), instructions));
+                  Toast.makeText(
+                          this,
+                          org.runnerup.common.R.string.AI_plan_kit_prompt_copied,
+                          Toast.LENGTH_LONG)
+                      .show();
+                });
+          } catch (IOException error) {
+            Log.e(getClass().getName(), "Could not read AI Plan Kit instructions", error);
+            showPlanKitFeedback(org.runnerup.common.R.string.AI_plan_kit_copy_failed);
+          }
+        });
+  }
+
+  private void sharePlanKit() {
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            File archive = RelvenPlanKit.createShareFile(getApplicationContext());
+            runOnUiThread(() -> launchPlanKitShare(archive));
+          } catch (IOException error) {
+            Log.e(getClass().getName(), "Could not prepare AI Plan Kit for sharing", error);
+            showPlanKitFeedback(org.runnerup.common.R.string.AI_plan_kit_share_failed);
+          }
+        });
+  }
+
+  private void launchPlanKitShare(File archive) {
+    if (isFinishing() || isDestroyed()) return;
+    try {
+      Uri uri =
+          FileProvider.getUriForFile(
+              this, getPackageName() + ".relven.ai.plan.kit.provider", archive);
+      Intent share = new Intent(Intent.ACTION_SEND);
+      share.setType("application/zip");
+      share.putExtra(
+          Intent.EXTRA_SUBJECT, getString(org.runnerup.common.R.string.AI_plan_kit_title));
+      share.putExtra(Intent.EXTRA_STREAM, uri);
+      share.setClipData(
+          ClipData.newUri(
+              getContentResolver(),
+              getString(org.runnerup.common.R.string.AI_plan_kit_title),
+              uri));
+      share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      startActivity(
+          Intent.createChooser(
+              share, getString(org.runnerup.common.R.string.AI_plan_kit_share_chooser)));
+    } catch (RuntimeException error) {
+      Log.e(getClass().getName(), "Could not open AI Plan Kit share chooser", error);
+      Toast.makeText(this, org.runnerup.common.R.string.AI_plan_kit_share_failed, Toast.LENGTH_LONG)
+          .show();
+    }
+  }
+
+  private void savePlanKit(Uri destination) {
+    if (destination == null) return;
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            OutputStream output = getContentResolver().openOutputStream(destination, "w");
+            if (output == null) throw new IOException("Document destination is unavailable");
+            try (OutputStream stream = output) {
+              RelvenPlanKit.copyArchive(getApplicationContext(), stream);
+            }
+            showPlanKitFeedback(org.runnerup.common.R.string.AI_plan_kit_saved);
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Could not save AI Plan Kit", error);
+            showPlanKitFeedback(org.runnerup.common.R.string.AI_plan_kit_save_failed);
+          }
+        });
+  }
+
+  private void showPlanKitFeedback(int message) {
+    runOnUiThread(
+        () -> {
+          if (isFinishing() || isDestroyed()) return;
+          Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         });
   }
 

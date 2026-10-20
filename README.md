@@ -10,8 +10,10 @@ Relven is a free, open-source fitness app for Android with a phone-dependent Wea
 - Review saved activities and use the inherited GPX/TCX and service export paths.
 - Use the Wear OS companion for live workout display and remote actions. The phone owns the workout and GPS recording.
 - Import or share the workout formats currently supported by RunnerUp.
+- Import supported running plans, activate them explicitly, and view or reschedule items in the Plan calendar.
+- Copy the AI plan-generation instructions or share/save the offline AI Plan Kit ZIP from Workout Manager.
 
-An initial Wear heart-rate provider is integrated behind an experimental setting, but it has not been tested on a watch and screen-off/background capture is unsupported. A limited Relven v3 running-workout JSON importer is implemented but has not been tested through the device UI. FIT Workout and multiweek plan imports, strength tracking, a unified calendar, AI Plan Kit and route coloring are **not yet implemented**. A debug-only Compose screen previews the new visual foundation; the launcher and workout screens still use the inherited layout beneath Relven branding.
+An initial Wear heart-rate provider is integrated behind an experimental setting, but it has not been tested on a watch and screen-off/background capture is unsupported. A limited Relven v3 running-workout JSON importer is implemented but has not been tested through the device UI. FIT Workout import, JSON running-plan packages, the active-plan calendar, and the schema-based AI Plan Kit are available in bounded forms. Strength tracking and route coloring remain pending. The launcher, workout library and workout screens still use inherited layouts beneath Relven branding.
 
 ## Build and install
 
@@ -20,6 +22,8 @@ Requirements: JDK 17 or newer, Android SDK platform 37.1, Build Tools 37.0.0, an
 ```sh
 ./gradlew :app:assembleLatestDebug :wear:assembleDebug
 ./gradlew :app:testLatestDebugUnitTest :wear:testDebugUnitTest
+python tools/test_build_ai_plan_kit.py
+python tools/build_ai_plan_kit.py --check
 ```
 
 The phone APK is under `app/build/outputs/apk/latest/debug/`; the watch APK is under `wear/build/outputs/apk/debug/`. Install each APK on its matching device with `adb install` and pair the devices normally. The phone debug APK launched on a Samsung SM-S948B (API 37) on 19 October 2026; recording and permission behavior have not yet been tested. No Wear hardware run has been verified for this fork.
@@ -28,7 +32,7 @@ Phone and watch share the original Relven Play application ID `se.hampusandersso
 
 ## Workouts, plans and exports
 
-Use **Import workout** in the workout management screen to select an inherited RunnerUp-format workout or the executable subset of Relven v3 **running-workout** JSON. The latter supports simple time, distance or manual steps, sequences, repeats, and numeric pace, speed or heart-rate targets. Unsupported conditions and strength workouts return an import error. Relven multiweek plans and FIT Workout files cannot yet be imported. Use activity details and export controls for available recording formats; installed options depend on the build variant and configured integrations. See [feature parity](docs/feature-parity.md).
+Use **Import workout** in Workout Manager to select an inherited RunnerUp-format workout, the supported subset of Relven v3 **running-workout** JSON, or a FIT Workout. Running-plan JSON can be imported, reviewed, saved, and explicitly activated; the Plan calendar shows its schedule and can create immutable rescheduling revisions. The **AI Plan Kit** action copies the generation prompt and shares or saves a ZIP containing current plan/workout schemas and a valid example. AI-created plans target schema v1; schema v2 is reserved for app-managed revisions. Plan ZIP import, strength plans, and online AI generation are unsupported. Use activity details and export controls for available recording formats; installed options depend on the build variant and configured integrations. See [feature parity](docs/feature-parity.md) and the [AI Plan Kit guide](docs/ai-plan-kit/README.md).
 
 ## Privacy and offline use
 

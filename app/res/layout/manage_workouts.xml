@@ -65,6 +65,20 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/ai_plan_kit_button"
+                style="@style/ButtonText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_blue"
+                android:text="@string/AI_plan_kit_title"
+                android:textSize="16sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
                 android:id="@+id/view_plans_button"
                 style="@style/ButtonText"
                 android:layout_width="match_parent"

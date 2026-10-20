@@ -1,0 +1,18 @@
+{
+  "kitVersion": 1,
+  "planFormat": "relven.plan",
+  "generatedPlanSchemaVersions": [1],
+  "appManagedRevisionSchemaVersion": 2,
+  "workoutSchemaVersion": 3,
+  "supportedSports": ["running"],
+  "supportedDayKinds": ["workout", "rest"],
+  "supportedStepKinds": ["segment", "sequence", "repeat"],
+  "supportedSegmentPhases": ["warmup", "work", "recovery", "cooldown"],
+  "supportedEndTypes": ["time", "distance", "manual"],
+  "supportedTargetTypes": ["pace", "speed", "heart_rate"],
+  "strengthPlanImport": false,
+  "planZipImport": false,
+  "automaticActivation": false,
+  "serverSynchronization": false,
+  "maximumJsonBytes": 4194304
+}

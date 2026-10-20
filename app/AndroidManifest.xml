@@ -215,6 +215,16 @@
             android:grantUriPermissions="true" />
 
         <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.relven.ai.plan.kit.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/relven_plan_kit_file_paths" />
+        </provider>
+
+        <provider
             android:name=".content.ActivityProvider"
             android:authorities="${applicationId}.activity.provider"
             android:exported="false"

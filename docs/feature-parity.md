@@ -14,7 +14,7 @@ Status describes this checkout, not planned designs.
 | Versioned JSON workouts and plans | Running-workout v3 import and locally stored plan packages | Plan packages can be validated, saved, previewed, and activated/switched/cleared; rescheduling creates a new immutable schema-v2 snapshot and activates it. Adding/removing entries, editing plan content, strength, and plan-linked execution remain pending |
 | Calendar and strength details | Active-plan month calendar with immutable rescheduling | Month navigation, selected-day workout/rest details, and moving an entry to a new date are available; each move preserves the prior revision. Strength details remain pending |
 | Offline exercise catalog and gym logging | Pending | License/data review and local model |
-| AI Plan Kit ZIP | Pending | Generate from implemented schema only |
+| AI Plan Kit ZIP | Implemented in this increment | Workout Manager can copy the generation instructions, share the full ZIP, or save it through the document picker. The reproducible archive contains plan v1, app-managed revision v2, workout v3 schemas and the supported example; no AI service is called. |
 | Free map and route coloring | osmdroid map inherited; coloring pending | Runtime route-sample audit |
 | New Compose phone/watch UI | Phone foundation/preview only | Debug-only native screen rendered on a phone; production navigation and Wear UI pending |
 
