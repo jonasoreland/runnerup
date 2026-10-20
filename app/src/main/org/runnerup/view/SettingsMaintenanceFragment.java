@@ -161,12 +161,12 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
     LEGACY_EXPORT_EXECUTOR.execute(
         () -> {
           int message;
-          boolean destinationMayExist = false;
+          // ACTION_CREATE_DOCUMENT may create the selected file before this callback is run.
+          boolean destinationMayExist = true;
           try {
             if (!LegacyRelvenVault.captureIfPresent(context)) {
               throw new IOException("No previous Relven database found");
             }
-            destinationMayExist = true;
             try (OutputStream output = resolver.openOutputStream(destination)) {
               if (output == null) throw new IOException("Unable to open backup destination");
               LegacyRelvenVault.exportTo(context, output);
