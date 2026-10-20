@@ -214,4 +214,37 @@ public class RelvenPlanRevisionTest {
         IllegalArgumentException.class,
         () -> RelvenPlanRevision.remove(original, "missing", "revision-1"));
   }
+
+  @Test
+  public void renameCreatesNameOnlyRevisionAndTrimsTheNewName() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.rename(original, "\u2003Autumn base\u2003", "revision-1");
+
+    assertEquals("Base plan", original.name());
+    assertEquals(SOURCE, original.sourceJson());
+    assertEquals("Autumn base", revision.name());
+    assertEquals(2, revision.schemaVersion());
+    assertEquals("base-plan", revision.rootPlanId());
+    assertEquals("base-plan", revision.previousRevisionId());
+    assertEquals(1, revision.revisionNumber());
+    assertEquals(original.days(), revision.days());
+    assertEquals(original.workoutNames(), revision.workoutNames());
+  }
+
+  @Test
+  public void rejectsBlankUnchangedOrOversizedPlanNames() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.rename(original, "  ", "revision-1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.rename(original, "Base plan", "revision-1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.rename(original, "x".repeat(161), "revision-1"));
+  }
 }

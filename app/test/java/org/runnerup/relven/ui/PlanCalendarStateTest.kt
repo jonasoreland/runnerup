@@ -99,6 +99,15 @@ class PlanCalendarStateTest {
   }
 
   @Test
+  fun planNameValidationRequiresTrimmedDistinctTextWithinLimit() {
+    assertTrue(canRenamePlanName("New name", "Current name"))
+    assertTrue(canRenamePlanName("  New name  ", "Current name"))
+    assertFalse(canRenamePlanName("  ", "Current name"))
+    assertFalse(canRenamePlanName("Current name", "Current name"))
+    assertFalse(canRenamePlanName("x".repeat(161), "Current name"))
+  }
+
+  @Test
   fun formatsMonthAndDateLabelsForTheSelectedAppLocale() {
     val state =
         planCalendarState(

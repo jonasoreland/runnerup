@@ -103,7 +103,8 @@ class RelvenHomeActivity : ComponentActivity() {
             onReschedulePlan = ::rescheduleActivePlan,
             onAddWorkoutToPlan = ::addWorkoutToActivePlan,
             onAddRestToPlan = ::addRestToActivePlan,
-            onRemovePlanEntry = ::removeActivePlanEntry)
+            onRemovePlanEntry = ::removeActivePlanEntry,
+            onRenamePlan = ::renameActivePlan)
       }
     }
   }
@@ -178,6 +179,12 @@ class RelvenHomeActivity : ComponentActivity() {
   private fun removeActivePlanEntry(sessionId: String) {
     savePlanRevision { plan ->
       RelvenPlanStore.removeActivePlanEntry(applicationContext, plan, sessionId)
+    }
+  }
+
+  private fun renameActivePlan(name: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.renameActivePlan(applicationContext, plan, name)
     }
   }
 
@@ -263,7 +270,8 @@ private fun RelvenHome(
     onReschedulePlan: (String, String) -> Unit,
     onAddWorkoutToPlan: (String, String) -> Unit,
     onAddRestToPlan: (String) -> Unit,
-    onRemovePlanEntry: (String) -> Unit) {
+    onRemovePlanEntry: (String) -> Unit,
+    onRenamePlan: (String) -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
@@ -363,7 +371,8 @@ private fun RelvenHome(
           onReschedule = onReschedulePlan,
           onAddWorkout = onAddWorkoutToPlan,
           onAddRest = onAddRestToPlan,
-          onRemoveEntry = onRemovePlanEntry)
+          onRemoveEntry = onRemovePlanEntry,
+          onRenamePlan = onRenamePlan)
     }
     HomeNavigationBar(
         destination = destination,

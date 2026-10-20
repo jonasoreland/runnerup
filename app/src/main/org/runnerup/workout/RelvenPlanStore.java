@@ -209,6 +209,18 @@ public final class RelvenPlanStore {
     return revision;
   }
 
+  /** Renames the active plan by saving and activating an immutable revision. */
+  public static synchronized RelvenPlanImporter.Plan renameActivePlan(
+      Context context, RelvenPlanImporter.Plan activePlan, String name) throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.rename(
+            current, name, UUID.randomUUID().toString(), nextRevisionNumber(context, current));
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
   private static RelvenPlanImporter.Plan requireCurrentActivePlan(
       Context context, RelvenPlanImporter.Plan activePlan) throws IOException {
     RelvenPlanImporter.Plan current = activePlan(context);
@@ -265,8 +277,7 @@ public final class RelvenPlanStore {
     try {
       JSONObject previousJson = new JSONObject(previous.sourceJson());
       JSONObject revisionJson = new JSONObject(revision.sourceJson());
-      if (!previous.name().equals(revision.name())
-          || !previous.timezone().equals(revision.timezone())
+      if (!previous.timezone().equals(revision.timezone())
           || !canonicalJson(previousJson.getJSONArray("workouts"))
               .equals(canonicalJson(revisionJson.getJSONArray("workouts")))) {
         throw new IOException("Plan revision changed immutable plan content");
@@ -310,18 +321,30 @@ public final class RelvenPlanStore {
         if (!found) addedDays++;
       }
       boolean oneReschedule =
-          oldDays.size() == newDays.size() && changedDates == 1 && removedDays == 0;
+          previous.name().equals(revision.name())
+              && oldDays.size() == newDays.size()
+              && changedDates == 1
+              && removedDays == 0;
       boolean oneAddition =
-          newDays.size() == oldDays.size() + 1
+          previous.name().equals(revision.name())
+              && newDays.size() == oldDays.size() + 1
               && addedDays == 1
               && changedDates == 0
               && removedDays == 0;
       boolean oneRemoval =
-          oldDays.size() == newDays.size() + 1
+          previous.name().equals(revision.name())
+              && oldDays.size() == newDays.size() + 1
               && removedDays == 1
               && addedDays == 0
               && changedDates == 0;
-      if (!oneReschedule && !oneAddition && !oneRemoval) {
+      boolean nameOnly =
+          !previous.name().equals(revision.name())
+              && revision.name().equals(RelvenPlanRevision.normalizePlanName(revision.name()))
+              && oldDays.size() == newDays.size()
+              && addedDays == 0
+              && removedDays == 0
+              && changedDates == 0;
+      if (!oneReschedule && !oneAddition && !oneRemoval && !nameOnly) {
         throw new IOException("Plan revision must move, add, or remove exactly one session");
       }
     } catch (JSONException error) {

@@ -30,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -68,7 +69,8 @@ internal fun PlanCalendarScreen(
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
-    onRemoveEntry: (String) -> Unit
+    onRemoveEntry: (String) -> Unit,
+    onRenamePlan: (String) -> Unit
 ) {
   when (loadState) {
     ActivePlanLoadState.Loading -> PlanCalendarMessage(stringResource(R.string.Today_plan_loading))
@@ -89,7 +91,8 @@ internal fun PlanCalendarScreen(
             onReschedule,
             onAddWorkout,
             onAddRest,
-            onRemoveEntry)
+            onRemoveEntry,
+            onRenamePlan)
   }
 }
 
@@ -102,7 +105,8 @@ private fun LoadedPlanCalendar(
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
-    onRemoveEntry: (String) -> Unit
+    onRemoveEntry: (String) -> Unit,
+    onRenamePlan: (String) -> Unit
 ) {
   val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
   var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
@@ -114,6 +118,9 @@ private fun LoadedPlanCalendar(
   var rescheduleTargetDate by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var showAddActions by rememberSaveable(plan.id()) { mutableStateOf(false) }
   var pendingRemovalId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
+  var showRenameDialog by rememberSaveable(plan.id()) { mutableStateOf(false) }
+  var editedPlanName by rememberSaveable(plan.id()) { mutableStateOf(plan.name()) }
+  var planNameTouched by rememberSaveable(plan.id()) { mutableStateOf(false) }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale) {
     planCalendarState(plan, month, selectedDate, nowMillis, locale)
@@ -126,7 +133,22 @@ private fun LoadedPlanCalendar(
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Text(stringResource(R.string.Plan_calendar_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)
-      Text(plan.name(), color = RelvenColors.MutedText, fontSize = 14.sp)
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            plan.name(),
+            color = RelvenColors.MutedText,
+            fontSize = 14.sp,
+            modifier = Modifier.weight(1f))
+        TextButton(
+            onClick = {
+              editedPlanName = plan.name()
+              planNameTouched = false
+              showRenameDialog = true
+            },
+            enabled = revisionStatus !is PlanRevisionStatus.Saving) {
+          Text(stringResource(R.string.Plan_calendar_rename))
+        }
+      }
       if (plan.revisionNumber() > 0) {
         Text(
             stringResource(R.string.Plan_calendar_revision_number, plan.revisionNumber()),
@@ -313,6 +335,44 @@ private fun LoadedPlanCalendar(
           rescheduleTargetDate = null
         },
         onRemove = { sessionId -> pendingRemovalId = sessionId })
+  }
+
+  if (showRenameDialog) {
+    val validName = canRenamePlanName(editedPlanName, plan.name())
+    AlertDialog(
+        onDismissRequest = { showRenameDialog = false },
+        title = { Text(stringResource(R.string.Plan_calendar_rename_title)) },
+        text = {
+          OutlinedTextField(
+              value = editedPlanName,
+              onValueChange = {
+                editedPlanName = it
+                planNameTouched = true
+              },
+              label = { Text(stringResource(R.string.Plan_calendar_rename_label)) },
+              singleLine = true,
+              isError = planNameTouched && !validName,
+              supportingText = {
+                if (planNameTouched && !validName) {
+                  Text(stringResource(R.string.Plan_calendar_rename_invalid))
+                }
+              })
+        },
+        confirmButton = {
+          TextButton(
+              onClick = {
+                showRenameDialog = false
+                onRenamePlan(editedPlanName.trim())
+              },
+              enabled = validName && revisionStatus !is PlanRevisionStatus.Saving) {
+            Text(stringResource(R.string.Plan_calendar_rename_save))
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { showRenameDialog = false }) {
+            Text(stringResource(R.string.Cancel))
+          }
+        })
   }
 
   if (showAddActions) {

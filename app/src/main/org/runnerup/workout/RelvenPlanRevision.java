@@ -109,6 +109,35 @@ public final class RelvenPlanRevision {
     return addSession(source, date, "rest", null, sessionId, revisionId, revisionNumber);
   }
 
+  public static RelvenPlanImporter.Plan rename(
+      RelvenPlanImporter.Plan source, String name, String revisionId) {
+    return rename(source, name, revisionId, source == null ? 0 : source.revisionNumber() + 1);
+  }
+
+  static RelvenPlanImporter.Plan rename(
+      RelvenPlanImporter.Plan source, String name, String revisionId, int revisionNumber) {
+    if (source == null || revisionId == null || name == null) {
+      throw new IllegalArgumentException("Missing rename input");
+    }
+    if (revisionNumber <= source.revisionNumber()) {
+      throw new IllegalArgumentException("Revision number must increase");
+    }
+    String normalizedName = normalizePlanName(name);
+    if (normalizedName.isEmpty() || normalizedName.length() > 160) {
+      throw new IllegalArgumentException("Invalid plan name");
+    }
+    if (normalizedName.equals(source.name())) {
+      throw new IllegalArgumentException("Plan name is unchanged");
+    }
+    try {
+      JSONObject root = revisionRoot(source, revisionId, revisionNumber);
+      root.put("name", normalizedName);
+      return RelvenPlanImporter.parse(root.toString());
+    } catch (JSONException error) {
+      throw new IllegalArgumentException("Invalid source plan", error);
+    }
+  }
+
   public static RelvenPlanImporter.Plan remove(
       RelvenPlanImporter.Plan source, String sessionId, String revisionId) {
     return remove(source, sessionId, revisionId, source == null ? 0 : source.revisionNumber() + 1);
@@ -204,6 +233,14 @@ public final class RelvenPlanRevision {
     revision.put("previousRevisionId", source.id());
     root.put("revision", revision);
     return root;
+  }
+
+  static String normalizePlanName(String name) {
+    int start = 0;
+    int end = name.length();
+    while (start < end && Character.isWhitespace(name.charAt(start))) start++;
+    while (end > start && Character.isWhitespace(name.charAt(end - 1))) end--;
+    return name.substring(start, end);
   }
 
   private static String findDate(RelvenPlanImporter.Plan plan, String sessionId) {

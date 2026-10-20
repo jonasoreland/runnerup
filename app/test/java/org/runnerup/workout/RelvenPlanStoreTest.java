@@ -235,6 +235,54 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
+  public void renameCreatesAndActivatesNameOnlyImmutableRevision() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+    File originalFile = directory.listFiles()[0];
+
+    RelvenPlanImporter.Plan renamed =
+        RelvenPlanStore.renameActivePlan(context, original, "Evening plan");
+
+    assertEquals(JSON, Files.readString(originalFile.toPath()));
+    assertEquals("Evening plan", renamed.name());
+    assertEquals("store-test", renamed.previousRevisionId());
+    assertEquals(1, renamed.revisionNumber());
+    assertEquals(renamed.id(), RelvenPlanStore.activePlan(context).id());
+    assertEquals(original.days(), renamed.days());
+    assertEquals(2, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void rejectsRenamingWhenPlanIsNotCurrentActiveSnapshot() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+    RelvenPlanImporter.Plan moved =
+        RelvenPlanStore.rescheduleActivePlan(context, original, "session-a", "2026-10-22");
+
+    assertThrows(
+        java.io.IOException.class,
+        () -> RelvenPlanStore.renameActivePlan(context, original, "Stale rename"));
+    assertEquals(moved.id(), RelvenPlanStore.activePlan(context).id());
+    assertEquals(2, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void rejectsRevisionCombiningRenameAndScheduleChange() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan moved =
+        RelvenPlanRevision.reschedule(original, "session-a", "2026-10-22", "revision-1");
+    String mixedJson =
+        moved.sourceJson().replace("\"name\":\"Store test\"", "\"name\":\"Renamed\"");
+    RelvenPlanImporter.Plan mixed = RelvenPlanImporter.parse(mixedJson);
+
+    assertThrows(java.io.IOException.class, () -> RelvenPlanStore.save(context, mixed));
+    assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
   public void rejectsRevisionWhosePreviousSnapshotIsNotSaved() throws Exception {
     RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
     RelvenPlanStore.save(context, original);

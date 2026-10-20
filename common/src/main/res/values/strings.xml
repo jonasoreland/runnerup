@@ -349,8 +349,13 @@
     <string name="Plan_calendar_revision_saving">Saving plan revision…</string>
     <string name="Plan_calendar_revision_saved">Plan revision saved and activated.</string>
     <string name="Plan_calendar_revision_conflict">That date conflicts with a rest day or another item.</string>
-    <string name="Plan_calendar_revision_failed">Could not save the revision. Your active plan is unchanged. Try another date or save again.</string>
+    <string name="Plan_calendar_revision_failed">Could not save the plan revision. Your active plan is unchanged. Check your changes and try again.</string>
     <string name="Plan_calendar_revision_number">Revision %1$d</string>
+    <string name="Plan_calendar_rename">Rename</string>
+    <string name="Plan_calendar_rename_title">Rename plan</string>
+    <string name="Plan_calendar_rename_label">Plan name</string>
+    <string name="Plan_calendar_rename_invalid">Enter a different name with 1–160 characters.</string>
+    <string name="Plan_calendar_rename_save">Save name</string>
     <string name="Plan_revision_named">%1$s · Revision %2$d</string>
     <string-array name="Plan_calendar_weekdays">
         <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>
