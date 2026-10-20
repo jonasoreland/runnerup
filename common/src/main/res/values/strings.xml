@@ -52,6 +52,10 @@
     <string name="Device">Device</string>
     <string name="Start_hour">Start hour</string>
     <string name="Heart_rate">Heart rate</string>
+    <string name="wear_hr_waiting">Waiting</string>
+    <string name="wear_hr_stale">No recent data</string>
+    <string name="wear_hr_unavailable">No reading</string>
+    <string name="wear_hr_bpm_format">%1$d bpm</string>
     <string name="Pace">Pace</string>
     <string name="Elevation">Elevation</string>
     <string name="Scan">Scan</string>

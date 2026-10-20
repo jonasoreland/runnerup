@@ -1,11 +1,14 @@
 package org.runnerup.wear.ui
 
+import org.runnerup.hr.WearHeartRateSample
+
 internal data class WearMetric(val label: String, val value: String)
 
 internal data class WearWorkoutDisplay(
     val phaseLabel: String?,
     val metrics: List<WearMetric>,
-    val isPaused: Boolean)
+    val isPaused: Boolean,
+    val heartRate: WearHeartRateDisplay?)
 
 fun replaceWearHeaderSnapshot(
     previous: MutableMap<String, String>,
@@ -21,7 +24,11 @@ internal fun wearWorkoutDisplay(
     data: Map<String, String>,
     screen: Int,
     rowCount: Int,
-    isPaused: Boolean
+    isPaused: Boolean,
+    heartRateSample: WearHeartRateSample? = null,
+    nowElapsedRealtime: Long = 0L,
+    heartRateCaptureActive: Boolean = false,
+    heartRateCaptureStartedAtElapsedRealtime: Long = nowElapsedRealtime
 ): WearWorkoutDisplay {
   require(screen >= 0) { "Screen index must not be negative" }
   require(rowCount >= 0) { "Row count must not be negative" }
@@ -34,5 +41,12 @@ internal fun wearWorkoutDisplay(
   return WearWorkoutDisplay(
       phaseLabel = headers["CURRENT_STEP"]?.takeIf(String::isNotBlank),
       metrics = metrics,
-      isPaused = isPaused)
+      isPaused = isPaused,
+      heartRate =
+          if (heartRateCaptureActive) {
+            wearHeartRateDisplay(
+                heartRateSample, nowElapsedRealtime, heartRateCaptureStartedAtElapsedRealtime)
+          } else {
+            null
+          })
 }

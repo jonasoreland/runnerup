@@ -61,6 +61,10 @@
   <string name="Device">Enhet</string>
   <string name="Start_hour">Starttid</string>
   <string name="Heart_rate">Puls</string>
+  <string name="wear_hr_waiting">Väntar</string>
+  <string name="wear_hr_stale">Inaktuell</string>
+  <string name="wear_hr_unavailable">Saknas</string>
+  <string name="wear_hr_bpm_format">%1$d slag/min</string>
   <string name="Pace">Tempo</string>
   <string name="Elevation">Höjd</string>
   <string name="Scan">Skanna</string>

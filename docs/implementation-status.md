@@ -1,10 +1,11 @@
-# Implementation status — 20 October 2026
+# Implementation status — 21 October 2026
 
-## 20 October 2026 serial integration checkpoint
+## 21 October 2026 serial integration checkpoint
 
 - **PR #42 — offline Progress overview:** Merged to `master` as `6c342085`. Shows locally recorded session counts and durations over rolling 7-day and 28-day windows, plus finite positive distance totals and coverage; training load stays unavailable. Regression coverage includes stale-read suppression, zero distances, and overflow. Local app tests, latest debug/release builds, debug/release lint, Spotless, release package verification and hosted Android/F-Droid CI passed. Release metadata retains `se.hampusandersson.relven` versionCode `24000374`. No ADB was used; device visual checks remain pending.
 - **PR #43 — Wear active workout glance:** Merged to `master` as `09f3375a`. Replaces RunnerUp's Wear run-metric cards with native Compose inside the existing fragment/pager. The current phase label and displayed metrics use existing Tracker payloads and formatting; pause/lap controls, HR and completion flows remain on RunnerUp. Wear and app tests, latest debug/release builds, debug/release lint, Spotless, package IDs, and hosted Android/F-Droid CI passed. No ADB was used.
-- **Current increment — Wear ready/start and session controls:** Migrates the existing ready/start and pause/resume/lap surfaces to Compose while retaining `TrackerState`, `StateService.sendStart()`, `sendPauseResume()` and `sendNewLap()` as the authority. Manual watch rendering remains pending; no ADB is used.
+- **PR #44 — Wear ready/start and session controls:** Merged to `master` as `ede87621`. Replaces the ready/start and pause/resume/lap pages with localized Compose controls while retaining `TrackerState` and existing `StateService` actions. Wear/app tests, latest debug/release builds, debug/release lint, Spotless and hosted Android/F-Droid CI passed. No ADB was used.
+- **Current increment — live Wear heart-rate glance:** Displays actual validated watch sensor samples beside the workout metrics, with waiting, live, stale and unavailable states. The existing watch sensor service remains responsible for collection and phone transfer; the Compose glance reads an in-memory snapshot, refreshes while resumed and hides it when capture is inactive. Wear/app unit tests, latest debug/release builds, debug/release lint, Spotless and package-ID verification passed locally. Hosted CI and manual watch rendering remain pending; no ADB was used.
 
 - **PR #41 — per-exercise strength history:** merged to `master` as `20d6cfd`. Exercise details show up to ten completed sessions newest first, with exact recorded reps or timed duration per set, matched by stable exercise ID. Local app/Wear/HR test/build/lint/style checks and free/F-Droid build passed; Play package ID was verified. Hosted build/test/release-lint/style/F-Droid CI passed. No ADB device was used.
 
@@ -65,12 +66,13 @@
 - **Completed increment — watch permission UX:** Adds a visible sensor/permission readiness page before and during workouts, API 35/36 permission selection, and a user-initiated permission action. The sensor service no longer launches UI. See [Wear HR audit](wear-hr-audit.md).
 - **Completed increment — health foreground service:** Declares the health service type, gates capture on versioned foreground/background heart-rate permissions, and shows an ongoing low-priority notification while sampling. Local build/test/lint checks do not verify screen-off operation or Data Layer background starts.
 - **Current increment:** Phone settings, pre-run status and the workout HR header display localized Wear connection state. A stale stream triggers one bounded sensor restart; after 30 seconds without fresh data the provider stops capture and permits manual retry. Repeated watch start commands re-register one sensor listener.
+- **Current increment — active Wear glance:** Shows the latest actual watch BPM sample and clears it after the same 15-second freshness window used by the phone provider. Before a first sample, it shows waiting and then unavailable; it is hidden when watch capture is inactive. The display reads the existing sensor service's in-process sample store and does not add another sensor listener. Local tests, debug/release builds and lint passed; hosted CI and paired-device operation are pending.
 - **Pending:** Galaxy Watch6 Classic permission, notification, screen-off, restart and reconnection tests.
 - **Changed modules:** `hrdevice`, `wear`, `app` HR settings/tracker, and shared message constants.
 - **Build/test status:** Phone/watch debug builds, app/Wear/HR unit targets and lint passed after service hardening. App lint has 23 inherited baseline-filtered errors; Wear has none and HR library has one inherited baseline-filtered error. No new issues were reported.
 - **Emulator/physical devices:** None connected.
 - **Known issues:** Screen-off/background HR is unsupported in the current started-service implementation. Do not present it as release-ready.
-- **Next step:** Make watch sensor collection lifecycle compliant, then test with a paired watch and phone.
+- **Next step:** Verify permission, foreground notification, screen-off collection, stale recovery and reconnection on a paired Galaxy Watch6 Classic after the other product phases are ready for manual testing.
 
 ## Phase Three — Stitch reference retrieval
 
@@ -81,9 +83,9 @@
 - **Emulator/physical devices:** No app visual run for the current increment. The first AVD was ARM and unsupported by this x86 host; the x86_64 Relven AVD appeared unauthorized to ADB because the server reported `ADB_VENDOR_KEYS` unset. No shared ADB server/key changes were made. The physical device remains unused until all phases are complete and the app is ready for manual testing.
 - **Known issues:** Stitch edit of the three exact screens returned HTTP 502. A fresh read showed unchanged file entries; the edit may still be pending server-side. Current three exports are content inventory only.
 - **Completed increment — PR #43:** The Wear active metrics screen uses Compose styling aligned to the downloaded circular Stitch reference while retaining RunnerUp's Tracker payload, pager, controls, HR and completion paths. The view handles live values and paused state; current-step intensity is sent as a localized header value. Local and hosted Android/F-Droid checks passed; no ADB or device rendering was used.
-- **Current increment:** Ready/start and pause/resume/lap pages now render through Compose. State remains sourced from `TrackerState`; buttons call the existing `StateService` actions. State mapping has unit tests. Device rendering and interaction remain unverified.
-- **Known limitation:** The Wear Stitch export includes heart rate on the same glance screen. Heart rate remains on RunnerUp's existing Wear page because the active metric payload has no heart-rate field. Watch permission, HR and completion pages still use RunnerUp views.
-- **Next step:** Add live heart-rate values and sensor freshness to the Wear glance using verified local sensor samples, then continue the remaining phone and watch UI migration.
+- **Completed increment — PR #44:** Ready/start and pause/resume/lap pages render through Compose. State remains sourced from `TrackerState`; buttons call the existing `StateService` actions. State mapping has unit tests. Device rendering and interaction remain unverified.
+- **Current increment — live Wear HR glance:** A compact localized row uses the watch's actual sensor samples, shows a live BPM only while fresh, and exposes waiting/stale/unavailable states. Capture-off states hide the row. The watch permission and completion pages still use RunnerUp views. Wear/app tests, latest debug/release builds, debug/release lint, Spotless and exact package-ID verification passed locally; hosted CI and on-watch visual verification remain pending. No ADB was used.
+- **Next step:** Continue migrating the remaining phone and watch UI while retaining RunnerUp as the recording authority; finish the paired-watch validation once all product phases are ready for manual testing.
 
 ## Phase Four — workout import
 

@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,9 @@ import java.util.Map;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.hr.WearHeartRateSampleStore;
 import org.runnerup.service.StateService;
+import org.runnerup.wear.ui.WearHeartRateDisplayKt;
 import org.runnerup.wear.ui.WearWorkoutComposeContent;
 import org.runnerup.wear.ui.WearWorkoutDisplayKt;
 import org.runnerup.wear.ui.WearWorkoutPresentationState;
@@ -51,6 +54,7 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
         @Override
         public void run() {
           update();
+          render();
           handlerOutstanding = false;
           if (isResumed()) {
             startTimer();
@@ -139,7 +143,18 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
 
   private void render() {
     if (composeView != null) {
-      presentationState.update(headerValues, dataValues, screen, rowsOnScreen, isPaused());
+      presentationState.update(
+          headerValues,
+          dataValues,
+          screen,
+          rowsOnScreen,
+          isPaused(),
+          WearHeartRateSampleStore.getLatest(),
+          SystemClock.elapsedRealtime(),
+          WearHeartRateDisplayKt.shouldShowWearHeartRate(
+              WearHeartRateSampleStore.isCaptureActive(),
+              mainActivity == null ? null : mainActivity.getTrackerState()),
+          WearHeartRateSampleStore.getCaptureStartedAtElapsedRealtime());
     }
   }
 

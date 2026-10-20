@@ -1,13 +1,16 @@
 package org.runnerup.wear.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -27,6 +30,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import org.runnerup.hr.WearHeartRateSample
 
 private val ScreenBackground = Color(0xFF03050B)
 private val AccentBlue = Color(0xFF9BCBFF)
@@ -42,8 +48,22 @@ class WearWorkoutPresentationState {
       data: Map<String, String>,
       screen: Int,
       rowCount: Int,
-      isPaused: Boolean) {
-    display = wearWorkoutDisplay(headers, data, screen, rowCount, isPaused)
+      isPaused: Boolean,
+      heartRateSample: WearHeartRateSample? = null,
+      nowElapsedRealtime: Long = 0L,
+      heartRateCaptureActive: Boolean = false,
+      heartRateCaptureStartedAtElapsedRealtime: Long = nowElapsedRealtime) {
+      display =
+          wearWorkoutDisplay(
+              headers,
+              data,
+              screen,
+              rowCount,
+              isPaused,
+              heartRateSample,
+              nowElapsedRealtime,
+              heartRateCaptureActive,
+              heartRateCaptureStartedAtElapsedRealtime)
   }
 }
 
@@ -57,7 +77,7 @@ object WearWorkoutComposeContent {
 @Composable
 internal fun WearWorkoutScreen(display: WearWorkoutDisplay) {
   Box(
-      modifier = Modifier.fillMaxSize().clip(CircleShape),
+      modifier = Modifier.fillMaxSize().clip(CircleShape).background(ScreenBackground),
       contentAlignment = Alignment.Center) {
     Canvas(Modifier.fillMaxSize().padding(7.dp)) {
       drawCircle(color = AccentBlue, style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx()))
@@ -136,6 +156,49 @@ internal fun WearWorkoutScreen(display: WearWorkoutDisplay) {
                   maxLines = 1,
                   overflow = TextOverflow.Ellipsis)
             }
+          }
+        }
+      }
+      display.heartRate?.let { heartRate ->
+        val heartRateLabel = stringResource(org.runnerup.common.R.string.Heart_rate)
+        val heartRateValue =
+            when (heartRate.status) {
+              WearHeartRateStatus.LIVE ->
+                  stringResource(
+                      org.runnerup.common.R.string.wear_hr_bpm_format,
+                      requireNotNull(heartRate.bpm))
+              WearHeartRateStatus.WAITING ->
+                  stringResource(org.runnerup.common.R.string.wear_hr_waiting)
+              WearHeartRateStatus.STALE ->
+                  stringResource(org.runnerup.common.R.string.wear_hr_stale)
+              WearHeartRateStatus.UNAVAILABLE ->
+                  stringResource(org.runnerup.common.R.string.wear_hr_unavailable)
+            }
+        Surface(
+            color = Color(0xFF202633),
+            shape = RoundedCornerShape(50),
+            modifier =
+                Modifier.semantics(mergeDescendants = true) {
+                  contentDescription = "$heartRateLabel, $heartRateValue"
+                }) {
+          Row(
+              modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+              horizontalArrangement = Arrangement.Center,
+              verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = heartRateLabel,
+                color = SecondaryText,
+                fontSize = 9.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = heartRateValue,
+                color = if (heartRate.status == WearHeartRateStatus.LIVE) AccentBlue else SecondaryText,
+              fontSize = 9.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis)
           }
         }
       }

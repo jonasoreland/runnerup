@@ -34,6 +34,7 @@ import android.hardware.SensorManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
@@ -85,6 +86,7 @@ public class HeartRateService extends Service implements SensorEventListener {
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    WearHeartRateSampleStore.endCapture();
     if (intent != null) {
       sourceNodeId = intent.getStringExtra(Constants.Intents.EXTRA_SOURCE_NODE_ID);
     }
@@ -103,6 +105,7 @@ public class HeartRateService extends Service implements SensorEventListener {
 
     try {
       startForegroundCaptureNotification();
+      WearHeartRateSampleStore.beginCapture(SystemClock.elapsedRealtime());
       if (!startHeartRateMonitoring()) {
         Log.e(TAG, "Failed to register heart rate sensor listener.");
         stopSelf(startId);
@@ -138,6 +141,7 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
 
     stopHeartRateMonitoring();
+    WearHeartRateSampleStore.endCapture();
     ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
     super.onDestroy();
   }
@@ -217,6 +221,7 @@ public class HeartRateService extends Service implements SensorEventListener {
       if (event.values.length > 0) {
         int currentHeartRate = Math.round(event.values[0]);
         if (currentHeartRate >= 30 && currentHeartRate <= 240) {
+          WearHeartRateSampleStore.record(currentHeartRate, SystemClock.elapsedRealtime());
           sendHeartRateToPhone(currentHeartRate);
         }
       }
