@@ -29,6 +29,20 @@ public class RelvenPlanStoreTest {
           + "\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":1800}}]}],"
           + "\"days\":[{\"id\":\"session-a\",\"date\":\"2026-10-20\",\"kind\":\"workout\","
           + "\"workoutId\":\"run-a\"}]}";
+  private static final String STRENGTH_JSON =
+      "{\"format\":\"relven.plan\",\"schemaVersion\":1,\"id\":\"strength-store\","
+          + "\"name\":\"Strength week\",\"timezone\":\"Europe/Stockholm\",\"workouts\":[{"
+          + "\"schemaVersion\":3,\"id\":\"strength-a\",\"name\":\"Bodyweight basics\","
+          + "\"sport\":\"strength\",\"steps\":[{\"id\":\"squat-step\",\"kind\":\"segment\","
+          + "\"phase\":\"work\",\"end\":{\"type\":\"manual\"},\"exercise\":{"
+          + "\"exerciseId\":\"3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0\",\"libraryRevision\":1,"
+          + "\"exerciseRevision\":1,\"snapshot\":{\"name\":\"Bodyweight squat\","
+          + "\"instructions\":\"Stand with your feet about shoulder-width apart.\\n"
+          + "Bend your knees and hips as far as comfortable while keeping your chest lifted.\\n"
+          + "Press through your feet to stand tall again.\","
+          + "\"equipment\":[],\"images\":[]},\"sets\":3,\"minRepetitions\":8,"
+          + "\"maxRepetitions\":12,\"restSeconds\":60}}]}],\"days\":[{\"id\":\"strength-day\","
+          + "\"date\":\"2026-10-20\",\"kind\":\"workout\",\"workoutId\":\"strength-a\"}]}";
 
   private Context context;
   private File directory;
@@ -58,11 +72,40 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
+  public void savesAndRevisesStrengthPlanWithoutRunnerUpWorkoutConversion() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(STRENGTH_JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanStore.addRestToActivePlan(context, original, "2026-10-21", "rest-day");
+
+    assertTrue(original.workouts().isEmpty());
+    assertEquals(
+        "Bodyweight squat",
+        revision.strengthWorkouts().get("strength-a").exercises().get(0).name());
+    assertEquals("strength-a", revision.days().get(0).workoutId());
+    assertEquals(2, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void importsPublishedStrengthAndPrehabExampleAgainstTheBundledCatalog() throws Exception {
+    String example = Files.readString(new File("../schemas/examples/plan-strength.json").toPath());
+
+    RelvenPlanImporter.Plan plan = RelvenPlanStore.parse(context, example);
+
+    assertEquals(2, plan.strengthWorkouts().size());
+    assertEquals(
+        "Bodyweight squat", plan.strengthWorkouts().get("strength-a").exercises().get(0).name());
+    assertEquals("Glute bridge", plan.strengthWorkouts().get("prehab-a").exercises().get(0).name());
+  }
+
+  @Test
   public void invalidSourceWritesNothing() {
     RelvenPlanImporter.Plan forged =
         new RelvenPlanImporter.Plan(
             "forged", "Forged", "Europe/Stockholm", List.of(), Map.of(), Map.of(), "{}");
-    assertThrows(RuntimeException.class, () -> RelvenPlanStore.save(context, forged));
+    assertThrows(java.io.IOException.class, () -> RelvenPlanStore.save(context, forged));
     assertEquals(0, directory.listFiles().length);
   }
 

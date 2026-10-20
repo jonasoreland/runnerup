@@ -228,7 +228,7 @@ public final class RelvenPlanRevision {
     }
     if (!ids.add(sessionId)) throw new IllegalArgumentException("Duplicate session ID");
     if ("workout".equals(kind)) {
-      if (!source.workouts().containsKey(workoutId) || hasRest) {
+      if (!source.workoutNames().containsKey(workoutId) || hasRest) {
         throw new IllegalArgumentException("Invalid workout entry");
       }
     } else if ("rest".equals(kind)) {

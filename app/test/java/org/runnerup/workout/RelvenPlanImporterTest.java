@@ -13,6 +13,16 @@ public class RelvenPlanImporterTest {
       "{\"format\":\"relven.plan\",\"schemaVersion\":1,\"id\":\"plan-1\",\"name\":\"First weeks\",\"timezone\":\"Europe/Stockholm\",\"workouts\":["
           + RUN
           + "],\"days\":";
+  private static final String STRENGTH =
+      "{\"schemaVersion\":3,\"id\":\"strength-a\",\"name\":\"Bodyweight basics\","
+          + "\"sport\":\"strength\",\"steps\":[{\"id\":\"squat-step\","
+          + "\"kind\":\"segment\",\"phase\":\"work\","
+          + "\"end\":{\"type\":\"manual\"},\"exercise\":{"
+          + "\"exerciseId\":\"3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0\","
+          + "\"libraryRevision\":1,\"exerciseRevision\":1,\"snapshot\":{\"name\":\"Squat\","
+          + "\"instructions\":\"Stand tall and bend your knees.\","
+          + "\"equipment\":[],\"images\":[]},\"sets\":3,"
+          + "\"minRepetitions\":8,\"maxRepetitions\":12,\"restSeconds\":60}}]}";
 
   @Test
   public void acceptsDatedRunningSessionsAndRestDay() {
@@ -63,6 +73,21 @@ public class RelvenPlanImporterTest {
         HEADER.replace("\"sport\":\"running\"", "\"sport\":\"strength\"")
             + "[{\"id\":\"s1\",\"date\":\"2026-10-20\",\"kind\":\"workout\",\"workoutId\":\"run-a\"}]}";
     assertThrows(IllegalArgumentException.class, () -> RelvenPlanImporter.parse(json));
+  }
+
+  @Test
+  public void acceptsStrengthWorkoutSnapshotsWithoutCreatingRunnerUpWorkout() {
+    String json =
+        HEADER.replace(RUN, STRENGTH)
+            + "[{\"id\":\"s1\",\"date\":\"2026-10-20\",\"kind\":\"workout\",\"workoutId\":\"strength-a\"}]}";
+
+    RelvenPlanImporter.Plan plan = RelvenPlanImporter.parse(json);
+
+    assertTrue(plan.workouts().isEmpty());
+    assertEquals(1, plan.strengthWorkouts().size());
+    assertEquals("Squat", plan.strengthWorkouts().get("strength-a").exercises().get(0).name());
+    assertTrue(plan.sourceJson().contains("\"instructions\":\"Stand tall and bend your knees.\""));
+    assertEquals("Bodyweight basics", plan.workoutNames().get("strength-a"));
   }
 
   @Test

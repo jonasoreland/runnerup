@@ -35,6 +35,7 @@ public final class RelvenPlanImporter {
       String previousRevisionId,
       List<Session> days,
       Map<String, Workout> workouts,
+      Map<String, RelvenStrengthWorkoutParser.Workout> strengthWorkouts,
       Map<String, String> workoutNames,
       String sourceJson) {
     public Plan(
@@ -45,7 +46,7 @@ public final class RelvenPlanImporter {
         Map<String, Workout> workouts,
         Map<String, String> workoutNames,
         String sourceJson) {
-      this(1, id, name, timezone, id, 0, null, days, workouts, workoutNames, sourceJson);
+      this(1, id, name, timezone, id, 0, null, days, workouts, Map.of(), workoutNames, sourceJson);
     }
 
     public long workoutDays() {
@@ -58,6 +59,11 @@ public final class RelvenPlanImporter {
   }
 
   public static Plan parse(String json) {
+    return parse(json, null);
+  }
+
+  /** Parses strength snapshots and optionally verifies them against the installed catalog. */
+  public static Plan parse(String json, Map<String, RelvenExerciseReference> catalog) {
     try {
       RelvenJsonLimits.validate(json);
       if (json == null
@@ -118,13 +124,25 @@ public final class RelvenPlanImporter {
         throw invalid("workout count");
       }
       Map<String, Workout> workouts = new HashMap<>();
+      Map<String, RelvenStrengthWorkoutParser.Workout> strengthWorkouts = new HashMap<>();
       Map<String, String> workoutNames = new HashMap<>();
       for (int i = 0; i < workoutArray.length(); i++) {
         JSONObject document = workoutArray.getJSONObject(i);
         String workoutId = text(document, "id");
-        if (workouts.containsKey(workoutId)) throw invalid("duplicate workout id");
-        workouts.put(workoutId, RelvenWorkoutImporter.parse(document.toString()));
-        workoutNames.put(workoutId, document.getString("name"));
+        if (workoutNames.containsKey(workoutId)) throw invalid("duplicate workout id");
+        String sport = document.getString("sport");
+        if (sport.equals("running")) {
+          Workout workout = RelvenWorkoutImporter.parse(document.toString());
+          workouts.put(workoutId, workout);
+          workoutNames.put(workoutId, document.getString("name"));
+        } else if (sport.equals("strength") || sport.equals("prehab")) {
+          RelvenStrengthWorkoutParser.Workout workout =
+              RelvenStrengthWorkoutParser.parse(document.toString(), catalog);
+          strengthWorkouts.put(workoutId, workout);
+          workoutNames.put(workoutId, workout.name());
+        } else {
+          throw invalid("unsupported workout sport");
+        }
       }
 
       JSONArray dayArray = root.getJSONArray("days");
@@ -161,7 +179,8 @@ public final class RelvenPlanImporter {
         switch (kind) {
           case "workout":
             workoutId = text(day, "workoutId");
-            if (!workouts.containsKey(workoutId)) throw invalid("unknown workout: " + workoutId);
+            if (!workoutNames.containsKey(workoutId))
+              throw invalid("unknown workout: " + workoutId);
             workoutDates.add(date);
             break;
           case "rest":
@@ -185,6 +204,7 @@ public final class RelvenPlanImporter {
           previousRevisionId,
           Collections.unmodifiableList(new ArrayList<>(days)),
           Collections.unmodifiableMap(new HashMap<>(workouts)),
+          Collections.unmodifiableMap(new HashMap<>(strengthWorkouts)),
           Collections.unmodifiableMap(new HashMap<>(workoutNames)),
           json);
     } catch (JSONException error) {

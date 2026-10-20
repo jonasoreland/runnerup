@@ -375,6 +375,11 @@
     <string name="Plan_calendar_add_title">Add to %1$s</string>
     <string name="Plan_calendar_add_rest">Add rest day</string>
     <string name="Plan_calendar_add_workout_named">Add workout: %1$s</string>
+    <string name="Plan_calendar_strength_workout">Strength session</string>
+    <string name="Plan_calendar_pre_hab_workout">Prehab session</string>
+    <string name="Plan_calendar_strength_prescription">%1$d sets · %2$d–%3$d reps</string>
+    <string name="Plan_calendar_strength_timed">Timed: %1$d seconds</string>
+    <string name="Plan_calendar_strength_rest">Rest: %1$d seconds between sets</string>
     <string name="Plan_calendar_remove">Remove</string>
     <string name="Plan_calendar_remove_accessibility">Remove %1$s</string>
     <string name="Plan_calendar_remove_title">Remove %1$s?</string>

@@ -231,7 +231,8 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     PLAN_IMPORT_EXECUTOR.execute(
         () -> {
           try (InputStream input = getContentResolver().openInputStream(uri)) {
-            RelvenPlanImporter.Plan plan = RelvenPlanImporter.parse(RelvenPlanImport.read(input));
+            RelvenPlanImporter.Plan plan =
+                RelvenPlanStore.parse(getApplicationContext(), RelvenPlanImport.read(input));
             runOnUiThread(
                 () -> {
                   dismissPlanProgress();

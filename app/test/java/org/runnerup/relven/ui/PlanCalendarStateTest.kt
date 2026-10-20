@@ -28,6 +28,28 @@ class PlanCalendarStateTest {
           {"id":"morning-run","date":"2026-10-20","kind":"workout","workoutId":"run-a"},
           {"id":"evening-run","date":"2026-10-20","kind":"workout","workoutId":"run-b"}]}
           """.trimIndent())
+  private val strengthPlan =
+      RelvenPlanImporter.parse(
+          """
+          {"format":"relven.plan","schemaVersion":1,"id":"strength-plan","name":"Strength week",
+          "timezone":"Europe/Stockholm","workouts":[{"schemaVersion":3,"id":"strength-a",
+          "name":"Bodyweight basics","sport":"strength","steps":[{"id":"squat-step","kind":"segment",
+          "phase":"work","end":{"type":"manual"},"exercise":{"exerciseId":"3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
+          "libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Bodyweight squat",
+          "instructions":"Stand with your feet about shoulder-width apart.\nBend your knees and hips as far as comfortable while keeping your chest lifted.\nPress through your feet to stand tall again.",
+          "equipment":[],"images":[]},"sets":3,"minRepetitions":8,"maxRepetitions":12,"restSeconds":60}}]}],
+          "days":[{"id":"strength-day","date":"2026-10-20","kind":"workout","workoutId":"strength-a"}]}
+          """.trimIndent())
+
+  @Test
+  fun selectedStrengthDayCarriesPinnedSnapshotPrescription() {
+    val state = planCalendarState(strengthPlan, "2026-10", "2026-10-20", 1_792_449_000_000L, Locale.ENGLISH)
+
+    val workout = state.selectedEntries.single() as PlanCalendarEntry.Workout
+    assertEquals("Bodyweight basics", workout.workoutName)
+    assertEquals("Bodyweight squat", workout.strengthDetails?.exercises()?.single()?.name())
+    assertEquals(3, workout.strengthDetails?.exercises()?.single()?.sets())
+  }
 
   @Test
   fun buildsMondayFirstMonthCellsAndMapsWorkoutRestAndEmptyDates() {

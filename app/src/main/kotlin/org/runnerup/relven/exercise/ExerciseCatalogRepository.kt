@@ -4,6 +4,7 @@ import android.content.Context
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import org.runnerup.workout.RelvenExerciseReference
 
 internal class ExerciseCatalogRepository(context: Context) {
   private val appContext = context.applicationContext
@@ -25,6 +26,19 @@ internal class ExerciseCatalogRepository(context: Context) {
           String(output.toByteArray(), StandardCharsets.UTF_8)
         }
     return ExerciseCatalog.parse(json, languageTag)
+  }
+
+  fun exerciseReferences(): Map<String, RelvenExerciseReference> {
+    val catalog = load("en")
+    return catalog.exercises.associate { entry ->
+      entry.exerciseId to
+          RelvenExerciseReference(
+              catalog.libraryRevision,
+              entry.revision,
+              entry.name,
+              entry.instructions.joinToString("\n"),
+              entry.equipment)
+    }
   }
 
   private companion object {

@@ -18,6 +18,7 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.runnerup.relven.exercise.ExerciseCatalogRepository;
 
 /** Stores validated plans atomically without changing active workouts or activity history. */
 public final class RelvenPlanStore {
@@ -27,9 +28,27 @@ public final class RelvenPlanStore {
 
   private RelvenPlanStore() {}
 
+  /** Parses a plan for preview and validates strength snapshots against the bundled catalog. */
+  public static RelvenPlanImporter.Plan parse(Context context, String sourceJson)
+      throws IOException {
+    try {
+      return RelvenPlanImporter.parse(sourceJson, installedExerciseReferences(context));
+    } catch (IllegalArgumentException error) {
+      throw new IOException("Plan package is invalid", error);
+    }
+  }
+
   public static synchronized void save(Context context, RelvenPlanImporter.Plan plan)
       throws IOException {
-    RelvenPlanImporter.Plan verified = RelvenPlanImporter.parse(plan.sourceJson());
+    RelvenPlanImporter.Plan verified;
+    try {
+      verified = RelvenPlanImporter.parse(plan.sourceJson());
+    } catch (IllegalArgumentException error) {
+      throw new IOException("Plan package is invalid", error);
+    }
+    if (verified.schemaVersion() == 1) {
+      verified = parse(context, plan.sourceJson());
+    }
     if (!verified.id().equals(plan.id())) throw new IOException("Plan ID changed before saving");
     if (plan.sourceJson().getBytes(StandardCharsets.UTF_8).length > 4_194_304) {
       throw new IOException("Plan file is too large");
@@ -248,6 +267,15 @@ public final class RelvenPlanStore {
       throw new IOException("Plan changed before editing");
     }
     return current;
+  }
+
+  private static java.util.Map<String, RelvenExerciseReference> installedExerciseReferences(
+      Context context) throws IOException {
+    try {
+      return new ExerciseCatalogRepository(context).exerciseReferences();
+    } catch (IllegalArgumentException error) {
+      throw new IOException("Bundled exercise catalog is invalid", error);
+    }
   }
 
   private static int nextRevisionNumber(Context context, RelvenPlanImporter.Plan current)

@@ -9,7 +9,7 @@ import java.io.File
 class ExerciseCatalogAssetTest {
   @Test
   fun bundledLibraryIsLocalizedUniqueAndBodyweightOnly() {
-    val asset = File("src/main/assets/relven/exercise-library-v1.json")
+    val asset = File("assets/relven/exercise-library-v1.json")
     assertTrue("Bundled exercise library asset is missing at ${asset.absolutePath}", asset.isFile)
     val json = asset.readText()
     val english = ExerciseCatalog.parse(json, "en-US")

@@ -222,6 +222,7 @@
       "required": [
         "exerciseId",
         "libraryRevision",
+        "exerciseRevision",
         "snapshot",
         "sets",
         "minRepetitions",
@@ -235,6 +236,11 @@
           "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
         "libraryRevision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "exerciseRevision": {
           "type": "integer",
           "minimum": 1,
           "maximum": 2147483647

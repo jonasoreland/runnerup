@@ -591,6 +591,50 @@ private fun SelectedPlanDay(
             when (entry) {
               is PlanCalendarEntry.Workout -> {
                 Text(entry.workoutName, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                entry.strengthDetails?.let { details ->
+                  Text(
+                      stringResource(
+                          if (details.sport() == "prehab")
+                              R.string.Plan_calendar_pre_hab_workout
+                          else R.string.Plan_calendar_strength_workout),
+                      color = RelvenColors.Orange,
+                      fontSize = 13.sp,
+                      fontWeight = FontWeight.SemiBold)
+                  details.exercises().forEachIndexed { index, exercise ->
+                    Column(
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .background(RelvenColors.SurfaceRaised, RoundedCornerShape(14.dp))
+                                .padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                      Text(
+                          "${index + 1}. ${exercise.name()}",
+                          color = RelvenColors.Text,
+                          fontWeight = FontWeight.SemiBold)
+                      Text(
+                          stringResource(
+                              R.string.Plan_calendar_strength_prescription,
+                              exercise.sets(),
+                              exercise.minRepetitions(),
+                              exercise.maxRepetitions()),
+                          color = RelvenColors.MutedText,
+                          fontSize = 13.sp)
+                      if (exercise.durationSeconds() != null) {
+                        Text(
+                            stringResource(
+                                R.string.Plan_calendar_strength_timed,
+                                exercise.durationSeconds()!!),
+                            color = RelvenColors.MutedText,
+                            fontSize = 13.sp)
+                      }
+                      Text(
+                          stringResource(R.string.Plan_calendar_strength_rest, exercise.restSeconds()),
+                          color = RelvenColors.MutedText,
+                          fontSize = 13.sp)
+                      Text(exercise.instructions(), color = RelvenColors.Text, fontSize = 14.sp)
+                    }
+                  }
+                }
                 if (entry.notes.isNotBlank()) {
                   Text(entry.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
                 }

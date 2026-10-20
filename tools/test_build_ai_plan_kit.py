@@ -18,7 +18,9 @@ ARCHIVE_SOURCES = {
     "schemas/plan-v1.schema.json": ROOT / "schemas" / "plan-v1.schema.json",
     "schemas/plan-v2.schema.json": ROOT / "schemas" / "plan-v2.schema.json",
     "schemas/workout-v3.schema.json": ROOT / "schemas" / "workout-v3.schema.json",
+    "schemas/exercise-library-v1.schema.json": ROOT / "schemas" / "exercise-library-v1.schema.json",
     "examples/plan-running.json": ROOT / "schemas" / "examples" / "plan-running.json",
+    "examples/plan-strength.json": ROOT / "schemas" / "examples" / "plan-strength.json",
 }
 
 
@@ -74,7 +76,8 @@ class AiPlanKitBuildTest(unittest.TestCase):
         self.assertEqual(1, capabilities["kitVersion"])
         self.assertEqual([1], capabilities["generatedPlanSchemaVersions"])
         self.assertEqual(2, capabilities["appManagedRevisionSchemaVersion"])
-        self.assertFalse(capabilities["strengthPlanImport"])
+        self.assertTrue(capabilities["strengthPlanImport"])
+        self.assertTrue(capabilities["strengthWorkoutDetails"])
         self.assertFalse(capabilities["planZipImport"])
 
     def test_check_mode_detects_a_stale_archive(self):

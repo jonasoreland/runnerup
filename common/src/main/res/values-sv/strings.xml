@@ -382,6 +382,11 @@
   <string name="Plan_calendar_add_title">Planera för %1$s</string>
   <string name="Plan_calendar_add_rest">Lägg till vilodag</string>
   <string name="Plan_calendar_add_workout_named">Lägg till pass: %1$s</string>
+  <string name="Plan_calendar_strength_workout">Styrkepass</string>
+  <string name="Plan_calendar_pre_hab_workout">Prehabpass</string>
+  <string name="Plan_calendar_strength_prescription">%1$d set · %2$d–%3$d repetitioner</string>
+  <string name="Plan_calendar_strength_timed">Tid: %1$d sekunder</string>
+  <string name="Plan_calendar_strength_rest">Vila: %1$d sekunder mellan seten</string>
   <string name="Plan_calendar_remove">Ta bort</string>
   <string name="Plan_calendar_remove_accessibility">Ta bort %1$s</string>
   <string name="Plan_calendar_remove_title">Ta bort %1$s?</string>

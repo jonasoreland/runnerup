@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://relven.invalid/schemas/plan-v1.schema.json",
-  "title": "Relven offline running plan v1",
+  "title": "Relven offline training plan v1",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "schemaVersion", "id", "name", "timezone", "workouts", "days"],
@@ -16,10 +16,7 @@
       "minItems": 1,
       "maxItems": 100,
       "items": {
-        "allOf": [
-          { "$ref": "workout-v3.schema.json" },
-          { "properties": { "sport": { "const": "running" } } }
-        ]
+        "$ref": "workout-v3.schema.json"
       }
     },
     "days": {

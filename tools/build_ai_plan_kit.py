@@ -16,7 +16,9 @@ FILES = {
     "schemas/plan-v1.schema.json": "schemas/plan-v1.schema.json",
     "schemas/plan-v2.schema.json": "schemas/plan-v2.schema.json",
     "schemas/workout-v3.schema.json": "schemas/workout-v3.schema.json",
+    "schemas/exercise-library-v1.schema.json": "schemas/exercise-library-v1.schema.json",
     "examples/plan-running.json": "schemas/examples/plan-running.json",
+    "examples/plan-strength.json": "schemas/examples/plan-strength.json",
 }
 
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://relven.invalid/schemas/plan-v2.schema.json",
-  "title": "Relven running plan revision v2",
+  "title": "Relven training plan revision v2",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "schemaVersion", "id", "name", "timezone", "workouts", "days", "revision"],
@@ -26,10 +26,7 @@
       "minItems": 1,
       "maxItems": 100,
       "items": {
-        "allOf": [
-          { "$ref": "workout-v3.schema.json" },
-          { "properties": { "sport": { "const": "running" } } }
-        ]
+        "$ref": "workout-v3.schema.json"
       }
     },
     "days": {
