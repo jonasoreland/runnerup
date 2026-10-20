@@ -281,6 +281,12 @@
   <string name="my_phone">Min telefon</string>
   <string name="Failed_to_import">Kunde inte importera</string>
   <string name="Import_workout">Importera träningspass</string>
+  <string name="Import_plan">Importera plan</string>
+  <string name="Plan_saved">Planen har sparats på den här enheten. Den är inte aktiverad.</string>
+  <string name="View_saved_plans">Visa sparade planer</string>
+  <string name="No_saved_plans">Inga sparade planer ännu.</string>
+  <string name="Validating_plan">Validerar plan…</string>
+  <string name="Saving_plan">Sparar plan…</string>
   <string name="Saving_as">Sparar som</string>
   <string name="Overwrite_existing">Skriv över existerande</string>
   <string name="Create_new_workout">Skapa nytt träningspass</string>

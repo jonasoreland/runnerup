@@ -3,11 +3,16 @@ package org.runnerup.workout;
 import android.content.Context;
 import android.util.AtomicFile;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /** Stores validated plans atomically without changing active workouts or activity history. */
 public final class RelvenPlanStore {
@@ -34,6 +39,24 @@ public final class RelvenPlanStore {
       if (stream != null) file.failWrite(stream);
       throw error;
     }
+  }
+
+  public static synchronized List<RelvenPlanImporter.Plan> list(Context context)
+      throws IOException {
+    File directory = context.getDir("relven-plans", Context.MODE_PRIVATE);
+    File[] files = directory.listFiles((dir, name) -> name.endsWith(".json"));
+    if (files == null) throw new IOException("Could not list saved plans");
+
+    List<RelvenPlanImporter.Plan> plans = new ArrayList<>(files.length);
+    for (File file : files) {
+      try (FileInputStream input = new FileInputStream(file)) {
+        plans.add(RelvenPlanImporter.parse(RelvenPlanImport.read(input)));
+      } catch (IllegalArgumentException error) {
+        throw new IOException("Saved plan is invalid: " + file.getName(), error);
+      }
+    }
+    plans.sort(Comparator.comparing(RelvenPlanImporter.Plan::name, String.CASE_INSENSITIVE_ORDER));
+    return Collections.unmodifiableList(new ArrayList<>(plans));
   }
 
   private static String hashId(String id) {

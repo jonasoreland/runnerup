@@ -64,6 +64,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -73,13 +75,18 @@ import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer.Status;
+import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.FitWorkoutImporter;
+import org.runnerup.workout.RelvenPlanImport;
+import org.runnerup.workout.RelvenPlanImporter;
+import org.runnerup.workout.RelvenPlanStore;
 import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
 
 public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
+  private static final ExecutorService PLAN_IMPORT_EXECUTOR = Executors.newSingleThreadExecutor();
 
   private SQLiteDatabase mDB = null;
 
@@ -103,6 +110,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   private Button importButton = null;
 
   private SyncManager syncManager = null;
+  private ProgressDialogCompat planProgress;
 
   private final ActivityResultLauncher<Intent> configureLauncher =
       registerForActivityResult(
@@ -118,6 +126,13 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
           new ActivityResultContracts.OpenDocument(),
           uri -> {
             if (uri != null) handleImportUri(uri);
+          });
+
+  private final ActivityResultLauncher<String[]> planImportLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.OpenDocument(),
+          uri -> {
+            if (uri != null) importPlan(uri);
           });
 
   /** Called when the activity is first created. */
@@ -145,6 +160,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     createButton.setOnClickListener(createButtonClick);
     importButton = findViewById(R.id.import_workout_button);
     importButton.setOnClickListener(view -> importLauncher.launch(new String[] {"*/*"}));
+    findViewById(R.id.import_plan_button)
+        .setOnClickListener(
+            view ->
+                planImportLauncher.launch(
+                    new String[] {"application/json", "text/json", "application/*+json", "*/*"}));
+    findViewById(R.id.view_plans_button).setOnClickListener(view -> showSavedPlans());
 
     shareButton = findViewById(R.id.share_workout_button);
     shareButton.setOnClickListener(shareButtonClick);
@@ -192,6 +213,130 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
           .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
           .show();
     }
+  }
+
+  private void importPlan(Uri uri) {
+    showPlanProgress(org.runnerup.common.R.string.Validating_plan);
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try (InputStream input = getContentResolver().openInputStream(uri)) {
+            RelvenPlanImporter.Plan plan = RelvenPlanImporter.parse(RelvenPlanImport.read(input));
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  showPlanPreview(plan);
+                });
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Failed to read plan package", error);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  showPlanImportError(error);
+                });
+          }
+        });
+  }
+
+  private void showPlanProgress(int message) {
+    if (isFinishing() || isDestroyed()) return;
+    planProgress = new ProgressDialogCompat(this);
+    planProgress.setTitle(org.runnerup.common.R.string.Import_plan);
+    planProgress.setMessage(getString(message));
+    planProgress.setCancelable(false);
+    planProgress.show();
+  }
+
+  private void dismissPlanProgress() {
+    if (planProgress != null && planProgress.isShowing()) planProgress.dismiss();
+    planProgress = null;
+  }
+
+  private void showPlanPreview(RelvenPlanImporter.Plan plan) {
+    if (isFinishing() || isDestroyed()) return;
+    AlertDialog.Builder dialog =
+        new AlertDialog.Builder(this)
+            .setTitle(plan.name())
+            .setMessage(RelvenPlanImport.preview(plan))
+            .setPositiveButton(
+                org.runnerup.common.R.string.Save, (ignored, which) -> savePlan(plan))
+            .setNegativeButton(
+                org.runnerup.common.R.string.Cancel, (ignored, which) -> ignored.dismiss());
+    dialog.show();
+  }
+
+  private void showSavedPlan(RelvenPlanImporter.Plan plan) {
+    if (isFinishing() || isDestroyed()) return;
+    new AlertDialog.Builder(this)
+        .setTitle(plan.name())
+        .setMessage(RelvenPlanImport.preview(plan))
+        .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+        .show();
+  }
+
+  private void showSavedPlans() {
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            List<RelvenPlanImporter.Plan> plans = RelvenPlanStore.list(getApplicationContext());
+            runOnUiThread(
+                () -> {
+                  if (isFinishing() || isDestroyed()) return;
+                  if (plans.isEmpty()) {
+                    Toast.makeText(
+                            this, org.runnerup.common.R.string.No_saved_plans, Toast.LENGTH_SHORT)
+                        .show();
+                    return;
+                  }
+                  String[] names =
+                      plans.stream().map(RelvenPlanImporter.Plan::name).toArray(String[]::new);
+                  new AlertDialog.Builder(this)
+                      .setTitle(org.runnerup.common.R.string.View_saved_plans)
+                      .setItems(names, (dialog, which) -> showSavedPlan(plans.get(which)))
+                      .setNegativeButton(
+                          org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
+                      .show();
+                });
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Failed to read saved plans", error);
+            runOnUiThread(() -> showPlanImportError(error));
+          }
+        });
+  }
+
+  private void savePlan(RelvenPlanImporter.Plan plan) {
+    showPlanProgress(org.runnerup.common.R.string.Saving_plan);
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            RelvenPlanStore.save(getApplicationContext(), plan);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  Toast.makeText(
+                          getApplicationContext(),
+                          org.runnerup.common.R.string.Plan_saved,
+                          Toast.LENGTH_LONG)
+                      .show();
+                });
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Failed to save plan package", error);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  showPlanImportError(error);
+                });
+          }
+        });
+  }
+
+  private void showPlanImportError(Exception error) {
+    if (isFinishing() || isDestroyed()) return;
+    new AlertDialog.Builder(this)
+        .setTitle(org.runnerup.common.R.string.Error)
+        .setMessage(
+            getString(org.runnerup.common.R.string.Failed_to_import) + ": " + error.getMessage())
+        .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+        .show();
   }
 
   private String getFilename(Uri data) {
@@ -376,6 +521,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
   @Override
   public void onDestroy() {
+    dismissPlanProgress();
     super.onDestroy();
     DBHelper.closeDB(mDB);
     syncManager.close();

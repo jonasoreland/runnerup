@@ -3,6 +3,7 @@ package org.runnerup.workout;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,7 +127,13 @@ public final class RelvenPlanImporter {
       if (!Collections.disjoint(restDates, workoutDates)) {
         throw invalid("rest and workout on the same date");
       }
-      return new Plan(id, name, timezone, List.copyOf(days), Map.copyOf(workouts), json);
+      return new Plan(
+          id,
+          name,
+          timezone,
+          Collections.unmodifiableList(new ArrayList<>(days)),
+          Collections.unmodifiableMap(new HashMap<>(workouts)),
+          json);
     } catch (JSONException error) {
       throw new IllegalArgumentException("Invalid Relven plan JSON", error);
     }
@@ -136,7 +143,7 @@ public final class RelvenPlanImporter {
     Object raw = object.get(key);
     if (!(raw instanceof String)) throw invalid(key);
     String value = (String) raw;
-    if (value.isBlank() || value.length() > 160) throw invalid(key);
+    if (RelvenJsonLimits.isBlank(value) || value.length() > 160) throw invalid(key);
     return value;
   }
 
@@ -154,7 +161,7 @@ public final class RelvenPlanImporter {
 
   private static void allowOnly(JSONObject object, String label, String... allowed)
       throws JSONException {
-    Set<String> fields = Set.of(allowed);
+    Set<String> fields = new HashSet<>(Arrays.asList(allowed));
     Iterator<String> keys = object.keys();
     while (keys.hasNext()) {
       String key = keys.next();

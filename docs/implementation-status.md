@@ -6,6 +6,7 @@
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`. This is a preservation bridge only; workouts and activity history are not yet imported into the current library.
 - PR #16 (bounded FIT running-workout importer) merged as `19395fa`; local build, tests, lint and fixture checks passed, as did hosted build/test/lint/style/F-Droid CI. Real-device FIT samples and picker-to-execution verification remain pending.
 - PR #17 (debug-only recent-activity card in the Compose preview) merged as `9b72e12`; local build, tests and lint plus hosted CI passed. No device was used.
+- PR #18 (bounded, strict running plan package parser and private atomic store) merged as `eed60df`; local build/tests/lint/style and hosted build/test/lint/style/F-Droid checks passed. Independent review approved. No device was used.
 - The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
 - Work continues serially with no more than one open PR. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
 ## Phase Zero — repository migration
@@ -59,8 +60,9 @@
 ## Phase Five — plan packages and library
 
 - **In progress:** Versioned running-plan and workout schemas plus a strict local parser and atomic app-private package store are being added. The importer rejects unsupported workout semantics, unknown fields, non-schema JSON types, invalid dates/timezones/references, packages over 4 MiB, JSON nesting over 32, and more than 100,000 JSON tokens.
-- **Pending:** Connect document picking and preview to the store, add plan revision/activation behavior and calendar UI, then build the AI Plan Kit from the canonical schema.
-- **Verification:** Parser/store unit tests, debug build, lint, and Spotless pass locally. Hosted CI and independent review are pending. No device is being used.
+- **In progress:** Users can choose a plan JSON package from the workout manager, validate it before a review summary, save after explicit confirmation, and reopen saved plans from app-private storage. Import does not activate plans or change the current schedule; plan dates are treated as one-time.
+- **Pending:** Add calendar scheduling and explicit plan activation/revisions, then build the AI Plan Kit from the canonical schema.
+- **Verification:** Parser, bounded-read, summary, and store unit tests plus debug build, full app unit tests, lint, and Spotless pass locally. Independent review approved the Android API 24 compatibility changes; hosted CI is pending. No device is being used.
 
 ## Later phases
 

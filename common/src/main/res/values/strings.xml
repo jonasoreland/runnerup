@@ -284,6 +284,12 @@
     <string name="my_phone">My phone</string>
     <string name="Failed_to_import">Failed to import</string>
     <string name="Import_workout">Import workout</string>
+    <string name="Import_plan">Import plan</string>
+    <string name="Plan_saved">Plan saved on this device. It has not been activated.</string>
+    <string name="View_saved_plans">View saved plans</string>
+    <string name="No_saved_plans">No saved plans yet.</string>
+    <string name="Validating_plan">Validating plan…</string>
+    <string name="Saving_plan">Saving plan…</string>
     <string name="Saving_as">Saving as</string>
     <string name="Overwrite_existing">Overwrite existing</string>
     <string name="Create_new_workout">Create new workout</string>

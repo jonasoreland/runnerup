@@ -51,6 +51,13 @@ final class RelvenJsonLimits {
     }
   }
 
+  static boolean isBlank(String value) {
+    for (int i = 0; i < value.length(); i++) {
+      if (!Character.isWhitespace(value.charAt(i))) return false;
+    }
+    return true;
+  }
+
   private static IllegalArgumentException tooDeep() {
     return new IllegalArgumentException("Invalid Relven JSON: JSON nesting too deep");
   }

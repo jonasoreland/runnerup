@@ -62,4 +62,18 @@ public class RelvenPlanStoreTest {
     assertThrows(RuntimeException.class, () -> RelvenPlanStore.save(context, forged));
     assertEquals(0, directory.listFiles().length);
   }
+
+  @Test
+  public void listsPreviouslySavedPlansByName() throws Exception {
+    String later = JSON.replace("store-test", "store-z").replace("Store test", "Zulu plan");
+    String earlier = JSON.replace("store-test", "store-a").replace("Store test", "Alpha plan");
+    RelvenPlanStore.save(context, RelvenPlanImporter.parse(later));
+    RelvenPlanStore.save(context, RelvenPlanImporter.parse(earlier));
+
+    List<RelvenPlanImporter.Plan> plans = RelvenPlanStore.list(context);
+
+    assertEquals(2, plans.size());
+    assertEquals("store-a", plans.get(0).id());
+    assertEquals("store-z", plans.get(1).id());
+  }
 }

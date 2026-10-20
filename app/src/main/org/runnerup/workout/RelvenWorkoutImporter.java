@@ -1,6 +1,7 @@
 package org.runnerup.workout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -205,7 +206,7 @@ public final class RelvenWorkoutImporter {
     Object raw = object.get(key);
     if (!(raw instanceof String)) throw unsupported(key);
     String value = (String) raw;
-    if (value.isBlank() || value.length() > 160) throw unsupported(key);
+    if (RelvenJsonLimits.isBlank(value) || value.length() > 160) throw unsupported(key);
     return value;
   }
 
@@ -229,7 +230,7 @@ public final class RelvenWorkoutImporter {
 
   private static void allowOnly(JSONObject object, String label, String... allowed)
       throws JSONException {
-    Set<String> fields = Set.of(allowed);
+    Set<String> fields = new HashSet<>(Arrays.asList(allowed));
     Iterator<String> keys = object.keys();
     while (keys.hasNext()) {
       String key = keys.next();

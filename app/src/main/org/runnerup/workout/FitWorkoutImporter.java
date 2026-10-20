@@ -183,9 +183,9 @@ public final class FitWorkoutImporter {
   private static Step convertStep(Map<Integer, Object> fields, int durationType) {
     Step step = new Step();
     String name = (String) fields.get(0);
-    if (name != null && !name.isBlank()) step.setName(name);
+    if (name != null && !RelvenJsonLimits.isBlank(name)) step.setName(name);
     String notes = (String) fields.get(8);
-    if (notes != null && !notes.isBlank()) throw unsupported("step notes");
+    if (notes != null && !RelvenJsonLimits.isBlank(notes)) throw unsupported("step notes");
     if (fields.containsKey(9) && integer(fields, 9, "equipment") != 0) {
       throw unsupported("step equipment");
     }
