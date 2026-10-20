@@ -10,6 +10,7 @@ class HomeDestinationTest {
     assertEquals(HomeDestination.Plan, homeDestinationFromSaved("Plan"))
     assertEquals(HomeDestination.Exercises, homeDestinationFromSaved("Exercises"))
     assertEquals(HomeDestination.Progress, homeDestinationFromSaved("Progress"))
+    assertEquals(HomeDestination.History, homeDestinationFromSaved("History"))
     assertEquals(HomeDestination.Today, homeDestinationFromSaved("unknown"))
   }
 }

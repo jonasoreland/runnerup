@@ -3,6 +3,7 @@ package org.runnerup.relven.ui
 import android.content.Intent
 import android.os.Bundle
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
@@ -70,6 +71,8 @@ import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.view.MainLayout
+import org.runnerup.view.ManualActivity
+import org.runnerup.view.DetailActivity
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
 import org.runnerup.relven.analysis.ProgressLoadState
 import org.runnerup.relven.analysis.ProgressRequestVersion
@@ -99,6 +102,8 @@ class RelvenHomeActivity : ComponentActivity() {
   private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
+  private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
+  private var activityHistoryRequest = 0
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
   private var viewedStrengthCompletion by mutableStateOf<CompletedStrengthSession?>(null)
@@ -140,17 +145,19 @@ class RelvenHomeActivity : ComponentActivity() {
             exerciseCatalogLoadState = exerciseCatalogLoadState,
             exerciseProgressionState = exerciseProgressionState,
             progressState = progressState,
+            activityHistoryState = activityHistoryState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
-            onSelectDestination = { destination = it },
+            onSelectDestination = ::selectHomeDestination,
             onRetryProgress = ::loadProgress,
+            onRetryHistory = ::loadActivityHistory,
+            onAddActivity = { startActivity(Intent(this, ManualActivity::class.java)) },
+            onOpenActivity = ::openHistoryActivity,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
-              startActivity(
-                  Intent(this, MainLayout::class.java)
-                      .putExtra(MainLayout.EXTRA_INITIAL_TAB, 1))
+              selectHomeDestination(HomeDestination.History)
             },
             onReschedulePlan = ::rescheduleActivePlan,
             onAddWorkoutToPlan = ::addWorkoutToActivePlan,
@@ -189,6 +196,7 @@ class RelvenHomeActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
+    if (destination == HomeDestination.History) loadActivityHistory()
     todayPlan = TodayPlanState.Loading
     activePlanState = ActivePlanLoadState.Loading
     planRevisionStatus = PlanRevisionStatus.Idle
@@ -254,6 +262,80 @@ class RelvenHomeActivity : ComponentActivity() {
             is ActivePlanLoadState.Loaded ->
                 todayPlanState(planState.plan, currentTimeMillis)
           }
+    }
+  }
+
+  private fun selectHomeDestination(next: HomeDestination) {
+    destination = next
+    if (next == HomeDestination.History) loadActivityHistory()
+  }
+
+  private fun openHistoryActivity(id: Long) {
+    startActivity(
+        Intent(this, DetailActivity::class.java)
+            .putExtra("ID", id)
+            .putExtra("mode", "details"))
+  }
+
+  private fun loadActivityHistory() {
+    val request = ++activityHistoryRequest
+    activityHistoryState = ActivityHistoryLoadState.Loading
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              val database: SQLiteDatabase = DBHelper.getReadableDatabase(applicationContext)
+              val columns =
+                  arrayOf(
+                      "_id",
+                      DB.ACTIVITY.START_TIME,
+                      DB.ACTIVITY.DISTANCE,
+                      DB.ACTIVITY.TIME,
+                      DB.ACTIVITY.SPORT)
+              database
+                  .query(
+                      DB.ACTIVITY.TABLE,
+                      columns,
+                      "${DB.ACTIVITY.DELETED} == 0",
+                      null,
+                      null,
+                      null,
+                      "${DB.ACTIVITY.START_TIME} desc")
+                  .use { cursor ->
+                    val idColumn = cursor.getColumnIndexOrThrow("_id")
+                    val startedColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.START_TIME)
+                    val distanceColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.DISTANCE)
+                    val durationColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.TIME)
+                    val sportColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.SPORT)
+                    buildList {
+                      while (cursor.moveToNext()) {
+                        val startedAt = cursor.getLong(startedColumn)
+                        if (startedAt <= 0L) continue
+                        add(
+                            HistoryActivity(
+                                id = cursor.getLong(idColumn),
+                                startedAtSeconds = startedAt,
+                                durationSeconds =
+                                    if (cursor.isNull(durationColumn)) null
+                                    else cursor.getLong(durationColumn).takeIf { it >= 0L },
+                                distanceMeters =
+                                    if (cursor.isNull(distanceColumn)) null
+                                    else cursor.getDouble(distanceColumn).takeIf { it.isFinite() && it > 0.0 },
+                                sport = cursor.getInt(sportColumn)))
+                      }
+                    }
+                  }
+            }
+          }
+      if (request == activityHistoryRequest) {
+        activityHistoryState =
+            result.fold(
+                onSuccess = { ActivityHistoryLoadState.Loaded(it) },
+                onFailure = { error ->
+                  Log.w("RelvenHome", "Could not load activity history", error)
+                  ActivityHistoryLoadState.Unavailable
+                })
+      }
     }
   }
 
@@ -588,7 +670,8 @@ internal enum class HomeDestination {
   Today,
   Plan,
   Exercises,
-  Progress
+  Progress,
+  History
 }
 
 internal fun homeDestinationFromSaved(saved: String?): HomeDestination =
@@ -604,11 +687,15 @@ private fun RelvenHome(
     exerciseCatalogLoadState: ExerciseCatalogLoadState,
     exerciseProgressionState: ExerciseProgressionLoadState,
     progressState: ProgressLoadState,
+    activityHistoryState: ActivityHistoryLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
     onSelectDestination: (HomeDestination) -> Unit,
     onRetryProgress: () -> Unit,
+    onRetryHistory: () -> Unit,
+    onAddActivity: () -> Unit,
+    onOpenActivity: (Long) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -741,6 +828,12 @@ private fun RelvenHome(
         }
       }
     }
+    } else if (destination == HomeDestination.History) {
+      ActivityHistoryScreen(
+          loadState = activityHistoryState,
+          onRetry = onRetryHistory,
+          onAddActivity = onAddActivity,
+          onOpenActivity = onOpenActivity)
     } else if (destination == HomeDestination.Progress) {
       ProgressScreen(
           progressState = progressState,
@@ -857,7 +950,7 @@ private fun HomeNavigationBar(
           onClick = onOpenWorkout,
           modifier = Modifier.weight(1f))
       HomeNavigationItem(
-          selected = false,
+          selected = destination == HomeDestination.History,
           icon = { tint -> Icon(Icons.Default.History, contentDescription = null, tint = tint) },
           label = stringResource(org.runnerup.common.R.string.Home_nav_history),
           onClick = onOpenHistory,
