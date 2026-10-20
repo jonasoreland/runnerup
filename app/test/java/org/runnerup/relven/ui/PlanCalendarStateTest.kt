@@ -6,6 +6,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.Locale
 import org.runnerup.workout.RelvenPlanImporter
+import org.runnerup.relven.strength.CompletedStrengthSession
+import org.runnerup.relven.strength.StrengthSession
 
 class PlanCalendarStateTest {
   private val plan =
@@ -50,6 +52,28 @@ class PlanCalendarStateTest {
     assertEquals("Bodyweight squat", workout.strengthDetails?.exercises()?.single()?.name())
     assertEquals(3, workout.strengthDetails?.exercises()?.single()?.sets())
     assertTrue(workout.runningSegments.isEmpty())
+  }
+
+  @Test
+  fun completionIsLinkedToStrengthScheduleEntryWithoutChangingRunningEntries() {
+    val workout = requireNotNull(strengthPlan.strengthWorkouts()["strength-a"])
+    val completed =
+        StrengthSession.start(strengthPlan.id(), "strength-day", workout)
+            .completeRepetitions(8)
+            .skipRest()
+            .completeRepetitions(9)
+            .skipRest()
+            .completeRepetitions(10)
+    val state =
+        planCalendarState(
+            strengthPlan,
+            "2026-10",
+            "2026-10-20",
+            1_792_449_000_000L,
+            Locale.ENGLISH,
+            mapOf("strength-day" to CompletedStrengthSession(completed, 1_792_449_000_000L)))
+
+    assertEquals("strength-day", (state.selectedEntries.single() as PlanCalendarEntry.Workout).completion?.state?.scheduledEntryId)
   }
 
   @Test

@@ -6,6 +6,7 @@ import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.TimeZone
 import org.runnerup.workout.RelvenPlanImporter
+import org.runnerup.relven.strength.CompletedStrengthSession
 
 internal data class PlanCalendarState(
     val month: String,
@@ -58,7 +59,8 @@ internal sealed interface PlanCalendarEntry {
       val workoutName: String,
       val notes: String,
       val strengthDetails: org.runnerup.workout.RelvenStrengthWorkoutParser.Workout? = null,
-      val runningSegments: List<RunningSegmentSummary> = emptyList()) :
+      val runningSegments: List<RunningSegmentSummary> = emptyList(),
+      val completion: CompletedStrengthSession? = null) :
       PlanCalendarEntry
 
   data class Rest(val sessionId: String, val notes: String) : PlanCalendarEntry
@@ -94,7 +96,8 @@ internal fun planCalendarState(
     month: String,
     selectedDate: String,
     nowMillis: Long,
-    locale: Locale = Locale.getDefault()
+    locale: Locale = Locale.getDefault(),
+    completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap()
 ): PlanCalendarState {
   val timezone = TimeZone.getTimeZone(plan.timezone())
   val displayedMonth = parseCalendarDate("$month-01", timezone)
@@ -114,7 +117,7 @@ internal fun planCalendarState(
 
   repeat(cellCount) {
     val date = formatDate(cursor)
-    val entries = sessionsByDate[date].orEmpty().mapNotNull { sessionEntry(it, plan) }
+    val entries = sessionsByDate[date].orEmpty().mapNotNull { sessionEntry(it, plan, completedStrengthSessions) }
     days.add(
         PlanCalendarDay(
             date = date,
@@ -130,7 +133,7 @@ internal fun planCalendarState(
   }
 
   val selectedEntries =
-      sessionsByDate[formatDate(selected)].orEmpty().mapNotNull { sessionEntry(it, plan) }
+      sessionsByDate[formatDate(selected)].orEmpty().mapNotNull { sessionEntry(it, plan, completedStrengthSessions) }
 
   val monthFormatter = SimpleDateFormat("MMMM yyyy", locale)
   monthFormatter.timeZone = timezone
@@ -153,19 +156,22 @@ internal fun planCalendarState(
 
 private fun sessionEntry(
     session: RelvenPlanImporter.Session,
-    plan: RelvenPlanImporter.Plan
+    plan: RelvenPlanImporter.Plan,
+    completedStrengthSessions: Map<String, CompletedStrengthSession>
 ): PlanCalendarEntry? =
     when (session.kind()) {
       "workout" -> {
         val workoutId = session.workoutId()
         plan.workoutNames()[workoutId]?.let {
+          val strengthDetails = plan.strengthWorkouts()[workoutId]
           PlanCalendarEntry.Workout(
               session.id(),
               workoutId,
               it,
               session.notes(),
-              plan.strengthWorkouts()[workoutId],
-              runningWorkoutSegments(plan, workoutId))
+              strengthDetails,
+              runningWorkoutSegments(plan, workoutId),
+              if (strengthDetails == null) null else completedStrengthSessions[session.id()])
         }
       }
       "rest" -> PlanCalendarEntry.Rest(session.id(), session.notes())
