@@ -20,24 +20,26 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.List;
-import org.runnerup.R;
+import androidx.compose.ui.platform.ComposeView;
+import java.util.HashMap;
+import java.util.Map;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
+import org.runnerup.wear.ui.WearWorkoutComposeContent;
+import org.runnerup.wear.ui.WearWorkoutDisplayKt;
+import org.runnerup.wear.ui.WearWorkoutPresentationState;
 
 public class RunInfoFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-  private final List<Pair<String, TextView>> textViews = new ArrayList<>(3);
+  private final Map<String, String> dataValues = new HashMap<>();
+  private final Map<String, String> headerValues = new HashMap<>();
+  private ComposeView composeView;
+  private WearWorkoutPresentationState presentationState;
   private int screen;
   private int rowsOnScreen;
   private long dataUpdateTime;
@@ -57,21 +59,6 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
       };
   private MainActivity mainActivity;
 
-  private static final int[] card1ids =
-      new int[] {
-        R.id.textView11, R.id.textViewHeader11,
-      };
-  private static final int[] card2ids =
-      new int[] {
-        R.id.textView21, R.id.textView22,
-        R.id.textViewHeader21, R.id.textViewHeader22
-      };
-  private static final int[] card3ids =
-      new int[] {
-        R.id.textView31, R.id.textView32, R.id.textView33,
-        R.id.textViewHeader31, R.id.textViewHeader32, R.id.textViewHeader33
-      };
-
   public static RunInfoFragment createForScreen(int screen, int rowsOnScreen) {
     RunInfoFragment frag = new RunInfoFragment();
     frag.screen = screen;
@@ -86,35 +73,11 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-    int[] ids = null;
-    int card =
-        switch (rowsOnScreen) {
-          case 2 -> {
-            ids = card2ids;
-            yield R.layout.card2;
-          }
-          case 1 -> {
-            ids = card1ids;
-            yield R.layout.card1;
-          }
-          default -> {
-            ids = card3ids;
-            yield R.layout.card3;
-          }
-        };
-    View view = inflater.inflate(card, container, false);
-    for (int i = 0; i < rowsOnScreen; i++) {
-      textViews.add(
-          new Pair<>(Constants.Wear.RunInfo.DATA + screen + "." + i, view.findViewById(ids[i])));
-    }
-    for (int i = 0; i < rowsOnScreen; i++) {
-      textViews.add(
-          new Pair<>(
-              Constants.Wear.RunInfo.HEADER + screen + "." + i,
-              view.findViewById(ids[rowsOnScreen + i])));
-    }
-    return view;
+    composeView = new ComposeView(mainActivity);
+    presentationState = new WearWorkoutPresentationState();
+    WearWorkoutComposeContent.bind(composeView, presentationState);
+    render();
+    return composeView;
   }
 
   private void startTimer() {
@@ -138,15 +101,45 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
     Bundle headers = mainActivity.getHeaders(headersTimestamp);
     if (headers != null) {
       headersTimestamp = headers.getLong(StateService.UPDATE_TIME);
-      update(headers);
+      updateHeaders(headers);
     }
   }
 
   private void update(Bundle b) {
-    for (Pair<String, TextView> tv : textViews) {
-      if (b.containsKey(tv.first)) {
-        tv.second.setText(b.getString(tv.first));
+    update(b, false);
+  }
+
+  private void updateHeaders(Bundle b) {
+    update(b, true);
+  }
+
+  private void update(Bundle b, boolean isHeaderSnapshot) {
+    Map<String, String> nextHeaders = isHeaderSnapshot ? new HashMap<>() : headerValues;
+    for (String key : b.keySet()) {
+      Object value = b.get(key);
+      if (value instanceof String) {
+        if (key.startsWith(Constants.Wear.RunInfo.HEADER)
+            || key.equals(Constants.Wear.RunInfo.CURRENT_STEP)) {
+          nextHeaders.put(key, (String) value);
+        } else {
+          dataValues.put(key, (String) value);
+        }
       }
+    }
+    if (isHeaderSnapshot) {
+      WearWorkoutDisplayKt.replaceWearHeaderSnapshot(headerValues, nextHeaders);
+    }
+    render();
+  }
+
+  private boolean isPaused() {
+    TrackerState state = mainActivity == null ? null : mainActivity.getTrackerState();
+    return state == TrackerState.PAUSED;
+  }
+
+  private void render() {
+    if (composeView != null) {
+      presentationState.update(headerValues, dataValues, screen, rowsOnScreen, isPaused());
     }
   }
 
@@ -167,6 +160,16 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
   }
 
   @Override
+  public void onDestroyView() {
+    if (composeView != null) {
+      composeView.disposeComposition();
+      composeView = null;
+    }
+    presentationState = null;
+    super.onDestroyView();
+  }
+
+  @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     mainActivity = (MainActivity) activity;
@@ -179,17 +182,6 @@ public class RunInfoFragment extends Fragment implements ValueModel.ChangeListen
 
     if (newValue == null) return;
 
-    if (textViews.isEmpty()) return;
-
-    if (newValue == TrackerState.PAUSED || newValue == TrackerState.STOPPED) {
-      Animation anim = new AlphaAnimation(0, 1);
-      anim.setDuration(500);
-      anim.setStartOffset(20);
-      anim.setRepeatMode(Animation.REVERSE);
-      anim.setRepeatCount(Animation.INFINITE);
-      textViews.get(0).second.startAnimation(anim);
-    } else {
-      textViews.get(0).second.clearAnimation();
-    }
+    render();
   }
 }

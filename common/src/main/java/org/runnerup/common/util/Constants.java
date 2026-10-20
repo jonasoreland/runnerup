@@ -283,6 +283,7 @@ public interface Constants {
       String PAUSE_STEP = "PAUSE_STEP"; // Stored in HEADERS
       String SCROLL = "SCROLL"; // Stored in HEADERS
       String COUNTDOWN = "COUNTDOWN"; // Stored in DATA
+      String CURRENT_STEP = "CURRENT_STEP"; // Localized current workout intensity in HEADERS
     }
 
     interface TrackerState {

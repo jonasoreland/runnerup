@@ -390,6 +390,11 @@ public class TrackerWear extends DefaultTrackerComponent
   private void updateHeaders() {
     Bundle b = new Bundle();
 
+    if (currentStep != null && currentStep.getIntensity() != null) {
+      b.putString(
+          Wear.RunInfo.CURRENT_STEP, context.getString(currentStep.getIntensity().getTextId()));
+    }
+
     int screenNo = 0;
     for (List<Pair<Pair<Scope, Dimension>, Formatter.Format>> screen : screens) {
       int itemNo = 0;
