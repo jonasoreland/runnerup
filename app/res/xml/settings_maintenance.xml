@@ -37,6 +37,12 @@
             app:iconSpaceReserved="false" />
 
         <Preference
+            android:key="@string/pref_export_legacy_relven_data"
+            android:summary="@string/Legacy_Relven_backup_summary"
+            android:title="@string/Legacy_Relven_backup_title"
+            app:iconSpaceReserved="false" />
+
+        <Preference
             android:key="@string/pref_importdb"
             android:summary="@string/Import_database_from_sdcard_eg_after_upgrade"
             android:title="@string/Import"

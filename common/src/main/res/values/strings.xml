@@ -357,6 +357,10 @@
     <string name="Phone_sensors_category">Phone sensors</string>
     <string name="Database_category">Database maintenance</string>
     <string name="Maintenance_explanation_summary_v2">Relven saves activities in a local SQL database that can be exported and imported.</string>
+    <string name="Legacy_Relven_backup_title">Export previous Relven data</string>
+    <string name="Legacy_Relven_backup_summary">Export data from an earlier Relven version as a JSON archive. It cannot restore into the current app yet.</string>
+    <string name="Legacy_Relven_backup_exported">Previous Relven data backup exported</string>
+    <string name="Legacy_Relven_backup_export_failed">Could not export the previous Relven data backup</string>
     <string name="Map_pref_summary">Mapstyle</string>
     <string name="User_interface">User interface</string>
     <string name="User_interface_pref_summary">Buttons and visibility</string>
