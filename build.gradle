@@ -133,6 +133,9 @@ allprojects {
 }
 
 spotless {
+    // Adopt formatting incrementally from the pinned RunnerUp baseline. The inherited
+    // Java tree has pre-existing violations unrelated to Relven changes.
+    ratchetFrom 'ac4f8baa'
     lineEndings = 'UNIX'
     java {
         googleJavaFormat()

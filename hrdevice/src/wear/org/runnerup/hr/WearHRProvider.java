@@ -22,8 +22,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.Task;
@@ -74,7 +74,8 @@ public class WearHRProvider implements HRProvider {
   }
 
   @Override
-  public boolean startEnableIntent(AppCompatActivity activity, ActivityResultLauncher<Intent> launcher) {
+  public boolean startEnableIntent(
+      AppCompatActivity activity, ActivityResultLauncher<Intent> launcher) {
     return false; // Assume watch is already paired/connected to phone
   }
 

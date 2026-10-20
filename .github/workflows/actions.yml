@@ -18,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Spotless ratchets from the pinned RunnerUp baseline commit.
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v5
