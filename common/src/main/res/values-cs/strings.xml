@@ -115,7 +115,7 @@
   <string name="Manage_workouts">Spravovat tréninky</string>
   <string name="Settings">Nastavení</string>
   <string name="Whats_new">Co je nového</string>
-  <string name="Rate_RunnerUp">Ohodnotit RunnerUp</string>
+  <string name="Rate_RunnerUp">Ohodnotit Relven</string>
   <string name="Enable_GPS">Povolit GPS</string>
   <string name="Start_activity">Zahájit aktivitu</string>
   <string name="Clear_HR_settings">Odebrat nastavení tepové frekvence</string>
@@ -151,7 +151,7 @@
   <string name="Experimental_HRM_devices">Experimentální zařízení MTF</string>
   <string name="Experimental_features">Experimentální funkce</string>
   <string name="Mock_HRM_devices">Falešná zařízení MTF</string>
-  <string name="About_RunnerUp">O aplikaci RunnerUp</string>
+  <string name="About_RunnerUp">O aplikaci Relven</string>
   <string name="Triggers">Spouštěče</string>
   <string name="Cue_interval_s">Interval znamení (s)</string>
   <string name="Cue_intervall_m">Interval znamení (m)</string>
@@ -190,7 +190,7 @@
   <string name="Activity_ready">Aktivita připravena</string>
   <string name="Ready_to_start_running">Můžeme vyběhnout!</string>
   <string name="Searching_for_GPS">Hledá se GPS</string>
-  <string name="RunnerUp_activity_started">Aktivita RunnerUp zahájena</string>
+  <string name="RunnerUp_activity_started">Aktivita Relven zahájena</string>
   <string name="Low_HRM_battery_level">Nízká hladina baterie MTF</string>
   <string name="High_HRM_battery_level">Vysoká hladina baterie MTF</string>
   <string name="Warning">Varování</string>

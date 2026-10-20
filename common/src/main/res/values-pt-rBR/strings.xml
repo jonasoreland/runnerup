@@ -126,7 +126,7 @@
   <string name="Manage_workouts">Gerenciar exercícios</string>
   <string name="Settings">Configurações</string>
   <string name="Whats_new">O que há de novo</string>
-  <string name="Rate_RunnerUp">Avalie o RunnerUp</string>
+  <string name="Rate_RunnerUp">Avalie o Relven</string>
   <string name="Enable_GPS">Ativar GPS</string>
   <string name="Waiting_for_GPS">Esperando o GPS...</string>
   <string name="Start_activity">Iniciar atividade</string>
@@ -195,7 +195,7 @@
   <string name="Paired_BLE_devices">Dispositivos BLE pareados</string>
   <string name="Experimental_features">Recursos experimentais</string>
   <string name="Mock_HRM_devices">Simular dispositivos MFC</string>
-  <string name="About_RunnerUp">Sobre o RunnerUp</string>
+  <string name="About_RunnerUp">Sobre o Relven</string>
   <string name="Triggers">Acionadores</string>
   <string name="Time_triggered_audio_cue">Acionado por tempo</string>
   <string name="Time_triggered_audio_cue_summary">Aviso periódico</string>
@@ -250,7 +250,7 @@
   <string name="Activity_ready">Atividade pronta</string>
   <string name="Ready_to_start_running">Pronto para começar a correr!</string>
   <string name="Searching_for_GPS">Procurando por GPS</string>
-  <string name="RunnerUp_activity_started">Atividade do RunnerUp iniciada</string>
+  <string name="RunnerUp_activity_started">Atividade do Relven iniciada</string>
   <string name="Low_HRM_battery_level">Baixo nível de bateria do MFC</string>
   <string name="High_HRM_battery_level">Alto nível de bateria do MFC</string>
   <string name="Warning">Aviso</string>
@@ -275,7 +275,7 @@
   <string name="Create_new_workout">Criar exercício</string>
   <string name="Set_workout_name">Definir nome do exercício</string>
   <string name="Delete_workout">Apagar exercício</string>
-  <string name="RunnerUp_workout">Exercício do RunnerUp</string>
+  <string name="RunnerUp_workout">Exercício do Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Olá!\nEu acho que você pode gostar deste exercício.</string>
   <string name="Share_workout">Compartilhar exercício…</string>
   <string name="New_audio_scheme">Novo esquema de áudio</string>
@@ -286,7 +286,7 @@
   <string name="GPS_permission_text_Android12">Este aplicativo coleta dados de localização para permitir o monitoramento de exercícios, mesmo quando o aplicativo estiver fechado ou não sendo usado (ficando em segundo plano).\nIsto é necessário para registrar as atividades quando a tela está apagada ou outro aplicativo estiver em primeiro plano.\n\nVocê precisa definir explicitamente \"Permitir o tempo todo\" nas configurações do sistema.\nPara a cadência de corrida, a permissão de \"Atividade Física\" é também necessária, e a conexão Bluetooth requer a permissão de \"Dispositivos por Perto\".</string>
   <string name="Request_permission_text">Conceda a permissão pressionando \"OK\".</string>
   <string name="Battery_optimization_check">Otimização de bateria ativada</string>
-  <string name="Battery_optimization_check_text">Otimização de bateria diminuirá a precisão.\nToque em OK para ir para as configurações do sistema e selecione \"Todos os aplicativos\", pesquise por \"RunnerUp\" e selecione \"Não otimizar\".</string>
+  <string name="Battery_optimization_check_text">Otimização de bateria diminuirá a precisão.\nToque em OK para ir para as configurações do sistema e selecione \"Todos os aplicativos\", pesquise por \"Relven\" e selecione \"Não otimizar\".</string>
   <string name="Battery_optimization_check_text_Android9">Otimização de bateria diminuirá a precisão.\nToque em OK para ir para as configurações do aplicativo, selecione \"Uso da bateria\" e selecione \"Não otimizar\" ou \"Sem restrição\".</string>
   <string name="Default">Padrão</string>
   <string name="Notes_about_your_workout">Anotações do exercício</string>
@@ -312,7 +312,7 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de pressão</string>
   <string name="use_pressure_sensor_summary">Usar barômetro para calcular a altitude</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS e notificações da atividade</string>
+  <string name="channel_notification_ongoing">Relven GPS e notificações da atividade</string>
   <string name="Lap_start">Início da volta</string>
   <string name="Lap_start_summary">Avisos para início de voltas e etapas de Atividade, Aquecimento e Desaquecimento</string>
   <string name="Lock_activity_buttons">Bloquear botões de atividade</string>
@@ -330,7 +330,7 @@
   <string name="File_format">Enviar arquivos como:</string>
   <string name="File_need_one_format">Especifique pelo menos um formato</string>
   <string name="tts_not_available_title">conversão de texto para fala não disponível</string>
-  <string name="tts_not_available">O RunnerUp requer um mecanismo de conversão de texto para fala funcionando para reproduzir avisos de áudio. Certifique-se de ter pelo menos um conversor de texto em fala em funcionamento instalado.</string>
+  <string name="tts_not_available">O Relven requer um mecanismo de conversão de texto para fala funcionando para reproduzir avisos de áudio. Certifique-se de ter pelo menos um conversor de texto em fala em funcionamento instalado.</string>
   <string name="Catch_backbuttonpress">Pressione Voltar novamente para sair</string>
   <string name="check_internet_connection">Verifique sua conexão com a Internet</string>
   <!--Preference categories & summaries-->

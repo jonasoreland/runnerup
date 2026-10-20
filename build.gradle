@@ -35,7 +35,7 @@ project.ext {
     mockitoVersion = '5.24.0'
 
     //The Git tag for the release must be identical for F-Droid
-    versionName = '2.12.0.1'
+    versionName = '2.0.0-dev'
     // wear uses +1, only set even codes
     versionCode = 374
     latestBaseVersionCode = minSdk * 1000000
@@ -97,13 +97,12 @@ project.ext {
         antPlusLibName = ""
     }
 
-    // ApplicationId (possibly with a .debug suffix) shared Android and Wear
-    // Separate Id allows simultaneous installation
+    // Phone and Wear share the existing Relven Play application ID.
+    // Debug builds use a .debug suffix, matching the previous app.
     if (!rootProject.ext.allowNonFree) {
-        // Separate applicationId for the free version (must be first)
-        applicationId = "org.runnerup.free"
+        applicationId = "se.hampusandersson.relven.free"
     } else {
-        applicationId = "org.runnerup"
+        applicationId = "se.hampusandersson.relven"
     }
 }
 
@@ -134,6 +133,9 @@ allprojects {
 }
 
 spotless {
+    // Adopt formatting incrementally from the pinned RunnerUp baseline. The inherited
+    // Java tree has pre-existing violations unrelated to Relven changes.
+    ratchetFrom 'ac4f8baa'
     lineEndings = 'UNIX'
     java {
         googleJavaFormat()

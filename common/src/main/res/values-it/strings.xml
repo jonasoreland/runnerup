@@ -126,7 +126,7 @@
   <string name="Manage_workouts">Gestisci allenamenti</string>
   <string name="Settings">Impostazioni</string>
   <string name="Whats_new">Novità</string>
-  <string name="Rate_RunnerUp">Dai un voto a RunnerUp</string>
+  <string name="Rate_RunnerUp">Dai un voto a Relven</string>
   <string name="Enable_GPS">Attiva GPS</string>
   <string name="Waiting_for_GPS">In attesa di segnale GPS</string>
   <string name="Start_activity">Inizia attività</string>
@@ -195,7 +195,7 @@
   <string name="Paired_BLE_devices">Dispositivi BLE associati</string>
   <string name="Experimental_features">Funzionalità sperimentali</string>
   <string name="Mock_HRM_devices">Dispositivi HRM \"fantoccio\"</string>
-  <string name="About_RunnerUp">Info su RunnerUp</string>
+  <string name="About_RunnerUp">Info su Relven</string>
   <string name="Triggers">Eventi</string>
   <string name="Time_triggered_audio_cue">Attivazione per tempo</string>
   <string name="Time_triggered_audio_cue_summary">Feedback periodico</string>
@@ -250,7 +250,7 @@
   <string name="Activity_ready">Attività pronta</string>
   <string name="Ready_to_start_running">Pronto per iniziare a correre!</string>
   <string name="Searching_for_GPS">Ricerca GPS</string>
-  <string name="RunnerUp_activity_started">Attività RunnerUp iniziata</string>
+  <string name="RunnerUp_activity_started">Attività Relven iniziata</string>
   <string name="Low_HRM_battery_level">Livello batteria HRM basso</string>
   <string name="High_HRM_battery_level">Livello batteria HRM alto</string>
   <string name="Warning">Attenzione</string>
@@ -275,7 +275,7 @@
   <string name="Create_new_workout">Crea un nuovo allenamento</string>
   <string name="Set_workout_name">Imposta il nome dell\'allenamento</string>
   <string name="Delete_workout">Elimina l\'allenamento</string>
-  <string name="RunnerUp_workout">Allenamento RunnerUp</string>
+  <string name="RunnerUp_workout">Allenamento Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Ciao\nPenso che questo allenamento ti potrebbe piacere.</string>
   <string name="Share_workout">Condividi l\'allenamento</string>
   <string name="New_audio_scheme">Nuovo schema audio</string>
@@ -284,7 +284,7 @@
   <string name="GPS_permission_text_pre_Android10">E\' richiesto il permesso posizione nelle impostazioni di sistema</string>
   <string name="Request_permission_text">Concedi i permessi cliccando \"OK\"</string>
   <string name="Battery_optimization_check">Ottimizzazione batteria abilitata</string>
-  <string name="Battery_optimization_check_text">L\'ottimizzazione della batteria diminuirà la precisione.\nPremere OK per aprire le impostazioni di sistema e selezionare \"Tutte le app\", cercare \"RunnerUp\", selezionare \"Non ottimizzare\".</string>
+  <string name="Battery_optimization_check_text">L\'ottimizzazione della batteria diminuirà la precisione.\nPremere OK per aprire le impostazioni di sistema e selezionare \"Tutte le app\", cercare \"Relven\", selezionare \"Non ottimizzare\".</string>
   <string name="Battery_optimization_check_text_Android9">L\'ottimizzazione della batteria diminuirà la precisione.\nPremere Ok per aprire le impostazioni app, selezionare \"Utilizzo batteria\" e segliere \"Senza restrizioni\" o \"Non ottimizzare\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Note relative al tuo allenamento</string>
@@ -310,7 +310,7 @@
   <string name="use_temperature_sensor">Sensore della temperatura</string>
   <string name="use_pressure_sensor_title">Sensore della pressione</string>
   <string name="use_pressure_sensor_summary">Usa il barometro per calcolare l\'altezza</string>
-  <string name="channel_notification_ongoing">Notifiche GPS e attività RunnerUp</string>
+  <string name="channel_notification_ongoing">Notifiche GPS e attività Relven</string>
   <string name="Lap_start">Inizio giro</string>
   <string name="Lap_start_summary">Notifiche di inizio giro e delle fasi Attivo, Riscaldamento e Defaticamento</string>
   <string name="Lock_activity_buttons">Blocca i pulsanti d\'attività</string>

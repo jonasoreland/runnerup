@@ -14,7 +14,7 @@
     ~
     ~  You should have received a copy of the GNU General Public License
     ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
-    <string name="app_name" translatable="false">RunnerUp</string>
+    <string name="app_name" translatable="false">Relven</string>
     <!--metrics stuff-->
     <string name="metrics_distance_km">km</string>
     <string name="metrics_distance_mi">mi</string>
@@ -137,7 +137,7 @@
     <string name="Workout_name_already_in_use">Workout name is already in use</string>
     <string name="Settings">Settings</string>
     <string name="Whats_new">What\'s new</string>
-    <string name="Rate_RunnerUp">Rate RunnerUp</string>
+    <string name="Rate_RunnerUp">Rate Relven</string>
     <string name="Enable_GPS">Enable GPS</string>
     <string name="Waiting_for_GPS">Waiting for GPS…</string>
     <string name="Start_activity">Start activity</string>
@@ -206,9 +206,10 @@
     <string name="Experimental_HRM_devices">Experimental HRM devices</string>
     <string name="Paired_BLE_devices">Paired BLE devices</string>
     <string name="Experimental_features">Experimental features</string>
+    <string name="RunnerUp_Wear_OS_devices">RunnerUp Wear OS devices</string>
     <string name="Mock_HRM_devices">Mock HRM devices</string>
     <string name="Debug_HRM">Debug HRM</string>
-    <string name="About_RunnerUp">About RunnerUp</string>
+    <string name="About_RunnerUp">About Relven</string>
     <string name="Triggers">Triggers</string>
     <string name="Time_triggered_audio_cue">Time trigger</string>
     <string name="Time_triggered_audio_cue_summary">Periodic feedback</string>
@@ -263,7 +264,7 @@
     <string name="Activity_ready">Activity ready</string>
     <string name="Ready_to_start_running">Ready to start running!</string>
     <string name="Searching_for_GPS">Searching for GPS</string>
-    <string name="RunnerUp_activity_started">RunnerUp activity started</string>
+    <string name="RunnerUp_activity_started">Relven activity started</string>
     <string name="Low_HRM_battery_level">Low HRM battery level</string>
     <string name="High_HRM_battery_level">High HRM battery level</string>
     <string name="Warning">Warning</string>
@@ -288,7 +289,7 @@
     <string name="Create_new_workout">Create new workout</string>
     <string name="Set_workout_name">Set workout name</string>
     <string name="Delete_workout">Delete workout</string>
-    <string name="RunnerUp_workout">RunnerUp workout</string>
+    <string name="RunnerUp_workout">Relven workout</string>
     <string name="HinHere_is_a_workout_I_think_you_might_like">Hi\nI think you might like this workout.</string>
     <string name="Share_workout">Share workout…</string>
     <string name="New_audio_scheme">New audio scheme</string>
@@ -299,7 +300,7 @@
     <string name="GPS_permission_text_Android12">This app collects location data to enable activity tracking even when the app is closed or not in use (the app is in the background).\nThis is required to record activities when the screen is off or another app is in the foreground.\n\nYou need to explicitly set \"Allow all the time\" in system settings.\nFor running cadence \"Physical activity\" permission is required too and BlueTooth requires \" Nearby devices\".</string>
     <string name="Request_permission_text">Allow permission by clicking \"OK\".</string>
     <string name="Battery_optimization_check">Battery optimization enabled</string>
-    <string name="Battery_optimization_check_text">Battery optimization will decrease the accuracy.\nPress OK to go system settings and select \"All apps\", search for \"RunnerUp\", select \"Don\'t optimize\".</string>
+    <string name="Battery_optimization_check_text">Battery optimization will decrease the accuracy.\nPress OK to go system settings and select \"All apps\", search for \"Relven\", select \"Don\'t optimize\".</string>
     <string name="Battery_optimization_check_text_Android9">Battery optimization may cause Android to stop workouts running in the background.\nPress OK to go app settings and select \"Battery usage" and select \"Unrestricted\" or \"Don\'t optimize\".</string>
     <string name="Default">Default</string>
     <string name="Notes_about_your_workout">Workout notes</string>
@@ -325,7 +326,7 @@
     <string name="use_temperature_sensor">Temperature sensor</string>
     <string name="use_pressure_sensor_title">Pressure sensor</string>
     <string name="use_pressure_sensor_summary">Use barometer to calculate elevation</string>
-    <string name="channel_notification_ongoing">RunnerUp GPS and activity notifications</string>
+    <string name="channel_notification_ongoing">Relven GPS and activity notifications</string>
     <string name="Lap_start">Lap start</string>
     <string name="Lap_start_summary">Cue for start of laps and Active, Warmup, and Cooldown steps</string>
     <string name="Lock_activity_buttons">Lock activity buttons</string>
@@ -345,7 +346,7 @@
     <string name="File_format">Upload files as:</string>
     <string name="File_need_one_format">You must specify at least one format</string>
     <string name="tts_not_available_title">Text to Speech is not available</string>
-    <string name="tts_not_available">RunnerUp requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
+    <string name="tts_not_available">Relven requires a working Text to Speech engine to play audio cues. Please ensure you have at least one working Text to Speech engine installed.</string>
     <string name="Catch_backbuttonpress">Press Back again to exit</string>
     <string name="check_internet_connection">Please check your internet connection</string>
     <!--Preference categories & summaries -->
@@ -355,7 +356,7 @@
     <string name="GPS_recording_category">GPS recording</string>
     <string name="Phone_sensors_category">Phone sensors</string>
     <string name="Database_category">Database maintenance</string>
-    <string name="Maintenance_explanation_summary_v2">RunnerUp saves workouts into a SQL-database that can be exported and imported.</string>
+    <string name="Maintenance_explanation_summary_v2">Relven saves activities in a local SQL database that can be exported and imported.</string>
     <string name="Map_pref_summary">Mapstyle</string>
     <string name="User_interface">User interface</string>
     <string name="User_interface_pref_summary">Buttons and visibility</string>
@@ -391,5 +392,5 @@
 
     <string name="import_cancelled">Import cancelled</string>
     <string name="export_cancelled">Export cancelled</string>
-    <string name="import_error_invalid_database">Selected file is not a valid RunnerUp database!</string>
+    <string name="import_error_invalid_database">The selected file is not a supported backup database.</string>
 </resources>

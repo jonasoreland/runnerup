@@ -19,10 +19,8 @@ package org.runnerup.widget;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -33,7 +31,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import org.runnerup.R;
-import org.runnerup.util.GoogleApiHelper;
 
 public class AboutPreference extends DialogPreference {
 
@@ -58,11 +55,7 @@ public class AboutPreference extends DialogPreference {
       Log.e(getClass().getName(), "Failed to get package info", e);
     }
     setNegativeButtonText(context.getString(org.runnerup.common.R.string.OK));
-    if (GoogleApiHelper.isGooglePlayServicesAvailable(context)) {
-      setPositiveButtonText(context.getString(org.runnerup.common.R.string.Rate_RunnerUp));
-    } else {
-      setPositiveButtonText(null);
-    }
+    setPositiveButtonText(null);
     setDialogLayoutResource(R.layout.whatsnew);
   }
 
@@ -93,20 +86,6 @@ public class AboutPreference extends DialogPreference {
                   (dialog, which) -> {
                     // Dismissed
                   });
-
-      if (GoogleApiHelper.isGooglePlayServicesAvailable(requireContext())) {
-        builder.setPositiveButton(
-            org.runnerup.common.R.string.Rate_RunnerUp,
-            (dialog, which) -> {
-              try {
-                String applicationId = "org.runnerup";
-                Uri uri = Uri.parse("market://details?id=" + applicationId);
-                requireContext().startActivity(new Intent(Intent.ACTION_VIEW, uri));
-              } catch (Exception ex) {
-                Log.e(AboutDialogFragment.class.getName(), "Failed to open Play Store", ex);
-              }
-            });
-      }
 
       try {
         PackageInfo pInfo =

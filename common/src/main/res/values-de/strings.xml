@@ -126,7 +126,7 @@
   <string name="Manage_workouts">Trainingsvorlagen verwalten</string>
   <string name="Settings">Einstellungen</string>
   <string name="Whats_new">Neuerungen</string>
-  <string name="Rate_RunnerUp">RunnerUp bewerten</string>
+  <string name="Rate_RunnerUp">Relven bewerten</string>
   <string name="Enable_GPS">GPS aktivieren</string>
   <string name="Waiting_for_GPS">Warte auf GPS…</string>
   <string name="Start_activity">Aktivität starten</string>
@@ -195,7 +195,7 @@
   <string name="Paired_BLE_devices">Verbundene BLE Geräte</string>
   <string name="Experimental_features">Experimentelle Funktionen</string>
   <string name="Mock_HRM_devices">Simuliertes/Mock HRM-Gerät</string>
-  <string name="About_RunnerUp">Über RunnerUp</string>
+  <string name="About_RunnerUp">Über Relven</string>
   <string name="Triggers">Hinweis-Auslöser</string>
   <string name="Time_triggered_audio_cue">Zeitauslöser</string>
   <string name="Time_triggered_audio_cue_summary">Regelmäßige Hinweise nach Zeit</string>
@@ -250,7 +250,7 @@
   <string name="Activity_ready">Aktivität fertig</string>
   <string name="Ready_to_start_running">Bereit zu laufen!</string>
   <string name="Searching_for_GPS">Suche GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp Aktivität gestartet</string>
+  <string name="RunnerUp_activity_started">Relven Aktivität gestartet</string>
   <string name="Low_HRM_battery_level">Niedrige Akkukapazität</string>
   <string name="High_HRM_battery_level">Hohe Akkukapazität</string>
   <string name="Warning">Warnung</string>
@@ -275,7 +275,7 @@
   <string name="Create_new_workout">Neue Trainingsvorlage erstellen</string>
   <string name="Set_workout_name">Trainingsname festlegen</string>
   <string name="Delete_workout">Trainingsvorlage löschen</string>
-  <string name="RunnerUp_workout">RunnerUp-Trainingseinheit</string>
+  <string name="RunnerUp_workout">Relven-Trainingseinheit</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hallo\nHier ist ein Training, dass dir vielleicht gefallen könnte.</string>
   <string name="Share_workout">Trainingsvorlage teilen…</string>
   <string name="New_audio_scheme">Neues Audioschema</string>
@@ -294,8 +294,8 @@ Sie müssen die Standortberechtigung in den Systemeinstellungen daher explizit a
 Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusätzlich. BlueTooth benötigt zudem \"Geräte in der Nähe\".</string>
   <string name="Request_permission_text">Erlaube die Berechtigung mit \"OK\".</string>
   <string name="Battery_optimization_check">Batterie-Optimierungen aktiviert</string>
-  <string name="Battery_optimization_check_text">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
-  <string name="Battery_optimization_check_text_Android9">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
+  <string name="Battery_optimization_check_text">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"Relven\" und wähle \"Nicht optimieren\".</string>
+  <string name="Battery_optimization_check_text_Android9">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"Relven\" und wähle \"Nicht optimieren\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Notizen zur Trainingseinheit hinzufügen</string>
   <string name="Downloading_from_1s">Von %1$s wird heruntergeladen</string>
@@ -320,7 +320,7 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="use_temperature_sensor">Temperatursensor</string>
   <string name="use_pressure_sensor_title">Drucksensor</string>
   <string name="use_pressure_sensor_summary">Barometer statt GPS für Höhe verwenden</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS- und Aktivitätsbenachrichtigungen</string>
+  <string name="channel_notification_ongoing">Relven GPS- und Aktivitätsbenachrichtigungen</string>
   <string name="Lap_start">Rundenstart</string>
   <string name="Lap_start_summary">Hinweis bei Rundenstart und Aktivität, Aufwärmen, Abkühlen</string>
   <string name="Lock_activity_buttons">Aktivitätsschaltflächen sperren</string>
@@ -338,7 +338,7 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="File_format">Dateien hochladen als:</string>
   <string name="File_need_one_format">Sie müssen wenigstens ein Format angeben</string>
   <string name="tts_not_available_title">\'Text zu Sprache\' ist nicht verfügbar</string>
-  <string name="tts_not_available">RunnerUp benötigt eine funktionierende \'Text zu Sprache\' Ausgabe für Audiohinweise. Bitte stellen Sie sicher, dass ihre \'Text zu Sprache\' Ausgabe funktioniert. </string>
+  <string name="tts_not_available">Relven benötigt eine funktionierende \'Text zu Sprache\' Ausgabe für Audiohinweise. Bitte stellen Sie sicher, dass ihre \'Text zu Sprache\' Ausgabe funktioniert. </string>
   <string name="Catch_backbuttonpress">Zum Beenden, drücke \"Zurück\" nochmal</string>
   <string name="check_internet_connection">Bitte prüfe deine Internetverbindung</string>
   <!--Preference categories & summaries-->

@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Gestionar actividades</string>
   <string name="Settings">Configuración</string>
   <string name="Whats_new">Novedades</string>
-  <string name="Rate_RunnerUp">Puntúa RunnerUp</string>
+  <string name="Rate_RunnerUp">Puntúa Relven</string>
   <string name="Enable_GPS">Habilitar GPS</string>
   <string name="Waiting_for_GPS">Esperando a señal GPS</string>
   <string name="Start_activity">Comenzar actividad</string>
@@ -192,7 +192,7 @@
   <string name="Experimental_HRM_devices">Dispositivos HRM experimentales</string>
   <string name="Experimental_features">Características experimentales</string>
   <string name="Mock_HRM_devices">Simular dispositivos </string>
-  <string name="About_RunnerUp">Acerca de RunnerUp</string>
+  <string name="About_RunnerUp">Acerca de Relven</string>
   <string name="Triggers">Disparadores</string>
   <string name="Time_triggered_audio_cue">Disparador de tiempo</string>
   <string name="Time_triggered_audio_cue_summary">Feedback periódico</string>
@@ -247,7 +247,7 @@
   <string name="Activity_ready">Actividad preparada</string>
   <string name="Ready_to_start_running">¡Listo para empezar a correr!</string>
   <string name="Searching_for_GPS">Buscando GPS</string>
-  <string name="RunnerUp_activity_started">Actividad RunnerUp iniciada</string>
+  <string name="RunnerUp_activity_started">Actividad Relven iniciada</string>
   <string name="Low_HRM_battery_level">Batería del dispositivo HRM baja</string>
   <string name="High_HRM_battery_level">Batería del dispositivo HRM alta</string>
   <string name="Warning">Advertencia</string>
@@ -272,7 +272,7 @@
   <string name="Create_new_workout">Crear nueva actividad</string>
   <string name="Set_workout_name">Cambiar nombre de la actividad</string>
   <string name="Delete_workout">Eliminar entrenamiento</string>
-  <string name="RunnerUp_workout">Entrenamiento RunnerUp</string>
+  <string name="RunnerUp_workout">Entrenamiento Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Hola\nCreo que te podría gustar este entrenamiento.</string>
   <string name="Share_workout">Compartir actividad…</string>
   <string name="New_audio_scheme">Nuevo esquema de audio</string>
@@ -299,7 +299,7 @@
   <string name="use_temperature_sensor">Sensor de temperatura</string>
   <string name="use_pressure_sensor_title">Sensor de presión</string>
   <string name="use_pressure_sensor_summary">Usar barómetro para calcular elevación</string>
-  <string name="channel_notification_ongoing">Notificacions de GPS y de actividad RunnerUp</string>
+  <string name="channel_notification_ongoing">Notificacions de GPS y de actividad Relven</string>
   <string name="Lap_start">Fin de tramo</string>
   <string name="Lap_start_summary">Pista para inicio de tramos y etapas Activas, Calentamiento y Enfriamiento</string>
   <string name="Lock_activity_buttons">Bloquear botones de actividad</string>

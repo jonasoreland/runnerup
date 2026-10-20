@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Valdyti treniruotes</string>
   <string name="Settings">Nustatymai</string>
   <string name="Whats_new">Kas naujo</string>
-  <string name="Rate_RunnerUp">Įvertinti RunnerUp</string>
+  <string name="Rate_RunnerUp">Įvertinti Relven</string>
   <string name="Enable_GPS">Leisti GPS</string>
   <string name="Waiting_for_GPS">Laukia GPS</string>
   <string name="Start_activity">Pradėti veiklą</string>
@@ -192,7 +192,7 @@
   <string name="Experimental_HRM_devices">Eksperimentiniai pulsometrai</string>
   <string name="Experimental_features">Eksperimentinės funkcijos</string>
   <string name="Mock_HRM_devices">Fiktyvūs pulsometrai</string>
-  <string name="About_RunnerUp">Apie RunnerUp</string>
+  <string name="About_RunnerUp">Apie Relven</string>
   <string name="Triggers">Leistukai</string>
   <string name="Time_triggered_audio_cue">Laiko trigeris</string>
   <string name="Time_triggered_audio_cue_summary">Periodinis atsiliepimas</string>
@@ -247,7 +247,7 @@
   <string name="Activity_ready">Veikla paruošta</string>
   <string name="Ready_to_start_running">Pasiruošęs pradėti bėgimą!</string>
   <string name="Searching_for_GPS">Ieškoma GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp veikla pradėta</string>
+  <string name="RunnerUp_activity_started">Relven veikla pradėta</string>
   <string name="Low_HRM_battery_level">Žemas pulsometro baterijos lygis</string>
   <string name="High_HRM_battery_level">Aukštas pulsometro baterijos lygis</string>
   <string name="Warning">Dėmesio</string>
@@ -272,7 +272,7 @@
   <string name="Create_new_workout">Sukurti naują treniruotę</string>
   <string name="Set_workout_name">Pavadinti treniruotę</string>
   <string name="Delete_workout">Ištrinti treniruotę</string>
-  <string name="RunnerUp_workout">RunnerUp treniruotė</string>
+  <string name="RunnerUp_workout">Relven treniruotė</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Labas\nI mano tau gali patikti ši treniruotė.</string>
   <string name="Share_workout">Dalintis treniruote…</string>
   <string name="New_audio_scheme">Nauja audio schema</string>
@@ -301,7 +301,7 @@
   <string name="use_temperature_sensor">Temperatūros jutiklis</string>
   <string name="use_pressure_sensor_title">Slėgio jutiklis</string>
   <string name="use_pressure_sensor_summary">Naudoti barometrą aukščio paskaičiavimui</string>
-  <string name="channel_notification_ongoing">RunnerUp GPS ir veiklos pranešimai</string>
+  <string name="channel_notification_ongoing">Relven GPS ir veiklos pranešimai</string>
   <string name="Lap_start">Rato pradžia</string>
   <string name="Lap_start_summary">Nurodymai ratų pradžiai ir žingsniams \"Aktyvus\", \"Apšilimas\" bei \"Atvėsimas\"</string>
   <string name="Lock_activity_buttons">Užrakinti veiklos mygtukus</string>

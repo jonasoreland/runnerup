@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="permission_rationale_message">RunnerUp requires the %1$s permission to function correctly. Please grant the permission.</string>
+    <string name="permission_rationale_message">Relven behöver behörigheten %1$s för att fungera. Ge åtkomst i inställningarna.</string>
 </resources>

@@ -125,7 +125,7 @@
   <string name="Manage_workouts">Gestionează antrenamentele</string>
   <string name="Settings">Setări</string>
   <string name="Whats_new">Ce mai e nou?</string>
-  <string name="Rate_RunnerUp">Evaluează RunnerUp</string>
+  <string name="Rate_RunnerUp">Evaluează Relven</string>
   <string name="Enable_GPS">Activează GPS-ul</string>
   <string name="Waiting_for_GPS">Se așteaptă GPS...</string>
   <string name="Start_activity">Începe activitatea</string>
@@ -192,7 +192,7 @@
   <string name="Experimental_HRM_devices">Dispozitive MRC experimentale</string>
   <string name="Experimental_features">Caracteristici experimentale</string>
   <string name="Mock_HRM_devices">Dispozitive MRC mock</string>
-  <string name="About_RunnerUp">Despre RunnerUp</string>
+  <string name="About_RunnerUp">Despre Relven</string>
   <string name="Triggers">Declanșatoare</string>
   <string name="Time_triggered_audio_cue">Declanșator de timp</string>
   <string name="Time_triggered_audio_cue_summary">Feedback periodic</string>
@@ -247,7 +247,7 @@
   <string name="Activity_ready">Activitate gata</string>
   <string name="Ready_to_start_running">Gata să începi să alergi!</string>
   <string name="Searching_for_GPS">Se caută GPS</string>
-  <string name="RunnerUp_activity_started">Activitatea RunnerUp începută</string>
+  <string name="RunnerUp_activity_started">Activitatea Relven începută</string>
   <string name="Low_HRM_battery_level">Nivel redus al bateriei MRC</string>
   <string name="High_HRM_battery_level">Nivel ridicat al bateriei MRC</string>
   <string name="Warning">Aviz</string>
@@ -272,14 +272,14 @@
   <string name="Create_new_workout">Nou antrenament</string>
   <string name="Set_workout_name">Numele antrenamentului</string>
   <string name="Delete_workout">Elimină antrenament</string>
-  <string name="RunnerUp_workout">Antrenament RunnerUp</string>
+  <string name="RunnerUp_workout">Antrenament Relven</string>
   <string name="HinHere_is_a_workout_I_think_you_might_like">Bună\nCred că v-ar putea să vă placă acest antrenament.</string>
   <string name="Share_workout">Partajează antrenament...</string>
   <string name="New_audio_scheme">Nouă schemă audio</string>
   <string name="GPS_permission_text_pre_Android10">Permisiunea de access a locației este solicitată în setarile sistemului</string>
   <string name="Request_permission_text">Acceptă permisiunea făcând click pe „OK”.</string>
   <string name="Battery_optimization_check">Optimizarea bateriei activată</string>
-  <string name="Battery_optimization_check_text">Optimizarea bateriei va scădea acuratețea.\nApasă OK pentru a merge la setările de sistem și selectează „Toate aplicațiile”, caută după „RunnerUp”, selectează „Nu optimiza”.</string>
+  <string name="Battery_optimization_check_text">Optimizarea bateriei va scădea acuratețea.\nApasă OK pentru a merge la setările de sistem și selectează „Toate aplicațiile”, caută după „Relven”, selectează „Nu optimiza”.</string>
   <string name="Default">Prestabilit</string>
   <string name="Notes_about_your_workout">Note de antrenament</string>
   <string name="Downloading_from_1s">Es descarcă de la %1$s</string>
@@ -303,7 +303,7 @@
   <string name="use_temperature_sensor">Senzor de temperatura</string>
   <string name="use_pressure_sensor_title">Senzor de presiune</string>
   <string name="use_pressure_sensor_summary">Utilizează barometrul pentru a calcula altitudinea</string>
-  <string name="channel_notification_ongoing">Notificări RunnerUp de GPS și activitate</string>
+  <string name="channel_notification_ongoing">Notificări Relven de GPS și activitate</string>
   <string name="Lap_start">Începe runda</string>
   <string name="Lap_start_summary">Cue pentru începerea rundelor și etapele active, de încălzire și de răcire</string>
   <string name="Lock_activity_buttons">Blochează butoanele de activitate</string>
@@ -320,7 +320,7 @@
   <string name="File_format">Încarcă fișiere ca:</string>
   <string name="File_need_one_format">Trebuie să specificați cel puțin un format</string>
   <string name="tts_not_available_title">Text-în-vorbire nu este disponibil</string>
-  <string name="tts_not_available">RunnerUp are nevoie de un motor Text-în-Vorbire pentru a reda indiciile audio. Te rog asigurăte că ai cel puțin un motor de Text-în-Vorbire instalat.</string>
+  <string name="tts_not_available">Relven are nevoie de un motor Text-în-Vorbire pentru a reda indiciile audio. Te rog asigurăte că ai cel puțin un motor de Text-în-Vorbire instalat.</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">Ritmul cardiac</string>
   <string name="Autopause_category">Autopauză</string>

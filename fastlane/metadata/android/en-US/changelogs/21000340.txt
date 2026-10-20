@@ -1,3 +1,0 @@
-#1193 Endurain upload support
-#1192 Audio coundown feedback
-#1190 Buttons in notifications in Android 14

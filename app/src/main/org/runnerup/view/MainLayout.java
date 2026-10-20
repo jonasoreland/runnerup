@@ -19,7 +19,6 @@ package org.runnerup.view;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
@@ -37,7 +36,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -64,7 +62,6 @@ import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
-import org.runnerup.util.GoogleApiHelper;
 import org.runnerup.util.ViewUtil;
 
 public class MainLayout extends AppCompatActivity {
@@ -382,16 +379,6 @@ public class MainLayout extends AppCompatActivity {
     }
   }
 
-  private final OnClickListener onRateClick =
-      arg0 -> {
-        try {
-          Uri uri = Uri.parse("market://details?id=" + getPackageName());
-          startActivity(new Intent(Intent.ACTION_VIEW, uri));
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-      };
-
   private void whatsNew() {
     LayoutInflater inflater = ContextCompat.getSystemService(this, LayoutInflater.class);
     @SuppressLint("InflateParams")
@@ -403,10 +390,6 @@ public class MainLayout extends AppCompatActivity {
             .setView(view)
             .setNegativeButton(
                 org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss());
-    if (GoogleApiHelper.isGooglePlayServicesAvailable(this)) {
-      builder.setPositiveButton(
-          org.runnerup.common.R.string.Rate_RunnerUp, (dialog, which) -> onRateClick.onClick(null));
-    }
     builder.show();
     wv.loadUrl("file:///android_asset/changes.html");
   }

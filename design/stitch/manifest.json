@@ -1,0 +1,15 @@
+{
+  "projectId": "15389433782836702529",
+  "projectTitle": "Relven Fitness App UI Design",
+  "verifiedOn": "2026-10-19",
+  "phase": "Phase Zero icon retrieval only; full screen inventory and exports pending",
+  "assets": [
+    {
+      "screenId": "15318243315829222097",
+      "title": "relven-app-icon.png",
+      "localFile": "relven-app-icon-reference.png",
+      "sourceVector": "relven-app-icon-source.svg",
+      "launcherMark": "relven-mark-transparent.svg"
+    }
+  ]
+}

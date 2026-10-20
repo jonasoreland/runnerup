@@ -106,7 +106,7 @@
   <string name="Manage_workouts">Upravljanje treninzima</string>
   <string name="Settings">Postavke</string>
   <string name="Whats_new">Šta je novo</string>
-  <string name="Rate_RunnerUp">Ocijeni RunnerUp</string>
+  <string name="Rate_RunnerUp">Ocijeni Relven</string>
   <string name="Enable_GPS">Uključi GPS</string>
   <string name="Waiting_for_GPS">Čekanje na GPS</string>
   <string name="Start_activity">Počni aktivnost</string>
@@ -149,7 +149,7 @@
   <string name="Experimental_HRM_devices">Eksperimentalni uređaji za mjerenje pulsa</string>
   <string name="Experimental_features">Eksperimentalne funkcije</string>
   <string name="Mock_HRM_devices">Simuliraj uređaj za mjerenje pulsa</string>
-  <string name="About_RunnerUp">O RunnerUp</string>
+  <string name="About_RunnerUp">O Relven</string>
   <string name="Triggers">Okidači</string>
   <string name="Cue_interval_s">Interval napomena (s)</string>
   <string name="Cue_intervall_m">Interval napomena (m)</string>
@@ -191,7 +191,7 @@
   <string name="Activity_ready">Aktivnost spremna</string>
   <string name="Ready_to_start_running">Spremni za trčanje!</string>
   <string name="Searching_for_GPS">Traženje GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp aktivnos počela</string>
+  <string name="RunnerUp_activity_started">Relven aktivnos počela</string>
   <string name="Low_HRM_battery_level">Nizak nivo baterije monitora pulsa</string>
   <string name="High_HRM_battery_level">Visok nivo baterije monitora pulsa</string>
   <string name="Warning">Upozorenje</string>

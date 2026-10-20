@@ -106,7 +106,7 @@
   <string name="Manage_workouts">Behandle treningsøkter</string>
   <string name="Settings">Innstillinger</string>
   <string name="Whats_new">Nyheter</string>
-  <string name="Rate_RunnerUp">Bedøm RunnerUp</string>
+  <string name="Rate_RunnerUp">Bedøm Relven</string>
   <string name="Enable_GPS">Skru på GPS</string>
   <string name="Waiting_for_GPS">Venter på GPS</string>
   <string name="Start_activity">Start aktivitet</string>
@@ -148,7 +148,7 @@
   <string name="Experimental_HRM_devices">Eksperimentelle HRM-enheter</string>
   <string name="Experimental_features">Eksperimentelle funksjoner</string>
   <string name="Mock_HRM_devices">Falske HRM-enheter</string>
-  <string name="About_RunnerUp">Om RunnerUp</string>
+  <string name="About_RunnerUp">Om Relven</string>
   <string name="Triggers">Utløsere</string>
   <string name="Cue_interval_s">Igangsettingsintervall (s)</string>
   <string name="Cue_intervall_m">Igangsettingsintervall (m)</string>
@@ -190,7 +190,7 @@
   <string name="Activity_ready">Aktivitet klar</string>
   <string name="Ready_to_start_running">Klar til å springe!</string>
   <string name="Searching_for_GPS">Søker etter GPS</string>
-  <string name="RunnerUp_activity_started">RunnerUp-aktivitet startet</string>
+  <string name="RunnerUp_activity_started">Relven-aktivitet startet</string>
   <string name="Low_HRM_battery_level">Lavt batterinivå på HRM</string>
   <string name="High_HRM_battery_level">Høyt batterinivå på HRM</string>
   <string name="Warning">Advarsel</string>

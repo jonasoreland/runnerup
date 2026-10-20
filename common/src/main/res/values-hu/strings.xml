@@ -124,7 +124,7 @@
   <string name="Manage_workouts">Edzéstervek kezelése</string>
   <string name="Settings">Beállítások</string>
   <string name="Whats_new">Újdonságok</string>
-  <string name="Rate_RunnerUp">RunnerUp értékelése</string>
+  <string name="Rate_RunnerUp">Relven értékelése</string>
   <string name="Enable_GPS">GPS engedélyezése</string>
   <string name="Waiting_for_GPS">Várakozás a GPS-re...</string>
   <string name="Start_activity">Tevékenység kezdése</string>
@@ -175,7 +175,7 @@
   <string name="Experimental_HRM_devices">Kísérleti pulzusmérő eszközök</string>
   <string name="Experimental_features">Kísérleti funkciók</string>
   <string name="Mock_HRM_devices">Pulzusmérő imitálása</string>
-  <string name="About_RunnerUp">A RunnerUpról</string>
+  <string name="About_RunnerUp">A Relvenról</string>
   <string name="Triggers">Kiváltók</string>
   <string name="Cue_interval_s">Beszéd intervallum (s)</string>
   <string name="Cue_intervall_m">Beszéd intervallum (m)</string>
@@ -220,7 +220,7 @@
   <string name="Activity_ready">Tevékenység kész</string>
   <string name="Ready_to_start_running">Készen áll a futás kezdésére!</string>
   <string name="Searching_for_GPS">GPS keresése</string>
-  <string name="RunnerUp_activity_started">RunnerUp tevékenység elkezdve</string>
+  <string name="RunnerUp_activity_started">Relven tevékenység elkezdve</string>
   <string name="Low_HRM_battery_level">Alacsony pulzusmérő akkumulátor töltöttség</string>
   <string name="High_HRM_battery_level">Magas pulzusmérő akkumulátor töltöttség</string>
   <string name="Warning">Figyelmeztetés</string>
