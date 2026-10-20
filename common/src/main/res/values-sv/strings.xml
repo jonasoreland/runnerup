@@ -302,6 +302,29 @@
   <string name="No_plan_item_today">Inget pass planerat idag</string>
   <string name="Rest_day">Vilodag</string>
   <string name="Planned_run_in_plan">Planerat löppass · %1$s</string>
+  <string name="Plan_calendar_title">Plan</string>
+  <string name="Home_nav_today">Idag</string>
+  <string name="Home_nav_plan">Plan</string>
+  <string name="Home_nav_start">Starta</string>
+  <string name="Home_nav_history">Historik</string>
+  <string name="Plan_calendar_no_active_plan_hint">Importera eller aktivera en sparad plan i träningsvyn för att se kalendern här.</string>
+  <string name="Plan_calendar_open_library">Öppna träningsvyn</string>
+  <string name="Plan_calendar_previous_month">Föregående månad</string>
+  <string name="Plan_calendar_next_month">Nästa månad</string>
+  <string name="Plan_calendar_empty_month">Inga pass är planerade den här månaden.</string>
+  <string name="Plan_calendar_no_item">Inget planerat den här dagen</string>
+  <string name="Plan_calendar_workout_accessibility">Träningspass: %1$s</string>
+  <string name="Plan_calendar_rest_accessibility">Vilodag</string>
+  <string name="Plan_calendar_empty_accessibility">Inget planerat</string>
+  <string name="Plan_calendar_day_accessibility">%1$s. %2$s</string>
+  <string name="Plan_calendar_today">Idag</string>
+  <string name="Plan_calendar_selected">Vald dag</string>
+  <string-array name="Plan_calendar_weekdays">
+    <item>M</item><item>T</item><item>O</item><item>T</item><item>F</item><item>L</item><item>S</item>
+  </string-array>
+  <string-array name="Plan_calendar_weekday_names">
+    <item>Måndag</item><item>Tisdag</item><item>Onsdag</item><item>Torsdag</item><item>Fredag</item><item>Lördag</item><item>Söndag</item>
+  </string-array>
   <string name="Validating_plan">Validerar plan…</string>
   <string name="Saving_plan">Sparar plan…</string>
   <string name="Saving_as">Sparar som</string>

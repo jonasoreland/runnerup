@@ -305,6 +305,29 @@
     <string name="No_plan_item_today">No workout scheduled today</string>
     <string name="Rest_day">Rest day</string>
     <string name="Planned_run_in_plan">Planned run · %1$s</string>
+    <string name="Plan_calendar_title">Plan</string>
+    <string name="Home_nav_today">Today</string>
+    <string name="Home_nav_plan">Plan</string>
+    <string name="Home_nav_start">Start</string>
+    <string name="Home_nav_history">History</string>
+    <string name="Plan_calendar_no_active_plan_hint">Import or activate a saved plan in the training view to see its calendar here.</string>
+    <string name="Plan_calendar_open_library">Open training view</string>
+    <string name="Plan_calendar_previous_month">Previous month</string>
+    <string name="Plan_calendar_next_month">Next month</string>
+    <string name="Plan_calendar_empty_month">No sessions are scheduled this month.</string>
+    <string name="Plan_calendar_no_item">Nothing scheduled for this day</string>
+    <string name="Plan_calendar_workout_accessibility">Workout: %1$s</string>
+    <string name="Plan_calendar_rest_accessibility">Rest day</string>
+    <string name="Plan_calendar_empty_accessibility">Nothing scheduled</string>
+    <string name="Plan_calendar_day_accessibility">%1$s. %2$s</string>
+    <string name="Plan_calendar_today">Today</string>
+    <string name="Plan_calendar_selected">Selected</string>
+    <string-array name="Plan_calendar_weekdays">
+        <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>
+    </string-array>
+    <string-array name="Plan_calendar_weekday_names">
+        <item>Monday</item><item>Tuesday</item><item>Wednesday</item><item>Thursday</item><item>Friday</item><item>Saturday</item><item>Sunday</item>
+    </string-array>
     <string name="Validating_plan">Validating plan…</string>
     <string name="Saving_plan">Saving plan…</string>
     <string name="Saving_as">Saving as</string>

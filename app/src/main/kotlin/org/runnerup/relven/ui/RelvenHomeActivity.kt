@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,19 +27,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,19 +63,34 @@ import org.runnerup.view.MainLayout
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
 class RelvenHomeActivity : ComponentActivity() {
+  companion object {
+    private const val HOME_DESTINATION_STATE = "relven.home.destination"
+  }
+
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
   private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
   private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
+  private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
+  private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
+  private var destination by mutableStateOf(HomeDestination.Today)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    destination =
+        savedInstanceState?.getString(HOME_DESTINATION_STATE)?.let { saved ->
+          HomeDestination.entries.firstOrNull { it.name == saved }
+        } ?: HomeDestination.Today
     setContent {
       RelvenTheme {
         RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
             todayPlan = todayPlan,
+            activePlanState = activePlanState,
+            currentTimeMillis = currentTimeMillis,
+            destination = destination,
+            onSelectDestination = { destination = it },
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
@@ -90,25 +110,41 @@ class RelvenHomeActivity : ComponentActivity() {
         }.also { it.start() }
   }
 
+  override fun onSaveInstanceState(outState: Bundle) {
+    outState.putString(HOME_DESTINATION_STATE, destination.name)
+    super.onSaveInstanceState(outState)
+  }
+
   override fun onResume() {
     super.onResume()
     todayPlan = TodayPlanState.Loading
+    activePlanState = ActivePlanLoadState.Loading
+    currentTimeMillis = System.currentTimeMillis()
     lifecycleScope.launch {
       val homeData =
           withContext(Dispatchers.IO) {
-            loadRecentActivity() to loadTodayPlan()
+            loadRecentActivity() to loadActivePlan()
           }
       recentActivity = homeData.first
-      todayPlan = homeData.second
+      activePlanState = homeData.second
+      todayPlan =
+          when (val planState = homeData.second) {
+            ActivePlanLoadState.Loading -> TodayPlanState.Loading
+            ActivePlanLoadState.NoActivePlan -> TodayPlanState.NoActivePlan
+            ActivePlanLoadState.Unavailable -> TodayPlanState.Unavailable
+            is ActivePlanLoadState.Loaded ->
+                todayPlanState(planState.plan, currentTimeMillis)
+          }
     }
   }
 
-  private fun loadTodayPlan(): TodayPlanState {
+  private fun loadActivePlan(): ActivePlanLoadState {
     return try {
-      todayPlanState(RelvenPlanStore.activePlan(applicationContext), System.currentTimeMillis())
+      RelvenPlanStore.activePlan(applicationContext)?.let(ActivePlanLoadState::Loaded)
+          ?: ActivePlanLoadState.NoActivePlan
     } catch (error: Exception) {
-      Log.w("RelvenHome", "Could not load today's plan", error)
-      TodayPlanState.Unavailable
+      Log.w("RelvenHome", "Could not load active plan", error)
+      ActivePlanLoadState.Unavailable
     }
   }
 
@@ -142,17 +178,27 @@ private data class RecentActivity(
     val distanceMeters: Double?,
     val durationSeconds: Long?)
 
+private enum class HomeDestination {
+  Today,
+  Plan
+}
+
 @Composable
 private fun RelvenHome(
     recentActivity: RecentActivity?,
     sessionStatus: HomeSessionStatus?,
     todayPlan: TodayPlanState,
+    activePlanState: ActivePlanLoadState,
+    currentTimeMillis: Long,
+    destination: HomeDestination,
+    onSelectDestination: (HomeDestination) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
-    Column(
+    if (destination == HomeDestination.Today) {
+      Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp).padding(bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
@@ -239,30 +285,85 @@ private fun RelvenHome(
         }
       }
     }
-    Surface(
-        color = Color(0xDD0E141E),
-        shape = RoundedCornerShape(28.dp),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
-        modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 20.dp).size(190.dp, 64.dp)) {
-      Row(
-          modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.SpaceBetween) {
-        IconButton(onClick = {}, modifier = Modifier.background(RelvenColors.Orange, CircleShape)) {
-          Icon(Icons.Default.Home, contentDescription = "Idag", tint = Color.White)
-        }
-        IconButton(onClick = onOpenWorkout) {
-          Icon(
-              Icons.AutoMirrored.Filled.DirectionsRun,
-              contentDescription = "Starta pass",
-              tint = Color.White)
-        }
-        IconButton(onClick = onOpenHistory) {
-          Icon(Icons.Default.History, contentDescription = "Historik i träningsvyn", tint = Color.White)
-        }
-      }
+    } else {
+      PlanCalendarScreen(
+          loadState = activePlanState,
+          nowMillis = currentTimeMillis,
+          onOpenWorkoutManager = onOpenWorkout)
+    }
+    HomeNavigationBar(
+        destination = destination,
+        onSelectDestination = onSelectDestination,
+        onOpenWorkout = onOpenWorkout,
+        onOpenHistory = onOpenHistory,
+        modifier = Modifier.align(Alignment.BottomCenter))
+  }
+  }
+}
+
+@Composable
+private fun HomeNavigationBar(
+    destination: HomeDestination,
+    onSelectDestination: (HomeDestination) -> Unit,
+    onOpenWorkout: () -> Unit,
+    onOpenHistory: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+  Surface(
+      color = Color(0xDD0E141E),
+      shape = RoundedCornerShape(28.dp),
+      border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
+      modifier = modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 12.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp).padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly) {
+      HomeNavigationItem(
+          selected = destination == HomeDestination.Today,
+          icon = { tint -> Icon(Icons.Default.Home, contentDescription = null, tint = tint) },
+          label = stringResource(org.runnerup.common.R.string.Home_nav_today),
+          onClick = { onSelectDestination(HomeDestination.Today) },
+          modifier = Modifier.weight(1f))
+      HomeNavigationItem(
+          selected = destination == HomeDestination.Plan,
+          icon = { tint -> Icon(Icons.Default.DateRange, contentDescription = null, tint = tint) },
+          label = stringResource(org.runnerup.common.R.string.Home_nav_plan),
+          onClick = { onSelectDestination(HomeDestination.Plan) },
+          modifier = Modifier.weight(1f))
+      HomeNavigationItem(
+          selected = false,
+          icon = { tint ->
+            Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null, tint = tint)
+          },
+          label = stringResource(org.runnerup.common.R.string.Home_nav_start),
+          onClick = onOpenWorkout,
+          modifier = Modifier.weight(1f))
+      HomeNavigationItem(
+          selected = false,
+          icon = { tint -> Icon(Icons.Default.History, contentDescription = null, tint = tint) },
+          label = stringResource(org.runnerup.common.R.string.Home_nav_history),
+          onClick = onOpenHistory,
+          modifier = Modifier.weight(1f))
     }
   }
+}
+
+@Composable
+private fun HomeNavigationItem(
+    selected: Boolean,
+    icon: @Composable (Color) -> Unit,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+  val tint = if (selected) RelvenColors.Orange else RelvenColors.MutedText
+  Column(
+      modifier = modifier.heightIn(min = 64.dp).clickable(role = Role.Tab, onClick = onClick)
+          .semantics { this.selected = selected },
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center) {
+    icon(tint)
+    Text(label, color = tint, fontSize = 10.sp, fontWeight = FontWeight.Medium)
   }
 }
 
