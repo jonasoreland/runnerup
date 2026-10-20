@@ -42,10 +42,10 @@ class PlanCalendarStateTest {
     assertTrue(state.days[22].isSelected)
     assertTrue(state.days[22].isToday)
     assertEquals(
-        listOf(PlanCalendarEntry.Workout("run-a", "Easy run", "Keep it easy")),
+        listOf(PlanCalendarEntry.Workout("october-run", "run-a", "Easy run", "Keep it easy")),
         state.selectedEntries)
     assertEquals(
-        listOf(PlanCalendarEntry.Rest("Recovery")),
+        listOf(PlanCalendarEntry.Rest("october-rest", "Recovery")),
         calendarState(plan, "2026-10", "2026-10-21", 1_792_449_000_000L).selectedEntries)
     assertTrue(
         calendarState(plan, "2026-10", "2026-10-22", 1_792_449_000_000L)

@@ -26,13 +26,28 @@ public final class RelvenPlanImporter {
   public record Session(String id, String date, String kind, String workoutId, String notes) {}
 
   public record Plan(
+      int schemaVersion,
       String id,
       String name,
       String timezone,
+      String rootPlanId,
+      int revisionNumber,
+      String previousRevisionId,
       List<Session> days,
       Map<String, Workout> workouts,
       Map<String, String> workoutNames,
       String sourceJson) {
+    public Plan(
+        String id,
+        String name,
+        String timezone,
+        List<Session> days,
+        Map<String, Workout> workouts,
+        Map<String, String> workoutNames,
+        String sourceJson) {
+      this(1, id, name, timezone, id, 0, null, days, workouts, workoutNames, sourceJson);
+    }
+
     public long workoutDays() {
       return days.stream().filter(day -> day.kind().equals("workout")).count();
     }
@@ -52,13 +67,43 @@ public final class RelvenPlanImporter {
       }
       JSONObject root = new JSONObject(json);
       allowOnly(
-          root, "plan", "format", "schemaVersion", "id", "name", "timezone", "workouts", "days");
-      if (!"relven.plan".equals(text(root, "format")) || integer(root, "schemaVersion") != 1) {
+          root,
+          "plan",
+          "format",
+          "schemaVersion",
+          "id",
+          "name",
+          "timezone",
+          "workouts",
+          "days",
+          "revision");
+      int schemaVersion = integer(root, "schemaVersion");
+      if (!"relven.plan".equals(text(root, "format"))
+          || (schemaVersion != 1 && schemaVersion != 2)) {
         throw invalid("format or version");
       }
       String id = text(root, "id");
       String name = text(root, "name");
       String timezone = text(root, "timezone");
+      String rootPlanId = id;
+      int revisionNumber = 0;
+      String previousRevisionId = null;
+      if (schemaVersion == 1) {
+        if (root.has("revision")) throw invalid("revision metadata for v1");
+      } else {
+        if (!root.has("revision")) throw invalid("missing revision metadata");
+        JSONObject revision = root.getJSONObject("revision");
+        allowOnly(revision, "revision", "rootPlanId", "number", "previousRevisionId");
+        rootPlanId = text(revision, "rootPlanId");
+        revisionNumber = integer(revision, "number");
+        previousRevisionId = text(revision, "previousRevisionId");
+        if (revisionNumber < 1
+            || rootPlanId.equals(id)
+            || previousRevisionId.equals(id)
+            || (revisionNumber == 1 && !previousRevisionId.equals(rootPlanId))) {
+          throw invalid("revision lineage");
+        }
+      }
       boolean validZone = false;
       for (String zone : TimeZone.getAvailableIDs()) {
         if (zone.equals(timezone)) {
@@ -131,9 +176,13 @@ public final class RelvenPlanImporter {
         throw invalid("rest and workout on the same date");
       }
       return new Plan(
+          schemaVersion,
           id,
           name,
           timezone,
+          rootPlanId,
+          revisionNumber,
+          previousRevisionId,
           Collections.unmodifiableList(new ArrayList<>(days)),
           Collections.unmodifiableMap(new HashMap<>(workouts)),
           Collections.unmodifiableMap(new HashMap<>(workoutNames)),

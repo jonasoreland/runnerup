@@ -71,6 +71,7 @@ class RelvenHomeActivity : ComponentActivity() {
   private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
   private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
+  private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
@@ -88,6 +89,7 @@ class RelvenHomeActivity : ComponentActivity() {
             sessionStatus = sessionStatus,
             todayPlan = todayPlan,
             activePlanState = activePlanState,
+            planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
             onSelectDestination = { destination = it },
@@ -97,7 +99,8 @@ class RelvenHomeActivity : ComponentActivity() {
               startActivity(
                   Intent(this, MainLayout::class.java)
                       .putExtra(MainLayout.EXTRA_INITIAL_TAB, 1))
-            })
+            },
+            onReschedulePlan = ::rescheduleActivePlan)
       }
     }
   }
@@ -119,6 +122,7 @@ class RelvenHomeActivity : ComponentActivity() {
     super.onResume()
     todayPlan = TodayPlanState.Loading
     activePlanState = ActivePlanLoadState.Loading
+    planRevisionStatus = PlanRevisionStatus.Idle
     currentTimeMillis = System.currentTimeMillis()
     lifecycleScope.launch {
       val homeData =
@@ -145,6 +149,36 @@ class RelvenHomeActivity : ComponentActivity() {
     } catch (error: Exception) {
       Log.w("RelvenHome", "Could not load active plan", error)
       ActivePlanLoadState.Unavailable
+    }
+  }
+
+  private fun rescheduleActivePlan(sessionId: String, targetDate: String) {
+    val sourcePlan = (activePlanState as? ActivePlanLoadState.Loaded)?.plan
+    if (sourcePlan == null) {
+      planRevisionStatus = PlanRevisionStatus.Failed
+      return
+    }
+    planRevisionStatus = PlanRevisionStatus.Saving
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              RelvenPlanStore.rescheduleActivePlan(
+                  applicationContext, sourcePlan, sessionId, targetDate)
+            }
+          }
+      result.fold(
+          onSuccess = { revision ->
+            activePlanState = ActivePlanLoadState.Loaded(revision)
+            todayPlan = todayPlanState(revision, currentTimeMillis)
+            planRevisionStatus = PlanRevisionStatus.Saved
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not save plan revision", error)
+            planRevisionStatus =
+                if (error is IllegalArgumentException) PlanRevisionStatus.Conflict
+                else PlanRevisionStatus.Failed
+          })
     }
   }
 
@@ -189,12 +223,14 @@ private fun RelvenHome(
     sessionStatus: HomeSessionStatus?,
     todayPlan: TodayPlanState,
     activePlanState: ActivePlanLoadState,
+    planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
     onSelectDestination: (HomeDestination) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
-    onOpenHistory: () -> Unit) {
+    onOpenHistory: () -> Unit,
+    onReschedulePlan: (String, String) -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
@@ -288,8 +324,10 @@ private fun RelvenHome(
     } else {
       PlanCalendarScreen(
           loadState = activePlanState,
+          revisionStatus = planRevisionStatus,
           nowMillis = currentTimeMillis,
-          onOpenWorkoutManager = onOpenWorkout)
+          onOpenWorkoutManager = onOpenWorkout,
+          onReschedule = onReschedulePlan)
     }
     HomeNavigationBar(
         destination = destination,

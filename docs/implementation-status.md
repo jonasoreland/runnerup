@@ -7,6 +7,7 @@
 - PR #23 (open the existing RunnerUp workout screen from the active/paused Today card) merged to `master` as `04674c4`. Local debug/release builds, app unit tests, lint and style passed; hosted Android CI passed.
 - PR #25 (explicitly activate, switch, or clear a saved plan without mutating its package or workout history) merged to `master` as `2cc3858`. Local app tests, debug/release builds, lint and style passed; hosted Android CI passed.
 - PR #26 (show the active plan item on Today, using its local timezone and localized loading/empty/rest/workout/error states) merged to `master` as `c67da79`. Local app tests, debug/release builds, lint and style passed; independent review and hosted Android CI passed. No emulator or physical ADB device was used.
+- PR #27 (read-only active-plan monthly calendar with selected-day workout/rest details) merged to `master` as `181c2e9`. Local debug/release builds, app tests, lint and style passed; independent review and hosted Android CI passed. No device or ADB server was used.
 - PR #20 (legacy migration review and confirmed import of supported workouts and eligible completed running activities) merged to `master` as `2b4198c`. Hosted build/test/lint/style/F-Droid checks passed.
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`.
@@ -74,9 +75,10 @@
 ## Phase Five — plan packages and library
 
 - **In progress:** Versioned running-plan and workout schemas plus a strict local parser and atomic app-private package store are implemented. The importer rejects unsupported workout semantics, unknown fields, non-schema JSON types, invalid dates/timezones/references, packages over 4 MiB, JSON nesting over 32, and more than 100,000 JSON tokens.
-- **In progress:** Users can choose a plan JSON package from the workout manager, validate it before a review summary, save after explicit confirmation, and reopen saved plans from app-private storage. Saved plans can be explicitly activated, switched, or cleared; activation stores a separate active-plan reference and does not mutate the saved package or activity history. Plan dates are treated as one-time. Today and the Plan destination surface the active plan's current item; the month calendar is read-only.
-- **Pending:** Immutable plan revisions and editable/reschedulable calendar items, then build the AI Plan Kit from the canonical schema.
-- **Verification:** Parser, bounded-read, summary, store, activation, Today-state, and calendar-state tests pass locally. PR #25 and #26 hosted Android CI passed. No emulator or physical device is being used for current calendar work.
+- **In progress:** Users can import, preview, save and activate plans. Today shows the active item and the Plan calendar shows its monthly schedule. Rescheduling one workout or rest item creates and activates a complete schema-v2 revision; the imported plan and prior revisions remain unchanged. Each revision keeps a root ID, sequence number and predecessor ID. Workout definitions and completed history are unchanged.
+- **Current increment:** Revisions are accepted only when they follow the saved lineage tip and preserve plan metadata, workout definitions, and every schedule entry except the date of exactly one moved session. Stale branches and edits disguised as reschedules are rejected.
+- **Pending:** Add/delete scheduled items and edit plan content; then build the AI Plan Kit from the canonical schema. Strength plans and plan-linked execution also remain pending.
+- **Verification:** Parser, revision transformation, store lineage/activation, Today-state and calendar-state tests pass locally. The lineage regression test was first observed failing, then passed with the validation fix. Full local and hosted verification for the current increment is recorded on its PR. No emulator or physical ADB device has been used for this increment.
 
 ## Later phases
 

@@ -319,6 +319,18 @@
   <string name="Plan_calendar_day_accessibility">%1$s. %2$s</string>
   <string name="Plan_calendar_today">Idag</string>
   <string name="Plan_calendar_selected">Vald dag</string>
+  <string name="Plan_calendar_reschedule">Flytta</string>
+  <string name="Plan_calendar_reschedule_accessibility">Flytta %1$s</string>
+  <string name="Plan_calendar_reschedule_prompt">Välj ett nytt datum för %1$s</string>
+  <string name="Plan_calendar_reschedule_choose_different_date">Välj ett annat datum än det nuvarande.</string>
+  <string name="Plan_calendar_cancel_reschedule">Avbryt</string>
+  <string name="Plan_calendar_save_revision">Spara ny version</string>
+  <string name="Plan_calendar_revision_saving">Sparar planversion…</string>
+  <string name="Plan_calendar_revision_saved">Planversionen har sparats och aktiverats.</string>
+  <string name="Plan_calendar_revision_conflict">Datumet krockar med en vilodag eller ett annat pass.</string>
+  <string name="Plan_calendar_revision_failed">Det gick inte att spara versionen. Den aktiva planen är oförändrad. Välj ett annat datum eller försök igen.</string>
+  <string name="Plan_calendar_revision_number">Version %1$d</string>
+  <string name="Plan_revision_named">%1$s · Version %2$d</string>
   <string-array name="Plan_calendar_weekdays">
     <item>M</item><item>T</item><item>O</item><item>T</item><item>F</item><item>L</item><item>S</item>
   </string-array>

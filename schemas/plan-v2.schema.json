@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relven.invalid/schemas/plan-v2.schema.json",
+  "title": "Relven running plan revision v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schemaVersion", "id", "name", "timezone", "workouts", "days", "revision"],
+  "properties": {
+    "format": { "const": "relven.plan" },
+    "schemaVersion": { "const": 2 },
+    "id": { "$ref": "#/$defs/id" },
+    "name": { "$ref": "#/$defs/id" },
+    "timezone": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rootPlanId", "number", "previousRevisionId"],
+      "properties": {
+        "rootPlanId": { "$ref": "#/$defs/id" },
+        "number": { "type": "integer", "minimum": 1 },
+        "previousRevisionId": { "$ref": "#/$defs/id" }
+      }
+    },
+    "workouts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "allOf": [
+          { "$ref": "workout-v3.schema.json" },
+          { "properties": { "sport": { "const": "running" } } }
+        ]
+      }
+    },
+    "days": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "date", "kind"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "date": { "type": "string", "format": "date" },
+          "kind": { "enum": ["workout", "rest"] },
+          "workoutId": { "$ref": "#/$defs/id" },
+          "notes": { "type": "string", "maxLength": 1000 }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "kind": { "const": "workout" } } },
+            "then": { "required": ["workoutId"] }
+          },
+          {
+            "if": { "properties": { "kind": { "const": "rest" } } },
+            "then": { "not": { "required": ["workoutId"] } }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 160 }
+  }
+}

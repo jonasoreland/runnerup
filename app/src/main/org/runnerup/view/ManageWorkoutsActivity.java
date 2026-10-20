@@ -256,7 +256,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     if (isFinishing() || isDestroyed()) return;
     AlertDialog.Builder dialog =
         new AlertDialog.Builder(this)
-            .setTitle(plan.name())
+            .setTitle(planDisplayName(plan))
             .setMessage(RelvenPlanImport.preview(plan))
             .setPositiveButton(
                 org.runnerup.common.R.string.Save, (ignored, which) -> savePlan(plan))
@@ -269,7 +269,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     if (isFinishing() || isDestroyed()) return;
     AlertDialog.Builder builder =
         new AlertDialog.Builder(this)
-            .setTitle(plan.name())
+            .setTitle(planDisplayName(plan))
             .setMessage(RelvenPlanImport.preview(plan))
             .setPositiveButton(
                 org.runnerup.common.R.string.Activate_plan, (dialog, which) -> activatePlan(plan))
@@ -304,8 +304,8 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                                   active != null && active.id().equals(plan.id())
                                       ? getString(org.runnerup.common.R.string.Active_plan_marker)
                                           + " "
-                                          + plan.name()
-                                      : plan.name())
+                                          + planDisplayName(plan)
+                                      : planDisplayName(plan))
                           .toArray(String[]::new);
                   new AlertDialog.Builder(this)
                       .setTitle(org.runnerup.common.R.string.View_saved_plans)
@@ -324,6 +324,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             runOnUiThread(() -> showPlanImportError(error));
           }
         });
+  }
+
+  private String planDisplayName(RelvenPlanImporter.Plan plan) {
+    if (plan.revisionNumber() == 0) return plan.name();
+    return getString(
+        org.runnerup.common.R.string.Plan_revision_named, plan.name(), plan.revisionNumber());
   }
 
   private void savePlan(RelvenPlanImporter.Plan plan) {

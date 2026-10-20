@@ -52,10 +52,26 @@ internal fun calendarDateEmphasis(day: PlanCalendarDay): CalendarDateEmphasis =
     }
 
 internal sealed interface PlanCalendarEntry {
-  data class Workout(val workoutId: String, val workoutName: String, val notes: String) :
+  data class Workout(
+      val sessionId: String,
+      val workoutId: String,
+      val workoutName: String,
+      val notes: String) :
       PlanCalendarEntry
 
-  data class Rest(val notes: String) : PlanCalendarEntry
+  data class Rest(val sessionId: String, val notes: String) : PlanCalendarEntry
+}
+
+internal sealed interface PlanRevisionStatus {
+  data object Idle : PlanRevisionStatus
+
+  data object Saving : PlanRevisionStatus
+
+  data object Saved : PlanRevisionStatus
+
+  data object Conflict : PlanRevisionStatus
+
+  data object Failed : PlanRevisionStatus
 }
 
 internal fun planCalendarState(
@@ -128,10 +144,10 @@ private fun sessionEntry(
       "workout" -> {
         val workoutId = session.workoutId()
         plan.workoutNames()[workoutId]?.let {
-          PlanCalendarEntry.Workout(workoutId, it, session.notes())
+          PlanCalendarEntry.Workout(session.id(), workoutId, it, session.notes())
         }
       }
-      "rest" -> PlanCalendarEntry.Rest(session.notes())
+      "rest" -> PlanCalendarEntry.Rest(session.id(), session.notes())
       else -> null
     }
 

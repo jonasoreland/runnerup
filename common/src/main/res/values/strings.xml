@@ -322,6 +322,18 @@
     <string name="Plan_calendar_day_accessibility">%1$s. %2$s</string>
     <string name="Plan_calendar_today">Today</string>
     <string name="Plan_calendar_selected">Selected</string>
+    <string name="Plan_calendar_reschedule">Reschedule</string>
+    <string name="Plan_calendar_reschedule_accessibility">Reschedule %1$s</string>
+    <string name="Plan_calendar_reschedule_prompt">Choose a new date for %1$s</string>
+    <string name="Plan_calendar_reschedule_choose_different_date">Choose a date other than the current date.</string>
+    <string name="Plan_calendar_cancel_reschedule">Cancel</string>
+    <string name="Plan_calendar_save_revision">Save new revision</string>
+    <string name="Plan_calendar_revision_saving">Saving plan revision…</string>
+    <string name="Plan_calendar_revision_saved">Plan revision saved and activated.</string>
+    <string name="Plan_calendar_revision_conflict">That date conflicts with a rest day or another item.</string>
+    <string name="Plan_calendar_revision_failed">Could not save the revision. Your active plan is unchanged. Try another date or save again.</string>
+    <string name="Plan_calendar_revision_number">Revision %1$d</string>
+    <string name="Plan_revision_named">%1$s · Revision %2$d</string>
     <string-array name="Plan_calendar_weekdays">
         <item>M</item><item>T</item><item>W</item><item>T</item><item>F</item><item>S</item><item>S</item>
     </string-array>

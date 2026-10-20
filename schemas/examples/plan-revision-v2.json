@@ -1,0 +1,41 @@
+{
+  "format": "relven.plan",
+  "schemaVersion": 2,
+  "id": "5b877437-9867-4db4-a184-53c6ed6f0054",
+  "name": "Autumn base",
+  "timezone": "Europe/Stockholm",
+  "revision": {
+    "rootPlanId": "autumn-base-2026",
+    "number": 1,
+    "previousRevisionId": "autumn-base-2026"
+  },
+  "workouts": [
+    {
+      "schemaVersion": 3,
+      "id": "easy-30",
+      "name": "Easy 30 minutes",
+      "sport": "running",
+      "steps": [
+        {
+          "id": "warmup",
+          "kind": "segment",
+          "name": "Warm up",
+          "phase": "warmup",
+          "end": { "type": "time", "seconds": 300 }
+        },
+        {
+          "id": "work",
+          "kind": "segment",
+          "name": "Easy running",
+          "phase": "work",
+          "end": { "type": "time", "seconds": 1500 }
+        }
+      ]
+    }
+  ],
+  "days": [
+    { "id": "day-1", "date": "2026-10-22", "kind": "workout", "workoutId": "easy-30" },
+    { "id": "day-2", "date": "2026-10-21", "kind": "rest" },
+    { "id": "day-3", "date": "2026-10-27", "kind": "workout", "workoutId": "easy-30" }
+  ]
+}
