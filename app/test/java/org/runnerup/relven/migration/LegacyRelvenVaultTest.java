@@ -49,6 +49,9 @@ public class LegacyRelvenVaultTest {
     }
     assertTrue(source.delete());
     assertTrue(LegacyRelvenVault.isAvailable(context));
+    ByteArrayOutputStream exported = new ByteArrayOutputStream();
+    LegacyRelvenVault.exportTo(context, exported);
+    assertTrue(exported.size() > 0);
   }
 
   @Test

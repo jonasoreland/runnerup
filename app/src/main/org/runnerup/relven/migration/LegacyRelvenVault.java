@@ -33,10 +33,10 @@ public final class LegacyRelvenVault {
    * Returns whether a validated snapshot is available. Existing snapshots are never overwritten.
    */
   public static synchronized boolean captureIfPresent(Context context) throws IOException {
-    File source = context.getDatabasePath(OLD_DATABASE);
-    if (!source.isFile()) return false;
     File snapshot = snapshotFile(context);
     if (snapshot.isFile()) return true;
+    File source = context.getDatabasePath(OLD_DATABASE);
+    if (!source.isFile()) return false;
     File directory = snapshot.getParentFile();
     if (!directory.isDirectory() && !directory.mkdirs()) {
       throw new IOException("Unable to create legacy backup directory");

@@ -161,13 +161,23 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
     LEGACY_EXPORT_EXECUTOR.execute(
         () -> {
           int message;
-          try (OutputStream output = resolver.openOutputStream(destination)) {
-            if (output == null) throw new IOException("Unable to open backup destination");
-            LegacyRelvenVault.exportTo(context, output);
+          boolean destinationMayExist = false;
+          try {
+            if (!LegacyRelvenVault.captureIfPresent(context)) {
+              throw new IOException("No previous Relven database found");
+            }
+            destinationMayExist = true;
+            try (OutputStream output = resolver.openOutputStream(destination)) {
+              if (output == null) throw new IOException("Unable to open backup destination");
+              LegacyRelvenVault.exportTo(context, output);
+            }
             message = org.runnerup.common.R.string.Legacy_Relven_backup_exported;
           } catch (IOException | RuntimeException error) {
             Log.e(TAG, "Unable to export previous Relven data", error);
-            message = org.runnerup.common.R.string.Legacy_Relven_backup_export_failed;
+            message =
+                destinationMayExist && !deletePartialDestination(resolver, destination)
+                    ? org.runnerup.common.R.string.Legacy_Relven_backup_export_failed_partial
+                    : org.runnerup.common.R.string.Legacy_Relven_backup_export_failed;
           }
           int resultMessage = message;
           MAIN_HANDLER.post(
@@ -177,6 +187,15 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
                 }
               });
         });
+  }
+
+  private boolean deletePartialDestination(ContentResolver resolver, Uri destination) {
+    try {
+      return resolver.delete(destination, null, null) > 0;
+    } catch (RuntimeException error) {
+      Log.w(TAG, "Unable to remove incomplete legacy data export", error);
+      return false;
+    }
   }
 
   /**
