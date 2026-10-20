@@ -187,8 +187,11 @@ public class WearHRProvider implements HRProvider {
                 if (handler == null) return;
                 handler.postDelayed(
                     () -> {
-                      if (isConnecting) {
-                        isConnecting = false;
+                      if (completeConnection(false)) {
+                        Wearable.getMessageClient(context)
+                            .sendMessage(
+                                connectedNodeId, Constants.Wear.Path.MSG_CMD_HR_STOP, new byte[0]);
+                        Wearable.getMessageClient(context).removeListener(onHRMessageListener);
                         postToHRClient(() -> hrClient.onConnectResult(false));
                       }
                     },
@@ -198,10 +201,10 @@ public class WearHRProvider implements HRProvider {
         .addOnFailureListener(
             e -> {
               Log.e(TAG, "Failed to send Start HR message: " + e.getMessage());
-              isConnected = false;
-              isConnecting = false;
-              Wearable.getMessageClient(context).removeListener(onHRMessageListener);
-              postToHRClient(() -> hrClient.onConnectResult(false));
+              if (completeConnection(false)) {
+                Wearable.getMessageClient(context).removeListener(onHRMessageListener);
+                postToHRClient(() -> hrClient.onConnectResult(false));
+              }
             });
   }
 
@@ -232,6 +235,15 @@ public class WearHRProvider implements HRProvider {
     hrTimestamp = 0;
     hrElapsedRealtime = 0;
     batteryLevel = HRProvider.BATTERY_LEVEL_UNAVAILABLE;
+  }
+
+  private synchronized boolean completeConnection(boolean connected) {
+    if (!isConnecting) {
+      return false;
+    }
+    isConnecting = false;
+    isConnected = connected;
+    return true;
   }
 
   @Override
@@ -292,9 +304,7 @@ public class WearHRProvider implements HRProvider {
               SystemClock.elapsedRealtimeNanos())) {
             hrTimestamp = System.currentTimeMillis();
             hrElapsedRealtime = SystemClock.elapsedRealtimeNanos();
-            if (isConnecting) {
-              isConnecting = false;
-              isConnected = true;
+            if (completeConnection(true)) {
               postToHRClient(() -> hrClient.onConnectResult(true));
             }
           } else {
