@@ -2,6 +2,8 @@
 
 ## 20 October 2026 serial integration checkpoint
 
+- **Current increment — free route maps:** the existing free osmdroid route map supports pace, heart rate, speed, and elevation coloring with a green-to-red legend. Pace is derived from stored active distance and elapsed time; route speed is now loaded from the existing activity database. Missing samples render gray, and a metric with fewer than two values is reported unavailable. Unit tests cover availability and color buckets. Local device rendering and live OpenStreetMap tile availability remain unverified; no ADB device was used.
+
 - PR #21 (production Today launcher with Start/History retained in RunnerUp) merged to `master` as `9335a6e`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.
 - PR #22 (lifecycle-bound, read-only Tracker session status on Today) merged to `master` as `dbaaee2`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.
 - PR #23 (open the existing RunnerUp workout screen from the active/paused Today card) merged to `master` as `04674c4`. Local debug/release builds, app unit tests, lint and style passed; hosted Android CI passed.

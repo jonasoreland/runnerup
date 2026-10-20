@@ -1,5 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="route_color_by">Color route by</string>
+    <string name="route_selector_description">%1$s: %2$s</string>
+    <string name="route_metric_pace">Pace (min/km)</string>
+    <string name="route_metric_heart_rate">Heart rate (bpm)</string>
+    <string name="route_metric_speed">Speed (km/h)</string>
+    <string name="route_metric_elevation">Elevation (m)</string>
+    <string name="route_metric_unavailable">Not enough samples for this metric</string>
+    <string name="route_legend_low_to_high">green is low, red is high</string>
+    <string name="route_legend_range">%1$s · %2$.1f – %3$.1f</string>
+    <string name="route_legend_content_description">%1$s, %2$.1f to %3$.1f, %4$s</string>
     <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
     ~
     ~  This program is free software: you can redistribute it and/or modify

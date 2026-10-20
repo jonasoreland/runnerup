@@ -15,7 +15,7 @@ Status describes this checkout, not planned designs.
 | Calendar and strength details | Active-plan month calendar with immutable schedule editing | Month navigation, selected-day workout/rest details, and moving, adding, or removing one entry at a time are available; each change preserves earlier revisions. Strength details remain pending |
 | Offline exercise catalog and gym logging | Pending | License/data review and local model |
 | AI Plan Kit ZIP | Implemented in this increment | Workout Manager can copy the generation instructions, share the full ZIP, or save it through the document picker. The reproducible archive contains plan v1, app-managed revision v2, workout v3 schemas and the supported example; no AI service is called. |
-| Free map and route coloring | osmdroid map inherited; coloring pending | Runtime route-sample audit |
+| Free map and route coloring | Free osmdroid route map with pace, heart-rate, speed, and elevation coloring | Route values come from stored samples; pace is derived from active distance/time; missing metrics are gray and unavailable metrics are labeled. Map tiles use the existing OpenStreetMap source; online tile availability and runtime rendering remain to be checked on a device. |
 | New Compose phone/watch UI | Phone foundation/preview only | Debug-only native screen rendered on a phone; production navigation and Wear UI pending |
 
 Build success does not prove device behavior. No phone or watch device was connected during the baseline build.

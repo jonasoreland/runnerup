@@ -123,7 +123,8 @@ public class LocationEntity extends AbstractEntity {
             Constants.DB.LOCATION.TYPE,
             Constants.DB.LOCATION.TIME,
             Constants.DB.LOCATION.LAP,
-            Constants.DB.LOCATION.HR
+            Constants.DB.LOCATION.HR,
+            Constants.DB.LOCATION.SPEED
           };
       final Cursor c;
       E prev = null;

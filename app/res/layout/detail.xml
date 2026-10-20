@@ -181,8 +181,9 @@
 
             <LinearLayout
                 android:id="@+id/tab_map"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <org.runnerup.util.MapViewWrapper
                     android:id="@+id/mapview"

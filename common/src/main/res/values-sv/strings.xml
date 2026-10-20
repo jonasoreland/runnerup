@@ -1,5 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="route_color_by">Färglägg rutten efter</string>
+  <string name="route_selector_description">%1$s: %2$s</string>
+  <string name="route_metric_pace">Tempo (min/km)</string>
+  <string name="route_metric_heart_rate">Puls (slag/min)</string>
+  <string name="route_metric_speed">Hastighet (km/h)</string>
+  <string name="route_metric_elevation">Höjd (m)</string>
+  <string name="route_metric_unavailable">För få mätvärden för detta mått</string>
+  <string name="route_legend_low_to_high">grönt är lågt, rött är högt</string>
+  <string name="route_legend_range">%1$s · %2$.1f – %3$.1f</string>
+  <string name="route_legend_content_description">%1$s, %2$.1f till %3$.1f, %4$s</string>
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
     ~
     ~  This program is free software: you can redistribute it and/or modify
