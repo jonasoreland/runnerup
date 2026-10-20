@@ -14,18 +14,15 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.ContextCompat;
-import org.runnerup.R;
 import org.runnerup.hr.HeartRatePermissionState;
+import org.runnerup.wear.ui.WearHeartRatePermissionComposeContent;
 
 /** Visible watch surface for reviewing and granting the heart-rate sensor permission. */
 public final class HeartRatePermissionFragment extends Fragment {
   private MainActivity activity;
-  private TextView status;
-  private TextView details;
-  private Button action;
+  private ComposeView composeView;
   private String permission;
   private String backgroundPermission;
   private boolean sensorAvailable;
@@ -33,19 +30,18 @@ public final class HeartRatePermissionFragment extends Fragment {
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.heart_rate_permission, container, false);
-    status = view.findViewById(R.id.heart_rate_permission_status);
-    details = view.findViewById(R.id.heart_rate_permission_details);
-    action = view.findViewById(R.id.heart_rate_permission_button);
+    composeView = new ComposeView(activity);
+    composeView.setLayoutParams(
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     permission = HeartRatePermissionState.permissionForSdk(Build.VERSION.SDK_INT);
     backgroundPermission =
         HeartRatePermissionState.backgroundPermissionForSdk(Build.VERSION.SDK_INT);
     SensorManager sensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
     sensorAvailable =
         sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE) != null;
-    action.setOnClickListener(ignored -> requestMissingPermission());
     refreshStatus();
-    return view;
+    return composeView;
   }
 
   private void requestMissingPermission() {
@@ -73,43 +69,15 @@ public final class HeartRatePermissionFragment extends Fragment {
   }
 
   private void refreshStatus() {
-    if (status == null) return;
+    if (composeView == null) return;
     boolean granted = isPermissionGranted(permission);
     boolean backgroundGranted =
         backgroundPermission == null || isPermissionGranted(backgroundPermission);
     HeartRatePermissionState.State state =
         HeartRatePermissionState.resolve(
             sensorAvailable, granted, backgroundGranted, Build.VERSION.SDK_INT);
-    switch (state) {
-      case UNAVAILABLE:
-        status.setText(org.runnerup.common.R.string.wear_hr_sensor_unavailable);
-        details.setText(org.runnerup.common.R.string.wear_hr_sensor_unavailable_details);
-        action.setVisibility(View.GONE);
-        break;
-      case NEEDS_PERMISSION:
-        status.setText(org.runnerup.common.R.string.wear_hr_permission_needed);
-        details.setText(org.runnerup.common.R.string.wear_hr_permission_needed_details);
-        action.setText(org.runnerup.common.R.string.wear_hr_grant_permission);
-        action.setVisibility(View.VISIBLE);
-        break;
-      case READY:
-        status.setText(org.runnerup.common.R.string.wear_hr_permission_ready);
-        details.setText(org.runnerup.common.R.string.wear_hr_permission_ready_details);
-        action.setVisibility(View.GONE);
-        break;
-      case NEEDS_BACKGROUND_PERMISSION:
-        status.setText(org.runnerup.common.R.string.wear_hr_background_permission_needed);
-        details.setText(
-            Build.VERSION.SDK_INT < 36
-                ? org.runnerup.common.R.string.wear_hr_background_permission_settings_details
-                : org.runnerup.common.R.string.wear_hr_background_permission_details);
-        action.setText(
-            Build.VERSION.SDK_INT < 36
-                ? org.runnerup.common.R.string.wear_hr_open_permission_settings
-                : org.runnerup.common.R.string.wear_hr_grant_background_permission);
-        action.setVisibility(View.VISIBLE);
-        break;
-    }
+    WearHeartRatePermissionComposeContent.bind(
+        composeView, state, Build.VERSION.SDK_INT, this::requestMissingPermission);
   }
 
   private boolean isPermissionGranted(String permissionName) {
@@ -127,5 +95,14 @@ public final class HeartRatePermissionFragment extends Fragment {
   public void onAttach(Activity host) {
     super.onAttach(host);
     activity = (MainActivity) host;
+  }
+
+  @Override
+  public void onDestroyView() {
+    if (composeView != null) {
+      composeView.disposeComposition();
+      composeView = null;
+    }
+    super.onDestroyView();
   }
 }
