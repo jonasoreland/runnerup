@@ -2,10 +2,15 @@ package org.runnerup.relven.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.database.Cursor
+import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,21 +35,35 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.DateFormat
+import java.util.Date
+import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.runnerup.common.util.Constants.DB
+import org.runnerup.db.DBHelper
 import org.runnerup.view.MainLayout
 
 /** Development entry point while the legacy workout controls remain authoritative. */
 class RelvenPreviewActivity : ComponentActivity() {
+  private var recentActivity by mutableStateOf<RecentActivity?>(null)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
       RelvenTheme {
         RelvenPreviewHome(
+            recentActivity = recentActivity,
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
               startActivity(
@@ -54,14 +73,48 @@ class RelvenPreviewActivity : ComponentActivity() {
       }
     }
   }
+
+  override fun onResume() {
+    super.onResume()
+    lifecycleScope.launch {
+      recentActivity = withContext(Dispatchers.IO) { loadRecentActivity() }
+    }
+  }
+
+  private fun loadRecentActivity(): RecentActivity? {
+    try {
+      val db = DBHelper.getReadableDatabase(applicationContext)
+      val columns = arrayOf(DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME)
+      db.query(DB.ACTIVITY.TABLE, columns, "deleted = 0", null, null, null,
+          "${DB.ACTIVITY.START_TIME} DESC", "1").use { cursor: Cursor ->
+        if (!cursor.moveToFirst()) return null
+        return RecentActivity(
+            startedAtSeconds = cursor.getLong(0),
+            distanceMeters = if (cursor.isNull(1)) null else cursor.getDouble(1),
+            durationSeconds = if (cursor.isNull(2)) null else cursor.getLong(2))
+      }
+    } catch (error: RuntimeException) {
+      Log.w("RelvenPreview", "Could not load recent activity", error)
+      return null
+    }
+  }
 }
 
+private data class RecentActivity(
+    val startedAtSeconds: Long,
+    val distanceMeters: Double?,
+    val durationSeconds: Long?)
+
 @Composable
-private fun RelvenPreviewHome(onOpenWorkout: () -> Unit, onOpenHistory: () -> Unit) {
+private fun RelvenPreviewHome(
+    recentActivity: RecentActivity?,
+    onOpenWorkout: () -> Unit,
+    onOpenHistory: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp).padding(bottom = 120.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
       Spacer(Modifier.height(20.dp))
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -98,6 +151,27 @@ private fun RelvenPreviewHome(onOpenWorkout: () -> Unit, onOpenHistory: () -> Un
               colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
               modifier = Modifier.fillMaxWidth().height(50.dp)) {
             Text("Öppna träningsvyn")
+          }
+        }
+      }
+      if (recentActivity != null) {
+        Surface(
+            shape = RoundedCornerShape(24.dp),
+            color = RelvenColors.Surface,
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
+            modifier = Modifier.fillMaxWidth()) {
+          Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Senaste passet", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(
+                DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.forLanguageTag("sv-SE"))
+                    .format(Date(recentActivity.startedAtSeconds * 1000)),
+                color = RelvenColors.MutedText,
+                fontSize = 13.sp)
+            val distance = recentActivity.distanceMeters?.let {
+              String.format(Locale.forLanguageTag("sv-SE"), "%.2f km", it / 1000.0)
+            } ?: "–"
+            val minutes = recentActivity.durationSeconds?.let { "${it / 60} min" } ?: "–"
+            Text("$distance  ·  $minutes", fontSize = 20.sp, fontWeight = FontWeight.Bold)
           }
         }
       }
