@@ -4,8 +4,10 @@
 
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`. This is a preservation bridge only; workouts and activity history are not yet imported into the current library.
+- PR #16 (bounded FIT running-workout importer) merged as `19395fa`; local build, tests, lint and fixture checks passed, as did hosted build/test/lint/style/F-Droid CI. Real-device FIT samples and picker-to-execution verification remain pending.
+- PR #17 (debug-only recent-activity card in the Compose preview) merged as `9b72e12`; local build, tests and lint plus hosted CI passed. No device was used.
 - The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
-- The FIT Workout subset importer is now on `codex/p1-fit-import`; local verification on this clean branch is pending. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
+- Work continues serially with no more than one open PR. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
 ## Phase Zero — repository migration
 
 - **Completed:** Existing history-preserving GitHub fork checked out on `codex/phase-zero`; `upstream` remote added. Original Relven repository untouched. Baseline phone/watch APKs and selected tests passed before edits. The release ID now matches the old Relven Play ID per owner instruction. Relven launcher labels, uploaded icon, CI artifact labels, README and migration documents changed locally.
@@ -52,8 +54,14 @@
 
 - **In progress:** The workout library now has a system file-picker button. Relven v3 running-workout JSON enters through this picker or the inherited document intent. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
 - **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
-- **Pending:** Broader real-world FIT Workout compatibility, richer schema validation, a full saved-file execution test, import UX review and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
+- **Pending:** Broader real-world FIT Workout compatibility, picker-to-execution verification, import UX review and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
+
+## Phase Five — plan packages and library
+
+- **In progress:** Versioned running-plan and workout schemas plus a strict local parser and atomic app-private package store are being added. The importer rejects unsupported workout semantics, unknown fields, non-schema JSON types, invalid dates/timezones/references, packages over 4 MiB, JSON nesting over 32, and more than 100,000 JSON tokens.
+- **Pending:** Connect document picking and preview to the store, add plan revision/activation behavior and calendar UI, then build the AI Plan Kit from the canonical schema.
+- **Verification:** Parser/store unit tests, debug build, lint, and Spotless pass locally. Hosted CI and independent review are pending. No device is being used.
 
 ## Later phases
 
-AI Plan Kit, strength library, map coloring and unified calendar remain pending. See [roadmap](roadmap.md) and [feature parity](feature-parity.md). Do not use the owner's phone via ADB again until all phases are complete and the app is ready for manual testing.
+See [roadmap](roadmap.md) and [feature parity](feature-parity.md). Do not use the owner's phone via ADB again until all phases are complete and the app is ready for manual testing.

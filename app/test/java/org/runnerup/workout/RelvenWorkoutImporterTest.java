@@ -69,6 +69,53 @@ public class RelvenWorkoutImporterTest {
   }
 
   @Test
+  public void rejectsUnknownFieldsInsteadOfSilentlyDroppingThem() {
+    String json =
+        PREFIX
+            + "[{\"id\":\"a\",\"kind\":\"segment\",\"phase\":\"work\","
+            + "\"end\":{\"type\":\"time\",\"seconds\":120},\"cadence\":180}]}";
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(json));
+  }
+
+  @Test
+  public void rejectsStringSchemaVersionInsteadOfCoercingIt() {
+    String json =
+        PREFIX.replace("\"schemaVersion\":3", "\"schemaVersion\":\"3\"")
+            + "[{\"id\":\"a\",\"kind\":\"segment\",\"phase\":\"work\","
+            + "\"end\":{\"type\":\"time\",\"seconds\":120}}]}";
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(json));
+  }
+
+  @Test
+  public void rejectsDeepJsonBeforeBuildingJsonObjectTree() {
+    String deeplyNested = "[".repeat(5_000) + "0" + "]".repeat(5_000);
+    String json = PREFIX + "[],\"unexpected\":" + deeplyNested + "}";
+    IllegalArgumentException error =
+        assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(json));
+    org.junit.Assert.assertTrue(error.getMessage().contains("JSON nesting too deep"));
+  }
+
+  @Test
+  public void rejectsNullSegmentName() {
+    String json =
+        PREFIX
+            + "[{\"id\":\"a\",\"kind\":\"segment\",\"name\":null,\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":120}}]}";
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(json));
+  }
+
+  @Test
+  public void rejectsNonStringCompositeNames() {
+    String sequence =
+        PREFIX
+            + "[{\"id\":\"s\",\"kind\":\"sequence\",\"name\":7,\"steps\":[{\"id\":\"a\",\"kind\":\"segment\",\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":120}}]}]}";
+    String repeat =
+        PREFIX
+            + "[{\"id\":\"r\",\"kind\":\"repeat\",\"name\":false,\"count\":2,\"steps\":[{\"id\":\"a\",\"kind\":\"segment\",\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":120}}]}]}";
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(sequence));
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(repeat));
+  }
+
+  @Test
   public void convertedWorkoutWritesExistingFileFormat() throws Exception {
     String json =
         PREFIX

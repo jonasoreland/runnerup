@@ -1,0 +1,513 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relven.invalid/schemas/workout-v3.schema.json",
+  "title": "Relven Workout v3",
+  "description": "Portable SI-unit workout document with immutable exercise library and media snapshots.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "sport",
+    "steps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 3
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "sport": {
+      "enum": [
+        "running",
+        "strength",
+        "prehab"
+      ]
+    },
+    "warmupExempt": {
+      "type": "boolean"
+    },
+    "cooldownExempt": {
+      "type": "boolean"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/segment"
+        },
+        {
+          "$ref": "#/$defs/sequence"
+        },
+        {
+          "$ref": "#/$defs/repeat"
+        }
+      ]
+    },
+    "stepBase": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "segment": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stepBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "end"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "kind": {
+              "const": "segment"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "phase": {
+              "enum": [
+                "warmup",
+                "work",
+                "recovery",
+                "cooldown"
+              ]
+            },
+            "end": {
+              "$ref": "#/$defs/end"
+            },
+            "target": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/target"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "exercise": {
+              "$ref": "#/$defs/exercise"
+            }
+          }
+        }
+      ]
+    },
+    "sequence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stepBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "steps"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "kind": {
+              "const": "sequence"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/node"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "repeat": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/stepBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "count",
+            "steps"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "kind": {
+              "const": "repeat"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "steps": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/node"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exerciseId",
+        "libraryRevision",
+        "snapshot",
+        "sets",
+        "minRepetitions",
+        "maxRepetitions",
+        "restSeconds"
+      ],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "libraryRevision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2147483647
+        },
+        "snapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "instructions",
+            "equipment",
+            "images"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "instructions": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "equipment": {
+              "type": "array",
+              "maxItems": 12,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              }
+            },
+            "images": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "assetId",
+                  "role"
+                ],
+                "properties": {
+                  "assetId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  },
+                  "role": {
+                    "enum": [
+                      "start",
+                      "finish",
+                      "demonstration"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "minRepetitions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "maxRepetitions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "restSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3600
+        }
+      }
+    },
+    "number": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1000000000
+    },
+    "end": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "seconds"
+          ],
+          "properties": {
+            "type": {
+              "const": "time"
+            },
+            "seconds": {
+              "$ref": "#/$defs/number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "meters"
+          ],
+          "properties": {
+            "type": {
+              "const": "distance"
+            },
+            "meters": {
+              "$ref": "#/$defs/number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "manual"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "conditions"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "any",
+                "all"
+              ]
+            },
+            "conditions": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 32,
+              "items": {
+                "$ref": "#/$defs/end"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "bpm",
+            "timeoutSeconds"
+          ],
+          "properties": {
+            "type": {
+              "const": "heart_rate_below"
+            },
+            "bpm": {
+              "type": "number",
+              "minimum": 30,
+              "maximum": 240
+            },
+            "timeoutSeconds": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 86400
+            }
+          }
+        }
+      ]
+    },
+    "target": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "level"
+          ],
+          "properties": {
+            "type": {
+              "const": "effort"
+            },
+            "level": {
+              "enum": [
+                "easy",
+                "steady",
+                "threshold",
+                "hard",
+                "maximal"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "minSecondsPerKm",
+            "maxSecondsPerKm"
+          ],
+          "properties": {
+            "type": {
+              "const": "pace"
+            },
+            "minSecondsPerKm": {
+              "$ref": "#/$defs/number"
+            },
+            "maxSecondsPerKm": {
+              "$ref": "#/$defs/number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "minMetersPerSecond",
+            "maxMetersPerSecond"
+          ],
+          "properties": {
+            "type": {
+              "const": "speed"
+            },
+            "minMetersPerSecond": {
+              "$ref": "#/$defs/number"
+            },
+            "maxMetersPerSecond": {
+              "$ref": "#/$defs/number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "minBpm",
+            "maxBpm"
+          ],
+          "properties": {
+            "type": {
+              "const": "heart_rate"
+            },
+            "minBpm": {
+              "type": "number",
+              "minimum": 30,
+              "maximum": 240
+            },
+            "maxBpm": {
+              "type": "number",
+              "minimum": 30,
+              "maximum": 240
+            }
+          }
+        }
+      ]
+    }
+  }
+}
