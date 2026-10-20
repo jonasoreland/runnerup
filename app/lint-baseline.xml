@@ -3,7 +3,7 @@
 
     <issue
         id="UnusedAttribute"
-        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 23)"
+        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 24)"
         errorLine1="        android:usesPermissionFlags=&quot;neverForLocation&quot; />"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -19,18 +19,7 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/view/MainLayout.java"
-            line="88"
-            column="7"/>
-    </issue>
-
-    <issue
-        id="SourceLockedOrientationActivity"
-        message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
-        errorLine1="      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
-        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/org/runnerup/view/RunActivity.java"
-            line="127"
+            line="90"
             column="7"/>
     </issue>
 
