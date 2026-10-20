@@ -37,6 +37,22 @@ public class RelvenWorkoutImporterTest {
   }
 
   @Test
+  public void rejectsNestedRepeatsThatExceedExpandedStepLimit() {
+    String json =
+        PREFIX
+            + "[{\"id\":\"outer\",\"kind\":\"repeat\",\"count\":100,\"steps\":[{\"id\":\"middle\",\"kind\":\"repeat\",\"count\":100,\"steps\":[{\"id\":\"inner\",\"kind\":\"repeat\",\"count\":100,\"steps\":[{\"id\":\"segment\",\"kind\":\"segment\",\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":1}}]}]}]}]}";
+    assertThrows(IllegalArgumentException.class, () -> RelvenWorkoutImporter.parse(json));
+  }
+
+  @Test
+  public void acceptsNestedRepeatsAtExpandedStepLimit() {
+    String json =
+        PREFIX
+            + "[{\"id\":\"outer\",\"kind\":\"repeat\",\"count\":100,\"steps\":[{\"id\":\"inner\",\"kind\":\"repeat\",\"count\":100,\"steps\":[{\"id\":\"segment\",\"kind\":\"segment\",\"phase\":\"work\",\"end\":{\"type\":\"time\",\"seconds\":1}}]}]}]}";
+    RelvenWorkoutImporter.parse(json);
+  }
+
+  @Test
   public void rejectsUnsupportedCompositeEndInsteadOfChangingWorkout() {
     String json =
         PREFIX

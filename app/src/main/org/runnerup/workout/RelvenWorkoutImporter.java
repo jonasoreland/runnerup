@@ -13,6 +13,7 @@ import org.runnerup.common.util.Constants;
 public final class RelvenWorkoutImporter {
   private static final int MAX_NODES = 256;
   private static final int MAX_DEPTH = 16;
+  private static final long MAX_EXPANDED_STEPS = 10_000;
 
   private RelvenWorkoutImporter() {}
 
@@ -27,7 +28,7 @@ public final class RelvenWorkoutImporter {
       if (nodes.length() == 0 || nodes.length() > MAX_NODES) throw unsupported("step count");
 
       ParseState state = new ParseState();
-      List<Step> steps = parseNodes(nodes, state, 0);
+      List<Step> steps = parseNodes(nodes, state, 0, 1);
       Workout workout = new Workout();
       workout.sport = Constants.DB.ACTIVITY.SPORT_RUNNING;
       workout.setWorkoutType(Constants.WORKOUT_TYPE.ADVANCED);
@@ -38,8 +39,8 @@ public final class RelvenWorkoutImporter {
     }
   }
 
-  private static List<Step> parseNodes(JSONArray nodes, ParseState state, int depth)
-      throws JSONException {
+  private static List<Step> parseNodes(
+      JSONArray nodes, ParseState state, int depth, long repeatMultiplier) throws JSONException {
     if (depth > MAX_DEPTH || nodes.length() == 0) throw unsupported("nesting or empty steps");
     List<Step> result = new ArrayList<>();
     for (int i = 0; i < nodes.length(); i++) {
@@ -49,17 +50,28 @@ public final class RelvenWorkoutImporter {
       if (!state.ids.add(id)) throw unsupported("duplicate step id: " + id);
       switch (node.getString("kind")) {
         case "segment":
+          if (repeatMultiplier > MAX_EXPANDED_STEPS - state.expandedStepCount) {
+            throw unsupported("expanded step count");
+          }
+          state.expandedStepCount += repeatMultiplier;
           result.add(parseSegment(node));
           break;
         case "sequence":
-          result.addAll(parseNodes(node.getJSONArray("steps"), state, depth + 1));
+          result.addAll(parseNodes(node.getJSONArray("steps"), state, depth + 1, repeatMultiplier));
           break;
         case "repeat":
           int count = node.getInt("count");
           if (count < 1 || count > 100) throw unsupported("repeat count");
+          if (repeatMultiplier > MAX_EXPANDED_STEPS / count) {
+            throw unsupported("expanded step count");
+          }
           RepeatStep repeat = new RepeatStep();
           repeat.setRepeatCount(count);
-          repeat.getSteps().addAll(parseNodes(node.getJSONArray("steps"), state, depth + 1));
+          repeat
+              .getSteps()
+              .addAll(
+                  parseNodes(
+                      node.getJSONArray("steps"), state, depth + 1, repeatMultiplier * count));
           result.add(repeat);
           break;
         default:
@@ -157,6 +169,7 @@ public final class RelvenWorkoutImporter {
 
   private static final class ParseState {
     int nodeCount;
+    long expandedStepCount;
     final Set<String> ids = new HashSet<>();
   }
 }
