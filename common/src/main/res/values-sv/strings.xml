@@ -293,6 +293,15 @@
   <string name="Clear_active_plan">Inaktivera plan</string>
   <string name="Clearing_active_plan">Inaktiverar plan…</string>
   <string name="Active_plan_cleared">Planen har inaktiverats.</string>
+  <string name="Today_plan_title">Dagens plan</string>
+  <string name="Today_plan_loading">Läser dagens plan…</string>
+  <string name="No_active_plan">Ingen aktiv plan</string>
+  <string name="Activate_a_plan_hint">Aktivera en sparad plan i träningsvyn för att se dagens pass här.</string>
+  <string name="Today_plan_unavailable">Den aktiva planen kunde inte läsas</string>
+  <string name="Today_plan_unavailable_hint">Öppna träningsvyn och kontrollera dina sparade planer.</string>
+  <string name="No_plan_item_today">Inget pass planerat idag</string>
+  <string name="Rest_day">Vilodag</string>
+  <string name="Planned_run_in_plan">Planerat löppass · %1$s</string>
   <string name="Validating_plan">Validerar plan…</string>
   <string name="Saving_plan">Sparar plan…</string>
   <string name="Saving_as">Sparar som</string>

@@ -60,7 +60,7 @@ public class RelvenPlanStoreTest {
   public void invalidSourceWritesNothing() {
     RelvenPlanImporter.Plan forged =
         new RelvenPlanImporter.Plan(
-            "forged", "Forged", "Europe/Stockholm", List.of(), Map.of(), "{}");
+            "forged", "Forged", "Europe/Stockholm", List.of(), Map.of(), Map.of(), "{}");
     assertThrows(RuntimeException.class, () -> RelvenPlanStore.save(context, forged));
     assertEquals(0, directory.listFiles().length);
   }

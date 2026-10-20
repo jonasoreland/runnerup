@@ -296,6 +296,15 @@
     <string name="Clear_active_plan">Clear active plan</string>
     <string name="Clearing_active_plan">Clearing active plan…</string>
     <string name="Active_plan_cleared">Active plan cleared.</string>
+    <string name="Today_plan_title">Today’s plan</string>
+    <string name="Today_plan_loading">Loading today’s plan…</string>
+    <string name="No_active_plan">No active plan</string>
+    <string name="Activate_a_plan_hint">Activate a saved plan in the training view to see today’s item here.</string>
+    <string name="Today_plan_unavailable">Couldn’t read the active plan</string>
+    <string name="Today_plan_unavailable_hint">Open the training view and check your saved plans.</string>
+    <string name="No_plan_item_today">No workout scheduled today</string>
+    <string name="Rest_day">Rest day</string>
+    <string name="Planned_run_in_plan">Planned run · %1$s</string>
     <string name="Validating_plan">Validating plan…</string>
     <string name="Saving_plan">Saving plan…</string>
     <string name="Saving_as">Saving as</string>
