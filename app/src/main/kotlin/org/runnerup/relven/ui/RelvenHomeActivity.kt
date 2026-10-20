@@ -54,15 +54,15 @@ import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
 import org.runnerup.view.MainLayout
 
-/** Development entry point while the legacy workout controls remain authoritative. */
-class RelvenPreviewActivity : ComponentActivity() {
+/** Production home screen; RunnerUp remains authoritative for workout controls. */
+class RelvenHomeActivity : ComponentActivity() {
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
       RelvenTheme {
-        RelvenPreviewHome(
+        RelvenHome(
             recentActivity = recentActivity,
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
@@ -94,7 +94,7 @@ class RelvenPreviewActivity : ComponentActivity() {
             durationSeconds = if (cursor.isNull(2)) null else cursor.getLong(2))
       }
     } catch (error: RuntimeException) {
-      Log.w("RelvenPreview", "Could not load recent activity", error)
+      Log.w("RelvenHome", "Could not load recent activity", error)
       return null
     }
   }
@@ -106,7 +106,7 @@ private data class RecentActivity(
     val durationSeconds: Long?)
 
 @Composable
-private fun RelvenPreviewHome(
+private fun RelvenHome(
     recentActivity: RecentActivity?,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit) {

@@ -2,6 +2,7 @@
 
 ## 20 October 2026 serial integration checkpoint
 
+- PR #20 (legacy migration review and confirmed import of supported workouts and eligible completed running activities) merged to `master` as `2b4198c`. Hosted build/test/lint/style/F-Droid checks passed. The next PR promotes the existing Compose Today screen to production launcher while keeping workout/history screens on RunnerUp.
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`.
 - PR #16 (bounded FIT running-workout importer) merged as `19395fa`; local build, tests, lint and fixture checks passed, as did hosted build/test/lint/style/F-Droid CI. Real-device FIT samples and picker-to-execution verification remain pending.
@@ -50,13 +51,13 @@
 
 ## Phase Three — Stitch reference retrieval
 
-- **Completed:** Verified current project `15389433782836702529`; downloaded all ten screen screenshots and seven available HTML exports. The [Stitch manifest](../design/stitch/manifest.json) records IDs and local files. Extracted primary Android colors, font and shell elements in the [reference notes](../design/stitch/README.md). Added native Kotlin/Compose theme tokens, bundled licensed Plus Jakarta Sans, and a debug-only preview with an action into the inherited workout controls. The preview now reads the latest recorded activity from the inherited local database and displays its date, distance and duration when one exists.
-- **Pending:** Correct the three inconsistent planning/detail screens in Stitch; implement the remaining home data, phone screens, watch screens and production navigation. The preview is not the release launcher.
-- **Changed modules:** `design/stitch`, root and app Gradle, debug manifest, `app/src/main/kotlin`, a narrow legacy tab-intent hook and documentation.
-- **Build/test status:** `:app:assembleLatestDebug`, `:app:testLatestDebugUnitTest` and `:app:lintLatestDebug` passed. Lint reported no new issues, with 23 inherited baseline-filtered errors.
-- **Emulator/physical devices:** Compose preview cold-launched on Samsung SM-S948B and was inspected by screenshot. Initial black capture was a transient screen/transition state; a clean launch rendered correctly. No navigation or workout behavior was verified in the preview.
+- **Completed:** Verified current project `15389433782836702529`; downloaded all ten screen screenshots and seven available HTML exports. The [Stitch manifest](../design/stitch/manifest.json) records IDs and local files. Extracted primary Android colors, font and shell elements in the [reference notes](../design/stitch/README.md). Added native Kotlin/Compose theme tokens, bundled licensed Plus Jakarta Sans, and a Today screen that reads the latest activity from the inherited local database. The production launcher now opens this screen; Start and History continue into RunnerUp's workout and history screens.
+- **Pending:** Correct the three inconsistent planning/detail screens in Stitch; implement the remaining home data, phone screens, watch screens and production navigation.
+- **Changed modules:** `design/stitch`, root and app Gradle, app manifest, `app/src/main/kotlin`, a narrow legacy tab-intent hook and documentation.
+- **Build/test status:** Launcher manifest regression test, `:app:assembleLatestDebug`, `:app:assembleLatestRelease`, `:app:testLatestDebugUnitTest`, `:app:lintLatestDebug` and `spotlessCheck` pass. Lint reports no new issues; 23 inherited baseline-filtered errors remain.
+- **Emulator/physical devices:** No emulator or physical device used for this promotion. Physical device remains unused until all phases are complete and the app is ready for manual testing.
 - **Known issues:** Stitch edit of the three exact screens returned HTTP 502. A fresh read showed unchanged file entries; the edit may still be pending server-side. Current three exports are content inventory only.
-- **Next step:** Connect the home screen to real activity/session data, then migrate essential running UI while retaining the inherited `Tracker`.
+- **Next step:** Continue migrating essential running UI while retaining the inherited `Tracker`.
 
 ## Phase Four — workout import
 
