@@ -74,11 +74,20 @@ public final class RelvenWorkoutImporter {
     Step step = new Step();
     if (node.has("name") && !node.isNull("name")) step.setName(requireName(node, "name"));
     switch (node.getString("phase")) {
-      case "warmup": step.setIntensity(Intensity.WARMUP); break;
-      case "work": step.setIntensity(Intensity.ACTIVE); break;
-      case "recovery": step.setIntensity(Intensity.RECOVERY); break;
-      case "cooldown": step.setIntensity(Intensity.COOLDOWN); break;
-      default: throw unsupported("phase");
+      case "warmup":
+        step.setIntensity(Intensity.WARMUP);
+        break;
+      case "work":
+        step.setIntensity(Intensity.ACTIVE);
+        break;
+      case "recovery":
+        step.setIntensity(Intensity.RECOVERY);
+        break;
+      case "cooldown":
+        step.setIntensity(Intensity.COOLDOWN);
+        break;
+      default:
+        throw unsupported("phase");
     }
 
     JSONObject end = node.getJSONObject("end");

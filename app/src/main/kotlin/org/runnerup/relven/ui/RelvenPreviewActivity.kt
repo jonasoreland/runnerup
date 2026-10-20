@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DirectionsRun
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
@@ -115,7 +115,10 @@ private fun RelvenPreviewHome(onOpenWorkout: () -> Unit, onOpenHistory: () -> Un
           Icon(Icons.Default.Home, contentDescription = "Idag", tint = Color.White)
         }
         IconButton(onClick = onOpenWorkout) {
-          Icon(Icons.Default.DirectionsRun, contentDescription = "Starta pass", tint = Color.White)
+          Icon(
+              Icons.AutoMirrored.Filled.DirectionsRun,
+              contentDescription = "Starta pass",
+              tint = Color.White)
         }
         IconButton(onClick = onOpenHistory) {
           Icon(Icons.Default.History, contentDescription = "Historik i träningsvyn", tint = Color.White)

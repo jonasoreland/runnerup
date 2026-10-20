@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.content.WorkoutFileProvider;
@@ -73,10 +74,9 @@ import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.ViewUtil;
-import org.runnerup.workout.Workout;
 import org.runnerup.workout.RelvenWorkoutImporter;
+import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
-import org.json.JSONObject;
 
 public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
 
@@ -184,7 +184,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
           .setTitle(org.runnerup.common.R.string.Error)
           .setMessage(
               getString(org.runnerup.common.R.string.Failed_to_import)
-                  + ": " + fileName + "\n" + e.getMessage())
+                  + ": "
+                  + fileName
+                  + "\n"
+                  + e.getMessage())
           .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
           .show();
     }
@@ -222,9 +225,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       raw = output.toString(StandardCharsets.UTF_8.name());
     }
     boolean relven = new JSONObject(raw).has("schemaVersion");
-    Workout w = relven
-        ? RelvenWorkoutImporter.parse(raw)
-        : WorkoutSerializer.readJSON(new StringReader(raw));
+    Workout w =
+        relven
+            ? RelvenWorkoutImporter.parse(raw)
+            : WorkoutSerializer.readJSON(new StringReader(raw));
     if (w == null) throw new Exception("Failed to parse content");
 
     if (fileName.endsWith(".json")) {
