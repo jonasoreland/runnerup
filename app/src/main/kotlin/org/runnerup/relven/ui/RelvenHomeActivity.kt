@@ -57,6 +57,8 @@ import org.runnerup.view.MainLayout
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
 class RelvenHomeActivity : ComponentActivity() {
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
+  private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
+  private var trackerSessionBinding: HomeTrackerSessionBinding? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -64,6 +66,7 @@ class RelvenHomeActivity : ComponentActivity() {
       RelvenTheme {
         RelvenHome(
             recentActivity = recentActivity,
+            sessionStatus = sessionStatus,
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
               startActivity(
@@ -74,11 +77,25 @@ class RelvenHomeActivity : ComponentActivity() {
     }
   }
 
+  override fun onStart() {
+    super.onStart()
+    trackerSessionBinding =
+        HomeTrackerSessionBinding(this) { status ->
+          runOnUiThread { sessionStatus = status }
+        }.also { it.start() }
+  }
+
   override fun onResume() {
     super.onResume()
     lifecycleScope.launch {
       recentActivity = withContext(Dispatchers.IO) { loadRecentActivity() }
     }
+  }
+
+  override fun onStop() {
+    trackerSessionBinding?.stop()
+    trackerSessionBinding = null
+    super.onStop()
   }
 
   private fun loadRecentActivity(): RecentActivity? {
@@ -108,6 +125,7 @@ private data class RecentActivity(
 @Composable
 private fun RelvenHome(
     recentActivity: RecentActivity?,
+    sessionStatus: HomeSessionStatus?,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
@@ -126,6 +144,20 @@ private fun RelvenHome(
         Column(Modifier.weight(1f).padding(start = 12.dp)) {
           Text("Relven", fontWeight = FontWeight.Bold, fontSize = 17.sp)
           Text("Din träning", color = RelvenColors.MutedText, fontSize = 12.sp)
+        }
+      }
+      sessionStatus?.let { status ->
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = RelvenColors.Surface,
+            border = BorderStroke(1.dp, RelvenColors.Orange.copy(alpha = 0.45f)),
+            modifier = Modifier.fillMaxWidth()) {
+          Text(
+              status.label,
+              color = RelvenColors.Orange,
+              fontSize = 14.sp,
+              fontWeight = FontWeight.SemiBold,
+              modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp))
         }
       }
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
