@@ -40,6 +40,20 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/import_workout_button"
+                style="@style/ButtonText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/btn_blue"
+                android:text="@string/Import_workout"
+                android:textSize="16sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
                 android:id="@+id/share_workout_button"
                 style="@style/ButtonText"
                 android:layout_width="0dp"

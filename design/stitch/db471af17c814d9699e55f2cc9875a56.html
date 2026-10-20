@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="sv"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Styrkepass Detaljer - Relven</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            surface: "#0c1017",
+            "surface-dim": "#080c12",
+            "surface-card": "#131a24",
+            "surface-container": "#18212e",
+            "surface-container-high": "#222c3c",
+            "on-surface": "#e6edf8",
+            "on-surface-variant": "#929db0",
+            primary: "#ff6a00",
+            "primary-hover": "#ff7a1a",
+            "accent-blue": "#3b82f6",
+            outline: "#232e3e",
+            "outline-variant": "#1c2533"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            display: ["Space Grotesk", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #0c1017;
+      color: #e6edf8;
+      font-family: 'Inter', sans-serif;
+      overscroll-behavior: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-primary/20">
+<!-- Main Container for Android Mobile Layout -->
+<div class="w-full max-w-md mx-auto flex-1 flex flex-col min-h-screen relative">
+<!-- Top System & App Navigation Bar -->
+<header class="sticky top-0 z-40 bg-[#0c1017]/90 backdrop-blur-md border-b border-outline-variant/30">
+<!-- Android Status Bar -->
+<div class="h-8 px-6 flex items-center justify-between text-xs font-medium text-on-surface-variant tracking-wide select-none">
+<span>9:40 PM</span>
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-[15px] leading-none">wifi</span>
+<span class="material-symbols-outlined text-[15px] leading-none">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[16px] leading-none">battery_full</span>
+</div>
+</div>
+<!-- App Header Bar -->
+<div class="h-14 px-4 flex items-center justify-between">
+<button aria-label="Tillbaka" class="w-10 h-10 rounded-full bg-surface-container/80 border border-outline/40 flex items-center justify-center text-on-surface active:scale-95 transition-all hover:bg-surface-container-high" onclick="history.back()">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<h1 class="text-base font-semibold tracking-tight text-on-surface font-sans">
+          Styrkepass
+        </h1>
+<button aria-label="Fler alternativ" class="w-10 h-10 rounded-full bg-transparent flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-all">
+<span class="material-symbols-outlined text-[22px]">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-5 pt-4 pb-6 space-y-6">
+<!-- Workout Title & Subtitle Hero -->
+<section class="space-y-1">
+<div class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-semibold tracking-wide uppercase font-sans mb-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>Fas 2 · Vecka 3</span>
+</div>
+<h2 class="text-2xl font-bold font-display tracking-tight text-on-surface">
+          Underkropp &amp; Core
+        </h2>
+<p class="text-xs text-on-surface-variant font-medium">
+          Tisdag 15 okt · 50 min · 5 övningar
+        </p>
+</section>
+<!-- Workout Summary Metrics Card -->
+<section class="rounded-2xl bg-surface-card/90 border border-outline/60 p-4 shadow-sm backdrop-blur-sm space-y-4">
+<div class="grid grid-cols-2 gap-3 pb-3 border-b border-outline-variant/60">
+<div>
+<span class="text-[11px] font-medium uppercase tracking-wider text-on-surface-variant block mb-0.5">Tid</span>
+<span class="text-lg font-bold font-display text-on-surface">50 min</span>
+</div>
+<div>
+<span class="text-[11px] font-medium uppercase tracking-wider text-on-surface-variant block mb-0.5">Arbets-set</span>
+<span class="text-lg font-bold font-display text-on-surface">15 set</span>
+</div>
+</div>
+<div class="space-y-2.5">
+<div class="flex items-start justify-between text-xs">
+<span class="text-on-surface-variant font-medium shrink-0">Fokus:</span>
+<span class="text-on-surface font-semibold text-right">Hypertrofi &amp; Grundstyrka</span>
+</div>
+<div class="flex items-start justify-between text-xs">
+<span class="text-on-surface-variant font-medium shrink-0">Muskelgrupper:</span>
+<span class="text-on-surface/90 text-right leading-relaxed pl-2 font-medium">Framsida lår, Säte, Baksida lår, Core</span>
+</div>
+</div>
+</section>
+<!-- Exercise List Section -->
+<section class="space-y-3">
+<div class="flex items-center justify-between px-0.5">
+<h3 class="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Övningsöversikt</h3>
+<span class="text-xs font-semibold text-on-surface-variant">5 övningar</span>
+</div>
+<div class="space-y-2">
+<!-- Exercise 1 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-card border border-outline-variant/60 hover:border-outline/80 transition-all">
+<div class="flex items-center space-x-3.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary/15 border border-primary/25 text-primary flex items-center justify-center shrink-0 font-display font-bold text-xs">
+                1
+              </div>
+<div class="min-w-0">
+<div class="flex items-center space-x-2">
+<h4 class="text-sm font-semibold text-on-surface truncate">Knäböj</h4>
+<span class="text-[11px] text-on-surface-variant truncate hidden sm:inline">(Barbell Back Squat)</span>
+</div>
+<div class="flex items-center space-x-2 text-xs text-on-surface-variant mt-0.5">
+<span class="font-medium text-on-surface">3 set × 8 reps</span>
+<span>·</span>
+<span class="text-on-surface/90 font-medium">85 kg</span>
+<span>·</span>
+<span class="text-[11px]">120s vila</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px] shrink-0 ml-2">chevron_right</span>
+</div>
+<!-- Exercise 2 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-card border border-outline-variant/60 hover:border-outline/80 transition-all">
+<div class="flex items-center space-x-3.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/50 text-on-surface-variant flex items-center justify-center shrink-0 font-display font-bold text-xs">
+                2
+              </div>
+<div class="min-w-0">
+<div class="flex items-center space-x-2">
+<h4 class="text-sm font-semibold text-on-surface truncate">Rumänska marklyft</h4>
+<span class="text-[11px] text-on-surface-variant truncate hidden sm:inline">(RDL)</span>
+</div>
+<div class="flex items-center space-x-2 text-xs text-on-surface-variant mt-0.5">
+<span class="font-medium text-on-surface">3 set × 10 reps</span>
+<span>·</span>
+<span class="text-on-surface/90 font-medium">70 kg</span>
+<span>·</span>
+<span class="text-[11px]">90s vila</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px] shrink-0 ml-2">chevron_right</span>
+</div>
+<!-- Exercise 3 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-card border border-outline-variant/60 hover:border-outline/80 transition-all">
+<div class="flex items-center space-x-3.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/50 text-on-surface-variant flex items-center justify-center shrink-0 font-display font-bold text-xs">
+                3
+              </div>
+<div class="min-w-0">
+<div class="flex items-center space-x-2">
+<h4 class="text-sm font-semibold text-on-surface truncate">Gående utfall med hantlar</h4>
+</div>
+<div class="flex items-center space-x-2 text-xs text-on-surface-variant mt-0.5">
+<span class="font-medium text-on-surface">3 set × 10 reps/ben</span>
+<span>·</span>
+<span class="text-on-surface/90 font-medium">16 kg</span>
+<span>·</span>
+<span class="text-[11px]">90s vila</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px] shrink-0 ml-2">chevron_right</span>
+</div>
+<!-- Exercise 4 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-card border border-outline-variant/60 hover:border-outline/80 transition-all">
+<div class="flex items-center space-x-3.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/50 text-on-surface-variant flex items-center justify-center shrink-0 font-display font-bold text-xs">
+                4
+              </div>
+<div class="min-w-0">
+<div class="flex items-center space-x-2">
+<h4 class="text-sm font-semibold text-on-surface truncate">Stående vadpress</h4>
+</div>
+<div class="flex items-center space-x-2 text-xs text-on-surface-variant mt-0.5">
+<span class="font-medium text-on-surface">3 set × 15 reps</span>
+<span>·</span>
+<span class="text-on-surface/90 font-medium">60 kg</span>
+<span>·</span>
+<span class="text-[11px]">60s vila</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px] shrink-0 ml-2">chevron_right</span>
+</div>
+<!-- Exercise 5 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-card border border-outline-variant/60 hover:border-outline/80 transition-all">
+<div class="flex items-center space-x-3.5 min-w-0">
+<div class="w-7 h-7 rounded-full bg-surface-container-high border border-outline/50 text-on-surface-variant flex items-center justify-center shrink-0 font-display font-bold text-xs">
+                5
+              </div>
+<div class="min-w-0">
+<div class="flex items-center space-x-2">
+<h4 class="text-sm font-semibold text-on-surface truncate">Planka med bålaktivering</h4>
+</div>
+<div class="flex items-center space-x-2 text-xs text-on-surface-variant mt-0.5">
+<span class="font-medium text-on-surface">3 set × 45 sek</span>
+<span>·</span>
+<span class="text-on-surface/90 font-medium">kroppsvikt</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/60 text-[20px] shrink-0 ml-2">chevron_right</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Actions & Android Indicator -->
+<footer class="p-5 pt-2 pb-3 bg-gradient-to-t from-surface via-surface/95 to-transparent flex flex-col items-center space-y-3">
+<!-- Primary Vibrant Orange Action Button -->
+<button class="w-full h-13 py-3.5 px-6 rounded-full bg-[#FF6A00] hover:bg-[#FF7A1A] text-white font-semibold text-base flex items-center justify-center space-x-2 shadow-[0_6px_20px_rgba(255,106,0,0.35)] active:scale-[0.98] transition-all duration-150" type="button">
+<span class="material-symbols-outlined text-[22px] leading-none" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+<span>Starta styrkepass</span>
+</button>
+<!-- Subtle Secondary Action Button -->
+<button class="py-2 px-4 rounded-full text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+        Logga manuellt
+      </button>
+<!-- Android Home Bar Indicator -->
+<div class="pt-2 pb-1 flex justify-center w-full">
+<div class="w-32 h-1 bg-on-surface-variant/30 rounded-full"></div>
+</div>
+</footer>
+</div>
+</body></html>
