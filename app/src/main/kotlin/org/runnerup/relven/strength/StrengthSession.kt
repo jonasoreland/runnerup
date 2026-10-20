@@ -26,6 +26,9 @@ internal data class StrengthSession(
   val isComplete: Boolean
     get() = phase == Phase.COMPLETE
 
+  fun matchesScheduledEntry(planId: String, scheduledEntryId: String): Boolean =
+      this.planId == planId && this.scheduledEntryId == scheduledEntryId
+
   fun currentExercise(): RelvenStrengthWorkoutParser.Exercise {
     check(phase != Phase.COMPLETE) { "Strength session is complete" }
     return workout.exercises()[exerciseIndex]

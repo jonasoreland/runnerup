@@ -409,6 +409,10 @@
   <string name="Strength_session_finish_confirmation">Spara passet som genomfört?</string>
   <string name="Strength_session_next">Nästa: %1$s</string>
   <string name="Strength_session_recovery_title">Passets framsteg kunde inte återställas</string>
+    <string name="Strength_session_existing_title">Ett annat pass pågår</string>
+    <string name="Strength_session_existing_message">Ett oavslutat pass är sparat: %1$s. Fortsätt det innan du startar %2$s?</string>
+    <string name="Strength_session_existing_continue">Fortsätt befintligt</string>
+    <string name="Strength_session_existing_cancel">Avbryt</string>
   <string name="Strength_session_recovery_message">De sparade framstegen var skadade och har tagits bort. Starta passet igen från planens kalender.</string>
   <string name="Plan_calendar_remove">Ta bort</string>
   <string name="Plan_calendar_remove_accessibility">Ta bort %1$s</string>

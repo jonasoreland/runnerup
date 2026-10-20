@@ -48,6 +48,7 @@ internal fun StrengthSessionScreen(
     session: StrengthSession,
     completedAtMillis: Long?,
     saveError: Boolean,
+    isSavingProgress: Boolean,
     isSavingCompletion: Boolean,
     onTick: () -> Unit,
     onLogRepetitions: (Int) -> Unit,
@@ -64,8 +65,8 @@ internal fun StrengthSessionScreen(
     mutableStateOf(exercise?.let { ((it.minRepetitions() + it.maxRepetitions()) / 2).toString() }.orEmpty())
   }
 
-  LaunchedEffect(session.phase, session.exerciseIndex, session.setNumber, session.secondsRemaining) {
-    if (!completed && (session.phase == StrengthSession.Phase.TIMED_WORK || session.phase == StrengthSession.Phase.REST)) {
+  LaunchedEffect(session.phase, session.exerciseIndex, session.setNumber, session.secondsRemaining, isSavingProgress) {
+    if (!completed && !isSavingProgress && (session.phase == StrengthSession.Phase.TIMED_WORK || session.phase == StrengthSession.Phase.REST)) {
       delay(1_000)
       onTick()
     }
@@ -164,7 +165,7 @@ internal fun StrengthSessionScreen(
                     modifier = Modifier.fillMaxWidth())
                 Button(
                     onClick = { repetitions.toIntOrNull()?.let(onLogRepetitions) },
-                    enabled = repetitions.toIntOrNull()?.let { it in 1..500 } == true,
+                    enabled = !isSavingProgress && repetitions.toIntOrNull()?.let { it in 1..500 } == true,
                     colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
                   Text(stringResource(R.string.Strength_session_log_repetitions))
@@ -190,12 +191,13 @@ internal fun StrengthSessionScreen(
                     color = RelvenColors.Orange,
                     fontSize = 64.sp,
                     fontWeight = FontWeight.Bold)
-                TextButton(onClick = onSkipRest) { Text(stringResource(R.string.Strength_session_skip_rest)) }
+                TextButton(onClick = onSkipRest, enabled = !isSavingProgress) { Text(stringResource(R.string.Strength_session_skip_rest)) }
               }
               StrengthSession.Phase.PAUSED -> {
                 Text(stringResource(R.string.Strength_session_paused), color = RelvenColors.MutedText)
                 Button(
                     onClick = onResume,
+                    enabled = !isSavingProgress,
                     colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
                   Text(stringResource(R.string.Strength_session_resume))
@@ -219,11 +221,11 @@ internal fun StrengthSessionScreen(
           horizontalArrangement = Arrangement.spacedBy(12.dp),
           verticalAlignment = Alignment.CenterVertically) {
         if (session.phase != StrengthSession.Phase.PAUSED) {
-          TextButton(onClick = onPause, modifier = Modifier.weight(1f)) {
+          TextButton(onClick = onPause, enabled = !isSavingProgress, modifier = Modifier.weight(1f)) {
             Text(stringResource(R.string.Strength_session_pause))
           }
         }
-        TextButton(onClick = onClose, modifier = Modifier.weight(1f)) {
+        TextButton(onClick = onClose, enabled = !isSavingProgress, modifier = Modifier.weight(1f)) {
           Text(stringResource(R.string.Strength_session_exit))
         }
       }

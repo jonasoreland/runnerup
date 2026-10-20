@@ -69,6 +69,15 @@ class StrengthSessionTest {
     assertFalse(paused.resume().isComplete)
   }
 
+  @Test
+  fun existingSessionMatchesOnlyTheSamePlanAndScheduledEntry() {
+    val session = StrengthSession.start("plan-a", "scheduled-a", workout)
+
+    assertTrue(session.matchesScheduledEntry("plan-a", "scheduled-a"))
+    assertFalse(session.matchesScheduledEntry("plan-b", "scheduled-a"))
+    assertFalse(session.matchesScheduledEntry("plan-a", "scheduled-b"))
+  }
+
   @Test(expected = IllegalArgumentException::class)
   fun rejectsRepetitionBelowOne() {
     StrengthSession.start("plan", "scheduled", workout).completeRepetitions(0)

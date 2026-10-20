@@ -402,6 +402,10 @@
     <string name="Strength_session_finish_confirmation">Save this workout as completed?</string>
     <string name="Strength_session_next">Next: %1$s</string>
     <string name="Strength_session_recovery_title">Session progress could not be restored</string>
+    <string name="Strength_session_existing_title">Another session is in progress</string>
+    <string name="Strength_session_existing_message">An unfinished session is saved: %1$s. Continue it before starting %2$s?</string>
+    <string name="Strength_session_existing_continue">Continue existing</string>
+    <string name="Strength_session_existing_cancel">Cancel</string>
     <string name="Strength_session_recovery_message">The saved progress was damaged and removed. Start the scheduled workout again from the plan calendar.</string>
     <string name="Plan_calendar_remove">Remove</string>
     <string name="Plan_calendar_remove_accessibility">Remove %1$s</string>
