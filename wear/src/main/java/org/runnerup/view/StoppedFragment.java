@@ -21,17 +21,32 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import org.runnerup.R;
+import androidx.compose.ui.platform.ComposeView;
+import org.runnerup.wear.ui.WearCompletionComposeContent;
 
 public class StoppedFragment extends Fragment {
+
+  private ComposeView composeView;
 
   public StoppedFragment() {}
 
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.stopped, container, false);
-    super.onViewCreated(view, savedInstanceState);
-    return view;
+    composeView = new ComposeView(getActivity());
+    composeView.setLayoutParams(
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    WearCompletionComposeContent.bind(composeView);
+    return composeView;
+  }
+
+  @Override
+  public void onDestroyView() {
+    if (composeView != null) {
+      composeView.disposeComposition();
+      composeView = null;
+    }
+    super.onDestroyView();
   }
 }
