@@ -62,12 +62,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import org.json.JSONObject
 import org.runnerup.common.R
+import org.runnerup.relven.strength.CompletedStrengthSession
 
 @Composable
 internal fun PlanCalendarScreen(
     loadState: ActivePlanLoadState,
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
+    completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
+    onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
+    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit = {},
     onOpenWorkoutManager: () -> Unit,
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
@@ -93,6 +97,9 @@ internal fun PlanCalendarScreen(
             loadState.plan,
             nowMillis,
             revisionStatus,
+            completedStrengthSessions,
+            onStartStrength,
+            onViewStrengthCompletion,
             onOpenWorkoutManager,
             onReschedule,
             onAddWorkout,
@@ -110,6 +117,9 @@ private fun LoadedPlanCalendar(
     plan: org.runnerup.workout.RelvenPlanImporter.Plan,
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
+    completedStrengthSessions: Map<String, CompletedStrengthSession>,
+    onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
+    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
     onOpenWorkoutManager: () -> Unit,
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
@@ -144,7 +154,7 @@ private fun LoadedPlanCalendar(
   var editMax by rememberSaveable(plan.id()) { mutableStateOf("") }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale) {
-    planCalendarState(plan, month, selectedDate, nowMillis, locale)
+    planCalendarState(plan, month, selectedDate, nowMillis, locale, completedStrengthSessions)
   }
   val weekdayLabels = stringArrayResource(R.array.Plan_calendar_weekdays)
   val weekdayNames = stringArrayResource(R.array.Plan_calendar_weekday_names)
@@ -349,6 +359,8 @@ private fun LoadedPlanCalendar(
         totalEntries = plan.days().size,
         reschedulingSessionId = reschedulingSessionId,
         enabled = revisionStatus !is PlanRevisionStatus.Saving,
+        onStartStrength = { entry -> onStartStrength(plan.id(), entry) },
+        onViewStrengthCompletion = onViewStrengthCompletion,
         onAdd = { showAddActions = true },
         onReschedule = { sessionId ->
           reschedulingSessionId = sessionId
@@ -656,6 +668,8 @@ private fun SelectedPlanDay(
     totalEntries: Int,
     reschedulingSessionId: String?,
     enabled: Boolean,
+    onStartStrength: (PlanCalendarEntry.Workout) -> Unit,
+    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
     onAdd: () -> Unit,
     onReschedule: (String) -> Unit,
     onRemove: (String) -> Unit,
@@ -737,6 +751,19 @@ private fun SelectedPlanDay(
                           color = RelvenColors.MutedText,
                           fontSize = 13.sp)
                       Text(exercise.instructions(), color = RelvenColors.Text, fontSize = 14.sp)
+                    }
+                  }
+                  if (entry.completion != null) {
+                    Text(
+                        stringResource(R.string.Strength_session_completed),
+                        color = RelvenColors.Orange,
+                        fontWeight = FontWeight.SemiBold)
+                    TextButton(onClick = { onViewStrengthCompletion(entry.completion) }) {
+                      Text(stringResource(R.string.Strength_session_view_summary))
+                    }
+                  } else {
+                    TextButton(onClick = { onStartStrength(entry) }, enabled = enabled) {
+                      Text(stringResource(R.string.Strength_session_start))
                     }
                   }
                 }
