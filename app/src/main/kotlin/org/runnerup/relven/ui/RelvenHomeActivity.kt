@@ -67,6 +67,7 @@ class RelvenHomeActivity : ComponentActivity() {
         RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
+            onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
               startActivity(
@@ -126,6 +127,7 @@ private data class RecentActivity(
 private fun RelvenHome(
     recentActivity: RecentActivity?,
     sessionStatus: HomeSessionStatus?,
+    onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
@@ -152,12 +154,20 @@ private fun RelvenHome(
             color = RelvenColors.Surface,
             border = BorderStroke(1.dp, RelvenColors.Orange.copy(alpha = 0.45f)),
             modifier = Modifier.fillMaxWidth()) {
-          Text(
-              status.label,
-              color = RelvenColors.Orange,
-              fontSize = 14.sp,
-              fontWeight = FontWeight.SemiBold,
-              modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp))
+          Column(Modifier.padding(top = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                status.label,
+                color = RelvenColors.Orange,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = 18.dp))
+            Button(
+                onClick = onOpenActiveSession,
+                colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp)) {
+              Text("Öppna pass")
+            }
+          }
         }
       }
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

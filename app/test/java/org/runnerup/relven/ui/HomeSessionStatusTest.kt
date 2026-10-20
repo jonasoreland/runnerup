@@ -1,19 +1,37 @@
 package org.runnerup.relven.ui
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import android.content.Intent
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 import org.runnerup.common.tracker.TrackerState
 import org.runnerup.common.util.ValueModel
 import org.runnerup.tracker.Tracker
+import org.runnerup.view.RunActivity
 
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class HomeSessionStatusTest {
   @Test
   fun startedAndPausedSessionsHaveDistinctStatuses() {
     assertEquals(HomeSessionStatus.ACTIVE, homeSessionStatus(TrackerState.STARTED))
     assertEquals(HomeSessionStatus.PAUSED, homeSessionStatus(TrackerState.PAUSED))
+  }
+
+  @Test
+  fun runActivityIntentReturnsToRunnerUpSessionScreen() {
+    val intent = runActivityIntent(RuntimeEnvironment.getApplication())
+    assertNotNull(intent.component)
+    assertEquals(RunActivity::class.java.name, intent.component?.className)
+    assertEquals(
+        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT, intent.flags and Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
   }
 
   @Test

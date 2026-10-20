@@ -8,6 +8,10 @@ import android.os.IBinder
 import org.runnerup.common.tracker.TrackerState
 import org.runnerup.common.util.ValueModel
 import org.runnerup.tracker.Tracker
+import org.runnerup.view.RunActivity
+
+internal fun runActivityIntent(context: Context): Intent =
+    Intent(context, RunActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
 
 internal enum class HomeSessionStatus(val label: String) {
   ACTIVE("Pågående pass"),
