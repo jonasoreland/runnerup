@@ -37,6 +37,7 @@
     <string name="cool_down">cooldown</string>
     <string name="repeat">Repeat</string>
     <string name="repeat_times">Repeat %1$d times</string>
+    <string name="additional_workout_steps_hidden">More workout steps are not shown.</string>
     <string name="Time">Time</string>
     <string name="time">time</string>
     <string name="distance">distance</string>

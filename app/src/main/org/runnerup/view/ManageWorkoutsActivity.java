@@ -83,6 +83,7 @@ import org.runnerup.workout.RelvenPlanImporter;
 import org.runnerup.workout.RelvenPlanStore;
 import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutImportPreview;
 import org.runnerup.workout.WorkoutSerializer;
 
 public class ManageWorkoutsActivity extends AppCompatActivity implements Constants {
@@ -401,6 +402,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     AlertDialog.Builder builder =
         new AlertDialog.Builder(this)
             .setTitle(getString(org.runnerup.common.R.string.Import_workout) + ": " + workoutName)
+            .setMessage(WorkoutImportPreview.format(this, w))
             .setPositiveButton(
                 org.runnerup.common.R.string.Yes,
                 (dialog, which) -> {
