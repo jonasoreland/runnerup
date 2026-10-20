@@ -265,13 +265,21 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     dialog.show();
   }
 
-  private void showSavedPlan(RelvenPlanImporter.Plan plan) {
+  private void showSavedPlan(RelvenPlanImporter.Plan plan, boolean isActive) {
     if (isFinishing() || isDestroyed()) return;
-    new AlertDialog.Builder(this)
-        .setTitle(plan.name())
-        .setMessage(RelvenPlanImport.preview(plan))
-        .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
-        .show();
+    AlertDialog.Builder builder =
+        new AlertDialog.Builder(this)
+            .setTitle(plan.name())
+            .setMessage(RelvenPlanImport.preview(plan))
+            .setPositiveButton(
+                org.runnerup.common.R.string.Activate_plan, (dialog, which) -> activatePlan(plan))
+            .setNegativeButton(
+                org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
+    if (isActive) {
+      builder.setNeutralButton(
+          org.runnerup.common.R.string.Clear_active_plan, (dialog, which) -> clearActivePlan());
+    }
+    builder.show();
   }
 
   private void showSavedPlans() {
@@ -279,6 +287,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         () -> {
           try {
             List<RelvenPlanImporter.Plan> plans = RelvenPlanStore.list(getApplicationContext());
+            RelvenPlanImporter.Plan active = RelvenPlanStore.activePlan(getApplicationContext());
             runOnUiThread(
                 () -> {
                   if (isFinishing() || isDestroyed()) return;
@@ -289,10 +298,23 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                     return;
                   }
                   String[] names =
-                      plans.stream().map(RelvenPlanImporter.Plan::name).toArray(String[]::new);
+                      plans.stream()
+                          .map(
+                              plan ->
+                                  active != null && active.id().equals(plan.id())
+                                      ? getString(org.runnerup.common.R.string.Active_plan_marker)
+                                          + " "
+                                          + plan.name()
+                                      : plan.name())
+                          .toArray(String[]::new);
                   new AlertDialog.Builder(this)
                       .setTitle(org.runnerup.common.R.string.View_saved_plans)
-                      .setItems(names, (dialog, which) -> showSavedPlan(plans.get(which)))
+                      .setItems(
+                          names,
+                          (dialog, which) ->
+                              showSavedPlan(
+                                  plans.get(which),
+                                  active != null && active.id().equals(plans.get(which).id())))
                       .setNegativeButton(
                           org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
                       .show();
@@ -505,6 +527,58 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       shareButton.setEnabled(false);
       editButton.setEnabled(false);
     }
+  }
+
+  private void activatePlan(RelvenPlanImporter.Plan plan) {
+    showPlanProgress(org.runnerup.common.R.string.Activating_plan);
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            RelvenPlanStore.activate(getApplicationContext(), plan);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  Toast.makeText(
+                          getApplicationContext(),
+                          org.runnerup.common.R.string.Plan_activated,
+                          Toast.LENGTH_LONG)
+                      .show();
+                });
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Failed to activate plan", error);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  showPlanImportError(error);
+                });
+          }
+        });
+  }
+
+  private void clearActivePlan() {
+    showPlanProgress(org.runnerup.common.R.string.Clearing_active_plan);
+    PLAN_IMPORT_EXECUTOR.execute(
+        () -> {
+          try {
+            RelvenPlanStore.clearActivePlan(getApplicationContext());
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  Toast.makeText(
+                          getApplicationContext(),
+                          org.runnerup.common.R.string.Active_plan_cleared,
+                          Toast.LENGTH_LONG)
+                      .show();
+                });
+          } catch (Exception error) {
+            Log.e(getClass().getName(), "Failed to clear active plan", error);
+            runOnUiThread(
+                () -> {
+                  dismissPlanProgress();
+                  showPlanImportError(error);
+                });
+          }
+        });
   }
 
   private void listLocal() {

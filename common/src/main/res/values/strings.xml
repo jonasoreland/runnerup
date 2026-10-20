@@ -289,6 +289,13 @@
     <string name="Plan_saved">Plan saved on this device. It has not been activated.</string>
     <string name="View_saved_plans">View saved plans</string>
     <string name="No_saved_plans">No saved plans yet.</string>
+    <string name="Active_plan_marker">(Active)</string>
+    <string name="Activate_plan">Activate plan</string>
+    <string name="Activating_plan">Activating plan…</string>
+    <string name="Plan_activated">Plan activated.</string>
+    <string name="Clear_active_plan">Clear active plan</string>
+    <string name="Clearing_active_plan">Clearing active plan…</string>
+    <string name="Active_plan_cleared">Active plan cleared.</string>
     <string name="Validating_plan">Validating plan…</string>
     <string name="Saving_plan">Saving plan…</string>
     <string name="Saving_as">Saving as</string>
