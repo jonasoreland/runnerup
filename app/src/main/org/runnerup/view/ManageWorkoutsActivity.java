@@ -74,6 +74,7 @@ import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer.Status;
 import org.runnerup.util.ViewUtil;
+import org.runnerup.workout.FitWorkoutImporter;
 import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.WorkoutSerializer;
@@ -212,7 +213,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
   private void importData(String fileName, final Uri data) throws Exception {
     final ContentResolver cr = getContentResolver();
-    String raw;
+    byte[] bytes;
     try (InputStream input = cr.openInputStream(data);
         ByteArrayOutputStream output = new ByteArrayOutputStream()) {
       if (input == null) throw new IOException("Failed to get input stream");
@@ -222,16 +223,24 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
         if (output.size() + length > 1_048_576) throw new IOException("Workout file is too large");
         output.write(buffer, 0, length);
       }
-      raw = output.toString(StandardCharsets.UTF_8.name());
+      bytes = output.toByteArray();
     }
-    boolean relven = new JSONObject(raw).has("schemaVersion");
+    boolean fit =
+        FitWorkoutImporter.isFit(bytes)
+            || fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".fit");
+    String raw = fit ? null : new String(bytes, StandardCharsets.UTF_8);
+    boolean relven = !fit && new JSONObject(raw).has("schemaVersion");
     Workout w =
-        relven
-            ? RelvenWorkoutImporter.parse(raw)
-            : WorkoutSerializer.readJSON(new StringReader(raw));
+        fit
+            ? FitWorkoutImporter.parse(bytes)
+            : relven
+                ? RelvenWorkoutImporter.parse(raw)
+                : WorkoutSerializer.readJSON(new StringReader(raw));
     if (w == null) throw new Exception("Failed to parse content");
 
-    if (fileName.endsWith(".json")) {
+    if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".fit")) {
+      fileName = fileName.substring(0, fileName.length() - 4);
+    } else if (fileName.endsWith(".json")) {
       fileName = fileName.substring(0, fileName.length() - ".json".length());
     }
 
@@ -265,7 +274,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
                               Toast.LENGTH_SHORT)
                           .show();
                     }
-                    if (relven) {
+                    if (fit || relven) {
                       WorkoutSerializer.writeFile(ManageWorkoutsActivity.this, saveName, w);
                     } else {
                       saveImport(saveName, cr.openInputStream(data));

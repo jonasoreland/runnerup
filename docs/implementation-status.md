@@ -3,10 +3,9 @@
 ## 20 October 2026 serial integration checkpoint
 
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
+- PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`. This is a preservation bridge only; workouts and activity history are not yet imported into the current library.
 - The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
-- The old Relven database is now snapshotted read-only at startup when present, and a maintenance action can export that snapshot as JSON. This is a preservation bridge only: workouts and activity history are not yet imported into the current library.
-- The physical Android device remains off limits until all phases are complete and the app is ready for manual testing. This checkpoint used local unit tests/build tooling only.
-
+- The FIT Workout subset importer is now on `codex/p1-fit-import`; local verification on this clean branch is pending. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
 ## Phase Zero — repository migration
 
 - **Completed:** Existing history-preserving GitHub fork checked out on `codex/phase-zero`; `upstream` remote added. Original Relven repository untouched. Baseline phone/watch APKs and selected tests passed before edits. The release ID now matches the old Relven Play ID per owner instruction. Relven launcher labels, uploaded icon, CI artifact labels, README and migration documents changed locally.
@@ -53,7 +52,7 @@
 
 - **In progress:** The workout library now has a system file-picker button. Relven v3 running-workout JSON enters through this picker or the inherited document intent. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
 - **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
-- **Pending:** FIT Workout decoding, richer schema validation, a full saved-file execution test, import UX review and activity export round trip. [FIT research](fit-import-research.md) records the official SDK license constraint.
+- **Pending:** Broader real-world FIT Workout compatibility, richer schema validation, a full saved-file execution test, import UX review and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
 
 ## Later phases
 
