@@ -316,6 +316,111 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
+  public void acceptsOneRunningSegmentEndOrTargetChangePerRevision() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan endRevision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "run-a",
+            "step-a",
+            new JSONObject("{\"type\":\"time\",\"seconds\":2400}"),
+            "end-revision");
+    RelvenPlanStore.save(context, endRevision);
+    RelvenPlanImporter.Plan targetRevision =
+        RelvenPlanRevision.editRunningSegmentTarget(
+            endRevision,
+            "run-a",
+            "step-a",
+            new JSONObject("{\"type\":\"pace\",\"minSecondsPerKm\":300,\"maxSecondsPerKm\":330}"),
+            "target-revision");
+
+    RelvenPlanStore.save(context, targetRevision);
+
+    assertEquals(3, RelvenPlanStore.list(context).size());
+    assertEquals(
+        2400, targetRevision.workouts().get("run-a").getSteps().get(0).getDurationValue(), 0.0);
+  }
+
+  @Test
+  public void rejectsRevisionThatChangesEndAndTargetTogether() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan endRevision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "run-a",
+            "step-a",
+            new JSONObject("{\"type\":\"time\",\"seconds\":2400}"),
+            "end-revision");
+    JSONObject forged = new JSONObject(endRevision.sourceJson());
+    JSONObject step =
+        forged.getJSONArray("workouts").getJSONObject(0).getJSONArray("steps").getJSONObject(0);
+    step.put(
+        "target",
+        new JSONObject("{\"type\":\"pace\",\"minSecondsPerKm\":300,\"maxSecondsPerKm\":330}"));
+
+    assertThrows(
+        java.io.IOException.class,
+        () -> RelvenPlanStore.save(context, RelvenPlanImporter.parse(forged.toString())));
+    assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void rejectsRevisionThatCombinesSegmentEditWithScheduleChange() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan endRevision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "run-a",
+            "step-a",
+            new JSONObject("{\"type\":\"time\",\"seconds\":2400}"),
+            "end-revision");
+    JSONObject forged = new JSONObject(endRevision.sourceJson());
+    forged.getJSONArray("days").getJSONObject(0).put("notes", "changed too");
+
+    assertThrows(
+        java.io.IOException.class,
+        () -> RelvenPlanStore.save(context, RelvenPlanImporter.parse(forged.toString())));
+    assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void rejectsRevisionThatChangesTwoRunningSegments() throws Exception {
+    JSONObject root = new JSONObject(JSON);
+    JSONObject workout = root.getJSONArray("workouts").getJSONObject(0);
+    workout
+        .getJSONArray("steps")
+        .put(
+            new JSONObject(
+                "{\"id\":\"step-b\",\"kind\":\"segment\",\"phase\":\"recovery\",\"end\":{\"type\":\"time\",\"seconds\":60}}"));
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(root.toString());
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan firstChange =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "run-a",
+            "step-a",
+            new JSONObject("{\"type\":\"time\",\"seconds\":2400}"),
+            "end-revision");
+    JSONObject forged = new JSONObject(firstChange.sourceJson());
+    forged
+        .getJSONArray("workouts")
+        .getJSONObject(0)
+        .getJSONArray("steps")
+        .getJSONObject(1)
+        .put(
+            "target",
+            new JSONObject("{\"type\":\"pace\",\"minSecondsPerKm\":300,\"maxSecondsPerKm\":330}"));
+
+    assertThrows(
+        java.io.IOException.class,
+        () -> RelvenPlanStore.save(context, RelvenPlanImporter.parse(forged.toString())));
+    assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
   public void rejectsRenamingWhenPlanIsNotCurrentActiveSnapshot() throws Exception {
     RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
     RelvenPlanStore.save(context, original);

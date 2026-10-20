@@ -177,6 +177,103 @@ public final class RelvenPlanRevision {
     }
   }
 
+  public static RelvenPlanImporter.Plan editRunningSegmentEnd(
+      RelvenPlanImporter.Plan source,
+      String workoutId,
+      String stepId,
+      JSONObject end,
+      String revisionId) {
+    requireRevisionInput(
+        source, stepId, revisionId, source == null ? 0 : source.revisionNumber() + 1);
+    if (end == null) throw new IllegalArgumentException("Missing segment end");
+    return editRunningSegmentField(source, workoutId, stepId, "end", end, revisionId);
+  }
+
+  public static RelvenPlanImporter.Plan editRunningSegmentTarget(
+      RelvenPlanImporter.Plan source,
+      String workoutId,
+      String stepId,
+      JSONObject target,
+      String revisionId) {
+    requireRevisionInput(
+        source, stepId, revisionId, source == null ? 0 : source.revisionNumber() + 1);
+    return editRunningSegmentField(source, workoutId, stepId, "target", target, revisionId);
+  }
+
+  private static RelvenPlanImporter.Plan editRunningSegmentField(
+      RelvenPlanImporter.Plan source,
+      String workoutId,
+      String stepId,
+      String field,
+      JSONObject value,
+      String revisionId) {
+    if (workoutId == null || workoutId.isBlank() || stepId.isBlank()) {
+      throw new IllegalArgumentException("Missing workout or segment ID");
+    }
+    try {
+      JSONObject root = revisionRoot(source, revisionId, source.revisionNumber() + 1);
+      JSONObject workout = findWorkout(root, workoutId);
+      if (!"running".equals(workout.getString("sport"))) {
+        throw new IllegalArgumentException("Only running workouts can be edited");
+      }
+      JSONObject segment = findSegment(workout.getJSONArray("steps"), stepId);
+      boolean hasExisting = segment.has(field) && !segment.isNull(field);
+      if (value == null) {
+        if (!hasExisting) throw new IllegalArgumentException("Segment field is unchanged");
+        segment.remove(field);
+      } else {
+        if (hasExisting && sameFlatObject(segment.getJSONObject(field), value)) {
+          throw new IllegalArgumentException("Segment field is unchanged");
+        }
+        segment.put(field, new JSONObject(value.toString()));
+      }
+      return RelvenPlanImporter.parse(root.toString());
+    } catch (JSONException error) {
+      throw new IllegalArgumentException("Invalid running segment edit", error);
+    }
+  }
+
+  private static JSONObject findWorkout(JSONObject root, String workoutId) throws JSONException {
+    JSONArray workouts = root.getJSONArray("workouts");
+    for (int index = 0; index < workouts.length(); index++) {
+      JSONObject workout = workouts.getJSONObject(index);
+      if (workoutId.equals(workout.getString("id"))) return workout;
+    }
+    throw new IllegalArgumentException("Unknown workout");
+  }
+
+  private static boolean sameFlatObject(JSONObject left, JSONObject right) throws JSONException {
+    if (left.length() != right.length()) return false;
+    for (java.util.Iterator<String> keys = left.keys(); keys.hasNext(); ) {
+      String key = keys.next();
+      if (!right.has(key)) return false;
+      Object oldValue = left.get(key);
+      Object newValue = right.get(key);
+      if (oldValue instanceof Number oldNumber && newValue instanceof Number newNumber) {
+        if (Double.compare(oldNumber.doubleValue(), newNumber.doubleValue()) != 0) return false;
+      } else if (!oldValue.equals(newValue)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private static JSONObject findSegment(JSONArray nodes, String stepId) throws JSONException {
+    for (int index = 0; index < nodes.length(); index++) {
+      JSONObject node = nodes.getJSONObject(index);
+      String kind = node.getString("kind");
+      if (kind.equals("segment") && stepId.equals(node.getString("id"))) return node;
+      if (kind.equals("sequence") || kind.equals("repeat")) {
+        try {
+          return findSegment(node.getJSONArray("steps"), stepId);
+        } catch (IllegalArgumentException ignored) {
+          // Keep searching sibling groups for the stable segment ID.
+        }
+      }
+    }
+    throw new IllegalArgumentException("Unknown running segment");
+  }
+
   public static RelvenPlanImporter.Plan remove(
       RelvenPlanImporter.Plan source, String sessionId, String revisionId) {
     return remove(source, sessionId, revisionId, source == null ? 0 : source.revisionNumber() + 1);

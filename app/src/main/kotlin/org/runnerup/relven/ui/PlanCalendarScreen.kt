@@ -58,6 +58,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import org.json.JSONObject
 import org.runnerup.common.R
 
 @Composable
@@ -71,7 +74,9 @@ internal fun PlanCalendarScreen(
     onAddRest: (String) -> Unit,
     onRemoveEntry: (String) -> Unit,
     onRenamePlan: (String) -> Unit,
-    onRenameWorkout: (String, String) -> Unit
+    onRenameWorkout: (String, String) -> Unit,
+    onEditRunningEnd: (String, String, JSONObject) -> Unit,
+    onEditRunningTarget: (String, String, JSONObject?) -> Unit
 ) {
   when (loadState) {
     ActivePlanLoadState.Loading -> PlanCalendarMessage(stringResource(R.string.Today_plan_loading))
@@ -94,7 +99,9 @@ internal fun PlanCalendarScreen(
             onAddRest,
             onRemoveEntry,
             onRenamePlan,
-            onRenameWorkout)
+            onRenameWorkout,
+            onEditRunningEnd,
+            onEditRunningTarget)
   }
 }
 
@@ -109,7 +116,9 @@ private fun LoadedPlanCalendar(
     onAddRest: (String) -> Unit,
     onRemoveEntry: (String) -> Unit,
     onRenamePlan: (String) -> Unit,
-    onRenameWorkout: (String, String) -> Unit
+    onRenameWorkout: (String, String) -> Unit,
+    onEditRunningEnd: (String, String, JSONObject) -> Unit,
+    onEditRunningTarget: (String, String, JSONObject?) -> Unit
 ) {
   val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
   var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
@@ -127,6 +136,12 @@ private fun LoadedPlanCalendar(
   var editingWorkoutId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var editedWorkoutName by rememberSaveable(plan.id()) { mutableStateOf("") }
   var workoutNameTouched by rememberSaveable(plan.id()) { mutableStateOf(false) }
+  var editingSegment by remember(plan.id()) { mutableStateOf<RunningSegmentSummary?>(null) }
+  var editingSegmentWorkoutId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
+  var editingTarget by rememberSaveable(plan.id()) { mutableStateOf(false) }
+  var editType by rememberSaveable(plan.id()) { mutableStateOf("time") }
+  var editMin by rememberSaveable(plan.id()) { mutableStateOf("") }
+  var editMax by rememberSaveable(plan.id()) { mutableStateOf("") }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale) {
     planCalendarState(plan, month, selectedDate, nowMillis, locale)
@@ -345,7 +360,81 @@ private fun LoadedPlanCalendar(
           editingWorkoutId = workoutId
           editedWorkoutName = currentName
           workoutNameTouched = false
+        },
+        onEditRunningEnd = { workoutId, segment ->
+          editingSegment = segment
+          editingSegmentWorkoutId = workoutId
+          editingTarget = false
+          editType = segment.end.type
+          editMin = segment.end.value?.toString().orEmpty()
+        },
+        onEditRunningTarget = { workoutId, segment ->
+          editingSegment = segment
+          editingSegmentWorkoutId = workoutId
+          editingTarget = true
+          editType = segment.target?.type ?: "pace"
+          editMin = segment.target?.minimum?.toString().orEmpty()
+          editMax = segment.target?.maximum?.toString().orEmpty()
         })
+  }
+
+  val segmentBeingEdited = editingSegment
+  if (segmentBeingEdited != null) {
+    val input = if (editingTarget) runningSegmentTargetInput(editType, editMin, editMax)
+        else runningSegmentEndInput(editType, editMin)
+    AlertDialog(
+        onDismissRequest = { editingSegment = null },
+        title = { Text(stringResource(if (editingTarget) R.string.Plan_calendar_edit_target else R.string.Plan_calendar_edit_end)) },
+        text = {
+          Column(
+              Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState()),
+              verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (editingTarget) {
+              Column {
+                listOf(listOf("pace", "speed"), listOf("heart_rate", "none")).forEach { row ->
+                  Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    row.filter { it != "none" || segmentBeingEdited.target != null }.forEach { type ->
+                      TextButton(
+                          onClick = {
+                            editType = type
+                            if (type == "none") { editMin = ""; editMax = "" }
+                          },
+                          modifier = Modifier.semantics {
+                            selected = editType == type
+                          }) { Text(stringResource(targetTypeLabel(type))) }
+                    }
+                  }
+                }
+              }
+              if (editType != "none") {
+                Text(stringResource(targetUnitLabel(editType)), color = RelvenColors.MutedText)
+                OutlinedTextField(editMin, { editMin = it }, label = { Text(stringResource(R.string.Plan_calendar_minimum)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+                OutlinedTextField(editMax, { editMax = it }, label = { Text(stringResource(R.string.Plan_calendar_maximum)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+              }
+            } else {
+              Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                listOf("time", "distance", "manual").forEach { type ->
+                  TextButton(onClick = { editType = type; if (type == "manual") editMin = "" }) { Text(stringResource(endTypeLabel(type))) }
+                }
+              }
+              if (editType != "manual") OutlinedTextField(editMin, { editMin = it }, label = { Text(if (editType == "time") stringResource(R.string.Plan_calendar_seconds) else stringResource(R.string.Plan_calendar_meters)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal))
+            }
+            if (input == null && !(editingTarget && editType == "none")) {
+              Text(stringResource(R.string.Plan_calendar_edit_invalid), color = RelvenColors.Orange)
+            }
+          }
+        },
+        confirmButton = {
+          TextButton(onClick = {
+            val workoutId = editingSegmentWorkoutId
+            if (workoutId != null) {
+              if (editingTarget) onEditRunningTarget(workoutId, segmentBeingEdited.id, input)
+              else input?.let { onEditRunningEnd(workoutId, segmentBeingEdited.id, it) }
+            }
+            editingSegment = null
+          }, enabled = (input != null || (editingTarget && editType == "none" && segmentBeingEdited.target != null)) && revisionStatus !is PlanRevisionStatus.Saving) { Text(stringResource(R.string.Plan_calendar_save_edit)) }
+        },
+        dismissButton = { TextButton(onClick = { editingSegment = null }) { Text(stringResource(R.string.Cancel)) } })
   }
 
   if (showRenameDialog) {
@@ -570,7 +659,9 @@ private fun SelectedPlanDay(
     onAdd: () -> Unit,
     onReschedule: (String) -> Unit,
     onRemove: (String) -> Unit,
-    onEditWorkout: (String, String) -> Unit
+    onEditWorkout: (String, String) -> Unit,
+    onEditRunningEnd: (String, RunningSegmentSummary) -> Unit,
+    onEditRunningTarget: (String, RunningSegmentSummary) -> Unit
 ) {
   Surface(
       shape = RoundedCornerShape(24.dp),
@@ -591,6 +682,20 @@ private fun SelectedPlanDay(
             when (entry) {
               is PlanCalendarEntry.Workout -> {
                 Text(entry.workoutName, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                entry.runningSegments.forEach { segment ->
+                  Column(
+                      Modifier.fillMaxWidth().background(RelvenColors.SurfaceRaised, RoundedCornerShape(14.dp)).padding(14.dp),
+                      verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(segment.name ?: stringResource(phaseLabel(segment.phase)), fontWeight = FontWeight.SemiBold)
+                    Text(segmentEndLabel(segment), color = RelvenColors.MutedText)
+                    Text(segment.target?.let { segmentTargetLabel(it) } ?: stringResource(R.string.Plan_calendar_no_target), color = RelvenColors.MutedText)
+                    if (segment.repeatCount > 1) Text(stringResource(R.string.Plan_calendar_repeat_count, segment.repeatCount), color = RelvenColors.MutedText)
+                    Row {
+                      TextButton(onClick = { onEditRunningEnd(entry.workoutId, segment) }, enabled = enabled) { Text(stringResource(R.string.Plan_calendar_edit_end)) }
+                      TextButton(onClick = { onEditRunningTarget(entry.workoutId, segment) }, enabled = enabled) { Text(stringResource(R.string.Plan_calendar_edit_target)) }
+                    }
+                  }
+                }
                 entry.strengthDetails?.let { details ->
                   Text(
                       stringResource(
@@ -669,6 +774,48 @@ private fun SelectedPlanDay(
       }
     }
   }
+}
+
+@Composable
+private fun phaseLabel(phase: String): Int = when (phase) {
+  "warmup" -> R.string.Plan_calendar_phase_warmup
+  "work" -> R.string.Plan_calendar_phase_work
+  "recovery" -> R.string.Plan_calendar_phase_recovery
+  "cooldown" -> R.string.Plan_calendar_phase_cooldown
+  else -> R.string.Plan_calendar_phase_work
+}
+
+private fun targetTypeLabel(type: String): Int = when (type) {
+  "pace" -> R.string.Plan_calendar_type_pace
+  "speed" -> R.string.Plan_calendar_type_speed
+  "heart_rate" -> R.string.Plan_calendar_type_heart_rate
+  else -> R.string.Plan_calendar_type_none
+}
+
+private fun targetUnitLabel(type: String): Int = when (type) {
+  "pace" -> R.string.Plan_calendar_unit_pace
+  "speed" -> R.string.Plan_calendar_unit_speed
+  else -> R.string.Plan_calendar_unit_heart_rate
+}
+
+private fun endTypeLabel(type: String): Int = when (type) {
+  "time" -> R.string.Plan_calendar_type_time
+  "distance" -> R.string.Plan_calendar_type_distance
+  else -> R.string.Plan_calendar_type_manual
+}
+
+@Composable
+private fun segmentEndLabel(segment: RunningSegmentSummary): String = when (segment.end.type) {
+  "time" -> stringResource(R.string.Plan_calendar_end_seconds, segment.end.value ?: 0.0)
+  "distance" -> stringResource(R.string.Plan_calendar_end_meters, segment.end.value ?: 0.0)
+  else -> stringResource(R.string.Plan_calendar_end_manual)
+}
+
+@Composable
+private fun segmentTargetLabel(target: RunningSegmentTarget): String = when (target.type) {
+  "pace" -> stringResource(R.string.Plan_calendar_target_pace, target.minimum, target.maximum)
+  "speed" -> stringResource(R.string.Plan_calendar_target_speed, target.minimum, target.maximum)
+  else -> stringResource(R.string.Plan_calendar_target_heart_rate, target.minimum, target.maximum)
 }
 
 @Composable

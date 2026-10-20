@@ -1,10 +1,12 @@
 package org.runnerup.workout;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.List;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -93,6 +95,160 @@ public class RelvenPlanRevisionTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> RelvenPlanRevision.renameWorkout(original, "easy", "x".repeat(161), "revision"));
+  }
+
+  @Test
+  public void editRunningSegmentEndChangesOneDefinitionAndPreservesSource() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "easy",
+            "run",
+            new JSONObject("{\"type\":\"distance\",\"meters\":500}"),
+            "end-edit");
+
+    assertEquals(SOURCE, original.sourceJson());
+    JSONObject revisedStep =
+        new JSONObject(revision.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0);
+    assertEquals("distance", revisedStep.getJSONObject("end").getString("type"));
+    assertEquals(500, revisedStep.getJSONObject("end").getInt("meters"));
+    assertEquals("run", revisedStep.getString("id"));
+    assertEquals(original.days(), revision.days());
+    assertEquals(2, revision.schemaVersion());
+  }
+
+  @Test
+  public void editFindsNestedSegmentWithoutChangingRepeatStructure() throws Exception {
+    JSONObject source = new JSONObject(SOURCE);
+    JSONObject segment =
+        source.getJSONArray("workouts").getJSONObject(0).getJSONArray("steps").getJSONObject(0);
+    JSONObject repeat =
+        new JSONObject()
+            .put("id", "repeat")
+            .put("kind", "repeat")
+            .put("count", 3)
+            .put("steps", new JSONArray().put(segment));
+    JSONObject sequence =
+        new JSONObject()
+            .put("id", "sequence")
+            .put("kind", "sequence")
+            .put("steps", new JSONArray().put(repeat));
+    source.getJSONArray("workouts").getJSONObject(0).put("steps", new JSONArray().put(sequence));
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(source.toString());
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            original,
+            "easy",
+            "run",
+            new JSONObject("{\"type\":\"distance\",\"meters\":500}"),
+            "nested-edit");
+
+    JSONObject revisedRepeat =
+        new JSONObject(revision.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0);
+    assertEquals(3, revisedRepeat.getInt("count"));
+    assertEquals(
+        "distance",
+        revisedRepeat
+            .getJSONArray("steps")
+            .getJSONObject(0)
+            .getJSONObject("end")
+            .getString("type"));
+  }
+
+  @Test
+  public void editRunningSegmentTargetCanAddChangeAndRemoveTarget() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+    RelvenPlanImporter.Plan added =
+        RelvenPlanRevision.editRunningSegmentTarget(
+            original,
+            "easy",
+            "run",
+            new JSONObject("{\"type\":\"pace\",\"minSecondsPerKm\":300,\"maxSecondsPerKm\":330}"),
+            "target-add");
+    RelvenPlanImporter.Plan changed =
+        RelvenPlanRevision.editRunningSegmentTarget(
+            added,
+            "easy",
+            "run",
+            new JSONObject("{\"type\":\"heart_rate\",\"minBpm\":130,\"maxBpm\":150}"),
+            "target-change");
+    RelvenPlanImporter.Plan removed =
+        RelvenPlanRevision.editRunningSegmentTarget(changed, "easy", "run", null, "target-remove");
+
+    JSONObject step =
+        new JSONObject(added.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0);
+    assertEquals("pace", step.getJSONObject("target").getString("type"));
+    assertEquals(
+        "heart_rate",
+        new JSONObject(changed.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0)
+            .getJSONObject("target")
+            .getString("type"));
+    assertFalse(
+        new JSONObject(removed.sourceJson())
+            .getJSONArray("workouts")
+            .getJSONObject(0)
+            .getJSONArray("steps")
+            .getJSONObject(0)
+            .has("target"));
+  }
+
+  @Test
+  public void rejectsUnknownUnchangedAndInvalidSegmentEdits() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            RelvenPlanRevision.editRunningSegmentEnd(
+                original, "easy", "missing", new JSONObject("{\"type\":\"manual\"}"), "missing"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            RelvenPlanRevision.editRunningSegmentEnd(
+                original,
+                "easy",
+                "run",
+                new JSONObject("{\"type\":\"time\",\"seconds\":1800}"),
+                "same"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            RelvenPlanRevision.editRunningSegmentEnd(
+                original,
+                "easy",
+                "run",
+                new JSONObject("{\"type\":\"time\",\"seconds\":0}"),
+                "bad"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            RelvenPlanRevision.editRunningSegmentTarget(
+                original,
+                "easy",
+                "run",
+                new JSONObject(
+                    "{\"type\":\"pace\",\"minSecondsPerKm\":350,\"maxSecondsPerKm\":300}"),
+                "reversed"));
   }
 
   @Test

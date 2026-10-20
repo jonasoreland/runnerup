@@ -12,8 +12,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -257,6 +259,38 @@ public final class RelvenPlanStore {
     return revision;
   }
 
+  public static synchronized RelvenPlanImporter.Plan editRunningSegmentEndInActivePlan(
+      Context context,
+      RelvenPlanImporter.Plan activePlan,
+      String workoutId,
+      String stepId,
+      JSONObject end)
+      throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.editRunningSegmentEnd(
+            current, workoutId, stepId, end, UUID.randomUUID().toString());
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
+  public static synchronized RelvenPlanImporter.Plan editRunningSegmentTargetInActivePlan(
+      Context context,
+      RelvenPlanImporter.Plan activePlan,
+      String workoutId,
+      String stepId,
+      JSONObject target)
+      throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.editRunningSegmentTarget(
+            current, workoutId, stepId, target, UUID.randomUUID().toString());
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
   private static RelvenPlanImporter.Plan requireCurrentActivePlan(
       Context context, RelvenPlanImporter.Plan activePlan) throws IOException {
     RelvenPlanImporter.Plan current = activePlan(context);
@@ -329,6 +363,8 @@ public final class RelvenPlanStore {
           canonicalJson(previousJson.getJSONArray("workouts"))
               .equals(canonicalJson(revisionJson.getJSONArray("workouts")));
       boolean oneWorkoutNameChange = sameWorkoutsExceptOneName(previousJson, revisionJson);
+      boolean oneRunningSegmentFieldChange =
+          sameWorkoutsExceptOneRunningSegmentField(previousJson, revisionJson);
 
       List<RelvenPlanImporter.Session> oldDays = previous.days();
       List<RelvenPlanImporter.Session> newDays = revision.days();
@@ -403,7 +439,19 @@ public final class RelvenPlanStore {
               && addedDays == 0
               && removedDays == 0
               && changedDates == 0;
-      if (!oneReschedule && !oneAddition && !oneRemoval && !nameOnly && !workoutNameOnly) {
+      boolean runningSegmentEdit =
+          previous.name().equals(revision.name())
+              && oneRunningSegmentFieldChange
+              && oldDays.size() == newDays.size()
+              && addedDays == 0
+              && removedDays == 0
+              && changedDates == 0;
+      if (!oneReschedule
+          && !oneAddition
+          && !oneRemoval
+          && !nameOnly
+          && !workoutNameOnly
+          && !runningSegmentEdit) {
         throw new IOException("Plan revision must contain exactly one supported edit");
       }
     } catch (JSONException error) {
@@ -431,6 +479,78 @@ public final class RelvenPlanStore {
       }
     }
     return changedNames == 1;
+  }
+
+  private static boolean sameWorkoutsExceptOneRunningSegmentField(
+      JSONObject previous, JSONObject revision) throws JSONException {
+    JSONArray oldWorkouts = previous.getJSONArray("workouts");
+    JSONArray newWorkouts = revision.getJSONArray("workouts");
+    if (oldWorkouts.length() != newWorkouts.length()) return false;
+    int[] changedFields = {0};
+    for (int index = 0; index < oldWorkouts.length(); index++) {
+      JSONObject oldWorkout = oldWorkouts.getJSONObject(index);
+      JSONObject newWorkout = newWorkouts.getJSONObject(index);
+      if (!oldWorkout.getString("id").equals(newWorkout.getString("id"))
+          || !oldWorkout.getString("sport").equals(newWorkout.getString("sport"))) {
+        return false;
+      }
+      if (!sameJsonExceptSegmentField(
+          oldWorkout, newWorkout, oldWorkout.getString("sport").equals("running"), changedFields)) {
+        return false;
+      }
+    }
+    return changedFields[0] == 1;
+  }
+
+  private static boolean sameJsonExceptSegmentField(
+      Object oldValue, Object newValue, boolean runningWorkout, int[] changedFields)
+      throws JSONException {
+    if (canonicalJson(oldValue).equals(canonicalJson(newValue))) return true;
+    if (oldValue instanceof JSONObject oldObject && newValue instanceof JSONObject newObject) {
+      boolean segment =
+          runningWorkout
+              && "segment".equals(oldObject.optString("kind"))
+              && "segment".equals(newObject.optString("kind"))
+              && oldObject.optString("id").equals(newObject.optString("id"));
+      Set<String> keys = new HashSet<>();
+      for (java.util.Iterator<String> iterator = oldObject.keys(); iterator.hasNext(); ) {
+        keys.add(iterator.next());
+      }
+      for (java.util.Iterator<String> iterator = newObject.keys(); iterator.hasNext(); ) {
+        keys.add(iterator.next());
+      }
+      for (String key : keys) {
+        boolean hasOld = oldObject.has(key);
+        boolean hasNew = newObject.has(key);
+        Object oldChild = hasOld ? oldObject.get(key) : null;
+        Object newChild = hasNew ? newObject.get(key) : null;
+        if (hasOld == hasNew
+            && (oldChild == null || canonicalJson(oldChild).equals(canonicalJson(newChild)))) {
+          continue;
+        }
+        if (segment && (key.equals("end") || key.equals("target"))) {
+          if (++changedFields[0] > 1) return false;
+          continue;
+        }
+        if (!hasOld
+            || !hasNew
+            || !sameJsonExceptSegmentField(oldChild, newChild, runningWorkout, changedFields)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (oldValue instanceof JSONArray oldArray && newValue instanceof JSONArray newArray) {
+      if (oldArray.length() != newArray.length()) return false;
+      for (int index = 0; index < oldArray.length(); index++) {
+        if (!sameJsonExceptSegmentField(
+            oldArray.get(index), newArray.get(index), runningWorkout, changedFields)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   private static String canonicalJson(Object value) throws JSONException {

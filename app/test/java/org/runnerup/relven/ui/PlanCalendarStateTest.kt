@@ -49,6 +49,7 @@ class PlanCalendarStateTest {
     assertEquals("Bodyweight basics", workout.workoutName)
     assertEquals("Bodyweight squat", workout.strengthDetails?.exercises()?.single()?.name())
     assertEquals(3, workout.strengthDetails?.exercises()?.single()?.sets())
+    assertTrue(workout.runningSegments.isEmpty())
   }
 
   @Test
@@ -63,9 +64,13 @@ class PlanCalendarStateTest {
     assertTrue(state.days[22].inDisplayedMonth)
     assertTrue(state.days[22].isSelected)
     assertTrue(state.days[22].isToday)
-    assertEquals(
-        listOf(PlanCalendarEntry.Workout("october-run", "run-a", "Easy run", "Keep it easy")),
-        state.selectedEntries)
+    val runningEntry = state.selectedEntries.single() as PlanCalendarEntry.Workout
+    assertEquals("october-run", runningEntry.sessionId)
+    assertEquals("run-a", runningEntry.workoutId)
+    assertEquals("Easy run", runningEntry.workoutName)
+    assertEquals("Keep it easy", runningEntry.notes)
+    assertEquals("step-a", runningEntry.runningSegments.single().id)
+    assertEquals(1800.0, runningEntry.runningSegments.single().end.value!!, 0.0)
     assertEquals(
         listOf(PlanCalendarEntry.Rest("october-rest", "Recovery")),
         calendarState(plan, "2026-10", "2026-10-21", 1_792_449_000_000L).selectedEntries)

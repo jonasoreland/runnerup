@@ -109,6 +109,8 @@ class RelvenHomeActivity : ComponentActivity() {
             onRemovePlanEntry = ::removeActivePlanEntry,
             onRenamePlan = ::renameActivePlan,
             onRenameWorkout = ::renameActivePlanWorkout,
+            onEditRunningEnd = ::editActivePlanRunningEnd,
+            onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog)
       }
     }
@@ -217,6 +219,18 @@ class RelvenHomeActivity : ComponentActivity() {
     }
   }
 
+  private fun editActivePlanRunningEnd(workoutId: String, segmentId: String, end: org.json.JSONObject) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.editRunningSegmentEndInActivePlan(applicationContext, plan, workoutId, segmentId, end)
+    }
+  }
+
+  private fun editActivePlanRunningTarget(workoutId: String, segmentId: String, target: org.json.JSONObject?) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.editRunningSegmentTargetInActivePlan(applicationContext, plan, workoutId, segmentId, target)
+    }
+  }
+
   private fun savePlanRevision(
       createRevision: (org.runnerup.workout.RelvenPlanImporter.Plan) ->
           org.runnerup.workout.RelvenPlanImporter.Plan) {
@@ -308,6 +322,8 @@ private fun RelvenHome(
     onRemovePlanEntry: (String) -> Unit,
     onRenamePlan: (String) -> Unit,
     onRenameWorkout: (String, String) -> Unit,
+    onEditRunningEnd: (String, String, org.json.JSONObject) -> Unit,
+    onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
@@ -410,7 +426,9 @@ private fun RelvenHome(
           onAddRest = onAddRestToPlan,
           onRemoveEntry = onRemovePlanEntry,
           onRenamePlan = onRenamePlan,
-          onRenameWorkout = onRenameWorkout)
+          onRenameWorkout = onRenameWorkout,
+          onEditRunningEnd = onEditRunningEnd,
+          onEditRunningTarget = onEditRunningTarget)
     } else {
       ExerciseCatalogScreen(exerciseCatalogLoadState, onRetry = onRetryExerciseCatalog)
     }
