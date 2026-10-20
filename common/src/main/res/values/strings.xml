@@ -336,6 +336,14 @@
     <string name="Exercise_catalog_equipment">Equipment</string>
     <string name="Exercise_catalog_no_equipment">No equipment</string>
     <string name="Exercise_catalog_instructions">Instructions</string>
+    <string name="Exercise_progression_title">Your history</string>
+    <string name="Exercise_progression_loading">Loading recorded sessions…</string>
+    <string name="Exercise_progression_empty">No completed sessions include this exercise.</string>
+    <string name="Exercise_progression_partial">%1$d saved session records were unavailable for this view.</string>
+    <string name="Exercise_progression_unavailable">Session history is unavailable right now.</string>
+    <string name="Exercise_progression_retry">Retry</string>
+    <string name="Exercise_progression_repetition_set">Set %1$d: %2$d reps</string>
+    <string name="Exercise_progression_timed_set">Set %1$d: %2$d seconds</string>
     <string name="Exercise_category_all">All</string>
     <string name="Exercise_category_lower_body">Lower body</string>
     <string name="Exercise_category_upper_body">Upper body</string>

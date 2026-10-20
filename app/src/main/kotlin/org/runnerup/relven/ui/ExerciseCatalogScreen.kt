@@ -34,8 +34,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -44,10 +46,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.DateFormat
+import java.util.Date
 import org.runnerup.common.R
 import org.runnerup.relven.exercise.ExerciseCatalog
 import org.runnerup.relven.exercise.ExerciseCategory
 import org.runnerup.relven.exercise.ExerciseEntry
+import org.runnerup.relven.strength.ExerciseProgressSession
 
 internal sealed interface ExerciseCatalogLoadState {
   data object Loading : ExerciseCatalogLoadState
@@ -60,19 +65,25 @@ internal sealed interface ExerciseCatalogLoadState {
 @Composable
 internal fun ExerciseCatalogScreen(
     loadState: ExerciseCatalogLoadState,
-    onRetry: () -> Unit
+    progressionState: ExerciseProgressionLoadState = ExerciseProgressionLoadState.Loading,
+    onRetry: () -> Unit,
+    onRetryProgression: () -> Unit = {}
 ) {
   when (loadState) {
     ExerciseCatalogLoadState.Loading ->
         CatalogMessage(stringResource(R.string.Exercise_catalog_loading))
     ExerciseCatalogLoadState.Unavailable ->
         CatalogError(onRetry)
-    is ExerciseCatalogLoadState.Loaded -> CatalogBrowser(loadState.catalog)
+    is ExerciseCatalogLoadState.Loaded ->
+        CatalogBrowser(loadState.catalog, progressionState, onRetryProgression)
   }
 }
 
 @Composable
-private fun CatalogBrowser(catalog: ExerciseCatalog) {
+private fun CatalogBrowser(
+    catalog: ExerciseCatalog,
+    progressionState: ExerciseProgressionLoadState,
+    onRetryProgression: () -> Unit) {
   var query by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var categoryKey by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var selectedExerciseId by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
@@ -81,7 +92,11 @@ private fun CatalogBrowser(catalog: ExerciseCatalog) {
           .selectedExercise(catalog)
 
   if (selectedExercise != null) {
-    ExerciseDetail(selectedExercise, onBack = { selectedExerciseId = "" })
+    ExerciseDetail(
+        selectedExercise,
+        progressionState,
+        onRetryProgression,
+        onBack = { selectedExerciseId = "" })
     return
   }
 
@@ -180,7 +195,11 @@ private fun ExerciseRow(entry: ExerciseEntry, onClick: () -> Unit) {
 }
 
 @Composable
-private fun ExerciseDetail(entry: ExerciseEntry, onBack: () -> Unit) {
+private fun ExerciseDetail(
+    entry: ExerciseEntry,
+    progressionState: ExerciseProgressionLoadState,
+    onRetryProgression: () -> Unit,
+    onBack: () -> Unit) {
   Column(
       modifier =
           Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -220,6 +239,66 @@ private fun ExerciseDetail(entry: ExerciseEntry, onBack: () -> Unit) {
             Text(instruction, color = RelvenColors.Text, fontSize = 15.sp, modifier = Modifier.weight(1f))
           }
         }
+      }
+    }
+    DetailSection(title = stringResource(R.string.Exercise_progression_title)) {
+      when (progressionState) {
+        ExerciseProgressionLoadState.Loading ->
+            Text(stringResource(R.string.Exercise_progression_loading), color = RelvenColors.MutedText)
+        ExerciseProgressionLoadState.Unavailable -> {
+          Text(stringResource(R.string.Exercise_progression_unavailable), color = RelvenColors.MutedText)
+          Button(onClick = onRetryProgression) {
+            Text(stringResource(R.string.Exercise_progression_retry))
+          }
+        }
+        is ExerciseProgressionLoadState.Loaded -> {
+          if (progressionState.unavailableRecordCount > 0) {
+            Text(
+                stringResource(
+                    R.string.Exercise_progression_partial, progressionState.unavailableRecordCount),
+                color = RelvenColors.MutedText)
+          }
+          val history = progressionState.sessionsByExerciseId[entry.exerciseId].orEmpty()
+          if (history.isEmpty()) {
+            Text(stringResource(R.string.Exercise_progression_empty), color = RelvenColors.MutedText)
+          } else {
+            history.forEach { session -> ExerciseProgressCard(session) }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun ExerciseProgressCard(session: ExerciseProgressSession) {
+  val locale = LocalConfiguration.current.locales[0]
+  val formattedDate =
+      remember(session.finishedAtMillis, locale) {
+        DateFormat.getDateInstance(DateFormat.MEDIUM, locale)
+            .format(Date(session.finishedAtMillis))
+      }
+  Surface(
+      color = RelvenColors.Surface,
+      shape = RoundedCornerShape(16.dp),
+      border = BorderStroke(1.dp, RelvenColors.Text.copy(alpha = 0.07f)),
+      modifier = Modifier.fillMaxWidth()) {
+    Column(
+        Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)) {
+      Text(
+          formattedDate,
+          color = RelvenColors.Text,
+          fontWeight = FontWeight.SemiBold)
+      session.sets.forEach { result ->
+        val label =
+            result.repetitions?.let {
+              stringResource(R.string.Exercise_progression_repetition_set, result.setNumber, it)
+            } ?: stringResource(
+                R.string.Exercise_progression_timed_set,
+                result.setNumber,
+                requireNotNull(result.durationSeconds))
+        Text(label, color = RelvenColors.MutedText)
       }
     }
   }

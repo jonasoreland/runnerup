@@ -2,7 +2,9 @@
 
 ## 20 October 2026 serial integration checkpoint
 
-- **Current increment — guided strength sessions:** the phone calendar starts validated bodyweight strength/prehab entries in an offline guided flow. It records actual reps or timed sets, prescribed rest and completion against the scheduled entry while keeping RunnerUp responsible for running. Progress and completion are stored privately and independently from plan revisions. This increment is being verified without ADB; hosted CI and manual device checks remain pending.
+- **Current increment — strength progression history:** Exercise details show up to ten completed sessions newest first, with the exact recorded reps or timed duration for each set. History is loaded from validated private offline completion records and matched by stable exercise ID. Loading, empty, unavailable, and partial-corruption states are localized. This increment is being verified without ADB; hosted CI and manual device checks remain pending.
+
+- **PR #40 — guided offline strength sessions:** merged to `master` as `69810a7`. Adds phone-guided reps/timed work, prescribed rest, pause/resume, offline persistence and plan-entry completion. Independent review approved after persist-before-display and different-entry confirmation fixes. Local app/Wear/HR tests and builds, debug/release lint, Spotless, free/F-Droid build, Play package-ID verification, and hosted build/test/lint/style/F-Droid CI passed. No ADB device was used.
 
 - **PR #32 — free route maps:** merged to `master` as `a38cbe9`. Local debug/release builds, app unit tests, debug lint with no new findings, Spotless, and hosted Android/F-Droid CI passed. No emulator or physical ADB device was used.
 - **PR #33 — offline exercise catalog:** merged to `master` as `abe7e06`. It adds 16 bilingual bodyweight exercises with stable UUIDs, strict local schema validation, offline search/category filters, details, and retryable loading errors. Local debug/release builds, app tests, debug lint, Spotless, and hosted Android/F-Droid CI passed. No ADB device was used.
