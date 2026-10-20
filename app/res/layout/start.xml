@@ -80,102 +80,10 @@
             android:orientation="vertical"
             tools:ignore="UnusedAttribute">
 
-            <LinearLayout
+            <androidx.compose.ui.platform.ComposeView
                 android:id="@+id/status_frame"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom|start"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/device_status"
-                        style="@style/StatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/No_devices_connected"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/hr_indicator"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="@string/Heart_Rate_Monitor"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/ic_heartrate_white_24dp" />
-
-                    <TextView
-                        android:id="@+id/hr_message"
-                        style="@style/StatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:visibility="gone" />
-
-                    <ImageView
-                        android:id="@+id/wearos_indicator"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="@string/Wear_OS_Device"
-                        android:visibility="gone"
-                        app:srcCompat="@drawable/ic_watch_white_24dp" />
-
-                    <TextView
-                        android:id="@+id/wearos_message"
-                        style="@style/StatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp" />
-
-                    <ImageView
-                        android:id="@+id/gps_indicator"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_gps_1"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:id="@+id/gps_message"
-                        style="@style/StatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/gps_detail_row"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="bottom|start"
-                    android:visibility="gone"
-                    tools:ignore="UseCompoundDrawables">
-
-                    <ImageView
-                        android:id="@+id/gps_detail_indicator"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="4dp"
-                        app:srcCompat="@drawable/ic_gps_1"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:id="@+id/gps_detail_message"
-                        style="@style/StatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-            </LinearLayout>
+                android:layout_height="wrap_content" />
 
             <ImageView
                 android:id="@+id/expand_icon"

@@ -48,15 +48,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -81,6 +80,10 @@ import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.relven.ui.StartReadinessCompose;
+import org.runnerup.relven.ui.StartReadinessItem;
+import org.runnerup.relven.ui.StartReadinessPresentation;
+import org.runnerup.relven.ui.StartReadinessPresentationFactory;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerCadence;
@@ -135,20 +138,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private View startButton = null;
 
   private ImageView expandIcon = null;
-  private TextView noDevicesConnected = null;
-
   private Button gpsEnable = null;
-  private ImageView gpsIndicator = null;
-  private TextView gpsMessage = null;
-  private LinearLayout gpsDetailRow = null;
-  private ImageView gpsDetailIndicator = null;
-  private TextView gpsDetailMessage = null;
-
-  private View hrIndicator = null;
-  private TextView hrMessage = null;
-
-  private View wearOsIndicator = null;
-  private TextView wearOsMessage = null;
+  private ComposeView readinessComposeView = null;
+  private StartReadinessItem gpsSummaryItem;
+  private StartReadinessItem gpsDetailsItem;
+  private StartReadinessItem heartRateItem;
+  private StartReadinessItem wearOsItem;
   private TrackerWear.WearNotifier mWearNotifier = null;
 
   boolean sportWithoutGps = false;
@@ -241,22 +236,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     startButton.setOnClickListener(startButtonClick);
 
     expandIcon = view.findViewById(R.id.expand_icon);
-    noDevicesConnected = view.findViewById(R.id.device_status);
-
-    gpsIndicator = view.findViewById(R.id.gps_indicator);
-    gpsMessage = view.findViewById(R.id.gps_message);
-    gpsDetailRow = view.findViewById(R.id.gps_detail_row);
-    gpsDetailIndicator = view.findViewById(R.id.gps_detail_indicator);
-    gpsDetailMessage = view.findViewById(R.id.gps_detail_message);
+    readinessComposeView = view.findViewById(R.id.status_frame);
+    StartReadinessCompose.install(readinessComposeView);
 
     gpsEnable = view.findViewById(R.id.gps_enable_button);
     gpsEnable.setOnClickListener(gpsEnableClick);
-
-    hrMessage = view.findViewById(R.id.hr_message);
-    hrIndicator = view.findViewById(R.id.hr_indicator);
-
-    wearOsIndicator = view.findViewById(R.id.wearos_indicator);
-    wearOsMessage = view.findViewById(R.id.wearos_message);
 
     view.findViewById(R.id.status_layout).setOnClickListener(v -> toggleStatusDetails());
 
@@ -1001,14 +985,22 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     updateStartGpsButtonView();
     updateStartButtonView();
     updateGPSView();
-    boolean hrPresent = updateHRView();
-    boolean wearPresent = updateWearOSView();
+    updateHRView();
+    updateWearOSView();
+    renderReadinessStatus();
+  }
 
-    if (!hrPresent && !wearPresent && statusDetailsShown) {
-      noDevicesConnected.setVisibility(View.VISIBLE);
-    } else {
-      noDevicesConnected.setVisibility(View.GONE);
-    }
+  private void renderReadinessStatus() {
+    String noDevicesMessage = getString(org.runnerup.common.R.string.No_devices_connected);
+    StartReadinessPresentation presentation =
+        StartReadinessPresentationFactory.INSTANCE.create(
+            gpsSummaryItem,
+            gpsDetailsItem,
+            heartRateItem,
+            wearOsItem,
+            statusDetailsShown,
+            noDevicesMessage);
+    StartReadinessCompose.setContent(readinessComposeView, presentation);
   }
 
   private void updateStartButtonView() {
@@ -1069,33 +1061,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void updateGPSView() {
     if (!mGpsStatus.isEnabled() || !mGpsStatus.isStarted() || sportWithoutGps) {
-
-      if (statusDetailsShown) {
-        gpsDetailMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
-        gpsDetailRow.setVisibility(View.VISIBLE);
-        gpsMessage.setVisibility(View.GONE);
-      } else {
-        gpsMessage.setText(org.runnerup.common.R.string.GPS_indicator_off);
-        gpsMessage.setVisibility(View.VISIBLE);
-        gpsDetailRow.setVisibility(View.GONE);
-      }
-
-      gpsIndicator.setVisibility(View.GONE);
-      gpsDetailIndicator.setVisibility(View.GONE);
+      String gpsOffMessage = getString(org.runnerup.common.R.string.GPS_indicator_off);
+      gpsSummaryItem = new StartReadinessItem(null, null, gpsOffMessage);
+      gpsDetailsItem = new StartReadinessItem(null, null, gpsOffMessage);
       return;
     }
-
-    if (statusDetailsShown) {
-      gpsIndicator.setVisibility(View.GONE);
-      gpsMessage.setVisibility(View.GONE);
-      gpsDetailRow.setVisibility(View.VISIBLE);
-    } else {
-      gpsIndicator.setVisibility(View.VISIBLE);
-      gpsMessage.setVisibility(View.VISIBLE);
-      gpsDetailRow.setVisibility(View.GONE);
-    }
-
-    gpsDetailIndicator.setVisibility(View.VISIBLE);
 
     int satFixedCount = mGpsStatus.getSatellitesFixed();
     int satAvailCount = mGpsStatus.getSatellitesAvailable();
@@ -1116,31 +1086,31 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
                 satFixedCount,
                 satAvailCount,
                 gpsAccuracy);
-    gpsDetailMessage.setText(gpsDetail);
-
     var gpsLevel = getGpsLevel(accuracy, satFixedCount);
+    int gpsIcon;
+    int gpsMessageResource;
     switch (gpsLevel) {
       case NOT_FIXED:
-        gpsIndicator.setImageResource(R.drawable.ic_gps_0);
-        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_0);
-        gpsMessage.setText(org.runnerup.common.R.string.Waiting_for_GPS);
+        gpsIcon = R.drawable.ic_gps_0;
+        gpsMessageResource = org.runnerup.common.R.string.Waiting_for_GPS;
         break;
       case POOR:
-        gpsIndicator.setImageResource(R.drawable.ic_gps_1);
-        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_1);
-        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_poor);
+        gpsIcon = R.drawable.ic_gps_1;
+        gpsMessageResource = org.runnerup.common.R.string.GPS_level_poor;
         break;
       case ACCEPTABLE:
-        gpsIndicator.setImageResource(R.drawable.ic_gps_2);
-        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_2);
-        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_acceptable);
+        gpsIcon = R.drawable.ic_gps_2;
+        gpsMessageResource = org.runnerup.common.R.string.GPS_level_acceptable;
         break;
       case GOOD:
-        gpsIndicator.setImageResource(R.drawable.ic_gps_3);
-        gpsDetailIndicator.setImageResource(R.drawable.ic_gps_3);
-        gpsMessage.setText(org.runnerup.common.R.string.GPS_level_good);
+        gpsIcon = R.drawable.ic_gps_3;
+        gpsMessageResource = org.runnerup.common.R.string.GPS_level_good;
         break;
+      default:
+        throw new IllegalStateException("Unhandled GPS level " + gpsLevel);
     }
+    gpsSummaryItem = new StartReadinessItem(gpsIcon, "GPS", getString(gpsMessageResource));
+    gpsDetailsItem = new StartReadinessItem(gpsIcon, "GPS", gpsDetail);
     if (gpsLevel == GpsLevel.NOT_FIXED) {
       notificationStateManager.displayNotificationState(gpsSearchingState);
     } else {
@@ -1148,11 +1118,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     }
   }
 
-  private boolean updateHRView() {
+  private void updateHRView() {
     if (mTracker == null || !mTracker.isComponentConfigured(TrackerHRM.NAME)) {
-      hrIndicator.setVisibility(View.GONE);
-      hrMessage.setVisibility(View.GONE);
-      return false;
+      heartRateItem = null;
+      return;
     }
     if (mTracker.getHRProvider() instanceof WearHRProvider) {
       WearHRConnectionState.Status status =
@@ -1160,10 +1129,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       if (status == WearHRConnectionState.Status.CONNECTING
           || status == WearHRConnectionState.Status.RECONNECTING
           || status == WearHRConnectionState.Status.UNAVAILABLE) {
-        hrIndicator.setVisibility(View.VISIBLE);
-        hrMessage.setText(WearHRStatusText.resourceFor(status));
-        hrMessage.setVisibility(View.VISIBLE);
-        return true;
+        heartRateItem =
+            new StartReadinessItem(
+                R.drawable.ic_heartrate_white_24dp,
+                getString(org.runnerup.common.R.string.Heart_Rate_Monitor),
+                getString(WearHRStatusText.resourceFor(status)));
+        return;
       }
     }
     Integer hrVal = null;
@@ -1177,37 +1148,27 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       }
     }
 
-    hrMessage.setText(getHRDetailString());
-    hrIndicator.setVisibility(View.VISIBLE);
-    if (statusDetailsShown) {
-      hrMessage.setVisibility(View.VISIBLE);
-    } else {
-      hrMessage.setVisibility(View.GONE);
-    }
-
-    return true;
+    heartRateItem =
+        new StartReadinessItem(
+            R.drawable.ic_heartrate_white_24dp,
+            getString(org.runnerup.common.R.string.Heart_Rate_Monitor),
+            statusDetailsShown ? getHRDetailString() : "");
   }
 
-  private boolean updateWearOSView() {
+  private void updateWearOSView() {
     if (mTracker == null || !mTracker.isComponentConfigured(TrackerWear.NAME)) {
-      wearOsIndicator.setVisibility(View.GONE);
-      wearOsMessage.setVisibility(View.GONE);
-      return false;
+      wearOsItem = null;
+      return;
     }
-
-    wearOsIndicator.setVisibility(View.VISIBLE);
-
+    String message = "";
     if (!mTracker.isComponentConnected(TrackerWear.NAME)) {
-      wearOsMessage.setVisibility(View.VISIBLE);
-      wearOsMessage.setText("?");
-    } else if (statusDetailsShown) {
-      // wearOsMessage.setText(""); //todo show device name
-      wearOsMessage.setVisibility(View.GONE);
-    } else {
-      wearOsMessage.setVisibility(View.GONE);
+      message = "?";
     }
-
-    return true;
+    wearOsItem =
+        new StartReadinessItem(
+            R.drawable.ic_watch_white_24dp,
+            getString(org.runnerup.common.R.string.Wear_OS_Device),
+            message);
   }
 
   @Override
