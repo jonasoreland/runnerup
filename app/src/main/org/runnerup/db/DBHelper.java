@@ -639,6 +639,9 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
           () -> {
             int currentProgress = 0;
             for (Long id : list) {
+              if (!dialog.isShowing()) {
+                break;
+              }
               deleteActivity(db, id);
               currentProgress++;
               final int progressToShow = currentProgress;
@@ -648,8 +651,11 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
             // Post-execution step (runs on the main thread)
             handler.post(
                 () -> {
-                  db.close();
-                  mDBHelper.close();
+                  try {
+                    db.close();
+                    mDBHelper.close();
+                  } catch (Exception ignored) {
+                  }
                   if (onComplete != null) {
                     onComplete.run();
                   }
@@ -657,8 +663,11 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
           });
     } else {
       // No activities to delete, just clean up
-      db.close();
-      mDBHelper.close();
+      try {
+        db.close();
+        mDBHelper.close();
+      } catch (Exception ignored) {
+      }
       if (onComplete != null) {
         onComplete.run();
       }

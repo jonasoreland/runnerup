@@ -130,6 +130,14 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   private SQLiteDatabase mDB = null;
   private PersistentGpsLoggerListener mDBWriter = null;
   private PowerManager.WakeLock mWakeLock = null;
+
+  public SQLiteDatabase getDatabase() {
+    if (mDB == null) {
+      mDB = DBHelper.getWritableDatabase(this);
+    }
+    return mDB;
+  }
+
   private final List<WorkoutObserver> liveLoggers = new ArrayList<>();
 
   private Workout workout = null;
@@ -574,7 +582,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private void saveActivity(Double manualDistance) {
     if (mDB == null) {
-      Log.e("Tracker", "saveActivity called but mDB is null");
+      mDB = DBHelper.getWritableDatabase(this);
+    }
+    if (mDB == null) {
+      Log.e("Tracker", "saveActivity: mDB is still null after attempting to reopen");
       return;
     }
     ContentValues tmp = new ContentValues();
