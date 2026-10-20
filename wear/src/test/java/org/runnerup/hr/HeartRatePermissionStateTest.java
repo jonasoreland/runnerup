@@ -7,11 +7,26 @@ import org.junit.Test;
 public class HeartRatePermissionStateTest {
   @Test
   public void mapsWearOsVersionsToTheirHeartRatePermission() {
+    assertEquals("android.permission.BODY_SENSORS", HeartRatePermissionState.permissionForSdk(32));
     assertEquals("android.permission.BODY_SENSORS", HeartRatePermissionState.permissionForSdk(35));
     assertEquals(
         "android.permission.health.READ_HEART_RATE", HeartRatePermissionState.permissionForSdk(36));
     assertEquals(
         "android.permission.health.READ_HEART_RATE", HeartRatePermissionState.permissionForSdk(37));
+  }
+
+  @Test
+  public void mapsBackgroundPermissionOnlyWhereRequired() {
+    assertEquals(null, HeartRatePermissionState.backgroundPermissionForSdk(32));
+    assertEquals(
+        "android.permission.BODY_SENSORS_BACKGROUND",
+        HeartRatePermissionState.backgroundPermissionForSdk(33));
+    assertEquals(
+        "android.permission.BODY_SENSORS_BACKGROUND",
+        HeartRatePermissionState.backgroundPermissionForSdk(35));
+    assertEquals(
+        "android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND",
+        HeartRatePermissionState.backgroundPermissionForSdk(36));
   }
 
   @Test
@@ -23,5 +38,27 @@ public class HeartRatePermissionStateTest {
         HeartRatePermissionState.resolve(true, false));
     assertEquals(
         HeartRatePermissionState.State.READY, HeartRatePermissionState.resolve(true, true));
+  }
+
+  @Test
+  public void requiresBackgroundPermissionFromApi33() {
+    assertEquals(
+        HeartRatePermissionState.State.READY,
+        HeartRatePermissionState.resolve(true, true, false, 32));
+    assertEquals(
+        HeartRatePermissionState.State.NEEDS_BACKGROUND_PERMISSION,
+        HeartRatePermissionState.resolve(true, true, false, 33));
+    assertEquals(
+        HeartRatePermissionState.State.NEEDS_BACKGROUND_PERMISSION,
+        HeartRatePermissionState.resolve(true, true, false, 36));
+    assertEquals(
+        HeartRatePermissionState.State.READY,
+        HeartRatePermissionState.resolve(true, true, true, 36));
+    assertEquals(
+        HeartRatePermissionState.State.NEEDS_PERMISSION,
+        HeartRatePermissionState.resolve(true, false, true, 36));
+    assertEquals(
+        HeartRatePermissionState.State.UNAVAILABLE,
+        HeartRatePermissionState.resolve(false, true, true, 36));
   }
 }

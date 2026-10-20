@@ -446,6 +446,13 @@
   <string name="wear_hr_grant_permission">Tillåt åtkomst</string>
   <string name="wear_hr_permission_ready">Puls är redo</string>
   <string name="wear_hr_permission_ready_details">Telefonen kan använda klockans sensor under ett pass.</string>
+  <string name="wear_hr_background_permission_needed">Tillåt puls i bakgrunden</string>
+  <string name="wear_hr_background_permission_details">Tillåt pulsåtkomst medan ett träningspass fortsätter med släckt skärm.</string>
+  <string name="wear_hr_background_permission_settings_details">Öppna appbehörigheter och tillåt sensoråtkomst hela tiden så att ett pass kan fortsätta med släckt skärm.</string>
+  <string name="wear_hr_open_permission_settings">Öppna inställningar</string>
+  <string name="wear_hr_grant_background_permission">Tillåt åtkomst i bakgrunden</string>
+  <string name="wear_hr_notification_title">Puls aktiv</string>
+  <string name="wear_hr_notification_details">Pulsen delas med träningspasset på telefonen.</string>
   <string name="Plan_revision_named">%1$s · Version %2$d</string>
   <string-array name="Plan_calendar_weekdays">
     <item>M</item><item>T</item><item>O</item><item>T</item><item>F</item><item>L</item><item>S</item>

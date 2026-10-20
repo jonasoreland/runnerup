@@ -17,12 +17,16 @@
 
 package org.runnerup.hr;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -31,10 +35,14 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.gms.wearable.Wearable;
 import java.nio.charset.StandardCharsets;
+import org.runnerup.R;
 import org.runnerup.common.util.Constants;
+import org.runnerup.view.MainActivity;
 
 /**
  * A {@link Service} that monitors heart rate data using the device's {@link Sensor#TYPE_HEART_RATE}
@@ -43,6 +51,8 @@ import org.runnerup.common.util.Constants;
  */
 public class HeartRateService extends Service implements SensorEventListener {
   private static final String TAG = "HeartRateService";
+  private static final String CHANNEL_ID = "relven_hr_capture";
+  private static final int NOTIFICATION_ID = 37;
 
   /** Node ID of the connected phone. */
   private String sourceNodeId;
@@ -62,7 +72,6 @@ public class HeartRateService extends Service implements SensorEventListener {
     super.onCreate();
 
     setupBatteryChangedReceiver();
-
     sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
     if (sensorManager != null) {
       heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
@@ -70,7 +79,6 @@ public class HeartRateService extends Service implements SensorEventListener {
 
     if (heartRateSensor == null) {
       Log.e(TAG, "onCreate: Heart rate sensor not available.");
-      stopSelf();
     }
   }
 
@@ -86,21 +94,34 @@ public class HeartRateService extends Service implements SensorEventListener {
       return START_NOT_STICKY;
     }
 
-    attemptToStartHeartRateMonitoring();
+    if (!hasRequiredPermissions() || heartRateSensor == null) {
+      Log.w(TAG, "Heart-rate capture is unavailable; check sensor and background permissions.");
+      stopSelf(startId);
+      return START_NOT_STICKY;
+    }
+
+    try {
+      startForegroundCaptureNotification();
+      if (!startHeartRateMonitoring()) {
+        Log.e(TAG, "Failed to register heart rate sensor listener.");
+        stopSelf(startId);
+      }
+    } catch (SecurityException | IllegalStateException e) {
+      Log.e(TAG, "Unable to start health foreground service.", e);
+      stopSelf(startId);
+    }
 
     // A restarted service must wait for a new command from the phone. A stale start command
     // could otherwise leave the watch sensor running after the workout has ended.
     return START_NOT_STICKY;
   }
 
-  private void startHeartRateMonitoring() {
+  private boolean startHeartRateMonitoring() {
     if (sensorManager != null && heartRateSensor != null) {
-      boolean registered =
-          sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
-      if (!registered) {
-        Log.e(TAG, "startHeartRateMonitoring: Failed to register heart rate sensor listener.");
-      }
+      return sensorManager.registerListener(
+          this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
+    return false;
   }
 
   @Override
@@ -111,17 +132,69 @@ public class HeartRateService extends Service implements SensorEventListener {
     }
 
     stopHeartRateMonitoring();
+    ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE);
     super.onDestroy();
   }
 
-  private void attemptToStartHeartRateMonitoring() {
-    if (checkHeartRatePermission()) {
-      startHeartRateMonitoring();
+  private boolean hasRequiredPermissions() {
+    String foregroundPermission = HeartRatePermissionState.permissionForSdk(Build.VERSION.SDK_INT);
+    String backgroundPermission =
+        HeartRatePermissionState.backgroundPermissionForSdk(Build.VERSION.SDK_INT);
+    boolean foregroundGranted = isPermissionGranted(foregroundPermission);
+    boolean backgroundGranted =
+        backgroundPermission == null || isPermissionGranted(backgroundPermission);
+    return HeartRatePermissionState.resolve(
+            heartRateSensor != null, foregroundGranted, backgroundGranted, Build.VERSION.SDK_INT)
+        == HeartRatePermissionState.State.READY;
+  }
+
+  private boolean isPermissionGranted(String permission) {
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+  }
+
+  private void startForegroundCaptureNotification() {
+    createNotificationChannel();
+    Intent activityIntent = new Intent(this, MainActivity.class);
+    PendingIntent contentIntent =
+        PendingIntent.getActivity(
+            this,
+            0,
+            activityIntent,
+            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    android.app.Notification notification =
+        new NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_ongoing_notification)
+            .setContentTitle(getString(org.runnerup.common.R.string.wear_hr_notification_title))
+            .setContentText(getString(org.runnerup.common.R.string.wear_hr_notification_details))
+            .setContentIntent(contentIntent)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setOnlyAlertOnce(true)
+            .setOngoing(true)
+            .setLocalOnly(true)
+            .build();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      ServiceCompat.startForeground(
+          this, NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH);
     } else {
-      Log.w(
-          TAG,
-          "Heart rate permission is missing; grant it from the visible watch permission page.");
-      stopSelf();
+      startForeground(NOTIFICATION_ID, notification);
+    }
+  }
+
+  private void createNotificationChannel() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      NotificationManager manager = getSystemService(NotificationManager.class);
+      if (manager != null) {
+        NotificationChannel channel =
+            new NotificationChannel(
+                CHANNEL_ID,
+                getString(org.runnerup.common.R.string.wear_hr_notification_title),
+                NotificationManager.IMPORTANCE_LOW);
+        channel.setDescription(
+            getString(org.runnerup.common.R.string.wear_hr_notification_details));
+        channel.setShowBadge(false);
+        manager.createNotificationChannel(channel);
+      }
     }
   }
 
@@ -129,12 +202,6 @@ public class HeartRateService extends Service implements SensorEventListener {
     if (sensorManager != null) {
       sensorManager.unregisterListener(this);
     }
-  }
-
-  /** Checks if the version-appropriate heart-rate permission has been granted. */
-  private boolean checkHeartRatePermission() {
-    String permission = HeartRatePermissionState.permissionForSdk(Build.VERSION.SDK_INT);
-    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
   }
 
   @Override

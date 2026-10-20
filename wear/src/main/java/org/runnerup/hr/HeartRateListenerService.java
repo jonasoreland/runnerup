@@ -20,6 +20,7 @@ package org.runnerup.hr;
 import android.content.Intent;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 import org.runnerup.common.util.Constants;
@@ -61,7 +62,11 @@ public class HeartRateListenerService extends WearableListenerService {
 
     if (Constants.Wear.Path.MSG_CMD_HR_START.equals(path)) {
       serviceIntent.putExtra(Constants.Intents.EXTRA_SOURCE_NODE_ID, sourceNodeId);
-      startService(serviceIntent);
+      try {
+        ContextCompat.startForegroundService(this, serviceIntent);
+      } catch (IllegalStateException | SecurityException e) {
+        Log.e(TAG, "Unable to start heart-rate foreground service.", e);
+      }
     } else if (Constants.Wear.Path.MSG_CMD_HR_STOP.equals(path)) {
       stopService(serviceIntent);
     }

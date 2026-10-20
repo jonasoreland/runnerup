@@ -19,6 +19,8 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
 
     <!--
       Starting with Wear OS 6 (API 36), granular Health Platform permissions replace
@@ -34,6 +36,11 @@
     <!-- Health Platform heart rate permission for Wear OS 6 (API 36) and higher -->
     <uses-permission
         android:name="android.permission.health.READ_HEART_RATE" />
+    <uses-permission
+        android:name="android.permission.BODY_SENSORS_BACKGROUND"
+        android:maxSdkVersion="35" />
+    <uses-permission
+        android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND" />
 
     <application
         android:allowBackup="true"
@@ -87,7 +94,9 @@
             android:name="com.google.android.gms.wearable.capabilities"
             android:resource="@array/android_wear_capabilities" />
 
-        <service android:name=".hr.HeartRateService" />
+        <service
+            android:name=".hr.HeartRateService"
+            android:foregroundServiceType="health" />
 
         <service
             android:name=".hr.HeartRateListenerService"
