@@ -20,23 +20,23 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import org.runnerup.R;
+import androidx.compose.ui.platform.ComposeView;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.service.StateService;
+import org.runnerup.wear.ui.WearControlPresentationState;
+import org.runnerup.wear.ui.WearControlsComposeContent;
 
 public class PauseResumeFragment extends Fragment
     implements ValueModel.ChangeListener<TrackerState> {
 
   private static final long SCROLL_DELAY = 1500; // 1.5s
   private final Handler handler = new Handler();
-  private TextView mButtonPauseResumeTxt;
-  private CircledImageView mButtonPauseResume;
-  private CircledImageView mButtonNewLap;
+  private ComposeView composeView;
+  private WearControlPresentationState presentationState;
   private MainActivity activity;
   private long clickCount = 0;
 
@@ -45,81 +45,43 @@ public class PauseResumeFragment extends Fragment
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.newlap_pause_resume, container, false);
-    super.onViewCreated(view, savedInstanceState);
-
-    mButtonPauseResume = view.findViewById(R.id.icon_resume);
-    mButtonPauseResume.setOnClickListener(pauseButtonClick);
-    mButtonPauseResumeTxt = view.findViewById(R.id.txt_resume);
-    mButtonNewLap = view.findViewById(R.id.icon_newlap);
-    mButtonNewLap.setOnClickListener(newLapButtonClick);
-    // TextView buttonNewLapTxt = (TextView) view.findViewById(R.id.txt_newlap);
-
-    return view;
+    composeView = new ComposeView(activity);
+    presentationState = new WearControlPresentationState();
+    WearControlsComposeContent.bindPauseResume(
+        composeView, presentationState, this::sendNewLap, this::sendPauseResume);
+    updateView(activity.getTrackerState());
+    return composeView;
   }
 
   private void updateView(TrackerState state) {
-    if (state != null) {
-      switch (state) {
-        case INIT:
-        case INITIALIZING:
-        case INITIALIZED:
-        case CLEANUP:
-        case ERROR:
-        case CONNECTING:
-        case CONNECTED:
-          break;
-        case STARTED:
-          mButtonNewLap.setEnabled(true);
-          mButtonPauseResume.setEnabled(true);
-          mButtonPauseResume.setImageResource(org.runnerup.common.R.drawable.ic_av_pause);
-          mButtonPauseResumeTxt.setText(getText(org.runnerup.common.R.string.Pause));
-          return;
-        case PAUSED:
-          mButtonNewLap.setEnabled(true);
-          mButtonPauseResume.setEnabled(true);
-          mButtonPauseResume.setImageResource(org.runnerup.common.R.drawable.ic_av_play_arrow);
-          mButtonPauseResumeTxt.setText(getText(org.runnerup.common.R.string.Resume));
-          return;
-      }
-    }
-    mButtonNewLap.setEnabled(false);
-    mButtonPauseResume.setEnabled(false);
+    if (presentationState != null) presentationState.updatePauseAction(state);
   }
 
-  private final View.OnClickListener pauseButtonClick =
-      new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          clickCount++;
-          activity.getStateService().sendPauseResume();
-          TrackerState state = activity.getTrackerState();
-          if (state == TrackerState.STARTED) updateView(TrackerState.PAUSED);
-          else if (state == TrackerState.PAUSED) {
-            updateView(TrackerState.STARTED);
-            // When resuming...scroll to RunInfo screen in 1.5 seconds
-            final long saveClickCount = clickCount;
-            handler.postDelayed(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    if (saveClickCount != clickCount) return;
-                    PauseResumeFragment.this.activity.scrollToRunInfo();
-                  }
-                },
-                SCROLL_DELAY);
-          }
-        }
-      };
+  private void sendPauseResume() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService == null) return;
+    clickCount++;
+    stateService.sendPauseResume();
+    TrackerState state = activity.getTrackerState();
+    if (state == TrackerState.STARTED) {
+      updateView(TrackerState.PAUSED);
+    } else if (state == TrackerState.PAUSED) {
+      updateView(TrackerState.STARTED);
+      long saveClickCount = clickCount;
+      handler.postDelayed(
+          () -> {
+            if (saveClickCount == clickCount && isAdded()) activity.scrollToRunInfo();
+          },
+          SCROLL_DELAY);
+    }
+  }
 
-  private final View.OnClickListener newLapButtonClick =
-      new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          clickCount++;
-          activity.getStateService().sendNewLap();
-        }
-      };
+  private void sendNewLap() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService == null) return;
+    clickCount++;
+    stateService.sendNewLap();
+  }
 
   @Override
   public void onResume() {
@@ -144,5 +106,15 @@ public class PauseResumeFragment extends Fragment
   public void onValueChanged(
       ValueModel<TrackerState> obj, TrackerState oldState, TrackerState newState) {
     if (isAdded()) updateView(newState);
+  }
+
+  @Override
+  public void onDestroyView() {
+    if (composeView != null) {
+      composeView.disposeComposition();
+      composeView = null;
+    }
+    presentationState = null;
+    super.onDestroyView();
   }
 }

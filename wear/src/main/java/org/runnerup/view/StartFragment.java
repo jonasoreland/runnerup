@@ -19,18 +19,20 @@ package org.runnerup.view;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.wearable.view.CircledImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import org.runnerup.R;
+import androidx.compose.ui.platform.ComposeView;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.service.StateService;
+import org.runnerup.wear.ui.WearControlPresentationState;
+import org.runnerup.wear.ui.WearControlsComposeContent;
 
 public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
 
-  private TextView mTxt;
+  private ComposeView composeView;
+  private WearControlPresentationState presentationState;
   private MainActivity activity;
 
   public StartFragment() {}
@@ -38,47 +40,21 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.start, container, false);
-    super.onViewCreated(view, savedInstanceState);
-
-    CircledImageView button = view.findViewById(R.id.icon_start);
-    button.setOnClickListener(startButtonClick);
-    mTxt = view.findViewById(R.id.txt_start);
-
-    return view;
+    composeView = new ComposeView(activity);
+    presentationState = new WearControlPresentationState();
+    WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
+    updateView(activity.getTrackerState());
+    return composeView;
   }
 
   private void updateView(TrackerState state) {
-    if (state == null) return;
-    switch (state) {
-      case INIT:
-      case INITIALIZING:
-      case INITIALIZED:
-        mTxt.setText(org.runnerup.common.R.string.Start_GPS);
-        break;
-      case CONNECTING:
-        break;
-      case CONNECTED:
-        mTxt.setText(org.runnerup.common.R.string.Start_activity);
-        break;
-      case STARTED:
-        break;
-      case PAUSED:
-        break;
-      case CLEANUP:
-        break;
-      case ERROR:
-        break;
-    }
+    if (presentationState != null) presentationState.updateStartState(state);
   }
 
-  private final View.OnClickListener startButtonClick =
-      new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          activity.getStateService().sendStart();
-        }
-      };
+  private void startActivity() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService != null) stateService.sendStart();
+  }
 
   @Override
   public void onResume() {
@@ -103,5 +79,15 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   public void onValueChanged(
       ValueModel<TrackerState> obj, TrackerState oldValue, TrackerState newValue) {
     if (isAdded()) updateView(newValue);
+  }
+
+  @Override
+  public void onDestroyView() {
+    if (composeView != null) {
+      composeView.disposeComposition();
+      composeView = null;
+    }
+    presentationState = null;
+    super.onDestroyView();
   }
 }
