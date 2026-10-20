@@ -1,16 +1,23 @@
-# Implementation status — 19 October 2026
+# Implementation status — 20 October 2026
+
+## 20 October 2026 serial integration checkpoint
+
+- PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
+- The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
+- The old Relven database is now snapshotted read-only at startup when present, and a maintenance action can export that snapshot as JSON. This is a preservation bridge only: workouts and activity history are not yet imported into the current library.
+- The physical Android device remains off limits until all phases are complete and the app is ready for manual testing. This checkpoint used local unit tests/build tooling only.
 
 ## Phase Zero — repository migration
 
 - **Completed:** Existing history-preserving GitHub fork checked out on `codex/phase-zero`; `upstream` remote added. Original Relven repository untouched. Baseline phone/watch APKs and selected tests passed before edits. The release ID now matches the old Relven Play ID per owner instruction. Relven launcher labels, uploaded icon, CI artifact labels, README and migration documents changed locally.
-- **Pending:** Real-device launcher check and safe Play upgrade migration. Dedicated splash and remaining legacy service/account copy need audit.
+- **Pending:** Real-device launcher check and complete Play upgrade migration. Dedicated splash and remaining legacy service/account copy need audit.
 - **Changed modules:** root Gradle configuration, `common` resources, phone/watch icon resources, Wear manifest, CI and documentation. Workout engine, database, GPS, audio and export logic are unchanged.
 - **Build results:** Untouched baseline and branded debug phone/watch builds passed. Unsigned release phone/watch APKs also built after the HR integration; APK metadata confirms `se.hampusandersson.relven` for both, with version codes `24000374` and `24000375`. Branded lint: Wear had no errors/warnings; phone had no new issues (23 errors filtered by inherited baseline). `spotlessCheck` fails on inherited CRLF formatting in 197 Java files on Windows; no bulk reformat was made.
 - **Automated tests:** Existing app unit target passed at baseline. Wear test target had no test sources. No new behavior tests for this identity/resource migration.
 - **Emulator:** Not run. `adb devices -l` showed no devices.
 - **Physical devices:** Debug APK installed and cold-launched on Samsung SM-S948B (API 37) over ADB; `MainLayout` resumed without a startup crash. A first-run background-location explanation was visible. Permission selection and workout behavior remain unverified. Galaxy Watch6 Classic unverified.
-- **Known issues:** Same-ID upgrade cannot read the old Relven Room data without migration; signing identity and published version-code floor require verification before upload. Optional legacy Mapbox and upstream integrations remain. Some legacy UI and provider-specific strings still show upstream terminology. Runtime GPS, audio, export and wearable paths remain unverified.
-- **Next step:** Design an explicit migration for the old Relven Room data before any Play update.
+- **Known issues:** Same-ID upgrade data is preserved in a private JSON vault and can be exported, but old workouts/activities are not imported into the new databases. Signing identity and published version-code floor require verification before upload. Optional legacy Mapbox and upstream integrations remain. Some legacy UI and provider-specific strings still show upstream terminology. Runtime GPS, audio, export and wearable paths remain unverified.
+- **Next step:** Convert explicitly supported old workout records and activity history from a copied production-era database; retain unsupported records in the vault and report them clearly.
 
 ## Phase One — engine audit
 

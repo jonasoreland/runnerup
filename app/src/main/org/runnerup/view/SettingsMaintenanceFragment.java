@@ -1,11 +1,14 @@
 package org.runnerup.view;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
@@ -14,13 +17,24 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.relven.migration.LegacyRelvenVault;
 import org.runnerup.util.ProgressDialogCompat;
 
 public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
 
   private static final String TAG = "SettingsMaintenance";
+  private static final ExecutorService LEGACY_EXPORT_EXECUTOR = Executors.newSingleThreadExecutor();
+  private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+
+  private final ActivityResultLauncher<String> exportLegacyLauncher =
+      registerForActivityResult(
+          new ActivityResultContracts.CreateDocument("application/json"), this::exportLegacyData);
 
   /**
    * ActivityResultLauncher for handling the result of the {@link Intent#ACTION_CREATE_DOCUMENT}
@@ -104,11 +118,22 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
         DBHelper.purgeDeletedActivities(requireContext(), dialog, dialog::dismiss);
         return false;
       };
+  private final Preference.OnPreferenceClickListener onExportLegacyClick =
+      preference -> {
+        exportLegacyLauncher.launch("relven-legacy-backup.json");
+        return true;
+      };
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
     setPreferencesFromResource(R.xml.settings_maintenance, rootKey);
     Resources res = getResources();
+    Preference legacyBackup =
+        findPreference(res.getString(R.string.pref_export_legacy_relven_data));
+    if (legacyBackup != null) {
+      legacyBackup.setVisible(LegacyRelvenVault.isAvailable(requireContext()));
+      legacyBackup.setOnPreferenceClickListener(onExportLegacyClick);
+    }
     {
       Preference btn = findPreference(res.getString(R.string.pref_exportdb));
       if (btn != null) {
@@ -126,6 +151,50 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
       if (btn != null) {
         btn.setOnPreferenceClickListener(onPruneClick);
       }
+    }
+  }
+
+  private void exportLegacyData(Uri destination) {
+    if (destination == null) return;
+    Context context = requireContext().getApplicationContext();
+    ContentResolver resolver = requireContext().getContentResolver();
+    LEGACY_EXPORT_EXECUTOR.execute(
+        () -> {
+          int message;
+          // ACTION_CREATE_DOCUMENT may create the selected file before this callback is run.
+          boolean destinationMayExist = true;
+          try {
+            if (!LegacyRelvenVault.captureIfPresent(context)) {
+              throw new IOException("No previous Relven database found");
+            }
+            try (OutputStream output = resolver.openOutputStream(destination)) {
+              if (output == null) throw new IOException("Unable to open backup destination");
+              LegacyRelvenVault.exportTo(context, output);
+            }
+            message = org.runnerup.common.R.string.Legacy_Relven_backup_exported;
+          } catch (IOException | RuntimeException error) {
+            Log.e(TAG, "Unable to export previous Relven data", error);
+            message =
+                destinationMayExist && !deletePartialDestination(resolver, destination)
+                    ? org.runnerup.common.R.string.Legacy_Relven_backup_export_failed_partial
+                    : org.runnerup.common.R.string.Legacy_Relven_backup_export_failed;
+          }
+          int resultMessage = message;
+          MAIN_HANDLER.post(
+              () -> {
+                if (isAdded()) {
+                  Toast.makeText(requireContext(), resultMessage, Toast.LENGTH_LONG).show();
+                }
+              });
+        });
+  }
+
+  private boolean deletePartialDestination(ContentResolver resolver, Uri destination) {
+    try {
+      return resolver.delete(destination, null, null) > 0;
+    } catch (RuntimeException error) {
+      Log.w(TAG, "Unable to remove incomplete legacy data export", error);
+      return false;
     }
   }
 

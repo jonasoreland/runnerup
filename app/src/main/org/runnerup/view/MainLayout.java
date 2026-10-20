@@ -57,15 +57,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants.DB;
 import org.runnerup.db.DBHelper;
+import org.runnerup.relven.migration.LegacyRelvenVault;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.ViewUtil;
 
 public class MainLayout extends AppCompatActivity {
   public static final String EXTRA_INITIAL_TAB = "org.runnerup.extra.INITIAL_TAB";
+  private static final ExecutorService LEGACY_BACKUP_EXECUTOR = Executors.newSingleThreadExecutor();
 
   private enum UpgradeState {
     UNKNOWN,
@@ -84,6 +88,14 @@ public class MainLayout extends AppCompatActivity {
     WindowCompat.getInsetsController(window, window.getDecorView())
         .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
+    LEGACY_BACKUP_EXECUTOR.execute(
+        () -> {
+          try {
+            LegacyRelvenVault.captureIfPresent(getApplicationContext());
+          } catch (IOException error) {
+            Log.e(getClass().getSimpleName(), "Unable to preserve previous Relven data", error);
+          }
+        });
     if (!isLargeScreen()) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
