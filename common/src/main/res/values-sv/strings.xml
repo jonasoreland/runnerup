@@ -36,6 +36,7 @@
   <string name="cool_down">nedvarvning</string>
   <string name="repeat">Upprepning</string>
   <string name="repeat_times">Upprepa %1$d gånger</string>
+  <string name="additional_workout_steps_hidden">Fler träningssteg visas inte.</string>
   <string name="Time">Tid</string>
   <string name="time">tid</string>
   <string name="distance">distans</string>

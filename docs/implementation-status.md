@@ -4,6 +4,7 @@
 
 - PR #21 (production Today launcher with Start/History retained in RunnerUp) merged to `master` as `9335a6e`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.
 - PR #22 (lifecycle-bound, read-only Tracker session status on Today) merged to `master` as `dbaaee2`. Local debug/release builds, app unit tests, lint and style passed; hosted build/test/lint/style/F-Droid CI passed.
+- PR #23 (open the existing RunnerUp workout screen from the active/paused Today card) merged to `master` as `04674c4`. Local debug/release builds, app unit tests, lint and style passed; hosted Android CI passed.
 - PR #20 (legacy migration review and confirmed import of supported workouts and eligible completed running activities) merged to `master` as `2b4198c`. Hosted build/test/lint/style/F-Droid checks passed.
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
 - PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`.
@@ -65,7 +66,8 @@
 
 - **In progress:** The workout library now has a system file-picker button. Relven v3 running-workout JSON enters through this picker or the inherited document intent. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
 - **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
-- **Pending:** Broader real-world FIT Workout compatibility, picker-to-execution verification, import UX review and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
+- **Current increment:** The import confirmation previews ordered steps, repeat counts, durations and targets before saving; RunnerUp remains responsible for execution.
+- **Pending:** Broader real-world FIT Workout compatibility, picker-to-execution verification, and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
 
 ## Phase Five — plan packages and library
 
