@@ -95,14 +95,18 @@
             android:value="true" />
 
         <activity
-            android:name=".view.MainLayout"
-            android:exported="true"
-            android:theme="@style/MainLayoutTheme">
+            android:name="org.runnerup.relven.ui.RelvenHomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
 
+        <activity
+            android:name=".view.MainLayout"
+            android:exported="true"
+            android:theme="@style/MainLayoutTheme">
             <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
 
