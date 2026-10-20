@@ -11,7 +11,7 @@ Status describes this checkout, not planned designs.
 | Wear workout display and controls | Inherited, runtime unverified | Paired-device test pending |
 | Watch heart-rate measurement | Initial integration, unverified | [PR #1378 audit](wear-hr-audit.md); Galaxy Watch6 Classic, screen-off and permission tests pending |
 | FIT Workout import | Bounded running-workout import with step preview | FIT file type 5 decoder validates structure and converts supported running steps; import confirmation previews nested steps, duration and targets. Real-device sample and start/finish/export checks remain. |
-| Versioned JSON workouts and plans | Partial running-workout v3 import | Supported steps convert into inherited workout files; plans, strength and device execution pending |
+| Versioned JSON workouts and plans | Running-workout v3 import and locally stored plan packages | Plan packages can be validated, saved, previewed, and explicitly activated/switched/cleared on device; calendar scheduling, plan revisions, strength and device execution remain pending |
 | Calendar and strength details | Pending | Stitch correction and implementation |
 | Offline exercise catalog and gym logging | Pending | License/data review and local model |
 | AI Plan Kit ZIP | Pending | Generate from implemented schema only |

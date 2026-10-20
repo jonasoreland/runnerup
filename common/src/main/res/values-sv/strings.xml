@@ -286,6 +286,13 @@
   <string name="Plan_saved">Planen har sparats på den här enheten. Den är inte aktiverad.</string>
   <string name="View_saved_plans">Visa sparade planer</string>
   <string name="No_saved_plans">Inga sparade planer ännu.</string>
+  <string name="Active_plan_marker">(Aktiv)</string>
+  <string name="Activate_plan">Aktivera plan</string>
+  <string name="Activating_plan">Aktiverar plan…</string>
+  <string name="Plan_activated">Planen har aktiverats.</string>
+  <string name="Clear_active_plan">Inaktivera plan</string>
+  <string name="Clearing_active_plan">Inaktiverar plan…</string>
+  <string name="Active_plan_cleared">Planen har inaktiverats.</string>
   <string name="Validating_plan">Validerar plan…</string>
   <string name="Saving_plan">Sparar plan…</string>
   <string name="Saving_as">Sparar som</string>
