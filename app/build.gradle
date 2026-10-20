@@ -9,6 +9,10 @@ android {
     buildToolsVersion = rootProject.ext.buildToolsVersion
     namespace = 'org.runnerup'
 
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion("17")
         targetCompatibility = JavaVersion.toVersion("17")

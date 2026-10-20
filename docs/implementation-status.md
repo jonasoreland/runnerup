@@ -3,12 +3,19 @@
 ## 20 October 2026 serial integration checkpoint
 
 - PR #14 (initial debug-only Compose preview and supported Relven v3 running-workout import) merged to `master` as `70e2845`. The nested-repeat importer limit is 10,000 expanded segment executions and has boundary tests.
-- PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`. This is a preservation bridge only; workouts and activity history are not yet imported into the current library.
+- PR #15 (read-only legacy database archive and explicit JSON export) merged to `master` as `f8450df`.
 - PR #16 (bounded FIT running-workout importer) merged as `19395fa`; local build, tests, lint and fixture checks passed, as did hosted build/test/lint/style/F-Droid CI. Real-device FIT samples and picker-to-execution verification remain pending.
 - PR #17 (debug-only recent-activity card in the Compose preview) merged as `9b72e12`; local build, tests and lint plus hosted CI passed. No device was used.
 - PR #18 (bounded, strict running plan package parser and private atomic store) merged as `eed60df`; local build/tests/lint/style and hosted build/test/lint/style/F-Droid checks passed. Independent review approved. No device was used.
+- PR #19 (validated legacy database snapshot and bounded archive preview) merged to `master` as `138781e`. The serial legacy importer is being implemented on one branch: workouts are staged idempotently and eligible completed running activities convert transactionally into history.
 - The earlier stacked draft PRs #2–#13 are closed; their branches are retained for serial selection. Work proceeds with one open PR at a time.
 - Work continues serially with no more than one open PR. The physical Android device remains off limits until all phases are complete and the app is ready for manual testing.
+
+## Legacy data migration — in progress
+
+- **Completed in the current migration branch:** Read-only archive preview; staged, hash-checked and idempotent legacy workout imports; conversion of eligible completed running activities into RunnerUp history with route and technical pause points; transactional source-identity ledger; synthetic archive and recovery tests.
+- **In progress:** Maintenance review/confirmation UI, localized import results and final documentation of supported and archived data.
+- **Verification still required:** Full local phone build/test/lint/style gate, independent branch review, one-at-a-time PR/CI/merge, and later signed upgrade testing against a copied production-era backup. Physical ADB remains unused until all product phases are complete and the app is ready for manual testing.
 ## Phase Zero — repository migration
 
 - **Completed:** Existing history-preserving GitHub fork checked out on `codex/phase-zero`; `upstream` remote added. Original Relven repository untouched. Baseline phone/watch APKs and selected tests passed before edits. The release ID now matches the old Relven Play ID per owner instruction. Relven launcher labels, uploaded icon, CI artifact labels, README and migration documents changed locally.

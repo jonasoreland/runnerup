@@ -360,6 +360,17 @@
   <string name="Phone_sensors_category">Telefon sensorer</string>
   <string name="Database_category">Databasunderhåll</string>
   <string name="Maintenance_explanation_summary_v2">Relven sparar aktiviteter i en lokal SQL-databas som kan importeras och exporteras.</string>
+  <string name="Legacy_Relven_import_title">Importera tidigare Relven-data</string>
+  <string name="Legacy_Relven_import_summary">Granska träningspass och slutförda löpaktiviteter som stöds från arkivet.</string>
+  <string name="Legacy_Relven_import_review_title">Granska tidigare Relven-data</string>
+  <string name="Legacy_Relven_import_review">%1$d träningspass stöds (%2$d stöds inte)\n%3$d aktiviteter kan importeras (%4$d stöds inte)\n%5$d planer, %6$d aktiva pass, %7$d schemaändringar och %8$d väntande åtgärder finns kvar i arkivet och återspelas inte. Träningspass kopieras till biblioteket. Aktiviteter läggs till i historiken. Planer aktiveras inte. Hela arkivet finns kvar för export.</string>
+  <string name="Legacy_Relven_import_confirm">Importera</string>
+  <string name="Legacy_Relven_import_complete_title">Importen är klar</string>
+  <string name="Legacy_Relven_import_partial_title">Importen behöver åtgärdas</string>
+  <string name="Legacy_Relven_import_progress">Importerar tidigare Relven-data…</string>
+  <string name="Legacy_Relven_import_result">Träningspass: %1$d importerade, %2$d fanns redan, %3$d stöds inte, %4$d konflikter, %5$d misslyckades. Aktiviteter: %6$d importerade, %7$d fanns redan, %8$d stöds inte, %9$d misslyckades.</string>
+  <string name="Legacy_Relven_import_failed">Det gick inte att granska det tidigare Relven-arkivet.</string>
+  <string name="Legacy_Relven_import_retry">Försök igen</string>
   <string name="Map_pref_summary">Karttyp</string>
   <string name="User_interface">Användarinterface</string>
   <string name="User_interface_pref_summary">Knappar och synlighet</string>

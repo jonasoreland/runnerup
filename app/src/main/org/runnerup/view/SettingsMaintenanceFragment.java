@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.runnerup.R;
 import org.runnerup.db.DBHelper;
+import org.runnerup.relven.migration.LegacyRelvenActivityImporter;
+import org.runnerup.relven.migration.LegacyRelvenMigration;
 import org.runnerup.relven.migration.LegacyRelvenVault;
 import org.runnerup.util.ProgressDialogCompat;
 
@@ -30,6 +33,7 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
 
   private static final String TAG = "SettingsMaintenance";
   private static final ExecutorService LEGACY_EXPORT_EXECUTOR = Executors.newSingleThreadExecutor();
+  private static final ExecutorService LEGACY_IMPORT_EXECUTOR = Executors.newSingleThreadExecutor();
   private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
 
   private final ActivityResultLauncher<String> exportLegacyLauncher =
@@ -123,6 +127,21 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
         exportLegacyLauncher.launch("relven-legacy-backup.json");
         return true;
       };
+  private final Preference.OnPreferenceClickListener onImportLegacyClick =
+      preference -> {
+        Context context = requireContext().getApplicationContext();
+        LEGACY_IMPORT_EXECUTOR.execute(
+            () -> {
+              try {
+                LegacyRelvenMigration.Preview preview = LegacyRelvenMigration.preview(context);
+                MAIN_HANDLER.post(() -> showLegacyReview(preview));
+              } catch (IOException | RuntimeException error) {
+                Log.e(TAG, "Unable to review previous Relven data", error);
+                MAIN_HANDLER.post(() -> showLegacyReviewFailure());
+              }
+            });
+        return true;
+      };
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -133,6 +152,12 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
     if (legacyBackup != null) {
       legacyBackup.setVisible(LegacyRelvenVault.isAvailable(requireContext()));
       legacyBackup.setOnPreferenceClickListener(onExportLegacyClick);
+    }
+    Preference legacyImport =
+        findPreference(res.getString(R.string.pref_import_legacy_relven_data));
+    if (legacyImport != null) {
+      legacyImport.setVisible(LegacyRelvenVault.isAvailable(requireContext()));
+      legacyImport.setOnPreferenceClickListener(onImportLegacyClick);
     }
     {
       Preference btn = findPreference(res.getString(R.string.pref_exportdb));
@@ -152,6 +177,92 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
         btn.setOnPreferenceClickListener(onPruneClick);
       }
     }
+  }
+
+  void showLegacyReview(LegacyRelvenMigration.Preview preview) {
+    if (!isAdded()) return;
+    String message =
+        getString(
+            org.runnerup.common.R.string.Legacy_Relven_import_review,
+            preview.getSupportedWorkoutCount(),
+            preview.getUnsupportedWorkoutCount(),
+            preview.getSupportedActivityCount(),
+            preview.getUnsupportedActivityCount(),
+            preview.getPlanCount(),
+            preview.getActiveSessionCount(),
+            preview.getScheduleChangeCount(),
+            preview.getPendingOperationCount());
+    new AlertDialog.Builder(requireContext())
+        .setTitle(org.runnerup.common.R.string.Legacy_Relven_import_review_title)
+        .setMessage(message)
+        .setPositiveButton(
+            org.runnerup.common.R.string.Legacy_Relven_import_confirm,
+            (dialog, which) -> startLegacyImport())
+        .setNegativeButton(android.R.string.cancel, null)
+        .show();
+  }
+
+  private void startLegacyImport() {
+    if (!isAdded()) return;
+    Toast.makeText(
+            requireContext(),
+            org.runnerup.common.R.string.Legacy_Relven_import_progress,
+            Toast.LENGTH_SHORT)
+        .show();
+    Context context = requireContext().getApplicationContext();
+    LEGACY_IMPORT_EXECUTOR.execute(
+        () -> {
+          LegacyRelvenMigration.WorkoutImportResult workouts =
+              LegacyRelvenMigration.importWorkouts(context);
+          LegacyRelvenActivityImporter.ActivityImportResult activities =
+              LegacyRelvenActivityImporter.importActivities(context);
+          MAIN_HANDLER.post(() -> showLegacyImportResult(workouts, activities));
+        });
+  }
+
+  private void showLegacyImportResult(
+      LegacyRelvenMigration.WorkoutImportResult workouts,
+      LegacyRelvenActivityImporter.ActivityImportResult activities) {
+    if (!isAdded()) return;
+    String message =
+        getString(
+            org.runnerup.common.R.string.Legacy_Relven_import_result,
+            workouts.getImportedCount(),
+            workouts.getAlreadyImportedCount(),
+            workouts.getUnsupportedCount(),
+            workouts.getConflictingCount(),
+            workouts.getFailedCount(),
+            activities.getImportedCount(),
+            activities.getAlreadyImportedCount(),
+            activities.getUnsupportedCount(),
+            activities.getFailedCount());
+    boolean failed = workouts.getFailedCount() > 0 || activities.getFailedCount() > 0;
+    AlertDialog.Builder builder =
+        new AlertDialog.Builder(requireContext())
+            .setTitle(
+                failed
+                    ? org.runnerup.common.R.string.Legacy_Relven_import_partial_title
+                    : org.runnerup.common.R.string.Legacy_Relven_import_complete_title)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, null);
+    if (failed) {
+      builder.setNegativeButton(
+          org.runnerup.common.R.string.Legacy_Relven_import_retry,
+          (dialog, which) -> startLegacyImport());
+    }
+    builder.show();
+  }
+
+  private void showLegacyReviewFailure() {
+    if (!isAdded()) return;
+    new AlertDialog.Builder(requireContext())
+        .setTitle(org.runnerup.common.R.string.Legacy_Relven_import_review_title)
+        .setMessage(org.runnerup.common.R.string.Legacy_Relven_import_failed)
+        .setPositiveButton(
+            org.runnerup.common.R.string.Legacy_Relven_import_retry,
+            (d, w) -> onImportLegacyClick.onPreferenceClick(null))
+        .setNegativeButton(android.R.string.cancel, null)
+        .show();
   }
 
   private void exportLegacyData(Uri destination) {

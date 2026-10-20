@@ -453,10 +453,12 @@ public class WorkoutSerializer {
       throws IOException, JSONException {
     File fout = getFile(ctx, name);
     Log.v("WorkoutSerializer", "writing " + fout.getPath());
-    writeJSON(new FileWriter(fout), workout);
+    try (FileWriter writer = new FileWriter(fout)) {
+      writeJSON(writer, workout);
+    }
   }
 
-  static void writeJSON(Writer out, Workout workout) throws JSONException, IOException {
+  public static void writeJSON(Writer out, Workout workout) throws JSONException, IOException {
     JSONObject obj = createJSON(workout);
     out.write(obj.toString());
     out.flush();

@@ -117,6 +117,29 @@ public class LegacyRelvenVaultTest {
         new String(first, StandardCharsets.UTF_8), exported.toString(StandardCharsets.UTF_8));
   }
 
+  @Test
+  public void legacyArchiveIncludesCommittedWalRowsReadOnly() throws Exception {
+    File source = context.getDatabasePath("relven-workouts.db");
+    try (SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(source, null)) {
+      db.enableWriteAheadLogging();
+      db.execSQL("CREATE TABLE committed_activity (id TEXT NOT NULL)");
+      db.execSQL("INSERT INTO committed_activity VALUES ('wal-activity')");
+      assertEquals(
+          "wal", android.database.DatabaseUtils.stringForQuery(db, "PRAGMA journal_mode", null));
+      assertTrue(new File(source.getPath() + "-wal").isFile());
+
+      assertTrue(LegacyRelvenVault.captureIfPresent(context));
+      JSONObject archive =
+          new JSONObject(Files.readString(LegacyRelvenVault.snapshotFile(context).toPath()));
+      JSONObject table = table(archive.getJSONArray("tables"), "committed_activity");
+      assertEquals("wal-activity", table.getJSONArray("rows").getJSONArray(0).getString(0));
+      assertEquals(
+          1,
+          android.database.DatabaseUtils.longForQuery(
+              db, "SELECT count(*) FROM committed_activity", null));
+    }
+  }
+
   private static JSONObject table(JSONArray tables, String name) throws Exception {
     for (int i = 0; i < tables.length(); i++) {
       JSONObject table = tables.getJSONObject(i);

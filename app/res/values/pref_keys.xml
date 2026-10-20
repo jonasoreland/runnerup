@@ -164,5 +164,6 @@
     <string name="pref_importdb">pref_importdb</string>
     <string name="pref_prunedb">pref_prunedb</string>
     <string name="pref_export_legacy_relven_data">pref_export_legacy_relven_data</string>
+    <string name="pref_import_legacy_relven_data">pref_import_legacy_relven_data</string>
     <string name="pref_about">pref_about</string>
 </resources>
