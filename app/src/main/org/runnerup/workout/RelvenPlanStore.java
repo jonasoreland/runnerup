@@ -158,6 +158,83 @@ public final class RelvenPlanStore {
     return revision;
   }
 
+  /** Adds one planned workout to the active plan and activates its immutable revision. */
+  public static synchronized RelvenPlanImporter.Plan addWorkoutToActivePlan(
+      Context context,
+      RelvenPlanImporter.Plan activePlan,
+      String date,
+      String workoutId,
+      String sessionId)
+      throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.addWorkout(
+            current,
+            date,
+            workoutId,
+            sessionId,
+            UUID.randomUUID().toString(),
+            nextRevisionNumber(context, current));
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
+  /** Adds one rest day to the active plan and activates its immutable revision. */
+  public static synchronized RelvenPlanImporter.Plan addRestToActivePlan(
+      Context context, RelvenPlanImporter.Plan activePlan, String date, String sessionId)
+      throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.addRest(
+            current,
+            date,
+            sessionId,
+            UUID.randomUUID().toString(),
+            nextRevisionNumber(context, current));
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
+  /** Removes exactly one scheduled item and activates the resulting immutable revision. */
+  public static synchronized RelvenPlanImporter.Plan removeActivePlanEntry(
+      Context context, RelvenPlanImporter.Plan activePlan, String sessionId) throws IOException {
+    RelvenPlanImporter.Plan current = requireCurrentActivePlan(context, activePlan);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.remove(
+            current, sessionId, UUID.randomUUID().toString(), nextRevisionNumber(context, current));
+    save(context, revision);
+    activate(context, revision);
+    return revision;
+  }
+
+  private static RelvenPlanImporter.Plan requireCurrentActivePlan(
+      Context context, RelvenPlanImporter.Plan activePlan) throws IOException {
+    RelvenPlanImporter.Plan current = activePlan(context);
+    if (current == null
+        || activePlan == null
+        || !current.id().equals(activePlan.id())
+        || !current.sourceJson().equals(activePlan.sourceJson())) {
+      throw new IOException("Plan changed before editing");
+    }
+    return current;
+  }
+
+  private static int nextRevisionNumber(Context context, RelvenPlanImporter.Plan current)
+      throws IOException {
+    int nextRevisionNumber = 1;
+    for (RelvenPlanImporter.Plan saved : list(context)) {
+      if (saved.rootPlanId().equals(current.rootPlanId())) {
+        if (saved.revisionNumber() == Integer.MAX_VALUE) {
+          throw new IOException("Plan revision limit reached");
+        }
+        nextRevisionNumber = Math.max(nextRevisionNumber, saved.revisionNumber() + 1);
+      }
+    }
+    return nextRevisionNumber;
+  }
+
   private static void validateRevisionLineage(Context context, RelvenPlanImporter.Plan revision)
       throws IOException {
     RelvenPlanImporter.Plan root = null;
@@ -197,10 +274,11 @@ public final class RelvenPlanStore {
 
       List<RelvenPlanImporter.Session> oldDays = previous.days();
       List<RelvenPlanImporter.Session> newDays = revision.days();
-      if (oldDays.size() != newDays.size()) {
+      if (Math.abs(oldDays.size() - newDays.size()) > 1) {
         throw new IOException("Plan revision changed the schedule");
       }
       int changedDates = 0;
+      int removedDays = 0;
       for (RelvenPlanImporter.Session oldDay : oldDays) {
         RelvenPlanImporter.Session newDay = null;
         for (RelvenPlanImporter.Session candidate : newDays) {
@@ -209,15 +287,43 @@ public final class RelvenPlanStore {
             break;
           }
         }
-        if (newDay == null
-            || !oldDay.kind().equals(newDay.kind())
+        if (newDay == null) {
+          removedDays++;
+          continue;
+        }
+        if (!oldDay.kind().equals(newDay.kind())
             || !Objects.equals(oldDay.workoutId(), newDay.workoutId())
             || !oldDay.notes().equals(newDay.notes())) {
           throw new IOException("Plan revision changed an existing schedule entry");
         }
         if (!oldDay.date().equals(newDay.date())) changedDates++;
       }
-      if (changedDates != 1) throw new IOException("Plan revision must move exactly one session");
+      int addedDays = 0;
+      for (RelvenPlanImporter.Session newDay : newDays) {
+        boolean found = false;
+        for (RelvenPlanImporter.Session oldDay : oldDays) {
+          if (oldDay.id().equals(newDay.id())) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) addedDays++;
+      }
+      boolean oneReschedule =
+          oldDays.size() == newDays.size() && changedDates == 1 && removedDays == 0;
+      boolean oneAddition =
+          newDays.size() == oldDays.size() + 1
+              && addedDays == 1
+              && changedDates == 0
+              && removedDays == 0;
+      boolean oneRemoval =
+          oldDays.size() == newDays.size() + 1
+              && removedDays == 1
+              && addedDays == 0
+              && changedDates == 0;
+      if (!oneReschedule && !oneAddition && !oneRemoval) {
+        throw new IOException("Plan revision must move, add, or remove exactly one session");
+      }
     } catch (JSONException error) {
       throw new IOException("Plan revision snapshot is invalid", error);
     }

@@ -84,6 +84,21 @@ class PlanCalendarStateTest {
   }
 
   @Test
+  fun scheduleEditAvailabilityRespectsRestCollisionsAndFinalEntry() {
+    val workout = PlanCalendarEntry.Workout("run", "easy", "Easy run", "")
+    val rest = PlanCalendarEntry.Rest("rest", "")
+
+    assertTrue(canAddWorkoutOnDate(emptyList()))
+    assertTrue(canAddWorkoutOnDate(listOf(workout)))
+    assertFalse(canAddWorkoutOnDate(listOf(rest)))
+    assertTrue(canAddRestOnDate(emptyList()))
+    assertFalse(canAddRestOnDate(listOf(workout)))
+    assertFalse(canAddRestOnDate(listOf(rest)))
+    assertFalse(canRemovePlanEntry(1))
+    assertTrue(canRemovePlanEntry(2))
+  }
+
+  @Test
   fun formatsMonthAndDateLabelsForTheSelectedAppLocale() {
     val state =
         planCalendarState(

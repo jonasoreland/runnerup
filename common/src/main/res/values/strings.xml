@@ -338,6 +338,14 @@
     <string name="Plan_calendar_reschedule_choose_different_date">Choose a date other than the current date.</string>
     <string name="Plan_calendar_cancel_reschedule">Cancel</string>
     <string name="Plan_calendar_save_revision">Save new revision</string>
+    <string name="Plan_calendar_add_item">Add item</string>
+    <string name="Plan_calendar_add_title">Add to %1$s</string>
+    <string name="Plan_calendar_add_rest">Add rest day</string>
+    <string name="Plan_calendar_add_workout_named">Add workout: %1$s</string>
+    <string name="Plan_calendar_remove">Remove</string>
+    <string name="Plan_calendar_remove_accessibility">Remove %1$s</string>
+    <string name="Plan_calendar_remove_title">Remove %1$s?</string>
+    <string name="Plan_calendar_remove_confirmation">This creates and activates a new plan revision. Earlier revisions remain saved.</string>
     <string name="Plan_calendar_revision_saving">Saving plan revision…</string>
     <string name="Plan_calendar_revision_saved">Plan revision saved and activated.</string>
     <string name="Plan_calendar_revision_conflict">That date conflicts with a rest day or another item.</string>

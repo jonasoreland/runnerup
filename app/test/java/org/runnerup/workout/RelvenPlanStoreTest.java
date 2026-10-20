@@ -188,6 +188,53 @@ public class RelvenPlanStoreTest {
   }
 
   @Test
+  public void addsAndRemovesScheduleEntriesAsActivatedImmutableRevisions() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+    File originalFile = directory.listFiles()[0];
+
+    RelvenPlanImporter.Plan withWorkout =
+        RelvenPlanStore.addWorkoutToActivePlan(
+            context, original, "2026-10-22", "run-a", "session-b");
+    RelvenPlanImporter.Plan withRest =
+        RelvenPlanStore.addRestToActivePlan(context, withWorkout, "2026-10-21", "rest-b");
+    RelvenPlanImporter.Plan withoutWorkout =
+        RelvenPlanStore.removeActivePlanEntry(context, withRest, "session-b");
+
+    assertEquals(JSON, Files.readString(originalFile.toPath()));
+    assertEquals(1, withWorkout.revisionNumber());
+    assertEquals(2, withRest.revisionNumber());
+    assertEquals(3, withoutWorkout.revisionNumber());
+    assertEquals(withoutWorkout.id(), RelvenPlanStore.activePlan(context).id());
+    assertEquals(2, withoutWorkout.days().size());
+    assertEquals("rest-b", withoutWorkout.days().get(1).id());
+    assertEquals(4, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void rejectsRevisionAddingMultipleEntriesOrChangingExistingEntry() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanImporter.Plan oneAddition =
+        RelvenPlanRevision.addWorkout(original, "2026-10-22", "run-a", "session-b", "revision-1");
+    JSONObject forgedJson = new JSONObject(oneAddition.sourceJson());
+    JSONObject secondEntry = new JSONObject();
+    secondEntry.put("id", "session-c");
+    secondEntry.put("date", "2026-10-23");
+    secondEntry.put("kind", "workout");
+    secondEntry.put("workoutId", "run-a");
+    forgedJson.getJSONArray("days").put(secondEntry);
+    RelvenPlanImporter.Plan twoAdditions = RelvenPlanImporter.parse(forgedJson.toString());
+    RelvenPlanImporter.Plan alteredExisting =
+        RelvenPlanImporter.parse(oneAddition.sourceJson().replace("2026-10-20", "2026-10-21"));
+
+    assertThrows(java.io.IOException.class, () -> RelvenPlanStore.save(context, twoAdditions));
+    assertThrows(java.io.IOException.class, () -> RelvenPlanStore.save(context, alteredExisting));
+    assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
   public void rejectsRevisionWhosePreviousSnapshotIsNotSaved() throws Exception {
     RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
     RelvenPlanStore.save(context, original);

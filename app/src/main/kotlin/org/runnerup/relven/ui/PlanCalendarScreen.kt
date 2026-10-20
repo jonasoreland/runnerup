@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -64,7 +65,10 @@ internal fun PlanCalendarScreen(
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
     onOpenWorkoutManager: () -> Unit,
-    onReschedule: (String, String) -> Unit
+    onReschedule: (String, String) -> Unit,
+    onAddWorkout: (String, String) -> Unit,
+    onAddRest: (String) -> Unit,
+    onRemoveEntry: (String) -> Unit
 ) {
   when (loadState) {
     ActivePlanLoadState.Loading -> PlanCalendarMessage(stringResource(R.string.Today_plan_loading))
@@ -78,7 +82,14 @@ internal fun PlanCalendarScreen(
         PlanCalendarMessage(stringResource(R.string.Today_plan_unavailable))
     is ActivePlanLoadState.Loaded ->
         LoadedPlanCalendar(
-            loadState.plan, nowMillis, revisionStatus, onOpenWorkoutManager, onReschedule)
+            loadState.plan,
+            nowMillis,
+            revisionStatus,
+            onOpenWorkoutManager,
+            onReschedule,
+            onAddWorkout,
+            onAddRest,
+            onRemoveEntry)
   }
 }
 
@@ -88,7 +99,10 @@ private fun LoadedPlanCalendar(
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
     onOpenWorkoutManager: () -> Unit,
-    onReschedule: (String, String) -> Unit
+    onReschedule: (String, String) -> Unit,
+    onAddWorkout: (String, String) -> Unit,
+    onAddRest: (String) -> Unit,
+    onRemoveEntry: (String) -> Unit
 ) {
   val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
   var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
@@ -98,6 +112,8 @@ private fun LoadedPlanCalendar(
   var reschedulingSessionId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var rescheduleSourceDate by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var rescheduleTargetDate by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
+  var showAddActions by rememberSaveable(plan.id()) { mutableStateOf(false) }
+  var pendingRemovalId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale) {
     planCalendarState(plan, month, selectedDate, nowMillis, locale)
@@ -117,6 +133,30 @@ private fun LoadedPlanCalendar(
             color = RelvenColors.MutedText,
             fontSize = 12.sp)
       }
+    }
+
+    when (revisionStatus) {
+      PlanRevisionStatus.Saving ->
+        Text(
+            stringResource(R.string.Plan_calendar_revision_saving),
+            color = RelvenColors.MutedText,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+      PlanRevisionStatus.Saved ->
+        Text(
+            stringResource(R.string.Plan_calendar_revision_saved),
+            color = RelvenColors.Orange,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+      PlanRevisionStatus.Conflict ->
+        Text(
+            stringResource(R.string.Plan_calendar_revision_conflict),
+            color = RelvenColors.Orange,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+      PlanRevisionStatus.Failed ->
+        Text(
+            stringResource(R.string.Plan_calendar_revision_failed),
+            color = RelvenColors.Orange,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+      PlanRevisionStatus.Idle -> Unit
     }
 
     val reschedulingSession =
@@ -149,17 +189,6 @@ private fun LoadedPlanCalendar(
               stringResource(R.string.Plan_calendar_reschedule_choose_different_date),
               color = RelvenColors.MutedText)
         }
-        if (revisionStatus is PlanRevisionStatus.Conflict) {
-          Text(
-              stringResource(R.string.Plan_calendar_revision_conflict),
-              color = RelvenColors.Orange,
-              modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-        } else if (revisionStatus is PlanRevisionStatus.Failed) {
-          Text(
-              stringResource(R.string.Plan_calendar_revision_failed),
-              color = RelvenColors.Orange,
-              modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-        }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
           TextButton(
               onClick = {
@@ -188,15 +217,6 @@ private fun LoadedPlanCalendar(
           }
         }
       }
-    } else if (revisionStatus is PlanRevisionStatus.Saved) {
-      val savedMessage = stringResource(R.string.Plan_calendar_revision_saved)
-      Text(
-          savedMessage,
-          color = RelvenColors.Orange,
-          modifier = Modifier.semantics {
-            contentDescription = savedMessage
-            liveRegion = LiveRegionMode.Polite
-          })
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -283,12 +303,80 @@ private fun LoadedPlanCalendar(
         dateLabel = state.selectedDateLabel,
         planName = state.planName,
         entries = state.selectedEntries,
+        totalEntries = plan.days().size,
         reschedulingSessionId = reschedulingSessionId,
         enabled = revisionStatus !is PlanRevisionStatus.Saving,
+        onAdd = { showAddActions = true },
         onReschedule = { sessionId ->
           reschedulingSessionId = sessionId
           rescheduleSourceDate = state.selectedDate
           rescheduleTargetDate = null
+        },
+        onRemove = { sessionId -> pendingRemovalId = sessionId })
+  }
+
+  if (showAddActions) {
+    AlertDialog(
+        onDismissRequest = { showAddActions = false },
+        title = { Text(stringResource(R.string.Plan_calendar_add_title, state.selectedDateLabel)) },
+        text = {
+          Column(Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState())) {
+            TextButton(
+                onClick = {
+                  showAddActions = false
+                  onAddRest(state.selectedDate)
+                },
+                enabled = revisionStatus !is PlanRevisionStatus.Saving &&
+                    canAddRestOnDate(state.selectedEntries)) {
+              Text(stringResource(R.string.Plan_calendar_add_rest))
+            }
+            plan.workoutNames().toSortedMap().forEach { (workoutId, workoutName) ->
+              TextButton(
+                  onClick = {
+                    showAddActions = false
+                    onAddWorkout(state.selectedDate, workoutId)
+                  },
+                  enabled = revisionStatus !is PlanRevisionStatus.Saving &&
+                      canAddWorkoutOnDate(state.selectedEntries)) {
+                Text(stringResource(R.string.Plan_calendar_add_workout_named, workoutName))
+              }
+            }
+          }
+        },
+        confirmButton = {
+          TextButton(onClick = { showAddActions = false }) {
+            Text(stringResource(R.string.Cancel))
+          }
+        })
+  }
+
+  val pendingEntry =
+      state.selectedEntries.firstOrNull { it.sessionId() == pendingRemovalId }
+  if (pendingEntry != null) {
+    val entryLabel =
+        when (pendingEntry) {
+          is PlanCalendarEntry.Workout -> pendingEntry.workoutName
+          is PlanCalendarEntry.Rest -> stringResource(R.string.Rest_day)
+        }
+    AlertDialog(
+        onDismissRequest = { pendingRemovalId = null },
+        title = { Text(stringResource(R.string.Plan_calendar_remove_title, entryLabel)) },
+        text = { Text(stringResource(R.string.Plan_calendar_remove_confirmation)) },
+        confirmButton = {
+          TextButton(
+              onClick = {
+                pendingRemovalId = null
+                onRemoveEntry(pendingEntry.sessionId())
+              },
+              enabled = revisionStatus !is PlanRevisionStatus.Saving &&
+                  canRemovePlanEntry(plan.days().size)) {
+            Text(stringResource(R.string.Plan_calendar_remove))
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { pendingRemovalId = null }) {
+            Text(stringResource(R.string.Cancel))
+          }
         })
   }
 }
@@ -364,9 +452,12 @@ private fun SelectedPlanDay(
     dateLabel: String,
     planName: String,
     entries: List<PlanCalendarEntry>,
+    totalEntries: Int,
     reschedulingSessionId: String?,
     enabled: Boolean,
-    onReschedule: (String) -> Unit
+    onAdd: () -> Unit,
+    onReschedule: (String) -> Unit,
+    onRemove: (String) -> Unit
 ) {
   Surface(
       shape = RoundedCornerShape(24.dp),
@@ -376,6 +467,9 @@ private fun SelectedPlanDay(
     Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(dateLabel, color = RelvenColors.Orange, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
       Text(planName, color = RelvenColors.MutedText, fontSize = 14.sp)
+      TextButton(onClick = onAdd, enabled = enabled && reschedulingSessionId == null) {
+        Text(stringResource(R.string.Plan_calendar_add_item))
+      }
       if (entries.isEmpty()) {
         Text(stringResource(R.string.Plan_calendar_no_item), fontSize = 18.sp, fontWeight = FontWeight.Bold)
       } else {
@@ -389,6 +483,7 @@ private fun SelectedPlanDay(
                 }
                 if (reschedulingSessionId == null) {
                   RescheduleAction(entry.sessionId, entry.workoutName, enabled, onReschedule)
+                  RemoveAction(entry.sessionId, entry.workoutName, totalEntries, enabled, onRemove)
                 }
               }
               is PlanCalendarEntry.Rest -> {
@@ -402,6 +497,12 @@ private fun SelectedPlanDay(
                       stringResource(R.string.Rest_day),
                       enabled,
                       onReschedule)
+                  RemoveAction(
+                      entry.sessionId,
+                      stringResource(R.string.Rest_day),
+                      totalEntries,
+                      enabled,
+                      onRemove)
                 }
               }
             }
@@ -409,6 +510,23 @@ private fun SelectedPlanDay(
         }
       }
     }
+  }
+}
+
+@Composable
+private fun RemoveAction(
+    sessionId: String,
+    entryName: String,
+    totalEntries: Int,
+    enabled: Boolean,
+    onRemove: (String) -> Unit
+) {
+  val accessibilityLabel = stringResource(R.string.Plan_calendar_remove_accessibility, entryName)
+  TextButton(
+      onClick = { onRemove(sessionId) },
+      enabled = enabled && canRemovePlanEntry(totalEntries),
+      modifier = Modifier.semantics { contentDescription = accessibilityLabel }) {
+    Text(stringResource(R.string.Plan_calendar_remove))
   }
 }
 
@@ -429,6 +547,12 @@ private fun RescheduleAction(
     Text(stringResource(R.string.Plan_calendar_reschedule))
   }
 }
+
+private fun PlanCalendarEntry.sessionId(): String =
+    when (this) {
+      is PlanCalendarEntry.Workout -> sessionId
+      is PlanCalendarEntry.Rest -> sessionId
+    }
 
 @Composable
 private fun PlanCalendarEmpty(title: String, body: String, action: String, onAction: () -> Unit) {

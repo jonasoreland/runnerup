@@ -335,6 +335,14 @@
   <string name="Plan_calendar_reschedule_choose_different_date">Välj ett annat datum än det nuvarande.</string>
   <string name="Plan_calendar_cancel_reschedule">Avbryt</string>
   <string name="Plan_calendar_save_revision">Spara ny version</string>
+  <string name="Plan_calendar_add_item">Lägg till</string>
+  <string name="Plan_calendar_add_title">Planera för %1$s</string>
+  <string name="Plan_calendar_add_rest">Lägg till vilodag</string>
+  <string name="Plan_calendar_add_workout_named">Lägg till pass: %1$s</string>
+  <string name="Plan_calendar_remove">Ta bort</string>
+  <string name="Plan_calendar_remove_accessibility">Ta bort %1$s</string>
+  <string name="Plan_calendar_remove_title">Ta bort %1$s?</string>
+  <string name="Plan_calendar_remove_confirmation">En ny planversion skapas och aktiveras. Tidigare versioner sparas.</string>
   <string name="Plan_calendar_revision_saving">Sparar planversion…</string>
   <string name="Plan_calendar_revision_saved">Planversionen har sparats och aktiverats.</string>
   <string name="Plan_calendar_revision_conflict">Datumet krockar med en vilodag eller ett annat pass.</string>

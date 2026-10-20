@@ -62,6 +62,13 @@ internal sealed interface PlanCalendarEntry {
   data class Rest(val sessionId: String, val notes: String) : PlanCalendarEntry
 }
 
+internal fun canAddWorkoutOnDate(entries: List<PlanCalendarEntry>): Boolean =
+    entries.none { it is PlanCalendarEntry.Rest }
+
+internal fun canAddRestOnDate(entries: List<PlanCalendarEntry>): Boolean = entries.isEmpty()
+
+internal fun canRemovePlanEntry(totalEntries: Int): Boolean = totalEntries > 1
+
 internal sealed interface PlanRevisionStatus {
   data object Idle : PlanRevisionStatus
 

@@ -139,4 +139,79 @@ public class RelvenPlanRevisionTest {
         () ->
             RelvenPlanImporter.parse(SOURCE.replace("\"schemaVersion\":1", "\"schemaVersion\":2")));
   }
+
+  @Test
+  public void addWorkoutCreatesOneNewEntryAndLeavesSourceUntouched() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanRevision.addWorkout(original, "2026-10-22", "easy", "work-c", "revision-1");
+
+    assertEquals(3, original.days().size());
+    assertEquals(SOURCE, original.sourceJson());
+    assertEquals(4, revision.days().size());
+    assertEquals(2, revision.schemaVersion());
+    assertEquals("base-plan", revision.rootPlanId());
+    assertEquals("base-plan", revision.previousRevisionId());
+    assertEquals(1, revision.revisionNumber());
+    assertEquals("2026-10-22", revision.days().get(3).date());
+    assertEquals("easy", revision.days().get(3).workoutId());
+  }
+
+  @Test
+  public void addRestCreatesOneNewEntryAndAllowsNextRevision() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan first =
+        RelvenPlanRevision.addRest(original, "2026-10-22", "rest-b", "revision-1");
+    RelvenPlanImporter.Plan second =
+        RelvenPlanRevision.addWorkout(first, "2026-10-23", "easy", "work-c", "revision-2");
+
+    assertEquals("rest", first.days().get(3).kind());
+    assertEquals(2, second.revisionNumber());
+    assertEquals("revision-1", second.previousRevisionId());
+    assertEquals(5, second.days().size());
+  }
+
+  @Test
+  public void rejectsDuplicateIdsDateConflictsAndUnknownWorkoutWhenAdding() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.addWorkout(original, "2026-10-22", "easy", "work-a", "r1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.addWorkout(original, "2026-10-22", "missing", "work-c", "r1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.addRest(original, "2026-10-20", "rest-b", "r1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.addRest(original, "2026-10-21", "rest-b", "r1"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.addWorkout(original, "2026-02-30", "easy", "work-c", "r1"));
+  }
+
+  @Test
+  public void removeDeletesOnlyRequestedEntryAndCannotRemoveLastDay() {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(SOURCE);
+
+    RelvenPlanImporter.Plan revision = RelvenPlanRevision.remove(original, "rest-a", "revision-1");
+
+    assertEquals(3, original.days().size());
+    assertEquals(SOURCE, original.sourceJson());
+    assertEquals(2, revision.days().size());
+    assertEquals(
+        List.of("work-a", "work-b"),
+        revision.days().stream().map(RelvenPlanImporter.Session::id).toList());
+    RelvenPlanImporter.Plan oneEntry = RelvenPlanRevision.remove(revision, "work-a", "revision-2");
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.remove(oneEntry, "work-b", "revision-3"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenPlanRevision.remove(original, "missing", "revision-1"));
+  }
 }

@@ -100,7 +100,10 @@ class RelvenHomeActivity : ComponentActivity() {
                   Intent(this, MainLayout::class.java)
                       .putExtra(MainLayout.EXTRA_INITIAL_TAB, 1))
             },
-            onReschedulePlan = ::rescheduleActivePlan)
+            onReschedulePlan = ::rescheduleActivePlan,
+            onAddWorkoutToPlan = ::addWorkoutToActivePlan,
+            onAddRestToPlan = ::addRestToActivePlan,
+            onRemovePlanEntry = ::removeActivePlanEntry)
       }
     }
   }
@@ -153,6 +156,34 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private fun rescheduleActivePlan(sessionId: String, targetDate: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.rescheduleActivePlan(applicationContext, plan, sessionId, targetDate)
+    }
+  }
+
+  private fun addWorkoutToActivePlan(date: String, workoutId: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.addWorkoutToActivePlan(
+          applicationContext, plan, date, workoutId, java.util.UUID.randomUUID().toString())
+    }
+  }
+
+  private fun addRestToActivePlan(date: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.addRestToActivePlan(
+          applicationContext, plan, date, java.util.UUID.randomUUID().toString())
+    }
+  }
+
+  private fun removeActivePlanEntry(sessionId: String) {
+    savePlanRevision { plan ->
+      RelvenPlanStore.removeActivePlanEntry(applicationContext, plan, sessionId)
+    }
+  }
+
+  private fun savePlanRevision(
+      createRevision: (org.runnerup.workout.RelvenPlanImporter.Plan) ->
+          org.runnerup.workout.RelvenPlanImporter.Plan) {
     val sourcePlan = (activePlanState as? ActivePlanLoadState.Loaded)?.plan
     if (sourcePlan == null) {
       planRevisionStatus = PlanRevisionStatus.Failed
@@ -163,8 +194,7 @@ class RelvenHomeActivity : ComponentActivity() {
       val result =
           withContext(Dispatchers.IO) {
             runCatching {
-              RelvenPlanStore.rescheduleActivePlan(
-                  applicationContext, sourcePlan, sessionId, targetDate)
+              createRevision(sourcePlan)
             }
           }
       result.fold(
@@ -230,7 +260,10 @@ private fun RelvenHome(
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit,
-    onReschedulePlan: (String, String) -> Unit) {
+    onReschedulePlan: (String, String) -> Unit,
+    onAddWorkoutToPlan: (String, String) -> Unit,
+    onAddRestToPlan: (String) -> Unit,
+    onRemovePlanEntry: (String) -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
@@ -327,7 +360,10 @@ private fun RelvenHome(
           revisionStatus = planRevisionStatus,
           nowMillis = currentTimeMillis,
           onOpenWorkoutManager = onOpenWorkout,
-          onReschedule = onReschedulePlan)
+          onReschedule = onReschedulePlan,
+          onAddWorkout = onAddWorkoutToPlan,
+          onAddRest = onAddRestToPlan,
+          onRemoveEntry = onRemovePlanEntry)
     }
     HomeNavigationBar(
         destination = destination,
