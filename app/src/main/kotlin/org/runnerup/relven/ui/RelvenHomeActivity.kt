@@ -83,6 +83,7 @@ class RelvenHomeActivity : ComponentActivity() {
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
   private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
+  private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
@@ -124,6 +125,7 @@ class RelvenHomeActivity : ComponentActivity() {
             todayPlan = todayPlan,
             activePlanState = activePlanState,
             exerciseCatalogLoadState = exerciseCatalogLoadState,
+            exerciseProgressionState = exerciseProgressionState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
@@ -144,6 +146,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onEditRunningEnd = ::editActivePlanRunningEnd,
             onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog,
+            onRetryExerciseProgression = ::reloadExerciseProgression,
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = ::startStrengthSession,
             onViewStrengthCompletion = { viewedStrengthCompletion = it },
@@ -205,11 +208,21 @@ class RelvenHomeActivity : ComponentActivity() {
                   }
                   null
                 },
-                completions)
+                completions,
+                try {
+                  loadedExerciseProgressionState(
+                      strengthStoreMutex.withLock {
+                        StrengthSessionStore.completedSessions(applicationContext)
+                      })
+                } catch (error: Exception) {
+                  Log.w("RelvenHome", "Could not load strength progression history", error)
+                  ExerciseProgressionLoadState.Unavailable
+                })
           }
       recentActivity = homeData.recentActivity
       activePlanState = homeData.activePlan
       completedStrengthSessions = homeData.completedStrengthSessions
+      exerciseProgressionState = homeData.exerciseProgressionState
       strengthSession = homeData.inProgressStrengthSession
       todayPlan =
           when (val planState = homeData.activePlan) {
@@ -292,6 +305,7 @@ class RelvenHomeActivity : ComponentActivity() {
         viewedStrengthCompletion = completion
         strengthSaveError = false
         strengthFinishing = false
+        reloadExerciseProgression()
       } catch (error: Exception) {
         Log.w("RelvenHome", "Could not complete strength session", error)
         strengthSaveError = true
@@ -363,6 +377,24 @@ class RelvenHomeActivity : ComponentActivity() {
                   Log.w("RelvenHome", "Could not load the bundled exercise catalog", error)
                 }
           }
+    }
+  }
+
+  private fun reloadExerciseProgression() {
+    exerciseProgressionState = ExerciseProgressionLoadState.Loading
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              strengthStoreMutex.withLock {
+                StrengthSessionStore.completedSessions(applicationContext)
+              }
+            }
+          }
+      result.exceptionOrNull()?.let { error ->
+        Log.w("RelvenHome", "Could not reload strength progression history", error)
+      }
+      exerciseProgressionState = exerciseProgressionLoadState(result)
     }
   }
 
@@ -481,7 +513,8 @@ private data class HomeLoad(
     val recentActivity: RecentActivity?,
     val activePlan: ActivePlanLoadState,
     val inProgressStrengthSession: StrengthSession?,
-    val completedStrengthSessions: Map<String, CompletedStrengthSession>)
+    val completedStrengthSessions: Map<String, CompletedStrengthSession>,
+    val exerciseProgressionState: ExerciseProgressionLoadState)
 
 private data class PendingStrengthSessionChoice(
     val session: StrengthSession,
@@ -504,6 +537,7 @@ private fun RelvenHome(
     todayPlan: TodayPlanState,
     activePlanState: ActivePlanLoadState,
     exerciseCatalogLoadState: ExerciseCatalogLoadState,
+    exerciseProgressionState: ExerciseProgressionLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
@@ -520,6 +554,7 @@ private fun RelvenHome(
     onEditRunningEnd: (String, String, org.json.JSONObject) -> Unit,
     onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit,
+    onRetryExerciseProgression: () -> Unit,
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
@@ -636,7 +671,11 @@ private fun RelvenHome(
           onEditRunningEnd = onEditRunningEnd,
           onEditRunningTarget = onEditRunningTarget)
     } else {
-      ExerciseCatalogScreen(exerciseCatalogLoadState, onRetry = onRetryExerciseCatalog)
+      ExerciseCatalogScreen(
+          exerciseCatalogLoadState,
+          progressionState = exerciseProgressionState,
+          onRetry = onRetryExerciseCatalog,
+          onRetryProgression = onRetryExerciseProgression)
     }
     HomeNavigationBar(
         destination = destination,

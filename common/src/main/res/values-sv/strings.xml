@@ -343,6 +343,14 @@
   <string name="Exercise_catalog_equipment">Utrustning</string>
   <string name="Exercise_catalog_no_equipment">Ingen utrustning</string>
   <string name="Exercise_catalog_instructions">Instruktioner</string>
+  <string name="Exercise_progression_title">Din historik</string>
+  <string name="Exercise_progression_loading">Läser in registrerade pass…</string>
+  <string name="Exercise_progression_empty">Inga genomförda pass innehåller den här övningen.</string>
+  <string name="Exercise_progression_partial">%1$d sparade passuppgifter var inte tillgängliga i vyn.</string>
+  <string name="Exercise_progression_unavailable">Passets historik är inte tillgänglig just nu.</string>
+  <string name="Exercise_progression_retry">Försök igen</string>
+  <string name="Exercise_progression_repetition_set">Set %1$d: %2$d repetitioner</string>
+  <string name="Exercise_progression_timed_set">Set %1$d: %2$d sekunder</string>
   <string name="Exercise_category_all">Alla</string>
   <string name="Exercise_category_lower_body">Underkropp</string>
   <string name="Exercise_category_upper_body">Överkropp</string>

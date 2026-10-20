@@ -13,10 +13,17 @@ import java.security.MessageDigest
 
 internal data class CompletedStrengthSession(val state: StrengthSession, val finishedAtMillis: Long)
 
+internal data class StrengthSessionHistoryLoad(
+    val sessions: List<CompletedStrengthSession>,
+    val invalidRecordCount: Int,
+    val omittedRecordCount: Int = 0)
+
 /** Private, offline persistence for the single resumable strength session and its completions. */
 internal object StrengthSessionStore {
   private const val VERSION = 1
   private const val MAX_SAVED_SESSION_BYTES = 16_777_216
+  private const val MAX_HISTORY_SCAN = 500
+  private const val MAX_HISTORY_READ_BYTES = 33_554_432L
 
   @Synchronized
   @Throws(IOException::class)
@@ -67,6 +74,45 @@ internal object StrengthSessionStore {
       throw IOException("Completion record does not match its scheduled workout")
     }
     return CompletedStrengthSession(state, finishedAt)
+  }
+
+  @Synchronized
+  @Throws(IOException::class)
+  fun completedSessions(context: Context): StrengthSessionHistoryLoad {
+    val directory = context.getDir("relven-strength-sessions", Context.MODE_PRIVATE)
+    val files =
+        directory.listFiles { file ->
+          file.isFile && file.name.startsWith("completed-") && file.name.endsWith(".json")
+        } ?: if (!directory.exists()) emptyArray() else throw IOException("Could not list strength history")
+    val candidates = files.sortedWith(compareByDescending<File> { it.lastModified() }.thenBy { it.name })
+    var invalidCount = 0
+    var omittedCount = (candidates.size - MAX_HISTORY_SCAN).coerceAtLeast(0)
+    var bytesRead = 0L
+    val sessions = ArrayList<CompletedStrengthSession>()
+    val scan = candidates.take(MAX_HISTORY_SCAN)
+    for ((index, file) in scan.withIndex()) {
+      if (bytesRead + file.length() > MAX_HISTORY_READ_BYTES) {
+        omittedCount += scan.size - index
+        break
+      }
+      bytesRead += file.length()
+      try {
+        val (state, finishedAt) = read(file)
+        if (
+            !state.isComplete ||
+                finishedAt == null ||
+                finishedAt <= 0 ||
+                file.name != "completed-${hash(state.scheduledEntryId)}.json") {
+          invalidCount++
+        } else {
+          sessions.add(CompletedStrengthSession(state, finishedAt))
+        }
+      } catch (_: Exception) {
+        invalidCount++
+      }
+    }
+    return StrengthSessionHistoryLoad(
+        sessions.sortedByDescending(CompletedStrengthSession::finishedAtMillis), invalidCount, omittedCount)
   }
 
   private fun read(file: File): Pair<StrengthSession, Long?> {
