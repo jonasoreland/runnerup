@@ -74,6 +74,14 @@ internal sealed interface PlanCalendarEntry {
   data class Rest(val sessionId: String, val notes: String) : PlanCalendarEntry
 }
 
+internal fun selectedPlanWorkout(
+    entries: List<PlanCalendarEntry>,
+    sessionId: String?
+): PlanCalendarEntry.Workout? =
+    entries.filterIsInstance<PlanCalendarEntry.Workout>().firstOrNull {
+      sessionId != null && it.sessionId == sessionId
+    }
+
 internal fun canAddWorkoutOnDate(entries: List<PlanCalendarEntry>): Boolean =
     entries.none { it is PlanCalendarEntry.Rest }
 
