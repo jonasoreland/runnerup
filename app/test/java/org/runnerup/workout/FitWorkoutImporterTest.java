@@ -37,6 +37,27 @@ public class FitWorkoutImporterTest {
   }
 
   @Test
+  public void importsWorkoutWithTwelveByteFileHeader() {
+    byte[] file = fitWith12ByteHeader(fit(5, 1, 1, step(0, 0, 120_000, 2, 0, 0, 0, 0)));
+
+    Step imported = FitWorkoutImporter.parse(file).getSteps().get(0);
+
+    assertEquals(Dimension.TIME, imported.getDurationType());
+    assertEquals(120, imported.getDurationValue(), 0.001);
+  }
+
+  @Test
+  public void importsBigEndianDefinitionsAndWorkoutStepValues() {
+    Step imported = FitWorkoutImporter.parse(fitBigEndian()).getSteps().get(0);
+
+    assertEquals(Dimension.DISTANCE, imported.getDurationType());
+    assertEquals(1500, imported.getDurationValue(), 0.001);
+    assertEquals(Dimension.SPEED, imported.getTargetType());
+    assertEquals(3.2, imported.getTargetValue().minValue, 0.001);
+    assertEquals(4.5, imported.getTargetValue().maxValue, 0.001);
+  }
+
+  @Test
   public void importsRunningTimeAndAbsoluteSpeed() {
     byte[] file = fit(5, 1, 1, step(0, 0, 120_000, 0, 0, 3000, 4000, 0));
     Workout workout = FitWorkoutImporter.parse(file);
@@ -254,6 +275,54 @@ public class FitWorkoutImporterTest {
     return file(records.toByteArray());
   }
 
+  private static byte[] fitBigEndian() {
+    ByteArrayOutputStream records = new ByteArrayOutputStream();
+    definition(records, 0, 0, true, new int[][] {{0, 1, 0}});
+    records.write(0);
+    records.write(5);
+    definition(records, 1, 26, true, new int[][] {{4, 1, 0}, {6, 2, 0x84}});
+    records.write(1);
+    records.write(1);
+    big(records, 1, 2);
+    definition(
+        records,
+        2,
+        27,
+        true,
+        new int[][] {
+          {254, 2, 0x84},
+          {1, 1, 0},
+          {2, 4, 0x86},
+          {3, 1, 0},
+          {4, 4, 0x86},
+          {5, 4, 0x86},
+          {6, 4, 0x86},
+          {7, 1, 0}
+        });
+    records.write(2);
+    big(records, 0, 2);
+    records.write(1);
+    big(records, 150_000, 4);
+    records.write(0);
+    big(records, 0, 4);
+    big(records, 3200, 4);
+    big(records, 4500, 4);
+    records.write(0);
+    return file(records.toByteArray());
+  }
+
+  private static byte[] fitWith12ByteHeader(byte[] original) {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    output.write(12);
+    output.write(original[1]);
+    output.write(original[2]);
+    output.write(original[3]);
+    output.writeBytes(java.util.Arrays.copyOfRange(original, 4, 12));
+    output.writeBytes(java.util.Arrays.copyOfRange(original, 14, original.length - 2));
+    little(output, crc(output.toByteArray()), 2);
+    return output.toByteArray();
+  }
+
   private static byte[] fitWithUnknownMessages(int count) {
     ByteArrayOutputStream records = new ByteArrayOutputStream();
     definition(records, 0, 0, new int[][] {{0, 1, 0}});
@@ -282,10 +351,19 @@ public class FitWorkoutImporterTest {
 
   private static void definition(
       ByteArrayOutputStream output, int local, int global, int[][] fields) {
+    definition(output, local, global, false, fields);
+  }
+
+  private static void definition(
+      ByteArrayOutputStream output, int local, int global, boolean bigEndian, int[][] fields) {
     output.write(0x40 | local);
     output.write(0);
-    output.write(0);
-    little(output, global, 2);
+    output.write(bigEndian ? 1 : 0);
+    if (bigEndian) {
+      big(output, global, 2);
+    } else {
+      little(output, global, 2);
+    }
     output.write(fields.length);
     for (int[] field : fields) {
       output.write(field[0]);
@@ -296,6 +374,10 @@ public class FitWorkoutImporterTest {
 
   private static void little(ByteArrayOutputStream output, int value, int length) {
     for (int i = 0; i < length; i++) output.write(value >>> (i * 8));
+  }
+
+  private static void big(ByteArrayOutputStream output, int value, int length) {
+    for (int i = length - 1; i >= 0; i--) output.write(value >>> (i * 8));
   }
 
   private static int crc(byte[] data) {
