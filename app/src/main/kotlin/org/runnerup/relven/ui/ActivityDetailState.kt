@@ -2,6 +2,7 @@ package org.runnerup.relven.ui
 
 import android.database.sqlite.SQLiteDatabase
 import org.runnerup.common.util.Constants.DB
+import org.runnerup.workout.Sport
 
 internal sealed interface ActivityDetailLoadState {
   data object Loading : ActivityDetailLoadState
@@ -19,6 +20,7 @@ internal data class HistoryActivityDetails(
     val durationSeconds: Long?,
     val distanceMeters: Double?,
     val sport: Int,
+    val gpsSampleCount: Int,
     val comment: String?,
     val averageHeartRate: Int?,
     val maximumHeartRate: Int?)
@@ -29,6 +31,30 @@ internal data class ActivityDetailMeasurements(
     val averageSpeedMetersPerSecond: Double?,
     val averageHeartRate: Int?,
     val maximumHeartRate: Int?)
+
+internal sealed interface ActivityMapLoadState {
+  data object NotFound : ActivityMapLoadState
+
+  data object RouteUnavailable : ActivityMapLoadState
+
+  data object Unavailable : ActivityMapLoadState
+
+  data class Loaded(val activity: HistoryActivityDetails) : ActivityMapLoadState
+}
+
+internal fun readActivityMapState(
+    database: SQLiteDatabase,
+    activityId: Long,
+    mapEnabled: Boolean
+): ActivityMapLoadState {
+  if (!mapEnabled) return ActivityMapLoadState.Unavailable
+  val activity = readHistoryActivityDetails(database, activityId) ?: return ActivityMapLoadState.NotFound
+  return if (activityHasMapRoute(activity, mapEnabled = true)) ActivityMapLoadState.Loaded(activity)
+  else ActivityMapLoadState.RouteUnavailable
+}
+
+internal fun activityHasMapRoute(activity: HistoryActivityDetails, mapEnabled: Boolean): Boolean =
+    mapEnabled && !Sport.isWithoutGps(activity.sport) && activity.gpsSampleCount >= 2
 
 internal fun readHistoryActivityDetails(
     database: SQLiteDatabase,
@@ -45,6 +71,17 @@ internal fun readHistoryActivityDetails(
           DB.ACTIVITY.COMMENT,
           DB.ACTIVITY.AVG_HR,
           DB.ACTIVITY.MAX_HR)
+  val gpsSampleCount =
+      database
+          .query(
+              DB.LOCATION.TABLE,
+              arrayOf("_id"),
+              "${DB.LOCATION.ACTIVITY} = ? AND ${DB.LOCATION.TYPE} = ?",
+              arrayOf(activityId.toString(), DB.LOCATION.TYPE_GPS.toString()),
+              null,
+              null,
+              null)
+          .use { it.count }
   return database
       .query(
           DB.ACTIVITY.TABLE,
@@ -75,6 +112,7 @@ internal fun readHistoryActivityDetails(
             distanceMeters =
                 if (cursor.isNull(distanceIndex)) null else cursor.getDouble(distanceIndex),
             sport = cursor.getInt(cursor.getColumnIndexOrThrow(DB.ACTIVITY.SPORT)),
+            gpsSampleCount = gpsSampleCount,
             comment = if (cursor.isNull(commentIndex)) null else cursor.getString(commentIndex),
             averageHeartRate = intValue(DB.ACTIVITY.AVG_HR),
             maximumHeartRate = intValue(DB.ACTIVITY.MAX_HR))

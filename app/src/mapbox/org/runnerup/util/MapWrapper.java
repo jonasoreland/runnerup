@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
@@ -64,6 +65,7 @@ public class MapWrapper implements Constants {
   private final Formatter formatter;
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private volatile boolean destroyed;
 
   public MapWrapper(
       Context context,
@@ -94,7 +96,7 @@ public class MapWrapper implements Constants {
         .loadStyle(
             val,
             mapStyle -> {
-              loadRouteAsync(mapView);
+              if (!destroyed) loadRouteAsync(mapView);
             });
   }
 
@@ -111,7 +113,32 @@ public class MapWrapper implements Constants {
   public void onLowMemory() {}
 
   public void onDestroy() {
+    onDestroy(() -> {});
+  }
+
+  public synchronized void onDestroy(Runnable afterBackgroundWork) {
+    destroyed = true;
     executor.shutdown();
+    Thread waiter =
+        new Thread(
+            () -> {
+              boolean interrupted = false;
+              try {
+                while (true) {
+                  try {
+                    if (executor.awaitTermination(1, TimeUnit.DAYS)) break;
+                  } catch (InterruptedException e) {
+                    interrupted = true;
+                  }
+                }
+              } finally {
+                if (interrupted) Thread.currentThread().interrupt();
+                afterBackgroundWork.run();
+              }
+            },
+            "Relven-map-shutdown");
+    waiter.setDaemon(true);
+    waiter.start();
   }
 
   /**
@@ -119,7 +146,8 @@ public class MapWrapper implements Constants {
    *
    * @param mapView The map instance to update once data is loaded.
    */
-  private void loadRouteAsync(final MapView mapView) {
+  private synchronized void loadRouteAsync(final MapView mapView) {
+    if (destroyed) return;
     executor.execute(
         () -> {
           // DB queries, data processing on the background thread

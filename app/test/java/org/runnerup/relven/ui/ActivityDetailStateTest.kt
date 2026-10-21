@@ -3,7 +3,9 @@ package org.runnerup.relven.ui
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.runnerup.common.util.Constants.DB
@@ -13,6 +15,27 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 @RunWith(RobolectricTestRunner::class)
 class ActivityDetailStateTest {
+  @Test
+  fun offersRouteOnlyForGpsSportWithAtLeastTwoGpsSamplesAndMapSupport() {
+    val activity =
+        HistoryActivityDetails(
+            id = 7L,
+            startedAtSeconds = 1_800_000_000L,
+            durationSeconds = null,
+            distanceMeters = null,
+            sport = DB.ACTIVITY.SPORT_RUNNING,
+            gpsSampleCount = 2,
+            comment = null,
+            averageHeartRate = null,
+            maximumHeartRate = null)
+
+    assertTrue(activityHasMapRoute(activity, mapEnabled = true))
+    assertFalse(activityHasMapRoute(activity.copy(gpsSampleCount = 1), mapEnabled = true))
+    assertFalse(activityHasMapRoute(activity.copy(gpsSampleCount = 0), mapEnabled = true))
+    assertFalse(activityHasMapRoute(activity.copy(sport = DB.ACTIVITY.SPORT_GYM), mapEnabled = true))
+    assertFalse(activityHasMapRoute(activity, mapEnabled = false))
+  }
+
   @Test
   fun readsOneSavedActivityAndSkipsDeletedRows() {
     val database = SQLiteDatabase.create(null)
@@ -28,6 +51,14 @@ class ActivityDetailStateTest {
           ${DB.ACTIVITY.AVG_HR} INTEGER,
           ${DB.ACTIVITY.MAX_HR} INTEGER,
           ${DB.ACTIVITY.DELETED} INTEGER NOT NULL DEFAULT 0
+        )
+        """.trimIndent())
+    database.execSQL(
+        """
+        CREATE TABLE ${DB.LOCATION.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.LOCATION.ACTIVITY} INTEGER NOT NULL,
+          ${DB.LOCATION.TYPE} INTEGER NOT NULL
         )
         """.trimIndent())
     val saved =
@@ -53,6 +84,7 @@ class ActivityDetailStateTest {
               durationSeconds = 1_800L,
               distanceMeters = 5_000.0,
               sport = DB.ACTIVITY.SPORT_RUNNING,
+              gpsSampleCount = 0,
               comment = "Morning run",
               averageHeartRate = 145,
               maximumHeartRate = 171),
@@ -72,6 +104,7 @@ class ActivityDetailStateTest {
             durationSeconds = 1_800L,
             distanceMeters = 5_000.0,
             sport = 0,
+            gpsSampleCount = 0,
             comment = null,
             averageHeartRate = 145,
             maximumHeartRate = 171)
@@ -95,6 +128,7 @@ class ActivityDetailStateTest {
             durationSeconds = 0L,
             distanceMeters = Double.NaN,
             sport = 0,
+            gpsSampleCount = 0,
             comment = "  ",
             averageHeartRate = 0,
             maximumHeartRate = -1)

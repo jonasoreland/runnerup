@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -354,6 +355,30 @@ public class MapWrapper implements Constants {
   public void onLowMemory() {}
 
   public void onDestroy() {
+    onDestroy(() -> {});
+  }
+
+  public void onDestroy(Runnable afterBackgroundWork) {
     executor.shutdown();
+    Thread waiter =
+        new Thread(
+            () -> {
+              boolean interrupted = false;
+              try {
+                while (true) {
+                  try {
+                    if (executor.awaitTermination(1, TimeUnit.DAYS)) break;
+                  } catch (InterruptedException e) {
+                    interrupted = true;
+                  }
+                }
+              } finally {
+                if (interrupted) Thread.currentThread().interrupt();
+                afterBackgroundWork.run();
+              }
+            },
+            "Relven-map-shutdown");
+    waiter.setDaemon(true);
+    waiter.start();
   }
 }

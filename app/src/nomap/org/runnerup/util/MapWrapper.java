@@ -43,4 +43,8 @@ public class MapWrapper {
   public void onLowMemory() {}
 
   public void onDestroy() {}
+
+  public void onDestroy(Runnable afterBackgroundWork) {
+    afterBackgroundWork.run();
+  }
 }
