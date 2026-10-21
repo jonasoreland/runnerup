@@ -75,6 +75,7 @@ import org.runnerup.view.MainLayout
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
+import org.runnerup.relven.exercise.ExerciseFavoritesStore
 import org.runnerup.relven.exercise.CustomExerciseInput
 import org.runnerup.relven.analysis.ProgressLoadState
 import org.runnerup.relven.analysis.ProgressRequestVersion
@@ -101,6 +102,7 @@ class RelvenHomeActivity : ComponentActivity() {
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
   private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
+  private var favoriteExerciseIds by mutableStateOf<Set<String>>(emptySet())
   private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
@@ -121,6 +123,7 @@ class RelvenHomeActivity : ComponentActivity() {
     installSplashScreen()
     super.onCreate(savedInstanceState)
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
+    favoriteExerciseIds = ExerciseFavoritesStore(applicationContext).read()
     loadExerciseCatalog()
     setContent {
       RelvenTheme {
@@ -172,6 +175,8 @@ class RelvenHomeActivity : ComponentActivity() {
             onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog,
             onSaveCustomExercise = ::saveCustomExercise,
+            favoriteExerciseIds = favoriteExerciseIds,
+            onToggleExerciseFavorite = ::toggleExerciseFavorite,
             onRetryExerciseProgression = ::reloadExerciseProgression,
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = ::startStrengthSession,
@@ -501,6 +506,13 @@ class RelvenHomeActivity : ComponentActivity() {
     return savedId
   }
 
+  private fun toggleExerciseFavorite(exerciseId: String, favorite: Boolean) {
+    ExerciseFavoritesStore(applicationContext).setFavorite(exerciseId, favorite)
+    favoriteExerciseIds = favoriteExerciseIds.toMutableSet().apply {
+      if (favorite) add(exerciseId) else remove(exerciseId)
+    }
+  }
+
   private fun loadProgress() {
     val progressRequest = progressRequests.begin()
     progressState = ProgressLoadState.Loading
@@ -726,6 +738,8 @@ private fun RelvenHome(
     onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit,
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
+    favoriteExerciseIds: Set<String>,
+    onToggleExerciseFavorite: (String, Boolean) -> Unit,
     onRetryExerciseProgression: () -> Unit,
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
@@ -880,7 +894,9 @@ private fun RelvenHome(
           progressionState = exerciseProgressionState,
           onRetry = onRetryExerciseCatalog,
           onRetryProgression = onRetryExerciseProgression,
-          onSaveCustomExercise = onSaveCustomExercise)
+          onSaveCustomExercise = onSaveCustomExercise,
+          favoriteExerciseIds = favoriteExerciseIds,
+          onToggleFavorite = onToggleExerciseFavorite)
     }
     HomeNavigationBar(
         destination = destination,

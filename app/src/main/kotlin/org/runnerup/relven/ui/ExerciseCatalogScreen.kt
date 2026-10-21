@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -74,7 +76,9 @@ internal fun ExerciseCatalogScreen(
     progressionState: ExerciseProgressionLoadState = ExerciseProgressionLoadState.Loading,
     onRetry: () -> Unit,
     onRetryProgression: () -> Unit = {},
-    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String = { id, _ -> id.orEmpty() }
+    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String = { id, _ -> id.orEmpty() },
+    favoriteExerciseIds: Set<String> = emptySet(),
+    onToggleFavorite: (String, Boolean) -> Unit = { _, _ -> }
 ) {
   when (loadState) {
     ExerciseCatalogLoadState.Loading ->
@@ -82,7 +86,13 @@ internal fun ExerciseCatalogScreen(
     ExerciseCatalogLoadState.Unavailable ->
         CatalogError(onRetry)
     is ExerciseCatalogLoadState.Loaded ->
-        CatalogBrowser(loadState.catalog, progressionState, onRetryProgression, onSaveCustomExercise)
+        CatalogBrowser(
+            loadState.catalog,
+            progressionState,
+            onRetryProgression,
+            onSaveCustomExercise,
+            favoriteExerciseIds,
+            onToggleFavorite)
   }
 }
 
@@ -91,9 +101,12 @@ private fun CatalogBrowser(
     catalog: ExerciseCatalog,
     progressionState: ExerciseProgressionLoadState,
     onRetryProgression: () -> Unit,
-    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String) {
+    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
+    favoriteExerciseIds: Set<String>,
+    onToggleFavorite: (String, Boolean) -> Unit) {
   var query by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var categoryKey by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
+  var favoritesOnly by rememberSaveable(catalog.libraryRevision) { mutableStateOf(false) }
   var selectedExerciseId by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   val selectedExercise =
       ExerciseCatalogViewState(selectedExerciseId = selectedExerciseId.ifBlank { null })
@@ -138,7 +151,11 @@ private fun CatalogBrowser(
   }
 
   val category = ExerciseCategory.fromKey(categoryKey)
-  val state = ExerciseCatalogViewState(query, category)
+  val state = ExerciseCatalogViewState(
+      query = query,
+      category = category,
+      favoriteExerciseIds = favoriteExerciseIds,
+      favoritesOnly = favoritesOnly)
   val matches = state.visibleEntries(catalog)
   Column(
       modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
@@ -178,6 +195,10 @@ private fun CatalogBrowser(
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      FilterChip(
+          selected = favoritesOnly,
+          onClick = { favoritesOnly = !favoritesOnly },
+          label = { Text(stringResource(R.string.Exercise_catalog_favorites)) })
       CategoryChip(null, categoryKey.isEmpty()) { categoryKey = "" }
       ExerciseCategory.entries.forEach { item ->
         CategoryChip(item, categoryKey == item.key) { categoryKey = item.key }
@@ -186,7 +207,9 @@ private fun CatalogBrowser(
     if (matches.isEmpty()) {
       Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
         Text(
-            stringResource(R.string.Exercise_catalog_no_results),
+          stringResource(
+              if (favoritesOnly) R.string.Exercise_catalog_no_favorites
+              else R.string.Exercise_catalog_no_results),
             color = RelvenColors.MutedText,
             fontSize = 15.sp)
       }
@@ -195,7 +218,11 @@ private fun CatalogBrowser(
           modifier = Modifier.weight(1f),
           verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items(matches, key = ExerciseEntry::exerciseId) { entry ->
-          ExerciseRow(entry) { selectedExerciseId = entry.exerciseId }
+          ExerciseRow(
+              entry,
+              isFavorite = entry.exerciseId in favoriteExerciseIds,
+              onClick = { selectedExerciseId = entry.exerciseId },
+              onToggleFavorite = { onToggleFavorite(entry.exerciseId, it) })
         }
       }
     }
@@ -217,19 +244,34 @@ private fun CategoryChip(category: ExerciseCategory?, selected: Boolean, onClick
 }
 
 @Composable
-private fun ExerciseRow(entry: ExerciseEntry, onClick: () -> Unit) {
+private fun ExerciseRow(
+    entry: ExerciseEntry,
+    isFavorite: Boolean,
+    onClick: () -> Unit,
+    onToggleFavorite: (Boolean) -> Unit) {
   Surface(
-      modifier =
-          Modifier.fillMaxWidth()
-              .clickable(role = Role.Button, onClick = onClick)
-              .semantics(mergeDescendants = true) {},
+      modifier = Modifier.fillMaxWidth(),
       shape = RoundedCornerShape(20.dp),
       color = RelvenColors.Surface,
       border = BorderStroke(1.dp, RelvenColors.Text.copy(alpha = 0.07f))) {
-    Column(Modifier.padding(horizontal = 18.dp, vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-      Text(entry.name, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
-      Text(categoryLabel(entry.category), color = RelvenColors.Orange, fontSize = 12.sp)
-      MuscleGroupLabels(entry.muscleGroups, color = RelvenColors.MutedText, fontSize = 13.sp)
+    Row(
+        modifier = Modifier.padding(start = 18.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+      Column(
+          Modifier.weight(1f).clickable(role = Role.Button, onClick = onClick).padding(vertical = 8.dp),
+          verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(entry.name, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+        Text(categoryLabel(entry.category), color = RelvenColors.Orange, fontSize = 12.sp)
+        MuscleGroupLabels(entry.muscleGroups, color = RelvenColors.MutedText, fontSize = 13.sp)
+      }
+      IconButton(onClick = { onToggleFavorite(!isFavorite) }) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+            contentDescription = stringResource(
+                if (isFavorite) R.string.Exercise_catalog_remove_favorite
+                else R.string.Exercise_catalog_add_favorite),
+            tint = if (isFavorite) RelvenColors.Orange else RelvenColors.MutedText)
+      }
     }
   }
 }
