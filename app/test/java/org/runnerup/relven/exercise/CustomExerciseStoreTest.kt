@@ -55,6 +55,35 @@ class CustomExerciseStoreTest {
   }
 
   @Test
+  fun archiveAndRestorePreserveStableIdAndDefinitionRevision() {
+    val id = store.create(validInput())
+    val original = store.load("en").single()
+
+    store.setArchived(id, true)
+    val archived = store.load("en").single()
+
+    assertEquals(id, archived.exerciseId)
+    assertEquals(original.revision, archived.revision)
+    assertTrue(archived.isArchived)
+
+    store.setArchived(id, false)
+    val restored = store.load("en").single()
+    assertEquals(id, restored.exerciseId)
+    assertEquals(original.revision, restored.revision)
+    assertFalse(restored.isArchived)
+  }
+
+  @Test
+  fun legacyRecordsWithoutArchiveFlagRemainActive() {
+    store.create(validInput())
+    val root = JSONObject(file.readText())
+    root.getJSONArray("exercises").getJSONObject(0).remove("archived")
+    file.writeText(root.toString())
+
+    assertFalse(store.load("en").single().isArchived)
+  }
+
+  @Test
   fun invalidEditDoesNotChangeExistingRecord() {
     val id = store.create(validInput())
     val original = file.readBytes()

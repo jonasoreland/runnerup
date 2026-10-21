@@ -175,6 +175,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog,
             onSaveCustomExercise = ::saveCustomExercise,
+            onSetCustomExerciseArchived = ::setCustomExerciseArchived,
             favoriteExerciseIds = favoriteExerciseIds,
             onToggleExerciseFavorite = ::toggleExerciseFavorite,
             onRetryExerciseProgression = ::reloadExerciseProgression,
@@ -506,6 +507,13 @@ class RelvenHomeActivity : ComponentActivity() {
     return savedId
   }
 
+  private suspend fun setCustomExerciseArchived(exerciseId: String, archived: Boolean) {
+    withContext(Dispatchers.IO) {
+      ExerciseCatalogRepository(applicationContext).setCustomExerciseArchived(exerciseId, archived)
+    }
+    loadExerciseCatalog()
+  }
+
   private fun toggleExerciseFavorite(exerciseId: String, favorite: Boolean) {
     ExerciseFavoritesStore(applicationContext).setFavorite(exerciseId, favorite)
     favoriteExerciseIds = favoriteExerciseIds.toMutableSet().apply {
@@ -738,6 +746,7 @@ private fun RelvenHome(
     onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit,
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
+    onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit,
     favoriteExerciseIds: Set<String>,
     onToggleExerciseFavorite: (String, Boolean) -> Unit,
     onRetryExerciseProgression: () -> Unit,
@@ -895,6 +904,7 @@ private fun RelvenHome(
           onRetry = onRetryExerciseCatalog,
           onRetryProgression = onRetryExerciseProgression,
           onSaveCustomExercise = onSaveCustomExercise,
+          onSetCustomExerciseArchived = onSetCustomExerciseArchived,
           favoriteExerciseIds = favoriteExerciseIds,
           onToggleFavorite = onToggleExerciseFavorite)
     }

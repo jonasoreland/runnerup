@@ -58,6 +58,16 @@ internal class CustomExerciseStore(
     writeRecords(records)
   }
 
+  @Synchronized
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun setArchived(exerciseId: String, archived: Boolean) {
+    val records = readRecords().toMutableList()
+    val index = records.indexOfFirst { it.exerciseId == exerciseId }
+    require(index >= 0) { "Custom exercise does not exist" }
+    records[index] = records[index].copy(isArchived = archived)
+    writeRecords(records)
+  }
+
   private fun readRecords(): List<Record> {
     recoverInterruptedReplacement()
     if (!file.exists()) return emptyList()
@@ -83,7 +93,10 @@ internal class CustomExerciseStore(
   }
 
   private fun parseRecord(value: JSONObject): Record {
-    requireKeys(value, RECORD_KEYS)
+    val actualKeys = value.keys().asSequence().toSet()
+    require(actualKeys == RECORD_KEYS || actualKeys == RECORD_KEYS - "archived") {
+      "Custom exercise data has unexpected fields"
+    }
     val id = value.getString("exerciseId")
     require(id.matches(UUID_PATTERN)) { "Custom exercise ID must be a lowercase UUID" }
     val revision = value.getInt("revision")
@@ -101,7 +114,8 @@ internal class CustomExerciseStore(
             value.stringList("instructionsEnglish"),
             value.stringList("instructionsSwedish"))
     validate(input)
-    return Record(id, revision, input)
+    val archived = if (value.has("archived")) value.getBoolean("archived") else false
+    return Record(id, revision, input, archived)
   }
 
   private fun writeRecords(records: List<Record>) {
@@ -112,6 +126,7 @@ internal class CustomExerciseStore(
           JSONObject()
               .put("exerciseId", record.exerciseId)
               .put("revision", record.revision)
+              .put("archived", record.isArchived)
               .put("nameEnglish", input.nameEnglish.trim())
               .put("nameSwedish", input.nameSwedish.trim())
               .put("category", input.category.key)
@@ -213,7 +228,8 @@ internal class CustomExerciseStore(
           input.equipment.trimmed(),
           (if (language == "sv") input.instructionsSwedish else input.instructionsEnglish).trimmed(),
           isCustom = true,
-          customInput = input)
+          customInput = input,
+          isArchived = isArchived)
 
   private fun JSONObject.stringList(key: String): List<String> {
     val array = getJSONArray(key)
@@ -227,7 +243,11 @@ internal class CustomExerciseStore(
     require(value.keys().asSequence().toSet() == expected) { "Custom exercise data has unexpected fields" }
   }
 
-  private data class Record(val exerciseId: String, val revision: Int, val input: CustomExerciseInput)
+  private data class Record(
+      val exerciseId: String,
+      val revision: Int,
+      val input: CustomExerciseInput,
+      val isArchived: Boolean = false)
 
   private companion object {
     const val FORMAT = "relven.custom-exercises"
@@ -245,6 +265,7 @@ internal class CustomExerciseStore(
         setOf(
             "exerciseId",
             "revision",
+            "archived",
             "nameEnglish",
             "nameSwedish",
             "category",

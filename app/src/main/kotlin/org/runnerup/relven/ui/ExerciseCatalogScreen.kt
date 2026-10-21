@@ -77,6 +77,7 @@ internal fun ExerciseCatalogScreen(
     onRetry: () -> Unit,
     onRetryProgression: () -> Unit = {},
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String = { id, _ -> id.orEmpty() },
+    onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit = { _, _ -> },
     favoriteExerciseIds: Set<String> = emptySet(),
     onToggleFavorite: (String, Boolean) -> Unit = { _, _ -> }
 ) {
@@ -91,6 +92,7 @@ internal fun ExerciseCatalogScreen(
             progressionState,
             onRetryProgression,
             onSaveCustomExercise,
+            onSetCustomExerciseArchived,
             favoriteExerciseIds,
             onToggleFavorite)
   }
@@ -102,11 +104,13 @@ private fun CatalogBrowser(
     progressionState: ExerciseProgressionLoadState,
     onRetryProgression: () -> Unit,
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
+    onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit,
     favoriteExerciseIds: Set<String>,
     onToggleFavorite: (String, Boolean) -> Unit) {
   var query by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var categoryKey by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var favoritesOnly by rememberSaveable(catalog.libraryRevision) { mutableStateOf(false) }
+  var showArchived by rememberSaveable(catalog.libraryRevision) { mutableStateOf(false) }
   var selectedExerciseId by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   val selectedExercise =
       ExerciseCatalogViewState(selectedExerciseId = selectedExerciseId.ifBlank { null })
@@ -114,6 +118,7 @@ private fun CatalogBrowser(
   var editing by rememberSaveable(catalog.libraryRevision) { mutableStateOf(false) }
   var formSaving by remember { mutableStateOf(false) }
   var formError by remember { mutableStateOf<String?>(null) }
+  var archiveError by remember { mutableStateOf(false) }
   val scope = rememberCoroutineScope()
 
   if (editing) {
@@ -146,7 +151,21 @@ private fun CatalogBrowser(
         progressionState,
         onRetryProgression,
         onBack = { selectedExerciseId = "" },
-        onEdit = if (selectedExercise.isCustom) { { editing = true } } else null)
+        onEdit = if (selectedExercise.isCustom && !selectedExercise.isArchived) { { editing = true } } else null,
+        archiveError = archiveError,
+        onToggleArchived = if (selectedExercise.isCustom) {
+          {
+            scope.launch {
+              archiveError = false
+              try {
+                onSetCustomExerciseArchived(selectedExercise.exerciseId, !selectedExercise.isArchived)
+                if (!selectedExercise.isArchived) selectedExerciseId = ""
+              } catch (_: Exception) {
+                archiveError = true
+              }
+            }
+          }
+        } else null)
     return
   }
 
@@ -155,7 +174,8 @@ private fun CatalogBrowser(
       query = query,
       category = category,
       favoriteExerciseIds = favoriteExerciseIds,
-      favoritesOnly = favoritesOnly)
+      favoritesOnly = favoritesOnly,
+      showArchived = showArchived)
   val matches = state.visibleEntries(catalog)
   Column(
       modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
@@ -166,7 +186,9 @@ private fun CatalogBrowser(
           fontSize = 30.sp,
           fontWeight = FontWeight.Bold)
       Text(
-          stringResource(R.string.Exercise_catalog_subtitle, catalog.exercises.size),
+          stringResource(
+              R.string.Exercise_catalog_subtitle,
+              catalog.exercises.count { it.isArchived == showArchived }),
           color = RelvenColors.MutedText,
           fontSize = 14.sp)
       Button(onClick = { editing = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
@@ -199,6 +221,13 @@ private fun CatalogBrowser(
           selected = favoritesOnly,
           onClick = { favoritesOnly = !favoritesOnly },
           label = { Text(stringResource(R.string.Exercise_catalog_favorites)) })
+      FilterChip(
+          selected = showArchived,
+          onClick = {
+            showArchived = !showArchived
+            favoritesOnly = false
+          },
+          label = { Text(stringResource(R.string.Exercise_custom_archived_filter)) })
       CategoryChip(null, categoryKey.isEmpty()) { categoryKey = "" }
       ExerciseCategory.entries.forEach { item ->
         CategoryChip(item, categoryKey == item.key) { categoryKey = item.key }
@@ -282,7 +311,9 @@ private fun ExerciseDetail(
     progressionState: ExerciseProgressionLoadState,
     onRetryProgression: () -> Unit,
     onBack: () -> Unit,
-    onEdit: (() -> Unit)? = null) {
+    onEdit: (() -> Unit)? = null,
+    archiveError: Boolean = false,
+    onToggleArchived: (() -> Unit)? = null) {
   Column(
       modifier =
           Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -300,6 +331,18 @@ private fun ExerciseDetail(
       Button(onClick = onEdit, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
         Text(stringResource(R.string.Exercise_custom_edit))
       }
+    }
+    if (onToggleArchived != null) {
+      Button(onClick = onToggleArchived, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(if (entry.isArchived) R.string.Exercise_custom_restore else R.string.Exercise_custom_archive))
+      }
+    }
+    if (entry.isArchived) {
+      Text(stringResource(R.string.Exercise_custom_archived_notice), color = RelvenColors.MutedText)
+    }
+    if (archiveError) {
+      Text(stringResource(R.string.Exercise_custom_archive_error), color = RelvenColors.Orange,
+          modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(entry.name, fontSize = 30.sp, fontWeight = FontWeight.Bold)
