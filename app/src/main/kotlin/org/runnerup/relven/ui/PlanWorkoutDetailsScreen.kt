@@ -1,23 +1,31 @@
 package org.runnerup.relven.ui
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,6 +52,8 @@ internal fun PlanWorkoutDetailsScreen(
     onStartStrength: () -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit
 ) {
+  var moreActionsExpanded by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
+
   Column(
       modifier = Modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -58,7 +68,41 @@ internal fun PlanWorkoutDetailsScreen(
           stringResource(R.string.Plan_calendar_workout_details_title),
           fontSize = 24.sp,
           fontWeight = FontWeight.Bold,
-          modifier = Modifier.semantics { heading() })
+          modifier = Modifier.weight(1f).semantics { heading() })
+      IconButton(
+          onClick = { moreActionsExpanded = true },
+          enabled = enabled,
+          modifier = Modifier.size(48.dp)) {
+        Icon(
+            Icons.Default.MoreVert,
+            contentDescription = stringResource(R.string.Plan_calendar_workout_more_actions),
+            tint = RelvenColors.Text)
+      }
+      DropdownMenu(
+          expanded = moreActionsExpanded,
+          onDismissRequest = { moreActionsExpanded = false }) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.Plan_calendar_rename_workout)) },
+            enabled = enabled,
+            onClick = {
+              moreActionsExpanded = false
+              onRename(workout.workoutId, workout.workoutName)
+            })
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.Plan_calendar_reschedule)) },
+            enabled = enabled,
+            onClick = {
+              moreActionsExpanded = false
+              onReschedule(workout.sessionId)
+            })
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.Plan_calendar_remove), color = RelvenColors.Orange) },
+            enabled = enabled,
+            onClick = {
+              moreActionsExpanded = false
+              onRemove(workout.sessionId)
+            })
+      }
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -74,32 +118,39 @@ internal fun PlanWorkoutDetailsScreen(
               else R.string.Plan_calendar_strength_workout),
           color = RelvenColors.Orange,
           fontWeight = FontWeight.SemiBold)
-      Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         details.exercises().forEachIndexed { index, exercise ->
-          Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                "${index + 1}. ${exercise.name()}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold)
-            Text(
-                stringResource(
-                    R.string.Plan_calendar_strength_prescription,
-                    exercise.sets(),
-                    exercise.minRepetitions(),
-                    exercise.maxRepetitions()),
-                color = RelvenColors.MutedText)
-            exercise.durationSeconds()?.let {
+          Surface(
+              modifier = Modifier.fillMaxWidth(),
+              color = RelvenColors.Surface,
+              shape = RoundedCornerShape(16.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
               Text(
-                  stringResource(R.string.Plan_calendar_strength_timed, it),
+                  "${index + 1}. ${exercise.name()}",
+                  fontSize = 18.sp,
+                  fontWeight = FontWeight.SemiBold)
+              Text(
+                  stringResource(
+                      R.string.Plan_calendar_strength_prescription,
+                      exercise.sets(),
+                      exercise.minRepetitions(),
+                      exercise.maxRepetitions()),
+                  color = RelvenColors.Text,
+                  fontWeight = FontWeight.Medium)
+              exercise.durationSeconds()?.let {
+                Text(
+                    stringResource(R.string.Plan_calendar_strength_timed, it),
+                    color = RelvenColors.MutedText)
+              }
+              Text(
+                  stringResource(R.string.Plan_calendar_strength_rest, exercise.restSeconds()),
                   color = RelvenColors.MutedText)
+              exercise.instructions().takeIf(String::isNotBlank)?.let {
+                Text(it, lineHeight = 22.sp, color = RelvenColors.MutedText)
+              }
             }
-            Text(
-                stringResource(R.string.Plan_calendar_strength_rest, exercise.restSeconds()),
-                color = RelvenColors.MutedText)
-            Text(exercise.instructions(), lineHeight = 22.sp)
-          }
-          if (index != details.exercises().lastIndex) {
-            Spacer(Modifier.fillMaxWidth().heightIn(min = 1.dp).background(RelvenColors.Surface))
           }
         }
       }
@@ -125,40 +176,53 @@ internal fun PlanWorkoutDetailsScreen(
     }
 
     if (workout.runningSegments.isNotEmpty()) {
-      Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+      Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         workout.runningSegments.forEachIndexed { index, segment ->
-          Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                segment.name ?: stringResource(phaseLabel(segment.phase)),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold)
-            Text(segmentEndLabel(segment), color = RelvenColors.MutedText)
-            Text(
-                segment.target?.let { target -> segmentTargetLabel(target) }
-                    ?: stringResource(R.string.Plan_calendar_no_target),
-                color = RelvenColors.MutedText)
-            if (segment.repeatCount > 1) {
+          Surface(
+              modifier = Modifier.fillMaxWidth(),
+              color = RelvenColors.Surface,
+              shape = RoundedCornerShape(16.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                Surface(
+                    modifier = Modifier.size(32.dp),
+                    shape = RoundedCornerShape(50),
+                    color = RelvenColors.SurfaceRaised) {
+                  BoxContentIndex(index + 1)
+                }
+                Text(
+                    segment.name ?: stringResource(phaseLabel(segment.phase)),
+                    modifier = Modifier.weight(1f).padding(start = 10.dp),
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.SemiBold)
+              }
+              Text(segmentEndLabel(segment), color = RelvenColors.Text)
               Text(
-                  stringResource(R.string.Plan_calendar_repeat_count, segment.repeatCount),
+                  segment.target?.let { target -> segmentTargetLabel(target) }
+                      ?: stringResource(R.string.Plan_calendar_no_target),
                   color = RelvenColors.MutedText)
-            }
-            Column(horizontalAlignment = Alignment.Start) {
-              TextButton(
-                  onClick = { onEditRunningEnd(workout.workoutId, segment) },
-                  enabled = enabled,
-                  modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                Text(stringResource(R.string.Plan_calendar_edit_end))
+              if (segment.repeatCount > 1) {
+                Text(
+                    stringResource(R.string.Plan_calendar_repeat_count, segment.repeatCount),
+                    color = RelvenColors.MutedText)
               }
-              TextButton(
-                  onClick = { onEditRunningTarget(workout.workoutId, segment) },
-                  enabled = enabled,
-                  modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-                Text(stringResource(R.string.Plan_calendar_edit_target))
+              Column(horizontalAlignment = Alignment.Start) {
+                TextButton(
+                    onClick = { onEditRunningEnd(workout.workoutId, segment) },
+                    enabled = enabled,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                  Text(stringResource(R.string.Plan_calendar_edit_end))
+                }
+                TextButton(
+                    onClick = { onEditRunningTarget(workout.workoutId, segment) },
+                    enabled = enabled,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                  Text(stringResource(R.string.Plan_calendar_edit_target))
+                }
               }
             }
-          }
-          if (index != workout.runningSegments.lastIndex) {
-            Spacer(Modifier.fillMaxWidth().heightIn(min = 1.dp).background(RelvenColors.Surface))
           }
         }
       }
@@ -166,25 +230,14 @@ internal fun PlanWorkoutDetailsScreen(
 
     workout.notes.takeIf(String::isNotBlank)?.let { Text(it, color = RelvenColors.MutedText) }
 
-    Column(horizontalAlignment = Alignment.Start) {
-      TextButton(
-          onClick = { onRename(workout.workoutId, workout.workoutName) },
-          enabled = enabled,
-          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-        Text(stringResource(R.string.Plan_calendar_rename_workout))
-      }
-      TextButton(
-          onClick = { onReschedule(workout.sessionId) },
-          enabled = enabled,
-          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-        Text(stringResource(R.string.Plan_calendar_reschedule))
-      }
-      TextButton(
-          onClick = { onRemove(workout.sessionId) },
-          enabled = enabled,
-          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-        Text(stringResource(R.string.Plan_calendar_remove))
-      }
-    }
+  }
+}
+
+@Composable
+private fun BoxContentIndex(index: Int) {
+  Box(
+      modifier = Modifier.fillMaxWidth().heightIn(min = 32.dp),
+      contentAlignment = Alignment.Center) {
+    Text(index.toString(), color = RelvenColors.Orange, fontWeight = FontWeight.SemiBold)
   }
 }
