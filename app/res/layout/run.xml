@@ -59,55 +59,14 @@
         android:id="@+id/hr_debug"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/run_table_row1"
+        android:layout_above="@id/run_controls"
         android:layout_below="@id/workout_steps"
         android:scrollbars="vertical" />
 
-    <TableRow
-        android:id="@+id/run_table_row1"
-        android:layout_width="fill_parent"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/run_controls"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/run_table_row2">
-
-        <Button
-            android:id="@+id/new_lap_button"
-            style="@style/ButtonText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/btn_blue"
-            android:drawableEnd="@drawable/ic_av_newlap"
-            android:drawablePadding="-32dp"
-            android:text="@string/Lap" />
-
-        <Button
-            android:id="@+id/pause_button"
-            style="@style/ButtonText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/btn_blue"
-            android:drawableEnd="@drawable/ic_av_pause"
-            android:drawablePadding="-32dp"
-            android:text="@string/Pause" />
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/run_table_row2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/stop_button"
-            style="@style/ButtonText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/btn_red"
-            android:drawableEnd="@drawable/ic_av_stop"
-            android:drawablePadding="-32dp"
-            android:text="@string/Stop" />
-    </TableRow>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

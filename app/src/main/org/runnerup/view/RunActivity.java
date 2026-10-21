@@ -40,7 +40,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -49,7 +48,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
@@ -68,6 +66,8 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.hr.WearHRConnectionState;
 import org.runnerup.hr.WearHRProvider;
+import org.runnerup.relven.ui.RunControlsCompose;
+import org.runnerup.relven.ui.RunControlsStateHolder;
 import org.runnerup.relven.ui.RunMetricValues;
 import org.runnerup.relven.ui.RunMetricsCompose;
 import org.runnerup.relven.ui.RunMetricsScreenKt;
@@ -99,8 +99,8 @@ public class RunActivity extends AppCompatActivity implements TickListener {
           new ActivityResultContracts.StartActivityForResult(),
           result -> handleActivityResult(1, result.getResultCode(), result.getData()));
 
-  private Button pauseButton = null;
-  private Button newLapButton = null;
+  private ComposeView workoutControlsView;
+  private RunControlsStateHolder runControlsState;
   private final RunMetricsStateHolder runMetricsState = new RunMetricsStateHolder();
   private TextView countdownView = null;
   private ComposeView workoutStepsView;
@@ -133,11 +133,13 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     // HRZones hrZones = new HRZones(this);
     RunMetricsCompose.install(findViewById(R.id.run_metrics), runMetricsState);
 
-    final Button stopButton = findViewById(R.id.stop_button);
-    stopButton.setOnClickListener(stopButtonClick);
-    pauseButton = findViewById(R.id.pause_button);
-    pauseButton.setOnClickListener(pauseButtonClick);
-    newLapButton = findViewById(R.id.new_lap_button);
+    workoutControlsView = findViewById(R.id.run_controls);
+    runControlsState =
+        new RunControlsStateHolder(
+            () -> newLapButtonClick.onClick(workoutControlsView),
+            () -> pauseButtonClick.onClick(workoutControlsView),
+            () -> stopButtonClick.onClick(workoutControlsView));
+    RunControlsCompose.install(workoutControlsView, runControlsState);
     countdownView = findViewById(R.id.countdown_text_view);
     hrDebug = findViewById(R.id.hr_debug);
     workoutStepsView = findViewById(R.id.workout_steps);
@@ -152,9 +154,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     final boolean keepScreenOn =
         prefs.getBoolean(res.getString(R.string.pref_keep_screen_on), false);
     buttonsLocked = lockButtons && showOnLockScreen;
-    if (buttonsLocked) {
-      stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_gray));
-    }
+    runControlsState.update(false, buttonsLocked);
 
     if (!prefs.getBoolean(res.getString(R.string.pref_bt_debug), false)) {
       hrDebug = null;
@@ -173,11 +173,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             long time = event.getEventTime();
             if (mTapArray[mTapIndex] != 0 && time - mTapArray[mTapIndex] < maxTapTime) {
               buttonsLocked = !buttonsLocked;
-              if (buttonsLocked) {
-                stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_gray));
-              } else {
-                stopButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_red));
-              }
+              runControlsState.update(workout != null && workout.isPaused(), buttonsLocked);
               Arrays.fill(mTapArray, 0);
               // set index so next tap is not message
               mTapIndex = 1;
@@ -198,8 +194,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
     root.setOnTouchListener(touchListener);
     workoutStepsView.setOnTouchListener(touchListener);
-    stopButton.setOnTouchListener(touchListener);
-    pauseButton.setOnTouchListener(touchListener);
+    workoutControlsView.setOnTouchListener(touchListener);
 
     getOnBackPressedDispatcher()
         .addCallback(
@@ -285,8 +280,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     startTimer();
 
     populateWorkoutList();
-    newLapButton.setOnClickListener(newLapButtonClick);
-    newLapButton.setText(org.runnerup.common.R.string.Lap);
     mTracker.displayNotificationState();
   }
 
@@ -394,17 +387,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   }
 
   private void setPauseButtonEnabled(boolean enabled) {
-    if (enabled) {
-      pauseButton.setText(org.runnerup.common.R.string.Pause);
-      pauseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_blue));
-      pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-          0, 0, org.runnerup.common.R.drawable.ic_av_pause, 0);
-    } else {
-      pauseButton.setText(org.runnerup.common.R.string.Resume);
-      pauseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.btn_green));
-      pauseButton.setCompoundDrawablesWithIntrinsicBounds(
-          0, 0, org.runnerup.common.R.drawable.ic_av_play_arrow, 0);
-    }
+    runControlsState.update(!enabled, buttonsLocked);
   }
 
   private void togglePause() {
