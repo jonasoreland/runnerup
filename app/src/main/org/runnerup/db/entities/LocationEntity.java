@@ -329,7 +329,7 @@ public class LocationEntity extends AbstractEntity {
   }
 
   /** Cadence at the location */
-  private void setCadence(Double value) {
+  public void setCadence(Double value) {
     values().put(Constants.DB.LOCATION.CADENCE, value);
   }
 

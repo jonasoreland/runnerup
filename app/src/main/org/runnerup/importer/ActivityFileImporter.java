@@ -362,7 +362,8 @@ public final class ActivityFileImporter {
         || "LongitudeDegrees".equals(name)
         || "AltitudeMeters".equals(name)
         || "DistanceMeters".equals(name)
-        || "Cadence".equals(name);
+        || "Cadence".equals(name)
+        || "RunCadence".equals(name);
   }
 
   private static final class PointBuilder {
@@ -395,6 +396,7 @@ public final class ActivityFileImporter {
           break;
         case "cad":
         case "Cadence":
+        case "RunCadence":
           cadence = parseInteger(trimmed, 0, 255);
           break;
         case "DistanceMeters":

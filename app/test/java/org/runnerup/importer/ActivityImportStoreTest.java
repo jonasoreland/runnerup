@@ -25,6 +25,8 @@ public class ActivityImportStoreTest {
     database.execSQL(
         "CREATE TABLE activity (_id INTEGER PRIMARY KEY, name TEXT, comment TEXT, start_time INTEGER, type INTEGER, distance REAL, time INTEGER, max_hr INTEGER, avg_hr INTEGER, avg_cadence REAL, deleted INTEGER, nullcolumnhack TEXT)");
     database.execSQL(
+        "CREATE TABLE lap (_id INTEGER PRIMARY KEY, activity_id INTEGER NOT NULL, lap INTEGER NOT NULL, type INTEGER NOT NULL, time INTEGER, distance REAL, planned_time INTEGER, planned_distance REAL, planned_pace REAL, avg_hr INTEGER, max_hr INTEGER, avg_cadence REAL)");
+    database.execSQL(
         "CREATE TABLE location (_id INTEGER PRIMARY KEY, activity_id INTEGER NOT NULL, lap INTEGER NOT NULL, type INTEGER NOT NULL, time INTEGER NOT NULL, longitude REAL NOT NULL, latitude REAL NOT NULL, altitude REAL, hr INTEGER, cadence REAL, temperature REAL, pressure REAL, elapsed REAL, distance REAL, gps_altitude REAL, accurancy REAL, speed REAL, bearing REAL, satellites INTEGER)");
     database.execSQL(
         "CREATE TABLE relven_activity_import_v1 (source_sha256 TEXT PRIMARY KEY NOT NULL, activity_id INTEGER NOT NULL)");
@@ -47,6 +49,7 @@ public class ActivityImportStoreTest {
     assertEquals(ActivityImportStore.Result.IMPORTED, first);
     assertEquals(ActivityImportStore.Result.ALREADY_IMPORTED, second);
     assertEquals(1, count(Constants.DB.ACTIVITY.TABLE));
+    assertEquals(1, count(Constants.DB.LAP.TABLE));
     assertEquals(3, count(Constants.DB.LOCATION.TABLE));
     assertEquals(1, count("relven_activity_import_v1"));
     try (Cursor cursor =
@@ -75,7 +78,10 @@ public class ActivityImportStoreTest {
         database.query(
             Constants.DB.LOCATION.TABLE,
             new String[] {
-              Constants.DB.LOCATION.TYPE, Constants.DB.LOCATION.TIME, Constants.DB.LOCATION.HR
+              Constants.DB.LOCATION.TYPE,
+              Constants.DB.LOCATION.TIME,
+              Constants.DB.LOCATION.HR,
+              Constants.DB.LOCATION.CADENCE
             },
             null,
             null,
@@ -84,15 +90,16 @@ public class ActivityImportStoreTest {
             Constants.DB.PRIMARY_KEY)) {
       assertEquals(3, cursor.getCount());
       cursor.moveToFirst();
-      assertEquals(Constants.DB.LOCATION.TYPE_START, cursor.getInt(0));
+      assertEquals(Constants.DB.LOCATION.TYPE_GPS, cursor.getInt(0));
       assertEquals(1_700_000_000_000L, cursor.getLong(1));
       assertEquals(130, cursor.getInt(2));
       cursor.moveToNext();
       assertEquals(Constants.DB.LOCATION.TYPE_GPS, cursor.getInt(0));
       assertEquals(1_700_000_060_000L, cursor.getLong(1));
       assertTrue(cursor.isNull(2));
+      assertEquals(84.0, cursor.getDouble(3), 0.01);
       cursor.moveToNext();
-      assertEquals(Constants.DB.LOCATION.TYPE_END, cursor.getInt(0));
+      assertEquals(Constants.DB.LOCATION.TYPE_GPS, cursor.getInt(0));
       assertEquals(1_700_000_120_000L, cursor.getLong(1));
       assertEquals(154, cursor.getInt(2));
     }
@@ -108,6 +115,7 @@ public class ActivityImportStoreTest {
       ActivityImportStore.importActivity(database, sampleActivity(), "b".repeat(64));
     } catch (RuntimeException expected) {
       assertEquals(0, count(Constants.DB.ACTIVITY.TABLE));
+      assertEquals(0, count(Constants.DB.LAP.TABLE));
       assertEquals(0, count(Constants.DB.LOCATION.TABLE));
       assertEquals(0, count("relven_activity_import_v1"));
       return;
@@ -126,7 +134,7 @@ public class ActivityImportStoreTest {
         174,
         java.util.List.of(
             new ActivityTrackPoint(1_700_000_000L, 59.0, 18.0, 10.0, 0.0, 130, null),
-            new ActivityTrackPoint(1_700_000_060L, 59.001, 18.001, null, 120.0, null, null),
+            new ActivityTrackPoint(1_700_000_060L, 59.001, 18.001, null, 120.0, null, 84),
             new ActivityTrackPoint(1_700_000_120L, 59.002, 18.002, 12.0, 240.0, 154, null)));
   }
 

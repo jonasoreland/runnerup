@@ -1,10 +1,11 @@
-package org.runnerup.export.format;
+package org.runnerup.importer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +17,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.runnerup.common.util.Constants.DB;
+import org.runnerup.export.format.ExportOptions;
+import org.runnerup.export.format.GPX;
+import org.runnerup.export.format.TCX;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
@@ -28,9 +32,9 @@ public class ActivityExportRoundTripTest {
   public void setUp() {
     database = SQLiteDatabase.create(null);
     database.execSQL(
-        "CREATE TABLE activity (_id INTEGER PRIMARY KEY, name TEXT, comment TEXT, start_time INTEGER, type INTEGER, meta_data TEXT)");
+        "CREATE TABLE activity (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, comment TEXT, start_time INTEGER NOT NULL, type INTEGER, distance REAL, time INTEGER, avg_hr INTEGER, max_hr INTEGER, avg_cadence REAL, meta_data TEXT, deleted INTEGER NOT NULL DEFAULT 0, nullColumnHack TEXT)");
     database.execSQL(
-        "CREATE TABLE lap (_id INTEGER PRIMARY KEY, activity_id INTEGER, lap INTEGER, time INTEGER, distance REAL, type INTEGER)");
+        "CREATE TABLE lap (_id INTEGER PRIMARY KEY AUTOINCREMENT, activity_id INTEGER NOT NULL, lap INTEGER NOT NULL, type INTEGER NOT NULL DEFAULT 0, time INTEGER, distance REAL, planned_time INTEGER, planned_distance REAL, planned_pace REAL, avg_hr INTEGER, max_hr INTEGER, avg_cadence REAL)");
     database.execSQL(
         "CREATE TABLE location (_id INTEGER PRIMARY KEY, activity_id INTEGER NOT NULL, lap INTEGER NOT NULL, type INTEGER NOT NULL, time INTEGER NOT NULL, longitude REAL NOT NULL, latitude REAL NOT NULL, altitude REAL, hr INTEGER, cadence REAL, temperature REAL, pressure REAL, elapsed REAL, distance REAL, gps_altitude REAL, accurancy REAL, speed REAL, bearing REAL, satellites INTEGER)");
   }
@@ -112,6 +116,68 @@ public class ActivityExportRoundTripTest {
     assertEquals(
         "steady <test> run",
         tcxDocument.getElementsByTagNameNS("*", "Notes").item(0).getTextContent());
+  }
+
+  @Test
+  public void importedGpxCanBeReexportedWithoutDroppingRouteOrSummary() throws Exception {
+    assertImportedFileRoundTrips("minimal.gpx");
+  }
+
+  @Test
+  public void importedTcxCanBeReexportedWithoutDroppingRouteOrSummary() throws Exception {
+    assertImportedFileRoundTrips("minimal.tcx");
+  }
+
+  private void assertImportedFileRoundTrips(String fileName) throws Exception {
+    byte[] source;
+    try (var fixture = getClass().getResourceAsStream("/activity-import/" + fileName)) {
+      source = fixture.readAllBytes();
+    }
+    ImportedActivity imported =
+        ActivityFileImporter.read(fileName, new ByteArrayInputStream(source));
+    ActivityImportStore.importActivity(database, imported, ActivityImportStore.sha256(source));
+    long activityId = latestActivityId();
+
+    String gpx = exportGpx(activityId);
+    String tcx = exportTcx(activityId);
+    var gpxPoints = parse(gpx).getElementsByTagNameNS("*", "trkpt");
+    assertEquals(2, gpxPoints.getLength());
+    assertEquals(
+        imported.getTrackPoints().get(0).getLatitude(),
+        Double.parseDouble(gpxPoints.item(0).getAttributes().getNamedItem("lat").getNodeValue()),
+        0.00001);
+    assertEquals(
+        imported.getTrackPoints().get(1).getLatitude(),
+        Double.parseDouble(gpxPoints.item(1).getAttributes().getNamedItem("lat").getNodeValue()),
+        0.00001);
+
+    var tcxDocument = parse(tcx);
+    assertEquals(
+        imported.getDurationSeconds(),
+        Long.parseLong(
+            tcxDocument.getElementsByTagNameNS("*", "TotalTimeSeconds").item(0).getTextContent()));
+    assertEquals(2, tcxDocument.getElementsByTagNameNS("*", "Trackpoint").getLength());
+    ImportedActivity reparsedGpx =
+        ActivityFileImporter.read(
+            "roundtrip.gpx", new ByteArrayInputStream(gpx.getBytes(StandardCharsets.UTF_8)));
+    ImportedActivity reparsedTcx =
+        ActivityFileImporter.read(
+            "roundtrip.tcx", new ByteArrayInputStream(tcx.getBytes(StandardCharsets.UTF_8)));
+    assertEquals(imported.getTrackPoints().size(), reparsedGpx.getTrackPoints().size());
+    assertEquals(imported.getTrackPoints().size(), reparsedTcx.getTrackPoints().size());
+    assertEquals(
+        imported.getTrackPoints().get(0).getCadence(),
+        reparsedGpx.getTrackPoints().get(0).getCadence());
+    assertEquals(
+        imported.getTrackPoints().get(0).getCadence(),
+        reparsedTcx.getTrackPoints().get(0).getCadence());
+  }
+
+  private long latestActivityId() {
+    try (var cursor = database.rawQuery("SELECT MAX(_id) FROM activity", null)) {
+      cursor.moveToFirst();
+      return cursor.getLong(0);
+    }
   }
 
   private long insertActivity() {
