@@ -248,7 +248,7 @@
   <string name="use_step_sensor_summary">Käytä kadenssin laskemiseksi</string>
   <string name="use_temperature_sensor">Lämpötila-anturi</string>
   <string name="use_pressure_sensor_title">Ilmanpaineanturi</string>
-  <string name="channel_notification_ongoing">RunnerUP GPS ja harjoituksen notifikaatiot</string>
+  <string name="channel_notification_ongoing">Relven GPS- ja harjoitusilmoitukset</string>
   <string name="Lap_start">Kierros alku</string>
   <string name="Lock_activity_buttons">Lukitse harjoituksen painikkeet</string>
   <!--Preference categories & summaries-->

@@ -119,7 +119,7 @@
   <string name="Manage_workouts">مدیریت تمرین ها</string>
   <string name="Settings">تنظیمات</string>
   <string name="Whats_new">تازه چه خبر؟</string>
-  <string name="Rate_RunnerUp">امتیاز دادن به رانرآپ</string>
+  <string name="Rate_RunnerUp">امتیاز دادن به Relven</string>
   <string name="Enable_GPS">فعالسازی GPS</string>
   <string name="Waiting_for_GPS">در انتظار GPS ...</string>
   <string name="Start_activity">شروع فعالیت</string>
@@ -163,7 +163,7 @@
   <string name="Experimental_HRM_devices">دستگاه های HRM تجربی</string>
   <string name="Experimental_features">قابلیت های تجربی</string>
   <string name="Mock_HRM_devices">مک کردن دستگاه های HRM</string>
-  <string name="About_RunnerUp">درباره ی رانرآپ</string>
+  <string name="About_RunnerUp">درباره ی Relven</string>
   <string name="Triggers">راه انداز ها</string>
   <string name="Cue_interval_s">فاصله های زمانی صف (ثانیه)</string>
   <string name="Cue_intervall_m">فاصله های مسافتی صف (متر)</string>
@@ -209,7 +209,7 @@
   <string name="Activity_ready">فعالیت آماده است</string>
   <string name="Ready_to_start_running">آماده برای شروع دویدن</string>
   <string name="Searching_for_GPS">جستجو برای GPS</string>
-  <string name="RunnerUp_activity_started">فعالیت رانرآپ شروع شد</string>
+  <string name="RunnerUp_activity_started">فعالیت Relven شروع شد</string>
   <string name="Low_HRM_battery_level">سطح باتری HRM پایین است</string>
   <string name="High_HRM_battery_level">سطح باتری HRM بالا است</string>
   <string name="Warning">هشدار</string>
@@ -247,7 +247,7 @@
   <string name="use_step_sensor_summary">استفاده برای آهنگ حرکت</string>
   <string name="use_temperature_sensor">سنسور دما</string>
   <string name="use_pressure_sensor_title">سنسور فشار</string>
-  <string name="channel_notification_ongoing">اعلانات GPS و فعالیت رانرآپ</string>
+  <string name="channel_notification_ongoing">اعلانات GPS و فعالیت Relven</string>
   <string name="Lap_start">شروع دور</string>
   <!--Preference categories & summaries-->
   <string name="HRM_category">ضربان قلب</string>

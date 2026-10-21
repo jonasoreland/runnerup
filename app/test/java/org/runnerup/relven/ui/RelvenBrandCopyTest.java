@@ -37,4 +37,32 @@ public class RelvenBrandCopyTest {
         "Relven Live-adress",
         swedish.getString(org.runnerup.common.R.string.RunnerUp_live_address));
   }
+
+  @Test
+  public void remainingLocalizedLabelsUseRelvenBranding() {
+    Context context = RuntimeEnvironment.getApplication();
+    Context persian = localizedContext(context, "fa");
+    Context finnish = localizedContext(context, "fi");
+    Context turkish = localizedContext(context, "tr");
+
+    assertEquals(
+        "امتیاز دادن به Relven", persian.getString(org.runnerup.common.R.string.Rate_RunnerUp));
+    assertEquals("درباره ی Relven", persian.getString(org.runnerup.common.R.string.About_RunnerUp));
+    assertEquals(
+        "فعالیت Relven شروع شد",
+        persian.getString(org.runnerup.common.R.string.RunnerUp_activity_started));
+    assertEquals(
+        "اعلانات GPS و فعالیت Relven",
+        persian.getString(org.runnerup.common.R.string.channel_notification_ongoing));
+    assertEquals(
+        "Relven GPS- ja harjoitusilmoitukset",
+        finnish.getString(org.runnerup.common.R.string.channel_notification_ongoing));
+    assertEquals("Relven Hakkında", turkish.getString(org.runnerup.common.R.string.About_RunnerUp));
+  }
+
+  private static Context localizedContext(Context context, String languageTag) {
+    Configuration configuration = new Configuration(context.getResources().getConfiguration());
+    configuration.setLocale(java.util.Locale.forLanguageTag(languageTag));
+    return context.createConfigurationContext(configuration);
+  }
 }
