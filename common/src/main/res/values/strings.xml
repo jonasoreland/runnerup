@@ -357,6 +357,10 @@
     <string name="Home_activity_detail_duration">Duration</string>
     <string name="Home_activity_detail_average_hr">Average heart rate</string>
     <string name="Home_activity_detail_maximum_hr">Maximum heart rate</string>
+    <string name="Activity_map_title">Route</string>
+    <string name="Activity_map_no_route">No GPS route is available for this activity.</string>
+    <string name="Activity_map_unavailable">The map is unavailable in this build.</string>
+    <string name="Activity_map_full_details">Open full details</string>
     <string name="Home_activity_detail_bpm">%1$d bpm</string>
     <string name="Home_activity_detail_note">Notes</string>
     <string name="Home_activity_detail_open_map">Open route and full details</string>

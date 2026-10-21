@@ -105,6 +105,11 @@
         </activity>
 
         <activity
+            android:name="org.runnerup.relven.ui.ActivityMapActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".view.MainLayout"
             android:exported="true"
             android:theme="@style/MainLayoutTheme">

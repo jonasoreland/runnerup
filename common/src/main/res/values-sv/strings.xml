@@ -364,6 +364,10 @@
   <string name="Home_activity_detail_duration">Tid</string>
   <string name="Home_activity_detail_average_hr">Medelpuls</string>
   <string name="Home_activity_detail_maximum_hr">Maxpuls</string>
+  <string name="Activity_map_title">Karta</string>
+  <string name="Activity_map_no_route">Det finns ingen GPS-rutt för det här passet.</string>
+  <string name="Activity_map_unavailable">Kartan är inte tillgänglig i den här versionen.</string>
+  <string name="Activity_map_full_details">Visa alla detaljer</string>
   <string name="Home_activity_detail_bpm">%1$d slag/min</string>
   <string name="Home_activity_detail_note">Anteckningar</string>
   <string name="Home_activity_detail_open_map">Visa rutt och alla detaljer</string>

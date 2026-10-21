@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import java.text.DateFormat
 import java.util.Date
 import org.runnerup.common.R
+import org.runnerup.BuildConfig
 import org.runnerup.util.Formatter
 import org.runnerup.workout.Sport
 
@@ -113,6 +114,8 @@ private fun ActivityDetailContent(
             .format(Date(activity.startedAtSeconds * 1000L))
       }
   val measurements = activityDetailMeasurements(activity)
+  val hasMapRoute = activityHasMapRoute(
+      activity, mapEnabled = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED)
   val metrics = buildList {
     measurements.distanceMeters?.let {
       add(
@@ -171,12 +174,12 @@ private fun ActivityDetailContent(
         modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
-      if (!Sport.isWithoutGps(activity.sport)) {
+      if (hasMapRoute) {
         Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
       }
       Text(
           stringResource(
-              if (Sport.isWithoutGps(activity.sport)) R.string.Home_activity_detail_open_full
+              if (!hasMapRoute) R.string.Home_activity_detail_open_full
               else R.string.Home_activity_detail_open_map),
           color = RelvenColors.Background,
           fontWeight = FontWeight.SemiBold)

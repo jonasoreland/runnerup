@@ -72,9 +72,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.runnerup.BuildConfig
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
+import org.runnerup.workout.Sport
 import org.runnerup.view.MainLayout
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
@@ -372,11 +374,17 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private fun openFullHistoryActivityDetails(id: Long) {
-    startActivity(
-        Intent(this, DetailActivity::class.java)
-            .putExtra("ID", id)
-            .putExtra("mode", "details")
-            .putExtra(DetailActivity.EXTRA_OPEN_MAP, true))
+    val activity = (activityDetailState as? ActivityDetailLoadState.Loaded)?.activity
+    val mapAvailable = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED
+    if (activity != null && activityHasMapRoute(activity, mapEnabled = mapAvailable)) {
+      startActivity(ActivityMapActivity.intent(this, id))
+    } else {
+      startActivity(
+          Intent(this, DetailActivity::class.java)
+              .putExtra("ID", id)
+              .putExtra("mode", "details")
+              .putExtra(DetailActivity.EXTRA_OPEN_MAP, false))
+    }
   }
 
   private fun loadHistoryActivityDetail(id: Long) {
