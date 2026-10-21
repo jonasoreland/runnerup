@@ -10,6 +10,7 @@ import java.util.List;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
 import org.runnerup.db.entities.ActivityEntity;
+import org.runnerup.db.entities.LapEntity;
 import org.runnerup.db.entities.LocationEntity;
 
 /** Stores imported GPX/TCX activities in RunnerUp's existing local history tables. */
@@ -75,24 +76,28 @@ public final class ActivityImportStore {
       long activityId = entity.insert(database);
       if (activityId < 0) throw new IllegalStateException("Unable to save imported activity");
 
-      ActivityTrackPoint previous = null;
+      LapEntity lap = new LapEntity();
+      lap.setActivityId(activityId);
+      lap.setLap(0);
+      lap.setType(Constants.DB.INTENSITY.ACTIVE);
+      lap.setTime(Math.toIntExact(activity.getDurationSeconds()));
+      lap.setDistance(activity.getDistanceMeters());
+      if (lap.insert(database) < 0) throw new IllegalStateException("Unable to save activity lap");
+
       for (int index = 0; index < points.size(); index++) {
         ActivityTrackPoint source = points.get(index);
         LocationEntity point = new LocationEntity();
         point.setActivityId(activityId);
         point.setLap(0);
-        point.setType(
-            index == 0
-                ? Constants.DB.LOCATION.TYPE_START
-                : index == points.size() - 1
-                    ? Constants.DB.LOCATION.TYPE_END
-                    : Constants.DB.LOCATION.TYPE_GPS);
+        point.setType(Constants.DB.LOCATION.TYPE_GPS);
         point.setTime(source.getTimeSeconds() * 1000L);
         point.setLatitude(source.getLatitude());
         point.setLongitude(source.getLongitude());
         point.setAltitude(source.getAltitudeMeters());
         point.setHr(source.getHeartRate());
-        if (previous != null) {
+        point.setCadence(source.getCadence() == null ? null : source.getCadence().doubleValue());
+        if (index > 0) {
+          ActivityTrackPoint previous = points.get(index - 1);
           long elapsedSeconds = source.getTimeSeconds() - previous.getTimeSeconds();
           if (elapsedSeconds > 0) {
             float[] meters = new float[1];
@@ -107,7 +112,6 @@ public final class ActivityImportStore {
         }
         if (point.insert(database) < 0)
           throw new IllegalStateException("Unable to save route point");
-        previous = source;
       }
 
       ContentValues ledger = new ContentValues();
