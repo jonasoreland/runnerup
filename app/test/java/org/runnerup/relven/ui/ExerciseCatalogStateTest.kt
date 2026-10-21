@@ -41,4 +41,29 @@ class ExerciseCatalogStateTest {
         ExerciseCatalogLoadState.Unavailable,
         loadExerciseCatalogState({ throw IllegalArgumentException("invalid catalog") }))
   }
+
+  @Test
+  fun customExerciseFormRequiresBilingualContentAndMapsValidInput() {
+    assertNull(CustomExerciseFormState().toInput())
+    val form =
+        CustomExerciseFormState(
+            nameEnglish = "  Split squat ",
+            nameSwedish = "Utfall",
+            category = ExerciseCategory.LOWER_BODY,
+            movementPattern = "single_leg_squat",
+            muscleGroups = setOf("quadriceps", "glutes"),
+            equipment = "Dumbbells, bench",
+            instructionsEnglish = "Stand tall.\nLower slowly.",
+            instructionsSwedish = "Stå upprätt.\nSänk långsamt.")
+
+    val input = form.toInput()
+    assertEquals("Split squat", input?.nameEnglish)
+    assertEquals(listOf("quadriceps", "glutes"), input?.muscleGroups)
+    assertEquals(listOf("Stand tall.", "Lower slowly."), input?.instructionsEnglish)
+    assertEquals(listOf("Dumbbells", "bench"), input?.equipment)
+    assertNull(form.copy(nameSwedish = " ").toInput())
+    assertNull(form.copy(movementPattern = "Invalid Key").toInput())
+    assertNull(form.copy(instructionsEnglish = (1..13).joinToString("\n") { "Step $it" }).toInput())
+    assertNull(form.copy(muscleGroups = setOf("unknown")).toInput())
+  }
 }

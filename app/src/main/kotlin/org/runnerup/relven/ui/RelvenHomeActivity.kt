@@ -75,6 +75,7 @@ import org.runnerup.view.MainLayout
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
+import org.runnerup.relven.exercise.CustomExerciseInput
 import org.runnerup.relven.analysis.ProgressLoadState
 import org.runnerup.relven.analysis.ProgressRequestVersion
 import org.runnerup.relven.analysis.ProgressSummary
@@ -170,6 +171,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onEditRunningEnd = ::editActivePlanRunningEnd,
             onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog,
+            onSaveCustomExercise = ::saveCustomExercise,
             onRetryExerciseProgression = ::reloadExerciseProgression,
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = ::startStrengthSession,
@@ -486,6 +488,19 @@ class RelvenHomeActivity : ComponentActivity() {
     }
   }
 
+  private suspend fun saveCustomExercise(exerciseId: String?, input: CustomExerciseInput): String {
+    val savedId = withContext(Dispatchers.IO) {
+      val repository = ExerciseCatalogRepository(applicationContext)
+      if (exerciseId == null) repository.createCustomExercise(input)
+      else {
+        repository.updateCustomExercise(exerciseId, input)
+        exerciseId
+      }
+    }
+    loadExerciseCatalog()
+    return savedId
+  }
+
   private fun loadProgress() {
     val progressRequest = progressRequests.begin()
     progressState = ProgressLoadState.Loading
@@ -710,6 +725,7 @@ private fun RelvenHome(
     onEditRunningEnd: (String, String, org.json.JSONObject) -> Unit,
     onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit,
+    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
     onRetryExerciseProgression: () -> Unit,
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
@@ -863,7 +879,8 @@ private fun RelvenHome(
           exerciseCatalogLoadState,
           progressionState = exerciseProgressionState,
           onRetry = onRetryExerciseCatalog,
-          onRetryProgression = onRetryExerciseProgression)
+          onRetryProgression = onRetryExerciseProgression,
+          onSaveCustomExercise = onSaveCustomExercise)
     }
     HomeNavigationBar(
         destination = destination,
