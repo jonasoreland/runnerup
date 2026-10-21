@@ -159,7 +159,8 @@ private fun CatalogBrowser(
               archiveError = false
               try {
                 onSetCustomExerciseArchived(selectedExercise.exerciseId, !selectedExercise.isArchived)
-                if (!selectedExercise.isArchived) selectedExerciseId = ""
+                selectedExerciseId = ""
+                showArchived = false
               } catch (_: Exception) {
                 archiveError = true
               }
