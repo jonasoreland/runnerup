@@ -91,6 +91,8 @@ import org.runnerup.workout.Sport;
 
 public class DetailActivity extends AppCompatActivity implements Constants {
 
+  public static final String EXTRA_OPEN_MAP = "open_map";
+
   private long mID = 0;
   private SQLiteDatabase mDB = null;
   private final HashSet<String> pendingSynchronizers = new HashSet<>();
@@ -269,6 +271,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     if (savedInstanceState != null) {
       TabLayout.Tab tab =
           detailTabs.getTabAt(savedInstanceState.getInt(STATE_SELECTED_TAB_POSITION, 0));
+      if (tab != null) {
+        detailTabs.selectTab(tab);
+      }
+    } else if (getIntent().getBooleanExtra(EXTRA_OPEN_MAP, false) && mapTab != null) {
+      TabLayout.Tab tab = detailTabs.getTabAt(2);
       if (tab != null) {
         detailTabs.selectTab(tab);
       }

@@ -102,6 +102,7 @@ import org.runnerup.relven.strength.StrengthSessionStore
 class RelvenHomeActivity : ComponentActivity() {
   companion object {
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
+    private const val HISTORY_ACTIVITY_DETAIL_STATE = "relven.home.history_activity_detail"
   }
 
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
@@ -121,6 +122,9 @@ class RelvenHomeActivity : ComponentActivity() {
   private var destination by mutableStateOf(HomeDestination.Today)
   private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
   private var activityHistoryRequest = 0
+  private var activityDetailId by mutableStateOf<Long?>(null)
+  private var activityDetailState by mutableStateOf<ActivityDetailLoadState?>(null)
+  private var activityDetailRequest = 0
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
   private var viewedStrengthCompletion by mutableStateOf<CompletedStrengthSession?>(null)
@@ -153,6 +157,9 @@ class RelvenHomeActivity : ComponentActivity() {
           if (uri != null) exportExerciseCollection(uri) else exerciseCollectionBusy = false
         }
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
+    activityDetailId =
+        savedInstanceState?.takeIf { it.containsKey(HISTORY_ACTIVITY_DETAIL_STATE) }
+            ?.getLong(HISTORY_ACTIVITY_DETAIL_STATE)
     favoriteExerciseIds = ExerciseFavoritesStore(applicationContext).read()
     loadExerciseCatalog()
     setContent {
@@ -199,6 +206,12 @@ class RelvenHomeActivity : ComponentActivity() {
               onResume = { updateStrengthSession { it.resume() } },
               onFinish = ::finishStrengthSession,
               onClose = ::closeStrengthSession)
+        } else if (activityDetailState != null) {
+          ActivityDetailScreen(
+              loadState = requireNotNull(activityDetailState),
+              onBack = ::closeHistoryActivityDetail,
+              onRetry = { activityDetailId?.let(::loadHistoryActivityDetail) },
+              onOpenMapAndDetails = ::openFullHistoryActivityDetails)
         } else RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
@@ -249,6 +262,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onCancelExistingStrengthSession = { pendingStrengthSessionChoice = null })
       }
     }
+    activityDetailId?.let(::loadHistoryActivityDetail)
   }
 
   override fun onStart() {
@@ -261,12 +275,18 @@ class RelvenHomeActivity : ComponentActivity() {
 
   override fun onSaveInstanceState(outState: Bundle) {
     outState.putString(HOME_DESTINATION_STATE, destination.name)
+    activityDetailId?.let { outState.putLong(HISTORY_ACTIVITY_DETAIL_STATE, it) }
     super.onSaveInstanceState(outState)
   }
 
   override fun onResume() {
     super.onResume()
     if (destination == HomeDestination.History) loadActivityHistory()
+    activityDetailId?.let { activityId ->
+      if (activityDetailState is ActivityDetailLoadState.Loaded) {
+        loadHistoryActivityDetail(activityId)
+      }
+    }
     todayPlan = TodayPlanState.Loading
     activePlanState = ActivePlanLoadState.Loading
     planRevisionStatus = PlanRevisionStatus.Idle
@@ -341,10 +361,48 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private fun openHistoryActivity(id: Long) {
+    activityDetailId = id
+    loadHistoryActivityDetail(id)
+  }
+
+  private fun closeHistoryActivityDetail() {
+    activityDetailRequest++
+    activityDetailId = null
+    activityDetailState = null
+  }
+
+  private fun openFullHistoryActivityDetails(id: Long) {
     startActivity(
         Intent(this, DetailActivity::class.java)
             .putExtra("ID", id)
-            .putExtra("mode", "details"))
+            .putExtra("mode", "details")
+            .putExtra(DetailActivity.EXTRA_OPEN_MAP, true))
+  }
+
+  private fun loadHistoryActivityDetail(id: Long) {
+    val request = ++activityDetailRequest
+    activityDetailState = ActivityDetailLoadState.Loading
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              val database: SQLiteDatabase = DBHelper.getReadableDatabase(applicationContext)
+              readHistoryActivityDetails(database, id)
+            }
+          }
+      if (request == activityDetailRequest && activityDetailId == id) {
+        activityDetailState =
+            result.fold(
+                onSuccess = { activity ->
+                  activity?.let(ActivityDetailLoadState::Loaded)
+                      ?: ActivityDetailLoadState.NotFound
+                },
+                onFailure = { error ->
+                  Log.w("RelvenHome", "Could not load activity details", error)
+                  ActivityDetailLoadState.Unavailable
+                })
+      }
+    }
   }
 
   private fun readActivityImport(uri: Uri) {
