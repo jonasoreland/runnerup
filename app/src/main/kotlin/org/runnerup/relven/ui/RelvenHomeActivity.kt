@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.os.ConfigurationCompat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -116,6 +117,7 @@ class RelvenHomeActivity : ComponentActivity() {
   private val strengthStoreMutex = Mutex()
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
     super.onCreate(savedInstanceState)
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
     loadExerciseCatalog()

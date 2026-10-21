@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.runnerup.R;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
@@ -24,5 +25,18 @@ public class RelvenLauncherManifestTest {
     assertNotNull(launcher);
     assertEquals(
         "org.runnerup.relven.ui.RelvenHomeActivity", launcher.getComponent().getClassName());
+  }
+
+  @Test
+  public void productionLauncherUsesRelvenStartingTheme() throws Exception {
+    Context context = RuntimeEnvironment.getApplication();
+
+    Intent launcher =
+        context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+
+    assertNotNull(launcher);
+    assertEquals(
+        R.style.RelvenStartingTheme,
+        context.getPackageManager().getActivityInfo(launcher.getComponent(), 0).theme);
   }
 }

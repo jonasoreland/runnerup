@@ -27,6 +27,12 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="RelvenStartingTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/relven_splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+    </style>
+
     <style name="MainLayoutTheme" parent="AppTheme.NoActionBar" />
 
     <style name="ButtonText" parent="Widget.AppCompat.Button.Colored">
