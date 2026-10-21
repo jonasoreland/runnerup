@@ -68,6 +68,8 @@ import org.runnerup.hr.WearHRConnectionState;
 import org.runnerup.hr.WearHRProvider;
 import org.runnerup.relven.ui.RunControlsCompose;
 import org.runnerup.relven.ui.RunControlsStateHolder;
+import org.runnerup.relven.ui.RunCountdownCompose;
+import org.runnerup.relven.ui.RunCountdownStateHolder;
 import org.runnerup.relven.ui.RunMetricValues;
 import org.runnerup.relven.ui.RunMetricsCompose;
 import org.runnerup.relven.ui.RunMetricsScreenKt;
@@ -102,7 +104,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private ComposeView workoutControlsView;
   private RunControlsStateHolder runControlsState;
   private final RunMetricsStateHolder runMetricsState = new RunMetricsStateHolder();
-  private TextView countdownView = null;
+  private final RunCountdownStateHolder runCountdownState = new RunCountdownStateHolder();
   private ComposeView workoutStepsView;
   private Step currentStep = null;
   private final RunWorkoutStepsStateHolder runWorkoutStepsState = new RunWorkoutStepsStateHolder();
@@ -140,7 +142,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
             () -> pauseButtonClick.onClick(workoutControlsView),
             () -> stopButtonClick.onClick(workoutControlsView));
     RunControlsCompose.install(workoutControlsView, runControlsState);
-    countdownView = findViewById(R.id.countdown_text_view);
+    RunCountdownCompose.install(findViewById(R.id.run_countdown), runCountdownState);
     hrDebug = findViewById(R.id.hr_debug);
     workoutStepsView = findViewById(R.id.workout_steps);
     RunWorkoutStepsCompose.install(workoutStepsView, runWorkoutStepsState, formatter);
@@ -273,7 +275,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
        *   since it's not created until then
        */
       HashMap<String, Object> bindValues = new HashMap<>();
-      bindValues.put(Workout.KEY_COUNTER_VIEW, countdownView);
+      bindValues.put(Workout.KEY_COUNTER_VIEW, runCountdownState);
       workout.onBind(workout, bindValues);
     }
 

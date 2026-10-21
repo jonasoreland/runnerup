@@ -18,8 +18,6 @@
 package org.runnerup.workout.feedback;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 import java.util.HashMap;
 import org.runnerup.util.Formatter;
 import org.runnerup.workout.Dimension;
@@ -31,7 +29,7 @@ public class CountdownFeedback extends Feedback {
 
   private final Scope scope;
   private final Dimension dimension;
-  private TextView textView = null;
+  private CountdownDisplay display = null;
   private Formatter formatter;
 
   public CountdownFeedback(Scope s, Dimension d) {
@@ -45,21 +43,17 @@ public class CountdownFeedback extends Feedback {
     if (bindValues.containsKey(Workout.KEY_FORMATTER))
       formatter = (Formatter) bindValues.get(Workout.KEY_FORMATTER);
     if (bindValues.containsKey(Workout.KEY_COUNTER_VIEW))
-      textView = (TextView) bindValues.get(Workout.KEY_COUNTER_VIEW);
+      display = (CountdownDisplay) bindValues.get(Workout.KEY_COUNTER_VIEW);
   }
 
   @Override
   public void onStart(Workout s) {
-    if (textView != null) {
-      textView.setVisibility(View.VISIBLE);
-    }
+    if (display != null) display.show("");
   }
 
   @Override
   public void onEnd(Workout s) {
-    if (textView != null) {
-      textView.setVisibility(View.GONE);
-    }
+    if (display != null) display.remove();
   }
 
   @Override
@@ -69,14 +63,13 @@ public class CountdownFeedback extends Feedback {
 
   @Override
   public void emit(Workout w, Context ctx) {
-    if (textView == null) return;
+    if (display == null) return;
 
     double remaining = w.getRemaining(scope, dimension);
     if (remaining > 0) {
-      textView.setVisibility(View.VISIBLE);
-      textView.setText(formatter.formatRemaining(Formatter.Format.TXT_SHORT, dimension, remaining));
+      display.show(formatter.formatRemaining(Formatter.Format.TXT_SHORT, dimension, remaining));
     } else {
-      textView.setVisibility(View.INVISIBLE);
+      display.hide();
     }
   }
 }

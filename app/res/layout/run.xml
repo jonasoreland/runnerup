@@ -27,33 +27,18 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 
-    <LinearLayout
-        android:id="@+id/countdown_layout"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/run_countdown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/run_metrics"
-        android:gravity="center_vertical|center_horizontal"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/countdown_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:background="@drawable/countdown_background"
-            android:padding="20dp"
-            android:text=""
-            android:textColor="@android:color/white"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:visibility="invisible" />
-    </LinearLayout>
+        android:gravity="center_vertical|center_horizontal" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/workout_steps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/countdown_layout" />
+        android:layout_below="@id/run_countdown" />
 
     <TextView
         android:id="@+id/hr_debug"
