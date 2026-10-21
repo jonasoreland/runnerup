@@ -36,11 +36,28 @@ project.ext {
     junitVersion = '4.13.2'
     mockitoVersion = '5.24.0'
 
-    //The Git tag for the release must be identical for F-Droid
+    // The Git tag for the release must be identical for F-Droid.
     versionName = '2.0.0-dev'
-    // wear uses +1, only set even codes
+    // Wear uses +1; keep the phone version code even.
     versionCode = 374
     latestBaseVersionCode = minSdk * 1000000
+    def playPhoneVersionCode = project.findProperty('relvenPlayVersionCode')
+    if (playPhoneVersionCode != null) {
+        long requestedVersionCode
+        try {
+            requestedVersionCode = playPhoneVersionCode.toString().toLong()
+        } catch (NumberFormatException error) {
+            throw new GradleException('relvenPlayVersionCode must be a decimal integer', error)
+        }
+        long currentVersionCode = latestBaseVersionCode + versionCode
+        if (requestedVersionCode <= currentVersionCode
+                || requestedVersionCode % 2 != 0
+                || requestedVersionCode > 2099999998L) {
+            throw new GradleException(
+                    "relvenPlayVersionCode must be even, greater than ${currentVersionCode}, and leave room for Wear's +1 version code")
+        }
+        versionCode = (requestedVersionCode - latestBaseVersionCode).intValue()
+    }
 
     // F-Droid builds only allow free software (wear dir deleted at builds)
     allowNonFree = !project.hasProperty('org.runnerup.free') && rootProject.file("wear").exists()
