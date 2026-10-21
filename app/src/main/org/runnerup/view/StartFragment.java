@@ -60,7 +60,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
-import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -84,6 +83,8 @@ import org.runnerup.relven.ui.StartReadinessCompose;
 import org.runnerup.relven.ui.StartReadinessItem;
 import org.runnerup.relven.ui.StartReadinessPresentation;
 import org.runnerup.relven.ui.StartReadinessPresentationFactory;
+import org.runnerup.relven.ui.StartWorkoutTabsCompose;
+import org.runnerup.relven.ui.StartWorkoutTabsStateHolder;
 import org.runnerup.tracker.GpsInformation;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerCadence;
@@ -127,7 +128,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private Tracker mTracker = null;
   private org.runnerup.tracker.GpsStatus mGpsStatus = null;
 
-  private TabLayout tabLayout = null;
+  private ComposeView workoutTabsView = null;
+  private StartWorkoutTabsStateHolder workoutTabsState = null;
   private final ActivityResultLauncher<Intent> runActivityLauncher =
       registerForActivityResult(
           new ActivityResultContracts.StartActivityForResult(),
@@ -244,34 +246,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
     view.findViewById(R.id.status_layout).setOnClickListener(v -> toggleStatusDetails());
 
-    tabLayout = view.findViewById(R.id.start_tabs);
+    workoutTabsView = view.findViewById(R.id.start_tabs);
+    int selectedTabPosition =
+        savedInstanceState == null ? 0 : savedInstanceState.getInt(STATE_SELECTED_TAB_POSITION, 0);
+    workoutTabsState =
+        new StartWorkoutTabsStateHolder(selectedTabPosition, this::onWorkoutTabSelected);
+    StartWorkoutTabsCompose.install(workoutTabsView, workoutTabsState);
     basicTabView = view.findViewById(R.id.start_basic_tab);
     intervalTabView = view.findViewById(R.id.start_interval_tab);
     advancedTabView = view.findViewById(R.id.start_advanced_tab);
-    setWorkoutTabVisibility(0);
-    tabLayout.addTab(
-        tabLayout.newTab().setText(org.runnerup.common.R.string.Basic).setTag(TAB_BASIC));
-    tabLayout.addTab(
-        tabLayout.newTab().setText(org.runnerup.common.R.string.Interval).setTag(TAB_INTERVAL));
-    tabLayout.addTab(
-        tabLayout.newTab().setText(org.runnerup.common.R.string.Advanced).setTag(TAB_ADVANCED));
-    tabLayout.addOnTabSelectedListener(
-        new TabLayout.OnTabSelectedListener() {
-          @Override
-          public void onTabSelected(@NonNull TabLayout.Tab tab) {
-            setWorkoutTabVisibility(tab.getPosition());
-            if (TAB_ADVANCED.equals(tab.getTag())) {
-              loadAdvanced(null);
-            }
-            updateView();
-          }
-
-          @Override
-          public void onTabUnselected(@NonNull TabLayout.Tab tab) {}
-
-          @Override
-          public void onTabReselected(@NonNull TabLayout.Tab tab) {}
-        });
+    setWorkoutTabVisibility(selectedTabPosition);
 
     LayoutInflater inflater = getLayoutInflater();
     simpleAudioListAdapter = new AudioSchemeListAdapter(mDB, inflater, false);
@@ -320,19 +304,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     advancedStepList.setDividerHeight(0);
     advancedStepList.setAdapter(advancedWorkoutStepsAdapter);
 
-    if (savedInstanceState != null) {
-      TabLayout.Tab tab =
-          tabLayout.getTabAt(savedInstanceState.getInt(STATE_SELECTED_TAB_POSITION, 0));
-      if (tab != null) {
-        tabLayout.selectTab(tab);
-      }
+    if (selectedTabPosition == 2) {
+      loadAdvanced(null);
     }
 
     Intent i = requireActivity().getIntent();
     if (i != null) {
       if (i.hasExtra("mode")) {
         if (Objects.equals(i.getStringExtra("mode"), TAB_ADVANCED)) {
-          tabLayout.selectTab(tabLayout.getTabAt(2));
+          workoutTabsState.select(2);
           i.removeExtra("mode");
         }
       }
@@ -505,8 +485,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (tabLayout != null) {
-      outState.putInt(STATE_SELECTED_TAB_POSITION, tabLayout.getSelectedTabPosition());
+    if (workoutTabsState != null) {
+      outState.putInt(STATE_SELECTED_TAB_POSITION, workoutTabsState.getSelectedIndex());
     }
   }
 
@@ -698,8 +678,19 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private String getSelectedTabTag() {
-    TabLayout.Tab selectedTab = tabLayout.getTabAt(tabLayout.getSelectedTabPosition());
-    return selectedTab == null ? TAB_BASIC : (String) selectedTab.getTag();
+    return switch (workoutTabsState.getSelectedIndex()) {
+      case 1 -> TAB_INTERVAL;
+      case 2 -> TAB_ADVANCED;
+      default -> TAB_BASIC;
+    };
+  }
+
+  private void onWorkoutTabSelected(int selectedPosition) {
+    setWorkoutTabVisibility(selectedPosition);
+    if (selectedPosition == 2) {
+      loadAdvanced(null);
+    }
+    updateView();
   }
 
   private void setWorkoutTabVisibility(int selectedPosition) {
