@@ -43,6 +43,18 @@ class ExerciseCatalogStateTest {
   }
 
   @Test
+  fun showsArchivedEntriesOnlyWhenArchiveViewIsSelected() {
+    val withArchived = catalog.copy(
+        exercises = catalog.exercises.mapIndexed { index, exercise ->
+          if (index == 1) exercise.copy(isArchived = true) else exercise
+        })
+
+    assertEquals(listOf("Squat"), ExerciseCatalogViewState().visibleEntries(withArchived).map { it.name })
+    assertEquals(listOf("Push-up"), ExerciseCatalogViewState(showArchived = true)
+        .visibleEntries(withArchived).map { it.name })
+  }
+
+  @Test
   fun resolvesTheSelectedDetailAndHandlesStaleIds() {
     val selected = ExerciseCatalogViewState(selectedExerciseId = catalog.exercises.first().exerciseId)
 

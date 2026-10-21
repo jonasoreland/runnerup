@@ -397,6 +397,11 @@
   <string name="Exercise_custom_save">Spara övning</string>
   <string name="Exercise_custom_saving">Sparar…</string>
   <string name="Exercise_custom_save_error">Det gick inte att spara. Den befintliga övningen är oförändrad. Kontrollera lagringen och försök igen.</string>
+  <string name="Exercise_custom_archived_filter">Arkiverade</string>
+  <string name="Exercise_custom_archive">Arkivera övning</string>
+  <string name="Exercise_custom_restore">Återställ övning</string>
+  <string name="Exercise_custom_archived_notice">Arkiverade övningar finns kvar i sparade planer och träningshistorik.</string>
+  <string name="Exercise_custom_archive_error">Det gick inte att uppdatera övningen. Kontrollera lagringen och försök igen.</string>
   <string name="Exercise_progression_title">Din historik</string>
   <string name="Exercise_progression_loading">Läser in registrerade pass…</string>
   <string name="Exercise_progression_empty">Inga genomförda pass innehåller den här övningen.</string>

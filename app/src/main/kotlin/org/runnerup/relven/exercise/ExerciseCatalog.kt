@@ -26,7 +26,8 @@ internal data class ExerciseEntry(
     val equipment: List<String>,
     val instructions: List<String>,
     val isCustom: Boolean = false,
-    val customInput: CustomExerciseInput? = null
+    val customInput: CustomExerciseInput? = null,
+    val isArchived: Boolean = false
 )
 
 internal data class ExerciseCatalog(

@@ -390,6 +390,11 @@
     <string name="Exercise_custom_save">Save exercise</string>
     <string name="Exercise_custom_saving">Saving…</string>
     <string name="Exercise_custom_save_error">Could not save. Your existing exercise is unchanged; check storage and try again.</string>
+    <string name="Exercise_custom_archived_filter">Archived</string>
+    <string name="Exercise_custom_archive">Archive exercise</string>
+    <string name="Exercise_custom_restore">Restore exercise</string>
+    <string name="Exercise_custom_archived_notice">Archived exercises stay available to saved plans and workout history.</string>
+    <string name="Exercise_custom_archive_error">Could not update this exercise. Check storage and try again.</string>
     <string name="Exercise_progression_title">Your history</string>
     <string name="Exercise_progression_loading">Loading recorded sessions…</string>
     <string name="Exercise_progression_empty">No completed sessions include this exercise.</string>

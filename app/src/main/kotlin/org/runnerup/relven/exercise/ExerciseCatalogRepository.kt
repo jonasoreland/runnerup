@@ -40,6 +40,10 @@ internal class ExerciseCatalogRepository(context: Context) {
   fun updateCustomExercise(exerciseId: String, input: CustomExerciseInput) =
       customStore.update(exerciseId, input)
 
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun setCustomExerciseArchived(exerciseId: String, archived: Boolean) =
+      customStore.setArchived(exerciseId, archived)
+
   fun exerciseReferences(): Map<String, RelvenExerciseReference> {
     val catalog = load("en")
     return catalog.exercises.associate { entry ->

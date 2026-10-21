@@ -12,10 +12,11 @@ internal data class ExerciseCatalogViewState(
     val category: ExerciseCategory? = null,
     val selectedExerciseId: String? = null,
     val favoriteExerciseIds: Set<String> = emptySet(),
-    val favoritesOnly: Boolean = false
+    val favoritesOnly: Boolean = false,
+    val showArchived: Boolean = false
 ) {
   fun visibleEntries(catalog: ExerciseCatalog): List<ExerciseEntry> =
-      catalog.filter(query, category).let { matches ->
+      catalog.filter(query, category).filter { it.isArchived == showArchived }.let { matches ->
         if (favoritesOnly) matches.filter { it.exerciseId in favoriteExerciseIds } else matches
       }
 
