@@ -14,23 +14,18 @@ internal class ExerciseCatalogRepository(context: Context) {
 
   @Throws(IOException::class, IllegalArgumentException::class)
   fun load(languageTag: String): ExerciseCatalog {
-    val json =
-        appContext.assets.open(ASSET_PATH).use { input ->
-          val output = ByteArrayOutputStream()
-          val buffer = ByteArray(8192)
-          var total = 0
-          while (true) {
-            val count = input.read(buffer)
-            if (count < 0) break
-            total += count
-            if (total > MAX_ASSET_BYTES) throw IOException("Exercise catalog asset is too large")
-            output.write(buffer, 0, count)
-          }
-          String(output.toByteArray(), StandardCharsets.UTF_8)
-        }
-    val bundled = ExerciseCatalog.parse(json, languageTag)
+    val bundled = loadBundledCatalog(languageTag)
     val custom = customStore.load(languageTag)
     return bundled.withCustomExercises(custom)
+  }
+
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun exportCustomExercises(): ByteArray = customStore.exportCollection()
+
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun importCustomExercises(bytes: ByteArray): CollectionImportResult {
+    val bundledIds = loadBundledCatalog("en").exercises.mapTo(HashSet()) { it.exerciseId }
+    return customStore.importCollection(bytes, bundledIds)
   }
 
   @Throws(IOException::class, IllegalArgumentException::class)
@@ -55,6 +50,24 @@ internal class ExerciseCatalogRepository(context: Context) {
               entry.instructions.joinToString("\n"),
               entry.equipment)
     }
+  }
+
+  private fun loadBundledCatalog(languageTag: String): ExerciseCatalog {
+    val json =
+        appContext.assets.open(ASSET_PATH).use { input ->
+          val output = ByteArrayOutputStream()
+          val buffer = ByteArray(8192)
+          var total = 0
+          while (true) {
+            val count = input.read(buffer)
+            if (count < 0) break
+            total += count
+            if (total > MAX_ASSET_BYTES) throw IOException("Exercise catalog asset is too large")
+            output.write(buffer, 0, count)
+          }
+          String(output.toByteArray(), StandardCharsets.UTF_8)
+        }
+    return ExerciseCatalog.parse(json, languageTag)
   }
 
   private companion object {

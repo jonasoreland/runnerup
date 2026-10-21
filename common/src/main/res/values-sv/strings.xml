@@ -412,6 +412,15 @@
   <string name="Exercise_custom_restore">Återställ övning</string>
   <string name="Exercise_custom_archived_notice">Arkiverade övningar finns kvar i sparade planer och träningshistorik.</string>
   <string name="Exercise_custom_archive_error">Det gick inte att uppdatera övningen. Kontrollera lagringen och försök igen.</string>
+  <string name="Exercise_collection_description">Överför dina egna övningar. De inbyggda övningarna ingår inte.</string>
+  <string name="Exercise_collection_import">Importera</string>
+  <string name="Exercise_collection_export">Exportera</string>
+  <string name="Exercise_collection_working">Arbetar…</string>
+  <string name="Exercise_collection_import_success">Importerade %1$d egna övningar.</string>
+  <string name="Exercise_collection_import_no_changes">Inga ändringar. De egna övningarna finns redan i biblioteket.</string>
+  <string name="Exercise_collection_import_error">Det gick inte att importera samlingen. Dina befintliga övningar är oförändrade.</string>
+  <string name="Exercise_collection_export_success">Samlingen med egna övningar har exporterats.</string>
+  <string name="Exercise_collection_export_error">Det gick inte att exportera samlingen med egna övningar.</string>
   <string name="Exercise_progression_title">Din historik</string>
   <string name="Exercise_progression_loading">Läser in registrerade pass…</string>
   <string name="Exercise_progression_empty">Inga genomförda pass innehåller den här övningen.</string>

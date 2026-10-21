@@ -129,6 +129,20 @@
 - **Pending:** Broader plan authoring and real-device manual validation of guided session timing, pause/resume, and completion.
 - **Verification:** Parser, revision transformation, store lineage/activation, Today-state and calendar-state tests pass locally. Guided strength progression, timed sets, rep capture, pause/resume, strict persistence codec, malformed completion rejection, and plan-entry completion mapping tests pass. Local Latest debug/release builds, free/F-Droid release build, app/Wear/HR unit tests, debug/release lint (no new findings), and Spotless passed. Hosted CI is pending. No emulator or physical ADB device has been used for this increment.
 
+## Follow-up increment — custom exercise collection portability
+
+- **Completed in this increment:** Added versioned offline JSON export/import for custom exercises. Export includes archived custom records and preserves stable IDs, revisions, and bilingual definitions. Import merges new records, ignores exact repeats, and rejects bundled-ID collisions, conflicting records, malformed files, oversize files, and capacity overflow before the single atomic write. The catalog UI exposes localized document-picker actions with success/error feedback.
+- **Verification:** Store round-trip/merge/idempotency/conflict/bounds tests and bounded stream reader tests passed locally. Full app tests, lint, debug build, package ID, and UI device rendering are still pending for this increment.
+- **Devices:** No emulator or ADB device used. The owner's physical device remains unused.
+- **Next step:** Complete the full verification gate, open only this PR, wait for CI, and merge it before starting the next phase.
+
+## Follow-up increment — custom exercise collection portability
+
+- **Completed in this increment:** Added versioned offline JSON export/import for custom exercises. Export includes archived custom records and preserves stable IDs, revisions, bilingual definitions, and equipment. Import merges new records, ignores exact repeats, and rejects bundled-ID collisions, conflicts, malformed or mistyped values, duplicate IDs, oversize files, and capacity overflow before one atomic write. The existing exercise catalog exposes localized document-picker actions and success/error/no-change feedback.
+- **Verification:** Full `:app:testLatestDebugUnitTest`, `:app:lintLatestDebug`, `:app:assembleLatestDebug`, `:app:processLatestReleaseMainManifest`, `:wear:processReleaseMainManifest`, and `spotlessCheck` passed after review follow-up. All 302 app unit tests passed; the collection store suite had 20 tests and no failures. The padded-text regression test passes. The app debug APK was produced. Release phone and Wear merged manifests both declare `se.hampusandersson.relven`. Lint reported no new issues; 23 existing findings remain filtered by the baseline.
+- **Devices:** No emulator or ADB device used. The owner's physical device remains unused; picker rendering and operation still need device validation when the full app is ready for manual testing.
+- **Integration:** Local checks complete; no PR is open for this increment yet. The next gate is review and hosted CI, then merge this single PR before starting the following phase.
+
 ## Later phases
 
 See [roadmap](roadmap.md) and [feature parity](feature-parity.md). Do not use the owner's phone via ADB again until all phases are complete and the app is ready for manual testing.

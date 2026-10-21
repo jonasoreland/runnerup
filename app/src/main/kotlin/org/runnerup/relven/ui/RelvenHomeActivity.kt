@@ -63,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.DateFormat
+import java.io.IOException
 import java.util.Date
 import java.util.Locale
 import java.text.NumberFormat
@@ -84,6 +85,8 @@ import org.runnerup.importer.ImportedActivity
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
 import org.runnerup.relven.exercise.ExerciseFavoritesStore
 import org.runnerup.relven.exercise.CustomExerciseInput
+import org.runnerup.relven.exercise.CollectionImportResult
+import org.runnerup.relven.exercise.readExerciseCollection
 import org.runnerup.relven.analysis.ProgressLoadState
 import org.runnerup.relven.analysis.ProgressRequestVersion
 import org.runnerup.relven.analysis.ProgressSummary
@@ -109,6 +112,9 @@ class RelvenHomeActivity : ComponentActivity() {
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
   private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
+  private var exerciseCollectionMessage by mutableStateOf<String?>(null)
+  private var exerciseCollectionBusy by mutableStateOf(false)
+  private val exerciseCatalogMutex = Mutex()
   private var favoriteExerciseIds by mutableStateOf<Set<String>>(emptySet())
   private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
@@ -128,6 +134,8 @@ class RelvenHomeActivity : ComponentActivity() {
   private var pendingActivityImport by mutableStateOf<PendingActivityImport?>(null)
   private var activityImportMessage by mutableStateOf<String?>(null)
   private lateinit var activityDocumentPicker: ActivityResultLauncher<Array<String>>
+  private lateinit var exerciseCollectionImportPicker: ActivityResultLauncher<Array<String>>
+  private lateinit var exerciseCollectionExportPicker: ActivityResultLauncher<String>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -135,6 +143,14 @@ class RelvenHomeActivity : ComponentActivity() {
     activityDocumentPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
           if (uri != null) readActivityImport(uri)
+        }
+    exerciseCollectionImportPicker =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+          if (uri != null) importExerciseCollection(uri) else exerciseCollectionBusy = false
+        }
+    exerciseCollectionExportPicker =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+          if (uri != null) exportExerciseCollection(uri) else exerciseCollectionBusy = false
         }
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
     favoriteExerciseIds = ExerciseFavoritesStore(applicationContext).read()
@@ -153,6 +169,16 @@ class RelvenHomeActivity : ComponentActivity() {
               text = { Text(message) },
               confirmButton = {
                 TextButton(onClick = { activityImportMessage = null }) {
+                  Text(stringResource(org.runnerup.common.R.string.Home_import_ok))
+                }
+              })
+        }
+        exerciseCollectionMessage?.let { message ->
+          AlertDialog(
+              onDismissRequest = { exerciseCollectionMessage = null },
+              text = { Text(message) },
+              confirmButton = {
+                TextButton(onClick = { exerciseCollectionMessage = null }) {
                   Text(stringResource(org.runnerup.common.R.string.Home_import_ok))
                 }
               })
@@ -207,6 +233,9 @@ class RelvenHomeActivity : ComponentActivity() {
             onRetryExerciseCatalog = ::loadExerciseCatalog,
             onSaveCustomExercise = ::saveCustomExercise,
             onSetCustomExerciseArchived = ::setCustomExerciseArchived,
+            onImportCustomExercises = ::chooseExerciseCollectionImport,
+            onExportCustomExercises = ::chooseExerciseCollectionExport,
+            exerciseCollectionBusy = exerciseCollectionBusy,
             favoriteExerciseIds = favoriteExerciseIds,
             onToggleExerciseFavorite = ::toggleExerciseFavorite,
             onRetryExerciseProgression = ::reloadExerciseProgression,
@@ -594,22 +623,26 @@ class RelvenHomeActivity : ComponentActivity() {
             ?: Locale.getDefault().toLanguageTag()
     lifecycleScope.launch {
       exerciseCatalogLoadState =
-          withContext(Dispatchers.IO) {
-            loadExerciseCatalogState(
-                { ExerciseCatalogRepository(applicationContext).load(languageTag) }) { error ->
-                  Log.w("RelvenHome", "Could not load the bundled exercise catalog", error)
-                }
+          exerciseCatalogMutex.withLock {
+            withContext(Dispatchers.IO) {
+              loadExerciseCatalogState(
+                  { ExerciseCatalogRepository(applicationContext).load(languageTag) }) { error ->
+                    Log.w("RelvenHome", "Could not load the bundled exercise catalog", error)
+                  }
+            }
           }
     }
   }
 
   private suspend fun saveCustomExercise(exerciseId: String?, input: CustomExerciseInput): String {
-    val savedId = withContext(Dispatchers.IO) {
-      val repository = ExerciseCatalogRepository(applicationContext)
-      if (exerciseId == null) repository.createCustomExercise(input)
-      else {
-        repository.updateCustomExercise(exerciseId, input)
-        exerciseId
+    val savedId = exerciseCatalogMutex.withLock {
+      withContext(Dispatchers.IO) {
+        val repository = ExerciseCatalogRepository(applicationContext)
+        if (exerciseId == null) repository.createCustomExercise(input)
+        else {
+          repository.updateCustomExercise(exerciseId, input)
+          exerciseId
+        }
       }
     }
     loadExerciseCatalog()
@@ -617,11 +650,89 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private suspend fun setCustomExerciseArchived(exerciseId: String, archived: Boolean) {
-    withContext(Dispatchers.IO) {
-      ExerciseCatalogRepository(applicationContext).setCustomExerciseArchived(exerciseId, archived)
+    exerciseCatalogMutex.withLock {
+      withContext(Dispatchers.IO) {
+        ExerciseCatalogRepository(applicationContext).setCustomExerciseArchived(exerciseId, archived)
+      }
     }
     loadExerciseCatalog()
   }
+
+  private fun chooseExerciseCollectionImport() {
+    if (exerciseCollectionBusy) return
+    exerciseCollectionBusy = true
+    try {
+      exerciseCollectionImportPicker.launch(arrayOf("application/json", "text/json", "text/plain"))
+    } catch (error: Exception) {
+      exerciseCollectionBusy = false
+      exerciseCollectionMessage = getString(org.runnerup.common.R.string.Exercise_collection_import_error)
+    }
+  }
+
+  private fun chooseExerciseCollectionExport() {
+    if (exerciseCollectionBusy) return
+    exerciseCollectionBusy = true
+    try {
+      exerciseCollectionExportPicker.launch("relven-custom-exercises.json")
+    } catch (error: Exception) {
+      exerciseCollectionBusy = false
+      exerciseCollectionMessage = getString(org.runnerup.common.R.string.Exercise_collection_export_error)
+    }
+  }
+
+  private fun importExerciseCollection(uri: Uri) {
+    lifecycleScope.launch {
+      try {
+        val result =
+            exerciseCatalogMutex.withLock {
+              withContext(Dispatchers.IO) {
+                val bytes =
+                    contentResolver.openInputStream(uri)?.use(::readExerciseCollection)
+                        ?: throw IOException("Could not open exercise collection")
+                ExerciseCatalogRepository(applicationContext).importCustomExercises(bytes)
+              }
+            }
+        if (result.addedCount > 0) loadExerciseCatalog()
+        exerciseCollectionMessage = exerciseCollectionImportMessage(result)
+      } catch (error: Exception) {
+        Log.w("RelvenHome", "Could not import custom exercise collection", error)
+        exerciseCollectionMessage = getString(org.runnerup.common.R.string.Exercise_collection_import_error)
+      } finally {
+        exerciseCollectionBusy = false
+      }
+    }
+  }
+
+  private fun exportExerciseCollection(uri: Uri) {
+    lifecycleScope.launch {
+      try {
+        exerciseCatalogMutex.withLock {
+          withContext(Dispatchers.IO) {
+            val bytes = ExerciseCatalogRepository(applicationContext).exportCustomExercises()
+            val output = contentResolver.openOutputStream(uri)
+                ?: throw IOException("Could not open export destination")
+            output.use {
+              it.write(bytes)
+              it.flush()
+            }
+          }
+        }
+        exerciseCollectionMessage = getString(org.runnerup.common.R.string.Exercise_collection_export_success)
+      } catch (error: Exception) {
+        Log.w("RelvenHome", "Could not export custom exercise collection", error)
+        exerciseCollectionMessage = getString(org.runnerup.common.R.string.Exercise_collection_export_error)
+      } finally {
+        exerciseCollectionBusy = false
+      }
+    }
+  }
+
+  private fun exerciseCollectionImportMessage(result: CollectionImportResult): String =
+      if (result.addedCount == 0) {
+        getString(org.runnerup.common.R.string.Exercise_collection_import_no_changes)
+      } else {
+        getString(org.runnerup.common.R.string.Exercise_collection_import_success, result.addedCount)
+      }
 
   private fun toggleExerciseFavorite(exerciseId: String, favorite: Boolean) {
     ExerciseFavoritesStore(applicationContext).setFavorite(exerciseId, favorite)
@@ -857,6 +968,9 @@ private fun RelvenHome(
     onRetryExerciseCatalog: () -> Unit,
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
     onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit,
+    onImportCustomExercises: () -> Unit,
+    onExportCustomExercises: () -> Unit,
+    exerciseCollectionBusy: Boolean,
     favoriteExerciseIds: Set<String>,
     onToggleExerciseFavorite: (String, Boolean) -> Unit,
     onRetryExerciseProgression: () -> Unit,
@@ -1016,6 +1130,9 @@ private fun RelvenHome(
           onRetryProgression = onRetryExerciseProgression,
           onSaveCustomExercise = onSaveCustomExercise,
           onSetCustomExerciseArchived = onSetCustomExerciseArchived,
+          onImportCustomExercises = onImportCustomExercises,
+          onExportCustomExercises = onExportCustomExercises,
+          exerciseCollectionBusy = exerciseCollectionBusy,
           favoriteExerciseIds = favoriteExerciseIds,
           onToggleFavorite = onToggleExerciseFavorite)
     }

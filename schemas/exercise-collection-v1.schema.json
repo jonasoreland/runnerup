@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relven.app/schemas/exercise-collection-v1.schema.json",
+  "title": "Relven Custom Exercise Collection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schemaVersion", "exercises"],
+  "properties": {
+    "format": { "const": "relven.exercise-collection" },
+    "schemaVersion": { "const": 1 },
+    "exercises": {
+      "type": "array",
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/exercise" }
+    }
+  },
+  "$defs": {
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exerciseId",
+        "revision",
+        "archived",
+        "nameEnglish",
+        "nameSwedish",
+        "category",
+        "movementPattern",
+        "muscleGroups",
+        "equipment",
+        "instructionsEnglish",
+        "instructionsSwedish"
+      ],
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "revision": { "type": "integer", "minimum": 1, "maximum": 2147483647 },
+        "archived": { "type": "boolean" },
+        "nameEnglish": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "nameSwedish": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "category": {
+          "enum": ["lower_body", "upper_body", "core", "warmup_mobility"]
+        },
+        "movementPattern": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,39}$" },
+        "muscleGroups": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "abdominals",
+              "back",
+              "calves",
+              "chest",
+              "glutes",
+              "hamstrings",
+              "hips",
+              "obliques",
+              "quadriceps",
+              "shoulders",
+              "triceps"
+            ]
+          }
+        },
+        "equipment": {
+          "type": "array",
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 80 }
+        },
+        "instructionsEnglish": { "$ref": "#/$defs/instructions" },
+        "instructionsSwedish": { "$ref": "#/$defs/instructions" }
+      }
+    },
+    "instructions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+    }
+  }
+}

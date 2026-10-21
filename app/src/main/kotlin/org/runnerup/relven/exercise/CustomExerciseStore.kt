@@ -10,6 +10,9 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+internal data class CollectionImportResult(val addedCount: Int, val unchangedCount: Int)
+internal const val MAX_EXERCISE_COLLECTION_BYTES = 1_048_576
+
 internal data class CustomExerciseInput(
     val nameEnglish: String,
     val nameSwedish: String,
@@ -68,6 +71,80 @@ internal class CustomExerciseStore(
     writeRecords(records)
   }
 
+  @Synchronized
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun exportCollection(): ByteArray {
+    val exercises = JSONArray()
+    readRecords().forEach { exercises.put(it.toJson()) }
+    val bytes =
+        JSONObject()
+            .put("format", COLLECTION_FORMAT)
+            .put("schemaVersion", COLLECTION_SCHEMA_VERSION)
+            .put("exercises", exercises)
+            .toString()
+            .toByteArray(StandardCharsets.UTF_8)
+    if (bytes.size > MAX_EXERCISE_COLLECTION_BYTES) {
+      throw IOException("Exercise collection is too large to export")
+    }
+    return bytes
+  }
+
+  @Synchronized
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun importCollection(bytes: ByteArray, bundledExerciseIds: Set<String>): CollectionImportResult {
+    require(bytes.size <= MAX_EXERCISE_COLLECTION_BYTES) { "Exercise collection is too large" }
+    val incoming =
+        try {
+          val root = JSONObject(String(bytes, StandardCharsets.UTF_8))
+          requireKeys(root, COLLECTION_ROOT_KEYS)
+          require(root.requireExactString("format") == COLLECTION_FORMAT) {
+            "Unsupported exercise collection format"
+          }
+          require(root.requireExactInt("schemaVersion") == COLLECTION_SCHEMA_VERSION) {
+            "Unsupported exercise collection version"
+          }
+          val array = root.getJSONArray("exercises")
+          require(array.length() <= MAX_EXERCISES) { "Exercise collection limit exceeded" }
+          val records = (0 until array.length()).map { index ->
+            val value = array.getJSONObject(index)
+            require(value.keys().asSequence().toSet() == RECORD_KEYS) {
+              "Exercise collection record has missing or unexpected fields"
+            }
+            value.validateCollectionRecordTypes()
+            parseRecord(value)
+          }
+          require(records.map(Record::exerciseId).toSet().size == records.size) {
+            "Exercise collection IDs must be unique"
+          }
+          records
+        } catch (error: JSONException) {
+          throw IllegalArgumentException("Exercise collection is invalid", error)
+        }
+
+    val merged = readRecords().toMutableList()
+    val existingById = merged.associateBy(Record::exerciseId)
+    var addedCount = 0
+    var unchangedCount = 0
+    incoming.forEach { record ->
+      require(record.exerciseId !in bundledExerciseIds) {
+        "Exercise collection ID conflicts with a bundled exercise"
+      }
+      val existing = existingById[record.exerciseId]
+      if (existing == null) {
+        merged.add(record)
+        addedCount++
+      } else {
+        require(existing == record) {
+          "Exercise collection conflicts with an existing custom exercise"
+        }
+        unchangedCount++
+      }
+    }
+    require(merged.size <= MAX_EXERCISES) { "Custom exercise limit exceeded" }
+    if (addedCount > 0) writeRecords(merged)
+    return CollectionImportResult(addedCount, unchangedCount)
+  }
+
   private fun readRecords(): List<Record> {
     recoverInterruptedReplacement()
     if (!file.exists()) return emptyList()
@@ -120,22 +197,7 @@ internal class CustomExerciseStore(
 
   private fun writeRecords(records: List<Record>) {
     val entries = JSONArray()
-    records.forEach { record ->
-      val input = record.input
-      entries.put(
-          JSONObject()
-              .put("exerciseId", record.exerciseId)
-              .put("revision", record.revision)
-              .put("archived", record.isArchived)
-              .put("nameEnglish", input.nameEnglish.trim())
-              .put("nameSwedish", input.nameSwedish.trim())
-              .put("category", input.category.key)
-              .put("movementPattern", input.movementPattern.trim())
-              .put("muscleGroups", input.muscleGroups.toJsonArray())
-              .put("equipment", input.equipment.trimmed().toJsonArray())
-              .put("instructionsEnglish", input.instructionsEnglish.trimmed().toJsonArray())
-              .put("instructionsSwedish", input.instructionsSwedish.trimmed().toJsonArray()))
-    }
+    records.forEach { entries.put(it.toJson()) }
     val content =
         JSONObject()
             .put("format", FORMAT)
@@ -231,9 +293,63 @@ internal class CustomExerciseStore(
           customInput = input,
           isArchived = isArchived)
 
+  private fun Record.toJson() =
+      JSONObject()
+          .put("exerciseId", exerciseId)
+          .put("revision", revision)
+          .put("archived", isArchived)
+          .put("nameEnglish", input.nameEnglish.trim())
+          .put("nameSwedish", input.nameSwedish.trim())
+          .put("category", input.category.key)
+          .put("movementPattern", input.movementPattern.trim())
+          .put("muscleGroups", input.muscleGroups.toJsonArray())
+          .put("equipment", input.equipment.trimmed().toJsonArray())
+          .put("instructionsEnglish", input.instructionsEnglish.trimmed().toJsonArray())
+          .put("instructionsSwedish", input.instructionsSwedish.trimmed().toJsonArray())
+
   private fun JSONObject.stringList(key: String): List<String> {
     val array = getJSONArray(key)
     return (0 until array.length()).map { index -> array.getString(index) }
+  }
+
+  private fun JSONObject.validateCollectionRecordTypes() {
+    requireCanonicalString("exerciseId")
+    requireExactInt("revision")
+    require(opt("archived") is Boolean) { "Exercise collection archive state must be boolean" }
+    requireCanonicalString("nameEnglish")
+    requireCanonicalString("nameSwedish")
+    requireCanonicalString("category")
+    requireCanonicalString("movementPattern")
+    listOf("muscleGroups", "equipment", "instructionsEnglish", "instructionsSwedish").forEach { key ->
+      val array = opt(key) as? JSONArray
+          ?: throw IllegalArgumentException("Exercise collection $key must be an array")
+      require((0 until array.length()).all { array.opt(it) is String }) {
+        "Exercise collection $key must contain only strings"
+      }
+      require((0 until array.length()).all { index ->
+        val value = array.getString(index)
+        value == value.trim()
+      }) { "Exercise collection $key must not contain surrounding whitespace" }
+    }
+  }
+
+  private fun JSONObject.requireCanonicalString(key: String): String {
+    val value = requireExactString(key)
+    require(value == value.trim()) { "Exercise collection $key must not contain surrounding whitespace" }
+    return value
+  }
+
+  private fun JSONObject.requireExactString(key: String): String =
+      opt(key) as? String ?: throw IllegalArgumentException("Exercise collection $key must be a string")
+
+  private fun JSONObject.requireExactInt(key: String): Int {
+    val value = opt(key)
+    require(value is Int || value is Long) { "Exercise collection $key must be an integer" }
+    val integer = (value as Number).toLong()
+    require(integer in Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()) {
+      "Exercise collection $key is out of range"
+    }
+    return integer.toInt()
   }
 
   private fun List<String>.trimmed() = map(String::trim)
@@ -252,6 +368,8 @@ internal class CustomExerciseStore(
   private companion object {
     const val FORMAT = "relven.custom-exercises"
     const val SCHEMA_VERSION = 1
+    const val COLLECTION_FORMAT = "relven.exercise-collection"
+    const val COLLECTION_SCHEMA_VERSION = 1
     const val MAX_FILE_BYTES = 1_048_576
     const val MAX_EXERCISES = 200
     const val MAX_NAME_LENGTH = 120
@@ -261,6 +379,7 @@ internal class CustomExerciseStore(
     val UUID_PATTERN = Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
     val KEY_PATTERN = Regex("^[a-z][a-z0-9_]{0,39}$")
     val ROOT_KEYS = setOf("format", "schemaVersion", "exercises")
+    val COLLECTION_ROOT_KEYS = ROOT_KEYS
     val RECORD_KEYS =
         setOf(
             "exerciseId",

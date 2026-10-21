@@ -31,6 +31,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,6 +79,9 @@ internal fun ExerciseCatalogScreen(
     onRetryProgression: () -> Unit = {},
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String = { id, _ -> id.orEmpty() },
     onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit = { _, _ -> },
+    onImportCustomExercises: () -> Unit = {},
+    onExportCustomExercises: () -> Unit = {},
+    exerciseCollectionBusy: Boolean = false,
     favoriteExerciseIds: Set<String> = emptySet(),
     onToggleFavorite: (String, Boolean) -> Unit = { _, _ -> }
 ) {
@@ -93,6 +97,9 @@ internal fun ExerciseCatalogScreen(
             onRetryProgression,
             onSaveCustomExercise,
             onSetCustomExerciseArchived,
+            onImportCustomExercises,
+            onExportCustomExercises,
+            exerciseCollectionBusy,
             favoriteExerciseIds,
             onToggleFavorite)
   }
@@ -105,6 +112,9 @@ private fun CatalogBrowser(
     onRetryProgression: () -> Unit,
     onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String,
     onSetCustomExerciseArchived: suspend (String, Boolean) -> Unit,
+    onImportCustomExercises: () -> Unit,
+    onExportCustomExercises: () -> Unit,
+    exerciseCollectionBusy: Boolean,
     favoriteExerciseIds: Set<String>,
     onToggleFavorite: (String, Boolean) -> Unit) {
   var query by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
@@ -194,6 +204,26 @@ private fun CatalogBrowser(
           fontSize = 14.sp)
       Button(onClick = { editing = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
         Text(stringResource(R.string.Exercise_custom_add))
+      }
+      Text(
+          stringResource(R.string.Exercise_collection_description),
+          color = RelvenColors.MutedText,
+          fontSize = 13.sp)
+      Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedButton(
+            onClick = onImportCustomExercises,
+            enabled = !exerciseCollectionBusy,
+            modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+          Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_import))
+        }
+        OutlinedButton(
+            onClick = onExportCustomExercises,
+            enabled = !exerciseCollectionBusy,
+            modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+          Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_export))
+        }
       }
     }
     OutlinedTextField(
