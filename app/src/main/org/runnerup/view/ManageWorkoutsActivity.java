@@ -36,7 +36,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -50,6 +49,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
@@ -79,6 +79,9 @@ import org.runnerup.export.SyncManager;
 import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
 import org.runnerup.export.Synchronizer.Status;
+import org.runnerup.relven.ui.ManageWorkoutActionsCompose;
+import org.runnerup.relven.ui.ManageWorkoutActionsStateHolder;
+import org.runnerup.relven.ui.WorkoutManagerActionCallbacks;
 import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.FitWorkoutImporter;
@@ -109,11 +112,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
   private boolean uploading = false;
   private CompoundButton currentlySelectedWorkout = null;
-  private Button deleteButton = null;
-  private Button shareButton = null;
-  private Button editButton = null;
-  private Button createButton = null;
-  private Button importButton = null;
+  private ManageWorkoutActionsStateHolder workoutActionsState;
 
   private SyncManager syncManager = null;
   private ProgressDialogCompat planProgress;
@@ -164,25 +163,52 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     ExpandableListView list = findViewById(R.id.expandable_list_view);
     list.setAdapter(adapter);
 
-    deleteButton = findViewById(R.id.delete_workout_button);
-    deleteButton.setOnClickListener(deleteButtonClick);
-    createButton = findViewById(R.id.create_workout_button);
-    createButton.setOnClickListener(createButtonClick);
-    importButton = findViewById(R.id.import_workout_button);
-    importButton.setOnClickListener(view -> importLauncher.launch(new String[] {"*/*"}));
-    findViewById(R.id.import_plan_button)
-        .setOnClickListener(
-            view ->
+    ComposeView workoutActionsView = findViewById(R.id.manage_button_table);
+    workoutActionsState =
+        new ManageWorkoutActionsStateHolder(
+            new WorkoutManagerActionCallbacks() {
+              @Override
+              public void importWorkout() {
+                importLauncher.launch(new String[] {"*/*"});
+              }
+
+              @Override
+              public void importPlan() {
                 planImportLauncher.launch(
-                    new String[] {"application/json", "text/json", "application/*+json", "*/*"}));
-    findViewById(R.id.view_plans_button).setOnClickListener(view -> showSavedPlans());
-    findViewById(R.id.ai_plan_kit_button).setOnClickListener(view -> showPlanKitActions());
+                    new String[] {"application/json", "text/json", "application/*+json", "*/*"});
+              }
 
-    shareButton = findViewById(R.id.share_workout_button);
-    shareButton.setOnClickListener(shareButtonClick);
+              @Override
+              public void showPlanKit() {
+                showPlanKitActions();
+              }
 
-    editButton = findViewById(R.id.edit_workout_button);
-    editButton.setOnClickListener(editButtonClick);
+              @Override
+              public void viewPlans() {
+                showSavedPlans();
+              }
+
+              @Override
+              public void share() {
+                shareButtonClick.onClick(workoutActionsView);
+              }
+
+              @Override
+              public void edit() {
+                editButtonClick.onClick(workoutActionsView);
+              }
+
+              @Override
+              public void create() {
+                createButtonClick.onClick(workoutActionsView);
+              }
+
+              @Override
+              public void delete() {
+                deleteButtonClick.onClick(workoutActionsView);
+              }
+            });
+    ManageWorkoutActionsCompose.install(workoutActionsView, workoutActionsState);
 
     handleButtons();
 
@@ -641,24 +667,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   }
 
   private void handleButtons() {
-    if (currentlySelectedWorkout == null) {
-      deleteButton.setEnabled(false);
-      shareButton.setEnabled(false);
-      editButton.setEnabled(false);
-      createButton.setEnabled(true);
-      return;
+    boolean canModifySelected = false;
+    if (currentlySelectedWorkout != null) {
+      WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+      canModifySelected = PHONE_STRING.contentEquals(selected.synchronizer());
     }
-
-    WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
-    if (PHONE_STRING.contentEquals(selected.synchronizer())) {
-      deleteButton.setEnabled(true);
-      shareButton.setEnabled(true);
-      editButton.setEnabled(true);
-    } else {
-      deleteButton.setEnabled(false);
-      shareButton.setEnabled(false);
-      editButton.setEnabled(false);
-    }
+    workoutActionsState.update(canModifySelected);
   }
 
   private void activatePlan(RelvenPlanImporter.Plan plan) {
