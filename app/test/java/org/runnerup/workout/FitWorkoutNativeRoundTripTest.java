@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import android.content.Context;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import org.junit.Test;
@@ -17,7 +18,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = 33)
 public class FitWorkoutNativeRoundTripTest {
   @Test
-  public void importedFitWorkoutPersistsAndReloadsAsRunnerUpWorkout() throws Exception {
+  public void selectedFitFilePersistsAndReloadsAsRunnerUpWorkout() throws Exception {
     Context context = RuntimeEnvironment.getApplication();
     File savedFile = WorkoutSerializer.getFile(context, "fit-native-round-trip");
     savedFile.delete();
@@ -27,7 +28,10 @@ public class FitWorkoutNativeRoundTripTest {
       bytes = input.readAllBytes();
     }
 
-    Workout imported = FitWorkoutImporter.parse(bytes);
+    WorkoutFileImport.Imported selected =
+        WorkoutFileImport.read("running-intervals.bin", new ByteArrayInputStream(bytes));
+    assertEquals(WorkoutFileImport.Format.FIT, selected.format());
+    Workout imported = selected.workout();
     try {
       WorkoutSerializer.writeFile(context, "fit-native-round-trip", imported);
       Workout restored = WorkoutSerializer.readFile(context, "fit-native-round-trip");

@@ -56,21 +56,17 @@ import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.json.JSONObject;
 import org.runnerup.R;
 import org.runnerup.common.util.Constants;
 import org.runnerup.content.WorkoutFileProvider;
@@ -84,13 +80,12 @@ import org.runnerup.relven.ui.ManageWorkoutActionsStateHolder;
 import org.runnerup.relven.ui.WorkoutManagerActionCallbacks;
 import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.util.ViewUtil;
-import org.runnerup.workout.FitWorkoutImporter;
 import org.runnerup.workout.RelvenPlanImport;
 import org.runnerup.workout.RelvenPlanImporter;
 import org.runnerup.workout.RelvenPlanKit;
 import org.runnerup.workout.RelvenPlanStore;
-import org.runnerup.workout.RelvenWorkoutImporter;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutFileImport;
 import org.runnerup.workout.WorkoutImportPreview;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -539,30 +534,11 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
   private void importData(String fileName, final Uri data) throws Exception {
     final ContentResolver cr = getContentResolver();
-    byte[] bytes;
-    try (InputStream input = cr.openInputStream(data);
-        ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-      if (input == null) throw new IOException("Failed to get input stream");
-      byte[] buffer = new byte[8192];
-      int length;
-      while ((length = input.read(buffer)) != -1) {
-        if (output.size() + length > 1_048_576) throw new IOException("Workout file is too large");
-        output.write(buffer, 0, length);
-      }
-      bytes = output.toByteArray();
-    }
-    boolean fit =
-        FitWorkoutImporter.isFit(bytes)
-            || fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".fit");
-    String raw = fit ? null : new String(bytes, StandardCharsets.UTF_8);
-    boolean relven = !fit && new JSONObject(raw).has("schemaVersion");
-    Workout w =
-        fit
-            ? FitWorkoutImporter.parse(bytes)
-            : relven
-                ? RelvenWorkoutImporter.parse(raw)
-                : WorkoutSerializer.readJSON(new StringReader(raw));
-    if (w == null) throw new Exception("Failed to parse content");
+    WorkoutFileImport.Imported imported =
+        WorkoutFileImport.read(fileName, cr.openInputStream(data));
+    boolean fit = imported.format() == WorkoutFileImport.Format.FIT;
+    boolean relven = imported.format() == WorkoutFileImport.Format.RELVEN;
+    Workout w = imported.workout();
 
     if (fileName.toLowerCase(java.util.Locale.ROOT).endsWith(".fit")) {
       fileName = fileName.substring(0, fileName.length() - 4);
