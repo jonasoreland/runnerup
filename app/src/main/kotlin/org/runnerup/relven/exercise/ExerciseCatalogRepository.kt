@@ -2,12 +2,15 @@ package org.runnerup.relven.exercise
 
 import android.content.Context
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import org.runnerup.workout.RelvenExerciseReference
 
 internal class ExerciseCatalogRepository(context: Context) {
   private val appContext = context.applicationContext
+  private val customStore =
+      CustomExerciseStore(File(appContext.filesDir, "relven/custom-exercises.json"))
 
   @Throws(IOException::class, IllegalArgumentException::class)
   fun load(languageTag: String): ExerciseCatalog {
@@ -25,8 +28,17 @@ internal class ExerciseCatalogRepository(context: Context) {
           }
           String(output.toByteArray(), StandardCharsets.UTF_8)
         }
-    return ExerciseCatalog.parse(json, languageTag)
+    val bundled = ExerciseCatalog.parse(json, languageTag)
+    val custom = customStore.load(languageTag)
+    return bundled.withCustomExercises(custom)
   }
+
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun createCustomExercise(input: CustomExerciseInput): String = customStore.create(input)
+
+  @Throws(IOException::class, IllegalArgumentException::class)
+  fun updateCustomExercise(exerciseId: String, input: CustomExerciseInput) =
+      customStore.update(exerciseId, input)
 
   fun exerciseReferences(): Map<String, RelvenExerciseReference> {
     val catalog = load("en")

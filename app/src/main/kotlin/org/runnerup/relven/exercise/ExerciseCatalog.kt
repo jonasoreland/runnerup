@@ -24,7 +24,9 @@ internal data class ExerciseEntry(
     val movementPattern: String,
     val muscleGroups: List<String>,
     val equipment: List<String>,
-    val instructions: List<String>
+    val instructions: List<String>,
+    val isCustom: Boolean = false,
+    val customInput: CustomExerciseInput? = null
 )
 
 internal data class ExerciseCatalog(
@@ -32,6 +34,17 @@ internal data class ExerciseCatalog(
     val language: String,
     val exercises: List<ExerciseEntry>
 ) {
+  fun withCustomExercises(custom: List<ExerciseEntry>): ExerciseCatalog {
+    require(custom.all(ExerciseEntry::isCustom)) { "Only custom exercises can be merged" }
+    val bundledIds = exercises.mapTo(HashSet(), ExerciseEntry::exerciseId)
+    val customIds = custom.map(ExerciseEntry::exerciseId)
+    require(customIds.toSet().size == customIds.size) { "Custom exercise IDs must be unique" }
+    require(custom.none { it.exerciseId in bundledIds }) {
+      "Custom exercise ID conflicts with the bundled library"
+    }
+    return copy(exercises = exercises + custom)
+  }
+
   fun filter(query: String, category: ExerciseCategory?): List<ExerciseEntry> {
     val terms = query.trim().lowercase(Locale.ROOT).split(Regex("\\s+")).filter(String::isNotBlank)
     return exercises.filter { exercise ->

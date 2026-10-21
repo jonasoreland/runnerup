@@ -75,6 +75,20 @@ class ExerciseCatalogTest {
     assertEquals(listOf("Push-up"), catalog.filter("push", null).map { it.name })
   }
 
+  @Test
+  fun mergesCustomEntriesWithoutShadowingBundledIds() {
+    val catalog = ExerciseCatalog.parse(catalogJson())
+    val custom =
+        ExerciseEntry(
+            "00000000-0000-0000-0000-000000000001", 1, "Wall sit", ExerciseCategory.LOWER_BODY,
+            "isometric_squat", listOf("quadriceps"), emptyList(), listOf("Hold."), isCustom = true)
+
+    assertEquals(listOf("Squat", "Wall sit"), catalog.withCustomExercises(listOf(custom)).exercises.map { it.name })
+    assertIllegalArgument { catalog.withCustomExercises(listOf(catalog.exercises.single())) }
+    assertIllegalArgument { catalog.withCustomExercises(listOf(custom, custom)) }
+    assertIllegalArgument { catalog.withCustomExercises(listOf(custom.copy(exerciseId = EXERCISE_ID))) }
+  }
+
   private fun catalogJson(twoExercises: Boolean = false): String {
     val entries = if (twoExercises) "${exerciseJson()},${exerciseJson(PUSH_ID, "Push-up", "upper_body", "chest")}" else exerciseJson()
     return """{"format":"relven.exercise-library","schemaVersion":1,"libraryRevision":3,"exercises":[$entries]}"""

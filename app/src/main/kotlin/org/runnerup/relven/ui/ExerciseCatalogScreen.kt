@@ -34,24 +34,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
 import org.runnerup.common.R
 import org.runnerup.relven.exercise.ExerciseCatalog
 import org.runnerup.relven.exercise.ExerciseCategory
 import org.runnerup.relven.exercise.ExerciseEntry
+import org.runnerup.relven.exercise.CustomExerciseInput
 import org.runnerup.relven.strength.ExerciseProgressSession
 
 internal sealed interface ExerciseCatalogLoadState {
@@ -67,7 +73,8 @@ internal fun ExerciseCatalogScreen(
     loadState: ExerciseCatalogLoadState,
     progressionState: ExerciseProgressionLoadState = ExerciseProgressionLoadState.Loading,
     onRetry: () -> Unit,
-    onRetryProgression: () -> Unit = {}
+    onRetryProgression: () -> Unit = {},
+    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String = { id, _ -> id.orEmpty() }
 ) {
   when (loadState) {
     ExerciseCatalogLoadState.Loading ->
@@ -75,7 +82,7 @@ internal fun ExerciseCatalogScreen(
     ExerciseCatalogLoadState.Unavailable ->
         CatalogError(onRetry)
     is ExerciseCatalogLoadState.Loaded ->
-        CatalogBrowser(loadState.catalog, progressionState, onRetryProgression)
+        CatalogBrowser(loadState.catalog, progressionState, onRetryProgression, onSaveCustomExercise)
   }
 }
 
@@ -83,20 +90,50 @@ internal fun ExerciseCatalogScreen(
 private fun CatalogBrowser(
     catalog: ExerciseCatalog,
     progressionState: ExerciseProgressionLoadState,
-    onRetryProgression: () -> Unit) {
+    onRetryProgression: () -> Unit,
+    onSaveCustomExercise: suspend (String?, CustomExerciseInput) -> String) {
   var query by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var categoryKey by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   var selectedExerciseId by rememberSaveable(catalog.libraryRevision) { mutableStateOf("") }
   val selectedExercise =
       ExerciseCatalogViewState(selectedExerciseId = selectedExerciseId.ifBlank { null })
           .selectedExercise(catalog)
+  var editing by rememberSaveable(catalog.libraryRevision) { mutableStateOf(false) }
+  var formSaving by remember { mutableStateOf(false) }
+  var formError by remember { mutableStateOf<String?>(null) }
+  val scope = rememberCoroutineScope()
+
+  if (editing) {
+    CustomExerciseEditor(
+        initial = selectedExercise?.customInput,
+        saving = formSaving,
+        error = formError,
+        onCancel = { editing = false; formError = null },
+        onSave = { input ->
+          scope.launch {
+            formSaving = true
+            formError = null
+            try {
+              val savedId = onSaveCustomExercise(selectedExercise?.exerciseId, input)
+              editing = false
+              selectedExerciseId = savedId
+            } catch (_: Exception) {
+              formError = "save"
+            } finally {
+              formSaving = false
+            }
+          }
+        })
+    return
+  }
 
   if (selectedExercise != null) {
     ExerciseDetail(
         selectedExercise,
         progressionState,
         onRetryProgression,
-        onBack = { selectedExerciseId = "" })
+        onBack = { selectedExerciseId = "" },
+        onEdit = if (selectedExercise.isCustom) { { editing = true } } else null)
     return
   }
 
@@ -106,7 +143,7 @@ private fun CatalogBrowser(
   Column(
       modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
       Text(
           stringResource(R.string.Exercise_catalog_title),
           fontSize = 30.sp,
@@ -115,6 +152,9 @@ private fun CatalogBrowser(
           stringResource(R.string.Exercise_catalog_subtitle, catalog.exercises.size),
           color = RelvenColors.MutedText,
           fontSize = 14.sp)
+      Button(onClick = { editing = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.Exercise_custom_add))
+      }
     }
     OutlinedTextField(
         value = query,
@@ -199,7 +239,8 @@ private fun ExerciseDetail(
     entry: ExerciseEntry,
     progressionState: ExerciseProgressionLoadState,
     onRetryProgression: () -> Unit,
-    onBack: () -> Unit) {
+    onBack: () -> Unit,
+    onEdit: (() -> Unit)? = null) {
   Column(
       modifier =
           Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -212,6 +253,11 @@ private fun ExerciseDetail(
             contentDescription = stringResource(R.string.Exercise_catalog_back))
       }
       Text(stringResource(R.string.Exercise_catalog_back), color = RelvenColors.MutedText)
+    }
+    if (onEdit != null) {
+      Button(onClick = onEdit, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.Exercise_custom_edit))
+      }
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(entry.name, fontSize = 30.sp, fontWeight = FontWeight.Bold)
@@ -271,6 +317,93 @@ private fun ExerciseDetail(
 }
 
 @Composable
+private fun CustomExerciseEditor(
+    initial: CustomExerciseInput?,
+    saving: Boolean,
+    error: String?,
+    onCancel: () -> Unit,
+    onSave: (CustomExerciseInput) -> Unit
+) {
+  val formStateSaver = listSaver<CustomExerciseFormState, Any>(
+      save = { form ->
+        listOf(
+            form.nameEnglish,
+            form.nameSwedish,
+            form.category.key,
+            form.movementPattern,
+            form.muscleGroups.joinToString(","),
+            form.equipment,
+            form.instructionsEnglish,
+            form.instructionsSwedish,
+            form.error.orEmpty())
+      },
+      restore = { saved ->
+        CustomExerciseFormState(
+            nameEnglish = saved[0] as String,
+            nameSwedish = saved[1] as String,
+            category = ExerciseCategory.fromKey(saved[2] as String) ?: ExerciseCategory.LOWER_BODY,
+            movementPattern = saved[3] as String,
+            muscleGroups = (saved[4] as String).split(',').filter(String::isNotBlank).toSet(),
+            equipment = saved[5] as String,
+            instructionsEnglish = saved[6] as String,
+            instructionsSwedish = saved[7] as String,
+            error = (saved[8] as String).ifBlank { null })
+      })
+  var state by rememberSaveable(initial, stateSaver = formStateSaver) {
+    mutableStateOf(
+        initial?.let {
+          CustomExerciseFormState(
+              it.nameEnglish, it.nameSwedish, it.category, it.movementPattern,
+              it.muscleGroups.toSet(), it.equipment.joinToString(", "),
+              it.instructionsEnglish.joinToString("\n"), it.instructionsSwedish.joinToString("\n"))
+        } ?: CustomExerciseFormState())
+  }
+  val muscles = listOf("abdominals", "back", "calves", "chest", "glutes", "hamstrings", "hips", "obliques", "quadriceps", "shoulders", "triceps")
+  Column(
+      Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(top = 16.dp, bottom = 120.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      IconButton(onClick = onCancel) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.Exercise_catalog_back)) }
+      Text(stringResource(if (initial == null) R.string.Exercise_custom_add else R.string.Exercise_custom_edit), fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    }
+    FormField(R.string.Exercise_custom_name_en, state.nameEnglish) { state = state.copy(nameEnglish = it) }
+    FormField(R.string.Exercise_custom_name_sv, state.nameSwedish) { state = state.copy(nameSwedish = it) }
+    Text(stringResource(R.string.Exercise_custom_category), fontWeight = FontWeight.SemiBold)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+      ExerciseCategory.entries.chunked(2).forEach { row ->
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+          row.forEach { category ->
+            FilterChip(selected = state.category == category, onClick = { state = state.copy(category = category) }, label = { Text(categoryLabel(category)) })
+          }
+        }
+      }
+    }
+    FormField(R.string.Exercise_custom_movement, state.movementPattern) { state = state.copy(movementPattern = it) }
+    Text(stringResource(R.string.Exercise_catalog_muscle_groups), fontWeight = FontWeight.SemiBold)
+    muscles.chunked(3).forEach { row ->
+      Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+        row.forEach { key ->
+          FilterChip(selected = key in state.muscleGroups, onClick = { state = state.copy(muscleGroups = if (key in state.muscleGroups) state.muscleGroups - key else state.muscleGroups + key) }, label = { Text(muscleGroupLabel(key)) })
+        }
+      }
+    }
+    FormField(R.string.Exercise_custom_equipment, state.equipment) { state = state.copy(equipment = it) }
+    FormField(R.string.Exercise_custom_instructions_en, state.instructionsEnglish, minLines = 3) { state = state.copy(instructionsEnglish = it) }
+    FormField(R.string.Exercise_custom_instructions_sv, state.instructionsSwedish, minLines = 3) { state = state.copy(instructionsSwedish = it) }
+    if (state.toInput() == null) Text(stringResource(R.string.Exercise_custom_required), color = RelvenColors.MutedText)
+    if (error != null) Text(stringResource(R.string.Exercise_custom_save_error), color = RelvenColors.Orange, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+    Button(onClick = { state.toInput()?.let(onSave) }, enabled = !saving && state.toInput() != null, modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)) {
+      Text(stringResource(if (saving) R.string.Exercise_custom_saving else R.string.Exercise_custom_save))
+    }
+  }
+}
+
+@Composable
+private fun FormField(label: Int, value: String, minLines: Int = 1, onChange: (String) -> Unit) {
+  OutlinedTextField(value, onChange, modifier = Modifier.fillMaxWidth(), label = { Text(stringResource(label)) }, minLines = minLines)
+}
+
+@Composable
 private fun ExerciseProgressCard(session: ExerciseProgressSession) {
   val locale = LocalConfiguration.current.locales[0]
   val formattedDate =
@@ -319,7 +452,7 @@ private fun MuscleGroupLabels(
     fontSize: androidx.compose.ui.unit.TextUnit
 ) {
   val labels = ArrayList<String>(muscleGroups.size)
-  for (muscleGroup in muscleGroups) labels.add(muscleGroupLabel(muscleGroup))
+  muscleGroups.forEach { labels.add(muscleGroupLabel(it)) }
   Text(labels.joinToString(" · "), color = color, fontSize = fontSize)
 }
 
