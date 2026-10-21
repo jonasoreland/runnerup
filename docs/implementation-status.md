@@ -68,7 +68,7 @@
 ## Phase One — engine audit
 
 - **Completed:** Source owners for workout steps, triggers, session state, GPS, activity persistence, voice feedback, import/export, maps and wearable messages are recorded in [engine audit](engine-audit.md). The existing phone `Tracker` remains the authoritative session owner.
-- **Pending:** Device-level recording, pause/resume, GPS, Swedish voice, export round-trip and process recovery checks.
+- **Pending:** Device-level recording, pause/resume, GPS, Swedish voice, third-party GPX/TCX import and device export checks, and process recovery checks.
 - **Changed modules:** Documentation only.
 - **Build/test status:** No engine refactor was made; Phase Zero build remains the baseline.
 - **Emulator/physical devices:** None connected.
@@ -110,7 +110,8 @@
 - **In progress:** The workout library now has a system file-picker button. Relven v3 running-workout JSON enters through this picker or the inherited document intent. Time, distance and manual ends, pace, speed and heart-rate targets, sequences and repeats convert to the RunnerUp engine and are saved in its existing workout file format. The parser rejects unsupported composite/heart-rate-below ends, effort targets, strength documents and exercise snapshots rather than changing their meaning.
 - **Verification:** Focused importer unit tests, phone debug build and lint passed. The generated file structure is tested; import through UI and execution on a device have not been verified.
 - **Current increment:** The import confirmation previews ordered steps, repeat counts, durations and targets before saving; RunnerUp remains responsible for execution.
-- **Pending:** Broader real-world FIT Workout compatibility, picker-to-execution verification, and activity export round trip. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
+- **Current increment:** Robolectric tests parse GPX and TCX exports from saved activity rows and verify route points, timestamps, heart rate, summary values, and escaped notes.
+- **Pending:** Broader real-world FIT Workout compatibility, picker-to-execution verification, third-party GPX/TCX import round trip, and visual/device checks. [FIT research](fit-import-research.md) records the supported subset and official SDK license constraint.
 
 ## Phase Five — plan packages and library
 
