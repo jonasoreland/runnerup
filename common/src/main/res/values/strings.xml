@@ -326,6 +326,16 @@
     <string name="Home_nav_history">History</string>
     <string name="Home_history_title">Workout history</string>
     <string name="Home_history_add">Add activity</string>
+    <string name="Home_history_import">Import GPX or TCX</string>
+    <string name="Home_import_review_title">Review activity</string>
+    <string name="Home_import_summary">%1$s km · %2$d min · %3$d route points</string>
+    <string name="Home_import_save">Save to history</string>
+    <string name="Home_import_cancel">Cancel</string>
+    <string name="Home_import_ok">OK</string>
+    <string name="Home_import_success">Activity added to history.</string>
+    <string name="Home_import_duplicate">This file was already imported.</string>
+    <string name="Home_import_failed">Could not import this activity file.</string>
+    <string name="Home_import_multiple_segments">This GPX contains separate route segments that cannot be saved accurately yet.</string>
     <string name="Home_history_loading">Loading activities…</string>
     <string name="Home_history_unavailable">Workout history is unavailable right now.</string>
     <string name="Home_history_retry">Try again</string>

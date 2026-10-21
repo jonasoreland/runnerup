@@ -8,6 +8,7 @@ public final class ActivityImportException extends Exception {
     INPUT_TOO_LARGE,
     TOO_MANY_POINTS,
     MULTIPLE_ACTIVITIES,
+    MULTIPLE_ROUTE_SEGMENTS,
     MISSING_ROUTE,
     INVALID_DATA
   }

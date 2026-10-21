@@ -75,7 +75,7 @@ public class ActivityFileImporterTest {
   }
 
   @Test
-  public void doesNotAddDistanceAcrossGpxTrackSegments() throws Exception {
+  public void rejectsGpxWithMultipleTrackSegmentsWithoutFlatteningRoute() throws Exception {
     String xml =
         "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\"><trk>"
             + "<trkseg>"
@@ -86,10 +86,10 @@ public class ActivityFileImporterTest {
             + point("60.0001", "19", "2025-01-01T10:00:30Z")
             + "</trkseg></trk></gpx>";
 
-    ImportedActivity activity = read("segments.gpx", xml);
-
-    assertEquals(22.2, activity.getDistanceMeters(), 2.0);
-    assertEquals(11.1, activity.getTrackPoints().get(2).getDistanceMeters(), 1.0);
+    ActivityImportException error =
+        org.junit.Assert.assertThrows(
+            ActivityImportException.class, () -> read("segments.gpx", xml));
+    assertEquals(ActivityImportException.Reason.MULTIPLE_ROUTE_SEGMENTS, error.getReason());
   }
 
   @Test

@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -66,6 +67,7 @@ internal fun ActivityHistoryScreen(
     loadState: ActivityHistoryLoadState,
     onRetry: () -> Unit,
     onAddActivity: () -> Unit,
+    onImportActivity: () -> Unit,
     onOpenActivity: (Long) -> Unit) {
   var selectedFilter by rememberSaveable { mutableStateOf(HistorySportFilter.ALL) }
   val context = LocalContext.current
@@ -87,11 +89,19 @@ internal fun ActivityHistoryScreen(
           lineHeight = 34.sp,
           fontWeight = FontWeight.Bold,
           modifier = Modifier.semantics { heading() })
-      IconButton(onClick = onAddActivity) {
-        Icon(
-            Icons.Default.Add,
-            contentDescription = stringResource(R.string.Home_history_add),
-            tint = RelvenColors.Orange)
+      Row {
+        IconButton(onClick = onImportActivity) {
+          Icon(
+              Icons.Default.FileOpen,
+              contentDescription = stringResource(R.string.Home_history_import),
+              tint = RelvenColors.Orange)
+        }
+        IconButton(onClick = onAddActivity) {
+          Icon(
+              Icons.Default.Add,
+              contentDescription = stringResource(R.string.Home_history_add),
+              tint = RelvenColors.Orange)
+        }
       }
     }
 
