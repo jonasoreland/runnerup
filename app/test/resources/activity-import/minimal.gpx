@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1"
+     xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+     version="1.1" creator="Relven test">
+  <trk><name>Test run</name><trkseg>
+    <trkpt lat="59.000000" lon="18.000000"><ele>10.5</ele><time>2025-01-01T10:00:00Z</time><extensions><gpxtpx:TrackPointExtension><gpxtpx:hr>140</gpxtpx:hr><gpxtpx:cad>82</gpxtpx:cad></gpxtpx:TrackPointExtension></extensions></trkpt>
+    <trkpt lat="59.000100" lon="18.000000"><ele>11.0</ele><time>2025-01-01T10:00:10Z</time><extensions><gpxtpx:TrackPointExtension><gpxtpx:hr>150</gpxtpx:hr><gpxtpx:cad>84</gpxtpx:cad></gpxtpx:TrackPointExtension></extensions></trkpt>
+  </trkseg></trk>
+</gpx>
