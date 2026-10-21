@@ -169,7 +169,7 @@
   <string name="Auto_start_GPS">Inicia automàticament el GPS</string>
   <string name="Advanced_options">Opcions avançades</string>
   <string name="Mapbox_default_style">Estil de Mapbox</string>
-  <string name="RunnerUp_live_address">Adreça RunnerUp Live</string>
+  <string name="RunnerUp_live_address">Adreça Relven Live</string>
   <string name="Autopause_after_s">Pausa automàtica rere (s)</string>
   <string name="Autopause_min_pace_minkm">Ritme mínim pausa autom. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Etapes de descans en intervals</string>

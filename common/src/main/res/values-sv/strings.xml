@@ -196,7 +196,7 @@
   <string name="Auto_start_GPS">Autostarta GPS</string>
   <string name="Advanced_options">Avancerade inställningar</string>
   <string name="Mapbox_default_style">Mapbox stil</string>
-  <string name="RunnerUp_live_address">RunnerUpLive adress</string>
+  <string name="RunnerUp_live_address">Relven Live-adress</string>
   <string name="Autopause_after_s">Autopausa efter (s)</string>
   <string name="Autopause_min_pace_minkm">Autopaus tempo (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interval vilosteg</string>

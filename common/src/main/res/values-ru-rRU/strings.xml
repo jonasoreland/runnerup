@@ -151,7 +151,7 @@
   <string name="Unit_preference">Единица расстояния</string>
   <string name="Auto_start_GPS">Автоматически включать GPS</string>
   <string name="Advanced_options">Продвинутые настройки</string>
-  <string name="RunnerUp_live_address">RunnerUp live адрес сервера</string>
+  <string name="RunnerUp_live_address">Relven live адрес сервера</string>
   <string name="Autopause_after_s">Автопауза - после N секунд (с) </string>
   <string name="Add_countdown_after_step_that_ends_with_user_press">Обратный отсчет после нажатия клавиши</string>
   <string name="Step_countdown_time_s">Время обратного отсчёта (с)</string>

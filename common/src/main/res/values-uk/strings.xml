@@ -169,7 +169,7 @@
   <string name="Auto_start_GPS">Автозапуск GPS</string>
   <string name="Advanced_options">Додаткові опції</string>
   <string name="Mapbox_default_style">Стиль з мапою</string>
-  <string name="RunnerUp_live_address">Адреса RunnerUp Live</string>
+  <string name="RunnerUp_live_address">Адреса Relven Live</string>
   <string name="Autopause_after_s">Автопауза після (с)</string>
   <string name="Autopause_min_pace_minkm">Мінімальний темп для авто-паузи (хв/км)</string>
   <string name="Convert_rest_on_Interval_tab">Кроки інтервалу відпочинку</string>

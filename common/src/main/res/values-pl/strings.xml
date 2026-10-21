@@ -167,7 +167,7 @@
   <string name="Auto_start_GPS">Automatycznie uruchom GPS</string>
   <string name="Advanced_options">Ustawienia zaawansowane</string>
   <string name="Mapbox_default_style">styl Mapboxa</string>
-  <string name="RunnerUp_live_address">Adres RunnerUpLive</string>
+  <string name="RunnerUp_live_address">Adres Relven Live</string>
   <string name="Autopause_after_s">Autopauza po (s)</string>
   <string name="Autopause_min_pace_minkm">Autopauza przy tempie (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interwał odpoczynku</string>

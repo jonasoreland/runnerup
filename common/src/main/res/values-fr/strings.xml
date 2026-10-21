@@ -172,7 +172,7 @@
   <string name="Auto_start_GPS">Démarrage auto. GPS</string>
   <string name="Advanced_options">Paramètres avancés</string>
   <string name="Mapbox_default_style">Style MapBox</string>
-  <string name="RunnerUp_live_address">Adresse RunnerUp live</string>
+  <string name="RunnerUp_live_address">Adresse Relven live</string>
   <string name="Autopause_after_s">Pause auto. après (s)</string>
   <string name="Autopause_min_pace_minkm">Rythme min. pour pause auto. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalles de repos</string>

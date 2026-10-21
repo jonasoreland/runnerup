@@ -136,7 +136,7 @@
   <string name="Auto_start_GPS">Auto start GPS</string>
   <string name="Advanced_options">Napredne opcije</string>
   <string name="Mapbox_default_style">Stil Mapboxa</string>
-  <string name="RunnerUp_live_address">RunnerUp live adresa</string>
+  <string name="RunnerUp_live_address">Relven live adresa</string>
   <string name="Autopause_after_s">Auto pauza nakon (s)</string>
   <string name="Step_countdown_time_s">Vrijeme odbrojavanja koraka (s)</string>
   <string name="Smooth_pace_graph">Izravnaj grafik tempa</string>

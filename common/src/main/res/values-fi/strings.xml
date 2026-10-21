@@ -150,7 +150,7 @@
   <string name="Auto_start_GPS">Käynnistä GPS automaattisesti</string>
   <string name="Advanced_options">Edistykselliset vaihtoehdot</string>
   <string name="Mapbox_default_style">Mapbox tyyli</string>
-  <string name="RunnerUp_live_address">RunnerUp Live yhteysosoite</string>
+  <string name="RunnerUp_live_address">Relven Live yhteysosoite</string>
   <string name="Autopause_after_s">Pysäytä automaattisesti (s)</string>
   <string name="Step_countdown_time_s">jakson lähtölaskenta aika (s)</string>
   <string name="Smooth_pace_graph">Vauhtigraafin pehmennys</string>

@@ -150,7 +150,7 @@
   <string name="Auto_start_GPS">GPS با شروع خودکار</string>
   <string name="Advanced_options">گزینه های پیشرفته</string>
   <string name="Mapbox_default_style">سبک نقشه</string>
-  <string name="RunnerUp_live_address">آدرس رانرآپ Live</string>
+  <string name="RunnerUp_live_address">آدرس Relven Live</string>
   <string name="Autopause_after_s">توقف خودکار بعد از (ثانیه)</string>
   <string name="Step_countdown_time_s">زمان شمارش معکوس مرحله (ثانیه)</string>
   <string name="Smooth_pace_graph">ملایم کردن گراف سرعت</string>

@@ -136,7 +136,7 @@
   <string name="Auto_start_GPS">Automatisk start av GPS</string>
   <string name="Advanced_options">Avanserte valg</string>
   <string name="Mapbox_default_style">Mapbox-stil</string>
-  <string name="RunnerUp_live_address">RunnerUp live-adresse</string>
+  <string name="RunnerUp_live_address">Relven live-adresse</string>
   <string name="Autopause_after_s">Autopause etter (s)</string>
   <string name="Step_countdown_time_s">Nedtellingstid for steg (s)</string>
   <string name="Smooth_pace_graph">Glatt hastighetsgraf</string>

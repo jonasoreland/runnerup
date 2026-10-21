@@ -163,7 +163,7 @@
   <string name="Auto_start_GPS">Start gps automatisch</string>
   <string name="Advanced_options">Geavanceerde opties</string>
   <string name="Mapbox_default_style">Kaartstijl</string>
-  <string name="RunnerUp_live_address">RunnerUp Live-adres</string>
+  <string name="RunnerUp_live_address">Relven Live-adres</string>
   <string name="Autopause_after_s">Automatisch pauzeren na (s)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalruststappen</string>
   <string name="Convert_rest_on_Advanced_tab">Herstel in aftelstappen</string>

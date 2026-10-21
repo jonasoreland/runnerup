@@ -171,7 +171,7 @@
   <string name="Auto_start_GPS">הפעל אוטומטית GPS</string>
   <string name="Advanced_options">אפשרויות מתקדמות</string>
   <string name="Mapbox_default_style">סגנון תיבת מפה</string>
-  <string name="RunnerUp_live_address">כתובת RunnerUp חי</string>
+  <string name="RunnerUp_live_address">כתובת Relven חי</string>
   <string name="Autopause_after_s">הפסק אוטומטית לאחר (ש)</string>
   <string name="Autopause_min_pace_minkm">הפסק אוטומטית במינימום קצב (דק/קמ)</string>
   <string name="Convert_rest_on_Interval_tab">שלבי מנוחה במרווחים</string>

@@ -162,7 +162,7 @@
   <string name="Auto_start_GPS">GPS automatikus indítása</string>
   <string name="Advanced_options">Haladó beállítások</string>
   <string name="Mapbox_default_style">Mapbox stílus</string>
-  <string name="RunnerUp_live_address">RunnerUp Live címe</string>
+  <string name="RunnerUp_live_address">Relven Live címe</string>
   <string name="Autopause_after_s">Automatikus szünet ennyi másodperc után</string>
   <string name="Step_countdown_time_s">Szakasz visszaszámlálás idő (s)</string>
   <string name="Smooth_pace_graph">Tempó grafikon simítása</string>

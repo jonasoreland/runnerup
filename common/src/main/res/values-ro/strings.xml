@@ -169,7 +169,7 @@
   <string name="Auto_start_GPS">GPS autostart</string>
   <string name="Advanced_options">Opțiuni avansate</string>
   <string name="Mapbox_default_style">Stilul Mapbox</string>
-  <string name="RunnerUp_live_address">Adresa RunnerUp Live</string>
+  <string name="RunnerUp_live_address">Adresa Relven Live</string>
   <string name="Autopause_after_s">Autopauză după (s)</string>
   <string name="Autopause_min_pace_minkm">Ritm minim de autopauză (min / km)</string>
   <string name="Convert_rest_on_Interval_tab">Etape de odihnă la intervale</string>

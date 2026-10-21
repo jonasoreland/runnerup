@@ -169,7 +169,7 @@
   <string name="Auto_start_GPS">Automatinis GPS paleidimas</string>
   <string name="Advanced_options">Išplėstiniai nustatymai</string>
   <string name="Mapbox_default_style">Mapbox stilius</string>
-  <string name="RunnerUp_live_address">RunnerUpLive adresas</string>
+  <string name="RunnerUp_live_address">Relven Live adresas</string>
   <string name="Autopause_after_s">Automatinė pauzė po (s)</string>
   <string name="Autopause_min_pace_minkm">Mažiausio tempo autopauzė (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalo poilsio žingsniai</string>

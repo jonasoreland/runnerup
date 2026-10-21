@@ -152,7 +152,7 @@
   <string name="Auto_start_GPS">GPS 自動開始</string>
   <string name="Advanced_options">高度なオプション</string>
   <string name="Mapbox_default_style">Mapbox スタイル</string>
-  <string name="RunnerUp_live_address">RunnerUp ライブアドレス</string>
+  <string name="RunnerUp_live_address">Relven ライブアドレス</string>
   <string name="Autopause_after_s">自動一時休止 ～秒後</string>
   <string name="Convert_rest_on_Interval_tab">休憩ステップのインターバル</string>
   <string name="Convert_rest_on_Advanced_tab">カウントダウンステップのリカバリー</string>

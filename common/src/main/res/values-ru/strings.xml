@@ -168,7 +168,7 @@
   <string name="Auto_start_GPS">Автоматически включать GPS</string>
   <string name="Advanced_options">Продвинутые настройки</string>
   <string name="Mapbox_default_style">Стиль карты (Mapbox)</string>
-  <string name="RunnerUp_live_address">RunnerUp live адрес сервера</string>
+  <string name="RunnerUp_live_address">Relven live адрес сервера</string>
   <string name="Autopause_after_s">Автопауза - после N секунд (с) </string>
   <string name="Autopause_min_pace_minkm">Автопауза - минимальный темп (мин/км)</string>
   <string name="Target_pace_moving_average_seconds">Среднее значение целевого темпа (с)</string>
