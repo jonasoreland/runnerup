@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -135,6 +136,8 @@ private fun LoadedPlanCalendar(
   var month by rememberSaveable(plan.rootPlanId(), todayDate) {
     mutableStateOf(todayDate.substring(0, 7))
   }
+  var savedViewMode by rememberSaveable(plan.rootPlanId()) { mutableStateOf(PlanCalendarViewMode.Month.name) }
+  val viewMode = PlanCalendarViewMode.valueOf(savedViewMode)
   var reschedulingSessionId by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var rescheduleSourceDate by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
   var rescheduleTargetDate by rememberSaveable(plan.id()) { mutableStateOf<String?>(null) }
@@ -153,8 +156,8 @@ private fun LoadedPlanCalendar(
   var editMin by rememberSaveable(plan.id()) { mutableStateOf("") }
   var editMax by rememberSaveable(plan.id()) { mutableStateOf("") }
   val locale = LocalLocale.current.platformLocale
-  val state = remember(plan, month, selectedDate, todayDate, locale) {
-    planCalendarState(plan, month, selectedDate, nowMillis, locale, completedStrengthSessions)
+  val state = remember(plan, month, selectedDate, todayDate, locale, viewMode, completedStrengthSessions) {
+    planCalendarState(plan, month, selectedDate, nowMillis, locale, completedStrengthSessions, viewMode)
   }
   val weekdayLabels = stringArrayResource(R.array.Plan_calendar_weekdays)
   val weekdayNames = stringArrayResource(R.array.Plan_calendar_weekday_names)
@@ -273,79 +276,100 @@ private fun LoadedPlanCalendar(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      CalendarViewModeSelector(
+          selectedMode = viewMode,
+          enabled = revisionStatus !is PlanRevisionStatus.Saving,
+          onSelect = { selected ->
+            savedViewMode = selected.name
+            month = selectedDate.substring(0, 7)
+          })
       Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(
             onClick = {
-              val shifted = shiftPlanCalendarMonth(month, selectedDate, -1, plan.timezone())
-              month = shifted.first
-              selectedDate = shifted.second
+              selectedDate = shiftPlanCalendarDate(selectedDate, viewMode, -1, plan.timezone())
+              month = selectedDate.substring(0, 7)
             },
             modifier = Modifier.size(48.dp),
             enabled = revisionStatus !is PlanRevisionStatus.Saving) {
           Icon(
               Icons.Default.ChevronLeft,
-              contentDescription = stringResource(R.string.Plan_calendar_previous_month),
+              contentDescription = stringResource(R.string.Plan_calendar_previous_period),
               tint = RelvenColors.Text)
         }
         Text(
-            state.monthLabel,
+            state.periodLabel,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold)
         IconButton(
             onClick = {
-              val shifted = shiftPlanCalendarMonth(month, selectedDate, 1, plan.timezone())
-              month = shifted.first
-              selectedDate = shifted.second
+              selectedDate = shiftPlanCalendarDate(selectedDate, viewMode, 1, plan.timezone())
+              month = selectedDate.substring(0, 7)
             },
             modifier = Modifier.size(48.dp),
             enabled = revisionStatus !is PlanRevisionStatus.Saving) {
           Icon(
               Icons.Default.ChevronRight,
-              contentDescription = stringResource(R.string.Plan_calendar_next_month),
+              contentDescription = stringResource(R.string.Plan_calendar_next_period),
               tint = RelvenColors.Text)
         }
       }
 
-      BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val gridWidth = maxOf(maxWidth, 308.dp)
-        val centeredOffset: Dp = -((gridWidth - maxWidth) / 2)
-        Column(Modifier.requiredWidth(gridWidth).offset(x = centeredOffset)) {
-          Row(Modifier.fillMaxWidth()) {
-            weekdayLabels.forEachIndexed { index, weekday ->
-              Text(
-                  weekday,
-                  modifier = Modifier.weight(1f).heightIn(min = 36.dp).semantics {
-                    contentDescription = weekdayNames[index]
-                  },
-                  textAlign = TextAlign.Center,
-                  color = RelvenColors.MutedText,
-                  fontSize = 12.sp,
-                  fontWeight = FontWeight.SemiBold)
-            }
-          }
-
-          state.days.chunked(7).forEach { week ->
+      if (viewMode == PlanCalendarViewMode.Month) {
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+          val gridWidth = maxOf(maxWidth, 308.dp)
+          val centeredOffset: Dp = -((gridWidth - maxWidth) / 2)
+          Column(Modifier.requiredWidth(gridWidth).offset(x = centeredOffset)) {
             Row(Modifier.fillMaxWidth()) {
-              week.forEach { day ->
-                CalendarDateCell(
-                    day = day,
-                    modifier = Modifier.weight(1f),
-                    enabled = revisionStatus !is PlanRevisionStatus.Saving,
-                    onClick = {
-                      selectedDate = day.date
-                      month = day.date.substring(0, 7)
-                      if (reschedulingSessionId != null) rescheduleTargetDate = day.date
-                    })
+              weekdayLabels.forEachIndexed { index, weekday ->
+                Text(
+                    weekday,
+                    modifier = Modifier.weight(1f).heightIn(min = 36.dp).semantics {
+                      contentDescription = weekdayNames[index]
+                    },
+                    textAlign = TextAlign.Center,
+                    color = RelvenColors.MutedText,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold)
               }
             }
+
+            state.days.chunked(7).forEach { week ->
+              Row(Modifier.fillMaxWidth()) {
+                week.forEach { day ->
+                  CalendarDateCell(
+                      day = day,
+                      modifier = Modifier.weight(1f),
+                      enabled = revisionStatus !is PlanRevisionStatus.Saving,
+                      onClick = {
+                        selectedDate = day.date
+                        month = day.date.substring(0, 7)
+                        if (reschedulingSessionId != null) rescheduleTargetDate = day.date
+                      })
+                }
+              }
+            }
+          }
+        }
+      } else {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+          state.days.forEach { day ->
+            CalendarAgendaDay(
+                day = day,
+                enabled = revisionStatus !is PlanRevisionStatus.Saving,
+                onClick = {
+                  selectedDate = day.date
+                  month = day.date.substring(0, 7)
+                  if (reschedulingSessionId != null) rescheduleTargetDate = day.date
+                })
           }
         }
       }
     }
 
-    if (state.days.none { it.inDisplayedMonth && it.entries.isNotEmpty() }) {
+    if (viewMode == PlanCalendarViewMode.Month &&
+        state.days.none { it.inDisplayedMonth && it.entries.isNotEmpty() }) {
       Text(
           stringResource(R.string.Plan_calendar_empty_month),
           color = RelvenColors.MutedText,
@@ -591,6 +615,86 @@ private fun LoadedPlanCalendar(
             Text(stringResource(R.string.Cancel))
           }
         })
+  }
+}
+
+@Composable
+private fun CalendarViewModeSelector(
+    selectedMode: PlanCalendarViewMode,
+    enabled: Boolean,
+    onSelect: (PlanCalendarViewMode) -> Unit
+) {
+  val modes = listOf(
+      PlanCalendarViewMode.Day to R.string.Plan_calendar_view_day,
+      PlanCalendarViewMode.Week to R.string.Plan_calendar_view_week,
+      PlanCalendarViewMode.Month to R.string.Plan_calendar_view_month)
+  Row(
+      modifier = Modifier.fillMaxWidth().background(RelvenColors.Surface, RoundedCornerShape(16.dp)).padding(4.dp)
+          .selectableGroup(),
+      horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+    modes.forEach { (mode, label) ->
+      val isSelected = mode == selectedMode
+      val labelText = stringResource(label)
+      Box(
+          modifier = Modifier.weight(1f).heightIn(min = 48.dp)
+              .clip(RoundedCornerShape(12.dp))
+              .background(if (isSelected) RelvenColors.Orange else Color.Transparent)
+              .clickable(enabled = enabled, role = Role.RadioButton) { onSelect(mode) }
+              .semantics {
+                this.selected = isSelected
+                contentDescription = labelText
+              },
+          contentAlignment = Alignment.Center) {
+        Text(
+            labelText,
+            color = if (isSelected) RelvenColors.Background else RelvenColors.MutedText,
+            fontSize = 14.sp,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium)
+      }
+    }
+  }
+}
+
+@Composable
+private fun CalendarAgendaDay(day: PlanCalendarDay, enabled: Boolean, onClick: () -> Unit) {
+  val entryLabels = day.entries.map { entry ->
+    when (entry) {
+      is PlanCalendarEntry.Workout -> entry.workoutName
+      is PlanCalendarEntry.Rest -> stringResource(R.string.Rest_day)
+    }
+  }
+  val descriptionEntries = if (entryLabels.isEmpty()) stringResource(R.string.Plan_calendar_empty_accessibility)
+      else entryLabels.joinToString(separator = ", ")
+  val accessibilityLabel = stringResource(R.string.Plan_calendar_day_accessibility, day.dateLabel, descriptionEntries)
+  val background = if (day.isSelected) RelvenColors.Orange.copy(alpha = 0.16f) else RelvenColors.Surface
+  val borderColor = if (day.isToday) RelvenColors.Orange else Color.White.copy(alpha = 0.06f)
+  Row(
+      modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp)
+          .clip(RoundedCornerShape(16.dp)).background(background)
+          .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+          .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
+          .semantics {
+            contentDescription = accessibilityLabel
+            selected = day.isSelected
+          }.padding(horizontal = 16.dp, vertical = 10.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Box(
+        Modifier.size(8.dp).background(
+            when {
+              day.entries.any { it is PlanCalendarEntry.Workout } -> RelvenColors.Orange
+              day.entries.any { it is PlanCalendarEntry.Rest } -> RelvenColors.MutedText
+              else -> Color.Transparent
+            },
+            CircleShape))
+    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+      Text(day.dateLabel, color = RelvenColors.Text, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+      Text(
+          entryLabels.ifEmpty { listOf(stringResource(R.string.Plan_calendar_no_item)) }.joinToString(" · "),
+          color = if (entryLabels.isEmpty()) RelvenColors.MutedText else RelvenColors.Text,
+          fontSize = 13.sp)
+    }
+    if (day.isToday) Text(stringResource(R.string.Plan_calendar_today), color = RelvenColors.Orange, fontSize = 12.sp)
   }
 }
 

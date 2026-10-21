@@ -11,12 +11,20 @@ import org.runnerup.relven.strength.CompletedStrengthSession
 internal data class PlanCalendarState(
     val month: String,
     val monthLabel: String,
+    val viewMode: PlanCalendarViewMode,
+    val periodLabel: String,
     val planName: String,
     val selectedDate: String,
     val selectedDateLabel: String,
     val todayDate: String,
     val days: List<PlanCalendarDay>,
     val selectedEntries: List<PlanCalendarEntry>)
+
+internal enum class PlanCalendarViewMode {
+  Day,
+  Week,
+  Month
+}
 
 internal sealed interface ActivePlanLoadState {
   data object Loading : ActivePlanLoadState
@@ -97,25 +105,41 @@ internal fun planCalendarState(
     selectedDate: String,
     nowMillis: Long,
     locale: Locale = Locale.getDefault(),
-    completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap()
+    completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
+    viewMode: PlanCalendarViewMode = PlanCalendarViewMode.Month
 ): PlanCalendarState {
   val timezone = TimeZone.getTimeZone(plan.timezone())
   val displayedMonth = parseCalendarDate("$month-01", timezone)
   val selected = parseCalendarDate(selectedDate, timezone)
   val today = calendarAt(nowMillis, timezone)
   val todayDate = formatDate(today)
-  val firstDay = (displayedMonth.get(Calendar.DAY_OF_WEEK) + 5) % 7
-  val daysInMonth = displayedMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
-  val cellCount = ((firstDay + daysInMonth + 6) / 7) * 7
   val sessionsByDate = plan.days().groupBy(RelvenPlanImporter.Session::date)
   val dateLabelFormatter = SimpleDateFormat("EEEE d MMMM yyyy", locale).apply {
     timeZone = timezone
   }
-  val days = ArrayList<PlanCalendarDay>(cellCount)
-  val cursor = displayedMonth.clone() as Calendar
-  cursor.add(Calendar.DAY_OF_MONTH, -firstDay)
+  val days = ArrayList<PlanCalendarDay>()
+  val firstDate = when (viewMode) {
+    PlanCalendarViewMode.Day -> selected.clone() as Calendar
+    PlanCalendarViewMode.Week -> (selected.clone() as Calendar).apply {
+      add(Calendar.DAY_OF_MONTH, -((get(Calendar.DAY_OF_WEEK) + 5) % 7))
+    }
+    PlanCalendarViewMode.Month -> (displayedMonth.clone() as Calendar).apply {
+      val firstDay = (get(Calendar.DAY_OF_WEEK) + 5) % 7
+      add(Calendar.DAY_OF_MONTH, -firstDay)
+    }
+  }
+  val dayCount = when (viewMode) {
+    PlanCalendarViewMode.Day -> 1
+    PlanCalendarViewMode.Week -> 7
+    PlanCalendarViewMode.Month -> {
+      val firstDay = (displayedMonth.get(Calendar.DAY_OF_WEEK) + 5) % 7
+      val daysInMonth = displayedMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
+      ((firstDay + daysInMonth + 6) / 7) * 7
+    }
+  }
+  val cursor = firstDate.clone() as Calendar
 
-  repeat(cellCount) {
+  repeat(dayCount) {
     val date = formatDate(cursor)
     val entries = sessionsByDate[date].orEmpty().mapNotNull { sessionEntry(it, plan, completedStrengthSessions) }
     days.add(
@@ -142,9 +166,17 @@ internal fun planCalendarState(
         if (first.isLowerCase()) first.titlecase(locale) else first.toString()
       }
 
+  val periodLabel = when (viewMode) {
+    PlanCalendarViewMode.Month -> formattedMonth
+    PlanCalendarViewMode.Day -> dateLabelFormatter.format(selected.time).replaceFirstChar { it.titlecase(locale) }
+    PlanCalendarViewMode.Week -> formatWeekLabel(days.first(), days.last(), locale, timezone)
+  }
+
   return PlanCalendarState(
       month = month,
       monthLabel = formattedMonth,
+      viewMode = viewMode,
+      periodLabel = periodLabel,
       planName = plan.name(),
       selectedDate = formatDate(selected),
       selectedDateLabel =
@@ -152,6 +184,34 @@ internal fun planCalendarState(
       todayDate = todayDate,
       days = days,
       selectedEntries = selectedEntries)
+}
+
+private fun formatWeekLabel(
+    firstDay: PlanCalendarDay,
+    lastDay: PlanCalendarDay,
+    locale: Locale,
+    timezone: TimeZone
+): String {
+  val firstDate = parseCalendarDate(firstDay.date, timezone)
+  val lastDate = parseCalendarDate(lastDay.date, timezone)
+  val sameMonth = firstDate.get(Calendar.YEAR) == lastDate.get(Calendar.YEAR) &&
+      firstDate.get(Calendar.MONTH) == lastDate.get(Calendar.MONTH)
+  val sameYear = firstDate.get(Calendar.YEAR) == lastDate.get(Calendar.YEAR)
+  val firstYear = firstDate.get(Calendar.YEAR)
+  val lastYear = lastDate.get(Calendar.YEAR)
+  val monthFormatter = SimpleDateFormat("MMMM", locale)
+  monthFormatter.timeZone = timezone
+  val firstMonth = monthFormatter.format(firstDate.time)
+  val lastMonth = monthFormatter.format(lastDate.time)
+  return if (locale.language == "sv") {
+    if (sameMonth) "${firstDate.get(Calendar.DAY_OF_MONTH)}–${lastDate.get(Calendar.DAY_OF_MONTH)} $lastMonth $lastYear"
+    else if (sameYear) "${firstDate.get(Calendar.DAY_OF_MONTH)} $firstMonth–${lastDate.get(Calendar.DAY_OF_MONTH)} $lastMonth $lastYear"
+    else "${firstDate.get(Calendar.DAY_OF_MONTH)} $firstMonth $firstYear–${lastDate.get(Calendar.DAY_OF_MONTH)} $lastMonth $lastYear"
+  } else {
+    if (sameMonth) "$lastMonth ${firstDate.get(Calendar.DAY_OF_MONTH)}–${lastDate.get(Calendar.DAY_OF_MONTH)}, $lastYear"
+    else if (sameYear) "$firstMonth ${firstDate.get(Calendar.DAY_OF_MONTH)} – $lastMonth ${lastDate.get(Calendar.DAY_OF_MONTH)}, $lastYear"
+    else "$firstMonth ${firstDate.get(Calendar.DAY_OF_MONTH)}, $firstYear – $lastMonth ${lastDate.get(Calendar.DAY_OF_MONTH)}, $lastYear"
+  }
 }
 
 private fun sessionEntry(
@@ -192,6 +252,26 @@ internal fun shiftPlanCalendarMonth(
   val destinationMonth = formatMonth(destination)
   destination.set(Calendar.DAY_OF_MONTH, minOf(selectedDay, destination.getActualMaximum(Calendar.DAY_OF_MONTH)))
   return destinationMonth to formatDate(destination)
+}
+
+internal fun shiftPlanCalendarDate(
+    selectedDate: String,
+    viewMode: PlanCalendarViewMode,
+    amount: Int,
+    timezone: String
+): String {
+  val shifted = parseCalendarDate(selectedDate, TimeZone.getTimeZone(timezone))
+  when (viewMode) {
+    PlanCalendarViewMode.Day -> shifted.add(Calendar.DAY_OF_MONTH, amount)
+    PlanCalendarViewMode.Week -> shifted.add(Calendar.DAY_OF_MONTH, amount * 7)
+    PlanCalendarViewMode.Month -> {
+      val day = shifted.get(Calendar.DAY_OF_MONTH)
+      shifted.set(Calendar.DAY_OF_MONTH, 1)
+      shifted.add(Calendar.MONTH, amount)
+      shifted.set(Calendar.DAY_OF_MONTH, minOf(day, shifted.getActualMaximum(Calendar.DAY_OF_MONTH)))
+    }
+  }
+  return formatDate(shifted)
 }
 
 internal fun planLocalDate(timezone: String, timeMillis: Long): String =

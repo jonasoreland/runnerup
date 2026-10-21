@@ -443,6 +443,11 @@
     <string name="Plan_calendar_open_library">Open training view</string>
     <string name="Plan_calendar_previous_month">Previous month</string>
     <string name="Plan_calendar_next_month">Next month</string>
+    <string name="Plan_calendar_previous_period">Previous period</string>
+    <string name="Plan_calendar_next_period">Next period</string>
+    <string name="Plan_calendar_view_day">Day</string>
+    <string name="Plan_calendar_view_week">Week</string>
+    <string name="Plan_calendar_view_month">Month</string>
     <string name="Plan_calendar_empty_month">No sessions are scheduled this month.</string>
     <string name="Plan_calendar_no_item">Nothing scheduled for this day</string>
     <string name="Plan_calendar_workout_accessibility">Workout: %1$s</string>

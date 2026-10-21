@@ -450,6 +450,11 @@
   <string name="Plan_calendar_open_library">Öppna träningsvyn</string>
   <string name="Plan_calendar_previous_month">Föregående månad</string>
   <string name="Plan_calendar_next_month">Nästa månad</string>
+  <string name="Plan_calendar_previous_period">Föregående period</string>
+  <string name="Plan_calendar_next_period">Nästa period</string>
+  <string name="Plan_calendar_view_day">Dag</string>
+  <string name="Plan_calendar_view_week">Vecka</string>
+  <string name="Plan_calendar_view_month">Månad</string>
   <string name="Plan_calendar_empty_month">Inga pass är planerade den här månaden.</string>
   <string name="Plan_calendar_no_item">Inget planerat den här dagen</string>
   <string name="Plan_calendar_workout_accessibility">Träningspass: %1$s</string>
