@@ -544,6 +544,7 @@
   <string name="Plan_calendar_rename_workout_save">Spara passnamn</string>
     <string name="Plan_calendar_workout_details_title">Passdetaljer</string>
     <string name="Plan_calendar_open_workout_details">Visa passdetaljer</string>
+    <string name="Plan_calendar_workout_more_actions">Fler passåtgärder</string>
   <string name="Plan_calendar_edit_end">Ändra tid eller distans</string>
   <string name="Plan_calendar_edit_target">Ändra mål</string>
   <string name="Plan_calendar_seconds">Sekunder</string>

@@ -537,6 +537,7 @@
     <string name="Plan_calendar_rename_workout_save">Save workout name</string>
     <string name="Plan_calendar_workout_details_title">Workout details</string>
     <string name="Plan_calendar_open_workout_details">View workout details</string>
+    <string name="Plan_calendar_workout_more_actions">More workout actions</string>
     <string name="Plan_calendar_edit_end">Edit duration or distance</string>
     <string name="Plan_calendar_edit_target">Edit target</string>
     <string name="Plan_calendar_seconds">Seconds</string>
