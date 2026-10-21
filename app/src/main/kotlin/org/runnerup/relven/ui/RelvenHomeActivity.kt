@@ -1,12 +1,15 @@
 package org.runnerup.relven.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.os.ConfigurationCompat
@@ -74,6 +77,10 @@ import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.view.MainLayout
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
+import org.runnerup.importer.ActivityFileImporter
+import org.runnerup.importer.ActivityImportStore
+import org.runnerup.importer.ActivityImportException
+import org.runnerup.importer.ImportedActivity
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
 import org.runnerup.relven.exercise.ExerciseFavoritesStore
 import org.runnerup.relven.exercise.CustomExerciseInput
@@ -118,15 +125,38 @@ class RelvenHomeActivity : ComponentActivity() {
   private var strengthRecoveryNotice by mutableStateOf(false)
   private var strengthFinishing by mutableStateOf(false)
   private val strengthStoreMutex = Mutex()
+  private var pendingActivityImport by mutableStateOf<PendingActivityImport?>(null)
+  private var activityImportMessage by mutableStateOf<String?>(null)
+  private lateinit var activityDocumentPicker: ActivityResultLauncher<Array<String>>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     super.onCreate(savedInstanceState)
+    activityDocumentPicker =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+          if (uri != null) readActivityImport(uri)
+        }
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
     favoriteExerciseIds = ExerciseFavoritesStore(applicationContext).read()
     loadExerciseCatalog()
     setContent {
       RelvenTheme {
+        pendingActivityImport?.let { pending ->
+          ActivityImportReviewDialog(
+              pending = pending,
+              onDismiss = { pendingActivityImport = null },
+              onConfirm = { saveActivityImport(pending) })
+        }
+        activityImportMessage?.let { message ->
+          AlertDialog(
+              onDismissRequest = { activityImportMessage = null },
+              text = { Text(message) },
+              confirmButton = {
+                TextButton(onClick = { activityImportMessage = null }) {
+                  Text(stringResource(org.runnerup.common.R.string.Home_import_ok))
+                }
+              })
+        }
         val currentStrengthSession = strengthSession
         val completionSummary = viewedStrengthCompletion
         if (currentStrengthSession != null || completionSummary != null) {
@@ -159,6 +189,7 @@ class RelvenHomeActivity : ComponentActivity() {
             onRetryProgress = ::loadProgress,
             onRetryHistory = ::loadActivityHistory,
             onAddActivity = { startActivity(Intent(this, ManualActivity::class.java)) },
+            onImportActivity = { activityDocumentPicker.launch(arrayOf("*/*")) },
             onOpenActivity = ::openHistoryActivity,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
@@ -285,6 +316,84 @@ class RelvenHomeActivity : ComponentActivity() {
         Intent(this, DetailActivity::class.java)
             .putExtra("ID", id)
             .putExtra("mode", "details"))
+  }
+
+  private fun readActivityImport(uri: Uri) {
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              val bytes =
+                  contentResolver.openInputStream(uri)?.use { input ->
+                    val output = java.io.ByteArrayOutputStream()
+                    val buffer = ByteArray(8192)
+                    var total = 0
+                    while (true) {
+                      val count = input.read(buffer)
+                      if (count < 0) break
+                      total += count
+                      require(total <= 10 * 1024 * 1024) {
+                        "Activity file is larger than 10 MB"
+                      }
+                      output.write(buffer, 0, count)
+                    }
+                    output.toByteArray()
+                  } ?: error("Unable to open selected file")
+              val name =
+                  contentResolver
+                      .query(
+                          uri,
+                          arrayOf(android.provider.OpenableColumns.DISPLAY_NAME),
+                          null,
+                          null,
+                          null)
+                      ?.use { cursor -> if (cursor.moveToFirst()) cursor.getString(0) else null }
+                      ?: "activity"
+              PendingActivityImport(
+                  ActivityFileImporter.read(name, bytes.inputStream()),
+                  ActivityImportStore.sha256(bytes),
+                  name)
+            }
+          }
+      result.fold(
+          onSuccess = { pendingActivityImport = it },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not read activity import", error)
+            activityImportMessage =
+                if (error is ActivityImportException &&
+                    error.reason == ActivityImportException.Reason.MULTIPLE_ROUTE_SEGMENTS) {
+                  getString(org.runnerup.common.R.string.Home_import_multiple_segments)
+                } else {
+                  getString(org.runnerup.common.R.string.Home_import_failed)
+                }
+          })
+    }
+  }
+
+  private fun saveActivityImport(pending: PendingActivityImport) {
+    pendingActivityImport = null
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              ActivityImportStore.importActivity(
+                  applicationContext, pending.activity, pending.sha256)
+            }
+          }
+      result.fold(
+          onSuccess = { imported ->
+            activityImportMessage =
+                getString(
+                    if (imported == ActivityImportStore.Result.ALREADY_IMPORTED)
+                      org.runnerup.common.R.string.Home_import_duplicate
+                    else org.runnerup.common.R.string.Home_import_success)
+            if (imported == ActivityImportStore.Result.IMPORTED) loadActivityHistory()
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not save imported activity", error)
+            activityImportMessage = getString(org.runnerup.common.R.string.Home_import_failed)
+          })
+    }
   }
 
   private fun loadActivityHistory() {
@@ -732,6 +841,7 @@ private fun RelvenHome(
     onRetryProgress: () -> Unit,
     onRetryHistory: () -> Unit,
     onAddActivity: () -> Unit,
+    onImportActivity: () -> Unit,
     onOpenActivity: (Long) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
@@ -874,6 +984,7 @@ private fun RelvenHome(
           loadState = activityHistoryState,
           onRetry = onRetryHistory,
           onAddActivity = onAddActivity,
+          onImportActivity = onImportActivity,
           onOpenActivity = onOpenActivity)
     } else if (destination == HomeDestination.Progress) {
       ProgressScreen(
@@ -1224,4 +1335,40 @@ private fun TodayPlanCard(state: TodayPlanState) {
       }
     }
   }
+}
+
+private data class PendingActivityImport(
+    val activity: ImportedActivity,
+    val sha256: String,
+    val displayName: String)
+
+@Composable
+private fun ActivityImportReviewDialog(
+    pending: PendingActivityImport,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit) {
+  val activity = pending.activity
+  val date = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+      .format(Date(activity.startTimeSeconds * 1000L))
+  val distanceKm = NumberFormat.getNumberInstance().format(activity.distanceMeters / 1000.0)
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      title = { Text(stringResource(org.runnerup.common.R.string.Home_import_review_title)) },
+      text = {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          Text(pending.displayName, fontWeight = FontWeight.SemiBold)
+          Text(date)
+          Text(stringResource(org.runnerup.common.R.string.Home_import_summary, distanceKm, activity.durationSeconds / 60, activity.trackPoints.size))
+        }
+      },
+      confirmButton = {
+        TextButton(onClick = onConfirm) {
+          Text(stringResource(org.runnerup.common.R.string.Home_import_save))
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = onDismiss) {
+          Text(stringResource(org.runnerup.common.R.string.Home_import_cancel))
+        }
+      })
 }

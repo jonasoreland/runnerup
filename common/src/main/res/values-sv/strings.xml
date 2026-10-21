@@ -333,6 +333,16 @@
   <string name="Home_nav_history">Historik</string>
   <string name="Home_history_title">Träningshistorik</string>
   <string name="Home_history_add">Lägg till aktivitet</string>
+  <string name="Home_history_import">Importera GPX eller TCX</string>
+  <string name="Home_import_review_title">Granska aktivitet</string>
+  <string name="Home_import_summary">%1$s km · %2$d min · %3$d ruttpunkter</string>
+  <string name="Home_import_save">Spara i historiken</string>
+  <string name="Home_import_cancel">Avbryt</string>
+  <string name="Home_import_ok">OK</string>
+  <string name="Home_import_success">Aktiviteten har lagts till i historiken.</string>
+  <string name="Home_import_duplicate">Den här filen har redan importerats.</string>
+  <string name="Home_import_failed">Det gick inte att importera aktivitetsfilen.</string>
+  <string name="Home_import_multiple_segments">Den här GPX-filen innehåller separata ruttsegment som ännu inte kan sparas korrekt.</string>
   <string name="Home_history_loading">Laddar aktiviteter…</string>
   <string name="Home_history_unavailable">Träningshistoriken är inte tillgänglig just nu.</string>
   <string name="Home_history_retry">Försök igen</string>

@@ -164,6 +164,13 @@ public final class ActivityFileImporter {
       }
     }
     if (points.isEmpty()) throw failure(Reason.MISSING_ROUTE, "Activity has no GPS route");
+    for (int index = 1; index < startsSegment.size(); index++) {
+      if (startsSegment.get(index)) {
+        throw failure(
+            Reason.MULTIPLE_ROUTE_SEGMENTS,
+            "GPX activities with multiple route segments cannot be imported without changing the route");
+      }
+    }
     List<ActivityTrackPoint> enriched = new ArrayList<>(points.size());
     double distance = 0.0;
     ActivityTrackPoint previous = null;
