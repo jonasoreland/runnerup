@@ -20,7 +20,6 @@ package org.runnerup.view;
 import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,16 +35,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -55,15 +50,16 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.runnerup.BuildConfig;
@@ -76,6 +72,10 @@ import org.runnerup.relven.ui.RunMetricValues;
 import org.runnerup.relven.ui.RunMetricsCompose;
 import org.runnerup.relven.ui.RunMetricsScreenKt;
 import org.runnerup.relven.ui.RunMetricsStateHolder;
+import org.runnerup.relven.ui.RunWorkoutStepItem;
+import org.runnerup.relven.ui.RunWorkoutStepsCompose;
+import org.runnerup.relven.ui.RunWorkoutStepsPresentationFactory;
+import org.runnerup.relven.ui.RunWorkoutStepsStateHolder;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
@@ -103,8 +103,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private Button newLapButton = null;
   private final RunMetricsStateHolder runMetricsState = new RunMetricsStateHolder();
   private TextView countdownView = null;
-  private ListView workoutList = null;
+  private ComposeView workoutStepsView;
   private Step currentStep = null;
+  private final RunWorkoutStepsStateHolder runWorkoutStepsState = new RunWorkoutStepsStateHolder();
+  private List<RunWorkoutStepItem> runWorkoutStepItems = List.of();
+  private final Map<Step, Integer> workoutStepIndexByIdentity = new IdentityHashMap<>();
   private Formatter formatter = null;
   private String paceLabel = "";
   private TextView hrDebug;
@@ -112,14 +115,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   private final long[] mTapArray = {0, 0};
   private int mTapIndex = 0;
   private boolean buttonsLocked = false;
-
-  class WorkoutRow {
-    Step step = null;
-    ContentValues lap = null;
-    public int level;
-  }
-
-  private final ArrayList<WorkoutRow> workoutRows = new ArrayList<>();
 
   @SuppressLint("SourceLockedOrientationActivity")
   @Override
@@ -144,10 +139,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     pauseButton.setOnClickListener(pauseButtonClick);
     newLapButton = findViewById(R.id.new_lap_button);
     countdownView = findViewById(R.id.countdown_text_view);
-    workoutList = findViewById(R.id.workout_list);
     hrDebug = findViewById(R.id.hr_debug);
-    WorkoutAdapter adapter = new WorkoutAdapter(workoutRows);
-    workoutList.setAdapter(adapter);
+    workoutStepsView = findViewById(R.id.workout_steps);
+    RunWorkoutStepsCompose.install(workoutStepsView, runWorkoutStepsState, formatter);
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
@@ -203,7 +197,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         };
 
     root.setOnTouchListener(touchListener);
-    workoutList.setOnTouchListener(touchListener);
+    workoutStepsView.setOnTouchListener(touchListener);
     stopButton.setOnTouchListener(touchListener);
     pauseButton.setOnTouchListener(touchListener);
 
@@ -297,14 +291,20 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   }
 
   private void populateWorkoutList() {
-    List<Workout.StepListEntry> list = workout.getStepList();
-    for (Workout.StepListEntry aList : list) {
-      WorkoutRow row = new WorkoutRow();
-      row.level = aList.level();
-      row.step = aList.step();
-      row.lap = null;
-      workoutRows.add(row);
+    List<Workout.StepListEntry> entries = workout.getStepList();
+    List<RunWorkoutStepItem> items = new java.util.ArrayList<>(entries.size());
+    workoutStepIndexByIdentity.clear();
+    for (int index = 0; index < entries.size(); index++) {
+      Workout.StepListEntry entry = entries.get(index);
+      Step step = entry.step();
+      workoutStepIndexByIdentity.putIfAbsent(step, index);
+      items.add(new RunWorkoutStepItem(step, entry.level()));
     }
+    runWorkoutStepItems = List.copyOf(items);
+    currentStep = workout.getCurrentStep();
+    runWorkoutStepsState.update(
+        RunWorkoutStepsPresentationFactory.INSTANCE.create(
+            runWorkoutStepItems, workoutStepIndexByIdentity.get(currentStep)));
   }
 
   private Timer timer = null;
@@ -618,20 +618,14 @@ public class RunActivity extends AppCompatActivity implements TickListener {
               heartRateAvailable,
               heartRateNotice));
 
-      Step curr = workout.getCurrentStep();
-      if (curr != currentStep) {
-        ((WorkoutAdapter) workoutList.getAdapter()).notifyDataSetChanged();
-        currentStep = curr;
-        workoutList.setSelection(getPosition(workoutRows, currentStep));
+      Step current = workout.getCurrentStep();
+      if (current != currentStep) {
+        currentStep = current;
+        runWorkoutStepsState.update(
+            RunWorkoutStepsPresentationFactory.INSTANCE.create(
+                runWorkoutStepItems, workoutStepIndexByIdentity.get(currentStep)));
       }
     }
-  }
-
-  private int getPosition(ArrayList<WorkoutRow> workoutRows, Step currentActivity) {
-    for (int i = 0; i < workoutRows.size(); i++) {
-      if (workoutRows.get(i).step == currentActivity) return i;
-    }
-    return 0;
   }
 
   private boolean mIsBound = false;
@@ -676,101 +670,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       // Detach our existing connection.
       getApplicationContext().unbindService(mConnection);
       mIsBound = false;
-    }
-  }
-
-  class WorkoutAdapter extends BaseAdapter {
-
-    final ArrayList<WorkoutRow> rows;
-
-    WorkoutAdapter(ArrayList<WorkoutRow> workoutRows) {
-      this.rows = workoutRows;
-    }
-
-    @Override
-    public int getCount() {
-      return rows.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-      return rows.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-      return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      WorkoutRow tmp = rows.get(position);
-      if (tmp.step != null) {
-        return getWorkoutRow(tmp.step, tmp.level, convertView, parent);
-      } else {
-        return getLapRow(tmp.lap, convertView, parent);
-      }
-    }
-
-    private View getWorkoutRow(Step step, int level, View convertView, ViewGroup parent) {
-      LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
-      View view = inflater.inflate(R.layout.workout_row, parent, false);
-      TextView intensity = view.findViewById(R.id.workout_step_intensity);
-      TextView durationType = view.findViewById(R.id.workout_step_duration_type);
-      TextView durationValue = view.findViewById(R.id.workout_step_duration_value);
-      TextView targetPace = view.findViewById(R.id.workout_step_pace);
-      intensity.setPadding(level * 10, 0, 0, 0);
-      intensity.setText(getResources().getText(step.getIntensity().getTextId()));
-      if (step.getDurationType() != null) {
-        durationType.setText(getResources().getText(step.getDurationType().getTextId()));
-        durationValue.setText(
-            formatter.format(
-                Formatter.Format.TXT_LONG, step.getDurationType(), step.getDurationValue()));
-      } else {
-        durationType.setText("");
-        durationValue.setText("");
-      }
-      if (currentStep == step) {
-        // view.setBackgroundResource(android.R.color.background_light);
-      } else {
-        view.setBackgroundResource(android.R.color.black);
-      }
-
-      if (step.getTargetType() == null) {
-        targetPace.setText("");
-      } else {
-        double minValue = step.getTargetValue().minValue;
-        double maxValue = step.getTargetValue().maxValue;
-        if (minValue == maxValue) {
-          targetPace.setText(
-              formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), minValue));
-        } else {
-          targetPace.setText(
-              String.format(
-                  Locale.getDefault(),
-                  "%s-%s",
-                  formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), minValue),
-                  formatter.format(Formatter.Format.TXT_SHORT, step.getTargetType(), maxValue)));
-        }
-      }
-      if (step.getIntensity() == Intensity.REPEAT) {
-        if (step.getCurrentRepeat() >= step.getRepeatCount()) {
-          durationValue.setText(org.runnerup.common.R.string.Finished);
-        } else {
-          durationValue.setText(
-              String.format(
-                  Locale.getDefault(),
-                  "%d/%d",
-                  (step.getCurrentRepeat() + 1),
-                  step.getRepeatCount()));
-        }
-      }
-      return view;
-    }
-
-    private View getLapRow(ContentValues tmp, View convertView, ViewGroup parent) {
-      LayoutInflater inflater = LayoutInflater.from(RunActivity.this);
-      return inflater.inflate(R.layout.laplist_row, parent, false);
     }
   }
 }

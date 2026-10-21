@@ -49,18 +49,18 @@
             android:visibility="invisible" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/workout_list"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/workout_steps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/countdown_layout"></ListView>
+        android:layout_below="@id/countdown_layout" />
 
     <TextView
         android:id="@+id/hr_debug"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/run_table_row1"
-        android:layout_below="@id/workout_list"
+        android:layout_below="@id/workout_steps"
         android:scrollbars="vertical" />
 
     <TableRow
