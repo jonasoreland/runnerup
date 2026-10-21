@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -133,6 +134,7 @@ private fun LoadedPlanCalendar(
 ) {
   val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
   var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
+  var openedWorkoutSessionId by rememberSaveable(plan.rootPlanId()) { mutableStateOf<String?>(null) }
   var month by rememberSaveable(plan.rootPlanId(), todayDate) {
     mutableStateOf(todayDate.substring(0, 7))
   }
@@ -159,12 +161,51 @@ private fun LoadedPlanCalendar(
   val state = remember(plan, month, selectedDate, todayDate, locale, viewMode, completedStrengthSessions) {
     planCalendarState(plan, month, selectedDate, nowMillis, locale, completedStrengthSessions, viewMode)
   }
+  val openedWorkout = selectedPlanWorkout(state.selectedEntries, openedWorkoutSessionId)
+  BackHandler(enabled = openedWorkout != null) { openedWorkoutSessionId = null }
   val weekdayLabels = stringArrayResource(R.array.Plan_calendar_weekdays)
   val weekdayNames = stringArrayResource(R.array.Plan_calendar_weekday_names)
   Column(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
           .padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    if (openedWorkout != null) {
+      PlanWorkoutDetailsScreen(
+          workout = openedWorkout,
+          dateLabel = state.selectedDateLabel,
+          planName = state.planName,
+          enabled = revisionStatus !is PlanRevisionStatus.Saving,
+          onBack = { openedWorkoutSessionId = null },
+          onRename = { workoutId, currentName ->
+            editingWorkoutId = workoutId
+            editedWorkoutName = currentName
+            workoutNameTouched = false
+          },
+          onReschedule = { sessionId ->
+            reschedulingSessionId = sessionId
+            rescheduleSourceDate = state.selectedDate
+            rescheduleTargetDate = null
+            openedWorkoutSessionId = null
+          },
+          onRemove = { sessionId -> pendingRemovalId = sessionId },
+          onEditRunningEnd = { workoutId, segment ->
+            editingSegment = segment
+            editingSegmentWorkoutId = workoutId
+            editingTarget = false
+            editType = segment.end.type
+            editMin = segment.end.value?.toString().orEmpty()
+          },
+          onEditRunningTarget = { workoutId, segment ->
+            editingSegment = segment
+            editingSegmentWorkoutId = workoutId
+            editingTarget = true
+            editType = segment.target?.type ?: "pace"
+            editMin = segment.target?.minimum?.toString().orEmpty()
+            editMax = segment.target?.maximum?.toString().orEmpty()
+          },
+          onStartStrength = { onStartStrength(plan.id(), openedWorkout) },
+          onViewStrengthCompletion = onViewStrengthCompletion)
+    } else {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Text(stringResource(R.string.Plan_calendar_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -383,35 +424,15 @@ private fun LoadedPlanCalendar(
         totalEntries = plan.days().size,
         reschedulingSessionId = reschedulingSessionId,
         enabled = revisionStatus !is PlanRevisionStatus.Saving,
-        onStartStrength = { entry -> onStartStrength(plan.id(), entry) },
-        onViewStrengthCompletion = onViewStrengthCompletion,
+        onOpenWorkout = { sessionId -> openedWorkoutSessionId = sessionId },
         onAdd = { showAddActions = true },
         onReschedule = { sessionId ->
           reschedulingSessionId = sessionId
           rescheduleSourceDate = state.selectedDate
           rescheduleTargetDate = null
         },
-        onRemove = { sessionId -> pendingRemovalId = sessionId },
-        onEditWorkout = { workoutId, currentName ->
-          editingWorkoutId = workoutId
-          editedWorkoutName = currentName
-          workoutNameTouched = false
-        },
-        onEditRunningEnd = { workoutId, segment ->
-          editingSegment = segment
-          editingSegmentWorkoutId = workoutId
-          editingTarget = false
-          editType = segment.end.type
-          editMin = segment.end.value?.toString().orEmpty()
-        },
-        onEditRunningTarget = { workoutId, segment ->
-          editingSegment = segment
-          editingSegmentWorkoutId = workoutId
-          editingTarget = true
-          editType = segment.target?.type ?: "pace"
-          editMin = segment.target?.minimum?.toString().orEmpty()
-          editMax = segment.target?.maximum?.toString().orEmpty()
-        })
+        onRemove = { sessionId -> pendingRemovalId = sessionId })
+    }
   }
 
   val segmentBeingEdited = editingSegment
@@ -772,14 +793,10 @@ private fun SelectedPlanDay(
     totalEntries: Int,
     reschedulingSessionId: String?,
     enabled: Boolean,
-    onStartStrength: (PlanCalendarEntry.Workout) -> Unit,
-    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
+    onOpenWorkout: (String) -> Unit,
     onAdd: () -> Unit,
     onReschedule: (String) -> Unit,
-    onRemove: (String) -> Unit,
-    onEditWorkout: (String, String) -> Unit,
-    onEditRunningEnd: (String, RunningSegmentSummary) -> Unit,
-    onEditRunningTarget: (String, RunningSegmentSummary) -> Unit
+    onRemove: (String) -> Unit
 ) {
   Surface(
       shape = RoundedCornerShape(24.dp),
@@ -796,89 +813,22 @@ private fun SelectedPlanDay(
         Text(stringResource(R.string.Plan_calendar_no_item), fontSize = 18.sp, fontWeight = FontWeight.Bold)
       } else {
         entries.forEach { entry ->
-          Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+          Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             when (entry) {
               is PlanCalendarEntry.Workout -> {
-                Text(entry.workoutName, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                entry.runningSegments.forEach { segment ->
-                  Column(
-                      Modifier.fillMaxWidth().background(RelvenColors.SurfaceRaised, RoundedCornerShape(14.dp)).padding(14.dp),
-                      verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(segment.name ?: stringResource(phaseLabel(segment.phase)), fontWeight = FontWeight.SemiBold)
-                    Text(segmentEndLabel(segment), color = RelvenColors.MutedText)
-                    Text(segment.target?.let { segmentTargetLabel(it) } ?: stringResource(R.string.Plan_calendar_no_target), color = RelvenColors.MutedText)
-                    if (segment.repeatCount > 1) Text(stringResource(R.string.Plan_calendar_repeat_count, segment.repeatCount), color = RelvenColors.MutedText)
-                    Row {
-                      TextButton(onClick = { onEditRunningEnd(entry.workoutId, segment) }, enabled = enabled) { Text(stringResource(R.string.Plan_calendar_edit_end)) }
-                      TextButton(onClick = { onEditRunningTarget(entry.workoutId, segment) }, enabled = enabled) { Text(stringResource(R.string.Plan_calendar_edit_target)) }
-                    }
-                  }
-                }
-                entry.strengthDetails?.let { details ->
+                Column(
+                    modifier = Modifier.fillMaxWidth().clickable(
+                        enabled = enabled,
+                        role = Role.Button,
+                        onClick = { onOpenWorkout(entry.sessionId) }),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                  Text(entry.workoutName, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                   Text(
-                      stringResource(
-                          if (details.sport() == "prehab")
-                              R.string.Plan_calendar_pre_hab_workout
-                          else R.string.Plan_calendar_strength_workout),
+                      stringResource(R.string.Plan_calendar_open_workout_details),
                       color = RelvenColors.Orange,
-                      fontSize = 13.sp,
-                      fontWeight = FontWeight.SemiBold)
-                  details.exercises().forEachIndexed { index, exercise ->
-                    Column(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .background(RelvenColors.SurfaceRaised, RoundedCornerShape(14.dp))
-                                .padding(14.dp),
-                        verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                      Text(
-                          "${index + 1}. ${exercise.name()}",
-                          color = RelvenColors.Text,
-                          fontWeight = FontWeight.SemiBold)
-                      Text(
-                          stringResource(
-                              R.string.Plan_calendar_strength_prescription,
-                              exercise.sets(),
-                              exercise.minRepetitions(),
-                              exercise.maxRepetitions()),
-                          color = RelvenColors.MutedText,
-                          fontSize = 13.sp)
-                      if (exercise.durationSeconds() != null) {
-                        Text(
-                            stringResource(
-                                R.string.Plan_calendar_strength_timed,
-                                exercise.durationSeconds()!!),
-                            color = RelvenColors.MutedText,
-                            fontSize = 13.sp)
-                      }
-                      Text(
-                          stringResource(R.string.Plan_calendar_strength_rest, exercise.restSeconds()),
-                          color = RelvenColors.MutedText,
-                          fontSize = 13.sp)
-                      Text(exercise.instructions(), color = RelvenColors.Text, fontSize = 14.sp)
-                    }
-                  }
-                  if (entry.completion != null) {
-                    Text(
-                        stringResource(R.string.Strength_session_completed),
-                        color = RelvenColors.Orange,
-                        fontWeight = FontWeight.SemiBold)
-                    TextButton(onClick = { onViewStrengthCompletion(entry.completion) }) {
-                      Text(stringResource(R.string.Strength_session_view_summary))
-                    }
-                  } else {
-                    TextButton(onClick = { onStartStrength(entry) }, enabled = enabled) {
-                      Text(stringResource(R.string.Strength_session_start))
-                    }
-                  }
+                      fontSize = 14.sp)
                 }
-                if (entry.notes.isNotBlank()) {
-                  Text(entry.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
-                }
-                if (reschedulingSessionId == null) {
-                  EditWorkoutAction(entry.workoutId, entry.workoutName, enabled, onEditWorkout)
-                  RescheduleAction(entry.sessionId, entry.workoutName, enabled, onReschedule)
-                  RemoveAction(entry.sessionId, entry.workoutName, totalEntries, enabled, onRemove)
-                }
+                if (entry.notes.isNotBlank()) Text(entry.notes, color = RelvenColors.MutedText)
               }
               is PlanCalendarEntry.Rest -> {
                 Text(stringResource(R.string.Rest_day), fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -908,7 +858,7 @@ private fun SelectedPlanDay(
 }
 
 @Composable
-private fun phaseLabel(phase: String): Int = when (phase) {
+internal fun phaseLabel(phase: String): Int = when (phase) {
   "warmup" -> R.string.Plan_calendar_phase_warmup
   "work" -> R.string.Plan_calendar_phase_work
   "recovery" -> R.string.Plan_calendar_phase_recovery
@@ -936,36 +886,17 @@ private fun endTypeLabel(type: String): Int = when (type) {
 }
 
 @Composable
-private fun segmentEndLabel(segment: RunningSegmentSummary): String = when (segment.end.type) {
+internal fun segmentEndLabel(segment: RunningSegmentSummary): String = when (segment.end.type) {
   "time" -> stringResource(R.string.Plan_calendar_end_seconds, segment.end.value ?: 0.0)
   "distance" -> stringResource(R.string.Plan_calendar_end_meters, segment.end.value ?: 0.0)
   else -> stringResource(R.string.Plan_calendar_end_manual)
 }
 
 @Composable
-private fun segmentTargetLabel(target: RunningSegmentTarget): String = when (target.type) {
+internal fun segmentTargetLabel(target: RunningSegmentTarget): String = when (target.type) {
   "pace" -> stringResource(R.string.Plan_calendar_target_pace, target.minimum, target.maximum)
   "speed" -> stringResource(R.string.Plan_calendar_target_speed, target.minimum, target.maximum)
   else -> stringResource(R.string.Plan_calendar_target_heart_rate, target.minimum, target.maximum)
-}
-
-@Composable
-private fun EditWorkoutAction(
-    workoutId: String,
-    workoutName: String,
-    enabled: Boolean,
-    onEditWorkout: (String, String) -> Unit
-) {
-  val accessibilityLabel =
-      stringResource(R.string.Plan_calendar_rename_workout_accessibility, workoutName)
-  TextButton(
-      onClick = { onEditWorkout(workoutId, workoutName) },
-      enabled = enabled,
-      modifier = Modifier.semantics {
-        contentDescription = accessibilityLabel
-      }) {
-    Text(stringResource(R.string.Plan_calendar_rename_workout))
-  }
 }
 
 @Composable

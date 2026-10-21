@@ -26,6 +26,25 @@ public class RelvenBrandCopyTest {
   }
 
   @Test
+  public void planWorkoutDetailsLabelsAreLocalizedInEnglishAndSwedish() {
+    Context context = RuntimeEnvironment.getApplication();
+    Context swedish = localizedContext(context, "sv");
+
+    assertEquals(
+        "Workout details",
+        context.getString(org.runnerup.common.R.string.Plan_calendar_workout_details_title));
+    assertEquals(
+        "View workout details",
+        context.getString(org.runnerup.common.R.string.Plan_calendar_open_workout_details));
+    assertEquals(
+        "Passdetaljer",
+        swedish.getString(org.runnerup.common.R.string.Plan_calendar_workout_details_title));
+    assertEquals(
+        "Visa passdetaljer",
+        swedish.getString(org.runnerup.common.R.string.Plan_calendar_open_workout_details));
+  }
+
+  @Test
   public void swedishLiveAddressUsesRelvenBranding() {
     Context context = RuntimeEnvironment.getApplication();
     Configuration configuration = new Configuration(context.getResources().getConfiguration());

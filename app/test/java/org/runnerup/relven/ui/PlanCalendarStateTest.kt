@@ -56,6 +56,19 @@ class PlanCalendarStateTest {
   }
 
   @Test
+  fun selectsOnlyTheScheduledWorkoutMatchingTheOpenedEntry() {
+    val entries =
+        planCalendarState(
+                multiWorkoutPlan, "2026-10", "2026-10-20", 1_792_449_000_000L, Locale.ENGLISH)
+            .selectedEntries
+
+    assertEquals("Short strides", selectedPlanWorkout(entries, "evening-run")?.workoutName)
+    assertEquals(null, selectedPlanWorkout(entries, "missing-entry"))
+    assertEquals(null, selectedPlanWorkout(entries, "october-rest"))
+    assertEquals(null, selectedPlanWorkout(entries, null))
+  }
+
+  @Test
   fun completionIsLinkedToStrengthScheduleEntryWithoutChangingRunningEntries() {
     val workout = requireNotNull(strengthPlan.strengthWorkouts()["strength-a"])
     val completed =
