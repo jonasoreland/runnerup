@@ -10,9 +10,14 @@ import java.util.Locale
 internal data class ExerciseCatalogViewState(
     val query: String = "",
     val category: ExerciseCategory? = null,
-    val selectedExerciseId: String? = null
+    val selectedExerciseId: String? = null,
+    val favoriteExerciseIds: Set<String> = emptySet(),
+    val favoritesOnly: Boolean = false
 ) {
-  fun visibleEntries(catalog: ExerciseCatalog): List<ExerciseEntry> = catalog.filter(query, category)
+  fun visibleEntries(catalog: ExerciseCatalog): List<ExerciseEntry> =
+      catalog.filter(query, category).let { matches ->
+        if (favoritesOnly) matches.filter { it.exerciseId in favoriteExerciseIds } else matches
+      }
 
   fun selectedExercise(catalog: ExerciseCatalog): ExerciseEntry? =
       selectedExerciseId?.let { id -> catalog.exercises.firstOrNull { it.exerciseId == id } }

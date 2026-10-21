@@ -375,6 +375,10 @@
   <string name="Exercise_catalog_search_hint">Namn, muskelgrupp eller rörelse</string>
   <string name="Exercise_catalog_clear_search">Rensa sökningen</string>
   <string name="Exercise_catalog_no_results">Inga övningar matchar filtren.</string>
+  <string name="Exercise_catalog_favorites">Favoriter</string>
+  <string name="Exercise_catalog_no_favorites">Inga favoritövningar matchar filtren.</string>
+  <string name="Exercise_catalog_add_favorite">Lägg till i favoriter</string>
+  <string name="Exercise_catalog_remove_favorite">Ta bort från favoriter</string>
   <string name="Exercise_catalog_back">Tillbaka till övningar</string>
   <string name="Exercise_catalog_muscle_groups">Tränade områden</string>
   <string name="Exercise_catalog_equipment">Utrustning</string>

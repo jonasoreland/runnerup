@@ -24,6 +24,25 @@ class ExerciseCatalogStateTest {
   }
 
   @Test
+  fun filtersFavoritesAfterSearchAndCategoryAndIgnoresRemovedIds() {
+    val ids = catalog.exercises.map { it.exerciseId }
+    val state =
+        ExerciseCatalogViewState(
+            query = "",
+            category = null,
+            favoriteExerciseIds = setOf(ids.first(), ids.last(), "removed-id"),
+            favoritesOnly = true)
+
+    assertEquals(listOf("Squat", "Push-up"), state.visibleEntries(catalog).map { it.name })
+    assertEquals(
+        listOf("Push-up"),
+        state.copy(query = "push").visibleEntries(catalog).map { it.name })
+    assertEquals(
+        emptyList<String>(),
+        state.copy(category = ExerciseCategory.CORE).visibleEntries(catalog).map { it.name })
+  }
+
+  @Test
   fun resolvesTheSelectedDetailAndHandlesStaleIds() {
     val selected = ExerciseCatalogViewState(selectedExerciseId = catalog.exercises.first().exerciseId)
 

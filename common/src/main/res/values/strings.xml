@@ -368,6 +368,10 @@
     <string name="Exercise_catalog_search_hint">Name, muscle group, or movement</string>
     <string name="Exercise_catalog_clear_search">Clear search</string>
     <string name="Exercise_catalog_no_results">No exercises match these filters.</string>
+    <string name="Exercise_catalog_favorites">Favorites</string>
+    <string name="Exercise_catalog_no_favorites">No favorited exercises match these filters.</string>
+    <string name="Exercise_catalog_add_favorite">Add to favorites</string>
+    <string name="Exercise_catalog_remove_favorite">Remove from favorites</string>
     <string name="Exercise_catalog_back">Back to exercises</string>
     <string name="Exercise_catalog_muscle_groups">Target areas</string>
     <string name="Exercise_catalog_equipment">Equipment</string>
