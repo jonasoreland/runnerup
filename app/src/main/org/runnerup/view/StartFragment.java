@@ -283,6 +283,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
               }
 
               @Override
+              public void onEditStep(int index) {
+                if (advancedWorkout == null) return;
+                List<StepListEntry> steps = advancedWorkout.getStepList();
+                if (index < 0 || index >= steps.size()) return;
+                StepButton editor = new StepButton(requireContext(), null);
+                editor.setStep(steps.get(index).step());
+                editor.setOnChangedListener(StartFragment.this::saveAdvancedWorkout);
+                editor.editStep();
+              }
+
+              @Override
               public void onManageWorkouts() {
                 startActivity(new Intent(requireContext(), ManageWorkoutsActivity.class));
               }
@@ -700,9 +711,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
                   Formatter.Format.TXT_LONG, step.getDurationType(), step.getDurationValue());
         }
         if (step.getTargetType() != null && step.getTargetValue() != null) {
-          String target =
+          String minimum =
               formatter.format(
                   Formatter.Format.TXT_SHORT, step.getTargetType(), step.getTargetValue().minValue);
+          String maximum =
+              formatter.format(
+                  Formatter.Format.TXT_LONG, step.getTargetType(), step.getTargetValue().maxValue);
+          String target =
+              org.runnerup.relven.ui.WorkoutSetupPresentation.formatRange(minimum, maximum);
           detail = detail.isEmpty() ? target : detail + " · " + target;
         }
         steps.add(new WorkoutSetupStep(title, detail, entry.level()));
@@ -746,6 +762,24 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       choices.add(new WorkoutSetupChoice(value, value));
     }
     return choices;
+  }
+
+  private void saveAdvancedWorkout() {
+    if (advancedWorkout == null) return;
+    String name =
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getString(getString(R.string.pref_advanced_workout), "");
+    if (name.isEmpty()) return;
+    try {
+      WorkoutSerializer.writeFile(requireContext().getApplicationContext(), name, advancedWorkout);
+      refreshWorkoutSetup();
+    } catch (Exception ex) {
+      new AlertDialog.Builder(requireContext())
+          .setTitle(org.runnerup.common.R.string.Failed_to_load_workout)
+          .setMessage(ex.toString())
+          .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+          .show();
+    }
   }
 
   private void startWorkout() {

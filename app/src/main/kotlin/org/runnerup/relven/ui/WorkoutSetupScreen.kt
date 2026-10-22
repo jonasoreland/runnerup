@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.text.KeyboardOptions
 import org.runnerup.common.R as CommonR
 
@@ -196,15 +198,19 @@ private fun AdvancedSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
   if (state.advancedSteps.isNotEmpty()) {
     SetupSection {
       SectionTitle(stringResource(org.runnerup.R.string.setup_steps))
-      state.advancedSteps.forEach { step ->
+      state.advancedSteps.forEachIndexed { index, step ->
         Row(
-          Modifier.fillMaxWidth().padding(horizontal = 0.dp, vertical = 5.dp).padding(start = (step.indent * 12).dp),
+          Modifier.fillMaxWidth()
+            .padding(vertical = 3.dp)
+            .clickable(role = Role.Button) { listener.onEditStep(index) }
+            .padding(start = (step.indent * 12).dp, end = 8.dp, top = 10.dp, bottom = 10.dp),
           verticalAlignment = Alignment.CenterVertically,
         ) {
           Column(Modifier.weight(1f)) {
             Text(step.title, color = RelvenColors.Text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
             if (step.detail.isNotBlank()) Text(step.detail, color = RelvenColors.MutedText, fontSize = 12.sp)
           }
+          Text(stringResource(CommonR.string.Edit_step), color = RelvenColors.Orange, fontSize = 12.sp)
         }
       }
     }

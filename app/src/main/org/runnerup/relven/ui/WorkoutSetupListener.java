@@ -5,6 +5,8 @@ public interface WorkoutSetupListener {
 
   void onSelectWorkout(String name);
 
+  void onEditStep(int index);
+
   void onManageWorkouts();
 
   void onManageAudio(int tab);

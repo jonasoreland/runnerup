@@ -30,6 +30,10 @@ data class WorkoutSetupState(
 )
 
 object WorkoutSetupPresentation {
+  @JvmStatic
+  fun formatRange(minimum: String, maximum: String): String =
+    if (minimum == maximum) minimum else "$minimum–$maximum"
+
   fun showsPace(targetType: Int) = targetType == 4
 
   fun showsHeartRate(targetType: Int, zonesConfigured: Boolean) =

@@ -1,6 +1,7 @@
 package org.runnerup.relven.ui
 
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -33,5 +34,11 @@ class WorkoutSetupPresentationTest {
     assertTrue(WorkoutSetupInput.isTime("4:00"))
     assertFalse(WorkoutSetupInput.isTime("00:71:00"))
     assertFalse(WorkoutSetupInput.isTime("not a time"))
+  }
+
+  @Test
+  fun targetRangeShowsBothDifferentEndpoints() {
+    assertEquals("5:00", WorkoutSetupPresentation.formatRange("5:00", "5:00"))
+    assertEquals("4:45–5:00", WorkoutSetupPresentation.formatRange("4:45", "5:00"))
   }
 }
