@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+    <!-- MapLibre brings Timber's Android lint checks; inherited RunnerUp Java intentionally uses android.util.Log. -->
+    <issue id="LogNotTimber" severity="ignore" />
     <issue id="all" >
         <ignore path="ANT-Android-SDKs/**" />
     </issue>
