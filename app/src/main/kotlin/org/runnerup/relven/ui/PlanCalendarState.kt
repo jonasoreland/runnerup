@@ -82,6 +82,11 @@ internal fun selectedPlanWorkout(
       sessionId != null && it.sessionId == sessionId
     }
 
+internal fun rescheduleTargetDateAfterSelection(
+    selectedDate: String,
+    reschedulingSessionId: String?
+): String? = if (reschedulingSessionId == null) null else selectedDate
+
 internal fun canAddWorkoutOnDate(entries: List<PlanCalendarEntry>): Boolean =
     entries.none { it is PlanCalendarEntry.Rest }
 

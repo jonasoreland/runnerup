@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
 import java.util.Locale
 import java.util.TimeZone
 import org.runnerup.workout.RelvenPlanImporter
@@ -11,6 +12,39 @@ import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 
 class PlanCalendarStateTest {
+  @Test
+  fun planLocalDateAdvancesAcrossMidnightInThePlanTimezone() {
+    val beforeMidnight = Instant.parse("2026-10-22T21:59:00Z").toEpochMilli()
+    val afterMidnight = Instant.parse("2026-10-22T22:01:00Z").toEpochMilli()
+
+    assertEquals("2026-10-22", planLocalDate("Europe/Stockholm", beforeMidnight))
+    assertEquals("2026-10-23", planLocalDate("Europe/Stockholm", afterMidnight))
+  }
+
+  @Test
+  fun selectedRescheduleDateRemainsConsistentWhenTodayRollsOver() {
+    val justAfterMidnight = Instant.parse("2026-10-22T22:01:00Z").toEpochMilli()
+
+    val state = calendarState(plan, "2026-10", "2026-10-22", justAfterMidnight)
+
+    assertEquals("2026-10-22", state.selectedDate)
+    assertEquals("2026-10-23", state.todayDate)
+  }
+
+  @Test
+  fun selectingTodayDuringReschedulingUsesTodayAsTheRescheduleTarget() {
+    assertEquals(
+        "2026-10-22",
+        rescheduleTargetDateAfterSelection("2026-10-22", reschedulingSessionId = "session-1"))
+  }
+
+  @Test
+  fun selectingTodayOutsideReschedulingDoesNotCreateARescheduleTarget() {
+    assertEquals(
+        null,
+        rescheduleTargetDateAfterSelection("2026-10-22", reschedulingSessionId = null))
+  }
+
   private val plan =
       RelvenPlanImporter.parse(
           """

@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -36,7 +33,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -44,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.activity.compose.BackHandler
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
@@ -60,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import org.json.JSONObject
@@ -132,10 +131,20 @@ private fun LoadedPlanCalendar(
     onEditRunningEnd: (String, String, JSONObject) -> Unit,
     onEditRunningTarget: (String, String, JSONObject?) -> Unit
 ) {
-  val todayDate = remember(plan.id(), nowMillis) { planLocalDate(plan.timezone(), nowMillis) }
-  var selectedDate by rememberSaveable(plan.rootPlanId(), todayDate) { mutableStateOf(todayDate) }
+  var calendarNowMillis by remember(plan.id()) { mutableLongStateOf(nowMillis) }
+  LaunchedEffect(nowMillis) { calendarNowMillis = nowMillis }
+  LaunchedEffect(plan.id()) {
+    while (true) {
+      delay(60_000)
+      calendarNowMillis = System.currentTimeMillis()
+    }
+  }
+  val todayDate = remember(plan.id(), calendarNowMillis) {
+    planLocalDate(plan.timezone(), calendarNowMillis)
+  }
+  var selectedDate by rememberSaveable(plan.rootPlanId()) { mutableStateOf(todayDate) }
   var openedWorkoutSessionId by rememberSaveable(plan.rootPlanId()) { mutableStateOf<String?>(null) }
-  var month by rememberSaveable(plan.rootPlanId(), todayDate) {
+  var month by rememberSaveable(plan.rootPlanId()) {
     mutableStateOf(todayDate.substring(0, 7))
   }
   var savedViewMode by rememberSaveable(plan.rootPlanId()) { mutableStateOf(PlanCalendarViewMode.Month.name) }
@@ -159,7 +168,8 @@ private fun LoadedPlanCalendar(
   var editMax by rememberSaveable(plan.id()) { mutableStateOf("") }
   val locale = LocalLocale.current.platformLocale
   val state = remember(plan, month, selectedDate, todayDate, locale, viewMode, completedStrengthSessions) {
-    planCalendarState(plan, month, selectedDate, nowMillis, locale, completedStrengthSessions, viewMode)
+    planCalendarState(
+        plan, month, selectedDate, calendarNowMillis, locale, completedStrengthSessions, viewMode)
   }
   val openedWorkout = selectedPlanWorkout(state.selectedEntries, openedWorkoutSessionId)
   BackHandler(enabled = openedWorkout != null) { openedWorkoutSessionId = null }
@@ -356,39 +366,50 @@ private fun LoadedPlanCalendar(
               tint = RelvenColors.Text)
         }
       }
+      if (selectedDate != todayDate) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+          TextButton(
+              onClick = {
+                selectedDate = todayDate
+                month = todayDate.substring(0, 7)
+                rescheduleTargetDate =
+                    rescheduleTargetDateAfterSelection(todayDate, reschedulingSessionId)
+              },
+              enabled = revisionStatus !is PlanRevisionStatus.Saving) {
+            Text(stringResource(R.string.Plan_calendar_today))
+          }
+        }
+      }
 
       if (viewMode == PlanCalendarViewMode.Month) {
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-          val gridWidth = maxOf(maxWidth, 308.dp)
-          val centeredOffset: Dp = -((gridWidth - maxWidth) / 2)
-          Column(Modifier.requiredWidth(gridWidth).offset(x = centeredOffset)) {
-            Row(Modifier.fillMaxWidth()) {
-              weekdayLabels.forEachIndexed { index, weekday ->
-                Text(
-                    weekday,
-                    modifier = Modifier.weight(1f).heightIn(min = 36.dp).semantics {
-                      contentDescription = weekdayNames[index]
-                    },
-                    textAlign = TextAlign.Center,
-                    color = RelvenColors.MutedText,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold)
-              }
+        Column(Modifier.fillMaxWidth()) {
+          Row(Modifier.fillMaxWidth()) {
+            weekdayLabels.forEachIndexed { index, weekday ->
+              Text(
+                  weekday,
+                  modifier = Modifier.weight(1f).heightIn(min = 36.dp).semantics {
+                    contentDescription = weekdayNames[index]
+                  },
+                  textAlign = TextAlign.Center,
+                  color = RelvenColors.MutedText,
+                  fontSize = 12.sp,
+                  fontWeight = FontWeight.SemiBold)
             }
+          }
 
-            state.days.chunked(7).forEach { week ->
-              Row(Modifier.fillMaxWidth()) {
-                week.forEach { day ->
-                  CalendarDateCell(
-                      day = day,
-                      modifier = Modifier.weight(1f),
-                      enabled = revisionStatus !is PlanRevisionStatus.Saving,
-                      onClick = {
-                        selectedDate = day.date
-                        month = day.date.substring(0, 7)
-                        if (reschedulingSessionId != null) rescheduleTargetDate = day.date
-                      })
-                }
+          state.days.chunked(7).forEach { week ->
+            Row(Modifier.fillMaxWidth()) {
+              week.forEach { day ->
+                CalendarDateCell(
+                    day = day,
+                    modifier = Modifier.weight(1f),
+                    enabled = revisionStatus !is PlanRevisionStatus.Saving,
+                    onClick = {
+                      selectedDate = day.date
+                      month = day.date.substring(0, 7)
+                      rescheduleTargetDate =
+                          rescheduleTargetDateAfterSelection(day.date, reschedulingSessionId)
+                    })
               }
             }
           }
@@ -402,7 +423,8 @@ private fun LoadedPlanCalendar(
                 onClick = {
                   selectedDate = day.date
                   month = day.date.substring(0, 7)
-                  if (reschedulingSessionId != null) rescheduleTargetDate = day.date
+                  rescheduleTargetDate =
+                      rescheduleTargetDateAfterSelection(day.date, reschedulingSessionId)
                 })
           }
         }
@@ -419,7 +441,6 @@ private fun LoadedPlanCalendar(
 
     SelectedPlanDay(
         dateLabel = state.selectedDateLabel,
-        planName = state.planName,
         entries = state.selectedEntries,
         totalEntries = plan.days().size,
         reschedulingSessionId = reschedulingSessionId,
@@ -788,7 +809,6 @@ private fun CalendarDateCell(
 @Composable
 private fun SelectedPlanDay(
     dateLabel: String,
-    planName: String,
     entries: List<PlanCalendarEntry>,
     totalEntries: Int,
     reschedulingSessionId: String?,
@@ -805,7 +825,6 @@ private fun SelectedPlanDay(
       modifier = Modifier.fillMaxWidth()) {
     Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(dateLabel, color = RelvenColors.Orange, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-      Text(planName, color = RelvenColors.MutedText, fontSize = 14.sp)
       TextButton(onClick = onAdd, enabled = enabled && reschedulingSessionId == null) {
         Text(stringResource(R.string.Plan_calendar_add_item))
       }
