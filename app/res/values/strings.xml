@@ -37,4 +37,6 @@
     <string name="setup_rest_distance">Recovery distance</string>
     <string name="setup_interval_structure">Interval structure</string>
     <string name="setup_steps">Workout steps</string>
+    <string name="start_readiness_expanded">Expanded</string>
+    <string name="start_readiness_collapsed">Collapsed</string>
 </resources>
