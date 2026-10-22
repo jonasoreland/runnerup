@@ -7,7 +7,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
-import androidx.activity.ComponentActivity
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
@@ -50,6 +53,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
@@ -78,6 +82,7 @@ import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.workout.Sport
 import org.runnerup.view.MainLayout
+import org.runnerup.view.StartFragment
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
 import org.runnerup.importer.ActivityFileImporter
@@ -101,7 +106,7 @@ import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
-class RelvenHomeActivity : ComponentActivity() {
+class RelvenHomeActivity : FragmentActivity() {
   companion object {
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
     private const val HISTORY_ACTIVITY_DETAIL_STATE = "relven.home.history_activity_detail"
@@ -226,6 +231,7 @@ class RelvenHomeActivity : ComponentActivity() {
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
             destination = destination,
+            startFragmentManager = supportFragmentManager,
             onSelectDestination = ::selectHomeDestination,
             onRetryProgress = ::loadProgress,
             onRetryHistory = ::loadActivityHistory,
@@ -233,7 +239,8 @@ class RelvenHomeActivity : ComponentActivity() {
             onImportActivity = { activityDocumentPicker.launch(arrayOf("*/*")) },
             onOpenActivity = ::openHistoryActivity,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
-            onOpenWorkout = { startActivity(Intent(this, MainLayout::class.java)) },
+            onOpenWorkout = { selectHomeDestination(HomeDestination.Start) },
+            onOpenWorkoutManager = { startActivity(Intent(this, MainLayout::class.java)) },
             onOpenHistory = {
               selectHomeDestination(HomeDestination.History)
             },
@@ -358,6 +365,17 @@ class RelvenHomeActivity : ComponentActivity() {
   }
 
   private fun selectHomeDestination(next: HomeDestination) {
+    if (destination == HomeDestination.Start && next != HomeDestination.Start) {
+      val startFragment =
+          supportFragmentManager.findFragmentById(org.runnerup.R.id.relven_start_fragment_container)
+      if (startFragment != null) {
+        if (supportFragmentManager.isStateSaved) {
+          supportFragmentManager.beginTransaction().remove(startFragment).commitAllowingStateLoss()
+        } else {
+          supportFragmentManager.commitNow { remove(startFragment) }
+        }
+      }
+    }
     destination = next
     if (next == HomeDestination.History) loadActivityHistory()
   }
@@ -991,6 +1009,7 @@ private data class PendingStrengthSessionChoice(
 
 internal enum class HomeDestination {
   Today,
+  Start,
   Plan,
   Exercises,
   Progress,
@@ -1014,6 +1033,7 @@ private fun RelvenHome(
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
+    startFragmentManager: FragmentManager,
     onSelectDestination: (HomeDestination) -> Unit,
     onRetryProgress: () -> Unit,
     onRetryHistory: () -> Unit,
@@ -1022,6 +1042,7 @@ private fun RelvenHome(
     onOpenActivity: (Long) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
+    onOpenWorkoutManager: () -> Unit,
     onOpenHistory: () -> Unit,
     onReschedulePlan: (String, String) -> Unit,
     onAddWorkoutToPlan: (String, String) -> Unit,
@@ -1159,6 +1180,8 @@ private fun RelvenHome(
         }
       }
     }
+    } else if (destination == HomeDestination.Start) {
+      StartDestinationScreen(startFragmentManager)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,
@@ -1179,7 +1202,7 @@ private fun RelvenHome(
           completedStrengthSessions = completedStrengthSessions,
           onStartStrength = onStartStrength,
           onViewStrengthCompletion = onViewStrengthCompletion,
-          onOpenWorkoutManager = onOpenWorkout,
+          onOpenWorkoutManager = onOpenWorkoutManager,
           onReschedule = onReschedulePlan,
           onAddWorkout = onAddWorkoutToPlan,
           onAddRest = onAddRestToPlan,
@@ -1205,7 +1228,6 @@ private fun RelvenHome(
     HomeNavigationBar(
         destination = destination,
         onSelectDestination = onSelectDestination,
-        onOpenWorkout = onOpenWorkout,
         onOpenHistory = onOpenHistory,
         modifier = Modifier.align(Alignment.BottomCenter))
     if (strengthRecoveryNotice) {
@@ -1249,7 +1271,6 @@ private fun RelvenHome(
 private fun HomeNavigationBar(
     destination: HomeDestination,
     onSelectDestination: (HomeDestination) -> Unit,
-    onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1281,12 +1302,12 @@ private fun HomeNavigationBar(
           onClick = { onSelectDestination(HomeDestination.Exercises) },
           modifier = Modifier.weight(1f))
       HomeNavigationItem(
-          selected = false,
+          selected = destination == HomeDestination.Start,
           icon = { tint ->
             Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null, tint = tint)
           },
           label = stringResource(org.runnerup.common.R.string.Home_nav_start),
-          onClick = onOpenWorkout,
+          onClick = { onSelectDestination(HomeDestination.Start) },
           modifier = Modifier.weight(1f))
       HomeNavigationItem(
           selected = destination == HomeDestination.History,

@@ -7,6 +7,7 @@ class HomeDestinationTest {
   @Test
   fun restoresNewAndExistingDestinationsAndDefaultsUnknownValues() {
     assertEquals(HomeDestination.Today, homeDestinationFromSaved(null))
+    assertEquals(HomeDestination.Start, homeDestinationFromSaved("Start"))
     assertEquals(HomeDestination.Plan, homeDestinationFromSaved("Plan"))
     assertEquals(HomeDestination.Exercises, homeDestinationFromSaved("Exercises"))
     assertEquals(HomeDestination.Progress, homeDestinationFromSaved("Progress"))
