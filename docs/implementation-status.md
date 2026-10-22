@@ -2,8 +2,10 @@
 
 ## 22 October 2026 checkpoint
 
-- **Plan authoring and management:** PR #83 added the in-app running-plan creator; PR #85 added strength and prehab authoring; PR #86 added saved-plan archive and revision management. The Plan destination includes day, week, and month calendar views, a saved-plan library, and the creation flow. A current incremental PR replaces the old workout-manager XML list with Relven Compose and sends “View saved plans” into that in-app library. This does not replace RunnerUp's workout storage or recording engine.
-- **Verification for the current increment:** Latest debug unit tests (180), debug APK build, release lint, and Spotless pass locally. The first test run exposed missing Robolectric SDK configuration in the new intent-routing test; the test now passes with the full suite. No emulator or physical ADB device was used.
+- **Plan authoring and management:** PR #83 added the in-app running-plan creator; PR #85 added strength and prehab authoring; PR #86 added saved-plan archive and revision management. The Plan destination includes day, week, and month calendar views, a saved-plan library, and the creation flow. PR #87 replaced the old workout-manager XML list with Relven Compose and sends “View saved plans” into that in-app library. This does not replace RunnerUp's workout storage or recording engine.
+- **Plan empty-state calendar:** The library now renders a browsable Monday-first month grid even when no plan is saved, with selectable dates, today highlighting, and create/import guidance. The creation action remains immediately visible. The navigation bar now fully obscures content passing beneath it.
+- **Visual check:** The no-plan calendar and the create-plan form were opened in an isolated Android emulator. No physical ADB device was used.
+- **Verification for the current increment:** Latest debug unit tests (180), debug APK build, release lint, and Spotless pass locally. The first test run exposed missing Robolectric SDK configuration in the new intent-routing test; the test now passes with the full suite. The plan screens were checked in an isolated emulator; no physical ADB device was used.
 - **Manual validation:** Plan authoring, calendar interactions, workout-manager rendering, and phone/watch behavior still need final visual and device testing after the remaining phases are complete. The physical ADB device remains unused.
 
 ## 21 October 2026 serial integration checkpoint
