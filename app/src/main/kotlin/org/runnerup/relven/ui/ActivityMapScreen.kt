@@ -1,5 +1,6 @@
 package org.runnerup.relven.ui
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -121,27 +123,40 @@ internal fun ActivityMapScreen(
               onOpenFullDetails = { onOpenFullDetails(activityId) },
               onRetry = onRetry)
       is ActivityMapScreenState.Loaded -> {
-        ActivityMapSummary(state.activity)
-        Row(
-            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-          RouteMetric.entries.forEach { metric ->
-            FilterChip(
-                selected = selectedMetric == metric,
-                onClick = { selectedMetric = metric },
-                label = { Text(stringResource(metric.labelResource())) })
-          }
-        }
-        RouteMetricLegend(state.route, selectedMetric)
-        Surface(
+        ActivityMapLoadedContent(
             modifier = Modifier.fillMaxWidth().weight(1f),
-            color = RelvenColors.Surface,
-            shape = RoundedCornerShape(20.dp)) {
-          Box(Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp))) {
-            mapContent(Modifier.fillMaxSize(), state.route, selectedMetric)
-          }
-        }
+            activity = state.activity,
+            route = state.route,
+            selectedMetric = selectedMetric,
+            onSelectMetric = { selectedMetric = it },
+            onOpenFullDetails = { onOpenFullDetails(state.activity.id) },
+            mapContent = mapContent)
+      }
+    }
+  }
+}
+
+@Composable
+private fun ActivityMapLoadedContent(
+    modifier: Modifier,
+    activity: HistoryActivityDetails,
+    route: List<RoutePoint>,
+    selectedMetric: RouteMetric,
+    onSelectMetric: (RouteMetric) -> Unit,
+    onOpenFullDetails: () -> Unit,
+    mapContent: @Composable (Modifier, List<RoutePoint>, RouteMetric) -> Unit) {
+  if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+      Column(
+          Modifier.weight(0.4f).fillMaxSize().verticalScroll(rememberScrollState()),
+          verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ActivityMapSummary(activity)
+        RouteMetricSelector(selectedMetric, onSelectMetric)
+        RouteMetricLegend(route, selectedMetric)
+      }
+      Column(Modifier.weight(0.6f).fillMaxSize(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        ActivityMapSurface(
+            Modifier.fillMaxWidth().weight(1f), route, selectedMetric, mapContent)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -156,20 +171,73 @@ internal fun ActivityMapScreen(
         Text(
             stringResource(AppR.string.route_map_tile_privacy),
             color = RelvenColors.MutedText,
-            fontSize = 11.sp)
-        Button(
-            onClick = { onOpenFullDetails(state.activity.id) },
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
-          Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-          Text(
-              stringResource(R.string.Activity_map_full_details),
-              color = RelvenColors.Background,
-              fontWeight = FontWeight.SemiBold)
-        }
+            fontSize = 11.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis)
+        ActivityMapDetailsButton(onOpenFullDetails)
       }
     }
+  } else {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+      ActivityMapSummary(activity)
+      RouteMetricSelector(selectedMetric, onSelectMetric)
+      RouteMetricLegend(route, selectedMetric)
+      ActivityMapSurface(Modifier.fillMaxWidth().weight(1f), route, selectedMetric, mapContent)
+      Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.spacedBy(16.dp),
+          verticalAlignment = Alignment.CenterVertically) {
+        RouteMapMarkerLegend(
+            color = Color(0xFF28A875), label = stringResource(AppR.string.route_map_start))
+        RouteMapMarkerLegend(
+            color = Color(0xFFFF5A1F), label = stringResource(AppR.string.route_map_finish))
+      }
+      Text(stringResource(AppR.string.route_map_tile_privacy), color = RelvenColors.MutedText, fontSize = 11.sp)
+      ActivityMapDetailsButton(onOpenFullDetails)
+    }
+  }
+}
+
+@Composable
+private fun RouteMetricSelector(selectedMetric: RouteMetric, onSelectMetric: (RouteMetric) -> Unit) {
+  Row(
+      modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+      horizontalArrangement = Arrangement.spacedBy(8.dp),
+      verticalAlignment = Alignment.CenterVertically) {
+    RouteMetric.entries.forEach { metric ->
+      FilterChip(
+          selected = selectedMetric == metric,
+          onClick = { onSelectMetric(metric) },
+          label = { Text(stringResource(metric.labelResource())) })
+    }
+  }
+}
+
+@Composable
+private fun ActivityMapSurface(
+    modifier: Modifier,
+    route: List<RoutePoint>,
+    selectedMetric: RouteMetric,
+    mapContent: @Composable (Modifier, List<RoutePoint>, RouteMetric) -> Unit) {
+  Surface(modifier, color = RelvenColors.Surface, shape = RoundedCornerShape(20.dp)) {
+    Box(Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp))) {
+      mapContent(Modifier.fillMaxSize(), route, selectedMetric)
+    }
+  }
+}
+
+@Composable
+private fun ActivityMapDetailsButton(onOpenFullDetails: () -> Unit) {
+  Button(
+      onClick = onOpenFullDetails,
+      modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
+      shape = RoundedCornerShape(16.dp),
+      colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
+    Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+    Text(
+        stringResource(R.string.Activity_map_full_details),
+        color = RelvenColors.Background,
+        fontWeight = FontWeight.SemiBold)
   }
 }
 
