@@ -87,6 +87,22 @@ class ActivityRouteDataTest {
   }
 
   @Test
+  fun marksCoincidentEndpointsSoBothClosedRouteMarkersRemainVisible() {
+    val route =
+        listOf(
+            RoutePoint(59.0, 18.0, 1, 0.0, 0.0),
+            RoutePoint(59.1, 18.1, 1, 60.0, 200.0),
+            RoutePoint(59.0, 18.0, 1, 120.0, 400.0))
+
+    val markers = buildRouteMarkersGeoJson(route)
+
+    assertEquals(2, "\"type\":\"Feature\"".toRegex().findAll(markers).count())
+    assertEquals(2, "\"coincident\":true".toRegex().findAll(markers).count())
+    assertTrue(markers.contains("\"kind\":\"start\""))
+    assertTrue(markers.contains("\"kind\":\"finish\""))
+  }
+
+  @Test
   fun routeMarkersSkipInvalidCoordinatesAndRequireTwoPoints() {
     val route =
         listOf(

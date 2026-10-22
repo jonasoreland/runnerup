@@ -24,6 +24,9 @@ import org.maplibre.android.style.layers.PropertyFactory.circleColor
 import org.maplibre.android.style.layers.PropertyFactory.circleRadius
 import org.maplibre.android.style.layers.PropertyFactory.circleStrokeColor
 import org.maplibre.android.style.layers.PropertyFactory.circleStrokeWidth
+import org.maplibre.android.style.expressions.Expression.eq
+import org.maplibre.android.style.expressions.Expression.literal
+import org.maplibre.android.style.expressions.Expression.switchCase
 import org.maplibre.android.style.layers.PropertyFactory.lineCap
 import org.maplibre.android.style.layers.PropertyFactory.lineColor
 import org.maplibre.android.style.layers.PropertyFactory.lineJoin
@@ -110,7 +113,12 @@ private class RelvenMapHost(
                 lineColor(get("color")), lineWidth(5.0f), lineCap("round"), lineJoin("round")))
         loadedStyle.addLayer(
             CircleLayer("relven-activity-route-markers", markerSourceId).withProperties(
-                circleColor(get("color")), circleRadius(7.0f),
+                circleColor(get("color")),
+                circleRadius(
+                    switchCase(
+                        eq(get("coincident"), true),
+                        switchCase(eq(get("kind"), "start"), literal(9.0f), literal(4.0f)),
+                        literal(7.0f))),
                 circleStrokeColor("#0A0F18"), circleStrokeWidth(2.0f)))
         fitRoute(map)
       }
@@ -171,11 +179,12 @@ private class RouteOnlyView(
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    if (route.size < 2) return
-    val minLat = route.minOf { it.latitude }
-    val maxLat = route.maxOf { it.latitude }
-    val minLon = route.minOf { it.longitude }
-    val maxLon = route.maxOf { it.longitude }
+    val validRoute = route.filter(RoutePoint::hasValidCoordinates)
+    if (validRoute.size < 2) return
+    val minLat = validRoute.minOf { it.latitude }
+    val maxLat = validRoute.maxOf { it.latitude }
+    val minLon = validRoute.minOf { it.longitude }
+    val maxLon = validRoute.maxOf { it.longitude }
     val pad = dp(context, 32).toFloat()
     val width = (this.width - pad * 2).coerceAtLeast(1f)
     val height = (this.height - pad * 2).coerceAtLeast(1f)
@@ -188,6 +197,7 @@ private class RouteOnlyView(
     for (index in 1 until route.size) {
       val before = route[index - 1]
       val after = route[index]
+      if (!before.hasValidCoordinates() || !after.hasValidCoordinates()) continue
       if (before.lap != after.lap || before.segment != after.segment) continue
       paint.color = routeMetricColor(selectedMetric, selectedMetric.value(after, before), range).toColorInt()
       val startX = pad + ((before.longitude - minLon) * longitudeScale).toFloat() * scale
@@ -196,16 +206,22 @@ private class RouteOnlyView(
       val endY = height + pad - (after.latitude - minLat).toFloat() * scale
       canvas.drawLine(startX, startY, endX, endY, paint)
     }
-    val markerRadius = dp(context, 6).toFloat()
-    listOf(route.first(), route.last()).forEachIndexed { index, point ->
+    val coincidentEndpoints =
+        validRoute.first().latitude == validRoute.last().latitude &&
+            validRoute.first().longitude == validRoute.last().longitude
+    listOf(validRoute.first(), validRoute.last()).forEachIndexed { index, point ->
       val x = pad + ((point.longitude - minLon) * longitudeScale).toFloat() * scale
       val y = height + pad - (point.latitude - minLat).toFloat() * scale
+      val markerRadius =
+          dp(context, if (coincidentEndpoints) (if (index == 0) 9 else 4) else 6).toFloat()
       paint.style = Paint.Style.FILL
       paint.color = (if (index == 0) "#28A875" else "#FF5A1F").toColorInt()
       canvas.drawCircle(x, y, markerRadius, paint)
       paint.style = Paint.Style.STROKE
       paint.color = "#0A0F18".toColorInt()
+      paint.strokeWidth = dp(context, 2).toFloat()
       canvas.drawCircle(x, y, markerRadius, paint)
+      paint.strokeWidth = dp(context, 6).toFloat()
     }
   }
 }

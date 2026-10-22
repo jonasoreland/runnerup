@@ -110,13 +110,17 @@ internal fun buildRouteMarkersGeoJson(route: List<RoutePoint>): String {
       listOf(
           Triple(validPoints.first(), "start", "#28A875"),
           Triple(validPoints.last(), "finish", "#FF5A1F"))
+  val coincidentEndpoints =
+      validPoints.first().latitude == validPoints.last().latitude &&
+          validPoints.first().longitude == validPoints.last().longitude
   return buildString {
     append("{\"type\":\"FeatureCollection\",\"features\":[")
     markers.forEachIndexed { index, (point, kind, color) ->
       if (index > 0) append(',')
       append("{\"type\":\"Feature\",\"properties\":{\"kind\":\"")
       append(kind).append("\",\"color\":\"").append(color)
-      append("\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
+      append("\",\"coincident\":").append(coincidentEndpoints)
+      append("},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
       append(number(point.longitude)).append(',').append(number(point.latitude))
       append("]}}")
     }
@@ -124,7 +128,7 @@ internal fun buildRouteMarkersGeoJson(route: List<RoutePoint>): String {
   }
 }
 
-private fun RoutePoint.hasValidCoordinates(): Boolean =
+internal fun RoutePoint.hasValidCoordinates(): Boolean =
     latitude.isFinite() && longitude.isFinite() && latitude in -90.0..90.0 && longitude in -180.0..180.0
 
 private fun number(value: Double): String = String.format(Locale.US, "%.7f", value)
