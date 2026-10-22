@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="plan_library_title">Dina planer</string>
+    <string name="plan_library_subtitle">Planera och hantera din träning.</string>
+    <string name="plan_library_calendar_empty">Inga pass är planerade den här månaden. Importera en plan eller skapa en med AI för att lägga till pass i kalendern.</string>
+    <string name="plan_library_create_ai">Skapa en plan med AI</string>
+    <string name="plan_library_create_ai_help">Kopiera instruktionerna i Plan Kit, beskriv planen du vill ha för din AI-assistent och importera sedan planfilen som skapas.</string>
+    <string name="plan_library_import">Importera plan</string>
+    <string name="plan_library_saved">Sparade planer</string>
+    <string name="plan_library_no_saved">Du har inga sparade planer ännu. Importera en planfil eller skapa en med AI.</string>
+    <string name="plan_library_active">Aktiv</string>
+    <string name="plan_library_activate">Använd den här planen</string>
+    <string name="plan_library_clear">Rensa aktiv plan</string>
+    <string name="plan_library_calendar">Öppna kalendern</string>
+    <string name="plan_library_import_title">Granska plan</string>
+    <string name="plan_library_save">Spara plan</string>
+    <string name="plan_library_cancel">Avbryt</string>
+    <string name="plan_library_loading">Läser in planer…</string>
+    <string name="plan_library_error">Det gick inte att läsa in sparade planer. Försök igen.</string>
+    <string name="plan_library_retry">Försök igen</string>
+    <string name="plan_library_import_error">Det gick inte att importera planen. Kontrollera att det är en giltig Relven-plan i JSON-format.</string>
+    <string name="plan_library_import_success">Planen har sparats. Välj ”Använd den här planen” när du vill aktivera den.</string>
+    <string name="plan_library_active_success">Aktiv plan har uppdaterats.</string>
+    <string name="plan_library_ai_copied">Plan Kit-instruktionerna har kopierats. Klistra in dem i din AI-assistent och importera sedan dess JSON-plan.</string>
+    <string name="plan_library_ai_error">Det gick inte att öppna Plan Kit-instruktionerna.</string>
+    <string name="plan_library_busy">Arbetar…</string>
+    <string name="plan_library_counts">%1$d pass · %2$d träningsdagar · %3$d vilodagar</string>
     <string name="setup_workouts_empty">Inga sparade pass ännu. Skapa ett under Hantera träningspass.</string>
     <string name="setup_invalid_time">Ange tiden som mm:ss eller tt:mm:ss.</string>
     <string name="setup_invalid_number">Ange ett tal större än noll.</string>

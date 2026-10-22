@@ -73,7 +73,7 @@ internal fun PlanCalendarScreen(
     completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit = {},
-    onOpenWorkoutManager: () -> Unit,
+    onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
@@ -90,7 +90,7 @@ internal fun PlanCalendarScreen(
             title = stringResource(R.string.No_active_plan),
             body = stringResource(R.string.Plan_calendar_no_active_plan_hint),
             action = stringResource(R.string.Plan_calendar_open_library),
-            onAction = onOpenWorkoutManager)
+            onAction = onOpenPlanLibrary)
     ActivePlanLoadState.Unavailable ->
         PlanCalendarMessage(stringResource(R.string.Today_plan_unavailable))
     is ActivePlanLoadState.Loaded ->
@@ -101,7 +101,7 @@ internal fun PlanCalendarScreen(
             completedStrengthSessions,
             onStartStrength,
             onViewStrengthCompletion,
-            onOpenWorkoutManager,
+            onOpenPlanLibrary,
             onReschedule,
             onAddWorkout,
             onAddRest,
@@ -121,7 +121,7 @@ private fun LoadedPlanCalendar(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
-    onOpenWorkoutManager: () -> Unit,
+    onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
     onAddWorkout: (String, String) -> Unit,
     onAddRest: (String) -> Unit,
@@ -224,6 +224,11 @@ private fun LoadedPlanCalendar(
             color = RelvenColors.MutedText,
             fontSize = 14.sp,
             modifier = Modifier.weight(1f))
+        TextButton(
+            onClick = onOpenPlanLibrary,
+            enabled = revisionStatus !is PlanRevisionStatus.Saving) {
+          Text(stringResource(org.runnerup.R.string.plan_library_saved))
+        }
         TextButton(
             onClick = {
               editedPlanName = plan.name()

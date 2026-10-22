@@ -1,5 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="plan_library_title">Your plans</string>
+    <string name="plan_library_subtitle">Plan, organize, and manage your training.</string>
+    <string name="plan_library_calendar_empty">No sessions scheduled this month. Import a plan or create one with AI to add workouts to your calendar.</string>
+    <string name="plan_library_create_ai">Create a plan with AI</string>
+    <string name="plan_library_create_ai_help">Copy the Plan Kit instructions, describe the plan you want in your AI assistant, then import the plan file it creates.</string>
+    <string name="plan_library_import">Import plan</string>
+    <string name="plan_library_saved">Saved plans</string>
+    <string name="plan_library_no_saved">No saved plans yet. Import a plan file or create one with AI.</string>
+    <string name="plan_library_active">Active</string>
+    <string name="plan_library_activate">Use this plan</string>
+    <string name="plan_library_clear">Clear active plan</string>
+    <string name="plan_library_calendar">Open calendar</string>
+    <string name="plan_library_import_title">Review plan</string>
+    <string name="plan_library_save">Save plan</string>
+    <string name="plan_library_cancel">Cancel</string>
+    <string name="plan_library_loading">Loading plans…</string>
+    <string name="plan_library_error">Could not load saved plans. Try again.</string>
+    <string name="plan_library_retry">Try again</string>
+    <string name="plan_library_import_error">Could not import this plan. Check that it is a valid Relven plan JSON file.</string>
+    <string name="plan_library_import_success">Plan saved. Choose “Use this plan” when you want to make it active.</string>
+    <string name="plan_library_active_success">Active plan updated.</string>
+    <string name="plan_library_ai_copied">Plan Kit instructions copied. Paste them into your AI assistant, then import its JSON plan.</string>
+    <string name="plan_library_ai_error">Could not open the Plan Kit instructions.</string>
+    <string name="plan_library_busy">Working…</string>
+    <string name="plan_library_counts">%1$d workouts · %2$d training days · %3$d rest days</string>
     <string name="route_color_by">Color route by</string>
     <string name="route_selector_description">%1$s: %2$s</string>
     <string name="route_metric_pace">Pace (min/km)</string>
