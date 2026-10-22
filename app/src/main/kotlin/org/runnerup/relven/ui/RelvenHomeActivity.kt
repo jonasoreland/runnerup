@@ -308,6 +308,8 @@ class RelvenHomeActivity : FragmentActivity() {
             onCreatePlanWithAi = ::copyPlanKitInstructions,
             onActivatePlan = ::activateSavedPlan,
             onClearActivePlan = ::clearActivePlan,
+            onArchivePlan = ::archiveSavedPlan,
+            onRestoreArchivedPlan = ::restoreArchivedPlan,
             onOpenPlanLibrary = { planLibraryOpen = true },
             onOpenPlanCalendar = { planLibraryOpen = false },
             onOpenHistory = {
@@ -471,7 +473,11 @@ class RelvenHomeActivity : FragmentActivity() {
         runCatching {
           val plans = RelvenPlanStore.list(applicationContext)
           val active = RelvenPlanStore.activePlan(applicationContext)
-          PlanLibraryState(loading = false, plans = plans, activePlanId = active?.id())
+          PlanLibraryState(
+              loading = false,
+              plans = plans,
+              activePlanId = active?.id(),
+              archivedRootPlanIds = RelvenPlanStore.archivedPlanRootIds(applicationContext))
         }
       }
       planLibraryState = result.getOrElse {
@@ -557,6 +563,39 @@ class RelvenHomeActivity : FragmentActivity() {
           onFailure = { error ->
             Log.w("RelvenHome", "Could not clear active plan", error)
             planLibraryMessage = getString(R.string.plan_library_error)
+          })
+    }
+  }
+
+  private fun archiveSavedPlan(rootPlanId: String) {
+    setSavedPlanArchived(rootPlanId, archived = true)
+  }
+
+  private fun restoreArchivedPlan(rootPlanId: String) {
+    setSavedPlanArchived(rootPlanId, archived = false)
+  }
+
+  private fun setSavedPlanArchived(rootPlanId: String, archived: Boolean) {
+    if (planLibraryBusy) return
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          if (archived) RelvenPlanStore.archivePlan(applicationContext, rootPlanId)
+          else RelvenPlanStore.restoreArchivedPlan(applicationContext, rootPlanId)
+        }
+      }
+      planLibraryBusy = false
+      result.fold(
+          onSuccess = {
+            loadPlanLibrary()
+            planLibraryMessage = getString(
+                if (archived) R.string.plan_library_archive_success
+                else R.string.plan_library_restore_success)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not update saved plan archive state", error)
+            planLibraryMessage = getString(R.string.plan_library_archive_error)
           })
     }
   }
@@ -1372,6 +1411,8 @@ private fun RelvenHome(
     onCreatePlanWithAi: () -> Unit,
     onActivatePlan: (RelvenPlanImporter.Plan) -> Unit,
     onClearActivePlan: () -> Unit,
+    onArchivePlan: (String) -> Unit,
+    onRestoreArchivedPlan: (String) -> Unit,
     onOpenPlanLibrary: () -> Unit,
     onOpenPlanCalendar: () -> Unit,
     startFragmentManager: FragmentManager,
@@ -1559,6 +1600,8 @@ private fun RelvenHome(
             onRetryPendingActivation = onRetryPlanActivation,
             onActivate = onActivatePlan,
             onClearActive = onClearActivePlan,
+            onArchive = onArchivePlan,
+            onRestore = onRestoreArchivedPlan,
             onOpenCalendar = onOpenPlanCalendar)
       } else {
         PlanCalendarScreen(

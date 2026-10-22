@@ -48,4 +48,36 @@ class PlanLibraryPreviewTest {
   fun noPlanIsPreviewedWhenTheLibraryIsEmpty() {
     assertNull(libraryPreviewPlan(emptyList(), null, null))
   }
+
+  @Test
+  fun planRevisionsAreGroupedWithActiveRevisionPromotedAndHistoryPreserved() {
+    val original = plan("root", "Running plan")
+    val revisionOne = org.runnerup.workout.RelvenPlanRevision.rename(original, "Renamed", "rev-1")
+    val revisionTwo = org.runnerup.workout.RelvenPlanRevision.rename(revisionOne, "Latest", "rev-2")
+    val other = plan("other", "Other plan")
+
+    val groups = groupSavedPlans(
+        listOf(original, revisionOne, revisionTwo, other),
+        activePlanId = revisionOne.id(),
+        archivedRootPlanIds = setOf(other.id()))
+    val rootGroup = groups.first { it.rootPlanId == original.id() }
+    val archivedGroup = groups.first { it.rootPlanId == other.id() }
+
+    assertEquals(revisionOne.id(), rootGroup.displayPlan.id())
+    assertEquals(listOf(2, 1, 0), rootGroup.revisions.map { it.revisionNumber() })
+    assertEquals(true, rootGroup.isActive)
+    assertEquals(false, rootGroup.archived)
+    assertEquals(true, archivedGroup.archived)
+  }
+
+  @Test
+  fun latestRevisionIsTheDisplayWhenNoRevisionIsActive() {
+    val original = plan("root", "Running plan")
+    val revision = org.runnerup.workout.RelvenPlanRevision.rename(original, "Updated", "rev-1")
+
+    val group = groupSavedPlans(listOf(original, revision), null, emptySet()).single()
+
+    assertEquals(revision.id(), group.displayPlan.id())
+    assertEquals(false, group.isActive)
+  }
 }

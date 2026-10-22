@@ -51,6 +51,11 @@ public class RelvenPlanStoreTest {
   public void setUp() throws Exception {
     context = RuntimeEnvironment.getApplication();
     RelvenPlanStore.clearActivePlan(context);
+    context
+        .getSharedPreferences("relven-plan-state", Context.MODE_PRIVATE)
+        .edit()
+        .remove("archived_plan_root_ids")
+        .commit();
     directory = context.getDir("relven-plans", Context.MODE_PRIVATE);
     File[] existing = directory.listFiles();
     if (existing != null) {
@@ -149,6 +154,54 @@ public class RelvenPlanStoreTest {
 
     assertNull(RelvenPlanStore.activePlan(context));
     assertEquals(1, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void archivesAndRestoresEveryRevisionByRootWithoutDeletingSavedPlans() throws Exception {
+    RelvenPlanImporter.Plan original = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, original);
+    RelvenPlanStore.activate(context, original);
+    RelvenPlanImporter.Plan revision =
+        RelvenPlanStore.renameActivePlan(context, original, "Updated plan");
+    RelvenPlanStore.clearActivePlan(context);
+
+    RelvenPlanStore.archivePlan(context, original.rootPlanId());
+
+    assertEquals(2, RelvenPlanStore.list(context).size());
+    assertEquals(
+        java.util.Set.of(original.rootPlanId()), RelvenPlanStore.archivedPlanRootIds(context));
+    assertEquals(revision.id(), RelvenPlanStore.list(context).get(1).id());
+
+    RelvenPlanStore.restoreArchivedPlan(context, original.rootPlanId());
+
+    assertTrue(RelvenPlanStore.archivedPlanRootIds(context).isEmpty());
+    assertEquals(2, RelvenPlanStore.list(context).size());
+  }
+
+  @Test
+  public void cannotArchiveTheActivePlanOrAnUnknownPlan() throws Exception {
+    RelvenPlanImporter.Plan plan = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, plan);
+    RelvenPlanStore.activate(context, plan);
+
+    assertThrows(
+        java.io.IOException.class, () -> RelvenPlanStore.archivePlan(context, plan.rootPlanId()));
+    assertThrows(
+        java.io.IOException.class, () -> RelvenPlanStore.archivePlan(context, "unknown-plan"));
+    assertTrue(RelvenPlanStore.archivedPlanRootIds(context).isEmpty());
+    assertEquals(plan.id(), RelvenPlanStore.activePlan(context).id());
+  }
+
+  @Test
+  public void activatingAnArchivedPlanRestoresItToTheSavedLibrary() throws Exception {
+    RelvenPlanImporter.Plan plan = RelvenPlanImporter.parse(JSON);
+    RelvenPlanStore.save(context, plan);
+    RelvenPlanStore.archivePlan(context, plan.rootPlanId());
+
+    RelvenPlanStore.activate(context, plan);
+
+    assertEquals(plan.id(), RelvenPlanStore.activePlan(context).id());
+    assertTrue(RelvenPlanStore.archivedPlanRootIds(context).isEmpty());
   }
 
   @Test
