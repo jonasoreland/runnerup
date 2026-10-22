@@ -51,4 +51,56 @@ class ActivityRouteDataTest {
     assertFalse(RouteMetric.HEART_RATE.isAvailable(route))
     assertTrue(RouteMetric.PACE.isAvailable(route))
   }
+
+  @Test
+  fun standardMetricUsesRelvenOrangeAndNeedsTwoRoutePoints() {
+    val route =
+        listOf(
+            RoutePoint(59.0, 18.0, 1, 0.0, 0.0),
+            RoutePoint(59.1, 18.1, 1, 60.0, 200.0),
+            RoutePoint(59.2, 18.2, 1, 120.0, 400.0))
+
+    assertFalse(RouteMetric.STANDARD.isAvailable(route.take(1)))
+    assertTrue(RouteMetric.STANDARD.isAvailable(route))
+    assertFalse(
+        RouteMetric.STANDARD.isAvailable(
+            route.mapIndexed { index, point -> point.copy(segment = index) }))
+    assertEquals("#FF5A1F", routeMetricColor(RouteMetric.STANDARD, null, null))
+    assertTrue(buildRouteGeoJson(route, RouteMetric.STANDARD).contains("\"color\":\"#FF5A1F\""))
+  }
+
+  @Test
+  fun emitsDistinctStartAndFinishRouteMarkers() {
+    val route =
+        listOf(
+            RoutePoint(59.0, 18.0, 1, 0.0, 0.0),
+            RoutePoint(59.1, 18.1, 1, 60.0, 200.0),
+            RoutePoint(59.2, 18.2, 1, 120.0, 400.0))
+
+    val markers = buildRouteMarkersGeoJson(route)
+
+    assertTrue(markers.contains("\"kind\":\"start\""))
+    assertTrue(markers.contains("\"kind\":\"finish\""))
+    assertTrue(markers.contains("[18.0000000,59.0000000]"))
+    assertTrue(markers.contains("[18.2000000,59.2000000]"))
+    assertEquals(2, "\"type\":\"Feature\"".toRegex().findAll(markers).count())
+  }
+
+  @Test
+  fun routeMarkersSkipInvalidCoordinatesAndRequireTwoPoints() {
+    val route =
+        listOf(
+            RoutePoint(Double.NaN, 18.0, 1, 0.0, 0.0),
+            RoutePoint(59.1, 18.1, 1, 60.0, 200.0),
+            RoutePoint(59.2, 18.2, 1, 120.0, 400.0),
+            RoutePoint(91.0, 18.3, 1, 180.0, 600.0))
+
+    val markers = buildRouteMarkersGeoJson(route)
+
+    assertTrue(markers.contains("[18.1000000,59.1000000]"))
+    assertTrue(markers.contains("[18.2000000,59.2000000]"))
+    assertEquals(
+        "{\"type\":\"FeatureCollection\",\"features\":[]}",
+        buildRouteMarkersGeoJson(route.take(1)))
+  }
 }

@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
@@ -141,6 +142,21 @@ internal fun ActivityMapScreen(
             mapContent(Modifier.fillMaxSize(), state.route, selectedMetric)
           }
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+          RouteMapMarkerLegend(
+              color = Color(0xFF28A875),
+              label = stringResource(AppR.string.route_map_start))
+          RouteMapMarkerLegend(
+              color = Color(0xFFFF5A1F),
+              label = stringResource(AppR.string.route_map_finish))
+        }
+        Text(
+            stringResource(AppR.string.route_map_tile_privacy),
+            color = RelvenColors.MutedText,
+            fontSize = 11.sp)
         Button(
             onClick = { onOpenFullDetails(state.activity.id) },
             modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
@@ -158,10 +174,25 @@ internal fun ActivityMapScreen(
 }
 
 @Composable
+private fun RouteMapMarkerLegend(color: Color, label: String) {
+  Row(
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    Box(
+        Modifier.size(9.dp)
+            .clip(androidx.compose.foundation.shape.CircleShape)
+            .background(color))
+    Text(label, color = RelvenColors.MutedText, fontSize = 12.sp)
+  }
+}
+
+@Composable
 private fun RouteMetricLegend(route: List<RoutePoint>, metric: RouteMetric) {
   val range = remember(route, metric) { routeMetricRange(route, metric) }
   val text =
-      if (range == null) stringResource(AppR.string.route_metric_unavailable)
+      if (metric == RouteMetric.STANDARD)
+        stringResource(AppR.string.route_metric_standard_description)
+      else if (range == null) stringResource(AppR.string.route_metric_unavailable)
       else
           stringResource(
               AppR.string.route_legend_range,
@@ -173,6 +204,7 @@ private fun RouteMetricLegend(route: List<RoutePoint>, metric: RouteMetric) {
 
 private fun RouteMetric.labelResource(): Int =
     when (this) {
+      RouteMetric.STANDARD -> AppR.string.route_metric_standard
       RouteMetric.PACE -> AppR.string.route_metric_pace
       RouteMetric.HEART_RATE -> AppR.string.route_metric_heart_rate
       RouteMetric.SPEED -> AppR.string.route_metric_speed

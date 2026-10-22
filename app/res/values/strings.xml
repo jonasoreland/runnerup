@@ -130,6 +130,12 @@
     </plurals>
     <string name="route_color_by">Color route by</string>
     <string name="route_selector_description">%1$s: %2$s</string>
+    <string name="route_metric_standard">Standard</string>
+    <string name="route_metric_standard_description">Relven orange · no metric coloring</string>
+    <string name="route_map_start">Start</string>
+    <string name="route_map_finish">Finish</string>
+    <string name="route_map_recenter">Fit route in map</string>
+    <string name="route_map_tile_privacy">Map tiles are requested from OpenFreeMap while this map is displayed. The provider can infer the area being viewed.</string>
     <string name="route_metric_pace">Pace (min/km)</string>
     <string name="route_metric_heart_rate">Heart rate (bpm)</string>
     <string name="route_metric_speed">Speed (km/h)</string>
