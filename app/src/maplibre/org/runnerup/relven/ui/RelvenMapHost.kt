@@ -4,10 +4,12 @@ import android.content.Context
 import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.graphics.toColorInt
 import org.maplibre.android.MapLibre
@@ -17,6 +19,14 @@ import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.LineLayer
+import org.maplibre.android.style.layers.CircleLayer
+import org.maplibre.android.style.layers.PropertyFactory.circleColor
+import org.maplibre.android.style.layers.PropertyFactory.circleRadius
+import org.maplibre.android.style.layers.PropertyFactory.circleStrokeColor
+import org.maplibre.android.style.layers.PropertyFactory.circleStrokeWidth
+import org.maplibre.android.style.expressions.Expression.eq
+import org.maplibre.android.style.expressions.Expression.literal
+import org.maplibre.android.style.expressions.Expression.switchCase
 import org.maplibre.android.style.layers.PropertyFactory.lineCap
 import org.maplibre.android.style.layers.PropertyFactory.lineColor
 import org.maplibre.android.style.layers.PropertyFactory.lineJoin
@@ -24,6 +34,7 @@ import org.maplibre.android.style.layers.PropertyFactory.lineWidth
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.android.style.expressions.Expression.get
 import org.runnerup.common.R
+import org.runnerup.R as AppR
 
 internal fun createActivityMapHost(
     context: Context,
@@ -39,11 +50,26 @@ private class RelvenMapHost(
   private val mapView = MapView(context)
   private val fallback = RouteOnlyView(context, route, metric)
   private val sourceId = "relven-activity-route-source"
+  private val markerSourceId = "relven-activity-route-markers"
   private var style: Style? = null
+  private var mapInstance: org.maplibre.android.maps.MapLibreMap? = null
   private var currentMetric = metric
   private val failedLoadingListener = MapView.OnDidFailLoadingMapListener {
     mapView.visibility = View.GONE
     fallback.visibility = View.VISIBLE
+    recenterButton.visibility = View.GONE
+  }
+  private val recenterButton = ImageButton(context).apply {
+    setImageResource(android.R.drawable.ic_menu_mylocation)
+    setColorFilter("#FF5A1F".toColorInt())
+    background = GradientDrawable().apply {
+      shape = GradientDrawable.OVAL
+      setColor("#172131".toColorInt())
+      setStroke(dp(context, 1), "#FF5A1F".toColorInt())
+    }
+    setPadding(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12))
+    contentDescription = context.getString(AppR.string.route_map_recenter)
+    setOnClickListener { mapInstance?.let(::fitRoute) }
   }
 
   override val view: View = root
@@ -54,6 +80,11 @@ private class RelvenMapHost(
     fallback.visibility = View.GONE
     root.addView(mapView, FrameLayout.LayoutParams(-1, -1))
     root.addView(fallback, FrameLayout.LayoutParams(-1, -1))
+    root.addView(
+        recenterButton,
+        FrameLayout.LayoutParams(dp(context, 48), dp(context, 48), Gravity.END or Gravity.TOP).apply {
+          setMargins(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12))
+        })
     val attribution =
         TextView(context).apply {
           text = context.getString(R.string.route_map_attribution)
@@ -71,13 +102,24 @@ private class RelvenMapHost(
     mapView.addOnDidFailLoadingMapListener(failedLoadingListener)
     mapView.onCreate(null)
     mapView.getMapAsync { map ->
+      mapInstance = map
       map.uiSettings.isCompassEnabled = true
       map.setStyle(STYLE_URL) { loadedStyle ->
         style = loadedStyle
         loadedStyle.addSource(GeoJsonSource(sourceId, buildRouteGeoJson(route, currentMetric)))
+        loadedStyle.addSource(GeoJsonSource(markerSourceId, buildRouteMarkersGeoJson(route)))
         loadedStyle.addLayer(
             LineLayer("relven-activity-route-line", sourceId).withProperties(
                 lineColor(get("color")), lineWidth(5.0f), lineCap("round"), lineJoin("round")))
+        loadedStyle.addLayer(
+            CircleLayer("relven-activity-route-markers", markerSourceId).withProperties(
+                circleColor(get("color")),
+                circleRadius(
+                    switchCase(
+                        eq(get("coincident"), true),
+                        switchCase(eq(get("kind"), "start"), literal(9.0f), literal(4.0f)),
+                        literal(7.0f))),
+                circleStrokeColor("#0A0F18"), circleStrokeWidth(2.0f)))
         fitRoute(map)
       }
     }
@@ -108,6 +150,7 @@ private class RelvenMapHost(
   override fun onDestroy() {
     mapView.removeOnDidFailLoadingMapListener(failedLoadingListener)
     mapView.onDestroy()
+    mapInstance = null
     style = null
   }
 
@@ -136,11 +179,12 @@ private class RouteOnlyView(
 
   override fun onDraw(canvas: Canvas) {
     super.onDraw(canvas)
-    if (route.size < 2) return
-    val minLat = route.minOf { it.latitude }
-    val maxLat = route.maxOf { it.latitude }
-    val minLon = route.minOf { it.longitude }
-    val maxLon = route.maxOf { it.longitude }
+    val validRoute = route.filter(RoutePoint::hasValidCoordinates)
+    if (validRoute.size < 2) return
+    val minLat = validRoute.minOf { it.latitude }
+    val maxLat = validRoute.maxOf { it.latitude }
+    val minLon = validRoute.minOf { it.longitude }
+    val maxLon = validRoute.maxOf { it.longitude }
     val pad = dp(context, 32).toFloat()
     val width = (this.width - pad * 2).coerceAtLeast(1f)
     val height = (this.height - pad * 2).coerceAtLeast(1f)
@@ -153,13 +197,31 @@ private class RouteOnlyView(
     for (index in 1 until route.size) {
       val before = route[index - 1]
       val after = route[index]
+      if (!before.hasValidCoordinates() || !after.hasValidCoordinates()) continue
       if (before.lap != after.lap || before.segment != after.segment) continue
-      paint.color = routeMetricColor(selectedMetric.value(after, before), range).toColorInt()
+      paint.color = routeMetricColor(selectedMetric, selectedMetric.value(after, before), range).toColorInt()
       val startX = pad + ((before.longitude - minLon) * longitudeScale).toFloat() * scale
       val startY = height + pad - (before.latitude - minLat).toFloat() * scale
       val endX = pad + ((after.longitude - minLon) * longitudeScale).toFloat() * scale
       val endY = height + pad - (after.latitude - minLat).toFloat() * scale
       canvas.drawLine(startX, startY, endX, endY, paint)
+    }
+    val coincidentEndpoints =
+        validRoute.first().latitude == validRoute.last().latitude &&
+            validRoute.first().longitude == validRoute.last().longitude
+    listOf(validRoute.first(), validRoute.last()).forEachIndexed { index, point ->
+      val x = pad + ((point.longitude - minLon) * longitudeScale).toFloat() * scale
+      val y = height + pad - (point.latitude - minLat).toFloat() * scale
+      val markerRadius =
+          dp(context, if (coincidentEndpoints) (if (index == 0) 9 else 4) else 6).toFloat()
+      paint.style = Paint.Style.FILL
+      paint.color = (if (index == 0) "#28A875" else "#FF5A1F").toColorInt()
+      canvas.drawCircle(x, y, markerRadius, paint)
+      paint.style = Paint.Style.STROKE
+      paint.color = "#0A0F18".toColorInt()
+      paint.strokeWidth = dp(context, 2).toFloat()
+      canvas.drawCircle(x, y, markerRadius, paint)
+      paint.strokeWidth = dp(context, 6).toFloat()
     }
   }
 }

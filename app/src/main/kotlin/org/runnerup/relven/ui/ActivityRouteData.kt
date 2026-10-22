@@ -14,6 +14,7 @@ internal data class RoutePoint(
     val segment: Int = lap)
 
 internal enum class RouteMetric {
+  STANDARD,
   PACE,
   HEART_RATE,
   SPEED,
@@ -21,6 +22,7 @@ internal enum class RouteMetric {
 
   fun value(point: RoutePoint, previous: RoutePoint? = null): Double? =
       when (this) {
+        STANDARD -> null
         PACE -> {
           if (previous == null || point.lap != previous.lap || point.segment != previous.segment) null
           else {
@@ -35,9 +37,19 @@ internal enum class RouteMetric {
       }
 
   fun isAvailable(route: List<RoutePoint>): Boolean =
-      route.indices.count { index ->
-        value(route[index], route.getOrNull(index - 1))?.isFinite() == true
-      } >= 2
+      when (this) {
+        STANDARD ->
+            route.zipWithNext().any { (before, after) ->
+              before.lap == after.lap &&
+                  before.segment == after.segment &&
+                  before.hasValidCoordinates() &&
+                  after.hasValidCoordinates()
+            }
+        else ->
+            route.indices.count { index ->
+              value(route[index], route.getOrNull(index - 1))?.isFinite() == true
+            } >= 2
+      }
 }
 
 internal data class RouteMetricRange(val minimum: Double, val maximum: Double, val count: Int)
@@ -60,6 +72,12 @@ internal fun routeMetricColor(value: Double?, range: RouteMetricRange?): String 
   return colors[index]
 }
 
+internal fun routeMetricColor(
+    metric: RouteMetric,
+    value: Double?,
+    range: RouteMetricRange?): String =
+    if (metric == RouteMetric.STANDARD) "#FF5A1F" else routeMetricColor(value, range)
+
 /** Emits a GeoJSON FeatureCollection with one colored line feature per adjacent same-lap pair. */
 internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): String {
   val range = routeMetricRange(route, metric)
@@ -74,7 +92,7 @@ internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): St
       firstFeature = false
       val value = metric.value(after, before)
       append("{\"type\":\"Feature\",\"properties\":{\"color\":\"")
-      append(routeMetricColor(value, range))
+      append(routeMetricColor(metric, value, range))
       append("\"},\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[")
       append(number(before.longitude)).append(',').append(number(before.latitude)).append("],[")
       append(number(after.longitude)).append(',').append(number(after.latitude))
@@ -83,5 +101,34 @@ internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): St
     append("]}")
   }
 }
+
+/** Emits one start and one finish marker, even when a closed route shares their coordinates. */
+internal fun buildRouteMarkersGeoJson(route: List<RoutePoint>): String {
+  val validPoints = route.filter(RoutePoint::hasValidCoordinates)
+  if (validPoints.size < 2) return "{\"type\":\"FeatureCollection\",\"features\":[]}"
+  val markers =
+      listOf(
+          Triple(validPoints.first(), "start", "#28A875"),
+          Triple(validPoints.last(), "finish", "#FF5A1F"))
+  val coincidentEndpoints =
+      validPoints.first().latitude == validPoints.last().latitude &&
+          validPoints.first().longitude == validPoints.last().longitude
+  return buildString {
+    append("{\"type\":\"FeatureCollection\",\"features\":[")
+    markers.forEachIndexed { index, (point, kind, color) ->
+      if (index > 0) append(',')
+      append("{\"type\":\"Feature\",\"properties\":{\"kind\":\"")
+      append(kind).append("\",\"color\":\"").append(color)
+      append("\",\"coincident\":").append(coincidentEndpoints)
+      append("},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
+      append(number(point.longitude)).append(',').append(number(point.latitude))
+      append("]}}")
+    }
+    append("]}")
+  }
+}
+
+internal fun RoutePoint.hasValidCoordinates(): Boolean =
+    latitude.isFinite() && longitude.isFinite() && latitude in -90.0..90.0 && longitude in -180.0..180.0
 
 private fun number(value: Double): String = String.format(Locale.US, "%.7f", value)
