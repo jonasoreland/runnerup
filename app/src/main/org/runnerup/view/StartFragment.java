@@ -44,9 +44,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -77,10 +75,10 @@ import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
-import org.runnerup.relven.ui.StartReadinessCompose;
 import org.runnerup.relven.ui.StartReadinessItem;
 import org.runnerup.relven.ui.StartReadinessPresentation;
 import org.runnerup.relven.ui.StartReadinessPresentationFactory;
+import org.runnerup.relven.ui.StartScreenChromeCompose;
 import org.runnerup.relven.ui.StartWorkoutTabsCompose;
 import org.runnerup.relven.ui.StartWorkoutTabsStateHolder;
 import org.runnerup.relven.ui.WorkoutSetupChoice;
@@ -139,9 +137,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private WorkoutSetupStateHolder workoutSetupState;
   private View startButton = null;
 
-  private ImageView expandIcon = null;
-  private Button gpsEnable = null;
   private ComposeView readinessComposeView = null;
+  private boolean gpsActionVisible;
+  private String gpsActionLabel = "";
   private StartReadinessItem gpsSummaryItem;
   private StartReadinessItem gpsDetailsItem;
   private StartReadinessItem heartRateItem;
@@ -209,12 +207,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     gpsSearchingState = new GpsSearchingState(context, this);
     gpsBoundState = new GpsBoundState(context);
 
-    ClassicSpinner sportSpinner = view.findViewById(R.id.sport_spinner);
+    ComposeView sportToolbar = view.findViewById(R.id.start_toolbar);
+    ClassicSpinner sportSpinner =
+        (ClassicSpinner)
+            LayoutInflater.from(context)
+                .inflate(R.layout.start_sport_spinner_component, sportToolbar, false);
     ArrayAdapter<CharSequence> adapter =
         new ArrayAdapter<>(
-            context, R.layout.actionbar_spinner, Sport.getStringArray(getResources()));
-    adapter.setDropDownViewResource(R.layout.actionbar_dropdown_spinner);
+            context, R.layout.start_sport_spinner, Sport.getStringArray(getResources()));
+    adapter.setDropDownViewResource(R.layout.start_sport_dropdown_spinner);
     sportSpinner.setAdapter(adapter);
+    sportSpinner.setPopupBackgroundResource(R.color.relven_surface);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     sportSpinner.setViewSelection(
         prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
@@ -222,14 +225,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     startButton = view.findViewById(R.id.start_button);
     startButton.setOnClickListener(startButtonClick);
 
-    expandIcon = view.findViewById(R.id.expand_icon);
-    readinessComposeView = view.findViewById(R.id.status_frame);
-    StartReadinessCompose.install(readinessComposeView);
-
-    gpsEnable = view.findViewById(R.id.gps_enable_button);
-    gpsEnable.setOnClickListener(gpsEnableClick);
-
-    view.findViewById(R.id.status_layout).setOnClickListener(v -> toggleStatusDetails());
+    StartScreenChromeCompose.installHeader(sportToolbar, sportSpinner);
+    readinessComposeView = view.findViewById(R.id.status_layout);
+    StartScreenChromeCompose.installReadiness(readinessComposeView);
 
     workoutTabsView = view.findViewById(R.id.start_tabs);
     int selectedTabPosition =
@@ -997,10 +995,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     float bottomMargin;
 
     if (statusDetailsShown) {
-      expandIcon.setImageResource(R.drawable.ic_expand_down_white_24dp);
       bottomMargin = getResources().getDimension(R.dimen.fab_margin_68row);
     } else {
-      expandIcon.setImageResource(R.drawable.ic_expand_up_white_24dp);
       bottomMargin = getResources().getDimension(R.dimen.fab_margin_44row);
     }
 
@@ -1044,7 +1040,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             wearOsItem,
             statusDetailsShown,
             noDevicesMessage);
-    StartReadinessCompose.setContent(readinessComposeView, presentation);
+    StartScreenChromeCompose.setReadiness(
+        readinessComposeView,
+        presentation,
+        statusDetailsShown,
+        gpsActionVisible,
+        gpsActionLabel,
+        () -> toggleStatusDetails(),
+        () -> gpsEnableClick.onClick(null));
   }
 
   private void updateStartButtonView() {
@@ -1090,17 +1093,17 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
       //
       if (sportWithoutGps) {
-        gpsEnable.setText(org.runnerup.common.R.string.Start_tracker);
+        gpsActionLabel = getString(org.runnerup.common.R.string.Start_tracker);
       } else if (mGpsStatus.isEnabled()) {
-        gpsEnable.setText(org.runnerup.common.R.string.Start_GPS);
+        gpsActionLabel = getString(org.runnerup.common.R.string.Start_GPS);
       } else {
-        gpsEnable.setText(org.runnerup.common.R.string.Enable_GPS);
+        gpsActionLabel = getString(org.runnerup.common.R.string.Enable_GPS);
       }
-      gpsEnable.setVisibility(View.VISIBLE);
+      gpsActionVisible = true;
       return;
     } while (false);
 
-    gpsEnable.setVisibility(View.GONE);
+    gpsActionVisible = false;
   }
 
   private void updateGPSView() {

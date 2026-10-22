@@ -9,4 +9,6 @@
     <string name="setup_rest_distance">Återhämtningens sträcka</string>
     <string name="setup_interval_structure">Intervallupplägg</string>
     <string name="setup_steps">Träningspassets steg</string>
+    <string name="start_readiness_expanded">Utökad</string>
+    <string name="start_readiness_collapsed">Hopfälld</string>
 </resources>

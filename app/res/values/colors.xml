@@ -16,6 +16,8 @@
   -->
 <resources>
     <color name="relven_splash_background">#0A0F18</color>
+    <color name="relven_surface">#172131</color>
+    <color name="relven_orange">#FF5A1F</color>
     <color name="subsectionBg">#212121</color>
     <color name="colorPrimaryDark">#003366</color>
     <color name="colorPrimary">#004282</color>
