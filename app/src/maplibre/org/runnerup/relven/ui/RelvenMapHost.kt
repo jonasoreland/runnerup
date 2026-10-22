@@ -144,7 +144,9 @@ private class RouteOnlyView(
     val pad = dp(context, 32).toFloat()
     val width = (this.width - pad * 2).coerceAtLeast(1f)
     val height = (this.height - pad * 2).coerceAtLeast(1f)
-    val lonRange = (maxLon - minLon).takeIf { it > 0.0 } ?: 1e-6
+    val averageLatitudeRadians = Math.toRadians((minLat + maxLat) / 2.0)
+    val longitudeScale = kotlin.math.cos(averageLatitudeRadians).coerceAtLeast(0.01)
+    val lonRange = ((maxLon - minLon) * longitudeScale).takeIf { it > 0.0 } ?: 1e-6
     val latRange = (maxLat - minLat).takeIf { it > 0.0 } ?: 1e-6
     val scale = minOf(width / lonRange.toFloat(), height / latRange.toFloat())
     val range = routeMetricRange(route, selectedMetric)
@@ -153,9 +155,9 @@ private class RouteOnlyView(
       val after = route[index]
       if (before.lap != after.lap || before.segment != after.segment) continue
       paint.color = routeMetricColor(selectedMetric.value(after, before), range).toColorInt()
-      val startX = pad + (before.longitude - minLon).toFloat() * scale
+      val startX = pad + ((before.longitude - minLon) * longitudeScale).toFloat() * scale
       val startY = height + pad - (before.latitude - minLat).toFloat() * scale
-      val endX = pad + (after.longitude - minLon).toFloat() * scale
+      val endX = pad + ((after.longitude - minLon) * longitudeScale).toFloat() * scale
       val endY = height + pad - (after.latitude - minLat).toFloat() * scale
       canvas.drawLine(startX, startY, endX, endY, paint)
     }
