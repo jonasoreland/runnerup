@@ -1,6 +1,7 @@
 package org.runnerup.relven.ui
 
 import android.database.sqlite.SQLiteDatabase
+import android.location.Location
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.workout.Sport
 
@@ -39,7 +40,7 @@ internal sealed interface ActivityMapLoadState {
 
   data object Unavailable : ActivityMapLoadState
 
-  data class Loaded(val activity: HistoryActivityDetails) : ActivityMapLoadState
+  data class Loaded(val activity: HistoryActivityDetails, val route: List<RoutePoint>) : ActivityMapLoadState
 }
 
 internal fun readActivityMapState(
@@ -49,8 +50,96 @@ internal fun readActivityMapState(
 ): ActivityMapLoadState {
   if (!mapEnabled) return ActivityMapLoadState.Unavailable
   val activity = readHistoryActivityDetails(database, activityId) ?: return ActivityMapLoadState.NotFound
-  return if (activityHasMapRoute(activity, mapEnabled = true)) ActivityMapLoadState.Loaded(activity)
+  if (!activityHasMapRoute(activity, mapEnabled = true)) return ActivityMapLoadState.RouteUnavailable
+  val route = readActivityRoute(database, activityId)
+  return if (route.size >= 2) ActivityMapLoadState.Loaded(activity, route)
   else ActivityMapLoadState.RouteUnavailable
+}
+
+internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List<RoutePoint> {
+  val points = mutableListOf<RoutePoint>()
+  var segment = 0
+  var previousLatitude: Double? = null
+  var previousLongitude: Double? = null
+  var previousTime: Long? = null
+  var cumulativeDistance = 0.0
+  var cumulativeElapsedMillis = 0L
+  val columns =
+      arrayOf(
+          DB.LOCATION.TYPE,
+          DB.LOCATION.LATITUDE,
+          DB.LOCATION.LONGITUDE,
+          DB.LOCATION.ALTITUDE,
+          DB.LOCATION.TIME,
+          DB.LOCATION.LAP,
+          DB.LOCATION.HR,
+          DB.LOCATION.SPEED)
+  database
+      .query(
+          DB.LOCATION.TABLE,
+          columns,
+          "${DB.LOCATION.ACTIVITY} = ?",
+          arrayOf(activityId.toString()),
+          null,
+          null,
+          "_id ASC")
+      .use { cursor ->
+        val typeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TYPE)
+        val latitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LATITUDE)
+        val longitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LONGITUDE)
+        val altitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ALTITUDE)
+        val timeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TIME)
+        val lapIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LAP)
+        val heartRateIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.HR)
+        val speedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.SPEED)
+        while (cursor.moveToNext()) {
+          val type = cursor.getInt(typeIndex)
+          val latitude = cursor.getDouble(latitudeIndex)
+          val longitude = cursor.getDouble(longitudeIndex)
+          val time = if (cursor.isNull(timeIndex)) null else cursor.getLong(timeIndex)
+          if (type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_RESUME) segment++
+          if (!latitude.isFinite() || latitude !in -90.0..90.0 || !longitude.isFinite() || longitude !in -180.0..180.0) {
+            previousLatitude = null
+            previousLongitude = null
+            previousTime = time
+            continue
+          }
+          val priorLatitude = previousLatitude
+          val priorLongitude = previousLongitude
+          val priorTime = previousTime
+          if ((type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_GPS) &&
+              priorLatitude != null && priorLongitude != null && time != null && priorTime != null) {
+            val delta = FloatArray(1)
+            Location.distanceBetween(
+                priorLatitude, priorLongitude, latitude, longitude, delta)
+            cumulativeDistance += delta[0].toDouble()
+            cumulativeElapsedMillis += (time - priorTime).coerceAtLeast(0L)
+          }
+          if (type == DB.LOCATION.TYPE_GPS) {
+            points +=
+                RoutePoint(
+                    latitude = latitude,
+                    longitude = longitude,
+                    lap = if (cursor.isNull(lapIndex)) 0 else cursor.getInt(lapIndex),
+                    elapsedSeconds = cumulativeElapsedMillis / 1000.0,
+                    distanceMeters = cumulativeDistance,
+                    heartRate =
+                        if (cursor.isNull(heartRateIndex)) null
+                        else cursor.getInt(heartRateIndex).takeIf { it > 0 }?.toDouble(),
+                    speedMetersPerSecond =
+                        if (cursor.isNull(speedIndex)) null
+                        else cursor.getDouble(speedIndex).takeIf { it.isFinite() && it >= 0.0 },
+                    elevationMeters =
+                        if (cursor.isNull(altitudeIndex)) null
+                        else cursor.getDouble(altitudeIndex).takeIf { it.isFinite() },
+                    segment = segment)
+          }
+          previousLatitude = latitude
+          previousLongitude = longitude
+          previousTime = time
+        }
+      }
+  return points
 }
 
 internal fun activityHasMapRoute(activity: HistoryActivityDetails, mapEnabled: Boolean): Boolean =

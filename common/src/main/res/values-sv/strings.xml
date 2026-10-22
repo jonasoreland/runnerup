@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="route_map_attribution">© OpenStreetMap contributors · © OpenMapTiles · OpenFreeMap</string>
+  <string name="route_map_attribution_description">Kartdata från OpenStreetMap contributors; kartstil från OpenMapTiles och OpenFreeMap</string>
   <string name="route_color_by">Färglägg rutten efter</string>
   <string name="route_selector_description">%1$s: %2$s</string>
   <string name="route_metric_pace">Tempo (min/km)</string>

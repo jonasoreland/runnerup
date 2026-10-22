@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Map
@@ -27,6 +31,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +54,7 @@ import java.text.DateFormat
 import java.util.Date
 import org.runnerup.common.R
 import org.runnerup.util.Formatter
+import org.runnerup.R as AppR
 import org.runnerup.workout.Sport
 
 internal sealed interface ActivityMapScreenState {
@@ -57,7 +66,7 @@ internal sealed interface ActivityMapScreenState {
 
   data object Unavailable : ActivityMapScreenState
 
-  data class Loaded(val activity: HistoryActivityDetails) : ActivityMapScreenState
+  data class Loaded(val activity: HistoryActivityDetails, val route: List<RoutePoint>) : ActivityMapScreenState
 }
 
 @Composable
@@ -67,7 +76,8 @@ internal fun ActivityMapScreen(
     onRetry: () -> Unit,
     onOpenFullDetails: (Long) -> Unit,
     activityId: Long,
-    mapContent: @Composable (Modifier) -> Unit) {
+    mapContent: @Composable (Modifier, List<RoutePoint>, RouteMetric) -> Unit) {
+  var selectedMetric by remember { mutableStateOf(RouteMetric.PACE) }
   BackHandler(onBack = onBack)
   Column(
       modifier =
@@ -87,6 +97,7 @@ internal fun ActivityMapScreen(
       }
       Text(
           stringResource(R.string.Activity_map_title),
+          color = RelvenColors.Text,
           fontSize = 22.sp,
           fontWeight = FontWeight.Bold,
           modifier = Modifier.semantics { heading() })
@@ -110,12 +121,24 @@ internal fun ActivityMapScreen(
               onRetry = onRetry)
       is ActivityMapScreenState.Loaded -> {
         ActivityMapSummary(state.activity)
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+          RouteMetric.entries.forEach { metric ->
+            FilterChip(
+                selected = selectedMetric == metric,
+                onClick = { selectedMetric = metric },
+                label = { Text(stringResource(metric.labelResource())) })
+          }
+        }
+        RouteMetricLegend(state.route, selectedMetric)
         Surface(
             modifier = Modifier.fillMaxWidth().weight(1f),
             color = RelvenColors.Surface,
             shape = RoundedCornerShape(20.dp)) {
           Box(Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp))) {
-            mapContent(Modifier.fillMaxSize())
+            mapContent(Modifier.fillMaxSize(), state.route, selectedMetric)
           }
         }
         Button(
@@ -135,6 +158,28 @@ internal fun ActivityMapScreen(
 }
 
 @Composable
+private fun RouteMetricLegend(route: List<RoutePoint>, metric: RouteMetric) {
+  val range = remember(route, metric) { routeMetricRange(route, metric) }
+  val text =
+      if (range == null) stringResource(AppR.string.route_metric_unavailable)
+      else
+          stringResource(
+              AppR.string.route_legend_range,
+              stringResource(metric.labelResource()),
+              range.minimum,
+              range.maximum)
+  Text(text, color = RelvenColors.MutedText, fontSize = 12.sp)
+}
+
+private fun RouteMetric.labelResource(): Int =
+    when (this) {
+      RouteMetric.PACE -> AppR.string.route_metric_pace
+      RouteMetric.HEART_RATE -> AppR.string.route_metric_heart_rate
+      RouteMetric.SPEED -> AppR.string.route_metric_speed
+      RouteMetric.ELEVATION -> AppR.string.route_metric_elevation
+    }
+
+@Composable
 private fun ActivityMapSummary(activity: HistoryActivityDetails) {
   val context = LocalContext.current
   val formatter = androidx.compose.runtime.remember(context, LocalConfiguration.current) {
@@ -149,6 +194,7 @@ private fun ActivityMapSummary(activity: HistoryActivityDetails) {
   Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
     Text(
         Sport.textOf(LocalResources.current, activity.sport),
+        color = RelvenColors.Text,
         fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold,
         maxLines = 1,
@@ -158,12 +204,14 @@ private fun ActivityMapSummary(activity: HistoryActivityDetails) {
       measurements.distanceMeters?.let {
         Text(
             formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong()),
+            color = RelvenColors.Text,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium)
       }
       measurements.durationSeconds?.let {
         Text(
             formatter.formatElapsedTime(Formatter.Format.TXT_LONG, it),
+            color = RelvenColors.Text,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium)
       }
