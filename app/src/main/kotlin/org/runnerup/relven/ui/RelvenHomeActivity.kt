@@ -77,11 +77,14 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.runnerup.BuildConfig
+import org.runnerup.R
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
+import org.runnerup.workout.RelvenPlanImport
+import org.runnerup.workout.RelvenPlanKit
+import org.runnerup.workout.RelvenPlanImporter
 import org.runnerup.workout.Sport
-import org.runnerup.view.MainLayout
 import org.runnerup.view.StartFragment
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
@@ -109,6 +112,7 @@ import org.runnerup.relven.strength.StrengthSessionStore
 class RelvenHomeActivity : FragmentActivity() {
   companion object {
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
+    private const val PLAN_LIBRARY_OPEN_STATE = "relven.home.plan_library_open"
     private const val HISTORY_ACTIVITY_DETAIL_STATE = "relven.home.history_activity_detail"
   }
 
@@ -118,6 +122,10 @@ class RelvenHomeActivity : FragmentActivity() {
   private var sessionStatus by mutableStateOf<HomeSessionStatus?>(null)
   private var todayPlan by mutableStateOf<TodayPlanState>(TodayPlanState.Loading)
   private var activePlanState by mutableStateOf<ActivePlanLoadState>(ActivePlanLoadState.Loading)
+  private var planLibraryState by mutableStateOf(PlanLibraryState())
+  private var planLibraryMessage by mutableStateOf<String?>(null)
+  private var pendingPlanImport by mutableStateOf<PendingPlanImport?>(null)
+  private var planLibraryBusy by mutableStateOf(false)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
   private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
   private var exerciseCollectionMessage by mutableStateOf<String?>(null)
@@ -127,6 +135,7 @@ class RelvenHomeActivity : FragmentActivity() {
   private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
+  private var planLibraryOpen by mutableStateOf(false)
   private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
   private var activityHistoryRequest = 0
   private var activityDetailId by mutableStateOf<Long?>(null)
@@ -147,6 +156,7 @@ class RelvenHomeActivity : FragmentActivity() {
   private lateinit var activityDocumentPicker: ActivityResultLauncher<Array<String>>
   private lateinit var exerciseCollectionImportPicker: ActivityResultLauncher<Array<String>>
   private lateinit var exerciseCollectionExportPicker: ActivityResultLauncher<String>
+  private lateinit var planImportPicker: ActivityResultLauncher<Array<String>>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -163,7 +173,11 @@ class RelvenHomeActivity : FragmentActivity() {
         registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
           if (uri != null) exportExerciseCollection(uri) else exerciseCollectionBusy = false
         }
+    planImportPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+      if (uri != null) readPlanImport(uri)
+    }
     destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
+    planLibraryOpen = savedInstanceState?.getBoolean(PLAN_LIBRARY_OPEN_STATE) ?: false
     activityDetailId =
         savedInstanceState?.takeIf { it.containsKey(HISTORY_ACTIVITY_DETAIL_STATE) }
             ?.getLong(HISTORY_ACTIVITY_DETAIL_STATE)
@@ -193,6 +207,23 @@ class RelvenHomeActivity : FragmentActivity() {
               text = { Text(message) },
               confirmButton = {
                 TextButton(onClick = { exerciseCollectionMessage = null }) {
+                  Text(stringResource(org.runnerup.common.R.string.Home_import_ok))
+                }
+              })
+        }
+        pendingPlanImport?.let { pending ->
+          PlanImportReviewDialog(
+              pending = pending,
+              busy = planLibraryBusy,
+              onDismiss = { pendingPlanImport = null },
+              onSave = { savePlanImport(pending) })
+        }
+        planLibraryMessage?.let { message ->
+          AlertDialog(
+              onDismissRequest = { planLibraryMessage = null },
+              text = { Text(message) },
+              confirmButton = {
+                TextButton(onClick = { planLibraryMessage = null }) {
                   Text(stringResource(org.runnerup.common.R.string.Home_import_ok))
                 }
               })
@@ -240,7 +271,16 @@ class RelvenHomeActivity : FragmentActivity() {
             onOpenActivity = ::openHistoryActivity,
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { selectHomeDestination(HomeDestination.Start) },
-            onOpenWorkoutManager = { startActivity(Intent(this, MainLayout::class.java)) },
+            planLibraryState = planLibraryState,
+            planLibraryOpen = planLibraryOpen,
+            planLibraryBusy = planLibraryBusy,
+            onRetryPlanLibrary = ::loadPlanLibrary,
+            onImportPlan = { planImportPicker.launch(arrayOf("application/json", "text/json", "*/*")) },
+            onCreatePlanWithAi = ::copyPlanKitInstructions,
+            onActivatePlan = ::activateSavedPlan,
+            onClearActivePlan = ::clearActivePlan,
+            onOpenPlanLibrary = { planLibraryOpen = true },
+            onOpenPlanCalendar = { planLibraryOpen = false },
             onOpenHistory = {
               selectHomeDestination(HomeDestination.History)
             },
@@ -284,6 +324,7 @@ class RelvenHomeActivity : FragmentActivity() {
 
   override fun onSaveInstanceState(outState: Bundle) {
     outState.putString(HOME_DESTINATION_STATE, destination.name)
+    outState.putBoolean(PLAN_LIBRARY_OPEN_STATE, planLibraryOpen)
     activityDetailId?.let { outState.putLong(HISTORY_ACTIVITY_DETAIL_STATE, it) }
     super.onSaveInstanceState(outState)
   }
@@ -298,6 +339,8 @@ class RelvenHomeActivity : FragmentActivity() {
     }
     todayPlan = TodayPlanState.Loading
     activePlanState = ActivePlanLoadState.Loading
+    planLibraryState = PlanLibraryState()
+    loadPlanLibrary()
     planRevisionStatus = PlanRevisionStatus.Idle
     currentTimeMillis = System.currentTimeMillis()
     progressState = ProgressLoadState.Loading
@@ -365,6 +408,7 @@ class RelvenHomeActivity : FragmentActivity() {
   }
 
   private fun selectHomeDestination(next: HomeDestination) {
+    if (next != HomeDestination.Plan) planLibraryOpen = false
     if (destination == HomeDestination.Start && next != HomeDestination.Start) {
       val startFragment =
           supportFragmentManager.findFragmentById(org.runnerup.R.id.relven_start_fragment_container)
@@ -383,6 +427,137 @@ class RelvenHomeActivity : FragmentActivity() {
   private fun openHistoryActivity(id: Long) {
     activityDetailId = id
     loadHistoryActivityDetail(id)
+  }
+
+  private fun loadPlanLibrary() {
+    planLibraryState = PlanLibraryState()
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          val plans = RelvenPlanStore.list(applicationContext)
+          val active = RelvenPlanStore.activePlan(applicationContext)
+          PlanLibraryState(loading = false, plans = plans, activePlanId = active?.id())
+        }
+      }
+      planLibraryState = result.getOrElse {
+        Log.w("RelvenHome", "Could not load saved plans", it)
+        PlanLibraryState(loading = false, unavailable = true)
+      }
+    }
+  }
+
+  private fun readPlanImport(uri: Uri) {
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          val source = contentResolver.openInputStream(uri).use { RelvenPlanImport.read(it) }
+          val plan = RelvenPlanStore.parse(applicationContext, source)
+          PendingPlanImport(plan, RelvenPlanImport.preview(plan))
+        }
+      }
+      planLibraryBusy = false
+      result.fold(
+          onSuccess = { pendingPlanImport = it },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not read plan import", error)
+            planLibraryMessage = getString(R.string.plan_library_import_error)
+          })
+    }
+  }
+
+  private fun savePlanImport(pending: PendingPlanImport) {
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching { RelvenPlanStore.save(applicationContext, pending.plan) }
+      }
+      planLibraryBusy = false
+      pendingPlanImport = null
+      result.fold(
+          onSuccess = {
+            loadPlanLibrary()
+            planLibraryMessage = getString(R.string.plan_library_import_success)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not save imported plan", error)
+            planLibraryMessage = getString(R.string.plan_library_import_error)
+          })
+    }
+  }
+
+  private fun activateSavedPlan(plan: RelvenPlanImporter.Plan) {
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching { RelvenPlanStore.activate(applicationContext, plan) }
+      }
+      planLibraryBusy = false
+      result.fold(
+          onSuccess = {
+            loadPlanLibrary()
+            refreshActivePlan()
+            planLibraryMessage = getString(R.string.plan_library_active_success)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not activate plan", error)
+            planLibraryMessage = getString(R.string.plan_library_error)
+          })
+    }
+  }
+
+  private fun clearActivePlan() {
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching { RelvenPlanStore.clearActivePlan(applicationContext) }
+      }
+      planLibraryBusy = false
+      result.fold(
+          onSuccess = {
+            loadPlanLibrary()
+            refreshActivePlan()
+            planLibraryMessage = getString(R.string.plan_library_active_success)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not clear active plan", error)
+            planLibraryMessage = getString(R.string.plan_library_error)
+          })
+    }
+  }
+
+  private fun refreshActivePlan() {
+    lifecycleScope.launch {
+      val plan = withContext(Dispatchers.IO) { runCatching { loadActivePlan() }.getOrNull() }
+          ?: ActivePlanLoadState.Unavailable
+      activePlanState = plan
+      todayPlan = when (plan) {
+        ActivePlanLoadState.Loading -> TodayPlanState.Loading
+        ActivePlanLoadState.NoActivePlan -> TodayPlanState.NoActivePlan
+        ActivePlanLoadState.Unavailable -> TodayPlanState.Unavailable
+        is ActivePlanLoadState.Loaded -> todayPlanState(plan.plan, System.currentTimeMillis())
+      }
+    }
+  }
+
+  private fun copyPlanKitInstructions() {
+    planLibraryBusy = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching { RelvenPlanKit.readInstructions(applicationContext) }
+      }
+      planLibraryBusy = false
+      result.fold(
+          onSuccess = { instructions ->
+            val clipboard = getSystemService(android.content.ClipboardManager::class.java)
+            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Relven Plan Kit", instructions))
+            planLibraryMessage = getString(R.string.plan_library_ai_copied)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not read Plan Kit instructions", error)
+            planLibraryMessage = getString(R.string.plan_library_ai_error)
+          })
+    }
   }
 
   private fun closeHistoryActivityDetail() {
@@ -1033,6 +1208,16 @@ private fun RelvenHome(
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
     destination: HomeDestination,
+    planLibraryState: PlanLibraryState,
+    planLibraryOpen: Boolean,
+    planLibraryBusy: Boolean,
+    onRetryPlanLibrary: () -> Unit,
+    onImportPlan: () -> Unit,
+    onCreatePlanWithAi: () -> Unit,
+    onActivatePlan: (RelvenPlanImporter.Plan) -> Unit,
+    onClearActivePlan: () -> Unit,
+    onOpenPlanLibrary: () -> Unit,
+    onOpenPlanCalendar: () -> Unit,
     startFragmentManager: FragmentManager,
     onSelectDestination: (HomeDestination) -> Unit,
     onRetryProgress: () -> Unit,
@@ -1042,7 +1227,6 @@ private fun RelvenHome(
     onOpenActivity: (Long) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
-    onOpenWorkoutManager: () -> Unit,
     onOpenHistory: () -> Unit,
     onReschedulePlan: (String, String) -> Unit,
     onAddWorkoutToPlan: (String, String) -> Unit,
@@ -1195,22 +1379,35 @@ private fun RelvenHome(
           onRetry = onRetryProgress,
           onBack = { onSelectDestination(HomeDestination.Today) })
     } else if (destination == HomeDestination.Plan) {
-      PlanCalendarScreen(
-          loadState = activePlanState,
-          revisionStatus = planRevisionStatus,
-          nowMillis = currentTimeMillis,
-          completedStrengthSessions = completedStrengthSessions,
-          onStartStrength = onStartStrength,
-          onViewStrengthCompletion = onViewStrengthCompletion,
-          onOpenWorkoutManager = onOpenWorkoutManager,
-          onReschedule = onReschedulePlan,
-          onAddWorkout = onAddWorkoutToPlan,
-          onAddRest = onAddRestToPlan,
-          onRemoveEntry = onRemovePlanEntry,
-          onRenamePlan = onRenamePlan,
-          onRenameWorkout = onRenameWorkout,
-          onEditRunningEnd = onEditRunningEnd,
-          onEditRunningTarget = onEditRunningTarget)
+      if (planLibraryOpen || activePlanState !is ActivePlanLoadState.Loaded) {
+        PlanLibraryScreen(
+            state = planLibraryState,
+            currentTimeMillis = currentTimeMillis,
+            busy = planLibraryBusy,
+            onRetry = onRetryPlanLibrary,
+            onImport = onImportPlan,
+            onCreateWithAi = onCreatePlanWithAi,
+            onActivate = onActivatePlan,
+            onClearActive = onClearActivePlan,
+            onOpenCalendar = onOpenPlanCalendar)
+      } else {
+        PlanCalendarScreen(
+            loadState = activePlanState,
+            revisionStatus = planRevisionStatus,
+            nowMillis = currentTimeMillis,
+            completedStrengthSessions = completedStrengthSessions,
+            onStartStrength = onStartStrength,
+            onViewStrengthCompletion = onViewStrengthCompletion,
+            onOpenPlanLibrary = onOpenPlanLibrary,
+            onReschedule = onReschedulePlan,
+            onAddWorkout = onAddWorkoutToPlan,
+            onAddRest = onAddRestToPlan,
+            onRemoveEntry = onRemovePlanEntry,
+            onRenamePlan = onRenamePlan,
+            onRenameWorkout = onRenameWorkout,
+            onEditRunningEnd = onEditRunningEnd,
+            onEditRunningTarget = onEditRunningTarget)
+      }
     } else {
       ExerciseCatalogScreen(
           exerciseCatalogLoadState,
