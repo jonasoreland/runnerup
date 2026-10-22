@@ -167,4 +167,12 @@
     <string name="setup_steps">Workout steps</string>
     <string name="start_readiness_expanded">Expanded</string>
     <string name="start_readiness_collapsed">Collapsed</string>
+    <string name="workout_manager_back">Back to workout setup</string>
+    <string name="workout_manager_title">Workout library</string>
+    <string name="workout_manager_subtitle">Choose a saved workout to edit, share, or remove.</string>
+    <string name="workout_manager_search">Search saved workouts</string>
+    <string name="workout_manager_empty_title">No saved workouts</string>
+    <string name="workout_manager_empty_body">Create a workout or import a file to get started.</string>
+    <string name="workout_manager_no_search_results">No matching workouts</string>
+    <string name="workout_manager_no_search_results_body">Try a shorter or different search.</string>
 </resources>

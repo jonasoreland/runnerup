@@ -14,4 +14,10 @@ class HomeDestinationTest {
     assertEquals(HomeDestination.History, homeDestinationFromSaved("History"))
     assertEquals(HomeDestination.Today, homeDestinationFromSaved("unknown"))
   }
+
+  @Test
+  fun explicitPlanLibraryRequestOpensPlanEvenWhenAnotherDestinationWasSaved() {
+    assertEquals(HomeDestination.Plan, homeDestinationFromRequest("Start", openPlanLibrary = true))
+    assertEquals(HomeDestination.Start, homeDestinationFromRequest("Start", openPlanLibrary = false))
+  }
 }

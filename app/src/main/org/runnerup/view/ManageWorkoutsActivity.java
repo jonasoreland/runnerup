@@ -30,19 +30,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -50,7 +40,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
@@ -63,8 +52,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.runnerup.R;
@@ -72,14 +59,16 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.content.WorkoutFileProvider;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
-import org.runnerup.export.SyncManager.Callback;
 import org.runnerup.export.SyncManager.WorkoutRef;
-import org.runnerup.export.Synchronizer.Status;
-import org.runnerup.relven.ui.ManageWorkoutActionsCompose;
 import org.runnerup.relven.ui.ManageWorkoutActionsStateHolder;
+import org.runnerup.relven.ui.ManageWorkoutsScreenCompose;
+import org.runnerup.relven.ui.RelvenHomeActivity;
 import org.runnerup.relven.ui.WorkoutManagerActionCallbacks;
+import org.runnerup.relven.ui.WorkoutManagerEntry;
+import org.runnerup.relven.ui.WorkoutManagerScreenStateHolder;
+import org.runnerup.relven.ui.WorkoutManagerSelectionCallback;
+import org.runnerup.relven.ui.WorkoutManagerSource;
 import org.runnerup.util.ProgressDialogCompat;
-import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.RelvenPlanImport;
 import org.runnerup.workout.RelvenPlanImporter;
 import org.runnerup.workout.RelvenPlanKit;
@@ -98,16 +87,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   public static final String WORKOUT_NAME = "";
   public static final String WORKOUT_EDIT_MODE = "workout_edit_mode";
 
-  private final HashSet<WorkoutRef> pendingWorkouts = new HashSet<>();
   private final ArrayList<ContentValues> providers = new ArrayList<>();
   private final HashMap<String, ArrayList<WorkoutRef>> workouts = new HashMap<>();
-  private WorkoutAccountListAdapter adapter = null;
 
-  private final HashSet<String> loadedProviders = new HashSet<>();
-
-  private boolean uploading = false;
-  private CompoundButton currentlySelectedWorkout = null;
+  private WorkoutRef currentlySelectedWorkout = null;
   private ManageWorkoutActionsStateHolder workoutActionsState;
+  private WorkoutManagerScreenStateHolder workoutManagerState;
 
   private SyncManager syncManager = null;
   private ProgressDialogCompat planProgress;
@@ -147,18 +132,14 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     WindowCompat.getInsetsController(window, window.getDecorView())
         .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.manage_workouts);
+    ComposeView workoutManagerView = new ComposeView(this);
+    setContentView(workoutManagerView);
 
     PHONE_STRING = getResources().getString(org.runnerup.common.R.string.my_phone);
 
     mDB = DBHelper.getReadableDatabase(this);
     syncManager = new SyncManager(this);
     syncManager.setAuthLauncher(configureLauncher);
-    adapter = new WorkoutAccountListAdapter(this);
-    ExpandableListView list = findViewById(R.id.expandable_list_view);
-    list.setAdapter(adapter);
-
-    ComposeView workoutActionsView = findViewById(R.id.manage_button_table);
     workoutActionsState =
         new ManageWorkoutActionsStateHolder(
             new WorkoutManagerActionCallbacks() {
@@ -180,46 +161,48 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
               @Override
               public void viewPlans() {
-                showSavedPlans();
+                startActivity(
+                    RelvenHomeActivity.openPlanLibraryIntent(ManageWorkoutsActivity.this));
+                finish();
               }
 
               @Override
               public void share() {
-                shareButtonClick.onClick(workoutActionsView);
+                shareButtonClick.onClick(workoutManagerView);
               }
 
               @Override
               public void edit() {
-                editButtonClick.onClick(workoutActionsView);
+                editButtonClick.onClick(workoutManagerView);
               }
 
               @Override
               public void create() {
-                createButtonClick.onClick(workoutActionsView);
+                createButtonClick.onClick(workoutManagerView);
               }
 
               @Override
               public void delete() {
-                deleteButtonClick.onClick(workoutActionsView);
+                deleteButtonClick.onClick(workoutManagerView);
               }
             });
-    ManageWorkoutActionsCompose.install(workoutActionsView, workoutActionsState);
+    workoutManagerState =
+        new WorkoutManagerScreenStateHolder(
+            (WorkoutManagerSelectionCallback)
+                (sourceName, workoutName) -> selectWorkout(sourceName, workoutName));
+    ManageWorkoutsScreenCompose.install(
+        workoutManagerView, workoutManagerState, workoutActionsState, this::finish);
 
     handleButtons();
 
     requery();
     listLocal();
-    if (!list.getAdapter().isEmpty()) {
-      list.expandGroup(0);
-    }
 
     Uri data = getIntent().getData();
     if (data != null) {
       getIntent().setData(null);
       handleImportUri(data);
     }
-
-    ViewUtil.Insets(findViewById(R.id.manage_workouts_view), true);
 
     // launch home Activity (with FLAG_ACTIVITY_CLEAR_TOP)
   }
@@ -295,67 +278,6 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
             .setNegativeButton(
                 org.runnerup.common.R.string.Cancel, (ignored, which) -> ignored.dismiss());
     dialog.show();
-  }
-
-  private void showSavedPlan(RelvenPlanImporter.Plan plan, boolean isActive) {
-    if (isFinishing() || isDestroyed()) return;
-    AlertDialog.Builder builder =
-        new AlertDialog.Builder(this)
-            .setTitle(planDisplayName(plan))
-            .setMessage(RelvenPlanImport.preview(plan))
-            .setPositiveButton(
-                org.runnerup.common.R.string.Activate_plan, (dialog, which) -> activatePlan(plan))
-            .setNegativeButton(
-                org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss());
-    if (isActive) {
-      builder.setNeutralButton(
-          org.runnerup.common.R.string.Clear_active_plan, (dialog, which) -> clearActivePlan());
-    }
-    builder.show();
-  }
-
-  private void showSavedPlans() {
-    PLAN_IMPORT_EXECUTOR.execute(
-        () -> {
-          try {
-            List<RelvenPlanImporter.Plan> plans = RelvenPlanStore.list(getApplicationContext());
-            RelvenPlanImporter.Plan active = RelvenPlanStore.activePlan(getApplicationContext());
-            runOnUiThread(
-                () -> {
-                  if (isFinishing() || isDestroyed()) return;
-                  if (plans.isEmpty()) {
-                    Toast.makeText(
-                            this, org.runnerup.common.R.string.No_saved_plans, Toast.LENGTH_SHORT)
-                        .show();
-                    return;
-                  }
-                  String[] names =
-                      plans.stream()
-                          .map(
-                              plan ->
-                                  active != null && active.id().equals(plan.id())
-                                      ? getString(org.runnerup.common.R.string.Active_plan_marker)
-                                          + " "
-                                          + planDisplayName(plan)
-                                      : planDisplayName(plan))
-                          .toArray(String[]::new);
-                  new AlertDialog.Builder(this)
-                      .setTitle(org.runnerup.common.R.string.View_saved_plans)
-                      .setItems(
-                          names,
-                          (dialog, which) ->
-                              showSavedPlan(
-                                  plans.get(which),
-                                  active != null && active.id().equals(plans.get(which).id())))
-                      .setNegativeButton(
-                          org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())
-                      .show();
-                });
-          } catch (Exception error) {
-            Log.e(getClass().getName(), "Failed to read saved plans", error);
-            runOnUiThread(() -> showPlanImportError(error));
-          }
-        });
   }
 
   private void showPlanKitActions() {
@@ -645,62 +567,10 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
   private void handleButtons() {
     boolean canModifySelected = false;
     if (currentlySelectedWorkout != null) {
-      WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
-      canModifySelected = PHONE_STRING.contentEquals(selected.synchronizer());
+      canModifySelected = PHONE_STRING.contentEquals(currentlySelectedWorkout.synchronizer());
     }
     workoutActionsState.update(canModifySelected);
-  }
-
-  private void activatePlan(RelvenPlanImporter.Plan plan) {
-    showPlanProgress(org.runnerup.common.R.string.Activating_plan);
-    PLAN_IMPORT_EXECUTOR.execute(
-        () -> {
-          try {
-            RelvenPlanStore.activate(getApplicationContext(), plan);
-            runOnUiThread(
-                () -> {
-                  dismissPlanProgress();
-                  Toast.makeText(
-                          getApplicationContext(),
-                          org.runnerup.common.R.string.Plan_activated,
-                          Toast.LENGTH_LONG)
-                      .show();
-                });
-          } catch (Exception error) {
-            Log.e(getClass().getName(), "Failed to activate plan", error);
-            runOnUiThread(
-                () -> {
-                  dismissPlanProgress();
-                  showPlanImportError(error);
-                });
-          }
-        });
-  }
-
-  private void clearActivePlan() {
-    showPlanProgress(org.runnerup.common.R.string.Clearing_active_plan);
-    PLAN_IMPORT_EXECUTOR.execute(
-        () -> {
-          try {
-            RelvenPlanStore.clearActivePlan(getApplicationContext());
-            runOnUiThread(
-                () -> {
-                  dismissPlanProgress();
-                  Toast.makeText(
-                          getApplicationContext(),
-                          org.runnerup.common.R.string.Active_plan_cleared,
-                          Toast.LENGTH_LONG)
-                      .show();
-                });
-          } catch (Exception error) {
-            Log.e(getClass().getName(), "Failed to clear active plan", error);
-            runOnUiThread(
-                () -> {
-                  dismissPlanProgress();
-                  showPlanImportError(error);
-                });
-          }
-        });
+    refreshWorkoutManagerScreen();
   }
 
   private void listLocal() {
@@ -714,7 +584,14 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
 
     workouts.remove(PHONE_STRING);
     workouts.put(PHONE_STRING, newlist);
-    adapter.notifyDataSetChanged();
+    if (currentlySelectedWorkout != null) {
+      boolean stillExists =
+          newlist.stream()
+              .anyMatch(
+                  workout -> workout.workoutName().equals(currentlySelectedWorkout.workoutName()));
+      if (!stillExists) currentlySelectedWorkout = null;
+    }
+    handleButtons();
   }
 
   @Override
@@ -771,24 +648,43 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     //            }
     //        }
 
-    adapter.notifyDataSetChanged();
+    refreshWorkoutManagerScreen();
   }
 
-  interface Filter<T> {
-    boolean match(T t);
-  }
-
-  ArrayList<WorkoutRef> filter(List<WorkoutRef> list, Filter<WorkoutRef> f) {
-    ArrayList<WorkoutRef> newlist = new ArrayList<>();
-    return filter(list, newlist, f);
-  }
-
-  private ArrayList<WorkoutRef> filter(
-      List<WorkoutRef> list, ArrayList<WorkoutRef> newlist, Filter<WorkoutRef> f) {
-    for (WorkoutRef w : list) {
-      if (f.match(w)) newlist.add(w);
+  private void refreshWorkoutManagerScreen() {
+    ArrayList<WorkoutManagerSource> sources = new ArrayList<>();
+    for (ContentValues provider : providers) {
+      String sourceName = provider.getAsString(DB.ACCOUNT.NAME);
+      ArrayList<WorkoutRef> sourceWorkouts = workouts.get(sourceName);
+      if (sourceWorkouts == null) continue;
+      ArrayList<WorkoutManagerEntry> entries = new ArrayList<>();
+      for (WorkoutRef workout : sourceWorkouts) {
+        entries.add(new WorkoutManagerEntry(workout.workoutName()));
+      }
+      sources.add(new WorkoutManagerSource(sourceName, entries));
     }
-    return newlist;
+    String selectedKey =
+        currentlySelectedWorkout == null
+            ? null
+            : org.runnerup.relven.ui.WorkoutManagerScreenStateKt.workoutManagerSelectionKey(
+                currentlySelectedWorkout.synchronizer(), currentlySelectedWorkout.workoutName());
+    workoutManagerState.update(sources, selectedKey);
+  }
+
+  private void selectWorkout(String sourceName, String workoutName) {
+    currentlySelectedWorkout = null;
+    if (sourceName != null && workoutName != null) {
+      ArrayList<WorkoutRef> sourceWorkouts = workouts.get(sourceName);
+      if (sourceWorkouts != null) {
+        for (WorkoutRef workout : sourceWorkouts) {
+          if (workout.workoutName().equals(workoutName)) {
+            currentlySelectedWorkout = workout;
+            break;
+          }
+        }
+      }
+    }
+    handleButtons();
   }
 
   private final OnClickListener createButtonClick =
@@ -838,7 +734,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       v -> {
         if (currentlySelectedWorkout == null) return;
 
-        final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+        final WorkoutRef selected = currentlySelectedWorkout;
         new AlertDialog.Builder(ManageWorkoutsActivity.this)
             .setTitle(
                 getString(org.runnerup.common.R.string.Delete_workout)
@@ -873,25 +769,12 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
     listLocal();
   }
 
-  private final OnCheckedChangeListener onWorkoutChecked =
-      (arg0, isChecked) -> {
-        if (currentlySelectedWorkout != null) {
-          currentlySelectedWorkout.setChecked(false);
-        }
-        if (isChecked) {
-          currentlySelectedWorkout = arg0;
-        } else {
-          currentlySelectedWorkout = null;
-        }
-        handleButtons();
-      };
-
   private final OnClickListener shareButtonClick =
       v -> {
         if (currentlySelectedWorkout == null) return;
 
         final AppCompatActivity context = ManageWorkoutsActivity.this;
-        final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+        final WorkoutRef selected = currentlySelectedWorkout;
         final String name = selected.workoutName();
         final Intent intent = new Intent(Intent.ACTION_SEND);
 
@@ -913,7 +796,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       v -> {
         if (currentlySelectedWorkout == null) return;
 
-        final WorkoutRef selected = (WorkoutRef) currentlySelectedWorkout.getTag();
+        final WorkoutRef selected = currentlySelectedWorkout;
         final Intent intent = new Intent(ManageWorkoutsActivity.this, CreateAdvancedWorkout.class);
 
         intent.putExtra(WORKOUT_NAME, selected.workoutName());
@@ -928,179 +811,5 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
       syncManager.onActivityResult(requestCode, resultCode, data);
     }
     requery();
-  }
-
-  class WorkoutAccountListAdapter extends BaseExpandableListAdapter {
-
-    final Context context;
-
-    WorkoutAccountListAdapter(Context ctx) {
-      context = ctx;
-    }
-
-    String getProvider(int index) {
-      return providers.get(index).getAsString(DB.ACCOUNT.NAME);
-    }
-
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-      return workouts.get(getProvider(groupPosition)).get(childPosition);
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-      return 0;
-    }
-
-    @Override
-    public View getChildView(
-        int groupPosition, int childPosition, boolean isLastChild, View view, ViewGroup parent) {
-
-      if (!(view instanceof LinearLayout)) {
-        LayoutInflater infalInflater =
-            ContextCompat.getSystemService(context, LayoutInflater.class);
-        view = infalInflater.inflate(R.layout.manage_workouts_list_row, parent, false);
-      }
-
-      WorkoutRef workout = workouts.get(getProvider(groupPosition)).get(childPosition);
-      RadioButton cb = view.findViewById(R.id.download_workout_checkbox);
-
-      cb.setTag(workout);
-      cb.setChecked(
-          currentlySelectedWorkout != null && currentlySelectedWorkout.getTag() == workout);
-      cb.setOnCheckedChangeListener(onWorkoutChecked);
-      cb.setText(workout.workoutName());
-      return view;
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-      return workouts.get(getProvider(groupPosition)).size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-      return providers.get(groupPosition);
-    }
-
-    @Override
-    public int getGroupCount() {
-      return providers.size();
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-      return 0;
-    }
-
-    @Override
-    public View getGroupView(
-        int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-      if (convertView == null) {
-        LayoutInflater inflater =
-            (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertView = inflater.inflate(R.layout.manage_workouts_list_category, parent, false);
-      }
-
-      TextView categoryText = convertView.findViewById(R.id.category_text);
-      categoryText.setText(getProvider(groupPosition));
-
-      if (isExpanded)
-        categoryText.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_expand_up_white_24dp, 0);
-      else
-        categoryText.setCompoundDrawablesWithIntrinsicBounds(
-            0, 0, R.drawable.ic_expand_down_white_24dp, 0);
-
-      return convertView;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-      return false;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-      return false;
-    }
-
-    int saveGroupPosition;
-
-    @Override
-    public void onGroupExpanded(int groupPosition) {
-      String provider = getProvider(groupPosition);
-      if (PHONE_STRING.contentEquals(provider)) {
-        super.onGroupExpanded(groupPosition);
-        return;
-      }
-
-      // below is not supported by any current provider, so 'uploading'
-      // is not set (back while uploading would abort)
-      if (loadedProviders.contains(provider)) {
-        super.onGroupExpanded(groupPosition);
-        return;
-      }
-
-      uploading = true;
-      saveGroupPosition = groupPosition;
-
-      if (!syncManager.isConfigured(provider)) {
-        syncManager.connect(onSynchronizerConfiguredCallback, provider);
-      } else {
-        onSynchronizerConfiguredCallback.run(provider, Status.OK);
-      }
-    }
-
-    final Callback onSynchronizerConfiguredCallback =
-        new Callback() {
-          @Override
-          public void run(String synchronizerName, Status status) {
-            Log.i(getClass().getName(), "status: " + status);
-            if (status != Status.OK) {
-              uploading = false;
-              return;
-            }
-
-            ArrayList<WorkoutRef> list = workouts.get(synchronizerName);
-            list.clear();
-
-            HashSet<String> tmp = new HashSet<>();
-            tmp.add(synchronizerName);
-
-            syncManager.loadWorkoutList(list, onLoadWorkoutListCallback, tmp);
-          }
-        };
-
-    private void onGroupExpandedImpl() {
-      super.onGroupExpanded(saveGroupPosition);
-    }
-
-    private final Callback onLoadWorkoutListCallback =
-        new Callback() {
-
-          @Override
-          public void run(String synchronizerName, Status status) {
-            uploading = false;
-            if (status == Status.OK) {
-              loadedProviders.add(getProvider(saveGroupPosition));
-              adapter.notifyDataSetChanged();
-              onGroupExpandedImpl();
-            }
-          }
-        };
-
-    @Override
-    public void onGroupCollapsed(int groupPosition) {
-      super.onGroupCollapsed(groupPosition);
-      String provider = getProvider(groupPosition);
-      if (currentlySelectedWorkout != null) {
-        WorkoutRef ref = (WorkoutRef) currentlySelectedWorkout.getTag();
-        if (ref.synchronizer().contentEquals(provider)) {
-          currentlySelectedWorkout.setChecked(false);
-          currentlySelectedWorkout = null;
-        }
-      }
-    }
   }
 }

@@ -139,4 +139,12 @@
     <string name="setup_steps">Träningspassets steg</string>
     <string name="start_readiness_expanded">Utökad</string>
     <string name="start_readiness_collapsed">Hopfälld</string>
+    <string name="workout_manager_back">Tillbaka till träningsvyn</string>
+    <string name="workout_manager_title">Träningspass</string>
+    <string name="workout_manager_subtitle">Välj ett sparat pass för att redigera, dela eller ta bort det.</string>
+    <string name="workout_manager_search">Sök bland sparade pass</string>
+    <string name="workout_manager_empty_title">Inga sparade pass</string>
+    <string name="workout_manager_empty_body">Skapa ett pass eller importera en fil för att komma igång.</string>
+    <string name="workout_manager_no_search_results">Inga matchande pass</string>
+    <string name="workout_manager_no_search_results_body">Prova en kortare eller annan sökning.</string>
 </resources>
