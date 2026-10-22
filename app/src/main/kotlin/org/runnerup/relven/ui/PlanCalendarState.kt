@@ -13,7 +13,6 @@ internal data class PlanCalendarState(
     val monthLabel: String,
     val viewMode: PlanCalendarViewMode,
     val periodLabel: String,
-    val planName: String,
     val selectedDate: String,
     val selectedDateLabel: String,
     val todayDate: String,
@@ -25,6 +24,9 @@ internal enum class PlanCalendarViewMode {
   Week,
   Month
 }
+
+internal fun planCalendarHorizontalPaddingDp(screenWidthDp: Int): Int =
+    if (screenWidthDp <= 360) 12 else 24
 
 internal sealed interface ActivePlanLoadState {
   data object Loading : ActivePlanLoadState
@@ -190,7 +192,6 @@ internal fun planCalendarState(
       monthLabel = formattedMonth,
       viewMode = viewMode,
       periodLabel = periodLabel,
-      planName = plan.name(),
       selectedDate = formatDate(selected),
       selectedDateLabel =
           dateLabelFormatter.format(selected.time).replaceFirstChar { it.titlecase(locale) },

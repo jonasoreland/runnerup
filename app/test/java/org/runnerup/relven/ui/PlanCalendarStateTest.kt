@@ -13,6 +13,13 @@ import org.runnerup.relven.strength.StrengthSession
 
 class PlanCalendarStateTest {
   @Test
+  fun narrowCalendarUsesReducedSidePaddingWithoutChangingRegularLayout() {
+    assertEquals(12, planCalendarHorizontalPaddingDp(320))
+    assertEquals(12, planCalendarHorizontalPaddingDp(360))
+    assertEquals(24, planCalendarHorizontalPaddingDp(411))
+  }
+
+  @Test
   fun planLocalDateAdvancesAcrossMidnightInThePlanTimezone() {
     val beforeMidnight = Instant.parse("2026-10-22T21:59:00Z").toEpochMilli()
     val afterMidnight = Instant.parse("2026-10-22T22:01:00Z").toEpochMilli()

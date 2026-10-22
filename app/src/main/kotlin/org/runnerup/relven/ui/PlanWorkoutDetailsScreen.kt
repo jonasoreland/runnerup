@@ -41,7 +41,6 @@ import org.runnerup.relven.strength.CompletedStrengthSession
 internal fun PlanWorkoutDetailsScreen(
     workout: PlanCalendarEntry.Workout,
     dateLabel: String,
-    planName: String,
     enabled: Boolean,
     onBack: () -> Unit,
     onRename: (String, String) -> Unit,
@@ -108,7 +107,6 @@ internal fun PlanWorkoutDetailsScreen(
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
       Text(workout.workoutName, fontSize = 28.sp, fontWeight = FontWeight.Bold)
       Text(dateLabel, color = RelvenColors.MutedText, fontSize = 14.sp)
-      Text(planName, color = RelvenColors.MutedText, fontSize = 14.sp)
     }
 
     workout.strengthDetails?.let { details ->
