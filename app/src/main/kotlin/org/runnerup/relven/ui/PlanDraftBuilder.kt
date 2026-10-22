@@ -7,14 +7,25 @@ import java.util.TimeZone
 import java.util.UUID
 import org.json.JSONArray
 import org.json.JSONObject
+import org.runnerup.workout.RelvenExerciseReference
 
 internal enum class PlanWorkoutType {
   Easy,
   Intervals,
-  LongRun
+  LongRun,
+  Strength,
+  Prehab
 }
 
 internal data class PlanDraftSession(val dayOfWeek: Int, val workoutType: PlanWorkoutType)
+
+internal data class PlanDraftStrengthExercise(
+    val exerciseId: String,
+    val sets: Int = 3,
+    val minRepetitions: Int = 8,
+    val maxRepetitions: Int = 12,
+    val restSeconds: Int = 60,
+    val durationSeconds: Int? = null)
 
 internal data class PlanWorkoutCopy(
     val name: String,
@@ -37,7 +48,9 @@ internal object PlanDraftBuilder {
       sessions: List<PlanDraftSession>,
       timezone: String,
       nextId: () -> String = { UUID.randomUUID().toString() },
-      workoutCopy: Map<PlanWorkoutType, PlanWorkoutCopy> = defaultWorkoutCopy()): String {
+      workoutCopy: Map<PlanWorkoutType, PlanWorkoutCopy> = defaultWorkoutCopy(),
+      strengthExercises: List<PlanDraftStrengthExercise> = emptyList(),
+      exerciseReferences: Map<String, RelvenExerciseReference> = emptyMap()): String {
     val normalizedName = name.trim()
     require(normalizedName.isNotEmpty() && normalizedName.length <= MAX_NAME_LENGTH) {
       "Plan name must contain 1–$MAX_NAME_LENGTH characters"
@@ -49,6 +62,29 @@ internal object PlanDraftBuilder {
     }
     require(sessions.map { it.dayOfWeek }.distinct().size == sessions.size) {
       "Choose each weekday at most once"
+    }
+    val usesStrengthExercises = sessions.any {
+      it.workoutType == PlanWorkoutType.Strength || it.workoutType == PlanWorkoutType.Prehab
+    }
+    val authoredExercises = if (usesStrengthExercises) strengthExercises else emptyList()
+    if (usesStrengthExercises) {
+      require(strengthExercises.isNotEmpty()) { "Choose at least one strength exercise" }
+    }
+    require(authoredExercises.map { it.exerciseId }.distinct().size == authoredExercises.size) {
+      "Choose each strength exercise at most once"
+    }
+    authoredExercises.forEach { exercise ->
+      require(exercise.sets in 1..100 && exercise.minRepetitions in 1..500 &&
+          exercise.maxRepetitions in exercise.minRepetitions..500 && exercise.restSeconds in 0..3600 &&
+          (exercise.durationSeconds?.let { it in 1..86_400 } ?: true)) {
+        "Invalid strength exercise prescription"
+      }
+      val reference = exerciseReferences[exercise.exerciseId]
+          ?: throw IllegalArgumentException("Unknown strength exercise")
+      require(reference.libraryRevision > 0 && reference.exerciseRevision > 0 &&
+          reference.equipment.isEmpty() && reference.name.isNotBlank() && reference.instructions.isNotBlank()) {
+        "Strength exercises must use a valid no-equipment catalog reference"
+      }
     }
     require(TimeZone.getAvailableIDs().contains(timezone)) { "Choose a valid timezone" }
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).apply {
@@ -73,7 +109,13 @@ internal object PlanDraftBuilder {
     sessions.map { it.workoutType }.distinct().forEach { type -> workoutIds[type] = id() }
     val workouts = JSONArray()
     workoutIds.forEach { (type, workoutId) ->
-      workouts.put(workoutDocument(workoutId, type, workoutCopy.getValue(type), ::id))
+      workouts.put(
+          if (type == PlanWorkoutType.Strength || type == PlanWorkoutType.Prehab) {
+            strengthWorkoutDocument(
+                workoutId, type, workoutCopy.getValue(type), authoredExercises, exerciseReferences, ::id)
+          } else {
+            workoutDocument(workoutId, type, workoutCopy.getValue(type), ::id)
+          })
     }
 
     val days = JSONArray()
@@ -144,6 +186,7 @@ internal object PlanDraftBuilder {
         steps.put(segment(copy.cooldown, "cooldown", 300))
       }
       PlanWorkoutType.LongRun -> steps.put(segment(copy.longRun, "work", 3_000))
+      PlanWorkoutType.Strength, PlanWorkoutType.Prehab -> error("Strength workout needs catalog exercises")
     }
     return JSONObject()
         .put("schemaVersion", 3)
@@ -153,11 +196,61 @@ internal object PlanDraftBuilder {
         .put("steps", steps)
   }
 
+  private fun strengthWorkoutDocument(
+      workoutId: String,
+      type: PlanWorkoutType,
+      copy: PlanWorkoutCopy,
+      exercises: List<PlanDraftStrengthExercise>,
+      references: Map<String, RelvenExerciseReference>,
+      nextId: () -> String
+  ): JSONObject {
+    val steps = JSONArray()
+    exercises.forEach { prescription ->
+      val reference = references.getValue(prescription.exerciseId)
+      steps.put(
+          JSONObject()
+              .put("id", nextId())
+              .put("kind", "segment")
+              .put("name", reference.name)
+              .put("phase", "work")
+              .put("end", prescription.durationSeconds?.let {
+                JSONObject().put("type", "time").put("seconds", it)
+              } ?: JSONObject().put("type", "manual"))
+              .put(
+                  "exercise",
+                  JSONObject()
+                      .put("exerciseId", prescription.exerciseId)
+                      .put("libraryRevision", reference.libraryRevision)
+                      .put("exerciseRevision", reference.exerciseRevision)
+                      .put(
+                          "snapshot",
+                          JSONObject()
+                              .put("name", reference.name)
+                              .put("instructions", reference.instructions)
+                              .put("equipment", JSONArray())
+                              .put("images", JSONArray()))
+                      .put("sets", prescription.sets)
+                      .put("minRepetitions", prescription.minRepetitions)
+                      .put("maxRepetitions", prescription.maxRepetitions)
+                      .put("restSeconds", prescription.restSeconds)))
+    }
+    return JSONObject()
+        .put("schemaVersion", 3)
+        .put("id", workoutId)
+        .put("name", copy.name)
+        .put("sport", if (type == PlanWorkoutType.Prehab) "prehab" else "strength")
+        .put("steps", steps)
+  }
+
   private fun defaultWorkoutCopy() = mapOf(
       PlanWorkoutType.Easy to PlanWorkoutCopy(
           "Easy run · 30 min", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"),
       PlanWorkoutType.Intervals to PlanWorkoutCopy(
           "Intervals · 4 × 4 min", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"),
       PlanWorkoutType.LongRun to PlanWorkoutCopy(
-          "Long run · 50 min", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"))
+          "Long run · 50 min", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"),
+      PlanWorkoutType.Strength to PlanWorkoutCopy(
+          "Bodyweight strength", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"),
+      PlanWorkoutType.Prehab to PlanWorkoutCopy(
+          "Prehab", "Warm up", "Easy running", "Fast interval", "Recovery jog", "Cool down", "Long easy run"))
 }

@@ -5,6 +5,7 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import java.util.Calendar
 import org.runnerup.workout.RelvenPlanImporter
+import org.runnerup.workout.RelvenExerciseReference
 
 class PlanDraftBuilderTest {
   private fun idSource() = sequence {
@@ -56,6 +57,89 @@ class PlanDraftBuilderTest {
     assertEquals(3, plan.days().size)
     assertEquals(setOf("Easy run · 30 min", "Intervals · 4 × 4 min", "Long run · 50 min"),
         plan.workoutNames().values.toSet())
+  }
+
+  @Test
+  fun generatesPinnedStrengthWorkoutsForSelectedDays() {
+    val exerciseId = "3b0e6f4b-0000-4000-8000-000000000001"
+    val timedExerciseId = "3b0e6f4b-0000-4000-8000-000000000002"
+    val references = mapOf(
+        exerciseId to RelvenExerciseReference(
+            libraryRevision = 1,
+            exerciseRevision = 2,
+            name = "Bodyweight squat",
+            instructions = "Stand tall.\nLower with control.",
+            equipment = emptyList()),
+        timedExerciseId to RelvenExerciseReference(
+            libraryRevision = 1,
+            exerciseRevision = 1,
+            name = "Plank",
+            instructions = "Hold a straight body position.",
+            equipment = emptyList()))
+    val ids = idSource()
+    val source = PlanDraftBuilder.create(
+        name = "Strength base",
+        startDate = "2026-01-05",
+        weeks = 1,
+        sessions = listOf(PlanDraftSession(Calendar.MONDAY, PlanWorkoutType.Strength)),
+        timezone = "UTC",
+        nextId = { ids.next() },
+        strengthExercises = listOf(
+            PlanDraftStrengthExercise(exerciseId, sets = 3, minRepetitions = 8, maxRepetitions = 12,
+                restSeconds = 60),
+            PlanDraftStrengthExercise(timedExerciseId, sets = 2, restSeconds = 15, durationSeconds = 30)),
+        exerciseReferences = references)
+
+    val plan = RelvenPlanImporter.parse(source, references)
+    val workoutId = plan.days().single().workoutId()
+    assertEquals("Bodyweight strength", plan.workoutNames().getValue(workoutId))
+    val workout = plan.strengthWorkouts().getValue(workoutId)
+    assertEquals("strength", workout.sport())
+    assertEquals(2, workout.exercises().size)
+    assertEquals("Bodyweight squat", workout.exercises().get(0).name())
+    assertEquals(3, workout.exercises().get(0).sets())
+    assertEquals(8, workout.exercises().get(0).minRepetitions())
+    assertEquals(12, workout.exercises().get(0).maxRepetitions())
+    assertEquals(60, workout.exercises().get(0).restSeconds())
+    assertEquals("Plank", workout.exercises().get(1).name())
+    assertEquals(30, workout.exercises().get(1).durationSeconds())
+    assertEquals(2, workout.exercises().get(1).sets())
+  }
+
+  @Test
+  fun requiresCatalogExercisesForStrengthTrainingDays() {
+    val ids = idSource()
+    org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+      PlanDraftBuilder.create(
+          name = "Strength base",
+          startDate = "2026-01-05",
+          weeks = 1,
+          sessions = listOf(PlanDraftSession(Calendar.MONDAY, PlanWorkoutType.Strength)),
+          timezone = "UTC",
+          nextId = { ids.next() })
+    }
+  }
+
+  @Test
+  fun rejectsEquipmentBasedCatalogReferencesAndInvalidTimedWork() {
+    val exerciseId = "3b0e6f4b-0000-4000-8000-000000000001"
+    val session = listOf(PlanDraftSession(Calendar.MONDAY, PlanWorkoutType.Strength))
+    val equipmentReference = mapOf(
+        exerciseId to RelvenExerciseReference(1, 1, "Weighted squat", "Instructions", listOf("dumbbell")))
+    org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+      PlanDraftBuilder.create(
+          "Plan", "2026-01-05", 1, session, "UTC",
+          strengthExercises = listOf(PlanDraftStrengthExercise(exerciseId)),
+          exerciseReferences = equipmentReference)
+    }
+    val bodyweightReference = mapOf(
+        exerciseId to RelvenExerciseReference(1, 1, "Plank", "Instructions", emptyList()))
+    org.junit.Assert.assertThrows(IllegalArgumentException::class.java) {
+      PlanDraftBuilder.create(
+          "Plan", "2026-01-05", 1, session, "UTC",
+          strengthExercises = listOf(PlanDraftStrengthExercise(exerciseId, durationSeconds = 0)),
+          exerciseReferences = bodyweightReference)
+    }
   }
 
   @Test

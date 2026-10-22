@@ -565,28 +565,42 @@ class RelvenHomeActivity : FragmentActivity() {
       name: String,
       startDate: String,
       weeks: Int,
-      sessions: List<PlanDraftSession>) {
-    val source = runCatching {
-      PlanDraftBuilder.create(
-          name = name,
-          startDate = startDate,
-          weeks = weeks,
-          sessions = sessions,
-          timezone = java.util.TimeZone.getDefault().id,
-          workoutCopy = localizedPlanWorkoutCopy())
-    }.getOrElse { error ->
-      Log.w("RelvenHome", "Could not create plan", error)
-      planCreationError = getString(R.string.plan_create_save_error)
-      return
-    }
-    if (!storePendingPlanActivation(source)) {
-      planCreationError = getString(R.string.plan_create_save_error)
-      return
-    }
-    planCreationOpen = true
+      sessions: List<PlanDraftSession>,
+      strengthExercises: List<PlanDraftStrengthExercise>) {
     planLibraryBusy = true
     planCreationError = null
+    val workoutCopy = localizedPlanWorkoutCopy()
     lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          val usesStrength = sessions.any {
+            it.workoutType == PlanWorkoutType.Strength || it.workoutType == PlanWorkoutType.Prehab
+          }
+          val references =
+              if (usesStrength) ExerciseCatalogRepository(applicationContext).exerciseReferences()
+              else emptyMap()
+          PlanDraftBuilder.create(
+              name = name,
+              startDate = startDate,
+              weeks = weeks,
+              sessions = sessions,
+              timezone = java.util.TimeZone.getDefault().id,
+              workoutCopy = workoutCopy,
+              strengthExercises = strengthExercises,
+              exerciseReferences = references)
+        }
+      }
+      val source = result.getOrElse { error ->
+        Log.w("RelvenHome", "Could not create plan", error)
+        planLibraryBusy = false
+        planCreationError = getString(R.string.plan_create_save_error)
+        return@launch
+      }
+      if (!storePendingPlanActivation(source)) {
+        planLibraryBusy = false
+        planCreationError = getString(R.string.plan_create_save_error)
+        return@launch
+      }
       finishPendingPlanActivation(source)
     }
   }
@@ -655,7 +669,9 @@ class RelvenHomeActivity : FragmentActivity() {
     return mapOf(
         PlanWorkoutType.Easy to copy(getString(R.string.plan_create_easy_name)),
         PlanWorkoutType.Intervals to copy(getString(R.string.plan_create_intervals_name)),
-        PlanWorkoutType.LongRun to copy(getString(R.string.plan_create_long_run_name)))
+        PlanWorkoutType.LongRun to copy(getString(R.string.plan_create_long_run_name)),
+        PlanWorkoutType.Strength to copy(getString(R.string.plan_create_strength_name)),
+        PlanWorkoutType.Prehab to copy(getString(R.string.plan_create_prehab_name)))
   }
 
   private fun refreshActivePlan() {
@@ -1350,7 +1366,7 @@ private fun RelvenHome(
     onOpenPlanCreator: () -> Unit,
     onClosePlanCreator: () -> Unit,
     onPlanDraftChanged: () -> Unit,
-    onCreatePlan: (String, String, Int, List<PlanDraftSession>) -> Unit,
+    onCreatePlan: (String, String, Int, List<PlanDraftSession>, List<PlanDraftStrengthExercise>) -> Unit,
     planActivationPending: Boolean,
     onRetryPlanActivation: () -> Unit,
     onCreatePlanWithAi: () -> Unit,
@@ -1524,8 +1540,10 @@ private fun RelvenHome(
             busy = planLibraryBusy,
             errorMessage = planCreationError,
             activationPending = planActivationPending,
+            exerciseCatalogLoadState = exerciseCatalogLoadState,
             onBack = onClosePlanCreator,
             onRetryActivation = onRetryPlanActivation,
+            onRetryExerciseCatalog = onRetryExerciseCatalog,
             onDraftChanged = onPlanDraftChanged,
             onCreate = onCreatePlan)
       } else if (planLibraryOpen || activePlanState !is ActivePlanLoadState.Loaded) {

@@ -12,6 +12,8 @@
   "supportedTargetTypes": ["pace", "speed", "heart_rate"],
   "strengthPlanImport": true,
   "strengthWorkoutDetails": true,
+  "strengthWorkoutAuthoring": true,
+  "strengthSessionRecording": true,
   "planZipImport": false,
   "automaticActivation": false,
   "serverSynchronization": false,
