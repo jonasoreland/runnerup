@@ -1716,7 +1716,7 @@ private fun HomeNavigationBar(
     modifier: Modifier = Modifier
 ) {
   Surface(
-      color = Color(0xDD0E141E),
+      color = Color(0xFF0E141E),
       shape = RoundedCornerShape(28.dp),
       border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
       modifier = modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 16.dp, vertical = 12.dp)) {

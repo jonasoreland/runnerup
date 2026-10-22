@@ -57,3 +57,8 @@ internal fun emptyPlanCalendarDays(month: PlanCalendarMonth): List<Int?> {
     day.takeIf { it in 1..daysInMonth }
   }
 }
+
+internal fun emptyPlanCalendarDateStrings(month: PlanCalendarMonth): List<String?> =
+    emptyPlanCalendarDays(month).map { day ->
+      day?.let { "%s-%02d".format(Locale.ROOT, month.key(), it) }
+    }

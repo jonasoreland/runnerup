@@ -1,15 +1,21 @@
 package org.runnerup.relven.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
@@ -31,16 +37,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.TimeZone
 import org.runnerup.R
 import org.runnerup.workout.RelvenPlanImporter
 
@@ -115,7 +128,7 @@ internal fun PlanLibraryScreen(
     libraryPreviewPlan(state.plans, previewPlanId, state.activePlanId)
   }
   val previewToday = previewPlan?.let { planLocalDate(it.timezone(), currentTimeMillis) }
-      ?: PlanCalendarMonth.now().key() + "-01"
+      ?: planLocalDate(TimeZone.getDefault().id, currentTimeMillis)
   var selectedDate by rememberSaveable(previewPlan?.id()) { mutableStateOf(previewToday) }
   var month by rememberSaveable(previewPlan?.id()) {
     mutableStateOf(previewToday.substring(0, 7))
@@ -140,7 +153,7 @@ internal fun PlanLibraryScreen(
   var expandedHistoryRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
   var archiveConfirmationRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
   LazyColumn(
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier.fillMaxSize().padding(bottom = 112.dp).background(RelvenColors.Background),
       contentPadding = androidx.compose.foundation.layout.PaddingValues(
           start = 24.dp, end = 24.dp, top = 24.dp, bottom = 120.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -174,26 +187,24 @@ internal fun PlanLibraryScreen(
                   fontSize = 13.sp)
             }
             IconButton(
-                enabled = previewPlan != null,
+                enabled = !busy,
                 onClick = {
-                  previewPlan?.let {
-                    val shifted = shiftPlanCalendarMonth(month, selectedDate, -1, it.timezone())
-                    month = shifted.first
-                    selectedDate = shifted.second
-                  }
+                  val shifted = shiftPlanCalendarMonth(
+                      month, selectedDate, -1, previewPlan?.timezone() ?: TimeZone.getDefault().id)
+                  month = shifted.first
+                  selectedDate = shifted.second
                 }) {
             Icon(Icons.Default.ChevronLeft,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_previous_period),
                 tint = RelvenColors.MutedText)
             }
             IconButton(
-                enabled = previewPlan != null,
+                enabled = !busy,
                 onClick = {
-                  previewPlan?.let {
-                    val shifted = shiftPlanCalendarMonth(month, selectedDate, 1, it.timezone())
-                    month = shifted.first
-                    selectedDate = shifted.second
-                  }
+                  val shifted = shiftPlanCalendarMonth(
+                      month, selectedDate, 1, previewPlan?.timezone() ?: TimeZone.getDefault().id)
+                  month = shifted.first
+                  selectedDate = shifted.second
                 }) {
             Icon(Icons.Default.ChevronRight,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_next_period),
@@ -201,7 +212,47 @@ internal fun PlanLibraryScreen(
             }
           }
           if (previewPlan == null) {
-            Text(stringResource(R.string.plan_library_calendar_no_plan), color = RelvenColors.MutedText, fontSize = 14.sp)
+            Text(PlanCalendarMonth.parse(month).label(locale), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+            Row(Modifier.fillMaxWidth()) {
+              weekdays.forEachIndexed { index, day ->
+                Text(
+                    day,
+                    modifier = Modifier.weight(1f).semantics { contentDescription = weekdayNames[index] },
+                    color = RelvenColors.MutedText,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center)
+              }
+            }
+            emptyPlanCalendarDateStrings(PlanCalendarMonth.parse(month)).chunked(7).forEach { week ->
+              Row(Modifier.fillMaxWidth()) {
+                week.forEach { date ->
+                  EmptyCalendarDateCell(
+                      date = date,
+                      todayDate = previewToday,
+                      selectedDate = selectedDate,
+                      modifier = Modifier.weight(1f),
+                      enabled = !busy,
+                      onClick = { date?.let { selectedDate = it } })
+                }
+              }
+            }
+            Surface(
+                color = RelvenColors.Background.copy(alpha = 0.48f),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth()) {
+              Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                val dateLabel = SimpleDateFormat("EEEE d MMMM yyyy", locale).format(
+                    Calendar.getInstance().apply {
+                      timeZone = TimeZone.getDefault()
+                      val parts = selectedDate.split('-').map(String::toInt)
+                      set(parts[0], parts[1] - 1, parts[2], 12, 0, 0)
+                      set(Calendar.MILLISECOND, 0)
+                    }.time)
+                Text(dateLabel.replaceFirstChar { it.titlecase(locale) }, color = RelvenColors.Orange,
+                    fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                Text(stringResource(org.runnerup.common.R.string.Plan_calendar_no_item), color = RelvenColors.MutedText)
+              }
+            }
           } else {
             Text(previewCalendar?.periodLabel.orEmpty(), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
             Row(Modifier.fillMaxWidth()) {
@@ -466,6 +517,51 @@ internal fun PlanLibraryScreen(
             Text(stringResource(R.string.plan_library_cancel))
           }
         })
+  }
+}
+
+@Composable
+private fun EmptyCalendarDateCell(
+    date: String?,
+    todayDate: String,
+    selectedDate: String,
+    modifier: Modifier,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+  if (date == null) {
+    Box(modifier.heightIn(min = 48.dp))
+    return
+  }
+  val locale = LocalLocale.current.platformLocale
+  val dateLabel = remember(date, locale) {
+    val parts = date.split('-').map(String::toInt)
+    val calendar = Calendar.getInstance().apply {
+      set(parts[0], parts[1] - 1, parts[2], 12, 0, 0)
+      set(Calendar.MILLISECOND, 0)
+    }
+    SimpleDateFormat("EEEE d MMMM yyyy", locale).format(calendar.time)
+        .replaceFirstChar { it.titlecase(locale) }
+  }
+  val isSelected = date == selectedDate
+  val isToday = date == todayDate
+  val background = if (isSelected) RelvenColors.Orange else Color.Transparent
+  val outline = if (isToday && isSelected) Color.White else if (isToday) RelvenColors.Orange else Color.Transparent
+  val accessibilityLabel = stringResource(
+      org.runnerup.common.R.string.Plan_calendar_day_accessibility,
+      dateLabel,
+      stringResource(org.runnerup.common.R.string.Plan_calendar_empty_accessibility))
+  Box(
+      modifier = modifier.heightIn(min = 48.dp).semantics {
+        contentDescription = accessibilityLabel
+        selected = isSelected
+      }.border(1.dp, outline, CircleShape).clip(CircleShape).background(background)
+          .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+      contentAlignment = Alignment.Center) {
+    Text(date.substringAfterLast('-').toInt().toString(),
+        color = if (isSelected) Color.White else RelvenColors.Text,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium)
   }
 }
 
