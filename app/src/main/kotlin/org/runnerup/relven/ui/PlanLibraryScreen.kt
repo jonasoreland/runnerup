@@ -63,7 +63,10 @@ internal fun PlanLibraryScreen(
     busy: Boolean,
     onRetry: () -> Unit,
     onImport: () -> Unit,
+    onCreatePlan: () -> Unit,
     onCreateWithAi: () -> Unit,
+    pendingActivation: Boolean,
+    onRetryPendingActivation: () -> Unit,
     onActivate: (RelvenPlanImporter.Plan) -> Unit,
     onClearActive: () -> Unit,
     onOpenCalendar: () -> Unit) {
@@ -83,6 +86,14 @@ internal fun PlanLibraryScreen(
       Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(stringResource(R.string.plan_library_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)
         Text(stringResource(R.string.plan_library_subtitle), color = RelvenColors.MutedText, fontSize = 15.sp)
+      }
+    }
+    item {
+      Button(
+          onClick = onCreatePlan, enabled = !busy && !pendingActivation,
+          colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+          modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
+        Text(stringResource(R.string.plan_create_title))
       }
     }
     item {
@@ -154,6 +165,26 @@ internal fun PlanLibraryScreen(
     item {
       OutlinedButton(onClick = onImport, enabled = !busy, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
         Text(stringResource(R.string.plan_library_import))
+      }
+    }
+    if (pendingActivation) {
+      item {
+        Surface(
+            color = RelvenColors.Surface,
+            shape = RoundedCornerShape(18.dp),
+            border = BorderStroke(1.dp, RelvenColors.Orange.copy(alpha = 0.5f)),
+            modifier = Modifier.fillMaxWidth()) {
+          Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(stringResource(R.string.plan_create_activation_error), color = RelvenColors.MutedText)
+            Button(
+                onClick = onRetryPendingActivation,
+                enabled = !busy,
+                colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp)) {
+              Text(stringResource(if (busy) R.string.plan_create_saving else R.string.plan_create_retry_activation))
+            }
+          }
+        }
       }
     }
     item { Text(stringResource(R.string.plan_library_saved), fontSize = 21.sp, fontWeight = FontWeight.Bold) }
