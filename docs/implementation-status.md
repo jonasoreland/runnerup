@@ -119,7 +119,7 @@
 - **Current increment — Wear stopped state:** The final `TrackerState.STOPPED` pager page now uses a localized Compose “Saving on phone” confirmation and a phone mark. RunnerUp remains responsible for saving and session state.
 - **Completed increment — scheduled workout details (PR #75):** Calendar entries open running or strength/prehab detail views; the original calendar remains the Plan overview and home navigation is shared.
 - **Completed increment — detail hierarchy (PR #76):** Running segments and strength/prehab exercises use structured surfaces, secondary schedule actions use an overflow menu, and strength start remains primary.
-- **Current increment:** Improve Plan overview return-to-today and narrow-screen calendar layout while preserving all view modes and schedule edits.
+- **Current increment:** Keep the existing return-to-today action; reduce side padding at narrow phone widths so the seven-column calendar has more room, and remove the repeated plan title from scheduled workout details. Preserve all view modes and schedule edits.
 - **Next step:** Align remaining phone workout surfaces, then complete phone/watch visual and behavior checks once the product is ready for manual testing.
 
 ## Phase Four — workout import

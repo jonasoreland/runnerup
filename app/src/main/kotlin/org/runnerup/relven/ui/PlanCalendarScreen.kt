@@ -45,7 +45,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -58,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
@@ -167,6 +170,11 @@ private fun LoadedPlanCalendar(
   var editMin by rememberSaveable(plan.id()) { mutableStateOf("") }
   var editMax by rememberSaveable(plan.id()) { mutableStateOf("") }
   val locale = LocalLocale.current.platformLocale
+  val screenWidthDp =
+      with(LocalDensity.current) {
+        LocalWindowInfo.current.containerSize.width.toDp().value.roundToInt()
+      }
+  val horizontalPadding = planCalendarHorizontalPaddingDp(screenWidthDp).dp
   val state = remember(plan, month, selectedDate, todayDate, locale, viewMode, completedStrengthSessions) {
     planCalendarState(
         plan, month, selectedDate, calendarNowMillis, locale, completedStrengthSessions, viewMode)
@@ -177,13 +185,12 @@ private fun LoadedPlanCalendar(
   val weekdayNames = stringArrayResource(R.array.Plan_calendar_weekday_names)
   Column(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-          .padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
+          .padding(horizontal = horizontalPadding).padding(top = 24.dp, bottom = 116.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
     if (openedWorkout != null) {
       PlanWorkoutDetailsScreen(
           workout = openedWorkout,
           dateLabel = state.selectedDateLabel,
-          planName = state.planName,
           enabled = revisionStatus !is PlanRevisionStatus.Saving,
           onBack = { openedWorkoutSessionId = null },
           onRename = { workoutId, currentName ->
