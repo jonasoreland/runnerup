@@ -24,7 +24,18 @@
     <string name="plan_library_ai_copied">Plan Kit instructions copied. Paste them into your AI assistant, then import its JSON plan.</string>
     <string name="plan_library_ai_error">Could not open the Plan Kit instructions.</string>
     <string name="plan_library_busy">Working…</string>
-    <string name="plan_library_counts">%1$d workouts · %2$d training days · %3$d rest days</string>
+    <plurals name="plan_library_workouts">
+        <item quantity="one">%d workout</item>
+        <item quantity="other">%d workouts</item>
+    </plurals>
+    <plurals name="plan_library_training_days">
+        <item quantity="one">%d training day</item>
+        <item quantity="other">%d training days</item>
+    </plurals>
+    <plurals name="plan_library_rest_days">
+        <item quantity="one">%d rest day</item>
+        <item quantity="other">%d rest days</item>
+    </plurals>
     <string name="route_color_by">Color route by</string>
     <string name="route_selector_description">%1$s: %2$s</string>
     <string name="route_metric_pace">Pace (min/km)</string>

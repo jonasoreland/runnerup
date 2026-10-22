@@ -34,15 +34,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.Calendar
 import org.runnerup.R
 import org.runnerup.workout.RelvenPlanImporter
 
@@ -59,6 +59,7 @@ internal data class PendingPlanImport(
 @Composable
 internal fun PlanLibraryScreen(
     state: PlanLibraryState,
+    currentTimeMillis: Long,
     busy: Boolean,
     onRetry: () -> Unit,
     onImport: () -> Unit,
@@ -66,10 +67,13 @@ internal fun PlanLibraryScreen(
     onActivate: (RelvenPlanImporter.Plan) -> Unit,
     onClearActive: () -> Unit,
     onOpenCalendar: () -> Unit) {
-  var month by rememberSaveable { mutableStateOf(YearMonth.now().toString()) }
-  val displayedMonth = remember(month) { YearMonth.parse(month) }
+  var month by rememberSaveable { mutableStateOf(PlanCalendarMonth.now().key()) }
+  val displayedMonth = remember(month) { PlanCalendarMonth.parse(month) }
   val weekdays = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekdays)
-  val locale = Locale.getDefault()
+  val locale = LocalLocale.current.platformLocale
+  val today = remember(currentTimeMillis) {
+    Calendar.getInstance().apply { timeInMillis = currentTimeMillis }
+  }
   LazyColumn(
       modifier = Modifier.fillMaxWidth(),
       contentPadding = androidx.compose.foundation.layout.PaddingValues(
@@ -90,15 +94,14 @@ internal fun PlanLibraryScreen(
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                displayedMonth.format(DateTimeFormatter.ofPattern("LLLL yyyy", locale))
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() },
+            displayedMonth.label(locale),
                 modifier = Modifier.weight(1f), fontSize = 19.sp, fontWeight = FontWeight.SemiBold)
-            IconButton(onClick = { month = displayedMonth.minusMonths(1).toString() }) {
+            IconButton(onClick = { month = displayedMonth.plusMonths(-1).key() }) {
             Icon(Icons.Default.ChevronLeft,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_previous_period),
                 tint = RelvenColors.MutedText)
             }
-            IconButton(onClick = { month = displayedMonth.plusMonths(1).toString() }) {
+            IconButton(onClick = { month = displayedMonth.plusMonths(1).key() }) {
             Icon(Icons.Default.ChevronRight,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_next_period),
                 tint = RelvenColors.MutedText)
@@ -113,8 +116,9 @@ internal fun PlanLibraryScreen(
           emptyPlanCalendarDays(displayedMonth).chunked(7).forEach { week ->
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
               week.forEach { day ->
-                val isToday = day == java.time.LocalDate.now().dayOfMonth &&
-                    displayedMonth == YearMonth.now()
+                val isToday = day == today.get(Calendar.DAY_OF_MONTH) &&
+                    displayedMonth.year == today.get(Calendar.YEAR) &&
+                    displayedMonth.month == today.get(Calendar.MONTH) + 1
                 Box(
                     Modifier.weight(1f).heightIn(min = 42.dp)
                         .background(
@@ -181,11 +185,10 @@ internal fun PlanLibraryScreen(
             }
             val dates = plan.days().map { it.date() }.sorted()
             Text(
-                "${dates.first()} – ${dates.last()}  ·  " + stringResource(
-                    R.string.plan_library_counts,
-                    plan.workoutNames().size,
-                    plan.workoutDays().toInt(),
-                    plan.restDays().toInt()),
+                "${dates.first()} – ${dates.last()}  ·  " +
+                    pluralStringResource(R.plurals.plan_library_workouts, plan.workoutNames().size, plan.workoutNames().size) +
+                    " · " + pluralStringResource(R.plurals.plan_library_training_days, plan.workoutDays().toInt(), plan.workoutDays().toInt()) +
+                    " · " + pluralStringResource(R.plurals.plan_library_rest_days, plan.restDays().toInt(), plan.restDays().toInt()),
                 color = RelvenColors.MutedText, fontSize = 13.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
               if (!active) TextButton(enabled = !busy, onClick = { onActivate(plan) }) {

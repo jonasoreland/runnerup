@@ -24,7 +24,18 @@
     <string name="plan_library_ai_copied">Plan Kit-instruktionerna har kopierats. Klistra in dem i din AI-assistent och importera sedan dess JSON-plan.</string>
     <string name="plan_library_ai_error">Det gick inte att öppna Plan Kit-instruktionerna.</string>
     <string name="plan_library_busy">Arbetar…</string>
-    <string name="plan_library_counts">%1$d pass · %2$d träningsdagar · %3$d vilodagar</string>
+    <plurals name="plan_library_workouts">
+        <item quantity="one">%d pass</item>
+        <item quantity="other">%d pass</item>
+    </plurals>
+    <plurals name="plan_library_training_days">
+        <item quantity="one">%d träningsdag</item>
+        <item quantity="other">%d träningsdagar</item>
+    </plurals>
+    <plurals name="plan_library_rest_days">
+        <item quantity="one">%d vilodag</item>
+        <item quantity="other">%d vilodagar</item>
+    </plurals>
     <string name="setup_workouts_empty">Inga sparade pass ännu. Skapa ett under Hantera träningspass.</string>
     <string name="setup_invalid_time">Ange tiden som mm:ss eller tt:mm:ss.</string>
     <string name="setup_invalid_number">Ange ett tal större än noll.</string>

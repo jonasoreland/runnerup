@@ -1382,6 +1382,7 @@ private fun RelvenHome(
       if (planLibraryOpen || activePlanState !is ActivePlanLoadState.Loaded) {
         PlanLibraryScreen(
             state = planLibraryState,
+            currentTimeMillis = currentTimeMillis,
             busy = planLibraryBusy,
             onRetry = onRetryPlanLibrary,
             onImport = onImportPlan,
