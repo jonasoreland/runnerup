@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -47,7 +48,36 @@ internal data class PlanLibraryState(
     val loading: Boolean = true,
     val unavailable: Boolean = false,
     val plans: List<RelvenPlanImporter.Plan> = emptyList(),
-    val activePlanId: String? = null)
+    val activePlanId: String? = null,
+    val archivedRootPlanIds: Set<String> = emptySet())
+
+internal data class PlanLibraryGroup(
+    val rootPlanId: String,
+    val revisions: List<RelvenPlanImporter.Plan>,
+    val activePlan: RelvenPlanImporter.Plan?,
+    val archived: Boolean) {
+  val displayPlan: RelvenPlanImporter.Plan
+    get() = activePlan ?: revisions.first()
+  val isActive: Boolean
+    get() = activePlan != null
+}
+
+internal fun groupSavedPlans(
+    plans: List<RelvenPlanImporter.Plan>,
+    activePlanId: String?,
+    archivedRootPlanIds: Set<String>): List<PlanLibraryGroup> =
+    plans.groupBy { it.rootPlanId() }
+        .map { (rootPlanId, revisions) ->
+          val ordered = revisions.sortedWith(
+              compareByDescending<RelvenPlanImporter.Plan> { it.revisionNumber() }
+                  .thenBy { it.id() })
+          PlanLibraryGroup(
+              rootPlanId = rootPlanId,
+              revisions = ordered,
+              activePlan = ordered.firstOrNull { it.id() == activePlanId },
+              archived = rootPlanId in archivedRootPlanIds)
+        }
+        .sortedBy { it.displayPlan.name().lowercase() }
 
 internal data class PendingPlanImport(
     val plan: RelvenPlanImporter.Plan,
@@ -59,7 +89,7 @@ internal fun libraryPreviewPlan(
     activePlanId: String?): RelvenPlanImporter.Plan? =
     plans.firstOrNull { it.id() == selectedPlanId }
         ?: plans.firstOrNull { it.id() == activePlanId }
-        ?: plans.firstOrNull()
+        ?: groupSavedPlans(plans, null, emptySet()).firstOrNull()?.displayPlan
 
 @Composable
 internal fun PlanLibraryScreen(
@@ -74,6 +104,8 @@ internal fun PlanLibraryScreen(
     onRetryPendingActivation: () -> Unit,
     onActivate: (RelvenPlanImporter.Plan) -> Unit,
     onClearActive: () -> Unit,
+    onArchive: (String) -> Unit,
+    onRestore: (String) -> Unit,
     onOpenCalendar: () -> Unit) {
   val weekdays = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekdays)
   val weekdayNames = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekday_names)
@@ -99,6 +131,14 @@ internal fun PlanLibraryScreen(
           viewMode = PlanCalendarViewMode.Month)
     }
   }
+  val planGroups = remember(state.plans, state.activePlanId, state.archivedRootPlanIds) {
+    groupSavedPlans(state.plans, state.activePlanId, state.archivedRootPlanIds)
+  }
+  val activePlanGroups = remember(planGroups) { planGroups.filterNot { it.archived } }
+  val archivedPlanGroups = remember(planGroups) { planGroups.filter { it.archived } }
+  var showArchivedPlans by rememberSaveable { mutableStateOf(false) }
+  var expandedHistoryRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
+  var archiveConfirmationRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
   LazyColumn(
       modifier = Modifier.fillMaxWidth(),
       contentPadding = androidx.compose.foundation.layout.PaddingValues(
@@ -269,11 +309,40 @@ internal fun PlanLibraryScreen(
           TextButton(onClick = onRetry) { Text(stringResource(R.string.plan_library_retry)) }
         }
       }
-    } else if (state.plans.isEmpty()) {
-      item { Text(stringResource(R.string.plan_library_no_saved), color = RelvenColors.MutedText) }
     } else {
-      items(state.plans, key = { it.id() }) { plan ->
-        val active = state.activePlanId == plan.id()
+      item {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+          FilterChip(
+              modifier = Modifier.weight(1f),
+              selected = !showArchivedPlans,
+              onClick = { showArchivedPlans = false },
+              label = {
+                Text(stringResource(R.string.plan_library_saved_filter, activePlanGroups.size))
+              })
+          FilterChip(
+              modifier = Modifier.weight(1f),
+              selected = showArchivedPlans,
+              onClick = { showArchivedPlans = true },
+              label = {
+                Text(stringResource(R.string.plan_library_archived_filter, archivedPlanGroups.size))
+              })
+        }
+      }
+      val visibleGroups = if (showArchivedPlans) archivedPlanGroups else activePlanGroups
+      if (visibleGroups.isEmpty()) {
+        item {
+          Text(
+              stringResource(
+                  if (showArchivedPlans) R.string.plan_library_no_archived
+                  else R.string.plan_library_no_saved),
+              color = RelvenColors.MutedText)
+        }
+      }
+      items(visibleGroups, key = { it.rootPlanId }) { group ->
+        val plan = group.displayPlan
+        val active = group.isActive
         Surface(
             color = RelvenColors.Surface,
             shape = RoundedCornerShape(22.dp),
@@ -285,6 +354,8 @@ internal fun PlanLibraryScreen(
               Text(plan.name(), modifier = Modifier.weight(1f), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
               if (active) Text(stringResource(R.string.plan_library_active), color = RelvenColors.Orange,
                   fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+              if (group.archived) Text(stringResource(R.string.plan_library_archived), color = RelvenColors.MutedText,
+                  fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
             val dates = plan.days().map { it.date() }.sorted()
             Text(
@@ -293,6 +364,15 @@ internal fun PlanLibraryScreen(
                     " · " + pluralStringResource(R.plurals.plan_library_training_days, plan.workoutDays().toInt(), plan.workoutDays().toInt()) +
                     " · " + pluralStringResource(R.plurals.plan_library_rest_days, plan.restDays().toInt(), plan.restDays().toInt()),
                 color = RelvenColors.MutedText, fontSize = 13.sp)
+            if (group.revisions.size > 1) {
+              Text(
+                  pluralStringResource(
+                      R.plurals.plan_library_revision_count,
+                      group.revisions.size,
+                      group.revisions.size),
+                  color = RelvenColors.MutedText,
+                  fontSize = 13.sp)
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
               TextButton(
                   enabled = !busy,
@@ -301,20 +381,91 @@ internal fun PlanLibraryScreen(
                     if (previewPlan?.id() == plan.id()) R.string.plan_library_previewing
                     else R.string.plan_library_preview_calendar))
               }
-              if (!active) TextButton(enabled = !busy, onClick = { onActivate(plan) }) {
+              if (!active && !group.archived) TextButton(enabled = !busy, onClick = { onActivate(plan) }) {
                 Text(stringResource(R.string.plan_library_activate))
               }
-              else TextButton(enabled = !busy, onClick = onClearActive) {
+              if (active) TextButton(enabled = !busy, onClick = onClearActive) {
                 Text(stringResource(R.string.plan_library_clear))
               }
               if (active) TextButton(onClick = onOpenCalendar) {
                 Text(stringResource(R.string.plan_library_calendar))
               }
             }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+              if (group.archived) {
+                TextButton(enabled = !busy, onClick = { onRestore(group.rootPlanId) }) {
+                  Text(stringResource(R.string.plan_library_restore))
+                }
+              } else if (!active) {
+                TextButton(enabled = !busy, onClick = { archiveConfirmationRootPlanId = group.rootPlanId }) {
+                  Text(stringResource(R.string.plan_library_archive))
+                }
+              }
+              if (group.revisions.size > 1) {
+                TextButton(
+                    enabled = !busy,
+                    onClick = {
+                      expandedHistoryRootPlanId =
+                          if (expandedHistoryRootPlanId == group.rootPlanId) null else group.rootPlanId
+                    }) {
+                  Text(stringResource(
+                      if (expandedHistoryRootPlanId == group.rootPlanId)
+                        R.string.plan_library_hide_history else R.string.plan_library_history))
+                }
+              }
+            }
+            if (expandedHistoryRootPlanId == group.rootPlanId) {
+              Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                group.revisions.forEach { revision ->
+                  Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        if (revision.revisionNumber() == 0) {
+                          stringResource(R.string.plan_library_original)
+                        } else {
+                          stringResource(R.string.plan_library_revision_number, revision.revisionNumber())
+                        },
+                        modifier = Modifier.weight(1f),
+                        color = if (revision.id() == state.activePlanId) RelvenColors.Orange
+                            else RelvenColors.MutedText,
+                        fontSize = 13.sp)
+                    TextButton(enabled = !busy, onClick = { previewPlanId = revision.id() }) {
+                      Text(stringResource(R.string.plan_library_preview_calendar))
+                    }
+                    if (!group.archived && revision.id() != state.activePlanId) {
+                      TextButton(enabled = !busy, onClick = { onActivate(revision) }) {
+                        Text(stringResource(R.string.plan_library_activate))
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     }
+  }
+  val archiveConfirmationGroup = planGroups.firstOrNull {
+    it.rootPlanId == archiveConfirmationRootPlanId
+  }
+  if (archiveConfirmationGroup != null) {
+    AlertDialog(
+        onDismissRequest = { if (!busy) archiveConfirmationRootPlanId = null },
+        title = { Text(stringResource(R.string.plan_library_archive_title)) },
+        text = {
+          Text(stringResource(R.string.plan_library_archive_message, archiveConfirmationGroup.displayPlan.name()))
+        },
+        confirmButton = {
+          TextButton(enabled = !busy, onClick = {
+            archiveConfirmationRootPlanId = null
+            onArchive(archiveConfirmationGroup.rootPlanId)
+          }) { Text(stringResource(R.string.plan_library_archive)) }
+        },
+        dismissButton = {
+          TextButton(enabled = !busy, onClick = { archiveConfirmationRootPlanId = null }) {
+            Text(stringResource(R.string.plan_library_cancel))
+          }
+        })
   }
 }
 

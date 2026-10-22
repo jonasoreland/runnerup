@@ -8,6 +8,21 @@
     <string name="plan_library_import">Importera plan</string>
     <string name="plan_library_saved">Sparade planer</string>
     <string name="plan_library_no_saved">Du har inga sparade planer ännu. Skapa en plan här eller importera en planfil.</string>
+    <string name="plan_library_saved_filter">Sparade (%1$d)</string>
+    <string name="plan_library_archived_filter">Arkiverade (%1$d)</string>
+    <string name="plan_library_archived">Arkiverad</string>
+    <string name="plan_library_no_archived">Inga arkiverade planer.</string>
+    <string name="plan_library_archive">Arkivera</string>
+    <string name="plan_library_restore">Återställ</string>
+    <string name="plan_library_archive_title">Arkivera planen?</string>
+    <string name="plan_library_archive_message">”%1$s” och dess versionshistorik flyttas till Arkiverade. Du kan återställa den senare.</string>
+    <string name="plan_library_archive_success">Planen har arkiverats. Schema och versionshistorik finns kvar på enheten.</string>
+    <string name="plan_library_restore_success">Planen har återställts till Sparade.</string>
+    <string name="plan_library_archive_error">Det gick inte att uppdatera planen. Försök igen.</string>
+    <string name="plan_library_history">Versionshistorik</string>
+    <string name="plan_library_hide_history">Dölj historik</string>
+    <string name="plan_library_original">Ursprunglig</string>
+    <string name="plan_library_revision_number">Version %1$d</string>
     <string name="plan_library_active">Aktiv</string>
     <string name="plan_library_activate">Använd den här planen</string>
     <string name="plan_library_clear">Rensa aktiv plan</string>
@@ -108,6 +123,10 @@
     <plurals name="plan_library_rest_days">
         <item quantity="one">%d vilodag</item>
         <item quantity="other">%d vilodagar</item>
+    </plurals>
+    <plurals name="plan_library_revision_count">
+        <item quantity="one">%d sparad version</item>
+        <item quantity="other">%d sparade versioner</item>
     </plurals>
     <string name="setup_workouts_empty">Inga sparade pass ännu. Skapa ett under Hantera träningspass.</string>
     <string name="setup_invalid_time">Ange tiden som mm:ss eller tt:mm:ss.</string>

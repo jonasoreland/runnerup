@@ -26,6 +26,7 @@ import org.runnerup.relven.exercise.ExerciseCatalogRepository;
 public final class RelvenPlanStore {
   private static final String ACTIVE_PLAN_PREFERENCES = "relven-plan-state";
   private static final String ACTIVE_PLAN_ID = "active_plan_id";
+  private static final String ARCHIVED_PLAN_ROOT_IDS = "archived_plan_root_ids";
   private static final int MAX_ACTIVE_PLAN_ID_BYTES = 640;
 
   private RelvenPlanStore() {}
@@ -111,11 +112,14 @@ public final class RelvenPlanStore {
       throw new IOException("Only a saved plan can be activated");
     }
 
+    Set<String> archived = new HashSet<>(archivedPlanRootIds(context));
+    archived.remove(stored.rootPlanId());
     boolean saved =
         context
             .getSharedPreferences(ACTIVE_PLAN_PREFERENCES, Context.MODE_PRIVATE)
             .edit()
             .putString(ACTIVE_PLAN_ID, stored.id())
+            .putStringSet(ARCHIVED_PLAN_ROOT_IDS, archived)
             .commit();
     if (!saved) throw new IOException("Could not activate plan");
   }
@@ -147,6 +151,69 @@ public final class RelvenPlanStore {
             .remove(ACTIVE_PLAN_ID)
             .commit();
     if (!cleared) throw new IOException("Could not clear active plan");
+  }
+
+  /** Archives every saved revision in a logical plan group without deleting its package files. */
+  public static synchronized void archivePlan(Context context, String rootPlanId)
+      throws IOException {
+    if (rootPlanId == null || rootPlanId.isBlank()) throw new IOException("Invalid plan ID");
+    boolean savedPlanExists = false;
+    for (RelvenPlanImporter.Plan plan : list(context)) {
+      if (plan.rootPlanId().equals(rootPlanId)) {
+        savedPlanExists = true;
+        break;
+      }
+    }
+    if (!savedPlanExists) throw new IOException("Plan is not saved");
+    RelvenPlanImporter.Plan active = activePlan(context);
+    if (active != null && active.rootPlanId().equals(rootPlanId)) {
+      throw new IOException("Clear or switch the active plan before archiving it");
+    }
+
+    Set<String> archived = archivedPlanRootIds(context);
+    if (archived.contains(rootPlanId)) return;
+    Set<String> updated = new HashSet<>(archived);
+    updated.add(rootPlanId);
+    boolean saved =
+        context
+            .getSharedPreferences(ACTIVE_PLAN_PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .putStringSet(ARCHIVED_PLAN_ROOT_IDS, updated)
+            .commit();
+    if (!saved) throw new IOException("Could not archive plan");
+  }
+
+  /** Restores an archived logical plan group; all immutable revision files remain unchanged. */
+  public static synchronized void restoreArchivedPlan(Context context, String rootPlanId)
+      throws IOException {
+    if (rootPlanId == null || rootPlanId.isBlank()) throw new IOException("Invalid plan ID");
+    boolean savedPlanExists = false;
+    for (RelvenPlanImporter.Plan plan : list(context)) {
+      if (plan.rootPlanId().equals(rootPlanId)) {
+        savedPlanExists = true;
+        break;
+      }
+    }
+    if (!savedPlanExists) throw new IOException("Plan is not saved");
+
+    Set<String> updated = new HashSet<>(archivedPlanRootIds(context));
+    if (!updated.remove(rootPlanId)) return;
+    boolean saved =
+        context
+            .getSharedPreferences(ACTIVE_PLAN_PREFERENCES, Context.MODE_PRIVATE)
+            .edit()
+            .putStringSet(ARCHIVED_PLAN_ROOT_IDS, updated)
+            .commit();
+    if (!saved) throw new IOException("Could not restore plan");
+  }
+
+  /** Returns archived logical plan IDs without exposing mutable preferences state. */
+  public static synchronized Set<String> archivedPlanRootIds(Context context) {
+    Set<String> archived =
+        context
+            .getSharedPreferences(ACTIVE_PLAN_PREFERENCES, Context.MODE_PRIVATE)
+            .getStringSet(ARCHIVED_PLAN_ROOT_IDS, Collections.emptySet());
+    return Collections.unmodifiableSet(new HashSet<>(archived));
   }
 
   /** Creates a new immutable schedule revision and activates it only after its package is saved. */
