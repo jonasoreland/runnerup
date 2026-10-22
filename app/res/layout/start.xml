@@ -56,17 +56,11 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-        <FrameLayout
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/start_setup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/start_tabs">
-
-            <include layout="@layout/start_basic" />
-
-            <include layout="@layout/start_interval" />
-
-            <include layout="@layout/start_advanced" />
-        </FrameLayout>
+            android:layout_below="@id/start_tabs" />
 
         <RelativeLayout
             android:id="@+id/status_layout"

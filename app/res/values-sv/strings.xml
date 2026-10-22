@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_workouts_empty">Inga sparade pass ännu. Skapa ett under Hantera träningspass.</string>
+    <string name="setup_invalid_time">Ange tiden som mm:ss eller tt:mm:ss.</string>
+    <string name="setup_invalid_number">Ange ett tal större än noll.</string>
+    <string name="setup_interval_duration">Längd på aktiv intervall</string>
+    <string name="setup_interval_distance">Sträcka för aktiv intervall</string>
+    <string name="setup_rest_duration">Återhämtningens längd</string>
+    <string name="setup_rest_distance">Återhämtningens sträcka</string>
+    <string name="setup_interval_structure">Intervallupplägg</string>
+    <string name="setup_steps">Träningspassets steg</string>
+</resources>

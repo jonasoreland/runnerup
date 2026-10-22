@@ -28,4 +28,13 @@
     <string name="_sign_plus" translatable="false">+</string>
     <string name="_sign_minus" translatable="false">-</string>
     <string name="path_simplification_default_tolerance" translatable="false">3</string>
+    <string name="setup_workouts_empty">No saved workouts yet. Create one in Manage workouts.</string>
+    <string name="setup_invalid_time">Enter time as mm:ss or hh:mm:ss.</string>
+    <string name="setup_invalid_number">Enter a number greater than zero.</string>
+    <string name="setup_interval_duration">Active interval duration</string>
+    <string name="setup_interval_distance">Active interval distance</string>
+    <string name="setup_rest_duration">Recovery duration</string>
+    <string name="setup_rest_distance">Recovery distance</string>
+    <string name="setup_interval_structure">Interval structure</string>
+    <string name="setup_steps">Workout steps</string>
 </resources>

@@ -88,6 +88,16 @@ public class StepButton extends LinearLayout {
     mOnChangedListener = runnable;
   }
 
+  /** Open this step's existing RunnerUp editor. */
+  public void editStep() {
+    if (step == null) return;
+    if (step.getIntensity() == Intensity.REPEAT) {
+      onRepeatClickListener.onClick(this);
+    } else {
+      onStepClickListener.onClick(this);
+    }
+  }
+
   public void setStep(Step step) {
     this.step = step;
 
