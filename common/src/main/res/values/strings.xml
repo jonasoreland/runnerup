@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="route_map_attribution">© OpenStreetMap contributors · © OpenMapTiles · OpenFreeMap</string>
+    <string name="route_map_attribution_description">Map data by OpenStreetMap contributors; map style by OpenMapTiles and OpenFreeMap</string>
     <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
     ~
     ~  This program is free software: you can redistribute it and/or modify

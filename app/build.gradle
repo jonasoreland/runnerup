@@ -34,10 +34,15 @@ android {
             }
             if (rootProject.ext.noMap) {
                 java.srcDirs += ['src/nomap']
-            } else if (rootProject.ext.mapboxEnabled) {
-                java.srcDirs += ['src/mapbox']
+                kotlin.srcDirs += ['src/nomap']
             } else {
-                java.srcDirs += ['src/osmdroid']
+                java.srcDirs += ['src/maplibre']
+                kotlin.srcDirs += ['src/maplibre']
+                if (rootProject.ext.mapboxEnabled) {
+                    java.srcDirs += ['src/mapbox']
+                } else {
+                    java.srcDirs += ['src/osmdroid']
+                }
             }
             // renderscript.srcDirs = java.srcDirs
             res.srcDirs = ['res']
@@ -189,6 +194,9 @@ dependencies {
         latestImplementation 'com.mapbox.maps:android-ndk27:11.32.1'
     } else {
         implementation 'org.osmdroid:osmdroid-android:6.1.20'
+    }
+    if (!rootProject.ext.noMap) {
+        latestImplementation 'org.maplibre.gl:android-sdk-opengl:13.7.1'
     }
     latestImplementation("com.github.PhilJay.MPAndroidChart:MPChartLib:v4.0.1")
 

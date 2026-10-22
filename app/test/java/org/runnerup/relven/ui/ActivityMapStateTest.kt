@@ -24,6 +24,8 @@ class ActivityMapStateTest {
       val state = readActivityMapState(database, activityId = 1L, mapEnabled = true)
       assertTrue(state is ActivityMapLoadState.Loaded)
       assertEquals(1L, (state as ActivityMapLoadState.Loaded).activity.id)
+      assertEquals(2, state.route.size)
+      assertEquals(59.3, state.route.first().latitude, 0.00001)
     } finally {
       database.close()
     }
@@ -104,7 +106,12 @@ class ActivityMapStateTest {
               ${DB.LOCATION.ACTIVITY} INTEGER NOT NULL,
               ${DB.LOCATION.TYPE} INTEGER NOT NULL,
               ${DB.LOCATION.LATITUDE} REAL NOT NULL,
-              ${DB.LOCATION.LONGITUDE} REAL NOT NULL
+              ${DB.LOCATION.LONGITUDE} REAL NOT NULL,
+              ${DB.LOCATION.ALTITUDE} REAL,
+              ${DB.LOCATION.TIME} INTEGER NOT NULL,
+              ${DB.LOCATION.LAP} INTEGER,
+              ${DB.LOCATION.HR} INTEGER,
+              ${DB.LOCATION.SPEED} REAL
             )
             """.trimIndent())
       }
@@ -128,6 +135,17 @@ class ActivityMapStateTest {
       activityId: Long,
       latitude: Double,
       longitude: Double) {
+    val pointNumber =
+        database
+            .query(
+                DB.LOCATION.TABLE,
+                arrayOf("_id"),
+                "${DB.LOCATION.ACTIVITY} = ?",
+                arrayOf(activityId.toString()),
+                null,
+                null,
+                null)
+            .use { it.count }
     database.insertOrThrow(
         DB.LOCATION.TABLE,
         null,
@@ -136,6 +154,8 @@ class ActivityMapStateTest {
           put(DB.LOCATION.TYPE, DB.LOCATION.TYPE_GPS)
           put(DB.LOCATION.LATITUDE, latitude)
           put(DB.LOCATION.LONGITUDE, longitude)
+          put(DB.LOCATION.TIME, pointNumber * 60_000L)
+          put(DB.LOCATION.LAP, 1)
         })
   }
 }
