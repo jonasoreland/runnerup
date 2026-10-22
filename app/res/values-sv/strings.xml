@@ -12,6 +12,10 @@
     <string name="plan_library_activate">Använd den här planen</string>
     <string name="plan_library_clear">Rensa aktiv plan</string>
     <string name="plan_library_calendar">Öppna kalendern</string>
+    <string name="plan_library_calendar_title">Träningskalender</string>
+    <string name="plan_library_calendar_no_plan">Spara eller förhandsgranska en plan för att se schemat här.</string>
+    <string name="plan_library_preview_calendar">Förhandsgranska schema</string>
+    <string name="plan_library_previewing">Förhandsgranskar</string>
     <string name="plan_library_import_title">Granska plan</string>
     <string name="plan_library_save">Spara plan</string>
     <string name="plan_library_cancel">Avbryt</string>

@@ -1,13 +1,9 @@
 package org.runnerup.relven.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -38,11 +34,12 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.Calendar
 import org.runnerup.R
 import org.runnerup.workout.RelvenPlanImporter
 
@@ -55,6 +52,14 @@ internal data class PlanLibraryState(
 internal data class PendingPlanImport(
     val plan: RelvenPlanImporter.Plan,
     val summary: String)
+
+internal fun libraryPreviewPlan(
+    plans: List<RelvenPlanImporter.Plan>,
+    selectedPlanId: String?,
+    activePlanId: String?): RelvenPlanImporter.Plan? =
+    plans.firstOrNull { it.id() == selectedPlanId }
+        ?: plans.firstOrNull { it.id() == activePlanId }
+        ?: plans.firstOrNull()
 
 @Composable
 internal fun PlanLibraryScreen(
@@ -70,12 +75,29 @@ internal fun PlanLibraryScreen(
     onActivate: (RelvenPlanImporter.Plan) -> Unit,
     onClearActive: () -> Unit,
     onOpenCalendar: () -> Unit) {
-  var month by rememberSaveable { mutableStateOf(PlanCalendarMonth.now().key()) }
-  val displayedMonth = remember(month) { PlanCalendarMonth.parse(month) }
   val weekdays = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekdays)
+  val weekdayNames = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekday_names)
   val locale = LocalLocale.current.platformLocale
-  val today = remember(currentTimeMillis) {
-    Calendar.getInstance().apply { timeInMillis = currentTimeMillis }
+  var previewPlanId by rememberSaveable { mutableStateOf<String?>(null) }
+  val previewPlan = remember(state.plans, previewPlanId, state.activePlanId) {
+    libraryPreviewPlan(state.plans, previewPlanId, state.activePlanId)
+  }
+  val previewToday = previewPlan?.let { planLocalDate(it.timezone(), currentTimeMillis) }
+      ?: PlanCalendarMonth.now().key() + "-01"
+  var selectedDate by rememberSaveable(previewPlan?.id()) { mutableStateOf(previewToday) }
+  var month by rememberSaveable(previewPlan?.id()) {
+    mutableStateOf(previewToday.substring(0, 7))
+  }
+  val previewCalendar = remember(previewPlan?.id(), month, selectedDate, currentTimeMillis, locale) {
+    previewPlan?.let {
+      planCalendarState(
+          it,
+          month,
+          selectedDate,
+          currentTimeMillis,
+          locale,
+          viewMode = PlanCalendarViewMode.Month)
+    }
   }
   LazyColumn(
       modifier = Modifier.fillMaxWidth(),
@@ -104,47 +126,97 @@ internal fun PlanLibraryScreen(
           modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
           Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-            displayedMonth.label(locale),
-                modifier = Modifier.weight(1f), fontSize = 19.sp, fontWeight = FontWeight.SemiBold)
-            IconButton(onClick = { month = displayedMonth.plusMonths(-1).key() }) {
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+              Text(stringResource(R.string.plan_library_calendar_title), fontSize = 19.sp, fontWeight = FontWeight.SemiBold)
+              Text(
+                  previewPlan?.name() ?: stringResource(R.string.plan_library_calendar_no_plan),
+                  color = RelvenColors.MutedText,
+                  fontSize = 13.sp)
+            }
+            IconButton(
+                enabled = previewPlan != null,
+                onClick = {
+                  previewPlan?.let {
+                    val shifted = shiftPlanCalendarMonth(month, selectedDate, -1, it.timezone())
+                    month = shifted.first
+                    selectedDate = shifted.second
+                  }
+                }) {
             Icon(Icons.Default.ChevronLeft,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_previous_period),
                 tint = RelvenColors.MutedText)
             }
-            IconButton(onClick = { month = displayedMonth.plusMonths(1).key() }) {
+            IconButton(
+                enabled = previewPlan != null,
+                onClick = {
+                  previewPlan?.let {
+                    val shifted = shiftPlanCalendarMonth(month, selectedDate, 1, it.timezone())
+                    month = shifted.first
+                    selectedDate = shifted.second
+                  }
+                }) {
             Icon(Icons.Default.ChevronRight,
                 contentDescription = stringResource(org.runnerup.common.R.string.Plan_calendar_next_period),
                 tint = RelvenColors.MutedText)
             }
           }
-          Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            weekdays.forEach { day ->
-              Text(day, modifier = Modifier.weight(1f), color = RelvenColors.MutedText,
-                  fontSize = 12.sp, textAlign = TextAlign.Center)
+          if (previewPlan == null) {
+            Text(stringResource(R.string.plan_library_calendar_no_plan), color = RelvenColors.MutedText, fontSize = 14.sp)
+          } else {
+            Text(previewCalendar?.periodLabel.orEmpty(), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+            Row(Modifier.fillMaxWidth()) {
+              weekdays.forEachIndexed { index, day ->
+                Text(
+                    day,
+                    modifier = Modifier.weight(1f).semantics {
+                      contentDescription = weekdayNames[index]
+                    },
+                    color = RelvenColors.MutedText,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center)
+              }
             }
-          }
-          emptyPlanCalendarDays(displayedMonth).chunked(7).forEach { week ->
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-              week.forEach { day ->
-                val isToday = day == today.get(Calendar.DAY_OF_MONTH) &&
-                    displayedMonth.year == today.get(Calendar.YEAR) &&
-                    displayedMonth.month == today.get(Calendar.MONTH) + 1
-                Box(
-                    Modifier.weight(1f).heightIn(min = 42.dp)
-                        .background(
-                            if (isToday) RelvenColors.Orange.copy(alpha = 0.18f)
-                            else RelvenColors.Background.copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center) {
-                  if (day != null) Text(day.toString(),
-                      color = if (isToday) RelvenColors.Orange else RelvenColors.MutedText,
-                      fontSize = 13.sp,
-                      fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal)
+            previewCalendar?.days?.chunked(7)?.forEach { week ->
+              Row(Modifier.fillMaxWidth()) {
+                week.forEach { day ->
+                  CalendarDateCell(
+                      day = day,
+                      modifier = Modifier.weight(1f),
+                      enabled = !busy,
+                      onClick = {
+                        selectedDate = day.date
+                        month = day.date.substring(0, 7)
+                      })
+                }
+              }
+            }
+            Surface(
+                color = RelvenColors.Background.copy(alpha = 0.48f),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.fillMaxWidth()) {
+              Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(previewCalendar?.selectedDateLabel.orEmpty(), color = RelvenColors.Orange,
+                    fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                val entries = previewCalendar?.selectedEntries.orEmpty()
+                if (entries.isEmpty()) {
+                  Text(stringResource(org.runnerup.common.R.string.Plan_calendar_no_item), color = RelvenColors.MutedText)
+                } else {
+                  entries.forEach { entry ->
+                    when (entry) {
+                      is PlanCalendarEntry.Workout -> {
+                        Text(entry.workoutName, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        if (entry.notes.isNotBlank()) Text(entry.notes, color = RelvenColors.MutedText, fontSize = 13.sp)
+                      }
+                      is PlanCalendarEntry.Rest -> {
+                        Text(stringResource(org.runnerup.common.R.string.Rest_day), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        if (entry.notes.isNotBlank()) Text(entry.notes, color = RelvenColors.MutedText, fontSize = 13.sp)
+                      }
+                    }
+                  }
                 }
               }
             }
           }
-          Text(stringResource(R.string.plan_library_calendar_empty), color = RelvenColors.MutedText, fontSize = 14.sp)
         }
       }
     }
@@ -222,6 +294,13 @@ internal fun PlanLibraryScreen(
                     " · " + pluralStringResource(R.plurals.plan_library_rest_days, plan.restDays().toInt(), plan.restDays().toInt()),
                 color = RelvenColors.MutedText, fontSize = 13.sp)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+              TextButton(
+                  enabled = !busy,
+                  onClick = { previewPlanId = plan.id() }) {
+                Text(stringResource(
+                    if (previewPlan?.id() == plan.id()) R.string.plan_library_previewing
+                    else R.string.plan_library_preview_calendar))
+              }
               if (!active) TextButton(enabled = !busy, onClick = { onActivate(plan) }) {
                 Text(stringResource(R.string.plan_library_activate))
               }

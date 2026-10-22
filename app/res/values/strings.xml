@@ -12,6 +12,10 @@
     <string name="plan_library_activate">Use this plan</string>
     <string name="plan_library_clear">Clear active plan</string>
     <string name="plan_library_calendar">Open calendar</string>
+    <string name="plan_library_calendar_title">Schedule calendar</string>
+    <string name="plan_library_calendar_no_plan">Save or preview a plan to see its schedule here.</string>
+    <string name="plan_library_preview_calendar">Preview schedule</string>
+    <string name="plan_library_previewing">Previewing</string>
     <string name="plan_library_import_title">Review plan</string>
     <string name="plan_library_save">Save plan</string>
     <string name="plan_library_cancel">Cancel</string>

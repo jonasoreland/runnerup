@@ -753,7 +753,7 @@ private fun CalendarAgendaDay(day: PlanCalendarDay, enabled: Boolean, onClick: (
 }
 
 @Composable
-private fun CalendarDateCell(
+internal fun CalendarDateCell(
     day: PlanCalendarDay,
     modifier: Modifier,
     enabled: Boolean,
