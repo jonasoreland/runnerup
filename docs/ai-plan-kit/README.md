@@ -8,7 +8,7 @@ Give your AI assistant the full ZIP, or provide `INSTRUCTIONS.md`, `capabilities
 
 The app accepts an initial plan as a JSON document. It does not import plan ZIPs. New AI output must use plan schema v1. Schema v2 is included for reference because Relven uses it for app-managed immutable revisions; revision metadata must come from Relven after a predecessor has been saved.
 
-Strength and prehab entries are read-only details backed by pinned exercise snapshots from the bundled no-equipment catalog. The app does not record or execute strength sessions yet. The RunnerUp engine executes running workouts. This kit does not enable server synchronization, automatic plan activation, or workout execution by an AI service.
+Strength and prehab workouts use pinned exercise snapshots from the no-equipment catalog. You can create them in the Plan creator by selecting exercises and prescribing repetition ranges or timed work, sets, and rest. Scheduled strength sessions can be guided and recorded offline on the phone. The RunnerUp engine remains responsible for running workouts. This kit does not enable server synchronization, automatic plan activation, or workout execution by an AI service.
 
 ## Contents
 
