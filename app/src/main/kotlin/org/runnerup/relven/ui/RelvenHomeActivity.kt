@@ -1,5 +1,6 @@
 package org.runnerup.relven.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -112,11 +113,18 @@ import org.runnerup.relven.strength.StrengthSessionStore
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
 class RelvenHomeActivity : FragmentActivity() {
   companion object {
+    private const val EXTRA_OPEN_PLAN_LIBRARY = "relven.home.open_plan_library"
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
     private const val PLAN_LIBRARY_OPEN_STATE = "relven.home.plan_library_open"
     private const val HISTORY_ACTIVITY_DETAIL_STATE = "relven.home.history_activity_detail"
     private const val PENDING_PLAN_ACTIVATION_PREFERENCES = "relven.pending-plan-activation"
     private const val PENDING_PLAN_ACTIVATION_KEY = "source_json"
+
+    @JvmStatic
+    fun openPlanLibraryIntent(context: Context): Intent =
+        Intent(context, RelvenHomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putExtra(EXTRA_OPEN_PLAN_LIBRARY, true)
   }
 
   private var recentActivity by mutableStateOf<RecentActivity?>(null)
@@ -182,8 +190,13 @@ class RelvenHomeActivity : FragmentActivity() {
     planImportPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
       if (uri != null) readPlanImport(uri)
     }
-    destination = homeDestinationFromSaved(savedInstanceState?.getString(HOME_DESTINATION_STATE))
-    planLibraryOpen = savedInstanceState?.getBoolean(PLAN_LIBRARY_OPEN_STATE) ?: false
+    val openPlanLibrary = intent.getBooleanExtra(EXTRA_OPEN_PLAN_LIBRARY, false)
+    if (openPlanLibrary) intent.removeExtra(EXTRA_OPEN_PLAN_LIBRARY)
+    destination =
+        homeDestinationFromRequest(
+            savedInstanceState?.getString(HOME_DESTINATION_STATE), openPlanLibrary)
+    planLibraryOpen =
+        openPlanLibrary || (savedInstanceState?.getBoolean(PLAN_LIBRARY_OPEN_STATE) ?: false)
     pendingPlanActivationJson = savedInstanceState?.getString("relven.home.pending_plan_activation")
         ?: getSharedPreferences(PENDING_PLAN_ACTIVATION_PREFERENCES, MODE_PRIVATE)
             .getString(PENDING_PLAN_ACTIVATION_KEY, null)
@@ -351,6 +364,19 @@ class RelvenHomeActivity : FragmentActivity() {
         HomeTrackerSessionBinding(this) { status ->
           runOnUiThread { sessionStatus = status }
         }.also { it.start() }
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    if (intent.getBooleanExtra(EXTRA_OPEN_PLAN_LIBRARY, false)) {
+      intent.removeExtra(EXTRA_OPEN_PLAN_LIBRARY)
+      setIntent(intent)
+      selectHomeDestination(HomeDestination.Plan)
+      planLibraryOpen = true
+      planCreationOpen = false
+    } else {
+      setIntent(intent)
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -1381,6 +1407,9 @@ internal enum class HomeDestination {
 internal fun homeDestinationFromSaved(saved: String?): HomeDestination =
     saved?.let { value -> HomeDestination.entries.firstOrNull { it.name == value } }
         ?: HomeDestination.Today
+
+internal fun homeDestinationFromRequest(saved: String?, openPlanLibrary: Boolean): HomeDestination =
+    if (openPlanLibrary) HomeDestination.Plan else homeDestinationFromSaved(saved)
 
 @Composable
 private fun RelvenHome(

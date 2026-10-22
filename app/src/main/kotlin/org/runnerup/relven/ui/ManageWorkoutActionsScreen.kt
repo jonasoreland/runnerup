@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,66 +70,64 @@ private fun ManageWorkoutActions(
   presentation: ManageWorkoutActionsPresentation,
   actions: ManageWorkoutActionsStateHolder,
 ) {
-  Column(
-    modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp),
-    verticalArrangement = Arrangement.spacedBy(4.dp),
-  ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+  Column(modifier = Modifier.fillMaxWidth().padding(4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
       ManagerActionButton(
-        stringResource(CommonR.string.Import_workout),
-        ManagerActionBlue,
-        Modifier.weight(1f),
-        onClick = actions::importWorkout,
-      )
-      ManagerActionButton(
-        stringResource(CommonR.string.Import_plan),
-        ManagerActionBlue,
-        Modifier.weight(1f),
-        onClick = actions::importPlan,
-      )
-    }
-    ManagerActionButton(
-      stringResource(CommonR.string.AI_plan_kit_title),
-      ManagerActionBlue,
-      Modifier.fillMaxWidth(),
-      onClick = actions::showPlanKit,
-    )
-    ManagerActionButton(
-      stringResource(CommonR.string.View_saved_plans),
-      ManagerActionBlue,
-      Modifier.fillMaxWidth(),
-      onClick = actions::viewPlans,
-    )
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-      ManagerActionButton(
-        stringResource(CommonR.string.Share),
-        ManagerActionBlue,
-        Modifier.weight(1f),
-        enabled = presentation.canModifySelected,
-        onClick = actions::share,
-      )
-      ManagerActionButton(
-        stringResource(CommonR.string.Edit),
-        ManagerActionBlue,
-        Modifier.weight(1f),
-        enabled = presentation.canModifySelected,
-        onClick = actions::edit,
-      )
-    }
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-      ManagerActionButton(
-        stringResource(CommonR.string.Create),
-        ManagerActionGreen,
+        stringResource(CommonR.string.Create_new_workout),
+        RelvenColors.Orange,
         Modifier.weight(1f),
         onClick = actions::create,
       )
       ManagerActionButton(
-        stringResource(CommonR.string.Delete),
-        ManagerActionRed,
+        stringResource(CommonR.string.Import_workout),
+        ManagerActionSecondary,
         Modifier.weight(1f),
-        enabled = presentation.canModifySelected,
+        onClick = actions::importWorkout,
+      )
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      ManagerActionButton(
+        stringResource(CommonR.string.Import_plan),
+        ManagerActionSecondary,
+        Modifier.weight(1f),
+        onClick = actions::importPlan,
+      )
+      ManagerActionButton(
+        stringResource(CommonR.string.View_saved_plans),
+        ManagerActionSecondary,
+        Modifier.weight(1f),
+        onClick = actions::viewPlans,
+      )
+    }
+    OutlinedButton(
+      onClick = actions::showPlanKit,
+      modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+      shape = RoundedCornerShape(16.dp),
+      border = androidx.compose.foundation.BorderStroke(1.dp, RelvenColors.Orange.copy(alpha = 0.5f)),
+    ) {
+      Text(stringResource(CommonR.string.AI_plan_kit_title), color = RelvenColors.Orange, fontWeight = FontWeight.SemiBold)
+    }
+    if (presentation.canModifySelected) {
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        ManagerActionButton(
+        stringResource(CommonR.string.Share),
+        ManagerActionSecondary,
+        Modifier.weight(1f),
+        onClick = actions::share,
+      )
+      ManagerActionButton(
+        stringResource(CommonR.string.Edit),
+        ManagerActionSecondary,
+        Modifier.weight(1f),
+        onClick = actions::edit,
+      )
+      ManagerActionButton(
+        stringResource(CommonR.string.Delete),
+        ManagerActionDanger,
+        Modifier.weight(1f),
         onClick = actions::delete,
       )
+      }
     }
   }
 }
@@ -145,8 +144,9 @@ private fun ManagerActionButton(
     onClick = onClick,
     modifier = modifier.heightIn(min = 48.dp),
     enabled = enabled,
-    shape = RoundedCornerShape(8.dp),
+    shape = RoundedCornerShape(16.dp),
     colors = ButtonDefaults.buttonColors(containerColor = color),
+    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp, vertical = 8.dp),
   ) {
     Text(
       text = label,
@@ -157,6 +157,5 @@ private fun ManagerActionButton(
   }
 }
 
-private val ManagerActionBlue = Color(0xFF315C83)
-private val ManagerActionGreen = Color(0xFF15743C)
-private val ManagerActionRed = Color(0xFFAB373A)
+private val ManagerActionSecondary = RelvenColors.SurfaceRaised
+private val ManagerActionDanger = Color(0xFF9F3C3B)
