@@ -7,16 +7,19 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "app" / "assets" / "relven" / "relven-ai-plan-kit-v1.zip"
+OUTPUT = ROOT / "app" / "assets" / "relven" / "relven-ai-plan-kit-v2.zip"
 PREFIX = "relven-ai-plan-kit/"
 FILES = {
     "README.md": "docs/ai-plan-kit/README.md",
     "INSTRUCTIONS.md": "docs/ai-plan-kit/INSTRUCTIONS.md",
     "capabilities.json": "docs/ai-plan-kit/capabilities.json",
+    "JSON-FORMAT.md": "docs/ai-plan-kit/JSON-FORMAT.md",
     "schemas/plan-v1.schema.json": "schemas/plan-v1.schema.json",
     "schemas/plan-v2.schema.json": "schemas/plan-v2.schema.json",
     "schemas/workout-v3.schema.json": "schemas/workout-v3.schema.json",
     "schemas/exercise-library-v1.schema.json": "schemas/exercise-library-v1.schema.json",
+    "schemas/exercise-collection-v1.schema.json": "schemas/exercise-collection-v1.schema.json",
+    "catalog/exercise-library-v1.json": "app/assets/relven/exercise-library-v1.json",
     "examples/plan-running.json": "schemas/examples/plan-running.json",
     "examples/plan-strength.json": "schemas/examples/plan-strength.json",
 }

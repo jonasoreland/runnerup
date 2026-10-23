@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
@@ -115,7 +118,7 @@ private fun ActiveWorkoutScreen(
             .height(safe.calculateTopPadding())
             .background(RelvenColors.Background.copy(alpha = 0.96f)))
     Column(
-        Modifier.fillMaxSize().padding(top = safe.calculateTopPadding(), bottom = safe.calculateBottomPadding()).padding(horizontal = 16.dp),
+        Modifier.fillMaxSize().padding(top = safe.calculateTopPadding()).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
       Column(
           Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
@@ -200,7 +203,12 @@ private fun ActiveWorkoutScreen(
           }
         }
       }
-      Column(Modifier.fillMaxWidth().padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Column(
+        Modifier.fillMaxWidth()
+          .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+          .padding(bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+      ) {
         if (controls.presentation.buttonsLocked) {
           Text("Knappar låsta · tryck snabbt två gånger för att låsa upp", color = RelvenColors.Text, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
         }

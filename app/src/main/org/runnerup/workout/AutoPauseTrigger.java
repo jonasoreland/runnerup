@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 import android.location.Location;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AutoPauseTrigger extends Trigger {
   private final float mAutoPauseAfter;
@@ -25,6 +27,30 @@ public class AutoPauseTrigger extends Trigger {
   private boolean mPausedByUser;
   private long mStoppedMovingAt;
   private boolean mIsAutoPaused;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint()
+        .put("pausedByUser", mPausedByUser)
+        .put("stoppedMovingAt", mStoppedMovingAt)
+        .put("autoPaused", mIsAutoPaused);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    long stoppedMovingAt = state.getLong("stoppedMovingAt");
+    if (stoppedMovingAt < 0) return false;
+    mPausedByUser = state.getBoolean("pausedByUser");
+    mStoppedMovingAt = stoppedMovingAt;
+    mIsAutoPaused = state.getBoolean("autoPaused");
+    return true;
+  }
+
+  @Override
+  void onRecoverPaused(Workout workout) {
+    resetPaused(true);
+  }
 
   private static final long NANO_IN_MILLI = 1000000;
 

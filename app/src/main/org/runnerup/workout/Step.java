@@ -21,6 +21,9 @@ import android.content.ContentValues;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants.DB;
 
@@ -119,6 +122,80 @@ public class Step implements TickComponent {
 
   public void setTargetValue(double min, double max) {
     this.targetValue = new Range(min, max);
+  }
+
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return toBaseRuntimeCheckpoint("step");
+  }
+
+  final JSONObject toBaseRuntimeCheckpoint(String stepType) throws JSONException {
+    JSONArray triggerStates = new JSONArray();
+    for (Trigger trigger : triggers) triggerStates.put(trigger.toRuntimeCheckpoint());
+    return new JSONObject()
+        .put("stepType", stepType)
+        .put("stepStartTime", stepStartTime)
+        .put("stepStartDistance", stepStartDistance)
+        .put("stepStartHeartbeats", stepStartHeartbeats)
+        .put("lapStartTime", lapStartTime)
+        .put("lapStartDistance", lapStartDistance)
+        .put("lapStartHeartbeats", lapStartHeartbeats)
+        .put("previousLapDistance", mPrevTickLapDistance)
+        .put("previousStepDistance", mPrevTickStepDistance)
+        .put("previousStepTime", mPrevTickStepTime)
+        .put("triggers", triggerStates);
+  }
+
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    return restoreBaseRuntimeCheckpoint(state, "step");
+  }
+
+  void onRecoverPaused(Workout workout) {
+    for (Trigger trigger : triggers) trigger.onRecoverPaused(workout);
+  }
+
+  final boolean restoreBaseRuntimeCheckpoint(JSONObject state, String expectedStepType)
+      throws JSONException {
+    if (state == null
+        || !expectedStepType.equals(state.optString("stepType"))
+        || state.getJSONArray("triggers").length() != triggers.size()) return false;
+    double savedStepStartTime = state.getDouble("stepStartTime");
+    double savedStepStartDistance = state.getDouble("stepStartDistance");
+    double savedStepStartHeartbeats = state.getDouble("stepStartHeartbeats");
+    double savedLapStartTime = state.getDouble("lapStartTime");
+    double savedLapStartDistance = state.getDouble("lapStartDistance");
+    double savedLapStartHeartbeats = state.getDouble("lapStartHeartbeats");
+    double savedPreviousLapDistance = state.getDouble("previousLapDistance");
+    double savedPreviousStepDistance = state.getDouble("previousStepDistance");
+    double savedPreviousStepTime = state.getDouble("previousStepTime");
+    if (!finiteNonnegative(savedStepStartTime)
+        || !finiteNonnegative(savedStepStartDistance)
+        || !finiteNonnegative(savedStepStartHeartbeats)
+        || !finiteNonnegative(savedLapStartTime)
+        || !finiteNonnegative(savedLapStartDistance)
+        || !finiteNonnegative(savedLapStartHeartbeats)
+        || !finiteNonnegative(savedPreviousLapDistance)
+        || !finiteNonnegative(savedPreviousStepDistance)
+        || !finiteNonnegative(savedPreviousStepTime)) return false;
+
+    JSONArray triggerStates = state.getJSONArray("triggers");
+    for (int index = 0; index < triggers.size(); index++) {
+      if (!triggers.get(index).restoreRuntimeCheckpoint(triggerStates.getJSONObject(index)))
+        return false;
+    }
+    stepStartTime = savedStepStartTime;
+    stepStartDistance = savedStepStartDistance;
+    stepStartHeartbeats = savedStepStartHeartbeats;
+    lapStartTime = savedLapStartTime;
+    lapStartDistance = savedLapStartDistance;
+    lapStartHeartbeats = savedLapStartHeartbeats;
+    mPrevTickLapDistance = savedPreviousLapDistance;
+    mPrevTickStepDistance = savedPreviousStepDistance;
+    mPrevTickStepTime = savedPreviousStepTime;
+    return true;
+  }
+
+  private static boolean finiteNonnegative(double value) {
+    return Double.isFinite(value) && value >= 0;
   }
 
   public Intensity getIntensity() {

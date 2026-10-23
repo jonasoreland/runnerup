@@ -17,16 +17,66 @@
 
 package org.runnerup.workout;
 
+import android.os.SystemClock;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class PauseStep extends Step {
 
   private long elapsedTime = 0;
   private long lastTime = 0;
   private double saveDurationValue = 0;
+  private boolean timingStarted;
+  private boolean lastSampleWasPaused;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    sample(lastSampleWasPaused);
+    return toBaseRuntimeCheckpoint("pause")
+        .put("elapsedTime", elapsedTime)
+        .put("timingStarted", timingStarted)
+        .put("lastSampleWasPaused", lastSampleWasPaused)
+        .put("durationValue", super.durationValue)
+        .put("saveDurationValue", saveDurationValue);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    long savedElapsedTime = state.getLong("elapsedTime");
+    boolean savedTimingStarted = state.getBoolean("timingStarted");
+    boolean savedLastSampleWasPaused = state.getBoolean("lastSampleWasPaused");
+    double savedDurationValue = state.getDouble("durationValue");
+    double savedOriginalDurationValue = state.getDouble("saveDurationValue");
+    if (savedElapsedTime < 0
+        || !Double.isFinite(savedDurationValue)
+        || savedDurationValue < 0
+        || !Double.isFinite(savedOriginalDurationValue)
+        || savedOriginalDurationValue < 0
+        || !restoreBaseRuntimeCheckpoint(state, "pause")) return false;
+
+    elapsedTime = savedElapsedTime;
+    timingStarted = savedTimingStarted;
+    lastTime = timingStarted ? SystemClock.elapsedRealtime() : 0;
+    lastSampleWasPaused = savedLastSampleWasPaused;
+    super.durationValue = savedDurationValue;
+    saveDurationValue = savedOriginalDurationValue;
+    return true;
+  }
+
+  @Override
+  void onRecoverPaused(Workout workout) {
+    super.onRecoverPaused(workout);
+    lastSampleWasPaused = true;
+  }
 
   @Override
   public void onInit(Workout s) {
     super.onInit(s);
     saveDurationValue = super.durationValue;
+    elapsedTime = 0;
+    lastTime = 0;
+    timingStarted = false;
+    lastSampleWasPaused = false;
   }
 
   @Override
@@ -34,7 +84,9 @@ public class PauseStep extends Step {
     if (what == Scope.STEP) {
       s.tracker.pause();
       elapsedTime = 0;
+      timingStarted = true;
       lastTime = android.os.SystemClock.elapsedRealtime();
+      lastSampleWasPaused = false;
       for (Trigger t : triggers) {
         t.onStart(what, s);
       }
@@ -52,9 +104,12 @@ public class PauseStep extends Step {
   }
 
   private void sample(boolean paused) {
-    long now = android.os.SystemClock.elapsedRealtime();
+    if (!timingStarted) return;
+    long now = SystemClock.elapsedRealtime();
     long diff = now - lastTime;
     lastTime = now;
+    lastSampleWasPaused = paused;
+    if (diff <= 0) return;
     elapsedTime += diff;
     if (paused) {
       /*

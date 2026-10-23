@@ -20,11 +20,23 @@ package org.runnerup.workout;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public abstract class Trigger implements TickComponent {
 
   ArrayList<Feedback> triggerAction = new ArrayList<>();
   final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<>();
+
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return new JSONObject().put("triggerType", getClass().getName());
+  }
+
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    return state != null && getClass().getName().equals(state.optString("triggerType"));
+  }
+
+  void onRecoverPaused(Workout workout) {}
 
   @Override
   public void onInit(Workout s) {

@@ -1,9 +1,23 @@
 package org.runnerup.workout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.hr.HRProvider;
 
 public class HRMStateTrigger extends Trigger {
   private boolean isConnected;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint().put("connected", isConnected);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    isConnected = state.getBoolean("connected");
+    return true;
+  }
 
   @Override
   public boolean onTick(Workout w) {

@@ -26,30 +26,35 @@ import org.xmlpull.v1.XmlPullParser;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
 public class RelvenPlanKitTest {
-  private static final String ASSET = "relven/relven-ai-plan-kit-v1.zip";
+  private static final String ASSET = "relven/relven-ai-plan-kit-v2.zip";
 
   @Test
   public void extractsTheExactGenerationInstructionsFromTheBundledKit() throws Exception {
     Context context = RuntimeEnvironment.getApplication();
     String expected = readEntry(context.getAssets().open(ASSET), "INSTRUCTIONS.md");
 
-    assertEquals(expected, RelvenPlanKit.readInstructions(context));
+    String copied = RelvenPlanKit.readInstructions(context);
+    assertTrue(copied.contains(expected));
     assertTrue(expected.contains("schemaVersion: 1"));
-    assertTrue(expected.contains("Do not create"));
+    assertTrue(copied.contains("JSON-FORMAT.md"));
+    assertTrue(copied.contains("catalog/exercise-library-v1.json"));
+    assertTrue(copied.contains("user-data/custom-exercise-collection-v1.json"));
+    assertTrue(RelvenPlanKit.ASSET_PATH.endsWith("relven-ai-plan-kit-v2.zip"));
   }
 
   @Test
-  public void copiesTheCompleteBundledZipWithoutClosingDestination() throws Exception {
+  public void createsCompleteKitZipWithoutClosingDestination() throws Exception {
     Context context = RuntimeEnvironment.getApplication();
-    byte[] expected;
-    try (InputStream input = context.getAssets().open(ASSET)) {
-      expected = input.readAllBytes();
-    }
     ByteArrayOutputStream destination = new ByteArrayOutputStream();
 
     RelvenPlanKit.copyArchive(context, destination);
 
-    assertArrayEquals(expected, destination.toByteArray());
+    try (ZipInputStream archive =
+        new ZipInputStream(
+            new java.io.ByteArrayInputStream(destination.toByteArray()), StandardCharsets.UTF_8)) {
+      assertNotNull(findEntry(archive, "catalog/exercise-library-v1.json"));
+      assertNotNull(findEntry(archive, "user-data/custom-exercise-collection-v1.json"));
+    }
     destination.write(0);
   }
 
@@ -58,24 +63,28 @@ public class RelvenPlanKitTest {
     Context context = RuntimeEnvironment.getApplication();
     try (ZipInputStream archive =
         new ZipInputStream(context.getAssets().open(ASSET), StandardCharsets.UTF_8)) {
-      assertNotNull(findEntry(archive, "capabilities.json"));
-      assertNotNull(findEntry(archive, "schemas/plan-v1.schema.json"));
-      assertNotNull(findEntry(archive, "schemas/plan-v2.schema.json"));
-      assertNotNull(findEntry(archive, "schemas/workout-v3.schema.json"));
+      java.util.Set<String> names = new java.util.HashSet<>();
+      ZipEntry entry;
+      while ((entry = archive.getNextEntry()) != null) names.add(entry.getName());
+      assertTrue(names.contains("relven-ai-plan-kit/capabilities.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/schemas/plan-v1.schema.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/schemas/plan-v2.schema.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/schemas/workout-v3.schema.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/schemas/exercise-library-v1.schema.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/schemas/exercise-collection-v1.schema.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/JSON-FORMAT.md"));
+      assertTrue(names.contains("relven-ai-plan-kit/catalog/exercise-library-v1.json"));
     }
   }
 
   @Test
   public void cachedShareFileIsACompleteCopyOfTheBundledArchive() throws Exception {
     Context context = RuntimeEnvironment.getApplication();
-    byte[] expected;
-    try (InputStream input = context.getAssets().open(ASSET)) {
-      expected = input.readAllBytes();
-    }
-
     File shareFile = RelvenPlanKit.createShareFile(context);
 
-    assertArrayEquals(expected, java.nio.file.Files.readAllBytes(shareFile.toPath()));
+    ByteArrayOutputStream expected = new ByteArrayOutputStream();
+    RelvenPlanKit.copyArchive(context, expected);
+    assertArrayEquals(expected.toByteArray(), java.nio.file.Files.readAllBytes(shareFile.toPath()));
     assertTrue(shareFile.getCanonicalPath().contains("relven-ai-plan-kit"));
   }
 

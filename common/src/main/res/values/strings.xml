@@ -296,11 +296,11 @@
     <string name="Plan_saved">Plan saved on this device. It has not been activated.</string>
     <string name="View_saved_plans">View saved plans</string>
     <string name="AI_plan_kit_title">AI Plan Kit</string>
-    <string name="AI_plan_kit_copy_prompt">Copy plan-generation instructions</string>
+    <string name="AI_plan_kit_copy_prompt">Copy complete AI kit</string>
     <string name="AI_plan_kit_share">Share complete kit ZIP</string>
     <string name="AI_plan_kit_save">Save complete kit ZIP</string>
-    <string name="AI_plan_kit_prompt_copied">Plan-generation instructions copied.</string>
-    <string name="AI_plan_kit_copy_failed">Could not copy the plan-generation instructions.</string>
+    <string name="AI_plan_kit_prompt_copied">Complete AI kit and your exercise catalog copied.</string>
+    <string name="AI_plan_kit_copy_failed">Could not copy the complete AI kit.</string>
     <string name="AI_plan_kit_saved">AI Plan Kit saved.</string>
     <string name="AI_plan_kit_save_failed">Could not save the AI Plan Kit.</string>
     <string name="AI_plan_kit_share_failed">Could not prepare the AI Plan Kit for sharing.</string>

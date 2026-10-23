@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.Constants.DB;
@@ -596,6 +599,49 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
   public void addStep(Step s) {
     steps.add(s);
+  }
+
+  /** Captures mutable execution position separately from the immutable workout definition. */
+  public JSONObject toRuntimeCheckpoint() throws JSONException {
+    JSONArray stepStates = new JSONArray();
+    for (Step step : steps) stepStates.put(step.toRuntimeCheckpoint());
+    return new JSONObject()
+        .put("version", 1)
+        .put("currentStepNo", currentStepNo)
+        .put("lap", lap)
+        .put("paused", paused)
+        .put("steps", stepStates);
+  }
+
+  /** Marks a restored session as paused after a device reboot without emitting workout cues. */
+  public void pauseForRecovery() {
+    paused = true;
+    if (currentStep != null) currentStep.onRecoverPaused(this);
+  }
+
+  /** Restores runtime progress only when the saved step tree matches this workout definition. */
+  public boolean restoreRuntimeCheckpoint(JSONObject state) {
+    if (state == null || state.optInt("version", -1) != 1) return false;
+    try {
+      int savedStepNo = state.getInt("currentStepNo");
+      long savedLap = state.getLong("lap");
+      JSONArray stepStates = state.getJSONArray("steps");
+      if (savedStepNo < 0
+          || savedStepNo >= steps.size()
+          || savedLap < 0
+          || stepStates.length() != steps.size()) return false;
+      for (int index = 0; index < steps.size(); index++) {
+        if (!steps.get(index).restoreRuntimeCheckpoint(stepStates.getJSONObject(index)))
+          return false;
+      }
+      currentStepNo = savedStepNo;
+      lap = savedLap;
+      paused = state.getBoolean("paused");
+      setCurrentStep(steps.get(currentStepNo));
+      return true;
+    } catch (JSONException | IllegalArgumentException exception) {
+      return false;
+    }
   }
 
   public List<Step> getSteps() {

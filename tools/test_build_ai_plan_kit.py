@@ -10,7 +10,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 BUILDER = ROOT / "tools" / "build_ai_plan_kit.py"
-OUTPUT = ROOT / "app" / "assets" / "relven" / "relven-ai-plan-kit-v1.zip"
+OUTPUT = ROOT / "app" / "assets" / "relven" / "relven-ai-plan-kit-v2.zip"
 ARCHIVE_SOURCES = {
     "README.md": ROOT / "docs" / "ai-plan-kit" / "README.md",
     "INSTRUCTIONS.md": ROOT / "docs" / "ai-plan-kit" / "INSTRUCTIONS.md",
@@ -19,6 +19,9 @@ ARCHIVE_SOURCES = {
     "schemas/plan-v2.schema.json": ROOT / "schemas" / "plan-v2.schema.json",
     "schemas/workout-v3.schema.json": ROOT / "schemas" / "workout-v3.schema.json",
     "schemas/exercise-library-v1.schema.json": ROOT / "schemas" / "exercise-library-v1.schema.json",
+    "schemas/exercise-collection-v1.schema.json": ROOT / "schemas" / "exercise-collection-v1.schema.json",
+    "catalog/exercise-library-v1.json": ROOT / "app" / "assets" / "relven" / "exercise-library-v1.json",
+    "JSON-FORMAT.md": ROOT / "docs" / "ai-plan-kit" / "JSON-FORMAT.md",
     "examples/plan-running.json": ROOT / "schemas" / "examples" / "plan-running.json",
     "examples/plan-strength.json": ROOT / "schemas" / "examples" / "plan-strength.json",
 }
@@ -73,12 +76,32 @@ class AiPlanKitBuildTest(unittest.TestCase):
             capabilities = json.loads(
                 archive.read("relven-ai-plan-kit/capabilities.json")
             )
-        self.assertEqual(1, capabilities["kitVersion"])
+        self.assertEqual(2, capabilities["kitVersion"])
         self.assertEqual([1], capabilities["generatedPlanSchemaVersions"])
         self.assertEqual(2, capabilities["appManagedRevisionSchemaVersion"])
-        self.assertTrue(capabilities["strengthPlanImport"])
-        self.assertTrue(capabilities["strengthWorkoutDetails"])
+        self.assertTrue(capabilities["strengthPrehab"]["planImport"])
+        self.assertTrue(capabilities["strengthPrehab"]["guidedPhoneSession"])
         self.assertFalse(capabilities["planZipImport"])
+
+    def test_complete_kit_contains_the_exercise_database_and_interchange_guide(self):
+        with zipfile.ZipFile(OUTPUT) as archive:
+            names = set(archive.namelist())
+            expected_entries = {
+                "relven-ai-plan-kit/catalog/exercise-library-v1.json",
+                "relven-ai-plan-kit/schemas/exercise-collection-v1.schema.json",
+                "relven-ai-plan-kit/JSON-FORMAT.md",
+            }
+            self.assertTrue(expected_entries.issubset(names))
+            catalog = json.loads(
+                archive.read("relven-ai-plan-kit/catalog/exercise-library-v1.json")
+            )
+            self.assertEqual("relven.exercise-library", catalog["format"])
+            self.assertEqual(116, len(catalog["exercises"]))
+            self.assertEqual(2, catalog["libraryRevision"])
+            capabilities = json.loads(
+                archive.read("relven-ai-plan-kit/capabilities.json")
+            )
+            self.assertEqual(116, capabilities["exerciseCatalog"]["bundledExerciseCount"])
 
     def test_check_mode_detects_a_stale_archive(self):
         original = OUTPUT.read_bytes()

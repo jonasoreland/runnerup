@@ -1,24 +1,33 @@
-# Relven AI Plan Kit v1
+# Relven AI Plan Kit v2
 
-This offline kit helps an AI assistant produce a running, strength, or prehab plan that Relven can import. It contains the prompt, capability limits, canonical plan/workout schemas, and valid examples.
+This offline package gives an external AI the plan contract Relven actually imports, the complete built-in exercise catalog, examples, and—when exported from the phone—the user's current custom exercise collection. Relven does not send an AI request or require a network connection.
 
-## Create a plan
+## Use the kit
 
-Give your AI assistant the full ZIP, or provide `INSTRUCTIONS.md`, `capabilities.json`, `schemas/plan-v1.schema.json`, and `schemas/workout-v3.schema.json` together. Include your goal, available days, recent running experience, preferred units, and the IANA timezone for the schedule. Ask it to return one JSON object. Validate the result against `schemas/plan-v1.schema.json`, including its relative reference to `schemas/workout-v3.schema.json`, before importing it in Relven.
+Attach the complete ZIP to the AI conversation. It contains the full prompt, detailed format guide, machine-readable capabilities, canonical schemas, examples, and all 116 bundled bilingual exercises. The phone adds a snapshot of every custom exercise, including its revision, equipment, bilingual instructions, and archived state, when the user copies, shares, or saves the kit.
 
-The app accepts an initial plan as a JSON document. It does not import plan ZIPs. New AI output must use plan schema v1. Schema v2 is included for reference because Relven uses it for app-managed immutable revisions; revision metadata must come from Relven after a predecessor has been saved.
+For a single-message workflow, use **Copy complete AI kit** in Relven. The copied text embeds the same instructions, schemas, built-in catalog, examples, and current custom exercise collection, so the AI does not need a separate attachment.
 
-Strength and prehab workouts use pinned exercise snapshots from the no-equipment catalog. You can create them in the Plan creator by selecting exercises and prescribing repetition ranges or timed work, sets, and rest. Scheduled strength sessions can be guided and recorded offline on the phone. The RunnerUp engine remains responsible for running workouts. This kit does not enable server synchronization, automatic plan activation, or workout execution by an AI service.
+Tell the AI your goal, current ability and recent training, constraints, availability, desired start date, preferred units, and IANA timezone. This kit does not automatically include workout history, existing plans, or medical/profile data. Add such context yourself if you want the AI to use it.
 
-## Contents
+AI output must be one JSON plan document using `format: "relven.plan"` and `schemaVersion: 1`. Import the JSON file in Relven, review it, save it, and activate it explicitly. The app does not import a ZIP as a plan, activate a plan on import, or contact the AI.
 
-- `INSTRUCTIONS.md` — full generation instructions to copy into an AI assistant.
-- `capabilities.json` — machine-readable supported formats and feature limits.
-- `schemas/plan-v1.schema.json` and `schemas/plan-v2.schema.json` — plan package and app revision schemas.
-- `schemas/workout-v3.schema.json` and `schemas/exercise-library-v1.schema.json` — workout and pinned exercise catalog schemas.
-- `examples/plan-running.json` — supported sample package.
-- `examples/plan-strength.json` — supported strength and prehab sample package.
+## Package contents
 
-## Rebuild
+- `INSTRUCTIONS.md` — generation prompt and strict output rules.
+- `JSON-FORMAT.md` — field-by-field structure, units, actual importer subset, and examples.
+- `capabilities.json` — machine-readable support and exact limits.
+- `schemas/plan-v1.schema.json` — new AI plan package schema.
+- `schemas/plan-v2.schema.json` — Relven-managed immutable revision schema; do not generate new v2 plans.
+- `schemas/workout-v3.schema.json` — running and exercise workout document structure.
+- `schemas/exercise-library-v1.schema.json` — bundled exercise catalog structure.
+- `schemas/exercise-collection-v1.schema.json` — user-created custom exercise collection structure.
+- `catalog/exercise-library-v1.json` — every bundled exercise with stable IDs, revisions, bilingual names/instructions, category, pattern, muscle groups, and equipment.
+- `user-data/custom-exercise-collection-v1.json` — the current device's custom exercise snapshot, appended by the phone at export time, including archived entries.
+- `examples/plan-running.json` and `examples/plan-strength.json` — full v1 plan examples that reference bundled exercises.
 
-From the repository root, run `python tools/build_ai_plan_kit.py`. Run `python tools/build_ai_plan_kit.py --check` to verify the checked-in Android asset matches these sources and the canonical schemas.
+Only the custom collection is device-specific. It remains local and is added only when the user explicitly chooses Copy, Share, or Save.
+
+## Maintainers
+
+The checked-in Android asset contains stable bundled sources. From the repository root run `python tools/build_ai_plan_kit.py` to rebuild it or `python tools/build_ai_plan_kit.py --check` to detect stale output. Runtime exports append the current local custom collection without changing the deterministic base asset.

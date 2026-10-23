@@ -24,7 +24,7 @@
     <string name="plan_library_subtitle">Plan, organize, and manage your training.</string>
     <string name="plan_library_calendar_empty">No sessions scheduled this month. Create a plan or import one to fill your calendar.</string>
     <string name="plan_library_create_ai">Create a plan with AI</string>
-    <string name="plan_library_create_ai_help">Copy the Plan Kit instructions, describe the plan you want in your AI assistant, then import the plan file it creates.</string>
+    <string name="plan_library_create_ai_help">Copy the complete Plan Kit, including your installed exercise catalog and JSON rules, paste it into your AI assistant, then import the plan file it creates.</string>
     <string name="plan_library_import">Import plan</string>
     <string name="plan_library_saved">Saved plans</string>
     <string name="plan_library_no_saved">No saved plans yet. Create a plan here or import a plan file.</string>
@@ -62,8 +62,8 @@
     <string name="plan_library_import_error">Could not import this plan. Check that it is a valid Relven plan JSON file.</string>
     <string name="plan_library_import_success">Plan saved. Choose “Use this plan” when you want to make it active.</string>
     <string name="plan_library_active_success">Active plan updated.</string>
-    <string name="plan_library_ai_copied">Plan Kit instructions copied. Paste them into your AI assistant, then import its JSON plan.</string>
-    <string name="plan_library_ai_error">Could not open the Plan Kit instructions.</string>
+    <string name="plan_library_ai_copied">Complete Plan Kit and your installed custom exercises copied. Paste it into your AI assistant, then import its JSON plan.</string>
+    <string name="plan_library_ai_error">Could not assemble the complete Plan Kit.</string>
     <string name="plan_library_busy">Working…</string>
     <string name="plan_create_back">Back to your plans</string>
     <string name="plan_create_title">Create a plan</string>

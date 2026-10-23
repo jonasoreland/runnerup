@@ -19,6 +19,9 @@ package org.runnerup.workout;
 
 import android.util.Log;
 import java.util.Arrays;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 
 public class TargetTrigger extends Trigger {
@@ -54,6 +57,83 @@ public class TargetTrigger extends Trigger {
   private double lastVal = 0;
 
   private int lastValCnt = 0;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint()
+        .put("initialized", inited)
+        .put("paused", paused)
+        .put("graceCount", graceCount)
+        .put("measureCount", cntMeasures)
+        .put("measure", arrayToJson(measure))
+        .put("measureTime", arrayToJson(measure_time))
+        .put("measureDistance", arrayToJson(measure_distance))
+        .put("lastTimestamp", lastTimestamp)
+        .put("lastValue", lastVal)
+        .put("lastValueCount", lastValCnt);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    JSONArray savedMeasure = state.getJSONArray("measure");
+    JSONArray savedMeasureTime = state.getJSONArray("measureTime");
+    JSONArray savedMeasureDistance = state.getJSONArray("measureDistance");
+    int savedCount = state.getInt("measureCount");
+    int savedGrace = state.getInt("graceCount");
+    int savedLastValueCount = state.getInt("lastValueCount");
+    double savedTimestamp = state.getDouble("lastTimestamp");
+    double savedLastValue = state.getDouble("lastValue");
+    if (savedMeasure.length() != measure.length
+        || savedMeasureTime.length() != measure_time.length
+        || savedMeasureDistance.length() != measure_distance.length
+        || savedCount < 0
+        || savedGrace < -86_400
+        || savedGrace > 86_400
+        || savedLastValueCount < 0
+        || savedLastValueCount > savedCount
+        || !Double.isFinite(savedTimestamp)
+        || savedTimestamp < 0
+        || !Double.isFinite(savedLastValue)
+        || !validArray(savedMeasure)
+        || !validArray(savedMeasureTime)
+        || !validArray(savedMeasureDistance)) return false;
+    copyArray(savedMeasure, measure);
+    copyArray(savedMeasureTime, measure_time);
+    copyArray(savedMeasureDistance, measure_distance);
+    inited = state.getBoolean("initialized");
+    paused = state.getBoolean("paused");
+    graceCount = savedGrace;
+    cntMeasures = savedCount;
+    lastTimestamp = savedTimestamp;
+    lastVal = savedLastValue;
+    lastValCnt = savedLastValueCount;
+    return true;
+  }
+
+  @Override
+  void onRecoverPaused(Workout workout) {
+    paused = true;
+  }
+
+  private static JSONArray arrayToJson(double[] values) throws JSONException {
+    JSONArray result = new JSONArray();
+    for (double value : values) result.put(value);
+    return result;
+  }
+
+  private static boolean validArray(JSONArray values) throws JSONException {
+    for (int index = 0; index < values.length(); index++) {
+      if (!Double.isFinite(values.getDouble(index))) return false;
+    }
+    return true;
+  }
+
+  private static void copyArray(JSONArray values, double[] destination) throws JSONException {
+    for (int index = 0; index < destination.length; index++) {
+      destination[index] = values.getDouble(index);
+    }
+  }
 
   public TargetTrigger(Dimension dim, int movingAverageSeconds, int graceSeconds) {
     dimension = dim;

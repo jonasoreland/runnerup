@@ -33,4 +33,14 @@ class ActivityCompletionGateTest {
 
     assertTrue(gate.tryBeginCompletion(TrackerState.STOPPED))
   }
+
+  @Test
+  fun failedDurableCheckpointClearAllowsCompletionToBeRetried() {
+    val gate = ActivityCompletionGate()
+    assertTrue(gate.tryBeginCompletion(TrackerState.PAUSED))
+
+    gate.cancelCompletion()
+
+    assertTrue(gate.tryBeginCompletion(TrackerState.PAUSED))
+  }
 }

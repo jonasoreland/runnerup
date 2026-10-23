@@ -1,7 +1,8 @@
 {
-  "kitVersion": 1,
+  "kitVersion": 2,
   "planFormat": "relven.plan",
   "generatedPlanSchemaVersions": [1],
+  "acceptedPlanSchemaVersions": [1, 2],
   "appManagedRevisionSchemaVersion": 2,
   "workoutSchemaVersion": 3,
   "supportedSports": ["running", "strength", "prehab"],
@@ -10,12 +11,82 @@
   "supportedSegmentPhases": ["warmup", "work", "recovery", "cooldown"],
   "supportedEndTypes": ["time", "distance", "manual"],
   "supportedTargetTypes": ["pace", "speed", "heart_rate"],
-  "strengthPlanImport": true,
-  "strengthWorkoutDetails": true,
-  "strengthWorkoutAuthoring": true,
-  "strengthSessionRecording": true,
+  "plan": {
+    "generatedSchemaVersion": 1,
+    "schemaVersion2Meaning": "Relven-managed immutable revision; do not generate for a new plan",
+    "maximumWorkouts": 100,
+    "maximumDays": 2000,
+    "multipleWorkoutsPerDate": true,
+    "restWorkoutDateCollision": false,
+    "recurringScheduleRules": false,
+    "maximumUtf8Bytes": 4194304,
+    "maximumJsonDepth": 32,
+    "maximumJsonTokens": 100000,
+    "previewBeforeSave": true,
+    "activationAfterSaveIsExplicit": true
+  },
+  "workout": {
+    "maximumStepNodes": 256,
+    "maximumNestingDepth": 16,
+    "maximumRepeatCount": 100,
+    "maximumExpandedSteps": 10000,
+    "uniqueStepIdsRequired": true,
+    "canonicalUnits": {
+      "time": "seconds",
+      "distance": "meters",
+      "pace": "seconds_per_kilometer",
+      "speed": "meters_per_second",
+      "heartRate": "beats_per_minute"
+    }
+  },
+  "running": {
+    "existingEngineExecution": true,
+    "supportedEnds": ["time", "distance", "manual"],
+    "supportedTargets": ["pace", "speed", "heart_rate"],
+    "supportedStructure": ["segment", "sequence", "repeat"],
+    "rejectedSchemaConstructs": {
+      "targets": ["effort"],
+      "ends": ["any", "all", "heart_rate_below"],
+      "warmupExemptTrue": true,
+      "cooldownExemptTrue": true
+    }
+  },
+  "strengthPrehab": {
+    "planImport": true,
+    "planCreator": true,
+    "readOnlyWorkoutDetails": true,
+    "guidedPhoneSession": true,
+    "watchWorkoutControls": false,
+    "supportedEnds": ["manual", "time"],
+    "nonNullTarget": false,
+    "distanceEnd": false,
+    "equipmentMustBeEmpty": true,
+    "imagesMustBeEmpty": true,
+    "exerciseMustMatchInstalledCatalog": true,
+    "prescriptionBounds": {
+      "sets": [1, 100],
+      "repetitions": [1, 500],
+      "restSeconds": [0, 3600],
+      "timedSeconds": [1, 86400]
+    }
+  },
+  "exerciseCatalog": {
+    "bundledPath": "catalog/exercise-library-v1.json",
+    "bundledExerciseCount": 116,
+    "libraryRevision": 2,
+    "customPath": "user-data/custom-exercise-collection-v1.json",
+    "customCollectionFormat": "relven.exercise-collection",
+    "customCollectionSchemaVersion": 1,
+    "maximumCustomExercises": 200,
+    "maximumCustomCollectionBytes": 1048576,
+    "customArchivedRecordsIncluded": true,
+    "customEquipmentMayBeNonEmpty": true,
+    "exerciseMediaIncluded": false
+  },
+  "planCreatorStrengthAuthoring": true,
   "planZipImport": false,
   "automaticActivation": false,
   "serverSynchronization": false,
+  "localAndOffline": true,
   "maximumJsonBytes": 4194304
 }
