@@ -7,6 +7,45 @@ import org.junit.Test
 
 class ActivityRouteDataTest {
   @Test
+  fun liveRouteUsesOneMultiLineFeatureAndPreservesRouteSegmentGaps() {
+    val route =
+        listOf(
+            RoutePoint(59.0, 18.0, 1, 0.0, 0.0, segment = 0),
+            RoutePoint(59.1, 18.1, 1, 10.0, 100.0, segment = 0),
+            RoutePoint(59.2, 18.2, 1, 20.0, 200.0, segment = 1),
+            RoutePoint(59.3, 18.3, 1, 30.0, 300.0, segment = 1))
+
+    val geoJson = buildLiveRouteGeoJson(route)
+
+    assertEquals(1, "\"type\":\"Feature\"".toRegex().findAll(geoJson).count())
+    assertTrue(geoJson.contains("\"type\":\"MultiLineString\""))
+    assertTrue(geoJson.contains("[[[18.0000000,59.0000000],[18.1000000,59.1000000]],[[18.2000000,59.2000000],[18.3000000,59.3000000]]]"))
+    assertFalse(geoJson.contains("[18.1000000,59.1000000],[18.2000000,59.2000000]"))
+    assertTrue(geoJson.contains("\"color\":\"#FF5A1F\""))
+  }
+
+  @Test
+  fun liveRouteKeepsEveryPointInOneFeatureForLongRuns() {
+    val route =
+        (0 until 10_000).map { index ->
+          RoutePoint(
+              latitude = 59.0 + index / 1_000_000.0,
+              longitude = 18.0 + index / 1_000_000.0,
+              lap = 1,
+              elapsedSeconds = index.toDouble(),
+              distanceMeters = index.toDouble(),
+              segment = 0)
+        }
+
+    val geoJson = buildLiveRouteGeoJson(route)
+
+    assertEquals(1, "\"type\":\"Feature\"".toRegex().findAll(geoJson).count())
+    assertEquals(
+        route.size,
+        "\\[-?\\d+\\.\\d{7},-?\\d+\\.\\d{7}\\]".toRegex().findAll(geoJson).count())
+  }
+
+  @Test
   fun buildsSegmentsWithoutCrossingLapBoundariesAndUsesGeoJsonCoordinateOrder() {
     val route =
         listOf(

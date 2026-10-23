@@ -124,6 +124,39 @@ internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): St
   }
 }
 
+/** Emits the standard-color live route as one feature while keeping pauses and laps disconnected. */
+internal fun buildLiveRouteGeoJson(route: List<RoutePoint>): String {
+  val lines = mutableListOf<List<RoutePoint>>()
+  var line = mutableListOf<RoutePoint>()
+  var previous: RoutePoint? = null
+  for (point in route) {
+    val prior = previous
+    if (!point.hasValidCoordinates() ||
+        (prior != null && (point.lap != prior.lap || point.segment != prior.segment))) {
+      if (line.size >= 2) lines += line
+      line = mutableListOf()
+    }
+    if (point.hasValidCoordinates()) line += point
+    previous = point.takeIf(RoutePoint::hasValidCoordinates)
+  }
+  if (line.size >= 2) lines += line
+  if (lines.isEmpty()) return "{\"type\":\"FeatureCollection\",\"features\":[]}"
+
+  return buildString {
+    append("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"color\":\"#FF5A1F\"},\"geometry\":{\"type\":\"MultiLineString\",\"coordinates\":[")
+    lines.forEachIndexed { lineIndex, points ->
+      if (lineIndex > 0) append(',')
+      append('[')
+      points.forEachIndexed { pointIndex, point ->
+        if (pointIndex > 0) append(',')
+        append('[').append(number(point.longitude)).append(',').append(number(point.latitude)).append(']')
+      }
+      append(']')
+    }
+    append("]}}]}")
+  }
+}
+
 /** Emits one start and one finish marker, even when a closed route shares their coordinates. */
 internal fun buildRouteMarkersGeoJson(route: List<RoutePoint>): String {
   val validPoints = route.filter(RoutePoint::hasValidCoordinates)

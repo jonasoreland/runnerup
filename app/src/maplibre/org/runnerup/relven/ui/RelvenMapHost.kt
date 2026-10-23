@@ -47,14 +47,16 @@ internal fun createLiveWorkoutMapHost(context: Context): LiveWorkoutMapHost =
         emptyList(),
         RouteMetric.STANDARD,
         showRecenterButton = false,
-        showAttribution = false)
+        showAttribution = false,
+        singleColorLiveRoute = true)
 
 private class RelvenMapHost(
     context: Context,
     initialRoute: List<RoutePoint>,
     metric: RouteMetric,
     showRecenterButton: Boolean = true,
-    showAttribution: Boolean = true) : LiveWorkoutMapHost {
+    showAttribution: Boolean = true,
+    private val singleColorLiveRoute: Boolean = false) : LiveWorkoutMapHost {
   private var route = initialRoute
   private var currentLocation: RoutePoint? = null
   private var followRunner = true
@@ -136,7 +138,7 @@ private class RelvenMapHost(
       }
       map.setStyle(STYLE_URL) { loadedStyle ->
         style = loadedStyle
-        loadedStyle.addSource(GeoJsonSource(sourceId, buildRouteGeoJson(route, currentMetric)))
+        loadedStyle.addSource(GeoJsonSource(sourceId, routeGeoJson(route, currentMetric)))
         loadedStyle.addSource(GeoJsonSource(markerSourceId, buildRouteMarkersGeoJson(route)))
         loadedStyle.addSource(
             GeoJsonSource(currentSourceId, buildCurrentLocationGeoJson(currentLocation)))
@@ -179,7 +181,7 @@ private class RelvenMapHost(
   override fun updateMetric(metric: RouteMetric) {
     currentMetric = metric
     fallback.setMetric(metric)
-    style?.let { (it.getSource(sourceId) as? GeoJsonSource)?.setGeoJson(buildRouteGeoJson(route, metric)) }
+    style?.let { (it.getSource(sourceId) as? GeoJsonSource)?.setGeoJson(routeGeoJson(route, metric)) }
   }
 
   override fun updateLiveRoute(route: List<RoutePoint>, currentLocation: RoutePoint?) {
@@ -188,7 +190,7 @@ private class RelvenMapHost(
     fallback.setRoute(this.route)
     style?.let { loadedStyle ->
       (loadedStyle.getSource(sourceId) as? GeoJsonSource)
-          ?.setGeoJson(buildRouteGeoJson(this.route, currentMetric))
+          ?.setGeoJson(routeGeoJson(this.route, currentMetric))
       (loadedStyle.getSource(markerSourceId) as? GeoJsonSource)
           ?.setGeoJson(buildRouteMarkersGeoJson(this.route))
       (loadedStyle.getSource(currentSourceId) as? GeoJsonSource)
@@ -202,6 +204,9 @@ private class RelvenMapHost(
       }
     }
   }
+
+  private fun routeGeoJson(route: List<RoutePoint>, metric: RouteMetric) =
+      if (singleColorLiveRoute) buildLiveRouteGeoJson(route) else buildRouteGeoJson(route, metric)
 
   override fun recenter() {
     followRunner = true
