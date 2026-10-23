@@ -424,22 +424,50 @@ internal fun PlanLibraryScreen(
                   color = RelvenColors.MutedText,
                   fontSize = 13.sp)
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-              TextButton(
+            if (active) {
+              Button(
                   enabled = !busy,
-                  onClick = { previewPlanId = plan.id() }) {
-                Text(stringResource(
-                    if (previewPlan?.id() == plan.id()) R.string.plan_library_previewing
-                    else R.string.plan_library_preview_calendar))
-              }
-              if (!active && !group.archived) TextButton(enabled = !busy, onClick = { onActivate(plan) }) {
-                Text(stringResource(R.string.plan_library_activate))
-              }
-              if (active) TextButton(enabled = !busy, onClick = onClearActive) {
-                Text(stringResource(R.string.plan_library_clear))
-              }
-              if (active) TextButton(onClick = onOpenCalendar) {
+                  onClick = onOpenCalendar,
+                  colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                  modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                 Text(stringResource(R.string.plan_library_calendar))
+              }
+              Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(
+                    modifier = Modifier.weight(1f),
+                    enabled = !busy,
+                    onClick = { previewPlanId = plan.id() }) {
+                  Text(
+                      stringResource(
+                          if (previewPlan?.id() == plan.id()) R.string.plan_library_previewing_short
+                          else R.string.plan_library_preview_short),
+                      maxLines = 1,
+                      textAlign = TextAlign.Center)
+                }
+                TextButton(
+                    modifier = Modifier.weight(1f),
+                    enabled = !busy,
+                    onClick = onClearActive) {
+                  Text(stringResource(R.string.plan_library_clear), maxLines = 2, textAlign = TextAlign.Center)
+                }
+              }
+            } else {
+              if (!group.archived) {
+                Button(
+                    enabled = !busy,
+                    onClick = { onActivate(plan) },
+                    colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                  Text(stringResource(R.string.plan_library_activate))
+                }
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !busy,
+                    onClick = { previewPlanId = plan.id() }) {
+                  Text(stringResource(R.string.plan_library_preview_calendar))
+                }
               }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -51,6 +51,8 @@
     <string name="plan_library_calendar_no_plan">Create or import a plan to add sessions to this calendar.</string>
     <string name="plan_library_preview_calendar">Preview schedule</string>
     <string name="plan_library_previewing">Previewing</string>
+    <string name="plan_library_preview_short">Preview</string>
+    <string name="plan_library_previewing_short">Previewing</string>
     <string name="plan_library_import_title">Review plan</string>
     <string name="plan_library_save">Save plan</string>
     <string name="plan_library_cancel">Cancel</string>
