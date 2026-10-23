@@ -79,6 +79,8 @@
         </intent>
     </queries>
 
+    <!-- Portrait is intentional for the phone-first Relven experience. Android may override
+         orientation requests on large-screen devices, so this guarantee applies to phones. -->
     <application
         android:allowBackup="true"
         android:appCategory="maps"
@@ -89,7 +91,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="UnusedAttribute,LockedOrientationActivity,DiscouragedApi">
         <meta-data
             android:name="android.webkit.WebView.MetricsOptOut"
             android:value="true" />
@@ -97,6 +99,7 @@
         <activity
             android:name="org.runnerup.relven.ui.RelvenHomeActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/RelvenStartingTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -107,17 +110,20 @@
         <activity
             android:name="org.runnerup.relven.ui.ActivityMapActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name="org.runnerup.relven.ui.ActivityUploadActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize|smallestScreenSize"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".view.MainLayout"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/MainLayoutTheme">
             <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
@@ -136,16 +142,19 @@
         <activity
             android:name=".view.RunActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <activity
             android:name=".view.AudioCueSettingsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <activity
             android:name=".view.DetailActivity"
             android:configChanges="orientation|screenSize|uiMode"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -157,6 +166,7 @@
             android:name=".view.ManualActivity"
             android:label="@string/Manual_activity_title"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -168,6 +178,7 @@
             android:name=".view.AccountListActivity"
             android:label="@string/Configure_accounts"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -178,6 +189,7 @@
         <activity
             android:name=".view.AccountActivity"
             android:parentActivityName=".view.AccountListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -187,6 +199,7 @@
 
         <activity
             android:name=".view.UploadActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <activity
@@ -194,6 +207,7 @@
             android:exported="true"
             android:label="@string/Manage_workouts"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/RelvenScreenTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -245,6 +259,7 @@
         <activity
             android:name=".export.oauth2client.OAuth2Activity"
             android:parentActivityName=".view.AccountListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -256,6 +271,7 @@
             android:name=".view.HRSettingsActivity"
             android:label="@string/Heart_Rate_Monitor"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -267,6 +283,7 @@
             android:name=".view.HRZonesActivity"
             android:label="@string/Heart_Rate_Zones"
             android:parentActivityName=".view.MainLayout"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -282,7 +299,9 @@
             android:name=".export.RunnerUpLiveSynchronizer$LiveService"
             android:foregroundServiceType="location|health" />
 
-        <activity android:name=".view.CreateAdvancedWorkout" />
+        <activity
+            android:name=".view.CreateAdvancedWorkout"
+            android:screenOrientation="portrait" />
 
     </application>
 </manifest>

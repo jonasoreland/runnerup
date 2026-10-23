@@ -60,7 +60,12 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -76,6 +81,13 @@ import org.runnerup.notification.GpsBoundState;
 import org.runnerup.notification.GpsSearchingState;
 import org.runnerup.notification.NotificationManagerDisplayStrategy;
 import org.runnerup.notification.NotificationStateManager;
+import org.runnerup.relven.exercise.ExerciseCatalog;
+import org.runnerup.relven.exercise.ExerciseCatalogRepository;
+import org.runnerup.relven.exercise.ExerciseEntry;
+import org.runnerup.relven.ui.GymExerciseDraft;
+import org.runnerup.relven.ui.GymExerciseOption;
+import org.runnerup.relven.ui.GymWorkoutDraftBuilder;
+import org.runnerup.relven.ui.GymWorkoutStarter;
 import org.runnerup.relven.ui.StartReadinessItem;
 import org.runnerup.relven.ui.StartReadinessPresentation;
 import org.runnerup.relven.ui.StartReadinessPresentationFactory;
@@ -100,6 +112,7 @@ import org.runnerup.util.SafeParse;
 import org.runnerup.util.TickListener;
 import org.runnerup.widget.ClassicSpinner;
 import org.runnerup.workout.Dimension;
+import org.runnerup.workout.RelvenExerciseReference;
 import org.runnerup.workout.Sport;
 import org.runnerup.workout.Workout;
 import org.runnerup.workout.Workout.StepListEntry;
@@ -139,6 +152,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private ComposeView workoutSetupView;
   private WorkoutSetupStateHolder workoutSetupState;
   private boolean startWorkoutReady;
+  private final ExecutorService gymCatalogExecutor = Executors.newSingleThreadExecutor();
+  private final ArrayList<GymExerciseOption> gymExercises = new ArrayList<>();
+  private final ArrayList<GymExerciseDraft> gymDraft = new ArrayList<>();
+  private Map<String, RelvenExerciseReference> gymExerciseReferences = Map.of();
+  private String gymName = "";
+  private String gymQuery = "";
+  private boolean gymCatalogLoading;
+  private boolean gymCatalogError;
 
   private ComposeView readinessComposeView = null;
   private boolean gpsActionVisible;
@@ -305,8 +326,78 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
               public void onManageAudio(int tab) {
                 startActivity(new Intent(requireContext(), AudioCueSettingsActivity.class));
               }
+
+              @Override
+              public void onGymNameChanged(String name) {
+                gymName = name;
+                persistGymDraft();
+                refreshWorkoutSetup();
+                updateView();
+              }
+
+              @Override
+              public void onGymQueryChanged(String query) {
+                gymQuery = query;
+                persistGymDraft();
+                refreshWorkoutSetup();
+              }
+
+              @Override
+              public void onAddGymExercise(String exerciseId) {
+                if (gymDraft.stream().anyMatch(item -> item.getExerciseId().equals(exerciseId)))
+                  return;
+                GymExerciseOption option =
+                    gymExercises.stream()
+                        .filter(item -> item.getExerciseId().equals(exerciseId))
+                        .findFirst()
+                        .orElse(null);
+                if (option == null) return;
+                gymDraft.add(new GymExerciseDraft(exerciseId, option.getName(), "3", "8", "60"));
+                persistGymDraft();
+                refreshWorkoutSetup();
+                updateView();
+              }
+
+              @Override
+              public void onRemoveGymExercise(String exerciseId) {
+                gymDraft.removeIf(item -> item.getExerciseId().equals(exerciseId));
+                persistGymDraft();
+                refreshWorkoutSetup();
+                updateView();
+              }
+
+              @Override
+              public void onUpdateGymExercise(
+                  String exerciseId, String sets, String repetitions, String restSeconds) {
+                for (int index = 0; index < gymDraft.size(); index++) {
+                  GymExerciseDraft item = gymDraft.get(index);
+                  if (item.getExerciseId().equals(exerciseId)) {
+                    gymDraft.set(
+                        index,
+                        new GymExerciseDraft(
+                            item.getExerciseId(), item.getName(), sets, repetitions, restSeconds));
+                    break;
+                  }
+                }
+                persistGymDraft();
+                refreshWorkoutSetup();
+                updateView();
+              }
+
+              @Override
+              public void onRetryGymCatalog() {
+                loadGymCatalog();
+              }
+
+              @Override
+              public void onStartGymWorkout() {
+                onStartWorkoutAction();
+              }
             });
     WorkoutSetupCompose.install(workoutSetupView, workoutSetupState);
+    restoreGymDraft();
+    loadGymCatalog();
+    applySportMode();
 
     if (selectedTabPosition == 2) {
       loadAdvanced(null);
@@ -336,6 +427,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
               listener.onItemSelected(parent, view, position, id);
             }
             setGpsNotRequired(Sport.isWithoutGps((int) id));
+            applySportMode();
+            refreshWorkoutSetup();
             StartFragment.this.updateView();
           }
 
@@ -393,6 +486,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       loadAdvanced(null);
     }
     refreshWorkoutSetup();
+    applySportMode();
 
     if (!mIsBound || mTracker == null) {
       bindGpsTracker();
@@ -441,6 +535,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   @Override
   public void onDestroy() {
+    gymCatalogExecutor.shutdownNow();
     stopGps();
     unbindGpsTracker();
     mGpsStatus = null;
@@ -491,8 +586,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void onGpsTrackerBound() {
+    sportWithoutGps =
+        Sport.isWithoutGps(
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getInt(getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
     // check and request permissions at startup
-    boolean missingEssentialPermission = checkPermissions(false);
+    boolean missingEssentialPermission = sportWithoutGps ? false : checkPermissions(false);
     mTracker.setWithoutGps(sportWithoutGps);
     if (!missingEssentialPermission && getAutoStartGps()) {
       startGps();
@@ -675,6 +774,157 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     if (workoutSetupState != null) workoutSetupState.update(setupState());
   }
 
+  private boolean isGymSelected() {
+    return PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getInt(getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING)
+        == DB.ACTIVITY.SPORT_GYM;
+  }
+
+  private boolean isInRange(String value, int minimum, int maximum) {
+    if (value == null) return false;
+    try {
+      int number = Integer.parseInt(value.trim());
+      return number >= minimum && number <= maximum;
+    } catch (NumberFormatException invalid) {
+      return false;
+    }
+  }
+
+  private void applySportMode() {
+    if (workoutTabsView != null) {
+      workoutTabsView.setVisibility(isGymSelected() ? View.GONE : View.VISIBLE);
+    }
+  }
+
+  private void loadGymCatalog() {
+    gymCatalogLoading = true;
+    gymCatalogError = false;
+    refreshWorkoutSetup();
+    Context appContext = requireContext().getApplicationContext();
+    gymCatalogExecutor.execute(
+        () -> {
+          try {
+            ExerciseCatalog catalog =
+                new ExerciseCatalogRepository(appContext).load(Locale.getDefault().toLanguageTag());
+            ArrayList<GymExerciseOption> options = new ArrayList<>();
+            for (ExerciseEntry entry : catalog.getExercises()) {
+              if (!entry.isArchived() && entry.getEquipment().isEmpty()) {
+                options.add(
+                    new GymExerciseOption(
+                        entry.getExerciseId(),
+                        entry.getName(),
+                        entry.getCategory().getKey(),
+                        String.join(
+                            " ",
+                            entry.getMuscleGroups().toString(),
+                            entry.getMovementPattern().replace('_', ' '))));
+              }
+            }
+            Map<String, RelvenExerciseReference> references =
+                new ExerciseCatalogRepository(appContext).exerciseReferences();
+            Activity activity = getActivity();
+            if (activity == null) return;
+            activity.runOnUiThread(
+                () -> {
+                  if (!isAdded() || getView() == null) return;
+                  gymExercises.clear();
+                  gymExercises.addAll(options);
+                  gymExerciseReferences = references;
+                  for (int index = 0; index < gymDraft.size(); index++) {
+                    GymExerciseDraft item = gymDraft.get(index);
+                    GymExerciseOption option =
+                        gymExercises.stream()
+                            .filter(value -> value.getExerciseId().equals(item.getExerciseId()))
+                            .findFirst()
+                            .orElse(null);
+                    if (option != null) {
+                      gymDraft.set(
+                          index,
+                          new GymExerciseDraft(
+                              item.getExerciseId(),
+                              option.getName(),
+                              item.getSets(),
+                              item.getRepetitions(),
+                              item.getRestSeconds()));
+                    }
+                  }
+                  gymCatalogLoading = false;
+                  gymCatalogError = false;
+                  refreshWorkoutSetup();
+                  updateView();
+                });
+          } catch (Exception error) {
+            Log.w(getClass().getName(), "Could not load offline gym exercise catalog", error);
+            Activity activity = getActivity();
+            if (activity != null) {
+              activity.runOnUiThread(
+                  () -> {
+                    if (!isAdded() || getView() == null) return;
+                    gymCatalogLoading = false;
+                    gymCatalogError = true;
+                    refreshWorkoutSetup();
+                    updateView();
+                  });
+            }
+          }
+        });
+  }
+
+  private void restoreGymDraft() {
+    gymName = getString(R.string.gym_workout_default_name);
+    String stored =
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getString("relven.gym_workout_draft", null);
+    if (stored == null) return;
+    try {
+      JSONObject root = new JSONObject(stored);
+      gymName = root.optString("name", gymName);
+      gymQuery = root.optString("query", "");
+      JSONArray entries = root.optJSONArray("exercises");
+      if (entries == null || entries.length() > 100) return;
+      for (int index = 0; index < entries.length(); index++) {
+        JSONObject item = entries.getJSONObject(index);
+        String id = item.getString("id");
+        if (gymDraft.stream().anyMatch(value -> value.getExerciseId().equals(id))) continue;
+        gymDraft.add(
+            new GymExerciseDraft(
+                id,
+                id,
+                item.optString("sets", "3"),
+                item.optString("repetitions", "8"),
+                item.optString("restSeconds", "60")));
+      }
+    } catch (Exception error) {
+      Log.w(getClass().getName(), "Ignoring invalid saved gym workout draft", error);
+      gymDraft.clear();
+    }
+  }
+
+  private void persistGymDraft() {
+    if (getContext() == null) return;
+    try {
+      JSONArray entries = new JSONArray();
+      for (GymExerciseDraft item : gymDraft) {
+        entries.put(
+            new JSONObject()
+                .put("id", item.getExerciseId())
+                .put("sets", item.getSets())
+                .put("repetitions", item.getRepetitions())
+                .put("restSeconds", item.getRestSeconds()));
+      }
+      JSONObject root = new JSONObject();
+      root.put("name", gymName);
+      root.put("query", gymQuery);
+      root.put("exercises", entries);
+      PreferenceManager.getDefaultSharedPreferences(requireContext())
+          .edit()
+          .putString("relven.gym_workout_draft", root.toString())
+          .apply();
+    } catch (org.json.JSONException impossible) {
+      throw new IllegalStateException(impossible);
+    }
+  }
+
   private WorkoutSetupState setupState() {
     Context context = requireContext();
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -764,7 +1014,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         prefs.getString(
             getString(R.string.pref_advanced_audio),
             getString(org.runnerup.common.R.string.Default)),
-        advancedAudio);
+        advancedAudio,
+        isGymSelected(),
+        gymName,
+        gymQuery,
+        gymCatalogLoading,
+        gymCatalogError,
+        new ArrayList<>(gymExercises),
+        new ArrayList<>(gymDraft));
   }
 
   private ArrayList<WorkoutSetupChoice> audioChoices(AudioSchemeListAdapter adapter) {
@@ -813,6 +1070,28 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void onStartWorkoutAction() {
     updateStartButtonView();
+    if (isGymSelected()) {
+      if (!startWorkoutReady || !(requireActivity() instanceof GymWorkoutStarter starter)) {
+        updateView();
+        return;
+      }
+      try {
+        String workoutJson =
+            GymWorkoutDraftBuilder.INSTANCE.build(gymName, gymDraft, gymExerciseReferences);
+        starter.startQuickStrengthWorkout(gymName.trim(), workoutJson);
+      } catch (Exception error) {
+        Log.w(getClass().getName(), "Could not create gym workout", error);
+        new AlertDialog.Builder(requireContext(), R.style.RelvenStartDialogTheme)
+            .setTitle(R.string.gym_workout_error_title)
+            .setMessage(
+                error.getLocalizedMessage() == null
+                    ? getString(R.string.gym_exercises_error)
+                    : error.getLocalizedMessage())
+            .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+            .show();
+      }
+      return;
+    }
     if (startWorkoutReady && mTracker != null && mTracker.getState() == TrackerState.CONNECTED) {
       startWorkout();
     } else {
@@ -1035,13 +1314,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private void renderReadinessStatus() {
     String noDevicesMessage = getString(org.runnerup.common.R.string.No_devices_connected);
     StartReadinessPresentation presentation =
-        StartReadinessPresentationFactory.INSTANCE.create(
-            gpsSummaryItem,
-            gpsDetailsItem,
-            heartRateItem,
-            wearOsItem,
-            statusDetailsShown,
-            noDevicesMessage);
+        isGymSelected()
+            ? new StartReadinessPresentation(List.of(), null)
+            : StartReadinessPresentationFactory.INSTANCE.create(
+                gpsSummaryItem,
+                gpsDetailsItem,
+                heartRateItem,
+                wearOsItem,
+                statusDetailsShown,
+                noDevicesMessage);
     StartScreenChromeCompose.setReadiness(
         readinessComposeView,
         presentation,
@@ -1049,13 +1330,33 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         gpsActionVisible,
         gpsActionLabel,
         startWorkoutReady,
-        getString(org.runnerup.common.R.string.Start_workout_action),
+        getString(
+            isGymSelected()
+                ? R.string.gym_start_workout
+                : org.runnerup.common.R.string.Start_workout_action),
         () -> toggleStatusDetails(),
         () -> gpsEnableClick.onClick(null),
         () -> onStartWorkoutAction());
   }
 
   private void updateStartButtonView() {
+    if (isGymSelected()) {
+      boolean validDraft =
+          !gymName.isBlank()
+              && gymName.trim().length() <= 80
+              && gymDraft.size() > 0
+              && !gymCatalogLoading
+              && !gymCatalogError
+              && gymDraft.stream()
+                  .allMatch(
+                      item ->
+                          gymExerciseReferences.containsKey(item.getExerciseId())
+                              && isInRange(item.getSets(), 1, 100)
+                              && isInRange(item.getRepetitions(), 1, 500)
+                              && isInRange(item.getRestSeconds(), 0, 3600));
+      startWorkoutReady = validDraft && gymExerciseReferences.size() > 0;
+      return;
+    }
     boolean gpsStarted = mGpsStatus != null && mGpsStatus.isStarted();
     boolean gpsLogging = mGpsStatus != null && mGpsStatus.isLogging();
     boolean gpsFixed = mGpsStatus != null && mGpsStatus.isFixed();
@@ -1071,6 +1372,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void updateStartGpsButtonView() {
+    if (isGymSelected()) {
+      gpsActionVisible = false;
+      gpsActionLabel = "";
+      return;
+    }
     do {
       if (mGpsStatus.isStarted()) {
         break;

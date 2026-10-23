@@ -224,4 +224,24 @@
     <string name="workout_manager_empty_body">Create a workout or import a file to get started.</string>
     <string name="workout_manager_no_search_results">No matching workouts</string>
     <string name="workout_manager_no_search_results_body">Try a shorter or different search.</string>
+    <string name="gym_workout_title">Build your workout</string>
+    <string name="gym_workout_name">Workout name</string>
+    <plurals name="gym_workout_exercise_count"><item quantity="one">%d exercise</item><item quantity="other">%d exercises</item></plurals>
+    <string name="gym_exercises_title">Add exercises</string>
+    <string name="gym_exercise_search">Search exercises</string>
+    <string name="gym_exercises_loading">Loading the offline exercise library…</string>
+    <string name="gym_exercises_error">The exercise library could not be loaded.</string>
+    <string name="gym_exercises_retry">Try again</string>
+    <string name="gym_exercises_empty">Search or choose an exercise below to begin.</string>
+    <string name="gym_exercise_no_matches">No more matching exercises.</string>
+    <string name="gym_exercise_add">Add</string>
+    <string name="gym_workout_order">Your workout</string>
+    <string name="gym_exercise_remove">Remove</string>
+    <string name="gym_sets">Sets</string>
+    <string name="gym_repetitions">Reps</string>
+    <string name="gym_rest_seconds">Rest s</string>
+    <string name="gym_start_workout">Start gym workout</string>
+    <string name="gym_workout_default_name">Gym workout</string>
+    <string name="gym_workout_error_title">Could not start workout</string>
+    <string name="gym_number_invalid">Enter a value in the allowed range.</string>
 </resources>

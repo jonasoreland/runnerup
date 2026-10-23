@@ -190,4 +190,24 @@
     <string name="activity_review_activity_type">Aktivitetstyp</string>
     <string name="activity_review_manual_distance_meters">Manuell distans (m)</string>
     <string name="route_metric_cadence">Stegfrekvens (steg/min)</string>
+    <string name="gym_workout_title">Skapa ditt pass</string>
+    <string name="gym_workout_name">Passnamn</string>
+    <plurals name="gym_workout_exercise_count"><item quantity="one">%d övning</item><item quantity="other">%d övningar</item></plurals>
+    <string name="gym_exercises_title">Lägg till övningar</string>
+    <string name="gym_exercise_search">Sök övningar</string>
+    <string name="gym_exercises_loading">Läser in övningsbiblioteket offline…</string>
+    <string name="gym_exercises_error">Övningsbiblioteket kunde inte läsas in.</string>
+    <string name="gym_exercises_retry">Försök igen</string>
+    <string name="gym_exercises_empty">Sök eller välj en övning nedan för att börja.</string>
+    <string name="gym_exercise_no_matches">Inga fler övningar matchar.</string>
+    <string name="gym_exercise_add">Lägg till</string>
+    <string name="gym_workout_order">Ditt pass</string>
+    <string name="gym_exercise_remove">Ta bort</string>
+    <string name="gym_sets">Set</string>
+    <string name="gym_repetitions">Reps</string>
+    <string name="gym_rest_seconds">Vila s</string>
+    <string name="gym_start_workout">Starta gympass</string>
+    <string name="gym_workout_default_name">Gympass</string>
+    <string name="gym_workout_error_title">Passet kunde inte startas</string>
+    <string name="gym_number_invalid">Ange ett värde inom tillåtet intervall.</string>
 </resources>
