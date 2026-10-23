@@ -36,7 +36,7 @@
 ## Phase 4 and final PR: lifecycle, performance, and cross-surface QA
 
 1. Add recovery tests for Activity recreation, background/foreground, Tracker binding loss/rebind, process restoration of active status, duplicate Save taps, and notification action synchronization.
-2. Stabilize live camera follow and throttle map source/Compose route snapshots without dropping accepted persisted samples; inspect memory/update cost on a long simulated route. Camera follow displacement gating is implemented in the current PR; source/snapshot coalescing and long-route cost measurement remain.
+2. Stabilize live camera follow and throttle map source/Compose route snapshots without dropping accepted persisted samples; inspect memory/update cost on a long simulated route. Camera follow displacement gating and first-location zoom-16 initialization are implemented; source/snapshot coalescing and long-route cost measurement remain.
 3. Run phone and paired Wear emulator regression flows for workout commands, HR source state, pause/resume/lap, voice/audio callback preservation, notification controls, and saved activity synchronization. Do not claim a physical watch test unless performed after manual-testing readiness.
 4. Capture the actual active and review screens on isolated emulators at compact and standard sizes; compare current Stitch system/screen and document intentional post-workout extrapolation and remaining limits.
 5. Run complete app/Wear/HR/common tests, debug assembly, release bundles, release lint, no-map release, Spotless and `git diff --check`; merge one final PR only after required CI passes and rebuild master APK.

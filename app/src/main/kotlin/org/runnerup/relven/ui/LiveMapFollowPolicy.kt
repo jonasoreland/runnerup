@@ -1,5 +1,11 @@
 package org.runnerup.relven.ui
 
+internal enum class LiveMapFollowAction {
+  INITIAL_CENTER,
+  ANIMATE,
+  NONE
+}
+
 /** Camera-only gate that prevents GPS jitter from repeatedly snapping the live map. */
 internal class LiveMapFollowPolicy(private val minimumDisplacementMeters: Double = 12.0) {
   private var cameraCenter: RoutePoint? = null
@@ -8,17 +14,19 @@ internal class LiveMapFollowPolicy(private val minimumDisplacementMeters: Double
     if (point.hasValidCoordinates()) cameraCenter = point
   }
 
-  fun shouldFollow(point: RoutePoint): Boolean {
-    if (!point.hasValidCoordinates()) return false
+  fun nextAction(point: RoutePoint): LiveMapFollowAction {
+    if (!point.hasValidCoordinates()) return LiveMapFollowAction.NONE
     val center = cameraCenter
     if (center == null) {
       cameraCenter = point
-      return true
+      return LiveMapFollowAction.INITIAL_CENTER
     }
     val distanceMeters = distanceMeters(center, point)
-    if (!distanceMeters.isFinite() || distanceMeters < minimumDisplacementMeters) return false
+    if (!distanceMeters.isFinite() || distanceMeters < minimumDisplacementMeters) {
+      return LiveMapFollowAction.NONE
+    }
     cameraCenter = point
-    return true
+    return LiveMapFollowAction.ANIMATE
   }
 
   private fun distanceMeters(first: RoutePoint, second: RoutePoint): Double {
