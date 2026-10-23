@@ -132,6 +132,42 @@ class PlanCalendarStateTest {
   }
 
   @Test
+  fun scheduledWorkoutRemainsAvailableBeforeAndAfterItsDateAndAfterCompletion() {
+    val futureRun =
+        planCalendarState(
+            plan, "2026-10", "2026-10-20", Instant.parse("2026-10-15T10:00:00Z").toEpochMilli(), Locale.ENGLISH)
+            .selectedEntries.single() as PlanCalendarEntry.Workout
+    val pastRun =
+        planCalendarState(
+            plan, "2026-10", "2026-10-20", Instant.parse("2026-10-25T10:00:00Z").toEpochMilli(), Locale.ENGLISH)
+            .selectedEntries.single() as PlanCalendarEntry.Workout
+
+    assertEquals("run-a", futureRun.workoutId)
+    assertEquals("run-a", pastRun.workoutId)
+    assertEquals(futureRun.runningSegments, pastRun.runningSegments)
+
+    val completedSession =
+        StrengthSession.start(strengthPlan.id(), "strength-day", requireNotNull(strengthPlan.strengthWorkouts()["strength-a"]))
+            .completeRepetitions(8)
+            .skipRest()
+            .completeRepetitions(9)
+            .skipRest()
+            .completeRepetitions(10)
+    val pastCompletedStrength =
+        planCalendarState(
+            strengthPlan,
+            "2026-10",
+            "2026-10-20",
+            Instant.parse("2026-10-25T10:00:00Z").toEpochMilli(),
+            Locale.ENGLISH,
+            mapOf("strength-day" to CompletedStrengthSession(completedSession, 1_792_449_000_000L)))
+            .selectedEntries.single() as PlanCalendarEntry.Workout
+
+    assertTrue(pastCompletedStrength.completion?.state?.isComplete == true)
+    assertEquals("strength-a", pastCompletedStrength.workoutId)
+  }
+
+  @Test
   fun buildsMondayFirstMonthCellsAndMapsWorkoutRestAndEmptyDates() {
     val state = calendarState(plan, "2026-10", "2026-10-20", 1_792_449_000_000L)
 

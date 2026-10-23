@@ -78,6 +78,25 @@ class StrengthSessionTest {
     assertFalse(session.matchesScheduledEntry("plan-a", "scheduled-b"))
   }
 
+  @Test
+  fun completedScheduledWorkoutCanBeRepeatedAsANewExecution() {
+    val completed =
+        StrengthSession.start("plan", "scheduled", workout)
+            .completeRepetitions(8)
+            .skipRest()
+            .completeRepetitions(8)
+            .skipRest()
+            .tick()
+            .tick()
+            .tick()
+    val repeated = StrengthSession.start("plan", "scheduled", workout)
+
+    assertTrue(completed.isComplete)
+    assertTrue(repeated.matchesScheduledEntry("plan", "scheduled"))
+    assertTrue(repeated.executionId != completed.executionId)
+    assertTrue(repeated.results.isEmpty())
+  }
+
   @Test(expected = IllegalArgumentException::class)
   fun rejectsRepetitionBelowOne() {
     StrengthSession.start("plan", "scheduled", workout).completeRepetitions(0)
