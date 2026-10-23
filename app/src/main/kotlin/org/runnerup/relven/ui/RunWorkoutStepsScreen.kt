@@ -159,5 +159,5 @@ private fun RunWorkoutStepRow(item: RunWorkoutStepItem, isCurrent: Boolean) {
   }
 }
 
-private val LocalRunWorkoutFormatter =
+internal val LocalRunWorkoutFormatter =
   staticCompositionLocalOf<Formatter> { error("Formatter must be provided by RunActivity") }

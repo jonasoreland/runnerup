@@ -41,16 +41,30 @@ internal fun createActivityMapHost(
     route: List<RoutePoint>,
     metric: RouteMetric): ActivityMapHost = RelvenMapHost(context, route, metric)
 
+internal fun createLiveWorkoutMapHost(context: Context): LiveWorkoutMapHost =
+    RelvenMapHost(
+        context,
+        emptyList(),
+        RouteMetric.STANDARD,
+        showRecenterButton = false,
+        showAttribution = false)
+
 private class RelvenMapHost(
     context: Context,
-    private val route: List<RoutePoint>,
-    metric: RouteMetric) : ActivityMapHost {
+    initialRoute: List<RoutePoint>,
+    metric: RouteMetric,
+    showRecenterButton: Boolean = true,
+    showAttribution: Boolean = true) : LiveWorkoutMapHost {
+  private var route = initialRoute
+  private var currentLocation: RoutePoint? = null
+  private var followRunner = true
   private val mapLibre = MapLibre.getInstance(context)
   private val root = FrameLayout(context)
   private val mapView = MapView(context)
   private val fallback = RouteOnlyView(context, route, metric)
   private val sourceId = "relven-activity-route-source"
   private val markerSourceId = "relven-activity-route-markers"
+  private val currentSourceId = "relven-active-location-marker"
   private var style: Style? = null
   private var mapInstance: org.maplibre.android.maps.MapLibreMap? = null
   private var currentMetric = metric
@@ -61,21 +75,21 @@ private class RelvenMapHost(
   }
   private val recenterButton = ImageButton(context).apply {
     setImageResource(android.R.drawable.ic_menu_mylocation)
-    setColorFilter("#FF5A1F".toColorInt())
+    setColorFilter("#FF6A00".toColorInt())
     background = GradientDrawable().apply {
       shape = GradientDrawable.OVAL
-      setColor("#172131".toColorInt())
-      setStroke(dp(context, 1), "#FF5A1F".toColorInt())
+      setColor("#151C26".toColorInt())
+      setStroke(dp(context, 1), "#FF6A00".toColorInt())
     }
     setPadding(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12))
     contentDescription = context.getString(AppR.string.route_map_recenter)
-    setOnClickListener { mapInstance?.let(::fitRoute) }
+    setOnClickListener { recenter() }
   }
 
   override val view: View = root
 
   init {
-    root.setBackgroundColor("#0A0F18".toColorInt())
+    root.setBackgroundColor("#0D141E".toColorInt())
     mapView.visibility = View.VISIBLE
     fallback.visibility = View.GONE
     root.addView(mapView, FrameLayout.LayoutParams(-1, -1))
@@ -85,6 +99,7 @@ private class RelvenMapHost(
         FrameLayout.LayoutParams(dp(context, 48), dp(context, 48), Gravity.END or Gravity.TOP).apply {
           setMargins(dp(context, 12), dp(context, 12), dp(context, 12), dp(context, 12))
         })
+    if (!showRecenterButton) recenterButton.visibility = View.GONE
     val attribution =
         TextView(context).apply {
           text = context.getString(R.string.route_map_attribution)
@@ -99,6 +114,7 @@ private class RelvenMapHost(
         FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM or Gravity.END).apply {
           setMargins(dp(context, 8), dp(context, 8), dp(context, 8), dp(context, 8))
         })
+    if (!showAttribution) attribution.visibility = View.GONE
     root.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
       attribution.maxWidth =
           routeMapAttributionMaxWidthPx(
@@ -111,10 +127,18 @@ private class RelvenMapHost(
     mapView.getMapAsync { map ->
       mapInstance = map
       map.uiSettings.isCompassEnabled = true
+      map.addOnCameraMoveStartedListener { reason ->
+        if (reason ==
+            org.maplibre.android.maps.MapLibreMap.OnCameraMoveStartedListener.REASON_API_GESTURE) {
+          followRunner = false
+        }
+      }
       map.setStyle(STYLE_URL) { loadedStyle ->
         style = loadedStyle
         loadedStyle.addSource(GeoJsonSource(sourceId, buildRouteGeoJson(route, currentMetric)))
         loadedStyle.addSource(GeoJsonSource(markerSourceId, buildRouteMarkersGeoJson(route)))
+        loadedStyle.addSource(
+            GeoJsonSource(currentSourceId, buildCurrentLocationGeoJson(currentLocation)))
         loadedStyle.addLayer(
             LineLayer("relven-activity-route-line", sourceId).withProperties(
                 lineColor(get("color")), lineWidth(5.0f), lineCap("round"), lineJoin("round")))
@@ -126,14 +150,24 @@ private class RelvenMapHost(
                         eq(get("coincident"), true),
                         switchCase(eq(get("kind"), "start"), literal(9.0f), literal(4.0f)),
                         literal(7.0f))),
-                circleStrokeColor("#0A0F18"), circleStrokeWidth(2.0f)))
-        fitRoute(map)
+                circleStrokeColor("#0D141E"), circleStrokeWidth(2.0f)))
+        loadedStyle.addLayer(
+            CircleLayer("relven-active-location-dot", currentSourceId).withProperties(
+                circleColor("#FF6A00"),
+                circleRadius(8.0f),
+                circleStrokeColor("#FFFFFF"),
+                circleStrokeWidth(2.0f)))
+        if (route.size >= 2) fitRoute(map) else currentLocation?.let(::centerOnRunner)
       }
     }
   }
 
   private fun fitRoute(map: org.maplibre.android.maps.MapLibreMap) {
     if (route.isEmpty()) return
+    if (route.size == 1) {
+      map.moveCamera(CameraUpdateFactory.newLatLng(LatLng(route.first().latitude, route.first().longitude)))
+      return
+    }
     val bounds =
         LatLngBounds.Builder().apply {
           route.forEach { include(LatLng(it.latitude, it.longitude)) }
@@ -145,6 +179,31 @@ private class RelvenMapHost(
     currentMetric = metric
     fallback.setMetric(metric)
     style?.let { (it.getSource(sourceId) as? GeoJsonSource)?.setGeoJson(buildRouteGeoJson(route, metric)) }
+  }
+
+  override fun updateLiveRoute(route: List<RoutePoint>, currentLocation: RoutePoint?) {
+    this.route = route.toList()
+    this.currentLocation = currentLocation
+    fallback.setRoute(this.route)
+    style?.let { loadedStyle ->
+      (loadedStyle.getSource(sourceId) as? GeoJsonSource)
+          ?.setGeoJson(buildRouteGeoJson(this.route, currentMetric))
+      (loadedStyle.getSource(markerSourceId) as? GeoJsonSource)
+          ?.setGeoJson(buildRouteMarkersGeoJson(this.route))
+      (loadedStyle.getSource(currentSourceId) as? GeoJsonSource)
+          ?.setGeoJson(buildCurrentLocationGeoJson(currentLocation))
+    }
+    if (followRunner && currentLocation != null) centerOnRunner(currentLocation)
+  }
+
+  override fun recenter() {
+    followRunner = true
+    currentLocation?.let(::centerOnRunner) ?: mapInstance?.let(::fitRoute)
+  }
+
+  private fun centerOnRunner(point: RoutePoint) {
+    mapInstance?.moveCamera(
+        CameraUpdateFactory.newLatLngZoom(LatLng(point.latitude, point.longitude), 16.0))
   }
 
   override fun onStart() = mapView.onStart()
@@ -166,11 +225,19 @@ private class RelvenMapHost(
   }
 }
 
+private fun buildCurrentLocationGeoJson(point: RoutePoint?): String =
+    if (point == null || !point.hasValidCoordinates()) {
+      "{\"type\":\"FeatureCollection\",\"features\":[]}"
+    } else {
+      "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[${point.longitude},${point.latitude}]}}]}"
+    }
+
 @SuppressLint("ViewConstructor")
 private class RouteOnlyView(
     context: Context,
-    private val route: List<RoutePoint>,
+    initialRoute: List<RoutePoint>,
     metric: RouteMetric) : View(context) {
+  private var route = initialRoute
   private var selectedMetric = metric
   private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
     style = Paint.Style.STROKE
@@ -181,6 +248,11 @@ private class RouteOnlyView(
 
   fun setMetric(metric: RouteMetric) {
     selectedMetric = metric
+    invalidate()
+  }
+
+  fun setRoute(route: List<RoutePoint>) {
+    this.route = route
     invalidate()
   }
 
@@ -222,10 +294,10 @@ private class RouteOnlyView(
       val markerRadius =
           dp(context, if (coincidentEndpoints) (if (index == 0) 9 else 4) else 6).toFloat()
       paint.style = Paint.Style.FILL
-      paint.color = (if (index == 0) "#28A875" else "#FF5A1F").toColorInt()
+      paint.color = (if (index == 0) "#35C982" else "#FF6A00").toColorInt()
       canvas.drawCircle(x, y, markerRadius, paint)
       paint.style = Paint.Style.STROKE
-      paint.color = "#0A0F18".toColorInt()
+      paint.color = "#0D141E".toColorInt()
       paint.strokeWidth = dp(context, 2).toFloat()
       canvas.drawCircle(x, y, markerRadius, paint)
       paint.strokeWidth = dp(context, 6).toFloat()

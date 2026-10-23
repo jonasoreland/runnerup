@@ -72,7 +72,7 @@ internal fun routeMetricRange(route: List<RoutePoint>, metric: RouteMetric): Rou
 }
 
 internal fun routeMetricColor(value: Double?, range: RouteMetricRange?): String {
-  val colors = listOf("#2E7D32", "#9EAA24", "#FFC107", "#F57C00", "#C62828")
+  val colors = listOf("#2979FF", "#35B8FF", "#62D8B0", "#FFB547", "#FF6A00")
   if (value == null || !value.isFinite() || range == null) return "#808080"
   val index =
       if (range.maximum <= range.minimum) 2
@@ -85,7 +85,7 @@ internal fun routeMetricColor(
     metric: RouteMetric,
     value: Double?,
     range: RouteMetricRange?): String =
-    if (metric == RouteMetric.STANDARD) "#FF5A1F" else routeMetricColor(value, range)
+    if (metric == RouteMetric.STANDARD) "#2979FF" else routeMetricColor(value, range)
 
 /** Emits a GeoJSON FeatureCollection with one colored line feature per adjacent same-lap pair. */
 internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): String {
@@ -117,8 +117,8 @@ internal fun buildRouteMarkersGeoJson(route: List<RoutePoint>): String {
   if (validPoints.size < 2) return "{\"type\":\"FeatureCollection\",\"features\":[]}"
   val markers =
       listOf(
-          Triple(validPoints.first(), "start", "#28A875"),
-          Triple(validPoints.last(), "finish", "#FF5A1F"))
+          Triple(validPoints.first(), "start", "#35C982"),
+          Triple(validPoints.last(), "finish", "#FF6A00"))
   val coincidentEndpoints =
       validPoints.first().latitude == validPoints.last().latitude &&
           validPoints.first().longitude == validPoints.last().longitude

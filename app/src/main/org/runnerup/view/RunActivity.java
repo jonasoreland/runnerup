@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -66,23 +67,20 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.hr.WearHRConnectionState;
 import org.runnerup.hr.WearHRProvider;
-import org.runnerup.relven.ui.RunControlsCompose;
+import org.runnerup.relven.ui.ActiveWorkoutMapController;
+import org.runnerup.relven.ui.ActiveWorkoutScreenKt;
 import org.runnerup.relven.ui.RunControlsStateHolder;
-import org.runnerup.relven.ui.RunCountdownCompose;
 import org.runnerup.relven.ui.RunCountdownStateHolder;
 import org.runnerup.relven.ui.RunMetricValues;
-import org.runnerup.relven.ui.RunMetricsCompose;
 import org.runnerup.relven.ui.RunMetricsScreenKt;
 import org.runnerup.relven.ui.RunMetricsStateHolder;
 import org.runnerup.relven.ui.RunWorkoutStepItem;
-import org.runnerup.relven.ui.RunWorkoutStepsCompose;
 import org.runnerup.relven.ui.RunWorkoutStepsPresentationFactory;
 import org.runnerup.relven.ui.RunWorkoutStepsStateHolder;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.component.TrackerHRM;
 import org.runnerup.util.Formatter;
 import org.runnerup.util.TickListener;
-import org.runnerup.util.ViewUtil;
 import org.runnerup.workout.Intensity;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Step;
@@ -101,11 +99,12 @@ public class RunActivity extends AppCompatActivity implements TickListener {
           new ActivityResultContracts.StartActivityForResult(),
           result -> handleActivityResult(1, result.getResultCode(), result.getData()));
 
-  private ComposeView workoutControlsView;
+  private ComposeView activeWorkoutView;
+  private FrameLayout activeWorkoutRoot;
+  private ActiveWorkoutMapController activeWorkoutMap;
   private RunControlsStateHolder runControlsState;
   private final RunMetricsStateHolder runMetricsState = new RunMetricsStateHolder();
   private final RunCountdownStateHolder runCountdownState = new RunCountdownStateHolder();
-  private ComposeView workoutStepsView;
   private Step currentStep = null;
   private final RunWorkoutStepsStateHolder runWorkoutStepsState = new RunWorkoutStepsStateHolder();
   private List<RunWorkoutStepItem> runWorkoutStepItems = List.of();
@@ -126,26 +125,29 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     WindowCompat.getInsetsController(window, window.getDecorView())
         .setAppearanceLightStatusBars(false);
     super.onCreate(savedInstanceState);
+    if (getSupportActionBar() != null) getSupportActionBar().hide();
     if (!isLargeScreen()) {
       setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
-    setContentView(R.layout.run);
+    activeWorkoutRoot = new FrameLayout(this);
+    activeWorkoutRoot.setId(R.id.start_view);
+    activeWorkoutView = new ComposeView(this);
+    activeWorkoutRoot.addView(activeWorkoutView, new FrameLayout.LayoutParams(-1, -1));
+    TextView debugText = new TextView(this);
+    debugText.setId(R.id.hr_debug);
+    debugText.setVisibility(View.GONE);
+    activeWorkoutRoot.addView(
+        debugText, new FrameLayout.LayoutParams(-1, -2, android.view.Gravity.TOP));
+    setContentView(activeWorkoutRoot);
     formatter = new Formatter(this);
     paceLabel = formatter.formatVelocityLabel();
-    // HRZones hrZones = new HRZones(this);
-    RunMetricsCompose.install(findViewById(R.id.run_metrics), runMetricsState);
-
-    workoutControlsView = findViewById(R.id.run_controls);
     runControlsState =
         new RunControlsStateHolder(
-            () -> newLapButtonClick.onClick(workoutControlsView),
-            () -> pauseButtonClick.onClick(workoutControlsView),
-            () -> stopButtonClick.onClick(workoutControlsView));
-    RunControlsCompose.install(workoutControlsView, runControlsState);
-    RunCountdownCompose.install(findViewById(R.id.run_countdown), runCountdownState);
+            () -> newLapButtonClick.onClick(activeWorkoutView),
+            () -> pauseButtonClick.onClick(activeWorkoutView),
+            () -> stopButtonClick.onClick(activeWorkoutView));
     hrDebug = findViewById(R.id.hr_debug);
-    workoutStepsView = findViewById(R.id.workout_steps);
-    RunWorkoutStepsCompose.install(workoutStepsView, runWorkoutStepsState, formatter);
+    activeWorkoutMap = new ActiveWorkoutMapController(this);
 
     final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     final Resources res = this.getResources();
@@ -162,7 +164,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       hrDebug = null;
     }
 
-    View root = findViewById(R.id.start_view);
+    View root = activeWorkoutRoot;
     bindGpsTracker();
 
     View.OnTouchListener touchListener =
@@ -195,8 +197,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         };
 
     root.setOnTouchListener(touchListener);
-    workoutStepsView.setOnTouchListener(touchListener);
-    workoutControlsView.setOnTouchListener(touchListener);
+    activeWorkoutView.setOnTouchListener(touchListener);
 
     getOnBackPressedDispatcher()
         .addCallback(
@@ -212,8 +213,6 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                 }
               }
             });
-    ViewUtil.Insets(findViewById(R.id.start_view), true);
-
     showOnLockScreen(showOnLockScreen);
     if (keepScreenOn) {
       window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -236,7 +235,20 @@ public class RunActivity extends AppCompatActivity implements TickListener {
 
   @Override
   public void onPause() {
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onPause();
     super.onPause();
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onStart();
+  }
+
+  @Override
+  protected void onStop() {
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onStop();
+    super.onStop();
   }
 
   @Override
@@ -247,14 +259,31 @@ public class RunActivity extends AppCompatActivity implements TickListener {
         prefs.getBoolean(res.getString(R.string.pref_show_on_lock_screen), true);
 
     super.onResume();
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onResume();
     showOnLockScreen(showOnLockScreen);
   }
 
   @Override
   public void onDestroy() {
+    if (activeWorkoutMap != null) {
+      activeWorkoutMap.detach();
+      activeWorkoutMap.getMapHost().onDestroy();
+    }
     super.onDestroy();
     unbindGpsTracker();
     stopTimer();
+  }
+
+  @Override
+  protected void onSaveInstanceState(@NonNull Bundle state) {
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onSaveInstanceState(state);
+    super.onSaveInstanceState(state);
+  }
+
+  @Override
+  public void onLowMemory() {
+    super.onLowMemory();
+    if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onLowMemory();
   }
 
   private void onGpsTrackerBound() {
@@ -268,6 +297,20 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       // should not happen
       return;
     }
+
+    activeWorkoutMap.attach(mTracker);
+    boolean isRunning = workout.getSport() == Constants.DB.ACTIVITY.SPORT_RUNNING;
+    ActiveWorkoutScreenKt.installActiveWorkoutScreen(
+        activeWorkoutView,
+        runMetricsState,
+        runControlsState,
+        runWorkoutStepsState,
+        runCountdownState,
+        activeWorkoutMap.getMapHost(),
+        isRunning ? "Löpning" : "Träning",
+        isRunning,
+        activeWorkoutMap.getGpsState(),
+        formatter);
 
     {
       /*
@@ -398,11 +441,13 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       return;
     }
 
-    if (workout.isPaused()) {
+    boolean wasPaused = workout.isPaused();
+    if (wasPaused) {
       workout.onResume(workout);
     } else {
       workout.onPause(workout);
     }
+    if (activeWorkoutMap != null) activeWorkoutMap.onPaused(!wasPaused);
     setPauseButtonEnabled(!workout.isPaused());
   }
 
@@ -556,6 +601,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
       double cp = workout.getSpeed(Scope.CURRENT);
       String currentPaceText =
           formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_SHORT, cp);
+      currentPaceText = RunMetricsScreenKt.currentPaceDisplay(cp, currentPaceText);
 
       WearHRConnectionState.Status wearHrStatus = null;
       if (mTracker.getHRProvider() instanceof WearHRProvider) {
