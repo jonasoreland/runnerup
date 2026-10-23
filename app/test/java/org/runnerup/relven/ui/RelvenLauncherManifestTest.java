@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.TypedArray;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -58,6 +59,32 @@ public class RelvenLauncherManifestTest {
             .getActivityInfo(
                 new ComponentName(context, "org.runnerup.relven.ui.ActivityMapActivity"), 0)
             .exported);
+  }
+
+  @Test
+  public void workoutManagerUsesRelvenScreenTheme() throws Exception {
+    Context context = RuntimeEnvironment.getApplication();
+
+    ActivityInfo workoutManager =
+        context
+            .getPackageManager()
+            .getActivityInfo(
+                new ComponentName(context, "org.runnerup.view.ManageWorkoutsActivity"), 0);
+
+    assertEquals(R.style.RelvenScreenTheme, workoutManager.theme);
+  }
+
+  @Test
+  public void workoutManagerUsesRelvenAlertDialogs() {
+    Context context = RuntimeEnvironment.getApplication();
+    TypedArray theme =
+        context.obtainStyledAttributes(
+            R.style.RelvenScreenTheme, new int[] {androidx.appcompat.R.attr.alertDialogTheme});
+    try {
+      assertEquals(R.style.RelvenStartDialogTheme, theme.getResourceId(0, 0));
+    } finally {
+      theme.recycle();
+    }
   }
 
   @Test

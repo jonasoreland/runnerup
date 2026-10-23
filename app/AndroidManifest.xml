@@ -194,7 +194,7 @@
             android:exported="true"
             android:label="@string/Manage_workouts"
             android:parentActivityName=".view.MainLayout"
-            android:theme="@style/AppTheme">
+            android:theme="@style/RelvenScreenTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

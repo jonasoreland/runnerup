@@ -27,6 +27,18 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="RelvenScreenTheme" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/relven_surface</item>
+        <item name="colorPrimaryDark">@color/relven_splash_background</item>
+        <item name="colorAccent">@color/relven_orange</item>
+        <item name="android:colorAccent">@color/relven_orange</item>
+        <item name="alertDialogTheme">@style/RelvenStartDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/RelvenStartDialogTheme</item>
+        <item name="android:statusBarColor">@color/relven_splash_background</item>
+        <item name="android:navigationBarColor">@color/relven_splash_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
     <style name="RelvenStartDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="colorAccent">@color/relven_orange</item>
         <item name="android:colorAccent">@color/relven_orange</item>
