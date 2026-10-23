@@ -384,7 +384,9 @@
   <string name="Home_activity_detail_split_number">Varv %1$d</string>
   <string name="Home_activity_detail_unavailable_value">—</string>
   <string name="Home_activity_detail_open_map">Visa rutt</string>
-  <string name="Home_activity_detail_more_actions">Redigera, exportera och ladda upp</string>
+  <string name="Home_activity_detail_more_actions">Redigera och ladda upp</string>
+  <string name="Home_activity_detail_share">Dela träningspass</string>
+  <string name="Home_activity_detail_share_format">Välj filformat</string>
   <string name="Home_nav_exercises">Övningar</string>
   <string name="Progress_title">Utveckling</string>
   <string name="Progress_entry_summary">Se dina senaste träningstotaler</string>

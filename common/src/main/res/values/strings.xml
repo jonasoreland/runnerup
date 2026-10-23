@@ -371,7 +371,9 @@
     <string name="Home_activity_detail_split_number">Split %1$d</string>
     <string name="Home_activity_detail_unavailable_value">—</string>
     <string name="Home_activity_detail_open_map">Open route</string>
-    <string name="Home_activity_detail_more_actions">Edit, export and upload</string>
+    <string name="Home_activity_detail_more_actions">Edit and upload</string>
+    <string name="Home_activity_detail_share">Share workout file</string>
+    <string name="Home_activity_detail_share_format">Choose file format</string>
     <string name="Home_nav_exercises">Exercises</string>
     <string name="Progress_title">Progress</string>
     <string name="Progress_entry_summary">See your recent training totals</string>

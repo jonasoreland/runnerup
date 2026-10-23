@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,14 +23,19 @@ import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -58,6 +65,7 @@ internal fun ActivityDetailScreen(
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onOpenMap: (Long) -> Unit,
+    onShareActivity: (HistoryActivityDetails, ActivityShareFormat) -> Unit,
     onOpenMoreActions: (Long) -> Unit) {
   BackHandler(onBack = onBack)
   Surface(
@@ -103,6 +111,7 @@ internal fun ActivityDetailScreen(
             ActivityDetailContent(
                 loadState.activity,
                 onOpenMap = { onOpenMap(loadState.activity.id) },
+                onShareActivity = { format -> onShareActivity(loadState.activity, format) },
                 onOpenMoreActions = { onOpenMoreActions(loadState.activity.id) })
       }
     }
@@ -113,8 +122,11 @@ internal fun ActivityDetailScreen(
 private fun ActivityDetailContent(
     activity: HistoryActivityDetails,
     onOpenMap: () -> Unit,
+    onShareActivity: (ActivityShareFormat) -> Unit,
     onOpenMoreActions: () -> Unit) {
   val context = LocalContext.current
+  var shareDialogVisible by remember(activity.id) { mutableStateOf(false) }
+  var shareFormat by remember(activity.id) { mutableStateOf(ActivityShareFormat.Tcx) }
   val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
   val sport = Sport.textOf(LocalResources.current, activity.sport)
   val date =
@@ -198,10 +210,63 @@ private fun ActivityDetailContent(
     }
 
     OutlinedButton(
+        onClick = { shareDialogVisible = true },
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+      Text(stringResource(R.string.Home_activity_detail_share))
+    }
+
+    OutlinedButton(
         onClick = onOpenMoreActions,
         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
       Text(stringResource(R.string.Home_activity_detail_more_actions))
     }
+  }
+
+  if (shareDialogVisible) {
+    AlertDialog(
+        onDismissRequest = { shareDialogVisible = false },
+        title = { Text(stringResource(R.string.Share_activity)) },
+        text = {
+          Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(stringResource(R.string.Home_activity_detail_share_format))
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth().selectable(
+                        selected = shareFormat == ActivityShareFormat.Gpx,
+                        role = Role.RadioButton) { shareFormat = ActivityShareFormat.Gpx },
+                verticalAlignment = Alignment.CenterVertically) {
+              RadioButton(
+                  selected = shareFormat == ActivityShareFormat.Gpx,
+                  onClick = null)
+              Text("GPX")
+            }
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth().selectable(
+                        selected = shareFormat == ActivityShareFormat.Tcx,
+                        role = Role.RadioButton) { shareFormat = ActivityShareFormat.Tcx },
+                verticalAlignment = Alignment.CenterVertically) {
+              RadioButton(
+                  selected = shareFormat == ActivityShareFormat.Tcx,
+                  onClick = null)
+              Text("TCX")
+            }
+          }
+        },
+        confirmButton = {
+          TextButton(
+              onClick = {
+                shareDialogVisible = false
+                onShareActivity(shareFormat)
+              }) {
+            Text(stringResource(R.string.OK))
+          }
+        },
+        dismissButton = {
+          TextButton(onClick = { shareDialogVisible = false }) {
+            Text(stringResource(R.string.Cancel))
+          }
+        })
   }
 }
 
