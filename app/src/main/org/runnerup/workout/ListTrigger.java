@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 import java.util.ArrayList;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ListTrigger extends Trigger {
 
@@ -26,6 +28,20 @@ public class ListTrigger extends Trigger {
 
   private int pos;
   private final ArrayList<Double> triggerTimes;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint().put("position", pos);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    int savedPosition = state.getInt("position");
+    if (savedPosition < 0 || savedPosition > triggerTimes.size()) return false;
+    pos = savedPosition;
+    return true;
+  }
 
   ListTrigger(Dimension d, Scope s, ArrayList<Double> triggerTimes) {
     this.dimension = d;

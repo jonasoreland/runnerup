@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 import androidx.annotation.NonNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class IntervalTrigger extends Trigger {
 
@@ -28,6 +30,20 @@ public class IntervalTrigger extends Trigger {
   double interval = 120;
 
   private double next = 0;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint().put("next", next);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    double savedNext = state.getDouble("next");
+    if (!Double.isFinite(savedNext) || savedNext < 0) return false;
+    next = savedNext;
+    return true;
+  }
 
   @Override
   public boolean onTick(Workout w) {

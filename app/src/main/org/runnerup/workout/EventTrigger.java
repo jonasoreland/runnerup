@@ -18,6 +18,8 @@
 package org.runnerup.workout;
 
 import androidx.annotation.NonNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class EventTrigger extends Trigger {
 
@@ -26,6 +28,20 @@ public class EventTrigger extends Trigger {
   private int counter = 0;
   int skipCounter = 0;
   int maxCounter = Integer.MAX_VALUE;
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    return super.toRuntimeCheckpoint().put("counter", counter);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (!super.restoreRuntimeCheckpoint(state)) return false;
+    int savedCounter = state.getInt("counter");
+    if (savedCounter < 0) return false;
+    counter = savedCounter;
+    return true;
+  }
 
   @Override
   public void onInit(Workout s) {

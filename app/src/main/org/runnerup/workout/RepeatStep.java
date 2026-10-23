@@ -21,6 +21,9 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RepeatStep extends Step {
 
@@ -28,6 +31,37 @@ public class RepeatStep extends Step {
 
   public ArrayList<Step> getSteps() {
     return steps;
+  }
+
+  @Override
+  JSONObject toRuntimeCheckpoint() throws JSONException {
+    JSONArray childStates = new JSONArray();
+    for (Step step : steps) childStates.put(step.toRuntimeCheckpoint());
+    return toBaseRuntimeCheckpoint("repeat")
+        .put("currentStep", currentStep)
+        .put("currentRepeat", currentRepeat)
+        .put("children", childStates);
+  }
+
+  @Override
+  boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
+    if (state == null || !"repeat".equals(state.optString("stepType"))) return false;
+    int savedCurrentStep = state.getInt("currentStep");
+    int savedCurrentRepeat = state.getInt("currentRepeat");
+    JSONArray childStates = state.getJSONArray("children");
+    if (childStates.length() != steps.size()
+        || savedCurrentStep < 0
+        || savedCurrentStep >= steps.size()
+        || savedCurrentRepeat < 0
+        || savedCurrentRepeat >= repeatCount) return false;
+    if (!restoreBaseRuntimeCheckpoint(state, "repeat")) return false;
+    for (int index = 0; index < steps.size(); index++) {
+      if (!steps.get(index).restoreRuntimeCheckpoint(childStates.getJSONObject(index)))
+        return false;
+    }
+    currentStep = savedCurrentStep;
+    currentRepeat = savedCurrentRepeat;
+    return true;
   }
 
   final ArrayList<Step> steps = new ArrayList<>();
