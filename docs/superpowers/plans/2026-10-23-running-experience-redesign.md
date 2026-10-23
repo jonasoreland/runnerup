@@ -28,6 +28,7 @@
 
 1. Add failing data/state tests distinguishing unfinished review from saved history and asserting supported metrics, route boundaries/order, chart eligibility, split/interval mapping, empty/missing states, note round-trip, and no Resume for saved activities.
 2. Build a shared review loader/model using only existing RunnerUp activity/lap/location rows, with IO queries and closed cursors/DB handles before rendering.
+   - Reconstruct route order from persisted row insertion order; use Tracker's active elapsed-time and cumulative-distance checkpoints instead of wall-clock deltas when available, with a fallback for legacy/imported rows that lack them.
 3. Replace `DetailActivity` legacy tabs/actions with a Compose review screen for stopped-unsaved and finalized modes; preserve upload/edit/share behavior through existing callbacks/adapters.
 4. Route History activity opening through the same composable/body instead of the separate outdated RunnerUp detail flow; embed route map, start/finish, fit/zoom/pan, eligible metric coloring/legend, charts with valid scales, ordered km/manual/structured splits, supported HR/elevation/cadence, and notes.
 5. Preserve save idempotence and order: persist notes/edit data, finalize once through `Tracker.completeActivity`, return to History; keep Resume only for unfinished state and confirm discard before deletion. Reopen the activity after closing/restarting the app.

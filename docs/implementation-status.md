@@ -12,6 +12,11 @@
 - New GPS-derived elevations are available only when the fix includes Android vertical-accuracy metadata no worse than 5 m; otherwise elevation is omitted from the persisted activity row and the optional raw GPS-altitude export field. Poor GPS altitude cannot calibrate the pressure-derived offset. This does not affect accepted horizontal route fixes, distance, time, or GPS recording. Pressure-sensor elevation remains available.
 - `TrackerElevationTest` covers the exact accuracy boundary, missing vertical accuracy, missing altitude, NaN/infinite altitude, and pressure calibration eligibility. `PersistentGpsLoggerListenerTest` verifies low-confidence raw altitude is omitted while trusted altitude remains exportable. The focused tests first failed because the guards were absent and pass after implementation. Full-suite/build and hosted review are pending.
 
+## Running experience redesign — monotonic saved-route reconstruction (current PR)
+
+- Saved route reconstruction now follows SQLite insertion order, uses Tracker's persisted active elapsed-time and cumulative-distance checkpoints when present, and avoids wall-clock ordering/calculation for current recordings. Older/imported rows without checkpoints retain the wall-time and coordinate-distance fallback. Interrupted-session summary reads the newest inserted durable checkpoint.
+- `ActivityDetailStateTest` first failed on a synthetic wall-clock rollback, then passed with assertions for route order, active elapsed time, recorded distance, interruption summary, and legacy checkpoint fallback. Local verification passed: app 467 tests, Wear 21, HR device 9, common 12; Latest debug/release builds, no-map Latest release build, app debug/release lint (no new findings; 23 existing baseline errors filtered), Wear debug/release builds and lint, HR-device lint, Spotless, and `git diff --check`. Hosted review is pending.
+
 ## Running experience redesign — one-shot workout completion (PR #112 merged)
 
 - `Tracker.completeActivity` now accepts only the first completion request while the activity is `PAUSED` or `STOPPED`. Duplicate Save/Discard callbacks and out-of-state calls return before writing an end marker, final metrics, deletion state, or resetting the Tracker. A new activity resets the gate when its database row is created.

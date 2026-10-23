@@ -211,6 +211,55 @@ class ActivityDetailStateTest {
   }
 
   @Test
+  fun rebuildsRouteInInsertionOrderUsingPersistedMonotonicElapsedAndDistance() {
+    val database = interruptedActivityDatabase()
+    database.insertOrThrow(
+        DB.LOCATION.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LOCATION.ACTIVITY, 31L)
+          put(DB.LOCATION.TYPE, DB.LOCATION.TYPE_GPS)
+          put(DB.LOCATION.LATITUDE, 59.3295)
+          put(DB.LOCATION.LONGITUDE, 18.0688)
+          // Wall clock moved backwards; the monotonic Tracker checkpoint did not.
+          put(DB.LOCATION.TIME, 1_700_000_000_000L)
+          put(DB.LOCATION.ELAPSED, 20_000.0)
+          put(DB.LOCATION.DISTANCE, 150.0)
+        })
+
+    try {
+      val route = readActivityRoute(database, 31L)
+
+      assertEquals(59.3293, route[0].latitude, 0.0000001)
+      assertEquals(59.3294, route[1].latitude, 0.0000001)
+      assertEquals(59.3295, route[2].latitude, 0.0000001)
+      assertEquals(listOf(0.0, 18.179, 20.0), route.map(RoutePoint::elapsedSeconds))
+      assertEquals(listOf(0.0, 131.6, 150.0), route.map(RoutePoint::distanceMeters))
+      assertEquals(ActivityRecoverySummary(20L, 150.0), readActivityRecoverySummary(database, 31L))
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun fallsBackToWallTimeAndGeometryForLegacyLocationsWithoutTrackerCheckpoints() {
+    val database = interruptedActivityDatabase()
+    database.execSQL(
+        "UPDATE ${DB.LOCATION.TABLE} SET ${DB.LOCATION.ELAPSED} = NULL, ${DB.LOCATION.DISTANCE} = NULL")
+
+    try {
+      val route = readActivityRoute(database, 31L)
+
+      assertEquals(2, route.size)
+      assertEquals(0.0, route.first().elapsedSeconds, 0.0)
+      assertEquals(0.001, route.last().elapsedSeconds, 0.000001)
+      assertTrue(route.last().distanceMeters > route.first().distanceMeters)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
   fun savingInterruptedActivityWritesItsLastCheckpointAndCannotFinalizeTwice() {
     val database = interruptedActivityDatabase()
     try {

@@ -89,6 +89,8 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           DB.LOCATION.LONGITUDE,
           DB.LOCATION.ALTITUDE,
           DB.LOCATION.TIME,
+          DB.LOCATION.ELAPSED,
+          DB.LOCATION.DISTANCE,
           DB.LOCATION.LAP,
           DB.LOCATION.HR,
           DB.LOCATION.SPEED,
@@ -101,13 +103,15 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           arrayOf(activityId.toString()),
           null,
           null,
-          DB.LOCATION.TIME + " ASC, _id ASC")
+          "_id ASC")
       .use { cursor ->
         val typeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TYPE)
         val latitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LATITUDE)
         val longitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LONGITUDE)
         val altitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ALTITUDE)
         val timeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TIME)
+        val elapsedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ELAPSED)
+        val distanceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.DISTANCE)
         val lapIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LAP)
         val heartRateIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.HR)
         val speedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.SPEED)
@@ -117,6 +121,12 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           val latitude = cursor.getDouble(latitudeIndex)
           val longitude = cursor.getDouble(longitudeIndex)
           val time = if (cursor.isNull(timeIndex)) null else cursor.getLong(timeIndex)
+          val persistedElapsedMillis =
+              if (cursor.isNull(elapsedIndex)) null
+              else cursor.getDouble(elapsedIndex).takeIf { it.isFinite() && it >= 0.0 }
+          val persistedDistanceMeters =
+              if (cursor.isNull(distanceIndex)) null
+              else cursor.getDouble(distanceIndex).takeIf { it.isFinite() && it >= 0.0 }
           if (type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_RESUME) segment++
           if (!latitude.isFinite() || latitude !in -90.0..90.0 || !longitude.isFinite() || longitude !in -180.0..180.0) {
             previousLatitude = null
@@ -127,12 +137,24 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           val priorLatitude = previousLatitude
           val priorLongitude = previousLongitude
           val priorTime = previousTime
+          var geometryDistanceDelta = 0.0
           if ((type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_GPS) &&
-              priorLatitude != null && priorLongitude != null && time != null && priorTime != null) {
+              priorLatitude != null && priorLongitude != null) {
             val delta = FloatArray(1)
             Location.distanceBetween(
                 priorLatitude, priorLongitude, latitude, longitude, delta)
-            cumulativeDistance += delta[0].toDouble()
+            geometryDistanceDelta = delta[0].toDouble()
+          }
+          // Tracker persists accepted cumulative values. Prefer them over recomputing distance
+          // from coordinates or elapsed time from wall clock, both of which can drift or jump.
+          cumulativeDistance =
+              persistedDistanceMeters?.takeIf { it >= cumulativeDistance }
+                  ?: (cumulativeDistance + geometryDistanceDelta)
+          if (persistedElapsedMillis != null) {
+            if (persistedElapsedMillis >= cumulativeElapsedMillis) {
+              cumulativeElapsedMillis = kotlin.math.round(persistedElapsedMillis).toLong()
+            }
+          } else if (time != null && priorTime != null) {
             cumulativeElapsedMillis += (time - priorTime).coerceAtLeast(0L)
           }
           if (type == DB.LOCATION.TYPE_GPS) {
@@ -179,7 +201,7 @@ internal fun readActivityRecoverySummary(
           arrayOf(activityId.toString()),
           null,
           null,
-          DB.LOCATION.TIME + " ASC, _id ASC")
+          "_id ASC")
       .use { cursor ->
         val elapsedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ELAPSED)
         val distanceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.DISTANCE)
