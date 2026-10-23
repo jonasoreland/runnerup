@@ -6,9 +6,12 @@ data class WorkoutSetupStep(val title: String, val detail: String, val indent: I
 
 data class WorkoutSetupState(
   val selectedTab: Int,
-  val targetType: Int,
-  val targetTypes: List<WorkoutSetupChoice>,
+  val goalType: String,
+  val goalTypes: List<WorkoutSetupChoice>,
   val pace: String,
+  val goalTime: String,
+  val goalDistance: String,
+  val goalDistanceUnit: String,
   val heartRateZone: String,
   val heartRateZones: List<WorkoutSetupChoice>,
   val basicAudio: String,
@@ -30,9 +33,37 @@ data class WorkoutSetupState(
 )
 
 object WorkoutSetupPresentation {
+  private val simpleGoalTypes = setOf("none", "pace", "time", "distance", "heart_rate")
+
   @JvmStatic
   fun formatRange(minimum: String, maximum: String): String =
     if (minimum == maximum) minimum else "$minimum–$maximum"
+
+  @JvmStatic
+  fun goalTypeFromPreferences(savedGoalType: String?, legacyTargetType: Int): String =
+    savedGoalType?.takeIf(simpleGoalTypes::contains)
+      ?: when (legacyTargetType) {
+        4 -> "pace"
+        6 -> "heart_rate"
+        else -> "none"
+      }
+
+  @JvmStatic
+  fun targetDimensionForGoal(goalType: String): Int =
+    when (goalType) {
+      "pace" -> 4
+      "heart_rate" -> 6
+      else -> -1
+    }
+
+  fun showsPace(goalType: String) = goalType == "pace"
+
+  fun showsGoalTime(goalType: String) = goalType == "time"
+
+  fun showsGoalDistance(goalType: String) = goalType == "distance"
+
+  fun showsHeartRate(goalType: String, zonesConfigured: Boolean) =
+    goalType == "heart_rate" && zonesConfigured
 
   fun showsPace(targetType: Int) = targetType == 4
 
@@ -45,8 +76,15 @@ object WorkoutSetupPresentation {
 }
 
 object WorkoutSetupInput {
-  fun isPositive(value: String): Boolean = value.toDoubleOrNull()?.let { it.isFinite() && it > 0 } == true
+  fun isPositive(value: String): Boolean =
+    value.trim().replace(',', '.').toDoubleOrNull()?.let { it.isFinite() && it > 0 } == true
 
-  fun isTime(value: String): Boolean =
-    value.matches(Regex("(?:[0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]"))
+  fun isTime(value: String): Boolean {
+    if (!value.matches(Regex("(?:[0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]"))) return false
+    val seconds = value.split(':').map(String::toLong)
+    val totalSeconds =
+      if (seconds.size == 3) seconds[0] * 3600 + seconds[1] * 60 + seconds[2]
+      else seconds[0] * 60 + seconds[1]
+    return totalSeconds > 0
+  }
 }

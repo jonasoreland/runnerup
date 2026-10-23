@@ -86,6 +86,7 @@ import org.runnerup.relven.ui.StartWorkoutTabsStateHolder;
 import org.runnerup.relven.ui.WorkoutSetupChoice;
 import org.runnerup.relven.ui.WorkoutSetupCompose;
 import org.runnerup.relven.ui.WorkoutSetupListener;
+import org.runnerup.relven.ui.WorkoutSetupPresentation;
 import org.runnerup.relven.ui.WorkoutSetupState;
 import org.runnerup.relven.ui.WorkoutSetupStateHolder;
 import org.runnerup.relven.ui.WorkoutSetupStep;
@@ -255,7 +256,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
                 SharedPreferences prefs =
                     PreferenceManager.getDefaultSharedPreferences(requireContext());
                 SharedPreferences.Editor editor = prefs.edit();
-                if (key.equals(getString(R.string.pref_basic_target_type))
+                if (key.equals(getString(R.string.pref_basic_goal_type))) {
+                  editor.putString(key, value);
+                  editor.putInt(
+                      getString(R.string.pref_basic_target_type),
+                      WorkoutSetupPresentation.targetDimensionForGoal(value));
+                } else if (key.equals(getString(R.string.pref_basic_target_type))
                     || key.equals(getString(R.string.pref_basic_target_hrz))
                     || key.equals(getString(R.string.pref_interval_type))
                     || key.equals(getString(R.string.pref_interval_rest_type))) {
@@ -682,15 +688,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         workouts.add(new WorkoutSetupChoice(name, name));
       }
     }
-    ArrayList<WorkoutSetupChoice> targets = new ArrayList<>();
-    int[] targetValues = getResources().getIntArray(R.array.target_values);
     CharSequence[] targetLabels =
         getResources().getTextArray(org.runnerup.common.R.array.target_types);
-    for (int i = 0; i < targetValues.length && i < targetLabels.length; i++) {
-      if (targetValues[i] != DB.DIMENSION.HRZ || hrZonesAdapter.hrZones.isConfigured()) {
-        targets.add(
-            new WorkoutSetupChoice(String.valueOf(targetValues[i]), targetLabels[i].toString()));
-      }
+    ArrayList<WorkoutSetupChoice> goals = new ArrayList<>();
+    goals.add(new WorkoutSetupChoice("none", targetLabels[0].toString()));
+    goals.add(new WorkoutSetupChoice("pace", targetLabels[1].toString()));
+    goals.add(new WorkoutSetupChoice("time", getString(org.runnerup.common.R.string.Time)));
+    goals.add(new WorkoutSetupChoice("distance", getString(org.runnerup.common.R.string.Distance)));
+    if (hrZonesAdapter.hrZones.isConfigured()) {
+      goals.add(
+          new WorkoutSetupChoice("heart_rate", targetLabels[targetLabels.length - 1].toString()));
     }
     ArrayList<WorkoutSetupChoice> zones = new ArrayList<>();
     for (int i = 0; i < hrZonesAdapter.getCount(); i++) {
@@ -725,11 +732,16 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         steps.add(new WorkoutSetupStep(title, detail, entry.level()));
       }
     }
+    int targetType = prefs.getInt(getString(R.string.pref_basic_target_type), -1);
     return new WorkoutSetupState(
         workoutTabsState == null ? 0 : workoutTabsState.getSelectedIndex(),
-        prefs.getInt(getString(R.string.pref_basic_target_type), -1),
-        targets,
+        WorkoutSetupPresentation.goalTypeFromPreferences(
+            prefs.getString(getString(R.string.pref_basic_goal_type), null), targetType),
+        goals,
         prefs.getString(getString(R.string.pref_basic_target_pace_max), "00:05:00"),
+        prefs.getString(getString(R.string.pref_basic_goal_time), "00:30:00"),
+        prefs.getString(getString(R.string.pref_basic_goal_distance), "5"),
+        formatter.getUnitString(),
         String.valueOf(prefs.getInt(getString(R.string.pref_basic_target_hrz), -1)),
         zones,
         prefs.getString(

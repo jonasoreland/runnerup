@@ -131,8 +131,11 @@ public class MainLayout extends AppCompatActivity {
     }
     editor.apply();
 
-    // clear basicTargetType between application startup/shutdown
-    pref.edit().remove(getString(R.string.pref_basic_target_type)).apply();
+    // clear simple workout target/goal selections between application starts
+    pref.edit()
+        .remove(getString(R.string.pref_basic_target_type))
+        .remove(getString(R.string.pref_basic_goal_type))
+        .apply();
 
     Log.i(
         getClass().getName(),

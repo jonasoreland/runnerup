@@ -90,11 +90,11 @@ private fun BasicSetup(state: WorkoutSetupState, listener: WorkoutSetupListener)
     SectionTitle(stringResource(CommonR.string.Target))
     SetupDropdown(
       label = stringResource(CommonR.string.Type),
-      selected = state.targetType.toString(),
-      options = state.targetTypes,
-      onSelected = { listener.onPreferenceChanged("basicTargetType", it) },
+      selected = state.goalType,
+      options = state.goalTypes,
+      onSelected = { listener.onPreferenceChanged("basic_goal_type", it) },
     )
-    if (WorkoutSetupPresentation.showsPace(state.targetType)) {
+    if (WorkoutSetupPresentation.showsPace(state.goalType)) {
       SetupInput(
         stringResource(CommonR.string.Target_pace_HHMMSS),
         state.pace,
@@ -104,8 +104,27 @@ private fun BasicSetup(state: WorkoutSetupState, listener: WorkoutSetupListener)
         if (WorkoutSetupInput.isTime(it)) listener.onPreferenceChanged("basic_target_pace_max", it)
       }
     }
+    if (WorkoutSetupPresentation.showsGoalTime(state.goalType)) {
+      SetupInput(
+        stringResource(CommonR.string.Duration),
+        state.goalTime,
+        time = true,
+        isValid = WorkoutSetupInput::isTime,
+      ) {
+        if (WorkoutSetupInput.isTime(it)) listener.onPreferenceChanged("basic_goal_time", it)
+      }
+    }
+    if (WorkoutSetupPresentation.showsGoalDistance(state.goalType)) {
+      SetupInput(
+        "${stringResource(CommonR.string.Distance)} (${state.goalDistanceUnit})",
+        state.goalDistance,
+        isValid = WorkoutSetupInput::isPositive,
+      ) {
+        if (WorkoutSetupInput.isPositive(it)) listener.onPreferenceChanged("basic_goal_distance", it)
+      }
+    }
     if (WorkoutSetupPresentation.showsHeartRate(
-        state.targetType,
+        state.goalType,
         state.heartRateZones.isNotEmpty(),
       )) {
       SetupDropdown(

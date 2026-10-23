@@ -191,7 +191,9 @@ private fun CatalogBrowser(
   Column(
       modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.horizontalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Text(
           stringResource(R.string.Exercise_catalog_title),
           fontSize = 30.sp,
@@ -202,29 +204,14 @@ private fun CatalogBrowser(
               catalog.exercises.count { it.isArchived == showArchived }),
           color = RelvenColors.MutedText,
           fontSize = 14.sp)
-      Button(onClick = { editing = true }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+      Button(onClick = { editing = true }, modifier = Modifier.heightIn(min = 48.dp)) {
         Text(stringResource(R.string.Exercise_custom_add))
       }
       Text(
           stringResource(R.string.Exercise_collection_description),
           color = RelvenColors.MutedText,
-          fontSize = 13.sp)
-      Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedButton(
-            onClick = onImportCustomExercises,
-            enabled = !exerciseCollectionBusy,
-            modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
-          Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_import))
-        }
-        OutlinedButton(
-            onClick = onExportCustomExercises,
-            enabled = !exerciseCollectionBusy,
-            modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
-          Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_export))
-        }
-      }
+          fontSize = 13.sp,
+          modifier = Modifier.fillMaxWidth())
     }
     OutlinedTextField(
         value = query,
@@ -245,6 +232,22 @@ private fun CatalogBrowser(
             }
           }
         })
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      OutlinedButton(
+          onClick = onImportCustomExercises,
+          enabled = !exerciseCollectionBusy,
+          modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+        Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_import))
+      }
+      OutlinedButton(
+          onClick = onExportCustomExercises,
+          enabled = !exerciseCollectionBusy,
+          modifier = Modifier.weight(1f).heightIn(min = 48.dp)) {
+        Text(stringResource(if (exerciseCollectionBusy) R.string.Exercise_collection_working else R.string.Exercise_collection_export))
+      }
+    }
     Row(
         modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)) {

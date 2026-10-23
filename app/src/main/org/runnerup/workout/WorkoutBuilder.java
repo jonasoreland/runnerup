@@ -71,6 +71,26 @@ public class WorkoutBuilder {
     Step step = new Step();
     w.steps.add(step);
 
+    String basicGoalType = prefs.getString(res.getString(R.string.pref_basic_goal_type), null);
+    if ("time".equals(basicGoalType)) {
+      long goalSeconds =
+          SafeParse.parseSeconds(
+              prefs.getString(res.getString(R.string.pref_basic_goal_time), "00:30:00"), 30 * 60);
+      step.durationType = Dimension.TIME;
+      step.durationValue = goalSeconds > 0 ? goalSeconds : 30 * 60;
+    } else if ("distance".equals(basicGoalType)) {
+      double goalDistance =
+          SafeParse.parseDouble(
+              prefs
+                  .getString(res.getString(R.string.pref_basic_goal_distance), "5")
+                  .replace(',', '.'),
+              5);
+      if (Double.isFinite(goalDistance) && goalDistance > 0) {
+        step.durationType = Dimension.DISTANCE;
+        step.durationValue = goalDistance * Formatter.getUnitMeters(res, prefs);
+      }
+    }
+
     if (target == Dimension.PACE) {
       double unitMeters = Formatter.getUnitMeters(res, prefs);
       double seconds_per_unit =
