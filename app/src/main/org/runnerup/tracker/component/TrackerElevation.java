@@ -34,12 +34,12 @@ import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.runnerup.R;
+import org.runnerup.tracker.GpsAltitudeQuality;
 import org.runnerup.tracker.Tracker;
 
 public class TrackerElevation extends DefaultTrackerComponent implements SensorEventListener {
 
   private static final String NAME = "Elevation";
-  private static final float MAX_RELIABLE_GPS_VERTICAL_ACCURACY_METERS = 5.0f;
   private final Tracker tracker;
   private final TrackerGPS trackerGPS;
   private final TrackerPressure trackerPressure;
@@ -78,7 +78,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
             (mAverageGpsElevation != null) ? (mAverageGpsElevation - pressureElevation) : 0D;
         // Apply correction to mean-sea-level
         Double offset =
-            mAltitudeConverter == null
+            mAltitudeConverter == null || !mayUseGpsAltitudeForPressureCalibration(lastLocation)
                 ? Double.valueOf(0D)
                 : mAltitudeConverter.getOffset(lastLocation);
         if (offset != null) {
@@ -88,7 +88,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
         }
       }
       val = pressureElevation + (mPressureOffset != null ? mPressureOffset : 0D);
-    } else if (!isReliableGpsAltitude(lastLocation)) {
+    } else if (!GpsAltitudeQuality.isReliable(lastLocation)) {
       return null;
     } else if (AltitudeConverterWrapper.hasMslAltitude(lastLocation)) {
       // note that msl offset is still applied in mock mode (use "raw" data when testing)
@@ -106,7 +106,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
   }
 
   public void onLocationChanged(android.location.Location arg0) {
-    if (isReliableGpsAltitude(arg0)
+    if (GpsAltitudeQuality.isReliable(arg0)
         && (!isStarted || mPressureOffset == null || arg0.getTime() < minEleAverageCutoffTime)) {
       // If mPressureOffset is not "used" yet or shortly after first GPS, update the average
       final int minElevationStabilizeTime = 60;
@@ -129,16 +129,8 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
     }
   }
 
-  static boolean isReliableGpsAltitude(Location location) {
-    if (location == null
-        || !location.hasAltitude()
-        || !LocationCompat.hasVerticalAccuracy(location)) {
-      return false;
-    }
-    float verticalAccuracy = LocationCompat.getVerticalAccuracyMeters(location);
-    return Float.isFinite(verticalAccuracy)
-        && verticalAccuracy > 0.0f
-        && verticalAccuracy <= MAX_RELIABLE_GPS_VERTICAL_ACCURACY_METERS;
+  static boolean mayUseGpsAltitudeForPressureCalibration(Location location) {
+    return GpsAltitudeQuality.isReliable(location);
   }
 
   @Override

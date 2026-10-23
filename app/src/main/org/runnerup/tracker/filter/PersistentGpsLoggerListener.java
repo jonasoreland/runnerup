@@ -21,6 +21,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import org.runnerup.common.util.Constants;
+import org.runnerup.tracker.GpsAltitudeQuality;
 
 public class PersistentGpsLoggerListener implements Constants {
   private final java.lang.Object mLock;
@@ -97,7 +98,7 @@ public class PersistentGpsLoggerListener implements Constants {
     if (this.mLogGpxAccuracy) {
       // Accuracy related, normally not used in exports
       // null data still uses one byte storage
-      if (arg0.hasAltitude()) {
+      if (GpsAltitudeQuality.isReliable(arg0)) {
         values.put(DB.LOCATION.GPS_ALTITUDE, arg0.getAltitude());
       }
       if (arg0.hasSpeed()) {

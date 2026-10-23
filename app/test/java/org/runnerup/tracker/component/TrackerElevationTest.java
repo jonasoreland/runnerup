@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.runnerup.tracker.GpsAltitudeQuality;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
@@ -19,10 +20,10 @@ public class TrackerElevationTest {
     location.setAltitude(-117.0);
     LocationCompat.setVerticalAccuracyMeters(location, 5.0f);
 
-    assertTrue(TrackerElevation.isReliableGpsAltitude(location));
+    assertTrue(GpsAltitudeQuality.isReliable(location));
 
     LocationCompat.setVerticalAccuracyMeters(location, 5.1f);
-    assertFalse(TrackerElevation.isReliableGpsAltitude(location));
+    assertFalse(GpsAltitudeQuality.isReliable(location));
   }
 
   @Test
@@ -30,7 +31,7 @@ public class TrackerElevationTest {
     Location location = new Location("gps");
     location.setAltitude(42.0);
 
-    assertFalse(TrackerElevation.isReliableGpsAltitude(location));
+    assertFalse(GpsAltitudeQuality.isReliable(location));
   }
 
   @Test
@@ -38,6 +39,24 @@ public class TrackerElevationTest {
     Location location = new Location("gps");
     LocationCompat.setVerticalAccuracyMeters(location, 2.0f);
 
-    assertFalse(TrackerElevation.isReliableGpsAltitude(location));
+    assertFalse(GpsAltitudeQuality.isReliable(location));
+  }
+
+  @Test
+  public void unreliableGpsAltitudeCannotCalibratePressureElevation() {
+    Location location = new Location("gps");
+    location.setAltitude(-117.0);
+    LocationCompat.setVerticalAccuracyMeters(location, 7.0f);
+
+    assertFalse(TrackerElevation.mayUseGpsAltitudeForPressureCalibration(location));
+  }
+
+  @Test
+  public void reliableGpsAltitudeCanCalibratePressureElevation() {
+    Location location = new Location("gps");
+    location.setAltitude(42.0);
+    LocationCompat.setVerticalAccuracyMeters(location, 3.0f);
+
+    assertTrue(TrackerElevation.mayUseGpsAltitudeForPressureCalibration(location));
   }
 }
