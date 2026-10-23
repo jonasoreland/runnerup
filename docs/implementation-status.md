@@ -1,11 +1,16 @@
 # Implementation status — 23 October 2026
 
-## Running experience redesign — live route snapshot coalescing (PR in progress)
+## Running experience redesign — live route geometry (PR in progress)
+
+- Live workout routes now serialize as one orange GeoJSON `MultiLineString` feature instead of one feature per adjacent GPS pair. Coordinates remain chronological and complete; lap and pause segment boundaries remain separate lines. Saved activity maps keep their per-edge metric coloring.
+- Regression coverage proves pauses remain disconnected and a 10,000-point route retains every coordinate in one feature. Focused route tests, full app/Wear/HR-device/common tests, MapLibre debug assembly, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug/release assemblies passed locally. Emulator rendering of a generated long route is still pending; no physical ADB device was used.
+
+## Running experience redesign — live route snapshot coalescing (PR #109 merged)
 
 - Map snapshots are now rate-limited to one render per 500 ms during bursts. Each accepted Tracker event still updates the in-memory route immediately, and persistence remains Tracker-owned; pause/resume/start boundaries and initial/restored routes render immediately. This coalesces UI work without filtering or dropping accepted route points.
-- Added unit coverage for immediate first render, two-per-second burst coalescing, monotonic-clock regression, and explicit reset. Tests first failed because `LiveRouteRenderGate` did not exist, then passed. The full app/Wear/HR-device/common test suites, MapLibre debug build, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug assembly passed. The no-map phone release lint configuration was not rerun in this increment; its existing `LogNotTimber` unknown issue IDs are recorded above. Emulator burst-count validation remains pending.
+- Added unit coverage for immediate first render, two-per-second burst coalescing, monotonic-clock regression, and explicit reset. Tests first failed because `LiveRouteRenderGate` did not exist, then passed. Full app/Wear/HR-device/common tests, MapLibre debug build, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug assembly passed. Hosted CI passed. Emulator burst-count validation remains pending.
 - Previous increment verified on isolated emulator `emulator-5586` at ADB port 5039: initial street-scale framing and progressive orange route with start/current-position markers. Capture: `app/build/outputs/qa/relven-active-initial-zoom.png`. No physical device was used.
-- Remaining in this redesign: profile/update map route-source cost over long sessions, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
+- Remaining after this increment: profile route-source update CPU/memory on long sessions, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
 
 ## Running experience redesign — map visual correction
 
