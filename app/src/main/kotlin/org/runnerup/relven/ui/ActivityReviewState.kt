@@ -71,39 +71,36 @@ internal fun kilometerSplits(
   if (points.size < 2) return emptyList()
 
   val result = mutableListOf<KilometerSplit>()
-  var nextSplitDistance = splitDistanceMeters
+  var segment = points.first().segment
+  var nextSplitDistance = points.first().distanceMeters + splitDistanceMeters
   var splitStartElapsed = points.first().elapsedSeconds
   for (index in 1 until points.size) {
     val before = points[index - 1]
     val after = points[index]
-    if (before.segment != after.segment ||
+    if (before.segment != after.segment) {
+      segment = after.segment
+      if (after.distanceMeters.isFinite() && after.elapsedSeconds.isFinite()) {
+        nextSplitDistance = after.distanceMeters + splitDistanceMeters
+        splitStartElapsed = after.elapsedSeconds
+      }
+      continue
+    }
+    if (before.segment != segment ||
         !before.distanceMeters.isFinite() ||
         !after.distanceMeters.isFinite() ||
         !before.elapsedSeconds.isFinite() ||
         !after.elapsedSeconds.isFinite() ||
         after.distanceMeters <= before.distanceMeters ||
         after.elapsedSeconds <= before.elapsedSeconds) {
-      if (before.segment != after.segment && after.distanceMeters.isFinite()) {
-        val firstUncrossed = (kotlin.math.floor(after.distanceMeters / splitDistanceMeters) + 1) * splitDistanceMeters
-        if (firstUncrossed > nextSplitDistance) {
-          nextSplitDistance = firstUncrossed
-          splitStartElapsed = after.elapsedSeconds
-        }
-      }
       continue
     }
 
     while (nextSplitDistance <= after.distanceMeters) {
-      if (nextSplitDistance <= before.distanceMeters) {
-        nextSplitDistance += splitDistanceMeters
-        continue
-      }
       val fraction = (nextSplitDistance - before.distanceMeters) / (after.distanceMeters - before.distanceMeters)
       val splitElapsed = before.elapsedSeconds + (after.elapsedSeconds - before.elapsedSeconds) * fraction
       val duration = splitElapsed - splitStartElapsed
       if (duration.isFinite() && duration > 0.0) {
-        val number = (nextSplitDistance / splitDistanceMeters).toInt()
-        result += KilometerSplit(number, duration, duration / (splitDistanceMeters / 1_000.0))
+        result += KilometerSplit(result.size + 1, duration, duration / (splitDistanceMeters / 1_000.0))
       }
       splitStartElapsed = splitElapsed
       nextSplitDistance += splitDistanceMeters

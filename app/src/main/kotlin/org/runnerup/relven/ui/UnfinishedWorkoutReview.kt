@@ -155,8 +155,10 @@ private fun UnfinishedWorkoutReviewScreen(
       }
       val editedDistance =
           manualDistanceMeters.toLongOrNull()?.toDouble()?.takeIf { it.isFinite() && it > 0.0 }
+      val reviewActivity =
+          activity.copy(sport = sport, distanceMeters = editedDistance ?: activity.distanceMeters)
       ActivityReviewOverview(
-          activity.copy(sport = sport, distanceMeters = editedDistance ?: activity.distanceMeters))
+          reviewActivity)
       Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             stringResource(AppR.string.activity_review_activity_type),
@@ -196,11 +198,11 @@ private fun UnfinishedWorkoutReviewScreen(
             enabled = !saving,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
       }
-      if (activity.route.size >= 2) {
-        ActivityReviewMapCard(activity, actions::onOpenMap)
-        ActivityReviewChartCard(activity.route)
-        ActivityReviewSplitsCard(activity.route)
-      } else if (!Sport.isWithoutGps(activity.sport)) {
+      if (!Sport.isWithoutGps(sport) && reviewActivity.route.size >= 2) {
+        ActivityReviewMapCard(reviewActivity, actions::onOpenMap)
+        ActivityReviewChartCard(reviewActivity.route)
+        ActivityReviewSplitsCard(reviewActivity.route)
+      } else if (!Sport.isWithoutGps(sport)) {
         Surface(color = RelvenColors.Surface, shape = RoundedCornerShape(18.dp)) {
           Text(
               stringResource(AppR.string.activity_review_no_route),

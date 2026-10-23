@@ -46,6 +46,35 @@ class ActivityReviewStateTest {
   }
 
   @Test
+  fun kilometerSplitRestartsOneFullKilometerAfterPauseAtPartialDistance() {
+    val route =
+        listOf(
+            point(distance = 0.0, elapsed = 0.0, segment = 0),
+            point(distance = 600.0, elapsed = 300.0, segment = 0),
+            point(distance = 600.0, elapsed = 400.0, segment = 1),
+            point(distance = 1_600.0, elapsed = 900.0, segment = 1))
+
+    assertEquals(
+        listOf(KilometerSplit(number = 1, durationSeconds = 500.0, paceSecondsPerKm = 500.0)),
+        kilometerSplits(route))
+  }
+
+  @Test
+  fun kilometerSplitDoesNotEmitShortRemainderAtGlobalKilometerMarkerAfterPause() {
+    val route =
+        listOf(
+            point(distance = 0.0, elapsed = 0.0, segment = 0),
+            point(distance = 600.0, elapsed = 300.0, segment = 0),
+            point(distance = 1_600.0, elapsed = 400.0, segment = 1),
+            point(distance = 2_000.0, elapsed = 600.0, segment = 1),
+            point(distance = 2_600.0, elapsed = 900.0, segment = 1))
+
+    assertEquals(
+        listOf(KilometerSplit(number = 1, durationSeconds = 500.0, paceSecondsPerKm = 500.0)),
+        kilometerSplits(route))
+  }
+
+  @Test
   fun routeLegendIgnoresStationaryPaceOutlierWithoutChangingRoutePoints() {
     val route =
         listOf(
