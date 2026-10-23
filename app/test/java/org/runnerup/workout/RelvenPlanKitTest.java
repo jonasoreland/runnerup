@@ -34,6 +34,7 @@ public class RelvenPlanKitTest {
     String expected = readEntry(context.getAssets().open(ASSET), "INSTRUCTIONS.md");
 
     String copied = RelvenPlanKit.readInstructions(context);
+    assertTrue(copied.startsWith("===== FILE: INSTRUCTIONS.md =====\n"));
     assertTrue(copied.contains(expected));
     assertTrue(expected.contains("schemaVersion: 1"));
     assertTrue(copied.contains("JSON-FORMAT.md"));
@@ -54,6 +55,7 @@ public class RelvenPlanKitTest {
             new java.io.ByteArrayInputStream(destination.toByteArray()), StandardCharsets.UTF_8)) {
       assertNotNull(findEntry(archive, "catalog/exercise-library-v1.json"));
       assertNotNull(findEntry(archive, "user-data/custom-exercise-collection-v1.json"));
+      assertNotNull(findEntry(archive, "user-data/custom-exercise-inventory.md"));
     }
     destination.write(0);
   }
@@ -74,6 +76,7 @@ public class RelvenPlanKitTest {
       assertTrue(names.contains("relven-ai-plan-kit/schemas/exercise-collection-v1.schema.json"));
       assertTrue(names.contains("relven-ai-plan-kit/JSON-FORMAT.md"));
       assertTrue(names.contains("relven-ai-plan-kit/catalog/exercise-library-v1.json"));
+      assertTrue(names.contains("relven-ai-plan-kit/catalog/exercise-inventory.md"));
     }
   }
 

@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.Pair;
+import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -244,6 +245,29 @@ public class WorkoutBuilder {
         key,
         ctx.getString(org.runnerup.common.R.string.Default),
         AudioCueSettingsActivity.SUFFIX);
+  }
+
+  /** Rebuilds preferences-derived runtime triggers before applying a saved execution checkpoint. */
+  public static void prepareForRecovery(Context context, Workout workout) {
+    prepareForRecovery(context, workout, workout.getMute());
+  }
+
+  public static void prepareForRecovery(Context context, Workout workout, boolean mute) {
+    Context appContext = context.getApplicationContext();
+    Resources resources = appContext.getResources();
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(appContext);
+    int audioPreferenceResource =
+        switch (workout.getWorkoutType()) {
+          case Constants.WORKOUT_TYPE.BASIC -> R.string.pref_basic_audio;
+          case Constants.WORKOUT_TYPE.INTERVAL -> R.string.pref_interval_audio;
+          default -> R.string.pref_advanced_audio;
+        };
+    prepareWorkout(resources, preferences, workout);
+    SharedPreferences audioPreferences =
+        getAudioCuePreferences(
+            appContext, preferences, appContext.getString(audioPreferenceResource));
+    addAudioCuesToWorkout(resources, workout, audioPreferences, preferences);
+    workout.setMute(mute);
   }
 
   private static SharedPreferences getSubPreferences(

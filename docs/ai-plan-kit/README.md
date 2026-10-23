@@ -23,10 +23,12 @@ AI output must be one JSON plan document using `format: "relven.plan"` and `sche
 - `schemas/exercise-library-v1.schema.json` — bundled exercise catalog structure.
 - `schemas/exercise-collection-v1.schema.json` — user-created custom exercise collection structure.
 - `catalog/exercise-library-v1.json` — every bundled exercise with stable IDs, revisions, bilingual names/instructions, category, pattern, muscle groups, and equipment.
+- `catalog/exercise-inventory.md` — a readable Swedish/English index of all bundled exercise IDs, categories, patterns, and equipment. The JSON file remains canonical.
 - `user-data/custom-exercise-collection-v1.json` — the current device's custom exercise snapshot, appended by the phone at export time, including archived entries.
+- `user-data/custom-exercise-inventory.md` — a readable index of the same device-local custom exercises, including IDs, revisions, active/archive status, and equipment.
 - `examples/plan-running.json` and `examples/plan-strength.json` — full v1 plan examples that reference bundled exercises.
 
-Only the custom collection is device-specific. It remains local and is added only when the user explicitly chooses Copy, Share, or Save.
+The bundled inventory is 116 exercises from the offline catalog. The phone also exports all user-created custom exercises currently stored on that device; archived entries remain visible for context but cannot be selected for new plans. These local records remain on-device and are added only when the user explicitly chooses Copy, Share, or Save. The two Markdown inventories are quick indexes; use the canonical JSON documents for exact instructions and exercise snapshots.
 
 ## Maintainers
 

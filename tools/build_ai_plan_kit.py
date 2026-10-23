@@ -1,6 +1,7 @@
 """Build the offline AI Plan Kit from Relven's canonical schemas."""
 
 import argparse
+import json
 from pathlib import Path
 import sys
 import zipfile
@@ -20,9 +21,37 @@ FILES = {
     "schemas/exercise-library-v1.schema.json": "schemas/exercise-library-v1.schema.json",
     "schemas/exercise-collection-v1.schema.json": "schemas/exercise-collection-v1.schema.json",
     "catalog/exercise-library-v1.json": "app/assets/relven/exercise-library-v1.json",
+    "catalog/exercise-inventory.md": "app/assets/relven/exercise-library-v1.json",
     "examples/plan-running.json": "schemas/examples/plan-running.json",
     "examples/plan-strength.json": "schemas/examples/plan-strength.json",
 }
+
+
+def build_exercise_inventory() -> bytes:
+    """Build a readable index without replacing canonical exercise JSON."""
+    catalog = json.loads((ROOT / FILES["catalog/exercise-library-v1.json"]).read_text(encoding="utf-8"))
+    exercises = catalog["exercises"]
+    lines = [
+        "# Bundled exercise inventory",
+        "",
+        f"{len(exercises)} bundled exercises · library revision {catalog['libraryRevision']}",
+        "",
+        "This is a quick index. `exercise-library-v1.json` is canonical for IDs, revisions, instructions, equipment, and all other fields.",
+        "Use only active exercises whose canonical `equipment` array is empty when creating no-equipment workouts.",
+        "",
+        "| Svenska | English | Exercise ID | Category | Movement pattern | Muscle groups | Equipment |",
+        "|---|---|---|---|---|---|---|",
+    ]
+    for exercise in sorted(exercises, key=lambda item: (item["name"]["sv"].casefold(), item["exerciseId"])):
+        name_sv = exercise["name"]["sv"].replace("|", "\\|")
+        name_en = exercise["name"]["en"].replace("|", "\\|")
+        muscle_groups = ", ".join(exercise["muscleGroups"])
+        equipment = ", ".join(exercise["equipment"]) or "None"
+        lines.append(
+            f"| {name_sv} | {name_en} | `{exercise['exerciseId']}` | {exercise['category']} | "
+            f"{exercise['movementPattern']} | {muscle_groups} | {equipment} |"
+        )
+    return ("\n".join(lines) + "\n").encode("utf-8")
 
 
 def build_archive() -> bytes:
@@ -37,7 +66,11 @@ def build_archive() -> bytes:
             entry.compress_type = zipfile.ZIP_STORED
             entry.create_system = 3
             entry.external_attr = 0o100644 << 16
-            source = (ROOT / relative_source).read_bytes().replace(b"\r\n", b"\n")
+            source = (
+                build_exercise_inventory()
+                if archive_name == "catalog/exercise-inventory.md"
+                else (ROOT / relative_source).read_bytes().replace(b"\r\n", b"\n")
+            )
             archive.writestr(entry, source, compress_type=zipfile.ZIP_STORED)
     return output.getvalue()
 

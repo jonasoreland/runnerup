@@ -29,6 +29,13 @@ public class AutoPauseTrigger extends Trigger {
   private boolean mIsAutoPaused;
 
   @Override
+  JSONObject runtimeConfiguration() throws JSONException {
+    return super.runtimeConfiguration()
+        .put("autoPauseAfterNanos", mAutoPauseAfter)
+        .put("autoPauseMinSpeed", mAutoPauseMinSpeed);
+  }
+
+  @Override
   JSONObject toRuntimeCheckpoint() throws JSONException {
     return super.toRuntimeCheckpoint()
         .put("pausedByUser", mPausedByUser)
@@ -50,6 +57,11 @@ public class AutoPauseTrigger extends Trigger {
   @Override
   void onRecoverPaused(Workout workout) {
     resetPaused(true);
+  }
+
+  @Override
+  void resetForRecovery() {
+    resetPaused(false);
   }
 
   private static final long NANO_IN_MILLI = 1000000;

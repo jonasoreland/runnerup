@@ -29,14 +29,30 @@ public abstract class Trigger implements TickComponent {
   final ArrayList<TriggerSuppression> triggerSuppression = new ArrayList<>();
 
   JSONObject toRuntimeCheckpoint() throws JSONException {
-    return new JSONObject().put("triggerType", getClass().getName());
+    return new JSONObject()
+        .put("triggerType", getClass().getName())
+        .put("configuration", runtimeConfiguration());
   }
 
   boolean restoreRuntimeCheckpoint(JSONObject state) throws JSONException {
     return state != null && getClass().getName().equals(state.optString("triggerType"));
   }
 
+  boolean hasMatchingRuntimeConfiguration(JSONObject state) throws JSONException {
+    JSONObject savedConfiguration = state.optJSONObject("configuration");
+    // Checkpoints written before configuration signatures remain recoverable.
+    return savedConfiguration == null
+        || runtimeConfiguration().toString().equals(savedConfiguration.toString());
+  }
+
+  JSONObject runtimeConfiguration() throws JSONException {
+    return new JSONObject();
+  }
+
   void onRecoverPaused(Workout workout) {}
+
+  /** Resets transient state when a checkpoint's preference-built trigger list has changed. */
+  void resetForRecovery() {}
 
   @Override
   public void onInit(Workout s) {

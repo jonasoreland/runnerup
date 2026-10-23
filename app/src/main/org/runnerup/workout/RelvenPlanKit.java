@@ -19,6 +19,8 @@ public final class RelvenPlanKit {
   private static final String KIT_PREFIX = "relven-ai-plan-kit/";
   private static final String CUSTOM_COLLECTION_ENTRY =
       KIT_PREFIX + "user-data/custom-exercise-collection-v1.json";
+  private static final String CUSTOM_INVENTORY_ENTRY =
+      KIT_PREFIX + "user-data/custom-exercise-inventory.md";
   private static final int MAX_ARCHIVE_BYTES = 4 * 1_048_576;
 
   private RelvenPlanKit() {}
@@ -83,6 +85,17 @@ public final class RelvenPlanKit {
         throw new IOException("Custom exercise collection is too large for the AI Plan Kit");
       }
       output.write(customData);
+      output.closeEntry();
+      total += customData.length;
+
+      ZipEntry customInventory = new ZipEntry(CUSTOM_INVENTORY_ENTRY);
+      customInventory.setTime(0L);
+      output.putNextEntry(customInventory);
+      byte[] customInventoryData = RelvenPlanKitExerciseData.exportCustomInventory(context);
+      if (customInventoryData.length > MAX_ARCHIVE_BYTES - total) {
+        throw new IOException("Custom exercise inventory is too large for the AI Plan Kit");
+      }
+      output.write(customInventoryData);
       output.closeEntry();
       output.finish();
       output.flush();

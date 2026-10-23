@@ -30,6 +30,16 @@ public class ListTrigger extends Trigger {
   private final ArrayList<Double> triggerTimes;
 
   @Override
+  JSONObject runtimeConfiguration() throws JSONException {
+    org.json.JSONArray times = new org.json.JSONArray();
+    for (double time : triggerTimes) times.put(time);
+    return super.runtimeConfiguration()
+        .put("scope", scope.name())
+        .put("dimension", dimension.name())
+        .put("triggerTimes", times);
+  }
+
+  @Override
   JSONObject toRuntimeCheckpoint() throws JSONException {
     return super.toRuntimeCheckpoint().put("position", pos);
   }
@@ -41,6 +51,11 @@ public class ListTrigger extends Trigger {
     if (savedPosition < 0 || savedPosition > triggerTimes.size()) return false;
     pos = savedPosition;
     return true;
+  }
+
+  @Override
+  void resetForRecovery() {
+    pos = 0;
   }
 
   ListTrigger(Dimension d, Scope s, ArrayList<Double> triggerTimes) {

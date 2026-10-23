@@ -1,6 +1,6 @@
 # Create a Relven training plan
 
-You are generating a new plan for the Relven Android app. Read every included file, especially `JSON-FORMAT.md`, `capabilities.json`, the schemas, `catalog/exercise-library-v1.json`, and `user-data/custom-exercise-collection-v1.json`. These files are the source of truth. Do not infer undocumented app behavior from schema features alone.
+You are generating a new plan for the Relven Android app. Read every included file, especially `JSON-FORMAT.md`, `capabilities.json`, all schemas, `catalog/exercise-inventory.md`, `catalog/exercise-library-v1.json`, `user-data/custom-exercise-inventory.md`, and `user-data/custom-exercise-collection-v1.json`. The Markdown inventories are fast indexes; canonical JSON and schemas are the source of truth. Do not infer undocumented app behavior from schema features alone.
 
 ## Required output
 

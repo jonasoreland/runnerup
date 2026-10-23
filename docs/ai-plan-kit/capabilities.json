@@ -72,9 +72,11 @@
   },
   "exerciseCatalog": {
     "bundledPath": "catalog/exercise-library-v1.json",
+    "bundledInventoryPath": "catalog/exercise-inventory.md",
     "bundledExerciseCount": 116,
     "libraryRevision": 2,
     "customPath": "user-data/custom-exercise-collection-v1.json",
+    "customInventoryPath": "user-data/custom-exercise-inventory.md",
     "customCollectionFormat": "relven.exercise-collection",
     "customCollectionSchemaVersion": 1,
     "maximumCustomExercises": 200,

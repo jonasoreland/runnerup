@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Looper;
 import android.speech.tts.TextToSpeech;
+import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -30,10 +31,9 @@ import org.robolectric.annotation.Implements;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.db.DBHelper;
-import org.runnerup.workout.Dimension;
 import org.runnerup.workout.Scope;
-import org.runnerup.workout.Step;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
 @RunWith(RobolectricTestRunner.class)
@@ -52,7 +52,7 @@ public class TrackerServiceRecoveryTest {
     long activityId = database.insert(Constants.DB.ACTIVITY.TABLE, null, activityValues);
     assertTruePositive(activityId);
 
-    Workout sourceWorkout = createRunningWorkout();
+    Workout sourceWorkout = createRunningWorkout(context);
     sourceWorkout.setTracker(mock(Tracker.class));
     sourceWorkout.onInit(sourceWorkout);
     sourceWorkout.onStart(Scope.ACTIVITY, sourceWorkout);
@@ -78,6 +78,18 @@ public class TrackerServiceRecoveryTest {
             true);
     checkpointStore.save(checkpoint);
 
+    android.content.SharedPreferences preferences =
+        PreferenceManager.getDefaultSharedPreferences(context);
+    preferences
+        .edit()
+        .putBoolean(context.getString(org.runnerup.R.string.pref_autopause_active), true)
+        .commit();
+    WorkoutBuilder.getAudioCuePreferences(
+            context, preferences, context.getString(org.runnerup.R.string.pref_basic_audio))
+        .edit()
+        .putBoolean(context.getString(org.runnerup.R.string.pref_mute_bool), !checkpoint.isMute())
+        .commit();
+
     ServiceController<Tracker> controller = Robolectric.buildService(Tracker.class).create();
     Tracker restoredTracker = controller.get();
     try {
@@ -89,6 +101,7 @@ public class TrackerServiceRecoveryTest {
       assertEquals(128.5, restoredTracker.getDistance(), 0.0);
       assertNotNull(restoredTracker.getWorkout());
       assertFalse(restoredTracker.getWorkout().isPaused());
+      assertEquals(checkpoint.isMute(), restoredTracker.getWorkout().getMute());
       assertNotNull(restoredTracker.getWorkout().getCurrentStep());
     } finally {
       controller.destroy();
@@ -99,12 +112,17 @@ public class TrackerServiceRecoveryTest {
     }
   }
 
-  private static Workout createRunningWorkout() {
-    Workout workout = new Workout();
-    Step step = new Step();
-    step.setDurationType(Dimension.TIME);
-    step.setDurationValue(600);
-    workout.addStep(step);
+  private static Workout createRunningWorkout(Context context) {
+    android.content.SharedPreferences preferences =
+        PreferenceManager.getDefaultSharedPreferences(context);
+    Workout workout =
+        WorkoutBuilder.createDefaultWorkout(context.getResources(), preferences, null);
+    WorkoutBuilder.prepareWorkout(context.getResources(), preferences, workout);
+    android.content.SharedPreferences audioPreferences =
+        WorkoutBuilder.getAudioCuePreferences(
+            context, preferences, context.getString(org.runnerup.R.string.pref_basic_audio));
+    WorkoutBuilder.addAudioCuesToWorkout(
+        context.getResources(), workout, audioPreferences, preferences);
     return workout;
   }
 

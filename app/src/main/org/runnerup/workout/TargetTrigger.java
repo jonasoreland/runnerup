@@ -59,6 +59,21 @@ public class TargetTrigger extends Trigger {
   private int lastValCnt = 0;
 
   @Override
+  JSONObject runtimeConfiguration() throws JSONException {
+    JSONObject configuration =
+        super.runtimeConfiguration()
+            .put("scope", scope.name())
+            .put("dimension", dimension.name())
+            .put("movingAverageSize", measure.length)
+            .put("minGraceCount", minGraceCount)
+            .put("skipValues", skip_values);
+    if (range != null) {
+      configuration.put("rangeMin", range.minValue).put("rangeMax", range.maxValue);
+    }
+    return configuration;
+  }
+
+  @Override
   JSONObject toRuntimeCheckpoint() throws JSONException {
     return super.toRuntimeCheckpoint()
         .put("initialized", inited)
@@ -114,6 +129,20 @@ public class TargetTrigger extends Trigger {
   @Override
   void onRecoverPaused(Workout workout) {
     paused = true;
+  }
+
+  @Override
+  void resetForRecovery() {
+    inited = false;
+    paused = false;
+    graceCount = initialGrace;
+    cntMeasures = 0;
+    Arrays.fill(measure, 0);
+    Arrays.fill(measure_time, 0);
+    Arrays.fill(measure_distance, 0);
+    lastTimestamp = 0;
+    lastVal = 0;
+    lastValCnt = 0;
   }
 
   private static JSONArray arrayToJson(double[] values) throws JSONException {
