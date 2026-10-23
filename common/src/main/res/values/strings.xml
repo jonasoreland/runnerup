@@ -315,7 +315,9 @@
     <string name="Today_plan_title">Today’s plan</string>
     <string name="Today_plan_loading">Loading today’s plan…</string>
     <string name="No_active_plan">No active plan</string>
-    <string name="Activate_a_plan_hint">Activate a saved plan in the training view to see today’s item here.</string>
+    <string name="Today_plan_create_hint">Create a plan or choose one from your library to see today’s training.</string>
+    <string name="Today_plan_open_library">Create or manage plans</string>
+    <string name="Today_plan_open_calendar">Manage plan</string>
     <string name="Today_plan_unavailable">Couldn’t read the active plan</string>
     <string name="Today_plan_unavailable_hint">Open the training view and check your saved plans.</string>
     <string name="No_plan_item_today">No workout scheduled today</string>
