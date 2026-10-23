@@ -1,11 +1,11 @@
 # Implementation status — 23 October 2026
 
-## Running experience redesign — live camera initialization (PR in progress)
+## Running experience redesign — live route snapshot coalescing (PR in progress)
 
-- The first accepted location now initializes the live map with a street-level zoom; later automatic follow keeps that zoom, animates over 700 ms, and recenters only after 12 m of accepted movement from its last camera anchor. Panning still disables follow; **Centrera** immediately reanchors to the current accepted location. This gate affects only camera rendering: Tracker acceptance, stored GPS samples, and route distance are unchanged.
-- Added unit coverage for initial center, sub-threshold jitter, meaningful displacement, recenter anchoring, and invalid coordinates. The initial test failed because the action model did not exist, then passed after implementation.
-- Isolated emulator `emulator-5586` on ADB port 5039 verified the initial map at street scale and a progressively drawn orange route with start and current-position markers using synthetic locations. Capture: `app/build/outputs/qa/relven-active-initial-zoom.png`. The focused policy tests, full app/Wear/HR/common unit suites, MapLibre Latest debug assembly, phone and Wear release bundles, all MapLibre release lint tasks, no-map Latest debug assembly and release bundle, Spotless, and `git diff --check` passed. The no-map phone release lint task still fails on the inherited `LogNotTimber` unknown-issue entries in `app/lint.xml` and `app/lint-osmdroid.xml`; the MapLibre phone release lint passes with 23 baseline findings filtered.
-- Remaining in this redesign: throttle route-source/snapshot rendering, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
+- Map snapshots are now rate-limited to one render per 500 ms during bursts. Each accepted Tracker event still updates the in-memory route immediately, and persistence remains Tracker-owned; pause/resume/start boundaries and initial/restored routes render immediately. This coalesces UI work without filtering or dropping accepted route points.
+- Added unit coverage for immediate first render, two-per-second burst coalescing, monotonic-clock regression, and explicit reset. Tests first failed because `LiveRouteRenderGate` did not exist, then passed. The full app/Wear/HR-device/common test suites, MapLibre debug build, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug assembly passed. The no-map phone release lint configuration was not rerun in this increment; its existing `LogNotTimber` unknown issue IDs are recorded above. Emulator burst-count validation remains pending.
+- Previous increment verified on isolated emulator `emulator-5586` at ADB port 5039: initial street-scale framing and progressive orange route with start/current-position markers. Capture: `app/build/outputs/qa/relven-active-initial-zoom.png`. No physical device was used.
+- Remaining in this redesign: profile/update map route-source cost over long sessions, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
 
 ## Running experience redesign — map visual correction
 
