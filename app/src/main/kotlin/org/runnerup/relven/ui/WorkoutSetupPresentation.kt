@@ -4,6 +4,21 @@ data class WorkoutSetupChoice(val value: String, val label: String)
 
 data class WorkoutSetupStep(val title: String, val detail: String, val indent: Int)
 
+data class GymExerciseOption(
+  val exerciseId: String,
+  val name: String,
+  val category: String,
+  val searchText: String = "",
+)
+
+data class GymExerciseDraft(
+  val exerciseId: String,
+  val name: String,
+  val sets: String = "3",
+  val repetitions: String = "8",
+  val restSeconds: String = "60",
+)
+
 data class WorkoutSetupState(
   val selectedTab: Int,
   val goalType: String,
@@ -30,6 +45,13 @@ data class WorkoutSetupState(
   val advancedSteps: List<WorkoutSetupStep>,
   val advancedAudio: String,
   val advancedAudioSchemes: List<WorkoutSetupChoice>,
+  val isGym: Boolean = false,
+  val gymName: String = "",
+  val gymQuery: String = "",
+  val gymCatalogLoading: Boolean = false,
+  val gymCatalogError: Boolean = false,
+  val gymExercises: List<GymExerciseOption> = emptyList(),
+  val gymDraft: List<GymExerciseDraft> = emptyList(),
 )
 
 object WorkoutSetupPresentation {

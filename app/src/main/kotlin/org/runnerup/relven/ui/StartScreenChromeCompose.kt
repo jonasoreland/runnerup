@@ -111,7 +111,7 @@ private fun StartReadinessBar(
   Column(
     modifier = Modifier.fillMaxWidth().background(RelvenColors.Surface).padding(horizontal = 12.dp, vertical = 6.dp),
   ) {
-    Row(
+    if (presentation.summaryItems.isNotEmpty() || showGpsAction) Row(
       modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(6.dp),

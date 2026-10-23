@@ -1,5 +1,12 @@
 # Implementation status — 23 October 2026
 
+## Gym custom workout composition (current PR)
+
+- Selecting Gym in Start replaces run tabs, targets, audio options and GPS action with an offline exercise composer. It supports a workout name, exercise search/add/remove, order, sets, repetitions, rest seconds, validation, and a locally persisted draft. Exercise search includes localized names, muscle groups, and movement patterns.
+- The composer builds a validated canonical Workout v3 strength document from the current bundled/custom exercise catalog and opens the existing durable Relven strength session. No separate tracker, plan scheduling, templates, network dependency, or GPS permission is introduced. Running setup remains on the existing RunnerUp flow.
+- `GymWorkoutDraftBuilderTest` verifies canonical snapshot revisions/name/instructions/equipment/images, configured prescriptions, and invalid/empty/duplicate/unknown drafts. Full `:app:testLatestDebugUnitTest` passed (460 tests, zero failures); `:app:lintLatestDebug`, `:app:assembleLatestDebug`, `spotlessCheck`, and `git diff --check` passed.
+- Isolated emulator `127.0.0.1:5587` verified the Swedish Gym composer, restored draft, sets/reps/rest controls, hidden run tabs/GPS action, and launch into the existing guided strength screen. Captures: `app/build/outputs/qa/gym-composer-final.png` and `app/build/outputs/qa/gym-session.png`. Emulator identity reported `sdk_gphone64_x86_64` with `ro.kernel.qemu=1`; no physical Android device was used.
+
 ## Running experience redesign — trustworthy elevation (current PR)
 
 - New GPS-derived elevations are available only when the fix includes Android vertical-accuracy metadata no worse than 5 m; otherwise elevation is omitted from the persisted activity row and the optional raw GPS-altitude export field. Poor GPS altitude cannot calibrate the pressure-derived offset. This does not affect accepted horizontal route fixes, distance, time, or GPS recording. Pressure-sensor elevation remains available.

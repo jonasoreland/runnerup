@@ -10,4 +10,16 @@ public interface WorkoutSetupListener {
   void onManageWorkouts();
 
   void onManageAudio(int tab);
+
+  void onGymNameChanged(String name);
+
+  void onGymQueryChanged(String query);
+
+  void onAddGymExercise(String exerciseId);
+
+  void onRemoveGymExercise(String exerciseId);
+
+  void onUpdateGymExercise(String exerciseId, String sets, String repetitions, String restSeconds);
+
+  void onStartGymWorkout();
 }

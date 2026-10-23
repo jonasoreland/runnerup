@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -76,12 +77,177 @@ private fun WorkoutSetupContent(state: WorkoutSetupState, listener: WorkoutSetup
       .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 160.dp),
     verticalArrangement = Arrangement.spacedBy(16.dp),
   ) {
-    when (state.selectedTab) {
-      0 -> BasicSetup(state, listener)
-      1 -> IntervalSetup(state, listener)
-      else -> AdvancedSetup(state, listener)
+    if (state.isGym) {
+      GymWorkoutSetup(state, listener)
+    } else {
+      when (state.selectedTab) {
+        0 -> BasicSetup(state, listener)
+        1 -> IntervalSetup(state, listener)
+        else -> AdvancedSetup(state, listener)
+      }
     }
   }
+}
+
+@Composable
+private fun GymWorkoutSetup(state: WorkoutSetupState, listener: WorkoutSetupListener) {
+  SetupSection {
+    SectionTitle(stringResource(org.runnerup.R.string.gym_workout_title))
+    OutlinedTextField(
+      value = state.gymName,
+      onValueChange = listener::onGymNameChanged,
+      modifier = Modifier.fillMaxWidth(),
+      label = { Text(stringResource(org.runnerup.R.string.gym_workout_name)) },
+      singleLine = true,
+      shape = RoundedCornerShape(16.dp),
+    )
+    Text(
+      pluralStringResource(
+        org.runnerup.R.plurals.gym_workout_exercise_count,
+        state.gymDraft.size,
+        state.gymDraft.size,
+      ),
+      color = RelvenColors.MutedText,
+      fontSize = 13.sp,
+    )
+  }
+
+  if (state.gymDraft.isNotEmpty()) GymWorkoutDraftSection(state, listener)
+
+  SetupSection {
+    SectionTitle(stringResource(org.runnerup.R.string.gym_exercises_title))
+    OutlinedTextField(
+      value = state.gymQuery,
+      onValueChange = listener::onGymQueryChanged,
+      modifier = Modifier.fillMaxWidth(),
+      label = { Text(stringResource(org.runnerup.R.string.gym_exercise_search)) },
+      singleLine = true,
+      shape = RoundedCornerShape(16.dp),
+    )
+    if (state.gymCatalogLoading) {
+      Text(stringResource(org.runnerup.R.string.gym_exercises_loading), color = RelvenColors.MutedText)
+    } else if (state.gymCatalogError) {
+      Text(stringResource(org.runnerup.R.string.gym_exercises_error), color = RelvenColors.MutedText)
+    } else {
+      val selectedIds = state.gymDraft.mapTo(HashSet(), GymExerciseDraft::exerciseId)
+      val query = state.gymQuery.trim()
+      val matches = state.gymExercises.filter {
+        it.exerciseId !in selectedIds &&
+          (query.isEmpty() || it.name.contains(query, ignoreCase = true) ||
+            it.searchText.contains(query, ignoreCase = true))
+      }.take(12)
+      if (matches.isEmpty()) {
+        Text(
+          if (state.gymDraft.isEmpty()) stringResource(org.runnerup.R.string.gym_exercises_empty)
+          else stringResource(org.runnerup.R.string.gym_exercise_no_matches),
+          color = RelvenColors.MutedText,
+        )
+      }
+      matches.forEach { exercise ->
+        Row(
+          Modifier.fillMaxWidth().padding(vertical = 2.dp),
+          verticalAlignment = Alignment.CenterVertically,
+        ) {
+          Column(Modifier.weight(1f).padding(end = 8.dp)) {
+            Text(exercise.name, color = RelvenColors.Text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            Text(gymCategoryLabel(exercise.category), color = RelvenColors.MutedText, fontSize = 11.sp)
+          }
+          TextButton(onClick = { listener.onAddGymExercise(exercise.exerciseId) }) {
+            Text(stringResource(org.runnerup.R.string.gym_exercise_add), color = RelvenColors.Orange)
+          }
+        }
+      }
+    }
+  }
+
+}
+
+@Composable
+private fun GymWorkoutDraftSection(state: WorkoutSetupState, listener: WorkoutSetupListener) {
+  SetupSection {
+    SectionTitle(stringResource(org.runnerup.R.string.gym_workout_order))
+    state.gymDraft.forEachIndexed { index, exercise ->
+      Column(
+        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+      ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+          Text(
+            "${index + 1}. ${exercise.name}",
+            color = RelvenColors.Text,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f).padding(end = 4.dp),
+          )
+          TextButton(onClick = { listener.onRemoveGymExercise(exercise.exerciseId) }) {
+            Text(stringResource(org.runnerup.R.string.gym_exercise_remove), color = RelvenColors.Orange)
+          }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+          GymNumberInput(
+            label = stringResource(org.runnerup.R.string.gym_sets),
+            value = exercise.sets,
+            minimum = 1,
+            maximum = 100,
+            modifier = Modifier.weight(1f),
+            onValueChange = { listener.onUpdateGymExercise(exercise.exerciseId, it, exercise.repetitions, exercise.restSeconds) },
+          )
+          GymNumberInput(
+            label = stringResource(org.runnerup.R.string.gym_repetitions),
+            value = exercise.repetitions,
+            minimum = 1,
+            maximum = 500,
+            modifier = Modifier.weight(1f),
+            onValueChange = { listener.onUpdateGymExercise(exercise.exerciseId, exercise.sets, it, exercise.restSeconds) },
+          )
+          GymNumberInput(
+            label = stringResource(org.runnerup.R.string.gym_rest_seconds),
+            value = exercise.restSeconds,
+            minimum = 0,
+            maximum = 3600,
+            modifier = Modifier.weight(1f),
+            onValueChange = { listener.onUpdateGymExercise(exercise.exerciseId, exercise.sets, exercise.repetitions, it) },
+          )
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun gymCategoryLabel(category: String): String =
+  stringResource(
+    when (category) {
+      "lower_body" -> CommonR.string.Exercise_category_lower_body
+      "upper_body" -> CommonR.string.Exercise_category_upper_body
+      "core" -> CommonR.string.Exercise_category_core
+      else -> CommonR.string.Exercise_category_warmup_mobility
+    },
+  )
+
+@Composable
+private fun GymNumberInput(
+  label: String,
+  value: String,
+  minimum: Int,
+  maximum: Int,
+  modifier: Modifier,
+  onValueChange: (String) -> Unit,
+) {
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    modifier = modifier,
+    label = { Text(label, maxLines = 1, fontSize = 11.sp) },
+    singleLine = true,
+    shape = RoundedCornerShape(12.dp),
+    isError = value.toIntOrNull()?.let { it !in minimum..maximum } ?: true,
+    supportingText = {
+      if (value.toIntOrNull()?.let { it in minimum..maximum } != true) {
+        Text(stringResource(org.runnerup.R.string.gym_number_invalid), fontSize = 9.sp)
+      }
+    },
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+  )
 }
 
 @Composable

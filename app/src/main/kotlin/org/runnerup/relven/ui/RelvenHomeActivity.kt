@@ -87,6 +87,7 @@ import org.runnerup.db.DBHelper
 import org.runnerup.db.ActivityCleaner
 import org.runnerup.db.PathSimplifier
 import org.runnerup.workout.RelvenPlanStore
+import org.runnerup.workout.RelvenStrengthWorkoutParser
 import org.runnerup.workout.RelvenPlanImport
 import org.runnerup.workout.RelvenPlanKit
 import org.runnerup.workout.RelvenPlanImporter
@@ -113,9 +114,10 @@ import org.runnerup.relven.analysis.summarizeActivities
 import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
+import java.util.UUID
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
-class RelvenHomeActivity : FragmentActivity() {
+class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   companion object {
     private const val EXTRA_OPEN_PLAN_LIBRARY = "relven.home.open_plan_library"
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
@@ -1050,6 +1052,40 @@ class RelvenHomeActivity : FragmentActivity() {
         }
       } catch (error: Exception) {
         Log.w("RelvenHome", "Could not start strength session", error)
+        strengthSaveError = true
+      }
+    }
+  }
+
+  override fun startQuickStrengthWorkout(name: String, workoutJson: String) {
+    val workout =
+        try {
+          RelvenStrengthWorkoutParser.parse(workoutJson)
+        } catch (error: Exception) {
+          Log.w("RelvenHome", "Could not validate custom gym workout", error)
+          strengthSaveError = true
+          return
+        }
+    lifecycleScope.launch {
+      try {
+        val existing = withContext(Dispatchers.IO) {
+          strengthStoreMutex.withLock {
+            val saved = StrengthSessionStore.loadInProgress(applicationContext)
+            if (saved != null) saved
+            else StrengthSession.start("quick-workout", UUID.randomUUID().toString(), workout).also {
+              StrengthSessionStore.saveInProgress(applicationContext, it)
+            }
+          }
+        }
+        if (existing.workout.id() == workout.id()) {
+          strengthSaveError = false
+          strengthSession = existing
+          viewedStrengthCompletion = null
+        } else {
+          pendingStrengthSessionChoice = PendingStrengthSessionChoice(existing, name)
+        }
+      } catch (error: Exception) {
+        Log.w("RelvenHome", "Could not start custom gym workout", error)
         strengthSaveError = true
       }
     }
