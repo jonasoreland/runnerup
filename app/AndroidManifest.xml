@@ -79,8 +79,8 @@
         </intent>
     </queries>
 
-    <!-- Portrait is intentional for the phone-first Relven experience. Android may override
-         orientation requests on large-screen devices, so this guarantee applies to phones. -->
+    <!-- Portrait is intentional. Disable device-manufacturer orientation overrides; Android 17
+         still ignores orientation locks on large-screen displays for apps targeting API 37+. -->
     <application
         android:allowBackup="true"
         android:appCategory="maps"
@@ -92,6 +92,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         tools:ignore="UnusedAttribute,LockedOrientationActivity,DiscouragedApi">
+        <property
+            android:name="android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE"
+            android:value="false" />
         <meta-data
             android:name="android.webkit.WebView.MetricsOptOut"
             android:value="true" />
