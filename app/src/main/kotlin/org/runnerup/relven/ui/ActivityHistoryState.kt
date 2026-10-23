@@ -1,5 +1,6 @@
 package org.runnerup.relven.ui
 
+import android.database.sqlite.SQLiteDatabase
 import org.runnerup.common.util.Constants.DB
 
 internal data class HistoryActivity(
@@ -7,7 +8,58 @@ internal data class HistoryActivity(
     val startedAtSeconds: Long,
     val durationSeconds: Long?,
     val distanceMeters: Double?,
-    val sport: Int)
+    val sport: Int,
+    val unfinished: Boolean = false)
+
+internal fun readHistoryActivities(database: SQLiteDatabase): List<HistoryActivity> {
+  val columns =
+      arrayOf(
+          "_id",
+          DB.ACTIVITY.START_TIME,
+          DB.ACTIVITY.DISTANCE,
+          DB.ACTIVITY.TIME,
+          DB.ACTIVITY.SPORT)
+  return database
+      .query(
+          DB.ACTIVITY.TABLE,
+          columns,
+          "${DB.ACTIVITY.DELETED} == 0",
+          null,
+          null,
+          null,
+          "${DB.ACTIVITY.START_TIME} desc")
+      .use { cursor ->
+        val idColumn = cursor.getColumnIndexOrThrow("_id")
+        val startedColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.START_TIME)
+        val distanceColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.DISTANCE)
+        val durationColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.TIME)
+        val sportColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.SPORT)
+        buildList {
+          while (cursor.moveToNext()) {
+            val startedAt = cursor.getLong(startedColumn)
+            if (startedAt <= 0L) continue
+            val id = cursor.getLong(idColumn)
+            val unfinished = cursor.isNull(durationColumn)
+            val recovery =
+                if (unfinished) readActivityRecoverySummary(database, id) else null
+            val distance =
+                if (cursor.isNull(distanceColumn)) recovery?.distanceMeters
+                else cursor.getDouble(distanceColumn).takeIf { it.isFinite() && it > 0.0 }
+            val duration =
+                if (unfinished) recovery?.durationSeconds
+                else cursor.getLong(durationColumn).takeIf { it >= 0L }
+            add(
+                HistoryActivity(
+                    id = id,
+                    startedAtSeconds = startedAt,
+                    durationSeconds = duration,
+                    distanceMeters = distance,
+                    sport = cursor.getInt(sportColumn),
+                    unfinished = unfinished))
+          }
+        }
+      }
+}
 
 internal enum class HistorySportFilter {
   ALL,

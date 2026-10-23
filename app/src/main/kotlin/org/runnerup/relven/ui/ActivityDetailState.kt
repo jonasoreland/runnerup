@@ -27,7 +27,12 @@ internal data class HistoryActivityDetails(
     val maximumHeartRate: Int?,
     val averageCadence: Double? = null,
     val laps: List<ActivityLapDetails> = emptyList(),
-    val route: List<RoutePoint> = emptyList())
+    val route: List<RoutePoint> = emptyList(),
+    val unfinished: Boolean = false)
+
+internal data class ActivityRecoverySummary(
+    val durationSeconds: Long?,
+    val distanceMeters: Double?)
 
 internal data class ActivityLapDetails(
     val number: Int,
@@ -160,6 +165,73 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
   return points
 }
 
+internal fun readActivityRecoverySummary(
+    database: SQLiteDatabase,
+    activityId: Long
+): ActivityRecoverySummary? {
+  var elapsedMillis: Double? = null
+  var distanceMeters: Double? = null
+  database
+      .query(
+          DB.LOCATION.TABLE,
+          arrayOf(DB.LOCATION.ELAPSED, DB.LOCATION.DISTANCE),
+          "${DB.LOCATION.ACTIVITY} = ?",
+          arrayOf(activityId.toString()),
+          null,
+          null,
+          DB.LOCATION.TIME + " ASC, _id ASC")
+      .use { cursor ->
+        val elapsedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ELAPSED)
+        val distanceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.DISTANCE)
+        while (cursor.moveToNext()) {
+          if (!cursor.isNull(elapsedIndex)) {
+            cursor.getDouble(elapsedIndex).takeIf { it.isFinite() && it >= 0.0 }?.let {
+              elapsedMillis = it
+            }
+          }
+          if (!cursor.isNull(distanceIndex)) {
+            cursor.getDouble(distanceIndex).takeIf { it.isFinite() && it >= 0.0 }?.let {
+              distanceMeters = it
+            }
+          }
+        }
+      }
+  if (elapsedMillis == null && distanceMeters == null) return null
+  return ActivityRecoverySummary(
+      durationSeconds = elapsedMillis?.let { kotlin.math.round(it / 1000.0).toLong() },
+      distanceMeters = distanceMeters?.takeIf { it > 0.0 })
+}
+
+/** Finalizes only an interrupted row, using the last durable Tracker checkpoint. */
+internal fun saveInterruptedActivity(
+    database: SQLiteDatabase,
+    activityId: Long,
+    note: String?): Boolean {
+  if (activityId <= 0L) return false
+  val summary = readActivityRecoverySummary(database, activityId) ?: return false
+  val values = android.content.ContentValues().apply {
+    put(DB.ACTIVITY.TIME, summary.durationSeconds ?: 0L)
+    summary.distanceMeters?.let { put(DB.ACTIVITY.DISTANCE, it) }
+    put(DB.ACTIVITY.COMMENT, note?.trim()?.takeIf(String::isNotEmpty))
+  }
+  return database.update(
+      DB.ACTIVITY.TABLE,
+      values,
+      "_id = ? AND ${DB.ACTIVITY.TIME} IS NULL AND ${DB.ACTIVITY.DELETED} = 0",
+      arrayOf(activityId.toString())) == 1
+}
+
+/** Soft-deletes only an interrupted row. Repeated discard callbacks are harmless. */
+internal fun discardInterruptedActivity(database: SQLiteDatabase, activityId: Long): Boolean {
+  if (activityId <= 0L) return false
+  val values = android.content.ContentValues().apply { put(DB.ACTIVITY.DELETED, 1) }
+  return database.update(
+      DB.ACTIVITY.TABLE,
+      values,
+      "_id = ? AND ${DB.ACTIVITY.TIME} IS NULL AND ${DB.ACTIVITY.DELETED} = 0",
+      arrayOf(activityId.toString())) == 1
+}
+
 internal fun activityHasMapRoute(activity: HistoryActivityDetails, mapEnabled: Boolean): Boolean =
     mapEnabled && !Sport.isWithoutGps(activity.sport) && activity.gpsSampleCount >= 2
 
@@ -216,20 +288,25 @@ internal fun readHistoryActivityDetails(
           return if (cursor.isNull(index)) null else cursor.getDouble(index)
         }
         val distanceIndex = cursor.getColumnIndexOrThrow(DB.ACTIVITY.DISTANCE)
+        val durationIndex = cursor.getColumnIndexOrThrow(DB.ACTIVITY.TIME)
         val commentIndex = cursor.getColumnIndexOrThrow(DB.ACTIVITY.COMMENT)
+        val unfinished = cursor.isNull(durationIndex)
+        val recovery = if (unfinished) readActivityRecoverySummary(database, activityId) else null
         HistoryActivityDetails(
             id = cursor.getLong(cursor.getColumnIndexOrThrow("_id")),
             startedAtSeconds = startedAt,
-            durationSeconds = longValue(DB.ACTIVITY.TIME),
+            durationSeconds = longValue(DB.ACTIVITY.TIME) ?: recovery?.durationSeconds,
             distanceMeters =
-                if (cursor.isNull(distanceIndex)) null else cursor.getDouble(distanceIndex),
+                if (cursor.isNull(distanceIndex)) recovery?.distanceMeters
+                else cursor.getDouble(distanceIndex).takeIf { it.isFinite() && it > 0.0 },
             sport = cursor.getInt(cursor.getColumnIndexOrThrow(DB.ACTIVITY.SPORT)),
             gpsSampleCount = gpsSampleCount,
             comment = if (cursor.isNull(commentIndex)) null else cursor.getString(commentIndex),
             averageHeartRate = intValue(DB.ACTIVITY.AVG_HR),
             maximumHeartRate = intValue(DB.ACTIVITY.MAX_HR),
             averageCadence =
-                doubleValue(DB.ACTIVITY.AVG_CADENCE)?.takeIf { it.isFinite() && it > 0.0 })
+                doubleValue(DB.ACTIVITY.AVG_CADENCE)?.takeIf { it.isFinite() && it > 0.0 },
+            unfinished = unfinished)
       }
   return activity?.copy(
       laps = readActivityLaps(database, activityId),

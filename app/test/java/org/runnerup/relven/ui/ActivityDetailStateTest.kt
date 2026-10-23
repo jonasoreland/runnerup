@@ -195,6 +195,62 @@ class ActivityDetailStateTest {
   }
 
   @Test
+  fun reconstructsSummaryForAnInterruptedGpsWorkoutFromItsPersistedCheckpoint() {
+    val database = interruptedActivityDatabase()
+
+    try {
+      val activity = readHistoryActivityDetails(database, 31L)
+
+      assertEquals(18L, activity?.durationSeconds)
+      assertEquals(131.6, activity?.distanceMeters!!, 0.001)
+      assertTrue(activity.unfinished)
+      assertEquals(2, activity.route.size)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun savingInterruptedActivityWritesItsLastCheckpointAndCannotFinalizeTwice() {
+    val database = interruptedActivityDatabase()
+    try {
+      assertTrue(saveInterruptedActivity(database, 31L, "Cut short by app restart"))
+      assertFalse(saveInterruptedActivity(database, 31L, "Overwritten note"))
+
+      database
+          .query(
+              DB.ACTIVITY.TABLE,
+              arrayOf(DB.ACTIVITY.TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.COMMENT),
+              "_id = ?",
+              arrayOf("31"),
+              null,
+              null,
+              null)
+          .use { cursor ->
+            assertTrue(cursor.moveToFirst())
+            assertEquals(18L, cursor.getLong(0))
+            assertEquals(131.6, cursor.getDouble(1), 0.001)
+            assertEquals("Cut short by app restart", cursor.getString(2))
+          }
+      assertFalse(readHistoryActivityDetails(database, 31L)!!.unfinished)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun discardingInterruptedActivitySoftDeletesItAndCannotDeleteTwice() {
+    val database = interruptedActivityDatabase()
+    try {
+      assertTrue(discardInterruptedActivity(database, 31L))
+      assertFalse(discardInterruptedActivity(database, 31L))
+      assertNull(readHistoryActivityDetails(database, 31L))
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
   fun ignoresInvalidLapMeasurementsAndKeepsLapRowsOrdered() {
     val database = SQLiteDatabase.create(null)
     database.execSQL(
@@ -265,5 +321,82 @@ class ActivityDetailStateTest {
     } finally {
       database.close()
     }
+  }
+
+  private fun interruptedActivityDatabase(): SQLiteDatabase {
+    val database = SQLiteDatabase.create(null)
+    database.execSQL(
+        """
+        CREATE TABLE ${DB.ACTIVITY.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.ACTIVITY.START_TIME} INTEGER NOT NULL,
+          ${DB.ACTIVITY.DISTANCE} REAL,
+          ${DB.ACTIVITY.TIME} INTEGER,
+          ${DB.ACTIVITY.SPORT} INTEGER,
+          ${DB.ACTIVITY.COMMENT} TEXT,
+          ${DB.ACTIVITY.AVG_HR} INTEGER,
+          ${DB.ACTIVITY.MAX_HR} INTEGER,
+          ${DB.ACTIVITY.AVG_CADENCE} REAL,
+          ${DB.ACTIVITY.DELETED} INTEGER NOT NULL DEFAULT 0
+        )
+        """.trimIndent())
+    database.execSQL(
+        """
+        CREATE TABLE ${DB.LAP.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.LAP.ACTIVITY} INTEGER NOT NULL,
+          ${DB.LAP.LAP} INTEGER NOT NULL,
+          ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
+          ${DB.LAP.TIME} INTEGER,
+          ${DB.LAP.DISTANCE} REAL,
+          ${DB.LAP.PLANNED_TIME} INTEGER,
+          ${DB.LAP.PLANNED_DISTANCE} REAL,
+          ${DB.LAP.PLANNED_PACE} REAL,
+          ${DB.LAP.AVG_HR} INTEGER
+        )
+        """.trimIndent())
+    database.execSQL(
+        """
+        CREATE TABLE ${DB.LOCATION.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.LOCATION.ACTIVITY} INTEGER NOT NULL,
+          ${DB.LOCATION.TYPE} INTEGER NOT NULL,
+          ${DB.LOCATION.LATITUDE} REAL NOT NULL,
+          ${DB.LOCATION.LONGITUDE} REAL NOT NULL,
+          ${DB.LOCATION.ALTITUDE} REAL,
+          ${DB.LOCATION.TIME} INTEGER NOT NULL,
+          ${DB.LOCATION.LAP} INTEGER,
+          ${DB.LOCATION.HR} INTEGER,
+          ${DB.LOCATION.SPEED} REAL,
+          ${DB.LOCATION.CADENCE} REAL,
+          ${DB.LOCATION.ELAPSED} REAL,
+          ${DB.LOCATION.DISTANCE} REAL
+        )
+        """.trimIndent())
+    database.insertOrThrow(
+        DB.ACTIVITY.TABLE,
+        null,
+        ContentValues().apply {
+          put("_id", 31L)
+          put(DB.ACTIVITY.START_TIME, 1_800_000_000L)
+          put(DB.ACTIVITY.SPORT, DB.ACTIVITY.SPORT_RUNNING)
+        })
+    listOf(Triple(1L, 0.0, 0.0), Triple(2L, 18_179.0, 131.6))
+        .forEachIndexed { index, (time, elapsed, distance) ->
+          database.insertOrThrow(
+              DB.LOCATION.TABLE,
+              null,
+              ContentValues().apply {
+                put(DB.LOCATION.ACTIVITY, 31L)
+                put(DB.LOCATION.TYPE, DB.LOCATION.TYPE_GPS)
+                put(DB.LOCATION.LATITUDE, 59.3293 + index * 0.0001)
+                put(DB.LOCATION.LONGITUDE, 18.0686 + index * 0.0001)
+                put(DB.LOCATION.TIME, 1_800_000_000_000L + time)
+                put(DB.LOCATION.LAP, 0)
+                put(DB.LOCATION.ELAPSED, elapsed)
+                put(DB.LOCATION.DISTANCE, distance)
+              })
+        }
+    return database
   }
 }

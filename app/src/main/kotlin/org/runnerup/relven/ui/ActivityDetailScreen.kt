@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -56,13 +58,16 @@ import org.runnerup.workout.Intensity
 internal fun ActivityDetailScreen(
     loadState: ActivityDetailLoadState,
     editSaveState: ActivityEditSaveState,
+    recoveryActionInProgress: Boolean,
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onOpenMap: (Long) -> Unit,
     onBeginEdit: () -> Unit,
     onSaveActivityEdit: (ActivityEditCommand) -> Unit,
     onShareActivity: (HistoryActivityDetails, ActivityShareFormat) -> Unit,
-    onOpenMoreActions: (Long) -> Unit) {
+    onOpenMoreActions: (Long) -> Unit,
+    onSaveInterruptedActivity: (Long, String?) -> Unit,
+    onDiscardInterruptedActivity: (Long) -> Unit) {
   val activityId = (loadState as? ActivityDetailLoadState.Loaded)?.activity?.id
   var editing by remember(activityId) { mutableStateOf(false) }
   LaunchedEffect(editSaveState) {
@@ -123,6 +128,7 @@ internal fun ActivityDetailScreen(
                 loadState.activity,
                 isEditing = editing,
                 editSaveState = editSaveState,
+                recoveryActionInProgress = recoveryActionInProgress,
                 onBeginEdit = {
                   onBeginEdit()
                   editing = true
@@ -131,7 +137,13 @@ internal fun ActivityDetailScreen(
                 onSaveActivityEdit = onSaveActivityEdit,
                 onOpenMap = { onOpenMap(loadState.activity.id) },
                 onShareActivity = { format -> onShareActivity(loadState.activity, format) },
-                onOpenMoreActions = { onOpenMoreActions(loadState.activity.id) })
+                onOpenMoreActions = { onOpenMoreActions(loadState.activity.id) },
+                onSaveInterruptedActivity = {
+                  onSaveInterruptedActivity(loadState.activity.id, loadState.activity.comment)
+                },
+                onDiscardInterruptedActivity = {
+                  onDiscardInterruptedActivity(loadState.activity.id)
+                })
       }
     }
   }
@@ -142,16 +154,49 @@ private fun ActivityDetailContent(
     activity: HistoryActivityDetails,
     isEditing: Boolean,
     editSaveState: ActivityEditSaveState,
+    recoveryActionInProgress: Boolean,
     onBeginEdit: () -> Unit,
     onCancelEdit: () -> Unit,
     onSaveActivityEdit: (ActivityEditCommand) -> Unit,
     onOpenMap: () -> Unit,
     onShareActivity: (ActivityShareFormat) -> Unit,
-    onOpenMoreActions: () -> Unit) {
+    onOpenMoreActions: () -> Unit,
+    onSaveInterruptedActivity: () -> Unit,
+    onDiscardInterruptedActivity: () -> Unit) {
   var shareDialogVisible by remember(activity.id) { mutableStateOf(false) }
   var shareFormat by remember(activity.id) { mutableStateOf(ActivityShareFormat.Tcx) }
+  var discardInterruptedVisible by remember(activity.id) { mutableStateOf(false) }
   Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
     ActivityReviewOverview(activity)
+
+    if (activity.unfinished) {
+      Surface(color = RelvenColors.Surface, shape = RoundedCornerShape(20.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+          Text(
+              stringResource(R.string.activity_recovery_title),
+              fontSize = 18.sp,
+              fontWeight = FontWeight.SemiBold)
+          Text(
+              stringResource(R.string.activity_recovery_message),
+              color = RelvenColors.MutedText)
+          Button(
+              onClick = onSaveInterruptedActivity,
+              enabled = !recoveryActionInProgress,
+              modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+              colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
+            Text(stringResource(R.string.activity_recovery_save_partial))
+          }
+          TextButton(
+              onClick = { discardInterruptedVisible = true },
+              enabled = !recoveryActionInProgress,
+              modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.activity_recovery_discard), color = RelvenColors.MutedText)
+          }
+        }
+      }
+    }
 
     if (isEditing) {
       ActivityEditForm(
@@ -181,7 +226,7 @@ private fun ActivityDetailContent(
       ActivityReviewSplitsCard(activity.route)
     }
 
-    if (!isEditing) {
+    if (!isEditing && !activity.unfinished) {
       OutlinedButton(
           onClick = { shareDialogVisible = true },
           modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
@@ -200,6 +245,25 @@ private fun ActivityDetailContent(
         Text(stringResource(R.string.Home_activity_detail_more_actions))
       }
     }
+  }
+
+  if (discardInterruptedVisible) {
+    AlertDialog(
+        onDismissRequest = { discardInterruptedVisible = false },
+        title = { Text(stringResource(R.string.activity_recovery_discard)) },
+        text = { Text(stringResource(R.string.activity_recovery_discard_confirmation)) },
+        confirmButton = {
+          TextButton(onClick = onDiscardInterruptedActivity, enabled = !recoveryActionInProgress) {
+            Text(stringResource(R.string.activity_recovery_discard), color = RelvenColors.Orange)
+          }
+        },
+        dismissButton = {
+          TextButton(
+              onClick = { discardInterruptedVisible = false },
+              enabled = !recoveryActionInProgress) {
+            Text(stringResource(org.runnerup.common.R.string.No))
+          }
+        })
   }
 
   if (shareDialogVisible) {

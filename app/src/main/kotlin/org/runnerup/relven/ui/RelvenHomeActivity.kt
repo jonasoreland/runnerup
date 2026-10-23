@@ -162,6 +162,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var activityDetailState by mutableStateOf<ActivityDetailLoadState?>(null)
   private var activityEditSaveState by mutableStateOf<ActivityEditSaveState>(ActivityEditSaveState.Idle)
   private var activityDetailRequest = 0
+  private var interruptedRecoveryInProgress by mutableStateOf(false)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
   private var viewedStrengthCompletion by mutableStateOf<CompletedStrengthSession?>(null)
@@ -282,13 +283,16 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           ActivityDetailScreen(
               loadState = requireNotNull(activityDetailState),
               editSaveState = activityEditSaveState,
+              recoveryActionInProgress = interruptedRecoveryInProgress,
               onBack = ::closeHistoryActivityDetail,
               onRetry = { activityDetailId?.let(::loadHistoryActivityDetail) },
               onOpenMap = ::openHistoryActivityMap,
               onBeginEdit = { activityEditSaveState = ActivityEditSaveState.Idle },
               onSaveActivityEdit = ::saveHistoryActivityEdit,
               onShareActivity = ::shareHistoryActivity,
-              onOpenMoreActions = ::openHistoryActivityUpload)
+              onOpenMoreActions = ::openHistoryActivityUpload,
+              onSaveInterruptedActivity = ::saveInterruptedHistoryActivity,
+              onDiscardInterruptedActivity = ::discardInterruptedHistoryActivity)
         } else RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
@@ -797,6 +801,64 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     activityDetailState = null
   }
 
+  private fun saveInterruptedHistoryActivity(id: Long, note: String?) {
+    if (interruptedRecoveryInProgress) return
+    interruptedRecoveryInProgress = true
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              saveInterruptedActivity(DBHelper.getWritableDatabase(applicationContext), id, note)
+            }
+          }
+      val saved = result.getOrElse { error ->
+        Log.e("RelvenHome", "Could not save interrupted activity", error)
+        false
+      }
+      if (saved) {
+        loadHistoryActivityDetail(id)
+        loadActivityHistory()
+        recentActivity = withContext(Dispatchers.IO) { loadRecentActivity() }
+      } else {
+        android.widget.Toast.makeText(
+                this@RelvenHomeActivity,
+                org.runnerup.common.R.string.activity_recovery_save_failed,
+                android.widget.Toast.LENGTH_LONG)
+            .show()
+      }
+      interruptedRecoveryInProgress = false
+    }
+  }
+
+  private fun discardInterruptedHistoryActivity(id: Long) {
+    if (interruptedRecoveryInProgress) return
+    interruptedRecoveryInProgress = true
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              discardInterruptedActivity(DBHelper.getWritableDatabase(applicationContext), id)
+            }
+          }
+      val discarded = result.getOrElse { error ->
+        Log.e("RelvenHome", "Could not discard interrupted activity", error)
+        false
+      }
+      if (discarded) {
+        closeHistoryActivityDetail()
+        loadActivityHistory()
+        recentActivity = withContext(Dispatchers.IO) { loadRecentActivity() }
+      } else {
+        android.widget.Toast.makeText(
+                this@RelvenHomeActivity,
+                org.runnerup.common.R.string.activity_recovery_discard_failed,
+                android.widget.Toast.LENGTH_LONG)
+            .show()
+      }
+      interruptedRecoveryInProgress = false
+    }
+  }
+
   private fun openHistoryActivityMap(id: Long) {
     val activity = (activityDetailState as? ActivityDetailLoadState.Loaded)?.activity
     val mapAvailable = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED
@@ -973,46 +1035,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           withContext(Dispatchers.IO) {
             runCatching {
               val database: SQLiteDatabase = DBHelper.getReadableDatabase(applicationContext)
-              val columns =
-                  arrayOf(
-                      "_id",
-                      DB.ACTIVITY.START_TIME,
-                      DB.ACTIVITY.DISTANCE,
-                      DB.ACTIVITY.TIME,
-                      DB.ACTIVITY.SPORT)
-              database
-                  .query(
-                      DB.ACTIVITY.TABLE,
-                      columns,
-                      "${DB.ACTIVITY.DELETED} == 0",
-                      null,
-                      null,
-                      null,
-                      "${DB.ACTIVITY.START_TIME} desc")
-                  .use { cursor ->
-                    val idColumn = cursor.getColumnIndexOrThrow("_id")
-                    val startedColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.START_TIME)
-                    val distanceColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.DISTANCE)
-                    val durationColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.TIME)
-                    val sportColumn = cursor.getColumnIndexOrThrow(DB.ACTIVITY.SPORT)
-                    buildList {
-                      while (cursor.moveToNext()) {
-                        val startedAt = cursor.getLong(startedColumn)
-                        if (startedAt <= 0L) continue
-                        add(
-                            HistoryActivity(
-                                id = cursor.getLong(idColumn),
-                                startedAtSeconds = startedAt,
-                                durationSeconds =
-                                    if (cursor.isNull(durationColumn)) null
-                                    else cursor.getLong(durationColumn).takeIf { it >= 0L },
-                                distanceMeters =
-                                    if (cursor.isNull(distanceColumn)) null
-                                    else cursor.getDouble(distanceColumn).takeIf { it.isFinite() && it > 0.0 },
-                                sport = cursor.getInt(sportColumn)))
-                      }
-                    }
-                  }
+              readHistoryActivities(database)
             }
           }
       if (request == activityHistoryRequest) {
@@ -1464,14 +1487,21 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private fun loadRecentActivity(): RecentActivity? {
     try {
       val db = DBHelper.getReadableDatabase(applicationContext)
-      val columns = arrayOf(DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME)
+      val columns =
+          arrayOf("_id", DB.ACTIVITY.START_TIME, DB.ACTIVITY.DISTANCE, DB.ACTIVITY.TIME)
       db.query(DB.ACTIVITY.TABLE, columns, "deleted = 0", null, null, null,
           "${DB.ACTIVITY.START_TIME} DESC", "1").use { cursor: Cursor ->
         if (!cursor.moveToFirst()) return null
+        val recovery =
+            if (cursor.isNull(3)) readActivityRecoverySummary(db, cursor.getLong(0)) else null
         return RecentActivity(
-            startedAtSeconds = cursor.getLong(0),
-            distanceMeters = if (cursor.isNull(1)) null else cursor.getDouble(1),
-            durationSeconds = if (cursor.isNull(2)) null else cursor.getLong(2))
+            startedAtSeconds = cursor.getLong(1),
+            distanceMeters =
+                if (cursor.isNull(2)) recovery?.distanceMeters
+                else cursor.getDouble(2).takeIf { it.isFinite() && it > 0.0 },
+            durationSeconds =
+                if (cursor.isNull(3)) recovery?.durationSeconds
+                else cursor.getLong(3).takeIf { it >= 0L })
       }
     } catch (error: RuntimeException) {
       Log.w("RelvenHome", "Could not load recent activity", error)

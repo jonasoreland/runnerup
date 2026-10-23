@@ -121,6 +121,8 @@ class ActivityMapStateTest {
               ${DB.LOCATION.LONGITUDE} REAL NOT NULL,
               ${DB.LOCATION.ALTITUDE} REAL,
               ${DB.LOCATION.TIME} INTEGER NOT NULL,
+              ${DB.LOCATION.ELAPSED} REAL,
+              ${DB.LOCATION.DISTANCE} REAL,
               ${DB.LOCATION.LAP} INTEGER,
               ${DB.LOCATION.HR} INTEGER,
               ${DB.LOCATION.SPEED} REAL,

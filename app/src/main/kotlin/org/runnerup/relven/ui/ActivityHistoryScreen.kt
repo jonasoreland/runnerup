@@ -206,6 +206,14 @@ private fun HistoryActivityRow(
         verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Text(sport, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
       Text(date, fontSize = 12.sp, color = RelvenColors.MutedText, maxLines = 1, overflow = TextOverflow.Ellipsis)
+      if (activity.unfinished) {
+        Text(
+            stringResource(R.string.Home_history_interrupted),
+            fontSize = 12.sp,
+            color = RelvenColors.Orange,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis)
+      }
       if (metrics.isNotEmpty()) {
         Text(
             metrics.joinToString("  ·  "),
