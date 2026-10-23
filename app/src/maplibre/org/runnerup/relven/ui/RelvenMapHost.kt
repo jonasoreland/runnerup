@@ -67,6 +67,7 @@ private class RelvenMapHost(
   private val sourceId = "relven-activity-route-source"
   private val markerSourceId = "relven-activity-route-markers"
   private val currentSourceId = "relven-active-location-marker"
+  private val initialRouteFitGate = InitialRouteFitGate()
   private var style: Style? = null
   private var mapInstance: org.maplibre.android.maps.MapLibreMap? = null
   private var currentMetric = metric
@@ -125,6 +126,13 @@ private class RelvenMapHost(
               leftClearancePx = dp(context, 120),
               marginPx = dp(context, 8))
     }
+    mapView.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+      if (initialRouteFitGate.onViewportChanged(view.width, view.height)) {
+        mapInstance?.let { map ->
+          if (fitRoute(map)) initialRouteFitGate.markFitIssued()
+        }
+      }
+    }
     mapView.addOnDidFailLoadingMapListener(failedLoadingListener)
     mapView.onCreate(null)
     mapView.getMapAsync { map ->
@@ -160,22 +168,27 @@ private class RelvenMapHost(
                 circleRadius(8.0f),
                 circleStrokeColor("#FFFFFF"),
                 circleStrokeWidth(2.0f)))
-        if (route.size >= 2) fitRoute(map) else currentLocation?.let(::centerOnRunner)
+        if (initialRouteFitGate.onStyleLoaded(route.size)) {
+          if (fitRoute(map)) initialRouteFitGate.markFitIssued()
+        } else if (route.size < 2) currentLocation?.let(::centerOnRunner)
       }
     }
   }
 
-  private fun fitRoute(map: org.maplibre.android.maps.MapLibreMap) {
-    if (route.isEmpty()) return
+  private fun fitRoute(map: org.maplibre.android.maps.MapLibreMap): Boolean {
+    if (mapView.width <= 0 || mapView.height <= 0 || route.isEmpty()) return false
     if (route.size == 1) {
       map.moveCamera(CameraUpdateFactory.newLatLng(LatLng(route.first().latitude, route.first().longitude)))
-      return
+      return true
     }
     val bounds =
         LatLngBounds.Builder().apply {
           route.forEach { include(LatLng(it.latitude, it.longitude)) }
         }.build()
-    runCatching { map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, dp(root.context, 42))) }
+    return runCatching {
+      map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, dp(root.context, 42)))
+      true
+    }.getOrDefault(false)
   }
 
   override fun updateMetric(metric: RouteMetric) {

@@ -1,9 +1,14 @@
 # Implementation status — 23 October 2026
 
-## Running experience redesign — live route geometry (PR in progress)
+## Running experience redesign — saved route first-layout fit (PR in progress)
+
+- Saved activity maps now defer the initial route fit until both the map style and the `MapView`'s nonzero measured viewport are ready. A fit stays pending until the camera request is issued, covering the first-layout race where the route could render outside the visible map until the user tapped **Fit route**. Unit tests cover style-first and viewport-first ordering, retry-before-issue, one-time fitting, and routes with fewer than two points.
+- Isolated emulator verification on `emulator-5586` at ADB port 5039: opening a saved 74 m route displays its orange geometry and finish marker without touching the recenter control. Capture: `app/build/outputs/qa/relven-pr111-review-initial-fit-final.png`. No physical ADB device was used.
+
+## Running experience redesign — live route geometry (PR #110 merged)
 
 - Live workout routes now serialize as one orange GeoJSON `MultiLineString` feature instead of one feature per adjacent GPS pair. Coordinates remain chronological and complete; lap and pause segment boundaries remain separate lines. Saved activity maps keep their per-edge metric coloring.
-- Regression coverage proves pauses remain disconnected and a 10,000-point route retains every coordinate in one feature. Focused route tests, full app/Wear/HR-device/common tests, MapLibre debug assembly, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug/release assemblies passed locally. Emulator rendering of a generated long route is still pending; no physical ADB device was used.
+- Regression coverage proves pauses remain disconnected and a 10,000-point route retains every coordinate in one feature. Focused route tests, full app/Wear/HR-device/common tests, MapLibre debug assembly, phone and Wear release bundles, release lint, Spotless, `git diff --check`, and no-map debug/release assemblies passed locally and hosted CI passed. Emulator rendering of a generated long route is still pending; no physical ADB device was used.
 
 ## Running experience redesign — live route snapshot coalescing (PR #109 merged)
 
