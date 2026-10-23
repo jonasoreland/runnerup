@@ -1,5 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+    <string name="activity_upload_title">Upload activity</string>
+    <string name="activity_upload_back">Back</string>
+    <string name="activity_upload_subtitle">Choose where this activity should be sent.</string>
+    <string name="activity_upload_empty_title">No upload services connected</string>
+    <string name="activity_upload_empty_body">Connect an account to upload this activity to a service.</string>
+    <string name="activity_upload_manage_accounts">Manage accounts</string>
+    <string name="activity_upload_save_note">Selected services will upload this activity when you save it.</string>
+    <plurals name="activity_upload_submit">
+        <item quantity="one">Upload to %1$d service</item>
+        <item quantity="other">Upload to %1$d services</item>
+    </plurals>
+    <string name="activity_upload_in_progress">Uploading activity…</string>
+    <string name="activity_upload_status_uploaded">Uploaded</string>
+    <string name="activity_upload_status_ready">Ready to upload</string>
+    <string name="activity_upload_open_link">Open uploaded activity</string>
+    <string name="activity_upload_clear_title">Clear upload record for %1$s?</string>
+    <string name="activity_upload_clear_message">This removes the saved upload record from Relven. It does not delete the activity from the service.</string>
+    <string name="activity_upload_clear_content_description">Clear upload record for %1$s</string>
+    <string name="activity_upload_confirm_clear">Clear record</string>
+    <string name="activity_upload_cancel">Cancel</string>
     <string name="plan_library_title">Your plans</string>
     <string name="plan_library_subtitle">Plan, organize, and manage your training.</string>
     <string name="plan_library_calendar_empty">No sessions scheduled this month. Create a plan or import one to fill your calendar.</string>

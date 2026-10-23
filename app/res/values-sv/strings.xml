@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="activity_upload_title">Ladda upp pass</string>
+    <string name="activity_upload_back">Tillbaka</string>
+    <string name="activity_upload_subtitle">Välj vart det här passet ska skickas.</string>
+    <string name="activity_upload_empty_title">Inga anslutna tjänster</string>
+    <string name="activity_upload_empty_body">Anslut ett konto för att ladda upp passet till en tjänst.</string>
+    <string name="activity_upload_manage_accounts">Hantera konton</string>
+    <string name="activity_upload_save_note">Valda tjänster laddar upp passet när du sparar det.</string>
+    <plurals name="activity_upload_submit">
+        <item quantity="one">Ladda upp till %1$d tjänst</item>
+        <item quantity="other">Ladda upp till %1$d tjänster</item>
+    </plurals>
+    <string name="activity_upload_in_progress">Laddar upp pass…</string>
+    <string name="activity_upload_status_uploaded">Uppladdat</string>
+    <string name="activity_upload_status_ready">Redo att ladda upp</string>
+    <string name="activity_upload_open_link">Öppna uppladdat pass</string>
+    <string name="activity_upload_clear_title">Rensa uppladdningspost för %1$s?</string>
+    <string name="activity_upload_clear_message">Detta tar bort uppladdningsposten från Relven. Passet tas inte bort från tjänsten.</string>
+    <string name="activity_upload_clear_content_description">Rensa uppladdningspost för %1$s</string>
+    <string name="activity_upload_confirm_clear">Rensa post</string>
+    <string name="activity_upload_cancel">Avbryt</string>
     <string name="plan_library_title">Dina planer</string>
     <string name="plan_library_subtitle">Planera och hantera din träning.</string>
     <string name="plan_library_calendar_empty">Inga pass är planerade den här månaden. Skapa en plan eller importera en för att fylla kalendern.</string>

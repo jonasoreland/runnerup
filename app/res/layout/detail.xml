@@ -213,11 +213,10 @@
                 android:layout_margin="@dimen/activity_margin"
                 android:baselineAligned="false">
 
-                <ListView
+                <androidx.compose.ui.platform.ComposeView
                     android:id="@+id/report_list"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
@@ -238,15 +237,6 @@
             android:drawableEnd="@drawable/ic_av_play_arrow"
             android:drawablePadding="-32dp"
             android:text="@string/Resume" />
-
-        <Button
-            android:id="@+id/upload_button"
-            style="@style/ButtonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_blue"
-            android:singleLine="false"
-            android:text="@string/Upload" />
 
         <Button
             android:id="@+id/save_button"

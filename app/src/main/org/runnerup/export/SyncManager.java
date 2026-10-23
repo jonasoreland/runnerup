@@ -108,6 +108,10 @@ public class SyncManager {
     init(activity, activity, new ProgressDialogCompat(activity));
   }
 
+  public SyncManager(AppCompatActivity activity, ProgressDialogCompat spinner) {
+    init(activity, activity, spinner);
+  }
+
   public SyncManager(Context context) {
     init(null, context, new ProgressDialogCompat(context));
   }

@@ -93,7 +93,6 @@ import org.runnerup.workout.RelvenPlanImporter
 import org.runnerup.workout.Sport
 import org.runnerup.view.StartFragment
 import org.runnerup.view.ManualActivity
-import org.runnerup.view.DetailActivity
 import org.runnerup.util.FileNameHelper
 import org.runnerup.importer.ActivityFileImporter
 import org.runnerup.importer.ActivityImportStore
@@ -287,7 +286,7 @@ class RelvenHomeActivity : FragmentActivity() {
               onBeginEdit = { activityEditSaveState = ActivityEditSaveState.Idle },
               onSaveActivityEdit = ::saveHistoryActivityEdit,
               onShareActivity = ::shareHistoryActivity,
-              onOpenMoreActions = ::openLegacyHistoryActivityActions)
+              onOpenMoreActions = ::openHistoryActivityUpload)
         } else RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
@@ -804,12 +803,8 @@ class RelvenHomeActivity : FragmentActivity() {
     }
   }
 
-  private fun openLegacyHistoryActivityActions(id: Long) {
-    startActivity(
-        Intent(this, DetailActivity::class.java)
-            .putExtra("ID", id)
-            .putExtra("mode", "details")
-            .putExtra(DetailActivity.EXTRA_OPEN_UPLOAD, true))
+  private fun openHistoryActivityUpload(id: Long) {
+    startActivity(ActivityUploadActivity.intent(this, id))
   }
 
   private fun shareHistoryActivity(activity: HistoryActivityDetails, format: ActivityShareFormat) {
