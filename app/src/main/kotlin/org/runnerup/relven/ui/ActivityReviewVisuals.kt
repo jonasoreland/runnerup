@@ -103,7 +103,27 @@ internal fun ActivityReviewOverview(activity: HistoryActivityDetails) {
 @Composable
 internal fun ActivityReviewMapCard(activity: HistoryActivityDetails, onOpenFullMap: () -> Unit) {
   val mapEnabled = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED
-  if (!activityHasMapRoute(activity, mapEnabled) || activity.route.size < 2) return
+  if (!mapEnabled || Sport.isWithoutGps(activity.sport)) return
+  if (!activityHasMapRoute(activity, mapEnabled) || activity.route.size < 2) {
+    Surface(
+        color = RelvenColors.Surface,
+        shape = RoundedCornerShape(22.dp),
+        modifier = Modifier.fillMaxWidth()) {
+      Column(
+          modifier = Modifier.padding(16.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            stringResource(AppR.string.activity_review_route),
+            color = RelvenColors.Text,
+            fontSize = 18.sp,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+        Text(
+            stringResource(AppR.string.activity_review_no_route),
+            color = RelvenColors.MutedText)
+      }
+    }
+    return
+  }
   var selectedMetric by remember(activity.id) {
     mutableStateOf(availableRouteMetrics(activity.route).firstOrNull() ?: RouteMetric.STANDARD)
   }
