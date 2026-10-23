@@ -70,6 +70,117 @@ public class GpsFixFilterTest {
   }
 
   @Test
+  public void
+      stationaryNineMeterAccuracyCorrelatedDriftDoesNotAccumulateWhenSpeedIsConfidentlyNearZero() {
+    GpsFixFilter filter = new GpsFixFilter();
+    assertTrue(filter.accept(fix(0.0, 0.0, 9f, NOW_NANOS), NOW_NANOS).isAccepted());
+    double accumulatedDistance = 0.0;
+    int driftSegmentStarts = 0;
+
+    // A stationary phone can report a slowly wandering position while GNSS Doppler speed stays
+    // near zero. With the old fixed anchor, each ~19 m drift was added as a plausible 0.8 m/s move.
+    for (int second = 1; second <= 79; second++) {
+      Location sample =
+          fix(0.0, metersToLongitude(0.8 * second), 9f, NOW_NANOS + second * 1_000_000_000L);
+      sample.setSpeed(0.1f);
+      sample.setSpeedAccuracyMetersPerSecond(0.05f);
+      assertTrue("test provider must expose speed accuracy", sample.hasSpeedAccuracy());
+      GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + second * 1_000_000_000L);
+      assertTrue("fresh location should still advance workout time", result.isAccepted());
+      assertTrue(
+          "confidently stationary drift should not enter the route at second " + second,
+          result.isStationary());
+      if (result.startsNewSegment()) driftSegmentStarts++;
+      accumulatedDistance += result.getDistanceMeters();
+    }
+
+    assertEquals(0.0, accumulatedDistance, 0.0);
+    assertEquals("gap and drift resets should preserve segment boundaries", 3, driftSegmentStarts);
+
+    double resumedWalkingDistance = 0.0;
+    for (int second = 80; second <= 107; second++) {
+      Location sample =
+          fix(
+              0.0,
+              metersToLongitude(0.8 * 79 + 0.75 * (second - 79)),
+              9f,
+              NOW_NANOS + second * 1_000_000_000L);
+      sample.setSpeed(0.75f);
+      sample.setSpeedAccuracyMetersPerSecond(0.15f);
+      GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + second * 1_000_000_000L);
+      if (result.hasDerivedSpeed()) resumedWalkingDistance += result.getDistanceMeters();
+    }
+    assertTrue(
+        "walking after stationary drift should recover without counting the offset",
+        resumedWalkingDistance >= 12.0);
+  }
+
+  @Test
+  public void slowWalkingWithConfidentProviderSpeedStillAccumulates() {
+    GpsFixFilter filter = new GpsFixFilter();
+    assertTrue(filter.accept(fix(0.0, 0.0, 4f, NOW_NANOS), NOW_NANOS).isAccepted());
+    double accumulatedDistance = 0.0;
+
+    for (int second = 1; second <= 24; second++) {
+      Location sample =
+          fix(0.0, metersToLongitude(0.75 * second), 4f, NOW_NANOS + second * 1_000_000_000L);
+      sample.setSpeed(0.75f);
+      sample.setSpeedAccuracyMetersPerSecond(0.15f);
+      GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + second * 1_000_000_000L);
+      if (result.hasDerivedSpeed()) accumulatedDistance += result.getDistanceMeters();
+    }
+
+    assertTrue("corroborated slow walking should be counted", accumulatedDistance >= 12.0);
+  }
+
+  @Test
+  public void verySlowWalkingIsNotClassifiedAsStationary() {
+    GpsFixFilter filter = new GpsFixFilter();
+    assertTrue(filter.accept(fix(0.0, 0.0, 4f, NOW_NANOS), NOW_NANOS).isAccepted());
+    GpsFixFilter.Result movement = null;
+
+    for (int second = 1; second <= 30; second++) {
+      Location sample =
+          fix(0.0, metersToLongitude(0.3 * second), 4f, NOW_NANOS + second * 1_000_000_000L);
+      sample.setSpeed(0.3f);
+      sample.setSpeedAccuracyMetersPerSecond(0.02f);
+      GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + second * 1_000_000_000L);
+      if (result.hasDerivedSpeed()) movement = result;
+    }
+
+    assertTrue("very slow walking must still produce a movement fix", movement != null);
+    assertEquals(0.3, movement.getSpeedMetersPerSecond(), 0.02);
+  }
+
+  @Test
+  public void uncertainProviderSpeedDoesNotOverrideAccuracyQualifiedMovement() {
+    GpsFixFilter filter = new GpsFixFilter();
+    assertTrue(filter.accept(fix(0.0, 0.0, 9f, NOW_NANOS), NOW_NANOS).isAccepted());
+    Location sample = fix(0.0, metersToLongitude(24.0), 9f, NOW_NANOS + 30_000_000_000L);
+    sample.setSpeed(0.1f);
+    sample.setSpeedAccuracyMetersPerSecond(1.0f);
+
+    GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + 30_000_000_000L);
+
+    assertTrue(
+        "uncertain speed must not veto quality-qualified movement", result.hasDerivedSpeed());
+    assertEquals(0.8, result.getSpeedMetersPerSecond(), 0.02);
+  }
+
+  @Test
+  @Config(sdk = 25)
+  public void preOreoLocationsWithoutSpeedAccuracyKeepTheGpsFallback() {
+    GpsFixFilter filter = new GpsFixFilter();
+    assertTrue(filter.accept(fix(0.0, 0.0, 9f, NOW_NANOS), NOW_NANOS).isAccepted());
+    Location sample = fix(0.0, metersToLongitude(24.0), 9f, NOW_NANOS + 30_000_000_000L);
+    sample.setSpeed(0.1f);
+
+    GpsFixFilter.Result result = filter.accept(sample, NOW_NANOS + 30_000_000_000L);
+
+    assertTrue("older Android has no speed confidence field", result.hasDerivedSpeed());
+  }
+
+  @Test
   public void slowWalkingEventuallyAccumulatesAccuracyQualifiedDistance() {
     GpsFixFilter filter = new GpsFixFilter();
     assertTrue(filter.accept(fix(0.0, 0.0, 4f, NOW_NANOS), NOW_NANOS).isAccepted());
@@ -112,10 +223,10 @@ public class GpsFixFilterTest {
     GpsFixFilter filter = new GpsFixFilter();
     assertTrue(filter.accept(fix(0.0, 0.0, 3f, NOW_NANOS), NOW_NANOS).isAccepted());
 
-    GpsFixFilter.Result spike =
-        filter.accept(
-            fix(0.0, metersToLongitude(150.0), 3f, NOW_NANOS + 1_000_000_000L),
-            NOW_NANOS + 1_000_000_000L);
+    Location spikeFix = fix(0.0, metersToLongitude(150.0), 3f, NOW_NANOS + 1_000_000_000L);
+    spikeFix.setSpeed(0.1f);
+    spikeFix.setSpeedAccuracyMetersPerSecond(0.1f);
+    GpsFixFilter.Result spike = filter.accept(spikeFix, NOW_NANOS + 1_000_000_000L);
     GpsFixFilter.Result recovered =
         filter.accept(
             fix(0.0, metersToLongitude(8.0), 3f, NOW_NANOS + 2_000_000_000L),

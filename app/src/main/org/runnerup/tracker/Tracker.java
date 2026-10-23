@@ -672,7 +672,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     if (!trackerGPS.isWithoutGps()) {
       fixResult = gpsFixFilter.accept(arg0, SystemClock.elapsedRealtimeNanos());
       if (!fixResult.isAccepted()) return;
-      if (fixResult.isStationary() && mLastLocation != null) {
+      if (fixResult.isStationary() && !fixResult.startsNewSegment() && mLastLocation != null) {
         // Advance timers on reliable fixes without letting coordinate jitter shape the route.
         arg0 = new Location(arg0);
         arg0.setLatitude(mLastLocation.getLatitude());
@@ -681,7 +681,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       if (fixResult.startsNewSegment() && mLastLocation != null) {
         setNextLocationType(DB.LOCATION.TYPE_RESUME);
       }
-      if (fixResult.startsNewSegment()) mCurrentSpeed = 0.0;
+      if (fixResult.startsNewSegment()) {
+        mCurrentSpeed = 0.0;
+        gpsCurrentSpeedFilter.reset();
+      }
       if (fixResult.hasDerivedSpeed()) {
         arg0.setSpeed((float) fixResult.getSpeedMetersPerSecond());
       } else {
