@@ -25,24 +25,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -54,7 +48,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
@@ -77,6 +70,10 @@ import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
+import org.runnerup.relven.ui.ActivityUploadActions;
+import org.runnerup.relven.ui.ActivityUploadServiceState;
+import org.runnerup.relven.ui.ActivityUploadServicesCompose;
+import org.runnerup.relven.ui.ActivityUploadStateHolder;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.FileNameHelper;
 import org.runnerup.util.Formatter;
@@ -112,7 +109,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private boolean uploading = false;
 
   private Button saveButton = null;
-  private Button uploadButton = null;
   private Button resumeButton = null;
   private TextView activityTime = null;
   private TextView activityPace = null;
@@ -127,6 +123,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   private TabLayout detailTabs;
   private final ArrayList<View> tabContents = new ArrayList<>();
   private SyncManager syncManager = null;
+  private ActivityUploadStateHolder activityUploadState;
   private Formatter formatter = null;
 
   private final ActivityResultLauncher<Intent> accountListLauncher =
@@ -176,6 +173,58 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     mDB = DBHelper.getReadableDatabase(this);
     syncManager = new SyncManager(this);
     syncManager.setAuthLauncher(configureLauncher);
+    activityUploadState =
+        new ActivityUploadStateHolder(
+            new ActivityUploadActions() {
+              @Override
+              public void onBack() {
+                getOnBackPressedDispatcher().onBackPressed();
+              }
+
+              @Override
+              public void onSelectionChanged(String name, boolean selected) {
+                if (alreadySynched.contains(name)) return;
+                if (selected) {
+                  pendingSynchronizers.add(name);
+                } else {
+                  pendingSynchronizers.remove(name);
+                }
+                updateActivityUploadState();
+              }
+
+              @Override
+              public void onUpload() {
+                if (pendingSynchronizers.isEmpty() || uploading) return;
+                uploading = true;
+                updateActivityUploadState();
+                syncManager.startUploading(
+                    (synchronizerName, status) -> {
+                      uploading = false;
+                      requery();
+                    },
+                    new HashSet<>(pendingSynchronizers),
+                    mID);
+              }
+
+              @Override
+              public void onOpenUploadedActivity(String name) {
+                openUploadedActivity(name);
+              }
+
+              @Override
+              public void onClearUpload(String name) {
+                syncManager.clearUpload(name, mID);
+                requery();
+              }
+
+              @Override
+              public void onManageAccounts() {
+                accountListLauncher.launch(
+                    new Intent(DetailActivity.this, AccountListActivity.class));
+              }
+            },
+            false);
+    ActivityUploadServicesCompose.install(findViewById(R.id.report_list), activityUploadState);
     formatter = new Formatter(this);
 
     if (intentMode.contentEquals("save")) {
@@ -187,11 +236,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         throw new AssertionError();
       }
     }
+    activityUploadState.setImmediateUploadAllowed(mode == MODE_DETAILS);
 
     saveButton = findViewById(R.id.save_button);
     Button discardButton = findViewById(R.id.discard_button);
     resumeButton = findViewById(R.id.resume_button);
-    uploadButton = findViewById(R.id.upload_button);
     activityTime = findViewById(R.id.activity_time);
     activityDistance = findViewById(R.id.activity_distance);
     activityPace = findViewById(R.id.activity_pace);
@@ -240,9 +289,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
 
     saveButton.setOnClickListener(saveButtonClick);
-    uploadButton.setOnClickListener(uploadButtonClick);
-
-    uploadButton.setVisibility(View.GONE);
 
     detailTabs = findViewById(R.id.detail_tabs);
     addDetailTab(org.runnerup.common.R.string.Notes, R.id.tab_main);
@@ -296,13 +342,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       adapters.add(adapter);
       lv.setAdapter(adapter);
     }
-    {
-      ListView lv = findViewById(R.id.report_list);
-      ReportListAdapter adapter = new ReportListAdapter();
-      adapters.add(adapter);
-      lv.setAdapter(adapter);
-    }
-
     getOnBackPressedDispatcher()
         .addCallback(
             this,
@@ -329,11 +368,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
           public WindowInsetsCompat onApplyWindowInsets(
               @NonNull View v, @NonNull WindowInsetsCompat windowInsets) {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-            int bottomPadding =
-                saveButton.getVisibility() == View.VISIBLE
-                        || uploadButton.getVisibility() == View.VISIBLE
-                    ? insets.bottom
-                    : 0;
+            int bottomPadding = saveButton.getVisibility() == View.VISIBLE ? insets.bottom : 0;
             v.setPadding(insets.left, 0, insets.right, bottomPadding);
 
             ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
@@ -415,16 +450,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     for (int i = 0; i < tabContents.size(); i++) {
       tabContents.get(i).setVisibility(i == selectedPosition ? View.VISIBLE : View.GONE);
     }
-  }
-
-  private void setUploadVisibility() {
-    boolean enabled = !pendingSynchronizers.isEmpty();
-    if (enabled) {
-      uploadButton.setVisibility(View.VISIBLE);
-    } else {
-      uploadButton.setVisibility(View.GONE);
-    }
-    ViewCompat.requestApplyInsets(rootView);
   }
 
   @Override
@@ -630,12 +655,14 @@ public class DetailActivity extends AppCompatActivity implements Constants {
             if (tmp.containsKey(DB.EXPORT.STATUS)
                 && tmp.getAsInteger(DB.EXPORT.STATUS)
                     == Synchronizer.ExternalIdStatus.getInt(Synchronizer.ExternalIdStatus.OK)) {
+              String externalId = tmp.getAsString(DB.EXPORT.EXTERNAL_ID);
+              Synchronizer account = syncManager.getSynchronizerByName(name);
               String url =
-                  syncManager
-                      .getSynchronizerByName(name)
-                      .getActivityUrl(synchedExternalId.get(name));
+                  account == null || externalId == null || externalId.isEmpty()
+                      ? null
+                      : account.getActivityUrl(externalId);
               if (url != null) {
-                synchedExternalId.put(name, tmp.getAsString(DB.EXPORT.EXTERNAL_ID));
+                synchedExternalId.put(name, externalId);
               }
             }
           } else if (tmp.containsKey(DB.ACCOUNT.FLAGS)
@@ -647,12 +674,38 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       c.close();
     }
 
-    if (mode == MODE_DETAILS) {
-      setUploadVisibility();
-    }
+    updateActivityUploadState();
 
     for (BaseAdapter a : adapters) {
       a.notifyDataSetChanged();
+    }
+  }
+
+  private void updateActivityUploadState() {
+    ArrayList<ActivityUploadServiceState> services = new ArrayList<>();
+    for (ContentValues report : reports) {
+      String name = report.getAsString(DB.ACCOUNT.NAME);
+      boolean uploaded = alreadySynched.contains(name);
+      String externalId = synchedExternalId.get(name);
+      Synchronizer synchronizer = syncManager.getSynchronizerByName(name);
+      String externalUrl =
+          uploaded && externalId != null && synchronizer != null
+              ? synchronizer.getActivityUrl(externalId)
+              : null;
+      services.add(
+          new ActivityUploadServiceState(
+              name, uploaded, pendingSynchronizers.contains(name), externalId, externalUrl));
+    }
+    activityUploadState.update(services, uploading);
+  }
+
+  private void openUploadedActivity(String name) {
+    String externalId = synchedExternalId.get(name);
+    Synchronizer synchronizer = syncManager.getSynchronizerByName(name);
+    if (externalId == null || synchronizer == null) return;
+    String url = synchronizer.getActivityUrl(externalId);
+    if (url != null) {
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
   }
 
@@ -824,102 +877,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     }
   }
 
-  private class ReportListAdapter extends BaseAdapter {
-
-    @Override
-    public int getCount() {
-      return reports.size() + 1;
-    }
-
-    @Override
-    public Object getItem(int position) {
-      if (position < reports.size()) return reports.get(position);
-      return this;
-    }
-
-    @Override
-    public long getItemId(int position) {
-      if (position < reports.size()) return reports.get(position).getAsLong("_id");
-
-      return 0;
-    }
-
-    private class ViewHolderDetailActivity {
-      private TextView tv0;
-      private CheckBox cb;
-      private TextView tv1;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      if (position == reports.size()) {
-        Button b = new Button(DetailActivity.this);
-        b.setText(org.runnerup.common.R.string.Configure_accounts);
-        b.setBackgroundResource(R.drawable.btn_blue);
-        b.setTextColor(
-            AppCompatResources.getColorStateList(DetailActivity.this, R.color.btn_text_color));
-        b.setOnClickListener(
-            v -> {
-              Intent i = new Intent(DetailActivity.this, AccountListActivity.class);
-              accountListLauncher.launch(i);
-            });
-        return b;
-      }
-
-      View view = convertView;
-      ViewHolderDetailActivity viewHolder;
-
-      // Note: Special ViewHolder support as the Configure button is not in the view
-      if (view == null || view.getTag() == null) {
-        viewHolder = new ViewHolderDetailActivity();
-
-        LayoutInflater inflater = LayoutInflater.from(DetailActivity.this);
-        view = inflater.inflate(R.layout.reportlist_row, parent, false);
-
-        viewHolder.tv0 = view.findViewById(R.id.reportlist_account_id);
-        viewHolder.cb = view.findViewById(R.id.reportlist_sent);
-        viewHolder.tv1 = view.findViewById(R.id.reportlist_account_name);
-
-        view.setTag(viewHolder);
-      } else {
-        viewHolder = (ViewHolderDetailActivity) view.getTag();
-      }
-
-      ContentValues tmp = reports.get(position);
-      String name = tmp.getAsString(DB.ACCOUNT.NAME);
-      viewHolder.cb.setOnCheckedChangeListener(null);
-      viewHolder.cb.setChecked(false);
-      viewHolder.cb.setEnabled(false);
-      viewHolder.cb.setTag(name);
-      viewHolder.tv1.setTag(name);
-      viewHolder.tv1.setTextColor(viewHolder.cb.getTextColors());
-      if (alreadySynched.contains(name)) {
-        viewHolder.cb.setChecked(true);
-        if (synchedExternalId.containsKey(name)) {
-          // Indicate Clickable label
-          viewHolder.tv1.setTextColor(Color.BLUE);
-        }
-        viewHolder.cb.setText(org.runnerup.common.R.string.Uploaded);
-        viewHolder.cb.setOnLongClickListener(clearUploadClick);
-      } else {
-        viewHolder.cb.setChecked(pendingSynchronizers.contains(name));
-        viewHolder.cb.setText(org.runnerup.common.R.string.Upload);
-        viewHolder.cb.setOnLongClickListener(null);
-      }
-      if (mode == MODE_DETAILS) {
-        viewHolder.cb.setEnabled(true);
-      } else if (mode == MODE_SAVE) {
-        viewHolder.cb.setEnabled(true);
-      }
-      viewHolder.cb.setOnCheckedChangeListener(onSendChecked);
-
-      viewHolder.tv0.setText(tmp.getAsString("_id"));
-      viewHolder.tv1.setText(name);
-
-      return view;
-    }
-  }
-
   private void saveActivity() {
     int sportValue = sport.getValueInt();
     ContentValues tmp = headerData;
@@ -938,40 +895,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       }
     } catch (Exception e) {
       Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
-    }
-  }
-
-  private final OnLongClickListener clearUploadClick =
-      arg0 -> {
-        final String name = (String) arg0.getTag();
-        new AlertDialog.Builder(DetailActivity.this)
-            .setTitle("Clear upload for " + name)
-            .setMessage(org.runnerup.common.R.string.Are_you_sure)
-            .setPositiveButton(
-                org.runnerup.common.R.string.Yes,
-                (dialog, which) -> {
-                  dialog.dismiss();
-                  syncManager.clearUpload(name, mID);
-                  requery();
-                })
-            .setNegativeButton(
-                org.runnerup.common.R.string.No,
-                // Do nothing but close the dialog
-                (dialog, which) -> dialog.dismiss())
-            .show();
-        return false;
-      };
-
-  // Note: onClick set in reportlist_row.xml
-  public void onClickAccountName(View arg0) {
-    final String name = (String) arg0.getTag();
-    if (synchedExternalId.containsKey(name) && !TextUtils.isEmpty(synchedExternalId.get(name))) {
-      String url =
-          syncManager.getSynchronizerByName(name).getActivityUrl(synchedExternalId.get(name));
-      if (url != null) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(browserIntent);
-      }
     }
   }
 
@@ -1024,41 +947,6 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       v -> {
         DetailActivity.this.setResult(RESULT_FIRST_USER);
         DetailActivity.this.finish();
-      };
-
-  private final OnClickListener uploadButtonClick =
-      v -> {
-        uploading = true;
-        syncManager.startUploading(
-            (synchronizerName, status) -> {
-              uploading = false;
-              requery();
-            },
-            pendingSynchronizers,
-            mID);
-      };
-
-  private final OnCheckedChangeListener onSendChecked =
-      new OnCheckedChangeListener() {
-
-        @Override
-        public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-          final String name = (String) arg0.getTag();
-          if (alreadySynched.contains(name)) {
-            // Only accept long clicks
-            arg0.setChecked(true);
-          } else {
-            if (arg1) {
-              pendingSynchronizers.add((String) arg0.getTag());
-            } else {
-              //noinspection SuspiciousMethodCalls
-              pendingSynchronizers.remove(arg0.getTag());
-            }
-            if (mode == MODE_DETAILS) {
-              setUploadVisibility();
-            }
-          }
-        }
       };
 
   private final OnClickListener deleteButtonClick =

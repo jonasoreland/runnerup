@@ -110,6 +110,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name="org.runnerup.relven.ui.ActivityUploadActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".view.MainLayout"
             android:exported="true"
             android:theme="@style/MainLayoutTheme">
