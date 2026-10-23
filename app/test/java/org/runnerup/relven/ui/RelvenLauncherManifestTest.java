@@ -3,10 +3,12 @@ package org.runnerup.relven.ui;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -56,5 +58,19 @@ public class RelvenLauncherManifestTest {
             .getActivityInfo(
                 new ComponentName(context, "org.runnerup.relven.ui.ActivityMapActivity"), 0)
             .exported);
+  }
+
+  @Test
+  public void activityUploadHandlesRotationWithoutRestartingItsSyncManager() throws Exception {
+    Context context = RuntimeEnvironment.getApplication();
+    ActivityInfo uploadActivity =
+        context
+            .getPackageManager()
+            .getActivityInfo(
+                new ComponentName(context, "org.runnerup.relven.ui.ActivityUploadActivity"), 0);
+
+    assertTrue((uploadActivity.configChanges & ActivityInfo.CONFIG_ORIENTATION) != 0);
+    assertTrue((uploadActivity.configChanges & ActivityInfo.CONFIG_SCREEN_SIZE) != 0);
+    assertTrue((uploadActivity.configChanges & ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE) != 0);
   }
 }
