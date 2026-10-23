@@ -1,10 +1,10 @@
 # Implementation status — 23 October 2026
 
-## Running experience redesign — live follow-camera stability (PR in progress)
+## Running experience redesign — live camera initialization (PR in progress)
 
-- The camera now keeps its current zoom during automatic follow, moves with a 700 ms animation, and recenters only after 12 m of accepted movement from its last camera anchor. Panning still disables follow; **Centrera** immediately reanchors to the current accepted location. This gate affects only camera rendering: Tracker acceptance, stored GPS samples, and route distance are unchanged.
-- Added unit coverage for initial follow, sub-threshold jitter, meaningful displacement, recenter anchoring, and invalid coordinates. The test was run before implementation and failed to compile because `LiveMapFollowPolicy` did not exist; it passed after implementation.
-- Full app, Wear, HR and common unit-test tasks passed. MapLibre Latest debug assembly, phone and Wear release bundles, all release lint tasks, no-map phone release bundle, Spotless, and `git diff --check` passed. A new emulator capture of the smooth-follow behavior remains pending because shell commands to the isolated emulator stopped responding during PR #106's short QA run.
+- The first accepted location now initializes the live map with a street-level zoom; later automatic follow keeps that zoom, animates over 700 ms, and recenters only after 12 m of accepted movement from its last camera anchor. Panning still disables follow; **Centrera** immediately reanchors to the current accepted location. This gate affects only camera rendering: Tracker acceptance, stored GPS samples, and route distance are unchanged.
+- Added unit coverage for initial center, sub-threshold jitter, meaningful displacement, recenter anchoring, and invalid coordinates. The initial test failed because the action model did not exist, then passed after implementation.
+- Isolated emulator `emulator-5586` on ADB port 5039 verified the initial map at street scale and a progressively drawn orange route with start and current-position markers using synthetic locations. Capture: `app/build/outputs/qa/relven-active-initial-zoom.png`. The focused policy tests, full app/Wear/HR/common unit suites, MapLibre Latest debug assembly, phone and Wear release bundles, all MapLibre release lint tasks, no-map Latest debug assembly and release bundle, Spotless, and `git diff --check` passed. The no-map phone release lint task still fails on the inherited `LogNotTimber` unknown-issue entries in `app/lint.xml` and `app/lint-osmdroid.xml`; the MapLibre phone release lint passes with 23 baseline findings filtered.
 - Remaining in this redesign: throttle route-source/snapshot rendering, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
 
 ## Running experience redesign — map visual correction

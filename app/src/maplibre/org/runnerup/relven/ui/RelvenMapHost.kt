@@ -194,8 +194,12 @@ private class RelvenMapHost(
       (loadedStyle.getSource(currentSourceId) as? GeoJsonSource)
           ?.setGeoJson(buildCurrentLocationGeoJson(currentLocation))
     }
-    if (followRunner && currentLocation != null && followPolicy.shouldFollow(currentLocation)) {
-      followRunnerTo(currentLocation)
+    if (followRunner && currentLocation != null) {
+      when (followPolicy.nextAction(currentLocation)) {
+        LiveMapFollowAction.INITIAL_CENTER -> centerOnRunner(currentLocation)
+        LiveMapFollowAction.ANIMATE -> followRunnerTo(currentLocation)
+        LiveMapFollowAction.NONE -> Unit
+      }
     }
   }
 
