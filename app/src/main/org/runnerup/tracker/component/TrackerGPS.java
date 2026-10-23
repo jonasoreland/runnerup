@@ -195,6 +195,10 @@ public class TrackerGPS extends DefaultTrackerComponent implements TickListener 
     return (mWithoutGps) || (mGpsStatus != null) && mGpsStatus.isFixed();
   }
 
+  public boolean isWithoutGps() {
+    return mWithoutGps;
+  }
+
   private void stopGps() {
     if (locationManager != null) {
       try {

@@ -1,5 +1,10 @@
 # Implementation status — 23 October 2026
 
+## Running experience redesign — current PR
+
+- **Phase 1, GPS quality foundation:** Added a monotonic-time `GpsFixFilter` to the existing phone `Tracker`. GPS fixes require valid coordinates, reported accuracy up to 25 m, timestamps no more than 15 seconds stale or 1 second ahead, accuracy-qualified displacement, and derived speed no greater than 12 m/s. Reliable stationary fixes still advance time and are recorded at the last stable route coordinate with zero distance; only moving fixes update elevation and derived pace. Pause/resume resets the anchor; a gap longer than 30 seconds writes a new route segment without bridging distance or inactive time. The existing no-GPS synthetic update path is preserved.
+- **Evidence so far:** Seven focused sequence tests cover anchor behavior, invalid/stale/future/non-monotonic samples, stationary 9 m-accuracy jitter, slow walking, running, an isolated speed spike, pause reset, and a long gap. Focused and full Latest debug unit tests, Latest debug assembly, Spotless, and Latest debug lint pass; lint reports no new findings (23 pre-existing baseline errors filtered). Physical-device testing is intentionally deferred. This PR is still in progress; the active map UI, post-workout summary, and history-detail unification remain subsequent phases.
+
 ## 23 October 2026 checkpoint
 
 - **PR #90 — MapLibre route controls:** Merged to `master` as `a2151ece`. Adds Relven-orange route coloring, distinct start/finish markers, a recenter/fit control, and a tile-request privacy note. Master CI passed. The route and controls were visually verified with a saved GPS activity in the isolated emulator.

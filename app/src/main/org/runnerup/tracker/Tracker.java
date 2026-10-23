@@ -124,6 +124,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   // Last location given by LocationManager
   private Location mLastLocation = null;
+  private final GpsFixFilter gpsFixFilter = new GpsFixFilter();
   // Last location given by LocationManager when in state STARTED
   private Location mLastLocationStarted = null;
 
@@ -361,6 +362,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     mHeartbeatNanos = 0;
     mMaxHR = 0;
     mLastLocationStarted = null;
+    mLastLocation = null;
+    gpsFixFilter.reset();
 
     // New location update will be tagged with START
     setNextLocationType(DB.LOCATION.TYPE_START);
@@ -423,6 +426,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     setNextLocationType(DB.LOCATION.TYPE_PAUSE);
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
+    gpsFixFilter.reset();
+    mCurrentSpeed = 0.0;
 
     saveActivity(/* manualDistance= */ null);
     components.onPause();
@@ -452,6 +457,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     setNextLocationType(DB.LOCATION.TYPE_PAUSE);
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
+    gpsFixFilter.reset();
+    mCurrentSpeed = 0.0;
 
     saveActivity(/* manualDistance= */ null);
     components.onPause(); // TODO add new callback for this
@@ -488,6 +495,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     setNextLocationType(DB.LOCATION.TYPE_RESUME);
     // save a resume location
     internalOnLocationChanged(mLastLocation);
+    gpsFixFilter.reset();
+    mCurrentSpeed = 0.0;
     components.onResume();
   }
 
@@ -639,13 +648,41 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   @Override
   public void onLocationChanged(@NonNull Location arg0) {
-    // Elevation depends on GPS updates
-    trackerElevation.onLocationChanged(arg0);
-    onLocationChangedImpl(arg0, false);
+    GpsFixFilter.Result fixResult = null;
+    if (!trackerGPS.isWithoutGps()) {
+      fixResult = gpsFixFilter.accept(arg0, SystemClock.elapsedRealtimeNanos());
+      if (!fixResult.isAccepted()) return;
+      if (fixResult.isStationary() && mLastLocation != null) {
+        // Advance timers on reliable fixes without letting coordinate jitter shape the route.
+        arg0 = new Location(arg0);
+        arg0.setLatitude(mLastLocation.getLatitude());
+        arg0.setLongitude(mLastLocation.getLongitude());
+      }
+      if (fixResult.startsNewSegment() && mLastLocation != null) {
+        setNextLocationType(DB.LOCATION.TYPE_RESUME);
+      }
+      if (fixResult.startsNewSegment()) mCurrentSpeed = 0.0;
+      if (fixResult.hasDerivedSpeed()) {
+        arg0.setSpeed((float) fixResult.getSpeedMetersPerSecond());
+      } else {
+        // Location.removeSpeed() is newer than the app's minimum supported Android version.
+        arg0.setSpeed(0.0f);
+      }
+    }
+    // Elevation and persisted telemetry use only accepted GPS fixes.
+    if (fixResult == null || !fixResult.isStationary()) {
+      trackerElevation.onLocationChanged(arg0);
+    }
+    onLocationChangedImpl(arg0, false, fixResult);
   }
 
   private void onLocationChangedImpl(Location arg0, boolean internal) {
-    if (!mTimeFromGpsPoints || internal) {
+    onLocationChangedImpl(arg0, internal, null);
+  }
+
+  private void onLocationChangedImpl(
+      Location arg0, boolean internal, GpsFixFilter.Result fixResult) {
+    if ((!mTimeFromGpsPoints && fixResult == null) || internal) {
       long elapsedNs = SystemClock.elapsedRealtimeNanos();
       arg0.setElapsedRealtimeNanos(elapsedNs);
       long timeMs = System.currentTimeMillis();
@@ -659,12 +696,17 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     Float pressureValue = getCurrentPressure();
 
     if (mLastLocation != null) {
-      double distDiff = arg0.distanceTo(mLastLocation);
+      double distDiff =
+          fixResult == null ? arg0.distanceTo(mLastLocation) : fixResult.getDistanceMeters();
       long timeDiffNanos =
           (arg0.getElapsedRealtimeNanos() - mLastLocation.getElapsedRealtimeNanos());
+      long activeTimeDiffNanos =
+          fixResult != null && fixResult.startsAfterGap() ? 0 : timeDiffNanos;
 
       float speed = arg0.getSpeed();
-      if (!arg0.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
+      if (fixResult != null && fixResult.startsNewSegment()) {
+        speed = 0.0f;
+      } else if (!arg0.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
         // at least the emulator can return 0 speed with hasSpeed()
         speed =
             (timeDiffNanos == 0)
@@ -672,7 +714,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
                 : (float) (distDiff * 1000 * NANO_IN_MILLI / (float) timeDiffNanos);
       }
 
-      if (!internal && timeDiffNanos > 0) {
+      if (!internal && timeDiffNanos > 0 && (fixResult == null || !fixResult.startsNewSegment())) {
         // Low pass filter, maintain also when paused
         final float alpha = 0.4f;
         mCurrentSpeed = speed * alpha + (1 - alpha) * mCurrentSpeed;
@@ -680,12 +722,14 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
       if (internal || state.get() == TrackerState.STARTED) {
         if (!internal) {
-          mElapsedTimeNanos += timeDiffNanos;
+          if (fixResult == null || !fixResult.startsAfterGap()) {
+            mElapsedTimeNanos += activeTimeDiffNanos;
+          }
           mElapsedDistance += distDiff;
         }
         if (hrValue != null && hrValue > 0) {
-          mHeartbeats += (hrValue * timeDiffNanos) / (double) (60 * 1000 * NANO_IN_MILLI);
-          mHeartbeatNanos += timeDiffNanos; // TODO handle loss of HRM connection
+          mHeartbeats += (hrValue * activeTimeDiffNanos) / (double) (60 * 1000 * NANO_IN_MILLI);
+          mHeartbeatNanos += activeTimeDiffNanos; // TODO handle loss of HRM connection
           mMaxHR = Math.max(hrValue, mMaxHR);
         }
       }
