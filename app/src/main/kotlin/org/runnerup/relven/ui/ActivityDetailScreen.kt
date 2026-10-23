@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,12 +63,24 @@ import org.runnerup.workout.Sport
 @Composable
 internal fun ActivityDetailScreen(
     loadState: ActivityDetailLoadState,
+    editSaveState: ActivityEditSaveState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onOpenMap: (Long) -> Unit,
+    onBeginEdit: () -> Unit,
+    onSaveActivityEdit: (ActivityEditCommand) -> Unit,
     onShareActivity: (HistoryActivityDetails, ActivityShareFormat) -> Unit,
     onOpenMoreActions: (Long) -> Unit) {
-  BackHandler(onBack = onBack)
+  val activityId = (loadState as? ActivityDetailLoadState.Loaded)?.activity?.id
+  var editing by remember(activityId) { mutableStateOf(false) }
+  LaunchedEffect(editSaveState) {
+    if (editSaveState is ActivityEditSaveState.Saved) editing = false
+  }
+  BackHandler {
+    if (editing) {
+      if (editSaveState !is ActivityEditSaveState.Saving) editing = false
+    } else onBack()
+  }
   Surface(
       modifier = Modifier.fillMaxSize(),
       color = RelvenColors.Background,
@@ -82,7 +95,13 @@ internal fun ActivityDetailScreen(
                 .padding(top = 12.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)) {
       Row(verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
+        IconButton(
+            onClick = {
+              if (editing) {
+                if (editSaveState !is ActivityEditSaveState.Saving) editing = false
+              } else onBack()
+            },
+            modifier = Modifier.size(48.dp)) {
           Icon(
               Icons.AutoMirrored.Filled.ArrowBack,
               contentDescription = stringResource(R.string.Home_activity_detail_back),
@@ -110,6 +129,14 @@ internal fun ActivityDetailScreen(
         is ActivityDetailLoadState.Loaded ->
             ActivityDetailContent(
                 loadState.activity,
+                isEditing = editing,
+                editSaveState = editSaveState,
+                onBeginEdit = {
+                  onBeginEdit()
+                  editing = true
+                },
+                onCancelEdit = { editing = false },
+                onSaveActivityEdit = onSaveActivityEdit,
                 onOpenMap = { onOpenMap(loadState.activity.id) },
                 onShareActivity = { format -> onShareActivity(loadState.activity, format) },
                 onOpenMoreActions = { onOpenMoreActions(loadState.activity.id) })
@@ -121,6 +148,11 @@ internal fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailContent(
     activity: HistoryActivityDetails,
+    isEditing: Boolean,
+    editSaveState: ActivityEditSaveState,
+    onBeginEdit: () -> Unit,
+    onCancelEdit: () -> Unit,
+    onSaveActivityEdit: (ActivityEditCommand) -> Unit,
     onOpenMap: () -> Unit,
     onShareActivity: (ActivityShareFormat) -> Unit,
     onOpenMoreActions: () -> Unit) {
@@ -178,7 +210,13 @@ private fun ActivityDetailContent(
       }
     }
 
-    activity.comment?.trim()?.takeIf(String::isNotEmpty)?.let { note ->
+    if (isEditing) {
+      ActivityEditForm(
+          activity = activity,
+          saveState = editSaveState,
+          onSave = onSaveActivityEdit,
+          onCancel = onCancelEdit)
+    } else activity.comment?.trim()?.takeIf(String::isNotEmpty)?.let { note ->
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             stringResource(R.string.Home_activity_detail_note),
@@ -194,7 +232,7 @@ private fun ActivityDetailContent(
       ActivityLapSection(activity.laps)
     }
 
-    if (hasMapRoute) {
+    if (!isEditing && hasMapRoute) {
       Button(
           onClick = onOpenMap,
           modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
@@ -209,16 +247,24 @@ private fun ActivityDetailContent(
       }
     }
 
-    OutlinedButton(
-        onClick = { shareDialogVisible = true },
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-      Text(stringResource(R.string.Home_activity_detail_share))
-    }
+    if (!isEditing) {
+      OutlinedButton(
+          onClick = { shareDialogVisible = true },
+          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.Home_activity_detail_share))
+      }
 
-    OutlinedButton(
-        onClick = onOpenMoreActions,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-      Text(stringResource(R.string.Home_activity_detail_more_actions))
+      OutlinedButton(
+          onClick = onBeginEdit,
+          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.Home_activity_detail_edit))
+      }
+
+      OutlinedButton(
+          onClick = onOpenMoreActions,
+          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.Home_activity_detail_more_actions))
+      }
     }
   }
 
@@ -228,7 +274,7 @@ private fun ActivityDetailContent(
         title = { Text(stringResource(R.string.Share_activity)) },
         text = {
           Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(stringResource(R.string.Home_activity_detail_share_format))
+      Text(stringResource(R.string.Home_activity_detail_share_format))
             Row(
                 modifier =
                     Modifier.fillMaxWidth().selectable(
