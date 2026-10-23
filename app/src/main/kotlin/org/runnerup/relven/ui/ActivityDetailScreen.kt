@@ -2,6 +2,7 @@ package org.runnerup.relven.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -235,24 +236,31 @@ private fun ActivityLapSection(laps: List<ActivityLapDetails>) {
           val distance = lap.distanceMeters?.takeIf { it > 0.0 }
           val duration = lap.durationSeconds?.takeIf { it > 0L }
           val speed = if (distance != null && duration != null) distance / duration else null
-          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ActivityLapMetric(
-                stringResource(R.string.Home_activity_detail_distance),
-                distance?.let {
-                  formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong())
-                } ?: stringResource(R.string.Home_activity_detail_unavailable_value),
-                Modifier.weight(1f))
-            ActivityLapMetric(
-                stringResource(R.string.Home_activity_detail_duration),
-                duration?.let { formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, it) }
-                    ?: stringResource(R.string.Home_activity_detail_unavailable_value),
-                Modifier.weight(1f))
-            ActivityLapMetric(
-                formatter.formatVelocityLabel(),
-                speed?.let {
-                  formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, it)
-                } ?: stringResource(R.string.Home_activity_detail_unavailable_value),
-                Modifier.weight(1f))
+          val lapMetrics =
+              listOf(
+                  stringResource(R.string.Home_activity_detail_distance) to
+                      (distance?.let {
+                        formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong())
+                      } ?: stringResource(R.string.Home_activity_detail_unavailable_value)),
+                  stringResource(R.string.Home_activity_detail_duration) to
+                      (duration?.let { formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, it) }
+                          ?: stringResource(R.string.Home_activity_detail_unavailable_value)),
+                  formatter.formatVelocityLabel() to
+                      (speed?.let {
+                        formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, it)
+                      } ?: stringResource(R.string.Home_activity_detail_unavailable_value)))
+          BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val metricRows = if (maxWidth < 320.dp) lapMetrics.chunked(2) else listOf(lapMetrics)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+              metricRows.forEach { rowMetrics ->
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                  rowMetrics.forEach { (label, value) ->
+                    ActivityLapMetric(label, value, Modifier.weight(1f))
+                  }
+                  if (rowMetrics.size == 1) Spacer(Modifier.weight(1f))
+                }
+              }
+            }
           }
           lap.averageHeartRate?.let { heartRate ->
             Text(
