@@ -462,12 +462,12 @@ internal fun PlanLibraryScreen(
                     modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                   Text(stringResource(R.string.plan_library_activate))
                 }
-                TextButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !busy,
-                    onClick = { previewPlanId = plan.id() }) {
-                  Text(stringResource(R.string.plan_library_preview_calendar))
-                }
+              }
+              TextButton(
+                  modifier = Modifier.fillMaxWidth(),
+                  enabled = !busy,
+                  onClick = { previewPlanId = plan.id() }) {
+                Text(stringResource(R.string.plan_library_preview_calendar))
               }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
