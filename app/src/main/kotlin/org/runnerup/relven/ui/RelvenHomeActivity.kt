@@ -1,6 +1,7 @@
 package org.runnerup.relven.ui
 
 import android.content.Context
+import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -81,6 +82,7 @@ import kotlinx.coroutines.withContext
 import org.runnerup.BuildConfig
 import org.runnerup.R
 import org.runnerup.common.util.Constants.DB
+import org.runnerup.content.ActivityProvider
 import org.runnerup.db.DBHelper
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.workout.RelvenPlanImport
@@ -90,6 +92,7 @@ import org.runnerup.workout.Sport
 import org.runnerup.view.StartFragment
 import org.runnerup.view.ManualActivity
 import org.runnerup.view.DetailActivity
+import org.runnerup.util.FileNameHelper
 import org.runnerup.importer.ActivityFileImporter
 import org.runnerup.importer.ActivityImportStore
 import org.runnerup.importer.ActivityImportException
@@ -277,6 +280,7 @@ class RelvenHomeActivity : FragmentActivity() {
               onBack = ::closeHistoryActivityDetail,
               onRetry = { activityDetailId?.let(::loadHistoryActivityDetail) },
               onOpenMap = ::openHistoryActivityMap,
+              onShareActivity = ::shareHistoryActivity,
               onOpenMoreActions = ::openLegacyHistoryActivityActions)
         } else RelvenHome(
             recentActivity = recentActivity,
@@ -800,6 +804,22 @@ class RelvenHomeActivity : FragmentActivity() {
             .putExtra("ID", id)
             .putExtra("mode", "details")
             .putExtra(DetailActivity.EXTRA_OPEN_MAP, false))
+  }
+
+  private fun shareHistoryActivity(activity: HistoryActivityDetails, format: ActivityShareFormat) {
+    val activityType = Sport.textOf(resources, activity.sport)
+    val fileName =
+        FileNameHelper.getExportFileName(activity.startedAtSeconds, activityType) + format.extension
+    val target = activityShareTarget(ActivityProvider.AUTHORITY, activity.id, fileName, format)
+    val shareIntent =
+        Intent(Intent.ACTION_SEND).apply {
+          type = target.mimeType
+          putExtra(Intent.EXTRA_STREAM, target.uri)
+          clipData = ClipData.newUri(contentResolver, fileName, target.uri)
+          addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    startActivity(
+        Intent.createChooser(shareIntent, getString(org.runnerup.common.R.string.Share_activity)))
   }
 
   private fun loadHistoryActivityDetail(id: Long) {
