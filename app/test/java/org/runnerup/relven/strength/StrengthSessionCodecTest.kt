@@ -32,8 +32,28 @@ class StrengthSessionCodecTest {
     assertTrue(complete.isComplete)
     val decodedComplete = StrengthSessionCodec.decode(StrengthSessionCodec.encode(complete, 1234L))
     assertEquals("entry-a", decodedComplete.first.scheduledEntryId)
+    assertEquals(complete.executionId, decodedComplete.first.executionId)
     assertEquals(1234L, decodedComplete.second)
     assertEquals(3, decodedComplete.first.results.size)
+  }
+
+  @Test
+  fun eachRetryKeepsThePlanEntryButGetsANewExecutionIdentity() {
+    val first = StrengthSession.start("plan-a", "entry-a", workout)
+    val retry = StrengthSession.start("plan-a", "entry-a", workout)
+
+    assertEquals(first.scheduledEntryId, retry.scheduledEntryId)
+    org.junit.Assert.assertNotEquals(first.executionId, retry.executionId)
+  }
+
+  @Test
+  fun readsLegacySessionRecordsUsingScheduledEntryAsExecutionIdentity() {
+    val json = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
+    json.remove("executionId")
+
+    val restored = StrengthSessionCodec.decode(json.toString()).first
+
+    assertEquals("entry", restored.executionId)
   }
 
   @Test(expected = IllegalArgumentException::class)

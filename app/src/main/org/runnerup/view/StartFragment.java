@@ -160,6 +160,8 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private String gymQuery = "";
   private boolean gymCatalogLoading;
   private boolean gymCatalogError;
+  private ClassicSpinner sportSpinner;
+  private Workout plannedWorkout;
 
   private ComposeView readinessComposeView = null;
   private boolean gpsActionVisible;
@@ -232,7 +234,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     gpsBoundState = new GpsBoundState(context);
 
     ComposeView sportToolbar = view.findViewById(R.id.start_toolbar);
-    ClassicSpinner sportSpinner =
+    sportSpinner =
         (ClassicSpinner)
             LayoutInflater.from(context)
                 .inflate(R.layout.start_sport_spinner_component, sportToolbar, false);
@@ -732,8 +734,10 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void onWorkoutTabSelected(int selectedPosition) {
-    if (selectedPosition == 2) {
+    if (selectedPosition == 2 && plannedWorkout == null) {
       loadAdvanced(null);
+    } else if (plannedWorkout != null) {
+      advancedWorkout = plannedWorkout;
     }
     refreshWorkoutSetup();
     updateView();
@@ -758,7 +762,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     } else if (getSelectedTabTag().contentEquals(TAB_ADVANCED)) {
       audioPref =
           WorkoutBuilder.getAudioCuePreferences(ctx, pref, getString(R.string.pref_advanced_audio));
-      w = advancedWorkout;
+      w = plannedWorkout != null ? plannedWorkout : advancedWorkout;
     } else {
       w = null;
       audioPref = null;
@@ -768,6 +772,32 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       WorkoutBuilder.addAudioCuesToWorkout(getResources(), w, audioPref, pref);
     }
     return w;
+  }
+
+  /** Selects a validated plan workout while keeping RunnerUp's tracker as the execution engine. */
+  public void usePlannedWorkout(Workout workout) {
+    if (workout == null) {
+      if (plannedWorkout == null) return;
+      plannedWorkout = null;
+      advancedWorkout = null;
+      if (!isAdded()) return;
+      loadAdvanced(null);
+      refreshWorkoutSetup();
+      updateView();
+      return;
+    }
+    if (plannedWorkout == workout) return;
+    plannedWorkout = workout;
+    advancedWorkout = workout;
+    if (!isAdded()) return;
+    PreferenceManager.getDefaultSharedPreferences(requireContext())
+        .edit()
+        .putInt(getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING)
+        .apply();
+    if (sportSpinner != null) sportSpinner.setViewSelection(DB.ACTIVITY.SPORT_RUNNING);
+    if (workoutTabsState != null) workoutTabsState.select(2);
+    refreshWorkoutSetup();
+    updateView();
   }
 
   private void refreshWorkoutSetup() {
@@ -1368,7 +1398,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
             gpsFixed,
             mTracker != null && mIsBound && mTracker.getState() == TrackerState.CONNECTED,
             getSelectedTabTag().contentEquals(TAB_ADVANCED),
-            advancedWorkout != null);
+            plannedWorkout != null || advancedWorkout != null);
   }
 
   private void updateStartGpsButtonView() {

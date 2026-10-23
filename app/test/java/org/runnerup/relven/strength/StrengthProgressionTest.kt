@@ -29,6 +29,19 @@ class StrengthProgressionTest {
   }
 
   @Test
+  fun keepsRepeatedExecutionsOfOnePlannedEntryAsSeparateProgressRecords() {
+    val first = completed("same-plan-entry", 100, listOf(result(0, 1, 8)))
+    val retry = completed("same-plan-entry", 200, listOf(result(0, 1, 11)))
+    val attempts = listOf(
+        first.copy(state = first.state.copy(executionId = "execution-a")),
+        retry.copy(state = retry.state.copy(executionId = "execution-b")))
+
+    val history = exerciseProgression(squatId, attempts)
+
+    assertEquals(listOf(200L, 100L), history.map { it.finishedAtMillis })
+  }
+
+  @Test
   fun keepsSetOrderAndExactValues() {
     val session = completed("entry", 100, listOf(result(0, 1, 7), result(0, 2, 5)))
 

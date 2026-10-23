@@ -12,7 +12,8 @@ internal data class StrengthSession(
     val phase: Phase,
     val secondsRemaining: Int,
     val results: List<SetResult>,
-    val resumePhase: Phase? = null) {
+    val resumePhase: Phase? = null,
+    val executionId: String = scheduledEntryId) {
   enum class Phase { REPETITIONS, TIMED_WORK, REST, PAUSED, COMPLETE }
 
   data class SetResult(
@@ -112,7 +113,8 @@ internal data class StrengthSession(
           1,
           workPhase(first),
           workDuration(first),
-          emptyList())
+          emptyList(),
+          executionId = java.util.UUID.randomUUID().toString())
     }
 
     internal fun workPhase(exercise: RelvenStrengthWorkoutParser.Exercise) =

@@ -75,6 +75,7 @@ internal fun PlanCalendarScreen(
     revisionStatus: PlanRevisionStatus,
     completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
+    onStartRunning: (org.runnerup.workout.Workout) -> Unit = {},
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit = {},
     onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
@@ -103,6 +104,7 @@ internal fun PlanCalendarScreen(
             revisionStatus,
             completedStrengthSessions,
             onStartStrength,
+            onStartRunning,
             onViewStrengthCompletion,
             onOpenPlanLibrary,
             onReschedule,
@@ -123,6 +125,7 @@ private fun LoadedPlanCalendar(
     revisionStatus: PlanRevisionStatus,
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
+    onStartRunning: (org.runnerup.workout.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
     onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
@@ -221,6 +224,7 @@ private fun LoadedPlanCalendar(
             editMax = segment.target?.maximum?.toString().orEmpty()
           },
           onStartStrength = { onStartStrength(plan.id(), openedWorkout) },
+          onStartRunning = { openedWorkout.runningWorkout?.let(onStartRunning) },
           onViewStrengthCompletion = onViewStrengthCompletion)
     } else {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

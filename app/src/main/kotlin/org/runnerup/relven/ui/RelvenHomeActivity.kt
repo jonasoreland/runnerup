@@ -172,6 +172,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var pendingStrengthSessionChoice by mutableStateOf<PendingStrengthSessionChoice?>(null)
   private var strengthRecoveryNotice by mutableStateOf(false)
   private var strengthFinishing by mutableStateOf(false)
+  private var pendingPlannedRunningWorkout by mutableStateOf<org.runnerup.workout.Workout?>(null)
   private val strengthStoreMutex = Mutex()
   private var pendingActivityImport by mutableStateOf<PendingActivityImport?>(null)
   private var activityImportMessage by mutableStateOf<String?>(null)
@@ -304,6 +305,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             activityHistoryState = activityHistoryState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
+            pendingPlannedRunningWorkout = pendingPlannedRunningWorkout,
             destination = destination,
             startFragmentManager = supportFragmentManager,
             onSelectDestination = ::selectHomeDestination,
@@ -370,6 +372,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = ::startStrengthSession,
             onViewStrengthCompletion = { viewedStrengthCompletion = it },
+            onStartPlannedRunningWorkout = ::startPlannedRunningWorkout,
             strengthRecoveryNotice = strengthRecoveryNotice,
             onDismissStrengthRecoveryNotice = { strengthRecoveryNotice = false },
             pendingStrengthSessionChoice = pendingStrengthSessionChoice,
@@ -432,14 +435,21 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           withContext(Dispatchers.IO) {
             val planState = loadActivePlan()
             val plan = (planState as? ActivePlanLoadState.Loaded)?.plan
-            val completions = buildMap {
-              plan?.days()?.forEach { scheduled ->
+            val strengthHistory =
                 try {
-                  StrengthSessionStore.completed(applicationContext, scheduled.id())?.let {
-                    put(scheduled.id(), it)
+                  strengthStoreMutex.withLock {
+                    StrengthSessionStore.completedSessions(applicationContext)
                   }
                 } catch (error: Exception) {
-                  Log.w("RelvenHome", "Could not load strength completion", error)
+                  Log.w("RelvenHome", "Could not load strength history", error)
+                  null
+                }
+            val completions = buildMap<String, CompletedStrengthSession> {
+              strengthHistory?.sessions?.forEach { completion ->
+                val scheduledId = completion.state.scheduledEntryId
+                val current = get(scheduledId)
+                if (current == null || completion.finishedAtMillis > current.finishedAtMillis) {
+                  put(scheduledId, completion)
                 }
               }
             }
@@ -458,15 +468,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
                   null
                 },
                 completions,
-                try {
-                  loadedExerciseProgressionState(
-                      strengthStoreMutex.withLock {
-                        StrengthSessionStore.completedSessions(applicationContext)
-                      })
-                } catch (error: Exception) {
-                  Log.w("RelvenHome", "Could not load strength progression history", error)
-                  ExerciseProgressionLoadState.Unavailable
-                },
+                strengthHistory?.let(::loadedExerciseProgressionState)
+                    ?: ExerciseProgressionLoadState.Unavailable,
                 runCatching { loadProgressSummary(progressAsOfMillis) })
           }
       recentActivity = homeData.recentActivity
@@ -489,6 +492,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   }
 
   private fun selectHomeDestination(next: HomeDestination) {
+    if (next != HomeDestination.Start) pendingPlannedRunningWorkout = null
     if (next != HomeDestination.Plan) {
       planLibraryOpen = false
       planCreationOpen = false
@@ -1052,7 +1056,6 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   private fun startStrengthSession(planId: String, entry: PlanCalendarEntry.Workout) {
     val workout = entry.strengthDetails ?: return
-    if (entry.completion != null) return
     lifecycleScope.launch {
       try {
         val session = withContext(Dispatchers.IO) {
@@ -1078,6 +1081,11 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         strengthSaveError = true
       }
     }
+  }
+
+  private fun startPlannedRunningWorkout(workout: org.runnerup.workout.Workout) {
+    pendingPlannedRunningWorkout = workout
+    selectHomeDestination(HomeDestination.Start)
   }
 
   override fun startQuickStrengthWorkout(name: String, workoutJson: String) {
@@ -1555,6 +1563,7 @@ private fun RelvenHome(
     activityHistoryState: ActivityHistoryLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
+    pendingPlannedRunningWorkout: org.runnerup.workout.Workout?,
     destination: HomeDestination,
     planLibraryState: PlanLibraryState,
     planLibraryOpen: Boolean,
@@ -1606,6 +1615,7 @@ private fun RelvenHome(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
+    onStartPlannedRunningWorkout: (org.runnerup.workout.Workout) -> Unit,
     strengthRecoveryNotice: Boolean,
     onDismissStrengthRecoveryNotice: () -> Unit,
     pendingStrengthSessionChoice: PendingStrengthSessionChoice?,
@@ -1726,7 +1736,7 @@ private fun RelvenHome(
       }
     }
     } else if (destination == HomeDestination.Start) {
-      StartDestinationScreen(startFragmentManager)
+      StartDestinationScreen(startFragmentManager, pendingPlannedRunningWorkout)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,
@@ -1774,6 +1784,7 @@ private fun RelvenHome(
             nowMillis = currentTimeMillis,
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = onStartStrength,
+            onStartRunning = onStartPlannedRunningWorkout,
             onViewStrengthCompletion = onViewStrengthCompletion,
             onOpenPlanLibrary = onOpenPlanLibrary,
             onReschedule = onReschedulePlan,
