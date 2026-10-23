@@ -9,6 +9,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
@@ -16,6 +17,7 @@ import org.runnerup.workout.RelvenWorkoutImporter
 import org.runnerup.workout.Workout
 
 @RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
 class StartFragmentContainerControllerTest {
   @Test
   fun createsStartFragmentOnlyAfterContainerIsAttached() {
