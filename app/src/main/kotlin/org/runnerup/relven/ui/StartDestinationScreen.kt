@@ -2,6 +2,7 @@ package org.runnerup.relven.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,5 +28,5 @@ internal fun StartDestinationScreen(fragmentManager: FragmentManager) {
           }
         }
       },
-      modifier = Modifier.fillMaxSize().padding(bottom = 104.dp))
+      modifier = Modifier.fillMaxSize().statusBarsPadding().padding(bottom = 104.dp))
 }

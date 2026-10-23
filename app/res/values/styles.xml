@@ -27,6 +27,15 @@
         <item name="windowActionBar">false</item>
     </style>
 
+    <style name="RelvenStartDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorAccent">@color/relven_orange</item>
+        <item name="android:colorAccent">@color/relven_orange</item>
+        <item name="colorBackgroundFloating">@color/relven_surface</item>
+        <item name="android:colorBackground">@color/relven_surface</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+    </style>
+
     <style name="RelvenStartingTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/relven_splash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
