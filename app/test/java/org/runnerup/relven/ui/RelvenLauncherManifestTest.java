@@ -9,6 +9,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +45,24 @@ public class RelvenLauncherManifestTest {
     assertEquals(
         R.style.RelvenStartingTheme,
         context.getPackageManager().getActivityInfo(launcher.getComponent(), 0).theme);
+  }
+
+  @Test
+  public void everyAppActivityIsLockedToPortrait() throws Exception {
+    Context context = RuntimeEnvironment.getApplication();
+    PackageInfo appPackage =
+        context
+            .getPackageManager()
+            .getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
+
+    assertNotNull(appPackage.activities);
+    for (ActivityInfo activity : appPackage.activities) {
+      if (!activity.name.startsWith("org.runnerup.")) continue;
+      assertEquals(
+          activity.name + " should be locked to portrait",
+          ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+          activity.screenOrientation);
+    }
   }
 
   @Test
