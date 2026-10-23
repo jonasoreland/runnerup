@@ -17,6 +17,8 @@
 - Only unfinished review exposes Resume, Save, or Discard; saved history never exposes Resume.
 - Preserve the `se.hampusandersson.relven` application ID and existing database schema.
 - Keep route recording independent of map availability and support no-map builds.
+- Derive only complete kilometer splits within one continuous accepted route segment; after pause/resume or a missing-route gap, restart split distance from that segment boundary so no split bridges the gap or represents a short remainder.
+- The unfinished review's selected sport is the source for route/map visibility, even while editing before save.
 - Use the active Stitch project `15389433782836702529` and Kinetic Obsidian tokens; the saved activity detail is a current-system reference and the review arrangement is an extrapolation.
 - Work in this existing checkout, with one PR open at a time, and never use the physical Android device.
 
