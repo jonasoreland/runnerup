@@ -20,6 +20,18 @@ An AI-created plan is one JSON object:
 
 `id` and `name` are nonblank strings up to 160 characters. `timezone` must be a recognized IANA timezone. A plan needs 1–100 workouts and 1–2,000 day entries. Each day has `id`, local `date` in exact `YYYY-MM-DD` form, and `kind` (`workout` or `rest`). Workout days also need a `workoutId` matching one included workout. Optional `notes` are strings up to 1,000 characters. Multiple workouts can share a date. Rest dates cannot repeat or overlap a workout date. Entries are one-time; recurrence rules are unsupported.
 
+| Plan field | Required | Meaning |
+|---|---|---|
+| `format` | Yes | Exact string `relven.plan`. |
+| `schemaVersion` | Yes | Integer `1` for a new AI-authored plan. |
+| `id` | Yes | Unique plan identifier; any nonblank string up to 160 characters. |
+| `name` | Yes | Human-readable plan name; any nonblank string up to 160 characters. |
+| `timezone` | Yes | Recognized IANA timezone used to interpret local schedule dates, such as `Europe/Stockholm`. |
+| `workouts` | Yes | 1–100 full Workout v3 documents. |
+| `days` | Yes | 1–2,000 one-time workout/rest calendar entries. |
+
+Each `days[]` entry requires `id`, `date`, and `kind`. `kind: "workout"` requires `workoutId`; `kind: "rest"` forbids `workoutId`. `notes` is optional. Every object rejects unrecognized properties. Dates are calendar dates, not timestamps; include the timezone once at the plan root.
+
 Use unique nonblank IDs for the plan, each workout, each day, and every step in its workout. IDs are unique within each entity list; UUIDs are recommended. The package is JSON rather than a ZIP and is limited to 4 MiB UTF-8, 32 nested levels, and 100,000 JSON tokens.
 
 ## Workout document
@@ -38,6 +50,15 @@ Every workout is schema version 3:
 
 `sport` is `running`, `strength`, or `prehab`. Optional `warmupExempt` and `cooldownExempt` must be omitted or false; true is currently rejected. Workouts allow 1–256 parsed step nodes, at most 16 nested levels, repeat count 1–100, and no more than 10,000 expanded steps/exercises.
 
+| Workout field | Required | Meaning |
+|---|---|---|
+| `schemaVersion` | Yes | Integer `3`. |
+| `id` | Yes | Unique workout identifier, nonblank and at most 160 characters. |
+| `name` | Yes | Nonblank workout label, at most 160 characters. |
+| `sport` | Yes | `running`, `strength`, or `prehab`. |
+| `steps` | Yes | Ordered nonempty array of step nodes (1–256 top-level entries). |
+| `warmupExempt`, `cooldownExempt` | No | Omit or set `false`; `true` is not importable. |
+
 Each step is one of:
 
 - `segment`: a phase with an end condition, optional target, and (for strength/prehab) an exercise prescription.
@@ -45,6 +66,14 @@ Each step is one of:
 - `repeat`: a nonempty `steps` list and integer `count` 1–100.
 
 Segment phases: `warmup`, `work`, `recovery`, `cooldown`. Every step needs a unique `id`; optional names are nonblank strings up to 160 characters.
+
+All step objects require `id` and `kind`; IDs must be unique throughout that workout's tree. `name` is optional. Objects reject fields outside their defined shape:
+
+| `kind` | Additional required fields | Purpose |
+|---|---|---|
+| `segment` | `phase`, `end` | One running phase or one exercise prescription. Optional `target`; strength/prehab requires `exercise`. |
+| `sequence` | nonempty `steps` | Run child steps once in the listed order. |
+| `repeat` | `count` (1–100), nonempty `steps` | Repeat the child sequence the requested number of times. |
 
 ### Supported running segments
 
@@ -96,7 +125,7 @@ Each exercise prescription has this shape:
 
 The bundled library uses `format: "relven.exercise-library"`, `schemaVersion: 1`, `libraryRevision`, and an `exercises` array (maximum 256). Each entry has a stable lowercase UUID, own `revision`, localized English/Swedish `name` and `instructions` arrays, category, `movementPattern`, `muscleGroups`, and `equipment`. Categories are `lower_body`, `upper_body`, `core`, and `warmup_mobility`; valid muscle groups are defined in `schemas/exercise-library-v1.schema.json`.
 
-The current bundled catalog contains 116 records at library revision 2. Custom records are separate and use `format: "relven.exercise-collection"`, `schemaVersion: 1`, and an `exercises` array (maximum 200). Each record has archive state, ID/revision, English and Swedish names/instructions, category, movement pattern, muscle groups, and equipment. Phone exports contain all custom records, including archived ones. The custom collection is limited to 1 MiB. No exercise media or external URLs are included.
+The current bundled catalog contains 116 records at library revision 2. `catalog/exercise-inventory.md` indexes their Swedish and English names, IDs, categories, movement patterns, and equipment; the JSON contains full records and instructions. Custom records are separate and use `format: "relven.exercise-collection"`, `schemaVersion: 1`, and an `exercises` array (maximum 200). Each record has archive state, ID/revision, English and Swedish names/instructions, category, movement pattern, muscle groups, and equipment. Phone copy/share/save exports contain the current device's complete custom collection, including archived records, plus `user-data/custom-exercise-inventory.md` as a readable index. The custom collection is limited to 1 MiB. No exercise media or external URLs are included.
 
 Exercise identity comes from the catalog, not its display name. Never invent, rename, translate, or substitute an exercise ID or snapshot. A workout's snapshot remains fixed even if the catalog changes later.
 
@@ -109,3 +138,7 @@ The in-app Plan creator can create a 1–16-week plan and select running, streng
 ## Valid examples
 
 `examples/plan-running.json` and `examples/plan-strength.json` are full schema-v1 plan packages. The strength example uses exact IDs and English snapshots from `catalog/exercise-library-v1.json`; examples explain structure and are not prescriptions for every athlete.
+
+## Strict JSON and version rules
+
+Use only fields defined by the schemas. Unknown fields are rejected, including plausible additions such as weekdays, recurrence rules, arbitrary workout notes, or custom targets. Do not place workout prescriptions directly in calendar days: `days[].workoutId` references a workout in the root `workouts` array. The workout document contains the ordered execution steps. Generate plan v1 and Workout v3; plan v2 is app-managed revision metadata, not a generation format.

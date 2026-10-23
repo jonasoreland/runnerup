@@ -25,6 +25,7 @@ ARCHIVE_SOURCES = {
     "examples/plan-running.json": ROOT / "schemas" / "examples" / "plan-running.json",
     "examples/plan-strength.json": ROOT / "schemas" / "examples" / "plan-strength.json",
 }
+GENERATED_ENTRIES = {"catalog/exercise-inventory.md"}
 
 
 class AiPlanKitBuildTest(unittest.TestCase):
@@ -60,7 +61,7 @@ class AiPlanKitBuildTest(unittest.TestCase):
         with zipfile.ZipFile(OUTPUT) as archive:
             expected_names = {
                 "relven-ai-plan-kit/" + name for name in ARCHIVE_SOURCES
-            }
+            } | {"relven-ai-plan-kit/" + name for name in GENERATED_ENTRIES}
             self.assertEqual(expected_names, set(archive.namelist()))
             for archive_name, source_path in ARCHIVE_SOURCES.items():
                 expected = source_path.read_bytes().replace(b"\r\n", b"\n")
@@ -88,6 +89,7 @@ class AiPlanKitBuildTest(unittest.TestCase):
             names = set(archive.namelist())
             expected_entries = {
                 "relven-ai-plan-kit/catalog/exercise-library-v1.json",
+                "relven-ai-plan-kit/catalog/exercise-inventory.md",
                 "relven-ai-plan-kit/schemas/exercise-collection-v1.schema.json",
                 "relven-ai-plan-kit/JSON-FORMAT.md",
             }
@@ -102,6 +104,24 @@ class AiPlanKitBuildTest(unittest.TestCase):
                 archive.read("relven-ai-plan-kit/capabilities.json")
             )
             self.assertEqual(116, capabilities["exerciseCatalog"]["bundledExerciseCount"])
+            self.assertEqual(
+                "catalog/exercise-inventory.md",
+                capabilities["exerciseCatalog"]["bundledInventoryPath"],
+            )
+
+    def test_exercise_inventory_index_lists_every_bundled_exercise_by_bilingual_name_and_id(self):
+        with zipfile.ZipFile(OUTPUT) as archive:
+            inventory = archive.read(
+                "relven-ai-plan-kit/catalog/exercise-inventory.md"
+            ).decode("utf-8")
+            catalog = json.loads(
+                archive.read("relven-ai-plan-kit/catalog/exercise-library-v1.json")
+            )
+        self.assertIn("116 bundled exercises", inventory)
+        for exercise in catalog["exercises"]:
+            self.assertIn(exercise["exerciseId"], inventory)
+            self.assertIn(exercise["name"]["sv"], inventory)
+            self.assertIn(exercise["name"]["en"], inventory)
 
     def test_check_mode_detects_a_stale_archive(self):
         original = OUTPUT.read_bytes()

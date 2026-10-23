@@ -82,6 +82,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutBuilder;
 import org.runnerup.workout.WorkoutSerializer;
 
 /**
@@ -958,6 +959,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       restored.sport = checkpoint.getSport();
       restored.setWorkoutType(checkpoint.getWorkoutType());
       restored.setMute(checkpoint.isMute());
+      WorkoutBuilder.prepareForRecovery(this, restored, checkpoint.isMute());
       restored.setTracker(this);
       restored.onInit(restored);
       if (!restored.restoreRuntimeCheckpoint(new JSONObject(checkpoint.getWorkoutRuntimeJson()))) {

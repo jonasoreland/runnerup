@@ -30,6 +30,15 @@ public class EventTrigger extends Trigger {
   int maxCounter = Integer.MAX_VALUE;
 
   @Override
+  JSONObject runtimeConfiguration() throws JSONException {
+    return super.runtimeConfiguration()
+        .put("scope", scope.name())
+        .put("event", event.name())
+        .put("skipCounter", skipCounter)
+        .put("maxCounter", maxCounter);
+  }
+
+  @Override
   JSONObject toRuntimeCheckpoint() throws JSONException {
     return super.toRuntimeCheckpoint().put("counter", counter);
   }
@@ -45,6 +54,11 @@ public class EventTrigger extends Trigger {
 
   @Override
   public void onInit(Workout s) {
+    counter = 0;
+  }
+
+  @Override
+  void resetForRecovery() {
     counter = 0;
   }
 

@@ -41,6 +41,10 @@ class RelvenPlanKitExerciseDataTest {
     assertEquals("Archived wall hold", archived.getString("nameEnglish"))
     assertTrue(archived.getBoolean("archived"))
     assertEquals("Väggpress", archived.getString("nameSwedish"))
+    val inventory = readEntry(output.toByteArray(), "user-data/custom-exercise-inventory.md")
+    assertTrue(inventory.contains("2 user-created exercises · 1 active · 1 archived"))
+    assertTrue(inventory.contains("| Väggpress | Custom bird dog |"))
+    assertTrue(inventory.contains("| Väggpress | Archived wall hold |"))
   }
 
   @Test
@@ -60,6 +64,9 @@ class RelvenPlanKitExerciseDataTest {
     assertTrue(copied.contains("Väggpress"))
     assertTrue(copied.contains(id))
     assertTrue(copied.contains("minSecondsPerKm"))
+    assertTrue(copied.contains("user-data/custom-exercise-inventory.md"))
+    assertTrue(copied.contains("# Custom exercise inventory"))
+    assertTrue(copied.contains("| Väggpress | Prompt-only custom exercise |"))
   }
 
   private fun customExercise(name: String) =

@@ -32,6 +32,15 @@ public class IntervalTrigger extends Trigger {
   private double next = 0;
 
   @Override
+  JSONObject runtimeConfiguration() throws JSONException {
+    return super.runtimeConfiguration()
+        .put("scope", scope.name())
+        .put("dimension", dimension.name())
+        .put("first", first)
+        .put("interval", interval);
+  }
+
+  @Override
   JSONObject toRuntimeCheckpoint() throws JSONException {
     return super.toRuntimeCheckpoint().put("next", next);
   }
@@ -43,6 +52,11 @@ public class IntervalTrigger extends Trigger {
     if (!Double.isFinite(savedNext) || savedNext < 0) return false;
     next = savedNext;
     return true;
+  }
+
+  @Override
+  void resetForRecovery() {
+    next = first;
   }
 
   @Override

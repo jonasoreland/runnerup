@@ -155,9 +155,7 @@ public class Step implements TickComponent {
 
   final boolean restoreBaseRuntimeCheckpoint(JSONObject state, String expectedStepType)
       throws JSONException {
-    if (state == null
-        || !expectedStepType.equals(state.optString("stepType"))
-        || state.getJSONArray("triggers").length() != triggers.size()) return false;
+    if (state == null || !expectedStepType.equals(state.optString("stepType"))) return false;
     double savedStepStartTime = state.getDouble("stepStartTime");
     double savedStepStartDistance = state.getDouble("stepStartDistance");
     double savedStepStartHeartbeats = state.getDouble("stepStartHeartbeats");
@@ -178,9 +176,31 @@ public class Step implements TickComponent {
         || !finiteNonnegative(savedPreviousStepTime)) return false;
 
     JSONArray triggerStates = state.getJSONArray("triggers");
-    for (int index = 0; index < triggers.size(); index++) {
-      if (!triggers.get(index).restoreRuntimeCheckpoint(triggerStates.getJSONObject(index)))
-        return false;
+    boolean triggerDefinitionsMatch = triggerStates.length() == triggers.size();
+    if (triggerDefinitionsMatch) {
+      for (int index = 0; index < triggers.size(); index++) {
+        if (!triggers
+                .get(index)
+                .getClass()
+                .getName()
+                .equals(triggerStates.getJSONObject(index).optString("triggerType"))
+            || !triggers
+                .get(index)
+                .hasMatchingRuntimeConfiguration(triggerStates.getJSONObject(index))) {
+          triggerDefinitionsMatch = false;
+          break;
+        }
+      }
+    }
+    if (triggerDefinitionsMatch) {
+      for (int index = 0; index < triggers.size(); index++) {
+        if (!triggers.get(index).restoreRuntimeCheckpoint(triggerStates.getJSONObject(index)))
+          return false;
+      }
+    } else {
+      // Preferences may change while the app is closed. Keep workout progress and reinitialize
+      // the newly-built triggers instead of rejecting the entire active-workout checkpoint.
+      for (Trigger trigger : triggers) trigger.resetForRecovery();
     }
     stepStartTime = savedStepStartTime;
     stepStartDistance = savedStepStartDistance;

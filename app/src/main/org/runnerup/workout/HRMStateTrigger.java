@@ -48,6 +48,11 @@ public class HRMStateTrigger extends Trigger {
   }
 
   @Override
+  void resetForRecovery() {
+    isConnected = false;
+  }
+
+  @Override
   public void onPause(Workout s) {}
 
   @Override
