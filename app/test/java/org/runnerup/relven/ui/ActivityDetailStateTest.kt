@@ -55,6 +55,18 @@ class ActivityDetailStateTest {
         """.trimIndent())
     database.execSQL(
         """
+        CREATE TABLE ${DB.LAP.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.LAP.ACTIVITY} INTEGER NOT NULL,
+          ${DB.LAP.LAP} INTEGER NOT NULL,
+          ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
+          ${DB.LAP.TIME} INTEGER,
+          ${DB.LAP.DISTANCE} REAL,
+          ${DB.LAP.AVG_HR} INTEGER
+        )
+        """.trimIndent())
+    database.execSQL(
+        """
         CREATE TABLE ${DB.LOCATION.TABLE} (
           _id INTEGER PRIMARY KEY,
           ${DB.LOCATION.ACTIVITY} INTEGER NOT NULL,
@@ -75,6 +87,26 @@ class ActivityDetailStateTest {
     database.insertOrThrow(DB.ACTIVITY.TABLE, null, saved)
     val deleted = ContentValues(saved).apply { put("_id", 8L); put(DB.ACTIVITY.DELETED, 1) }
     database.insertOrThrow(DB.ACTIVITY.TABLE, null, deleted)
+    database.insertOrThrow(
+        DB.LAP.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LAP.ACTIVITY, 7L)
+          put(DB.LAP.LAP, 1)
+          put(DB.LAP.INTENSITY, 0)
+          put(DB.LAP.TIME, 360L)
+          put(DB.LAP.DISTANCE, 1_000.0)
+          put(DB.LAP.AVG_HR, 142)
+        })
+    database.insertOrThrow(
+        DB.LAP.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LAP.ACTIVITY, 8L)
+          put(DB.LAP.LAP, 1)
+          put(DB.LAP.TIME, 120L)
+          put(DB.LAP.DISTANCE, 500.0)
+        })
 
     try {
       assertEquals(
@@ -87,7 +119,8 @@ class ActivityDetailStateTest {
               gpsSampleCount = 0,
               comment = "Morning run",
               averageHeartRate = 145,
-              maximumHeartRate = 171),
+              maximumHeartRate = 171,
+              laps = listOf(ActivityLapDetails(2, 0, 360L, 1_000.0, 142))),
           readHistoryActivityDetails(database, 7L))
       assertNull(readHistoryActivityDetails(database, 8L))
     } finally {
@@ -140,5 +173,64 @@ class ActivityDetailStateTest {
     assertNull(measurements.averageSpeedMetersPerSecond)
     assertNull(measurements.averageHeartRate)
     assertNull(measurements.maximumHeartRate)
+  }
+
+  @Test
+  fun ignoresInvalidLapMeasurementsAndKeepsLapRowsOrdered() {
+    val database = SQLiteDatabase.create(null)
+    database.execSQL(
+        """
+        CREATE TABLE ${DB.LAP.TABLE} (
+          _id INTEGER PRIMARY KEY,
+          ${DB.LAP.ACTIVITY} INTEGER NOT NULL,
+          ${DB.LAP.LAP} INTEGER NOT NULL,
+          ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
+          ${DB.LAP.TIME} INTEGER,
+          ${DB.LAP.DISTANCE} REAL,
+          ${DB.LAP.AVG_HR} INTEGER
+        )
+        """.trimIndent())
+    database.insertOrThrow(
+        DB.LAP.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LAP.ACTIVITY, 11L)
+          put(DB.LAP.LAP, 2)
+          put(DB.LAP.INTENSITY, 0)
+          put(DB.LAP.TIME, -4L)
+          put(DB.LAP.DISTANCE, Double.NaN)
+          put(DB.LAP.AVG_HR, 0)
+        })
+    database.insertOrThrow(
+        DB.LAP.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LAP.ACTIVITY, 11L)
+          put(DB.LAP.LAP, 1)
+          put(DB.LAP.INTENSITY, 2)
+          put(DB.LAP.TIME, 300L)
+          put(DB.LAP.DISTANCE, 800.0)
+          put(DB.LAP.AVG_HR, 150)
+        })
+    database.insertOrThrow(
+        DB.LAP.TABLE,
+        null,
+        ContentValues().apply {
+          put(DB.LAP.ACTIVITY, 12L)
+          put(DB.LAP.LAP, 1)
+          put(DB.LAP.INTENSITY, 0)
+          put(DB.LAP.TIME, 100L)
+          put(DB.LAP.DISTANCE, 400.0)
+        })
+
+    try {
+      assertEquals(
+          listOf(
+              ActivityLapDetails(2, 2, 300L, 800.0, 150),
+              ActivityLapDetails(3, 0, null, null, null)),
+          readActivityLaps(database, 11L))
+    } finally {
+      database.close()
+    }
   }
 }

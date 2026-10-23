@@ -276,7 +276,8 @@ class RelvenHomeActivity : FragmentActivity() {
               loadState = requireNotNull(activityDetailState),
               onBack = ::closeHistoryActivityDetail,
               onRetry = { activityDetailId?.let(::loadHistoryActivityDetail) },
-              onOpenMapAndDetails = ::openFullHistoryActivityDetails)
+              onOpenMap = ::openHistoryActivityMap,
+              onOpenMoreActions = ::openLegacyHistoryActivityActions)
         } else RelvenHome(
             recentActivity = recentActivity,
             sessionStatus = sessionStatus,
@@ -779,18 +780,20 @@ class RelvenHomeActivity : FragmentActivity() {
     activityDetailState = null
   }
 
-  private fun openFullHistoryActivityDetails(id: Long) {
+  private fun openHistoryActivityMap(id: Long) {
     val activity = (activityDetailState as? ActivityDetailLoadState.Loaded)?.activity
     val mapAvailable = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED
     if (activity != null && activityHasMapRoute(activity, mapEnabled = mapAvailable)) {
       startActivity(ActivityMapActivity.intent(this, id))
-    } else {
-      startActivity(
-          Intent(this, DetailActivity::class.java)
-              .putExtra("ID", id)
-              .putExtra("mode", "details")
-              .putExtra(DetailActivity.EXTRA_OPEN_MAP, false))
     }
+  }
+
+  private fun openLegacyHistoryActivityActions(id: Long) {
+    startActivity(
+        Intent(this, DetailActivity::class.java)
+            .putExtra("ID", id)
+            .putExtra("mode", "details")
+            .putExtra(DetailActivity.EXTRA_OPEN_MAP, false))
   }
 
   private fun loadHistoryActivityDetail(id: Long) {
