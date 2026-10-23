@@ -14,6 +14,13 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class ActivityMapStateTest {
   @Test
+  fun mapTileAttributionReservesSpaceForTheMapLibreBranding() {
+    assertEquals(224, routeMapAttributionMaxWidthPx(360, leftClearancePx = 120, marginPx = 8))
+    assertEquals(104, routeMapAttributionMaxWidthPx(240, leftClearancePx = 120, marginPx = 8))
+    assertEquals(0, routeMapAttributionMaxWidthPx(100, leftClearancePx = 120, marginPx = 8))
+  }
+
+  @Test
   fun loadsMapOnlyWhenSavedActivityHasAtLeastTwoGpsSamples() {
     val database = databaseWithActivityAndLocations()
     insertActivity(database, id = 1L)
