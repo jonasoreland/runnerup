@@ -49,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
@@ -70,10 +71,13 @@ import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
 import org.runnerup.export.Synchronizer.Feature;
+import org.runnerup.relven.ui.ActivityMapActivity;
 import org.runnerup.relven.ui.ActivityUploadActions;
 import org.runnerup.relven.ui.ActivityUploadServiceState;
 import org.runnerup.relven.ui.ActivityUploadServicesCompose;
 import org.runnerup.relven.ui.ActivityUploadStateHolder;
+import org.runnerup.relven.ui.UnfinishedWorkoutReviewActions;
+import org.runnerup.relven.ui.UnfinishedWorkoutReviewAdapter;
 import org.runnerup.util.Bitfield;
 import org.runnerup.util.FileNameHelper;
 import org.runnerup.util.Formatter;
@@ -282,7 +286,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
         });
     notes = findViewById(R.id.notes_text);
 
-    if (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED) {
+    if (mode == MODE_DETAILS && (BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED)) {
       Object mapView = findViewById(R.id.mapview);
       mapWrapper = new MapWrapper(this, mDB, mID, formatter, mapView);
       mapWrapper.onCreate(savedInstanceState);
@@ -397,6 +401,52 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       resumeButton.setOnClickListener(resumeButtonClick);
       discardButton.setOnClickListener(discardButtonClick);
       setEdit(true);
+      ComposeView review = new ComposeView(this);
+      UnfinishedWorkoutReviewAdapter.install(
+          review,
+          mDB,
+          mID,
+          notes.getText().toString(),
+          this,
+          activityUploadState,
+          new UnfinishedWorkoutReviewActions() {
+            @Override
+            public void onNoteChanged(String note) {
+              notes.setText(note);
+            }
+
+            @Override
+            public void onResume() {
+              resumeButtonClick.onClick(resumeButton);
+            }
+
+            @Override
+            public void onSave() {
+              saveButtonClick.onClick(saveButton);
+            }
+
+            @Override
+            public void onDiscard() {
+              DetailActivity.this.setResult(RESULT_CANCELED);
+              DetailActivity.this.finish();
+            }
+
+            @Override
+            public void onOpenMap() {
+              startActivity(ActivityMapActivity.Companion.intent(DetailActivity.this, mID));
+            }
+
+            @Override
+            public void onSportChanged(int sportValue) {
+              sport.setValue(sportValue);
+            }
+
+            @Override
+            public void onManualDistanceChanged(String distanceMeters) {
+              manualDistance.setValue(distanceMeters);
+            }
+          });
+      setContentView(review);
     } else if (this.mode == MODE_DETAILS) {
       resumeButton.setVisibility(View.GONE);
       discardButton.setVisibility(View.GONE);

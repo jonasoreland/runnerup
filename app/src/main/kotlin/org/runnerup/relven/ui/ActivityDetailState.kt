@@ -25,14 +25,19 @@ internal data class HistoryActivityDetails(
     val comment: String?,
     val averageHeartRate: Int?,
     val maximumHeartRate: Int?,
-    val laps: List<ActivityLapDetails> = emptyList())
+    val averageCadence: Double? = null,
+    val laps: List<ActivityLapDetails> = emptyList(),
+    val route: List<RoutePoint> = emptyList())
 
 internal data class ActivityLapDetails(
     val number: Int,
     val intensity: Int,
     val durationSeconds: Long?,
     val distanceMeters: Double?,
-    val averageHeartRate: Int?)
+    val averageHeartRate: Int?,
+    val plannedDurationSeconds: Long? = null,
+    val plannedDistanceMeters: Double? = null,
+    val plannedPace: Double? = null)
 
 internal data class ActivityDetailMeasurements(
     val distanceMeters: Double?,
@@ -59,7 +64,7 @@ internal fun readActivityMapState(
   if (!mapEnabled) return ActivityMapLoadState.Unavailable
   val activity = readHistoryActivityDetails(database, activityId) ?: return ActivityMapLoadState.NotFound
   if (!activityHasMapRoute(activity, mapEnabled = true)) return ActivityMapLoadState.RouteUnavailable
-  val route = readActivityRoute(database, activityId)
+  val route = activity.route
   return if (route.size >= 2) ActivityMapLoadState.Loaded(activity, route)
   else ActivityMapLoadState.RouteUnavailable
 }
@@ -81,7 +86,8 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           DB.LOCATION.TIME,
           DB.LOCATION.LAP,
           DB.LOCATION.HR,
-          DB.LOCATION.SPEED)
+          DB.LOCATION.SPEED,
+          DB.LOCATION.CADENCE)
   database
       .query(
           DB.LOCATION.TABLE,
@@ -90,7 +96,7 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           arrayOf(activityId.toString()),
           null,
           null,
-          "_id ASC")
+          DB.LOCATION.TIME + " ASC, _id ASC")
       .use { cursor ->
         val typeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TYPE)
         val latitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LATITUDE)
@@ -100,6 +106,7 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
         val lapIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LAP)
         val heartRateIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.HR)
         val speedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.SPEED)
+        val cadenceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.CADENCE)
         while (cursor.moveToNext()) {
           val type = cursor.getInt(typeIndex)
           val latitude = cursor.getDouble(latitudeIndex)
@@ -137,6 +144,9 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
                     speedMetersPerSecond =
                         if (cursor.isNull(speedIndex)) null
                         else cursor.getDouble(speedIndex).takeIf { it.isFinite() && it >= 0.0 },
+                    cadencePerMinute =
+                        if (cursor.isNull(cadenceIndex)) null
+                        else cursor.getDouble(cadenceIndex).takeIf { it.isFinite() && it > 0.0 },
                     elevationMeters =
                         if (cursor.isNull(altitudeIndex)) null
                         else cursor.getDouble(altitudeIndex).takeIf { it.isFinite() },
@@ -167,7 +177,8 @@ internal fun readHistoryActivityDetails(
           DB.ACTIVITY.SPORT,
           DB.ACTIVITY.COMMENT,
           DB.ACTIVITY.AVG_HR,
-          DB.ACTIVITY.MAX_HR)
+          DB.ACTIVITY.MAX_HR,
+          DB.ACTIVITY.AVG_CADENCE)
   val gpsSampleCount =
       database
           .query(
@@ -200,6 +211,10 @@ internal fun readHistoryActivityDetails(
           val index = cursor.getColumnIndexOrThrow(column)
           return if (cursor.isNull(index)) null else cursor.getInt(index)
         }
+        fun doubleValue(column: String): Double? {
+          val index = cursor.getColumnIndexOrThrow(column)
+          return if (cursor.isNull(index)) null else cursor.getDouble(index)
+        }
         val distanceIndex = cursor.getColumnIndexOrThrow(DB.ACTIVITY.DISTANCE)
         val commentIndex = cursor.getColumnIndexOrThrow(DB.ACTIVITY.COMMENT)
         HistoryActivityDetails(
@@ -212,9 +227,13 @@ internal fun readHistoryActivityDetails(
             gpsSampleCount = gpsSampleCount,
             comment = if (cursor.isNull(commentIndex)) null else cursor.getString(commentIndex),
             averageHeartRate = intValue(DB.ACTIVITY.AVG_HR),
-            maximumHeartRate = intValue(DB.ACTIVITY.MAX_HR))
+            maximumHeartRate = intValue(DB.ACTIVITY.MAX_HR),
+            averageCadence =
+                doubleValue(DB.ACTIVITY.AVG_CADENCE)?.takeIf { it.isFinite() && it > 0.0 })
       }
-  return activity?.copy(laps = readActivityLaps(database, activityId))
+  return activity?.copy(
+      laps = readActivityLaps(database, activityId),
+      route = if (gpsSampleCount >= 2) readActivityRoute(database, activityId) else emptyList())
 }
 
 internal fun readActivityLaps(database: SQLiteDatabase, activityId: Long): List<ActivityLapDetails> {
@@ -224,6 +243,9 @@ internal fun readActivityLaps(database: SQLiteDatabase, activityId: Long): List<
           DB.LAP.INTENSITY,
           DB.LAP.TIME,
           DB.LAP.DISTANCE,
+          DB.LAP.PLANNED_TIME,
+          DB.LAP.PLANNED_DISTANCE,
+          DB.LAP.PLANNED_PACE,
           DB.LAP.AVG_HR)
   return database
       .query(
@@ -239,6 +261,9 @@ internal fun readActivityLaps(database: SQLiteDatabase, activityId: Long): List<
         val intensityIndex = cursor.getColumnIndexOrThrow(DB.LAP.INTENSITY)
         val durationIndex = cursor.getColumnIndexOrThrow(DB.LAP.TIME)
         val distanceIndex = cursor.getColumnIndexOrThrow(DB.LAP.DISTANCE)
+        val plannedDurationIndex = cursor.getColumnIndexOrThrow(DB.LAP.PLANNED_TIME)
+        val plannedDistanceIndex = cursor.getColumnIndexOrThrow(DB.LAP.PLANNED_DISTANCE)
+        val plannedPaceIndex = cursor.getColumnIndexOrThrow(DB.LAP.PLANNED_PACE)
         val heartRateIndex = cursor.getColumnIndexOrThrow(DB.LAP.AVG_HR)
         buildList {
           while (cursor.moveToNext()) {
@@ -254,7 +279,16 @@ internal fun readActivityLaps(database: SQLiteDatabase, activityId: Long): List<
                     intensity = cursor.getInt(intensityIndex),
                     durationSeconds = duration?.takeIf { it >= 0L },
                     distanceMeters = distance?.takeIf { it.isFinite() && it >= 0.0 },
-                    averageHeartRate = heartRate?.takeIf { it > 0 }))
+                    averageHeartRate = heartRate?.takeIf { it > 0 },
+                    plannedDurationSeconds =
+                        if (cursor.isNull(plannedDurationIndex)) null
+                        else cursor.getLong(plannedDurationIndex).takeIf { it >= 0L },
+                    plannedDistanceMeters =
+                        if (cursor.isNull(plannedDistanceIndex)) null
+                        else cursor.getDouble(plannedDistanceIndex).takeIf { it.isFinite() && it > 0.0 },
+                    plannedPace =
+                        if (cursor.isNull(plannedPaceIndex)) null
+                        else cursor.getDouble(plannedPaceIndex).takeIf { it.isFinite() && it > 0.0 }))
           }
         }
       }

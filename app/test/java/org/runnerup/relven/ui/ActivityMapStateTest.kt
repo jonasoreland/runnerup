@@ -33,6 +33,10 @@ class ActivityMapStateTest {
       assertEquals(1L, (state as ActivityMapLoadState.Loaded).activity.id)
       assertEquals(2, state.route.size)
       assertEquals(59.3, state.route.first().latitude, 0.00001)
+      assertEquals(2, state.activity.route.size)
+      assertEquals(state.route, state.activity.route)
+      assertEquals(174.0, state.activity.averageCadence!!, 0.01)
+      assertEquals(174.0, state.route.first().cadencePerMinute!!, 0.01)
     } finally {
       database.close()
     }
@@ -103,6 +107,7 @@ class ActivityMapStateTest {
               ${DB.ACTIVITY.COMMENT} TEXT,
               ${DB.ACTIVITY.AVG_HR} INTEGER,
               ${DB.ACTIVITY.MAX_HR} INTEGER,
+              ${DB.ACTIVITY.AVG_CADENCE} REAL,
               ${DB.ACTIVITY.DELETED} INTEGER NOT NULL DEFAULT 0
             )
             """.trimIndent())
@@ -118,7 +123,8 @@ class ActivityMapStateTest {
               ${DB.LOCATION.TIME} INTEGER NOT NULL,
               ${DB.LOCATION.LAP} INTEGER,
               ${DB.LOCATION.HR} INTEGER,
-              ${DB.LOCATION.SPEED} REAL
+              ${DB.LOCATION.SPEED} REAL,
+              ${DB.LOCATION.CADENCE} REAL
             )
             """.trimIndent())
         execSQL(
@@ -130,6 +136,9 @@ class ActivityMapStateTest {
               ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
               ${DB.LAP.TIME} INTEGER,
               ${DB.LAP.DISTANCE} REAL,
+              ${DB.LAP.PLANNED_TIME} INTEGER,
+              ${DB.LAP.PLANNED_DISTANCE} REAL,
+              ${DB.LAP.PLANNED_PACE} REAL,
               ${DB.LAP.AVG_HR} INTEGER
             )
             """.trimIndent())
@@ -146,6 +155,7 @@ class ActivityMapStateTest {
           put("_id", id)
           put(DB.ACTIVITY.START_TIME, 1_800_000_000L)
           put(DB.ACTIVITY.SPORT, sport)
+          put(DB.ACTIVITY.AVG_CADENCE, 174.0)
         })
   }
 
@@ -175,6 +185,7 @@ class ActivityMapStateTest {
           put(DB.LOCATION.LONGITUDE, longitude)
           put(DB.LOCATION.TIME, pointNumber * 60_000L)
           put(DB.LOCATION.LAP, 1)
+          put(DB.LOCATION.CADENCE, 174.0)
         })
   }
 }
