@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -115,7 +117,9 @@ private fun ActiveWorkoutScreen(
     Column(
         Modifier.fillMaxSize().padding(top = safe.calculateTopPadding(), bottom = safe.calculateBottomPadding()).padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
-      Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+      Column(
+          Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()),
+          verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Surface(
             color = RelvenColors.Background.copy(alpha = 0.96f),
             shape = RoundedCornerShape(16.dp),
