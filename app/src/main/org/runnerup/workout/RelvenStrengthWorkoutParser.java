@@ -170,12 +170,12 @@ public final class RelvenStrengthWorkoutParser {
     JSONArray equipment = snapshot.getJSONArray("equipment");
     if (equipment.length() != 0) throw invalid("strength equipment is not supported");
     if (reference != null
-        && (reference.getLibraryRevision() != libraryRevision
+        && (libraryRevision > reference.getLibraryRevision()
             || reference.getExerciseRevision() != exerciseRevision
             || !reference.getName().equals(name)
             || !reference.getInstructions().equals(instructions)
             || !reference.getEquipment().equals(List.of()))) {
-      throw invalid("exercise snapshot does not match its pinned catalog revision");
+      throw invalid("exercise snapshot does not match its canonical exercise revision");
     }
     validateImages(snapshot.getJSONArray("images"));
     return new Exercise(

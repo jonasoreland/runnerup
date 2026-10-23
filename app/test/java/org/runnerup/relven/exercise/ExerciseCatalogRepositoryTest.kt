@@ -15,6 +15,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.runnerup.relven.ui.PlanDraftBuilder
+import org.runnerup.relven.ui.PlanDraftSession
+import org.runnerup.relven.ui.PlanDraftStrengthExercise
+import org.runnerup.relven.ui.PlanWorkoutType
+import org.runnerup.workout.RelvenStrengthWorkoutParser
+import java.util.Calendar
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
@@ -82,6 +88,43 @@ class ExerciseCatalogRepositoryTest {
     } catch (_: IllegalArgumentException) {
       assertFalse(File(customDirectory, "custom-exercises.json").exists())
     }
+  }
+
+  @Test
+  fun expandedCatalogLoadsOfflineSearchesSwedishAndPinsV3Snapshots() {
+    val repository = ExerciseCatalogRepository(context)
+    val swedish = repository.load("sv-SE")
+    val english = repository.load("en-US")
+
+    assertEquals(116, swedish.exercises.size)
+    assertTrue(swedish.exercises.all { it.equipment.isEmpty() })
+    assertTrue(
+        swedish.filter("tåhävning", ExerciseCategory.LOWER_BODY)
+            .any { it.name == "Tåhävning med böjt knä" })
+
+    val selected = english.exercises.single { it.name == "Single-leg glute bridge" }
+    val references = repository.exerciseReferences()
+    val json =
+        PlanDraftBuilder.create(
+            name = "Snapshot compatibility check",
+            startDate = "2026-01-05",
+            weeks = 1,
+            sessions = listOf(PlanDraftSession(Calendar.MONDAY, PlanWorkoutType.Strength)),
+            timezone = "Europe/Stockholm",
+            strengthExercises = listOf(PlanDraftStrengthExercise(selected.exerciseId)),
+            exerciseReferences = references)
+    val workout = JSONObject(json).getJSONArray("workouts").getJSONObject(0)
+    val prescription =
+        workout.getJSONArray("steps").getJSONObject(0).getJSONObject("exercise")
+    val snapshot = prescription.getJSONObject("snapshot")
+    assertEquals(selected.exerciseId, prescription.getString("exerciseId"))
+    assertEquals(2, prescription.getInt("libraryRevision"))
+    assertEquals(1, prescription.getInt("exerciseRevision"))
+    assertEquals(selected.name, snapshot.getString("name"))
+    assertEquals(selected.instructions.joinToString("\n"), snapshot.getString("instructions"))
+    assertEquals(0, snapshot.getJSONArray("equipment").length())
+    assertEquals(0, snapshot.getJSONArray("images").length())
+    assertEquals(1, RelvenStrengthWorkoutParser.parse(workout.toString(), references).exercises().size)
   }
 
   private fun validInput() =

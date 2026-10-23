@@ -1,214 +1,3323 @@
 {
   "format": "relven.exercise-library",
   "schemaVersion": 1,
-  "libraryRevision": 1,
+  "libraryRevision": 2,
   "exercises": [
     {
       "exerciseId": "3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
       "revision": 1,
-      "name": { "en": "Bodyweight squat", "sv": "Knäböj" },
+      "name": {
+        "en": "Bodyweight squat",
+        "sv": "Knäböj"
+      },
       "category": "lower_body",
       "movementPattern": "squat",
-      "muscleGroups": ["quadriceps", "glutes"],
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand with your feet about shoulder-width apart.", "Bend your knees and hips as far as comfortable while keeping your chest lifted.", "Press through your feet to stand tall again."],
-        "sv": ["Stå med fötterna ungefär axelbrett isär.", "Böj knän och höfter så långt det känns bekvämt och håll bröstet upprätt.", "Tryck genom fötterna och res dig upp igen."]
+        "en": [
+          "Stand with your feet about shoulder-width apart.",
+          "Bend your knees and hips as far as comfortable while keeping your chest lifted.",
+          "Press through your feet to stand tall again."
+        ],
+        "sv": [
+          "Stå med fötterna ungefär axelbrett isär.",
+          "Böj knän och höfter så långt det känns bekvämt och håll bröstet upprätt.",
+          "Tryck genom fötterna och res dig upp igen."
+        ]
       }
     },
     {
       "exerciseId": "584a307a-9b1f-4be8-8a25-ea8800d0ff55",
       "revision": 1,
-      "name": { "en": "Reverse lunge", "sv": "Bakåtutfall" },
+      "name": {
+        "en": "Reverse lunge",
+        "sv": "Bakåtutfall"
+      },
       "category": "lower_body",
       "movementPattern": "lunge",
-      "muscleGroups": ["quadriceps", "glutes"],
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand tall with your feet hip-width apart.", "Step one foot back and lower under control, keeping your front foot planted.", "Push through the front foot to return. Repeat on both sides."],
-        "sv": ["Stå upprätt med fötterna höftbrett isär.", "Ta ett steg bakåt och sänk kroppen kontrollerat med främre foten kvar i golvet.", "Tryck ifrån med främre foten och återgå. Upprepa på båda sidor."]
+        "en": [
+          "Stand tall with your feet hip-width apart.",
+          "Step one foot back and lower under control, keeping your front foot planted.",
+          "Push through the front foot to return. Repeat on both sides."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär.",
+          "Ta ett steg bakåt och sänk kroppen kontrollerat med främre foten kvar i golvet.",
+          "Tryck ifrån med främre foten och återgå. Upprepa på båda sidor."
+        ]
       }
     },
     {
       "exerciseId": "a112bc26-c38c-45c8-a855-6bb8b412daf2",
       "revision": 1,
-      "name": { "en": "Glute bridge", "sv": "Höftlyft" },
+      "name": {
+        "en": "Glute bridge",
+        "sv": "Höftlyft"
+      },
       "category": "lower_body",
       "movementPattern": "hip_extension",
-      "muscleGroups": ["glutes", "hamstrings"],
+      "muscleGroups": [
+        "glutes",
+        "hamstrings"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Lie on your back with knees bent and feet flat on the floor.", "Gently brace your middle and lift your hips until your body forms a comfortable line from shoulders to knees.", "Lower your hips with control."],
-        "sv": ["Ligg på rygg med böjda knän och fötterna i golvet.", "Spänn bålen lätt och lyft höfterna tills kroppen bildar en bekväm linje från axlar till knän.", "Sänk höfterna kontrollerat."]
+        "en": [
+          "Lie on your back with knees bent and feet flat on the floor.",
+          "Gently brace your middle and lift your hips until your body forms a comfortable line from shoulders to knees.",
+          "Lower your hips with control."
+        ],
+        "sv": [
+          "Ligg på rygg med böjda knän och fötterna i golvet.",
+          "Spänn bålen lätt och lyft höfterna tills kroppen bildar en bekväm linje från axlar till knän.",
+          "Sänk höfterna kontrollerat."
+        ]
       }
     },
     {
       "exerciseId": "78a2e792-7974-495b-80dd-c21c842890ab",
       "revision": 1,
-      "name": { "en": "Calf raise", "sv": "Tåhävning" },
+      "name": {
+        "en": "Calf raise",
+        "sv": "Tåhävning"
+      },
       "category": "lower_body",
       "movementPattern": "calf_raise",
-      "muscleGroups": ["calves"],
+      "muscleGroups": [
+        "calves"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand with your feet hip-width apart on a stable surface.", "Rise onto the balls of your feet at a controlled pace.", "Lower your heels slowly and repeat."],
-        "sv": ["Stå höftbrett på ett stadigt underlag.", "Res dig kontrollerat upp på framfoten.", "Sänk hälarna långsamt och upprepa."]
+        "en": [
+          "Stand with your feet hip-width apart on a stable surface.",
+          "Rise onto the balls of your feet at a controlled pace.",
+          "Lower your heels slowly and repeat."
+        ],
+        "sv": [
+          "Stå höftbrett på ett stadigt underlag.",
+          "Res dig kontrollerat upp på framfoten.",
+          "Sänk hälarna långsamt och upprepa."
+        ]
       }
     },
     {
       "exerciseId": "101a9b68-62c3-47a4-a619-2073893303c2",
       "revision": 1,
-      "name": { "en": "Wall sit", "sv": "Väggsittning" },
+      "name": {
+        "en": "Wall sit",
+        "sv": "Väggsittning"
+      },
       "category": "lower_body",
       "movementPattern": "isometric_squat",
-      "muscleGroups": ["quadriceps", "glutes"],
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand with your back against a wall and feet slightly forward.", "Slide down to a comfortable knee bend while keeping your back supported.", "Hold while breathing steadily, then press through your feet to stand."],
-        "sv": ["Stå med ryggen mot en vägg och fötterna något framför dig.", "Glid ned till en bekväm knävinkel med ryggen stödd mot väggen.", "Håll positionen och andas lugnt. Tryck sedan genom fötterna för att resa dig."]
+        "en": [
+          "Stand with your back against a wall and feet slightly forward.",
+          "Slide down to a comfortable knee bend while keeping your back supported.",
+          "Hold while breathing steadily, then press through your feet to stand."
+        ],
+        "sv": [
+          "Stå med ryggen mot en vägg och fötterna något framför dig.",
+          "Glid ned till en bekväm knävinkel med ryggen stödd mot väggen.",
+          "Håll positionen och andas lugnt. Tryck sedan genom fötterna för att resa dig."
+        ]
       }
     },
     {
       "exerciseId": "09a2a7b3-0798-4ef8-98a8-02a446068ee0",
       "revision": 1,
-      "name": { "en": "Push-up", "sv": "Armhävning" },
+      "name": {
+        "en": "Push-up",
+        "sv": "Armhävning"
+      },
       "category": "upper_body",
       "movementPattern": "push",
-      "muscleGroups": ["chest", "triceps", "shoulders"],
+      "muscleGroups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Start in a high plank with hands under or just outside your shoulders.", "Keep your body in a comfortable straight line and lower your chest toward the floor.", "Press the floor away to return to the start."],
-        "sv": ["Börja i hög plankposition med händerna under eller strax utanför axlarna.", "Håll kroppen i en bekväm rak linje och sänk bröstet mot golvet.", "Pressa golvet ifrån dig och återgå till startpositionen."]
+        "en": [
+          "Start in a high plank with hands under or just outside your shoulders.",
+          "Keep your body in a comfortable straight line and lower your chest toward the floor.",
+          "Press the floor away to return to the start."
+        ],
+        "sv": [
+          "Börja i hög plankposition med händerna under eller strax utanför axlarna.",
+          "Håll kroppen i en bekväm rak linje och sänk bröstet mot golvet.",
+          "Pressa golvet ifrån dig och återgå till startpositionen."
+        ]
       }
     },
     {
       "exerciseId": "a3ac8fc8-fbbc-4284-a968-737494a8f0ef",
       "revision": 1,
-      "name": { "en": "Knee push-up", "sv": "Armhävning på knä" },
+      "name": {
+        "en": "Knee push-up",
+        "sv": "Armhävning på knä"
+      },
       "category": "upper_body",
       "movementPattern": "push",
-      "muscleGroups": ["chest", "triceps", "shoulders"],
+      "muscleGroups": [
+        "chest",
+        "triceps",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Start on your hands and knees with hands under your shoulders.", "Keep a straight line from your head to your knees as you lower your chest toward the floor.", "Press through your hands to return."],
-        "sv": ["Börja på händer och knän med händerna under axlarna.", "Håll en rak linje från huvudet till knäna och sänk bröstet mot golvet.", "Pressa genom händerna och återgå."]
+        "en": [
+          "Start on your hands and knees with hands under your shoulders.",
+          "Keep a straight line from your head to your knees as you lower your chest toward the floor.",
+          "Press through your hands to return."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna.",
+          "Håll en rak linje från huvudet till knäna och sänk bröstet mot golvet.",
+          "Pressa genom händerna och återgå."
+        ]
       }
     },
     {
       "exerciseId": "b3dff0aa-e44b-4c53-9519-dd99a032a19a",
       "revision": 1,
-      "name": { "en": "Forearm plank", "sv": "Planka på underarmarna" },
+      "name": {
+        "en": "Forearm plank",
+        "sv": "Planka på underarmarna"
+      },
       "category": "core",
       "movementPattern": "anti_extension",
-      "muscleGroups": ["abdominals", "shoulders"],
+      "muscleGroups": [
+        "abdominals",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Place your forearms on the floor with elbows under your shoulders.", "Step your feet back and keep your body in a comfortable straight line.", "Breathe steadily and end the hold when you can no longer keep the position comfortably."],
-        "sv": ["Placera underarmarna i golvet med armbågarna under axlarna.", "Ta fötterna bakåt och håll kroppen i en bekväm rak linje.", "Andas lugnt och avsluta när du inte längre kan hålla positionen bekvämt."]
+        "en": [
+          "Place your forearms on the floor with elbows under your shoulders.",
+          "Step your feet back and keep your body in a comfortable straight line.",
+          "Breathe steadily and end the hold when you can no longer keep the position comfortably."
+        ],
+        "sv": [
+          "Placera underarmarna i golvet med armbågarna under axlarna.",
+          "Ta fötterna bakåt och håll kroppen i en bekväm rak linje.",
+          "Andas lugnt och avsluta när du inte längre kan hålla positionen bekvämt."
+        ]
       }
     },
     {
       "exerciseId": "be1a39c1-1675-467e-a5ca-e4352ac87809",
       "revision": 1,
-      "name": { "en": "Side plank", "sv": "Sidoplanka" },
+      "name": {
+        "en": "Side plank",
+        "sv": "Sidoplanka"
+      },
       "category": "core",
       "movementPattern": "lateral_stability",
-      "muscleGroups": ["obliques", "shoulders"],
+      "muscleGroups": [
+        "obliques",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Lie on one side and place your forearm below your shoulder.", "Lift your hips until your body forms a comfortable line.", "Hold while breathing steadily, then repeat on the other side."],
-        "sv": ["Ligg på sidan och placera underarmen under axeln.", "Lyft höfterna tills kroppen bildar en bekväm linje.", "Håll positionen och andas lugnt. Upprepa sedan på andra sidan."]
+        "en": [
+          "Lie on one side and place your forearm below your shoulder.",
+          "Lift your hips until your body forms a comfortable line.",
+          "Hold while breathing steadily, then repeat on the other side."
+        ],
+        "sv": [
+          "Ligg på sidan och placera underarmen under axeln.",
+          "Lyft höfterna tills kroppen bildar en bekväm linje.",
+          "Håll positionen och andas lugnt. Upprepa sedan på andra sidan."
+        ]
       }
     },
     {
       "exerciseId": "d99ad912-22e5-44eb-9e55-462005238910",
       "revision": 1,
-      "name": { "en": "Dead bug", "sv": "Dead bug" },
+      "name": {
+        "en": "Dead bug",
+        "sv": "Dead bug"
+      },
       "category": "core",
       "movementPattern": "anti_extension",
-      "muscleGroups": ["abdominals"],
+      "muscleGroups": [
+        "abdominals"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Lie on your back with arms pointing upward and hips and knees bent.", "Slowly reach one arm overhead while extending the opposite leg only as far as comfortable.", "Return to the start and alternate sides while keeping your lower back comfortable."],
-        "sv": ["Ligg på rygg med armarna uppåt och höfter och knän böjda.", "Sträck långsamt ena armen bakåt samtidigt som du sträcker motsatt ben så långt det känns bekvämt.", "Återgå och byt sida. Håll ländryggen bekväm mot underlaget."]
+        "en": [
+          "Lie on your back with arms pointing upward and hips and knees bent.",
+          "Slowly reach one arm overhead while extending the opposite leg only as far as comfortable.",
+          "Return to the start and alternate sides while keeping your lower back comfortable."
+        ],
+        "sv": [
+          "Ligg på rygg med armarna uppåt och höfter och knän böjda.",
+          "Sträck långsamt ena armen bakåt samtidigt som du sträcker motsatt ben så långt det känns bekvämt.",
+          "Återgå och byt sida. Håll ländryggen bekväm mot underlaget."
+        ]
       }
     },
     {
       "exerciseId": "af39b3fd-304e-47a2-a22e-3f10f0063f6d",
       "revision": 1,
-      "name": { "en": "Bird dog", "sv": "Fågelhund" },
+      "name": {
+        "en": "Bird dog",
+        "sv": "Fågelhund"
+      },
       "category": "core",
       "movementPattern": "contralateral_stability",
-      "muscleGroups": ["back", "abdominals", "glutes"],
+      "muscleGroups": [
+        "back",
+        "abdominals",
+        "glutes"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Start on your hands and knees with your back in a comfortable neutral position.", "Reach one arm forward and the opposite leg back without twisting your trunk.", "Return to the start and alternate sides."],
-        "sv": ["Börja på händer och knän med ryggen i en bekväm neutral position.", "Sträck fram ena armen och bak motsatt ben utan att vrida överkroppen.", "Återgå och byt sida."]
+        "en": [
+          "Start on your hands and knees with your back in a comfortable neutral position.",
+          "Reach one arm forward and the opposite leg back without twisting your trunk.",
+          "Return to the start and alternate sides."
+        ],
+        "sv": [
+          "Börja på händer och knän med ryggen i en bekväm neutral position.",
+          "Sträck fram ena armen och bak motsatt ben utan att vrida överkroppen.",
+          "Återgå och byt sida."
+        ]
       }
     },
     {
       "exerciseId": "566b7625-6ad7-4b31-aa50-399795388855",
       "revision": 1,
-      "name": { "en": "Mountain climber", "sv": "Bergsklättrare" },
+      "name": {
+        "en": "Mountain climber",
+        "sv": "Bergsklättrare"
+      },
       "category": "core",
       "movementPattern": "dynamic_core",
-      "muscleGroups": ["abdominals", "shoulders"],
+      "muscleGroups": [
+        "abdominals",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Start in a high plank with hands below your shoulders.", "Bring one knee toward your chest, then return it as the other knee moves forward.", "Continue at a pace that lets you keep control of your position."],
-        "sv": ["Börja i hög plankposition med händerna under axlarna.", "För ett knä mot bröstet och för tillbaka det medan det andra knät går fram.", "Fortsätt i ett tempo där du kan behålla kontrollen."]
+        "en": [
+          "Start in a high plank with hands below your shoulders.",
+          "Bring one knee toward your chest, then return it as the other knee moves forward.",
+          "Continue at a pace that lets you keep control of your position."
+        ],
+        "sv": [
+          "Börja i hög plankposition med händerna under axlarna.",
+          "För ett knä mot bröstet och för tillbaka det medan det andra knät går fram.",
+          "Fortsätt i ett tempo där du kan behålla kontrollen."
+        ]
       }
     },
     {
       "exerciseId": "1d8dbf3c-e768-4876-935d-d90881fb87e4",
       "revision": 1,
-      "name": { "en": "Hip hinge", "sv": "Höftfällning" },
+      "name": {
+        "en": "Hip hinge",
+        "sv": "Höftfällning"
+      },
       "category": "warmup_mobility",
       "movementPattern": "hinge",
-      "muscleGroups": ["hamstrings", "glutes"],
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand tall with feet hip-width apart and knees softly bent.", "Move your hips backward while keeping your back comfortable and torso long.", "Press through your feet and return to standing."],
-        "sv": ["Stå upprätt med fötterna höftbrett isär och knäna lätt böjda.", "För höfterna bakåt med bekväm rygg och lång överkropp.", "Tryck genom fötterna och återgå till stående."]
+        "en": [
+          "Stand tall with feet hip-width apart and knees softly bent.",
+          "Move your hips backward while keeping your back comfortable and torso long.",
+          "Press through your feet and return to standing."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och knäna lätt böjda.",
+          "För höfterna bakåt med bekväm rygg och lång överkropp.",
+          "Tryck genom fötterna och återgå till stående."
+        ]
       }
     },
     {
       "exerciseId": "c444dd89-62fa-425b-955e-567c4b853241",
       "revision": 1,
-      "name": { "en": "Marching knee raise", "sv": "Gående knälyft" },
+      "name": {
+        "en": "Marching knee raise",
+        "sv": "Gående knälyft"
+      },
       "category": "warmup_mobility",
       "movementPattern": "march",
-      "muscleGroups": ["hips", "abdominals"],
+      "muscleGroups": [
+        "hips",
+        "abdominals"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand tall with your feet hip-width apart.", "Lift one knee to a comfortable height while keeping your torso upright.", "Lower with control and alternate sides at an easy pace."],
-        "sv": ["Stå upprätt med fötterna höftbrett isär.", "Lyft ett knä till en bekväm höjd och håll överkroppen upprätt.", "Sänk kontrollerat och växla sida i lugnt tempo."]
+        "en": [
+          "Stand tall with your feet hip-width apart.",
+          "Lift one knee to a comfortable height while keeping your torso upright.",
+          "Lower with control and alternate sides at an easy pace."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär.",
+          "Lyft ett knä till en bekväm höjd och håll överkroppen upprätt.",
+          "Sänk kontrollerat och växla sida i lugnt tempo."
+        ]
       }
     },
     {
       "exerciseId": "2e65df65-017b-4fbb-9c02-ecc5ca64fc4f",
       "revision": 1,
-      "name": { "en": "Jumping jack", "sv": "Jumping jack" },
+      "name": {
+        "en": "Jumping jack",
+        "sv": "Jumping jack"
+      },
       "category": "warmup_mobility",
       "movementPattern": "cardiovascular",
-      "muscleGroups": ["calves", "shoulders"],
+      "muscleGroups": [
+        "calves",
+        "shoulders"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand tall with arms by your sides.", "Step or jump your feet apart as you raise your arms overhead.", "Return to the start. Use side steps instead of jumps whenever you prefer."],
-        "sv": ["Stå upprätt med armarna längs sidorna.", "Kliv eller hoppa ut med fötterna samtidigt som du lyfter armarna över huvudet.", "Återgå till start. Välj sidosteg i stället för hopp när du vill."]
+        "en": [
+          "Stand tall with arms by your sides.",
+          "Step or jump your feet apart as you raise your arms overhead.",
+          "Return to the start. Use side steps instead of jumps whenever you prefer."
+        ],
+        "sv": [
+          "Stå upprätt med armarna längs sidorna.",
+          "Kliv eller hoppa ut med fötterna samtidigt som du lyfter armarna över huvudet.",
+          "Återgå till start. Välj sidosteg i stället för hopp när du vill."
+        ]
       }
     },
     {
       "exerciseId": "5c778d2a-2be6-4366-8f10-72786048d8db",
       "revision": 1,
-      "name": { "en": "Standing quad stretch", "sv": "Stående framsida lår" },
+      "name": {
+        "en": "Standing quad stretch",
+        "sv": "Stående framsida lår"
+      },
       "category": "warmup_mobility",
       "movementPattern": "static_stretch",
-      "muscleGroups": ["quadriceps"],
+      "muscleGroups": [
+        "quadriceps"
+      ],
       "equipment": [],
       "instructions": {
-        "en": ["Stand tall and shift your weight onto one foot.", "Bend the other knee and bring your heel toward your seat, holding your ankle if comfortable.", "Keep your knees close and hold gently. Repeat on the other side."],
-        "sv": ["Stå upprätt och flytta vikten till ena foten.", "Böj det andra knät och för hälen mot sätet. Håll i fotleden om det känns bekvämt.", "Håll knäna nära varandra och stretcha mjukt. Upprepa på andra sidan."]
+        "en": [
+          "Stand tall and shift your weight onto one foot.",
+          "Bend the other knee and bring your heel toward your seat, holding your ankle if comfortable.",
+          "Keep your knees close and hold gently. Repeat on the other side."
+        ],
+        "sv": [
+          "Stå upprätt och flytta vikten till ena foten.",
+          "Böj det andra knät och för hälen mot sätet. Håll i fotleden om det känns bekvämt.",
+          "Håll knäna nära varandra och stretcha mjukt. Upprepa på andra sidan."
+        ]
+      }
+    },
+    {
+      "exerciseId": "2a8d1a7a-be56-4d37-9ad9-d1facd0870d2",
+      "revision": 1,
+      "name": {
+        "en": "Glute bridge march",
+        "sv": "Höftlyft med marsch"
+      },
+      "category": "lower_body",
+      "movementPattern": "bridge_march",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lift into a bridge, then raise one foot a few centimetres without dropping the pelvis.",
+          "Alternate slowly and keep both hip bones level.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Lyft höfterna till ett höftlyft och lyft sedan ena foten några centimeter utan att sänka bäckenet.",
+          "Växla långsamt och håll höfterna i jämn höjd.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "091886ef-635d-4568-954a-ef3f70e8df24",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg glute bridge",
+        "sv": "Enbenshöftlyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_bridge",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Extend one leg, press through the other heel and lift your hips.",
+          "Keep the pelvis level; use a smaller lift if the hamstring cramps.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Sträck ena benet, pressa genom den andra hälen och lyft höfterna.",
+          "Håll bäckenet jämnt och lyft lägre om hamstringsmuskeln krampar.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "1a8ffbc7-e4c4-45fc-b405-33b837315fc1",
+      "revision": 1,
+      "name": {
+        "en": "Long-lever bridge",
+        "sv": "Höftlyft med lång hävarm"
+      },
+      "category": "lower_body",
+      "movementPattern": "long_lever_bridge",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Move both heels farther from your hips, press them down and lift your pelvis.",
+          "Keep the ribs relaxed and stop before your back arches.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Placera båda hälarna längre från höfterna, pressa ned dem och lyft bäckenet.",
+          "Håll revbenen avslappnade och avsluta innan ryggen svankar.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "562bd1ab-53e7-4f44-9be9-ae84af6fdaa2",
+      "revision": 1,
+      "name": {
+        "en": "Long-lever bridge hold",
+        "sv": "Långt höftlyft med håll"
+      },
+      "category": "lower_body",
+      "movementPattern": "long_lever_bridge_hold",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Set your heels farther from your hips and raise your pelvis to a comfortable height.",
+          "Hold while breathing steadily; do not force the knees straight.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Placera hälarna längre från höfterna och lyft bäckenet till en bekväm höjd.",
+          "Håll och andas lugnt; tvinga inte knäna raka.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "0509c4b3-a679-4641-9d96-2f11a94e8e8b",
+      "revision": 1,
+      "name": {
+        "en": "Bridge walkout",
+        "sv": "Höftlyft med utgång"
+      },
+      "category": "lower_body",
+      "movementPattern": "bridge_walkout",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lift into a bridge, take short heel steps away, then step back toward your hips.",
+          "Keep hips lifted only as long as you can avoid sagging.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Lyft höfterna, gå med hälarna korta steg bort och sedan tillbaka.",
+          "Håll höfterna uppe bara så länge du kan undvika att de sjunker.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "801b16e3-9859-4468-b538-2008af40dcb7",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg bridge walkout",
+        "sv": "Enbens höftlyft med hälgång"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_bridge_walkout",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Raise your hips on one leg and take one small heel step out and back.",
+          "Keep the pelvis level and shorten the step if control fades.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Lyft höfterna på ett ben och ta ett litet steg ut och tillbaka med hälen.",
+          "Håll bäckenet jämnt och gör steget kortare om kontrollen minskar.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "8ccb6c9c-8c3e-4e49-849a-cee683619e70",
+      "revision": 1,
+      "name": {
+        "en": "Supine heel press",
+        "sv": "Hälpress mot golvet"
+      },
+      "category": "lower_body",
+      "movementPattern": "hamstring_isometric",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Press both heels firmly into the floor as if dragging them toward your seat.",
+          "Keep hips grounded and build effort gradually without holding your breath.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Pressa båda hälarna mot golvet som om du drog dem mot sätet.",
+          "Håll höfterna i golvet och öka kraften gradvis utan att hålla andan.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "68b0b97b-bf58-4168-af85-6fe290589d42",
+      "revision": 1,
+      "name": {
+        "en": "Prone heel drag",
+        "sv": "Magliggande häldrag"
+      },
+      "category": "lower_body",
+      "movementPattern": "prone_hamstring_isometric",
+      "muscleGroups": [
+        "hamstrings"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie face down with your forehead resting lightly on the floor.",
+          "Bend one knee and press the heel down while trying to draw it toward your seat.",
+          "Keep the thigh relaxed on the floor and use moderate effort.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på mage med pannan lätt mot golvet.",
+          "Böj ena knät och pressa hälen nedåt samtidigt som du försöker dra den mot sätet.",
+          "Håll låret avslappnat mot golvet och använd måttlig kraft.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "a80fd433-89a8-4686-8f31-6b3cd7da1601",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg hinge reach",
+        "sv": "Enbenshöftfällning med räckning"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_hinge_reach",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Shift onto one foot, hinge at the hip and reach the opposite hand forward.",
+          "Keep a soft knee and hips facing the floor; use a shallow range first.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Flytta vikten till ena foten, fäll i höften och sträck motsatt hand framåt.",
+          "Behåll lätt böjt knä och höfterna riktade mot golvet; börja grunt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e2afb474-1414-46fa-833d-f82c9c02b515",
+      "revision": 1,
+      "name": {
+        "en": "Kickstand hip hinge",
+        "sv": "Höftfällning med stödben"
+      },
+      "category": "lower_body",
+      "movementPattern": "kickstand_hinge",
+      "muscleGroups": [
+        "hamstrings",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Place one foot slightly behind on its toes and hinge mostly over the front leg.",
+          "Keep most weight over the front heel and maintain a long spine.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Placera ena foten lite bakom på tå och fäll främst över det främre benet.",
+          "Behåll mesta vikten över främre hälen och håll ryggen lång.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "6b56e2f7-4158-4bb2-9c0b-4a1131c328e9",
+      "revision": 1,
+      "name": {
+        "en": "Standing hip extension",
+        "sv": "Stående höftsträckning"
+      },
+      "category": "lower_body",
+      "movementPattern": "standing_hip_extension",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Move one straight leg gently behind you without leaning your torso forward.",
+          "Squeeze the glute lightly and keep the movement small.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "För ett rakt ben mjukt bakåt utan att luta överkroppen framåt.",
+          "Spänn sätet lätt och håll rörelsen liten.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "d03ddd51-5294-4c67-bcbc-89add5185bd0",
+      "revision": 1,
+      "name": {
+        "en": "Quadruped hip extension",
+        "sv": "Fyrfota höftsträckning"
+      },
+      "category": "lower_body",
+      "movementPattern": "quadruped_hip_extension",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Bend one knee and lift the thigh behind you until the pelvis begins to move.",
+          "Keep your back quiet and avoid arching to gain extra height.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "Böj ena knät och lyft låret bakåt tills bäckenet börjar röra sig.",
+          "Håll ryggen stilla och undvik att svanka för att komma högre.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "90fa40e4-5b0b-4f59-bcbc-b07697df6879",
+      "revision": 1,
+      "name": {
+        "en": "Side-lying hip adduction",
+        "sv": "Sidliggande adduktorlyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "side_lying_hip_adduction",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Move your top leg forward and place its foot on the floor in front of you.",
+          "Lift the lower leg from the inner thigh without rolling your hips back.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "För det övre benet framåt och placera foten framför dig i golvet.",
+          "Lyft det undre benet med insida lår utan att rulla bäckenet bakåt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f6e6428f-6c02-4226-b955-0836e19e15b1",
+      "revision": 1,
+      "name": {
+        "en": "Bent-knee hip adduction",
+        "sv": "Böjt adduktorlyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "bent_knee_hip_adduction",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Bend the lower knee and keep the top leg relaxed in front of you.",
+          "Lift the bent lower knee a short distance, then lower with control.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Böj det undre knät och låt det övre benet vila framför dig.",
+          "Lyft det böjda undre knät en kort bit och sänk kontrollerat.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "8df10410-416a-40b2-bc06-e5fb2b804322",
+      "revision": 1,
+      "name": {
+        "en": "Self-resisted hip adduction",
+        "sv": "Självpress för adduktorer"
+      },
+      "category": "lower_body",
+      "movementPattern": "self_resisted_adduction",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Place one hand against the inside of your thigh and let the knee rest slightly outward.",
+          "Press the knee inward against your hand without allowing either to move.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Placera ena handen mot lårets insida och låt knät vila lätt utåt.",
+          "Pressa knät inåt mot handen utan att någon av dem rör sig.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "2166b66a-eb3f-4daf-b340-84e3d2df813e",
+      "revision": 1,
+      "name": {
+        "sv": "Stående höftadduktion",
+        "en": "Standing hip adduction"
+      },
+      "category": "lower_body",
+      "movementPattern": "standing_hip_adduction",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand beside a clear wall and shift your weight onto the leg farther from it.",
+          "Keep one hand near the wall for balance and let the other leg hang relaxed.",
+          "Sweep the free leg inward across the midline without turning your pelvis.",
+          "Return slowly and repeat on both sides; use a small range and stop if painful."
+        ],
+        "sv": [
+          "Stå bredvid en fri vägg och lägg vikten på benet längst från den.",
+          "Håll ena handen nära väggen för balans och låt det andra benet hänga avslappnat.",
+          "För det fria benet inåt över kroppens mittlinje utan att vrida bäckenet.",
+          "Återgå långsamt och upprepa på båda sidor; använd liten rörelse och avbryt vid smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "8dd03213-d267-4ef5-b75c-8b7ef3253457",
+      "revision": 1,
+      "name": {
+        "en": "Lateral weight shift",
+        "sv": "Sidoutfall med viktförskjutning"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_weight_shift",
+      "muscleGroups": [
+        "hips",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Take a wide stance with toes mostly forward and knees relaxed.",
+          "Shift your hips over one leg while the other leg stays long and comfortable.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå brett med tårna mestadels framåt och knäna mjuka.",
+          "Flytta höfterna över ena benet medan det andra hålls långt och avslappnat.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f832d36c-aff4-48f5-aca4-34d978f4f5b5",
+      "revision": 1,
+      "name": {
+        "en": "Adductor rock-back",
+        "sv": "Adduktorrockning"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "adductor_rockback",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Slide one leg out to the side with its foot flat and knee straight but relaxed.",
+          "Rock your hips back until you feel a mild inner-thigh stretch, not pain.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "Sträck ut ena benet åt sidan med foten i golvet och knät mjukt rakt.",
+          "För höfterna bakåt tills det känns lätt på insida lår, inte smärtsamt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "1adcb28c-e8ef-40bb-85de-320d1992cabf",
+      "revision": 1,
+      "name": {
+        "en": "Wide-knee rock-back",
+        "sv": "Bred knärockning"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "wide_knee_rockback",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Widen your knees to a comfortable position while keeping feet in line with them.",
+          "Rock your hips back and forward through a small, easy range.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "För knäna brett inom ett bekvämt läge och håll fötterna i linje med dem.",
+          "Gunga höfterna fram och tillbaka genom ett litet, behagligt rörelseomfång.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "31cbedf6-f7d7-41f6-b7c7-c9f368d24406",
+      "revision": 1,
+      "name": {
+        "en": "90/90 hip internal rotation",
+        "sv": "90/90 inåtrotation"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "hip_internal_rotation",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit with both knees bent and feet wider than your hips, hands on the floor if needed.",
+          "Let one knee move gently inward while the opposite hip stays grounded.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt med böjda knän och fötterna bredare än höfterna; använd händerna som stöd vid behov.",
+          "För ena knät mjukt inåt medan motsatt höft hålls i golvet.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "8b88f775-b38f-4732-9f42-83b2b51fdb65",
+      "revision": 1,
+      "name": {
+        "en": "Side-lying hip rotation",
+        "sv": "Sidliggande höftrotation"
+      },
+      "category": "lower_body",
+      "movementPattern": "side_lying_hip_rotation",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Bend both knees and stack your hips with feet together.",
+          "Open the top knee a small distance without rolling your pelvis backward.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Böj båda knäna och stapla höfterna med fötterna ihop.",
+          "Öppna det övre knät en liten bit utan att rulla bäckenet bakåt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "424b5301-b79e-4ba1-b056-219550daadff",
+      "revision": 1,
+      "name": {
+        "en": "Low lateral shuffle step",
+        "sv": "Sidosteg i djup position"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_shuffle_step",
+      "muscleGroups": [
+        "hips",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Bend your hips and knees slightly and keep your chest lifted.",
+          "Take two small side steps each way without letting your knees collapse inward.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Böj höfter och knän lätt och håll bröstet upprätt.",
+          "Ta två korta sidosteg åt varje håll utan att knäna faller inåt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "aea36344-1ad2-4cbd-bf66-ba3016b2baa5",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg hip abduction",
+        "sv": "Enbens höftabduktion"
+      },
+      "category": "lower_body",
+      "movementPattern": "standing_hip_abduction",
+      "muscleGroups": [
+        "hips",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Balance on one foot with the standing knee soft.",
+          "Move the other leg a short distance out to the side without leaning.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Balansera på ena foten med lätt böjt stödknä.",
+          "För det andra benet en kort bit ut åt sidan utan att luta kroppen.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "366b0f3f-a09d-474e-9fc0-5402b11132c1",
+      "revision": 1,
+      "name": {
+        "en": "Lateral lunge with reach",
+        "sv": "Utfall med sidolutning"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_lunge_reach",
+      "muscleGroups": [
+        "hips",
+        "quadriceps",
+        "obliques"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Step one foot wide and keep both feet flat.",
+          "Bend the stepping knee and reach both hands toward that thigh while the other leg lengthens.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Kliv brett åt sidan och håll båda fötterna i golvet.",
+          "Böj stegsidans knä och sträck händerna mot låret medan det andra benet blir långt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "875ccdd9-a028-4235-8f3d-9a517de2577f",
+      "revision": 1,
+      "name": {
+        "en": "Wall tibialis raise",
+        "sv": "Tibialislyft mot vägg"
+      },
+      "category": "lower_body",
+      "movementPattern": "tibialis_raise",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Lean lightly against the wall with heels on the floor and feet forward.",
+          "Lift your toes toward your shins, then lower without rocking your body.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Luta dig lätt mot väggen med hälarna i golvet och fötterna framåt.",
+          "Lyft tårna mot smalbenen och sänk utan att gunga kroppen.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "2dfd9494-8dc5-4ea5-a28d-3b8c4707ad79",
+      "revision": 1,
+      "name": {
+        "en": "Seated toe raise",
+        "sv": "Sittande tålyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "seated_dorsiflexion",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit with heels under your knees and feet flat on the floor.",
+          "Lift the front of both feet while keeping heels grounded.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt med hälarna under knäna och fötterna i golvet.",
+          "Lyft framfoten på båda fötterna medan hälarna stannar i golvet.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "4c698272-315f-4d68-b9aa-b2082c4d2b4b",
+      "revision": 1,
+      "name": {
+        "en": "Self-resisted dorsiflexion",
+        "sv": "Självmotstånd för fotlyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "self_resisted_dorsiflexion",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit and loop one hand over the forefoot of the same-side foot.",
+          "Pull toes toward your shin against gentle hand pressure without moving the ankle.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt och lägg ena handen över framfoten på samma sidas fot.",
+          "Dra tårna mot smalbenet mot ett lätt handtryck utan att fotleden rör sig.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "dd6db5ec-542b-478f-8fbc-f3babb27e11e",
+      "revision": 1,
+      "name": {
+        "en": "Bent-knee calf raise",
+        "sv": "Tåhävning med böjt knä"
+      },
+      "category": "lower_body",
+      "movementPattern": "bent_knee_calf_raise",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet hip-width apart and bend both knees slightly.",
+          "Rise onto your toes while keeping the knee bend steady.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå höftbrett och böj båda knäna lätt.",
+          "Res dig upp på tå och behåll samma böjning i knäna.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "ad4f85ad-4cd4-4e87-b97a-e57f5763bb1c",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg calf raise",
+        "sv": "Enbens tåhävning"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_calf_raise",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand on one foot with the other foot lifted just off the floor.",
+          "Rise onto the ball of the standing foot and lower slowly.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå på ena foten med den andra lätt lyft från golvet.",
+          "Res dig på stödbenets framfot och sänk långsamt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "c35e791e-b520-4665-ac91-39907767a193",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg bent-knee calf raise",
+        "sv": "Enbens tåhävning med böjt knä"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_bent_knee_calf_raise",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Balance on one foot with the standing knee softly bent.",
+          "Lift the heel while preserving the knee angle, then lower slowly.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Balansera på ena foten med stödknät lätt böjt.",
+          "Lyft hälen med samma knävinkel och sänk långsamt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "3f1dd088-341a-433d-b6ec-2bbc74065ac9",
+      "revision": 1,
+      "name": {
+        "en": "Calf raise hold",
+        "sv": "Tåhävningshåll"
+      },
+      "category": "lower_body",
+      "movementPattern": "calf_raise_isometric",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with both feet flat and rise to a comfortable mid-height on your toes.",
+          "Hold steady without rolling onto the outside edges of your feet.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå med båda fötterna i golvet och lyft till en bekväm mellanhöjd på tå.",
+          "Håll stilla utan att rulla ut på fötternas ytterkanter.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "45afe6a0-7b66-42d3-8a1d-45336e01ead2",
+      "revision": 1,
+      "name": {
+        "en": "Eccentric heel lowering",
+        "sv": "Excentrisk hälsänkning"
+      },
+      "category": "lower_body",
+      "movementPattern": "eccentric_calf_lowering",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Rise onto both toes, then shift most of your weight to one foot.",
+          "Lower that heel slowly to the floor over several seconds.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Res dig på båda tårna och flytta sedan merparten av vikten till ena foten.",
+          "Sänk den hälen långsamt till golvet under flera sekunder.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "ba1380d2-363b-44da-9b51-5afb79f941d2",
+      "revision": 1,
+      "name": {
+        "en": "Toe yoga",
+        "sv": "Tåyoga"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "toe_control",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit or stand with both feet flat and relaxed.",
+          "Lift the big toes while other toes stay down, then reverse the movement.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt eller stå med båda fötterna i golvet och avslappnade.",
+          "Lyft stortårna medan övriga tår stannar nere och byt sedan rörelse.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "1724c268-0e13-4af6-8d0f-39116e164491",
+      "revision": 1,
+      "name": {
+        "en": "Short-foot exercise",
+        "sv": "Kortfot"
+      },
+      "category": "lower_body",
+      "movementPattern": "intrinsic_foot_control",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand barefoot or in flexible footwear with feet hip-width apart.",
+          "Draw the ball of one foot gently toward its heel without curling the toes.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå barfota eller i mjuka skor med fötterna höftbrett isär.",
+          "Dra framfoten lätt mot hälen utan att krumma tårna.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "9f88562e-a2c0-40c6-9796-4e089b35d079",
+      "revision": 1,
+      "name": {
+        "en": "Toe spreading",
+        "sv": "Tåspridning"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "toe_spread",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit with feet flat and toes relaxed on the floor.",
+          "Spread your toes apart gently, then let them return without gripping.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt med fötterna i golvet och avslappnade tår.",
+          "Spreta mjukt med tårna och låt dem återgå utan att krampa.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "40c4f176-230f-45c3-aabe-a58244112f47",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg ankle balance",
+        "sv": "Enbens fotledsbalans"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_balance",
+      "muscleGroups": [
+        "calves",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand on one foot with a soft knee and eyes on a steady point.",
+          "Hold your balance while keeping a tripod through heel, big toe and little toe.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå på ena foten med mjukt knä och blicken på en fast punkt.",
+          "Balansera med stöd genom häl, stortåbas och lilltåbas.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "0614205c-04da-4086-9f26-4ef76cc3a51a",
+      "revision": 1,
+      "name": {
+        "en": "Self-resisted ankle inversion and eversion",
+        "sv": "Fotledspress inåt och utåt"
+      },
+      "category": "lower_body",
+      "movementPattern": "ankle_inversion_eversion",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit with one lower leg relaxed and hold the forefoot with your hand.",
+          "Press the foot gently inward, then outward against your hand.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt med underbenet avslappnat och håll framfoten med handen.",
+          "Pressa foten mjukt inåt och sedan utåt mot handen.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "11d7c089-78bb-45d1-9f72-680f200d8f62",
+      "revision": 1,
+      "name": {
+        "en": "Knee-to-toe ankle mobility",
+        "sv": "Knä fram över tå"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "ankle_dorsiflexion_mobility",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand in a short split stance with the front heel fully grounded.",
+          "Move the front knee forward over the toes, then ease it back.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå i ett kort utfallssteg med främre hälen helt i golvet.",
+          "För främre knät fram över tårna och backa sedan mjukt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e7dc9206-9774-4785-9dcb-f4156003e786",
+      "revision": 1,
+      "name": {
+        "en": "Split squat",
+        "sv": "Statisk split squat"
+      },
+      "category": "lower_body",
+      "movementPattern": "split_squat",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet on two tracks, one foot forward and one back.",
+          "Lower straight down by bending both knees, then press through both feet to rise.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå med fötterna på var sitt spår, ena fram och andra bak.",
+          "Sänk rakt ned genom att böja båda knäna och pressa dig upp igen.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "9d5d7b0e-5871-4230-bcac-53ef7241f9b2",
+      "revision": 1,
+      "name": {
+        "en": "Forward lunge",
+        "sv": "Framåtutfall"
+      },
+      "category": "lower_body",
+      "movementPattern": "forward_lunge",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall with feet hip-width apart and hands at your sides.",
+          "Step forward, lower under control, then push back to standing.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt med fötterna höftbrett och armarna längs sidorna.",
+          "Kliv fram, sänk kontrollerat och tryck tillbaka till stående.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "62345244-eae1-4ae4-beb9-b491fef05a9c",
+      "revision": 1,
+      "name": {
+        "en": "Lateral lunge",
+        "sv": "Sidoutfall"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_lunge",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Start with feet wider than hips and toes pointing mostly forward.",
+          "Bend one knee and sit the hips back over that foot while the other leg stays long.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Börja med fötterna bredare än höfterna och tårna mest framåt.",
+          "Böj ena knät och för höfterna bak över den foten medan det andra benet hålls långt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "ce393329-74b8-405d-8eb6-055244f2b451",
+      "revision": 1,
+      "name": {
+        "en": "Split squat isometric hold",
+        "sv": "Split squat-håll"
+      },
+      "category": "lower_body",
+      "movementPattern": "split_squat_isometric",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Set a comfortable split stance with feet hip-width apart front to back.",
+          "Lower a short distance and hold with weight shared between both feet.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Ställ dig i ett bekvämt utfallssteg med fötterna höftbrett i sidled.",
+          "Sänk en kort bit och håll med vikten fördelad mellan fötterna.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "1881c916-13c3-4903-9a71-19a8d5629f7e",
+      "revision": 1,
+      "name": {
+        "en": "Shallow single-leg squat",
+        "sv": "Enbensknäböj, grund"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_squat",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Balance on one leg with the other foot slightly forward.",
+          "Bend the standing knee a small amount and push the hips back.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Balansera på ett ben med den andra foten lite framför.",
+          "Böj stödknät lite och för höfterna bakåt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "656213fd-5e06-43cc-aa2f-ac8757a32a91",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg squat with reach",
+        "sv": "Knäböj med sidräckning"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_squat_reach",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Balance on one foot with the free leg relaxed in front.",
+          "Perform a shallow squat and reach the opposite hand toward the standing foot.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Balansera på ena foten med det fria benet avslappnat framför.",
+          "Gör en grund knäböj och sträck motsatt hand mot stödbenets fot.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "cebf146c-b9c5-4eb7-869f-9855ee4a72df",
+      "revision": 1,
+      "name": {
+        "en": "Wide-stance squat",
+        "sv": "Bred knäböj"
+      },
+      "category": "lower_body",
+      "movementPattern": "wide_squat",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand wider than shoulder-width with toes turned out only slightly.",
+          "Bend hips and knees between your feet while knees follow the toes.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå bredare än axlarna med tårna lätt utåt.",
+          "Böj höfter och knän mellan fötterna och låt knäna följa tårna.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "3489b838-36c5-43e6-a57c-2f7dbdfbd697",
+      "revision": 1,
+      "name": {
+        "en": "Narrow-stance squat",
+        "sv": "Smal knäböj"
+      },
+      "category": "lower_body",
+      "movementPattern": "narrow_squat",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet closer than hip-width and keep your heels grounded.",
+          "Sit hips down between your feet while keeping balance over the whole foot.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå med fötterna smalare än höftbrett och håll hälarna i golvet.",
+          "Sänk höfterna mellan fötterna och håll balansen över hela foten.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "52f0d5cc-eeba-4b90-b077-95c5bf2e16f2",
+      "revision": 1,
+      "name": {
+        "en": "Reverse lunge to knee drive",
+        "sv": "Bakåtutfall med knälyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "reverse_lunge_knee_drive",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall and step one foot back into a comfortable lunge.",
+          "Push through the front foot and bring the back knee forward to hip height if steady.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt och kliv bak med ena foten till ett bekvämt utfall.",
+          "Tryck genom främre foten och för bakre knät fram till höfthöjd om balansen tillåter.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "0386f6b5-be04-4f7f-92b9-ebb0a85205ed",
+      "revision": 1,
+      "name": {
+        "en": "Lateral lunge to balance",
+        "sv": "Sidoutfall till balans"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_lunge_balance",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet hip-width apart and arms relaxed.",
+          "Step wide, bend the stepping knee, then push back and balance on that leg.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå höftbrett med avslappnade armar.",
+          "Kliv brett, böj stegsidans knä och tryck tillbaka till balans på det benet.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "91e4c7d4-cbf1-415b-ae04-e659f162c9bd",
+      "revision": 1,
+      "name": {
+        "en": "Step-back lunge",
+        "sv": "Utfallssteg bakåt"
+      },
+      "category": "lower_body",
+      "movementPattern": "step_back_lunge",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet parallel and leave space behind you.",
+          "Reach one foot back and lower until both knees are comfortably bent.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå med parallella fötter och fri yta bakom dig.",
+          "För ena foten bakåt och sänk tills båda knäna är bekvämt böjda.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "85d3e7b0-851c-47a2-b2c7-4e5c49f767fd",
+      "revision": 1,
+      "name": {
+        "en": "Reverse lunge with hip hinge",
+        "sv": "Utfall bakåt med pendel"
+      },
+      "category": "lower_body",
+      "movementPattern": "reverse_lunge_hip_hinge",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall and step one foot back a comfortable distance.",
+          "Hinge your torso slightly forward as both knees bend, then drive through the front foot.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt och kliv bak en bekväm sträcka.",
+          "Fäll överkroppen lätt fram när båda knäna böjs och tryck sedan genom främre foten.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "9736a98b-6fee-4d60-8b81-a366394431b4",
+      "revision": 1,
+      "name": {
+        "en": "Wall sit with toe lift",
+        "sv": "Väggsittning med tålyft"
+      },
+      "category": "lower_body",
+      "movementPattern": "wall_sit_tibialis_raise",
+      "muscleGroups": [
+        "quadriceps",
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Slide into a comfortable wall sit with feet far enough forward to stay stable.",
+          "Lift both toes while keeping heels down, then lower them gently.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Glid ned till en bekväm väggsittning med fötterna så långt fram att du är stadig.",
+          "Lyft båda tårna med hälarna i golvet och sänk dem mjukt.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "6345ee07-e274-49c1-9538-6f6bdeabd7d2",
+      "revision": 1,
+      "name": {
+        "en": "Squat to calf raise",
+        "sv": "Knäböj med tåhävning"
+      },
+      "category": "lower_body",
+      "movementPattern": "squat_to_calf_raise",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand hip-width apart with arms reaching forward for balance.",
+          "Squat to a comfortable depth, stand, then rise onto your toes.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå höftbrett med armarna framåt som balanshjälp.",
+          "Böj till ett bekvämt djup, res dig och gå sedan upp på tå.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "888f94d2-58a9-4c7f-98c4-0a2796f6ff54",
+      "revision": 1,
+      "name": {
+        "en": "Alternating lateral lunge",
+        "sv": "Växlande sidoutfall"
+      },
+      "category": "lower_body",
+      "movementPattern": "alternating_lateral_lunge",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand with feet wide and knees soft.",
+          "Shift into one side lunge, return to centre, then move to the other side.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå brett med mjuka knän.",
+          "Gå ned i sidoutfall åt ena hållet, återgå till mitten och byt sida.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f41d7659-5195-4ddf-a531-9abb68cb9797",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg squat and reach",
+        "sv": "Enbens knäböj till tå"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_squat_reach_forward",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Balance on one foot with the free toes lightly touching beside you.",
+          "Bend the standing knee and reach the free foot forward without putting weight on it.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Balansera på ena foten med den fria fotens tår lätt i golvet bredvid.",
+          "Böj stödknät och för den fria foten fram utan att lägga vikt på den.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e6f4fa51-f767-425c-8bf2-34ede35a7541",
+      "revision": 1,
+      "name": {
+        "en": "Plank shoulder tap",
+        "sv": "Planka med axelklapp"
+      },
+      "category": "core",
+      "movementPattern": "plank_anti_rotation",
+      "muscleGroups": [
+        "abdominals",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Start in a high plank with feet slightly wider than hips; use your knees down to reduce the load.",
+          "Tap one shoulder with the opposite hand while keeping your hips quiet.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Börja i hög planka med fötterna något bredare än höfterna; sätt ned knäna för lägre belastning.",
+          "Nudda ena axeln med motsatt hand och håll höfterna stilla.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "969e3071-d933-4402-a76c-6848ca25ef69",
+      "revision": 1,
+      "name": {
+        "en": "Forearm plank knee lift",
+        "sv": "Underarmsplanka med knälyft"
+      },
+      "category": "core",
+      "movementPattern": "plank_hip_extension",
+      "muscleGroups": [
+        "abdominals",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Set your forearms under your shoulders and step back into a plank.",
+          "Lift one knee a few centimetres without changing your trunk position.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Placera underarmarna under axlarna och kliv bak till planka.",
+          "Lyft ena knät några centimeter utan att ändra bålens position.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "5410b7b3-4399-4286-801a-057d864506db",
+      "revision": 1,
+      "name": {
+        "en": "Long-lever plank",
+        "sv": "Lång planka"
+      },
+      "category": "core",
+      "movementPattern": "long_lever_anti_extension",
+      "muscleGroups": [
+        "abdominals",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Place forearms down and walk your elbows slightly forward from your shoulders.",
+          "Hold a straight comfortable line while gently bracing your abdomen.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Sätt ned underarmarna och flytta armbågarna lite framför axlarna.",
+          "Håll en bekväm rak linje och spänn magen lätt.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "c826444c-8c80-454e-ae20-79a61c68731e",
+      "revision": 1,
+      "name": {
+        "en": "Dead bug heel tap",
+        "sv": "Dead bug med hältryck"
+      },
+      "category": "core",
+      "movementPattern": "dead_bug_heel_tap",
+      "muscleGroups": [
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie with hips and knees bent and arms pointing upward.",
+          "Lower one heel to tap the floor, then return without arching your back.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg med böjda höfter och knän och armarna uppåt.",
+          "Sänk en häl till golvet och återgå utan att svanka.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "7c788f1b-520b-4776-b85f-a7c01a628b33",
+      "revision": 1,
+      "name": {
+        "en": "Dead bug leg extension",
+        "sv": "Dead bug med bensträck"
+      },
+      "category": "core",
+      "movementPattern": "dead_bug_long_lever",
+      "muscleGroups": [
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie with hips and knees bent over your hips and arms reaching upward.",
+          "Extend one leg away while keeping your lower back comfortably steady.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg med böjda höfter och knän ovanför höfterna och armarna uppåt.",
+          "Sträck ett ben bort medan ländryggen hålls bekvämt stilla.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f17c2ef9-b57f-4dff-b35b-cd945dc7cfb6",
+      "revision": 1,
+      "name": {
+        "en": "Hollow tuck hold",
+        "sv": "Hollow tuck-håll"
+      },
+      "category": "core",
+      "movementPattern": "hollow_body_tuck",
+      "muscleGroups": [
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie on your back and draw knees over hips with arms by your sides.",
+          "Lift head and shoulder blades slightly and hold the tucked shape.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg på rygg och för knäna över höfterna med armarna längs sidorna.",
+          "Lyft huvud och skulderblad lite och håll den hopdragna positionen.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "013cb4dd-adf7-498d-9267-1102eab7f822",
+      "revision": 1,
+      "name": {
+        "en": "Hollow body hold",
+        "sv": "Hollow body-håll"
+      },
+      "category": "core",
+      "movementPattern": "hollow_body_hold",
+      "muscleGroups": [
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie on your back and brace gently with knees bent.",
+          "Extend arms and legs only as far as you can keep your back controlled.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg på rygg och spänn bålen lätt med böjda knän.",
+          "Sträck armar och ben bara så långt du kan hålla ryggen kontrollerad.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "30f654d9-2e8d-4959-896b-ed4c6ec72729",
+      "revision": 1,
+      "name": {
+        "en": "Reverse crunch",
+        "sv": "Omvänd magcurl"
+      },
+      "category": "core",
+      "movementPattern": "reverse_crunch",
+      "muscleGroups": [
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie on your back with knees bent and arms resting beside you.",
+          "Curl your pelvis a few centimetres toward your ribs without swinging your legs.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg på rygg med böjda knän och armarna längs sidorna.",
+          "Rulla bäckenet några centimeter mot revbenen utan att svinga benen.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "fe27ada2-478d-4654-ae38-85c6462eba76",
+      "revision": 1,
+      "name": {
+        "en": "Kneeling side plank",
+        "sv": "Sidoplanka på knä"
+      },
+      "category": "core",
+      "movementPattern": "kneeling_lateral_stability",
+      "muscleGroups": [
+        "obliques",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Lie on one side with knees bent and elbow beneath shoulder.",
+          "Lift your hips until shoulders, hips and knees form a line.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Ligg på sidan med böjda knän och armbågen under axeln.",
+          "Lyft höfterna tills axlar, höfter och knän bildar en linje.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e3a43638-290c-43f8-8699-a74ad7f26bd4",
+      "revision": 1,
+      "name": {
+        "en": "Side plank with leg lift",
+        "sv": "Sidoplanka med benlyft"
+      },
+      "category": "core",
+      "movementPattern": "side_plank_hip_abduction",
+      "muscleGroups": [
+        "obliques",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Set up in a side plank on your forearm with legs long, or use the lower knee down.",
+          "Lift the top leg a short distance without rotating your pelvis.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Gör sidoplanka på underarmen med raka ben, eller sätt ned det undre knät.",
+          "Lyft det övre benet en kort bit utan att vrida bäckenet.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "488a2cdb-5f95-4aa3-ab30-a69230efe31b",
+      "revision": 1,
+      "name": {
+        "en": "Side plank thread-through",
+        "sv": "Sidoplanka med rotation"
+      },
+      "category": "core",
+      "movementPattern": "side_plank_rotation",
+      "muscleGroups": [
+        "obliques",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Hold a side plank from knees or feet with the top arm reaching upward.",
+          "Reach that arm gently beneath your ribs, then open without losing hip height.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Håll sidoplanka på knä eller fötter med övre armen sträckt uppåt.",
+          "För armen mjukt under revbenen och öppna igen utan att sänka höften.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "06144fd2-aad9-4ad2-afc1-f44018706d88",
+      "revision": 1,
+      "name": {
+        "en": "Bird dog knee drive",
+        "sv": "Fågelhund med knädrag"
+      },
+      "category": "core",
+      "movementPattern": "bird_dog_knee_to_elbow",
+      "muscleGroups": [
+        "back",
+        "abdominals",
+        "glutes"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Start on hands and knees with your spine comfortable and level.",
+          "Reach opposite arm and leg long, then draw elbow and knee toward each other.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "Börja på händer och knän med ryggen bekväm och jämn.",
+          "Sträck motsatt arm och ben och för sedan armbåge och knä mot varandra.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f9731087-43c2-40f6-bf4a-62138a111860",
+      "revision": 1,
+      "name": {
+        "en": "Bear hover hold",
+        "sv": "Björnhåll"
+      },
+      "category": "core",
+      "movementPattern": "bear_hover",
+      "muscleGroups": [
+        "abdominals",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Start on hands and knees with toes tucked under.",
+          "Brace gently and lift both knees just off the floor while breathing.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "Börja på händer och knän med tårna i golvet.",
+          "Spänn bålen lätt och lyft båda knäna precis från golvet medan du andas.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "4f0a79b4-d4c4-4b66-86d6-9c6fdade25fe",
+      "revision": 1,
+      "name": {
+        "en": "Bear crawl",
+        "sv": "Björngång"
+      },
+      "category": "core",
+      "movementPattern": "bear_crawl",
+      "muscleGroups": [
+        "abdominals",
+        "shoulders",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Start on hands and knees with hands below shoulders and knees below hips.",
+          "Lift the knees only if this is comfortable; otherwise stay on hands and knees.",
+          "Move one hand and opposite foot a short distance, then alternate.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Börja på händer och knän med händerna under axlarna och knäna under höfterna.",
+          "Lyft knäna bara om det känns stabilt; annars stanna på händer och knän.",
+          "Flytta ena handen och motsatt fot en kort sträcka och växla sedan.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "790f6b83-cb25-4de1-87e8-95d446f82878",
+      "revision": 1,
+      "name": {
+        "en": "Scapular push-up",
+        "sv": "Skulderbladspush-up"
+      },
+      "category": "upper_body",
+      "movementPattern": "scapular_push",
+      "muscleGroups": [
+        "shoulders",
+        "chest"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Start in a high plank or on hands and knees with elbows straight.",
+          "Let your chest sink slightly between your shoulders, then push the floor away.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Börja i hög planka eller på händer och knän med raka armbågar.",
+          "Låt bröstet sjunka lite mellan skulderbladen och pressa sedan golvet ifrån dig.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "82044bbc-c86c-46eb-96ea-031d821b5ff4",
+      "revision": 1,
+      "name": {
+        "en": "Wall slide",
+        "sv": "Väggglidning"
+      },
+      "category": "upper_body",
+      "movementPattern": "wall_slide",
+      "muscleGroups": [
+        "shoulders",
+        "back"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Stand with forearms on the wall and elbows below shoulder height.",
+          "Slide arms upward only through a comfortable range, keeping ribs relaxed.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Stå med underarmarna mot väggen och armbågarna under axelhöjd.",
+          "Glid armarna uppåt bara inom ett bekvämt omfång och håll revbenen avslappnade.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "f471b7ca-f63a-4995-afd0-09e0a309345b",
+      "revision": 1,
+      "name": {
+        "en": "Wall angel",
+        "sv": "Väggängel"
+      },
+      "category": "upper_body",
+      "movementPattern": "wall_angel",
+      "muscleGroups": [
+        "shoulders",
+        "back"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Stand with your back near a wall and elbows bent in a low comfortable position.",
+          "Move arms upward and outward only through a relaxed range; do not force overhead reach.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Stå med ryggen nära en vägg och böjda armbågar i ett lågt bekvämt läge.",
+          "För armarna uppåt och utåt bara i ett avslappnat omfång; tvinga inte armarna över huvudet.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "4c387eb3-b7db-4c78-bb79-b056fc7cb08e",
+      "revision": 1,
+      "name": {
+        "en": "Wall push-up plus",
+        "sv": "Väggpress med skulderblad"
+      },
+      "category": "upper_body",
+      "movementPattern": "wall_serratus_press",
+      "muscleGroups": [
+        "shoulders",
+        "chest"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Place hands on the wall at chest height and lean in slightly.",
+          "Press the wall away so your shoulder blades move forward without rounding your back.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Placera händerna mot väggen i brösthöjd och luta lätt framåt.",
+          "Pressa väggen ifrån dig så skulderbladen glider fram utan att ryggen rundas.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e23753e0-07db-4aa2-b5f6-40577b16f128",
+      "revision": 1,
+      "name": {
+        "en": "Wall push-up",
+        "sv": "Väggarmhävning"
+      },
+      "category": "upper_body",
+      "movementPattern": "wall_push",
+      "muscleGroups": [
+        "chest",
+        "shoulders",
+        "triceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Place hands on the wall just wider than shoulders and step back slightly.",
+          "Bend elbows to bring your chest toward the wall, then press back.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Placera händerna lite bredare än axlarna mot väggen och kliv lätt bakåt.",
+          "Böj armbågarna och för bröstet mot väggen; pressa sedan tillbaka.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "5f040539-4d73-45d3-b644-65923308677b",
+      "revision": 1,
+      "name": {
+        "en": "Wall plank weight shift",
+        "sv": "Väggpress med viktförskjutning"
+      },
+      "category": "upper_body",
+      "movementPattern": "wall_closed_chain_stability",
+      "muscleGroups": [
+        "shoulders",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Place both palms on the wall at shoulder height and step back to a gentle lean.",
+          "Shift a little more weight into one palm, then return to centre.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Placera båda handflatorna mot väggen i axelhöjd och luta lätt bakåt.",
+          "Flytta lite mer vikt till ena handen och återgå till mitten.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "017c6dfb-80c9-4b11-a445-0d5e9b19a0fe",
+      "revision": 1,
+      "name": {
+        "en": "Prone W lift",
+        "sv": "Magliggande W-lyft"
+      },
+      "category": "upper_body",
+      "movementPattern": "scapular_external_rotation",
+      "muscleGroups": [
+        "back",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie face down with your forehead resting lightly on the floor.",
+          "Lie face down with elbows bent beside you in a relaxed W shape.",
+          "Lift hands and elbows slightly while drawing shoulder blades gently back.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på mage med pannan lätt mot golvet.",
+          "Ligg på mage med böjda armbågar vid sidan i en avslappnad W-form.",
+          "Lyft händer och armbågar lite och för skulderbladen mjukt bakåt.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "9faad62f-32a3-4cfc-a36f-62a8c563e80d",
+      "revision": 1,
+      "name": {
+        "en": "Prone Y lift",
+        "sv": "Magliggande Y-lyft"
+      },
+      "category": "upper_body",
+      "movementPattern": "scapular_elevation_control",
+      "muscleGroups": [
+        "back",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie face down with your forehead resting lightly on the floor.",
+          "Lie face down with arms reaching diagonally forward in a small, comfortable Y.",
+          "Lift arms a small distance only in a controlled, pain-free range.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på mage med pannan lätt mot golvet.",
+          "Ligg på mage med armarna diagonalt framåt i ett litet, bekvämt Y.",
+          "Lyft armarna lite och bara inom ett kontrollerat, smärtfritt omfång.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "7c9fda77-4dae-4c86-a37f-165c000c3fcb",
+      "revision": 1,
+      "name": {
+        "en": "Prone T lift",
+        "sv": "Magliggande T-lyft"
+      },
+      "category": "upper_body",
+      "movementPattern": "scapular_retraction",
+      "muscleGroups": [
+        "back",
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie face down with your forehead resting lightly on the floor.",
+          "Lie face down with arms extended sideways in a relaxed T.",
+          "Lift hands a little while keeping the neck long and shoulders down.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på mage med pannan lätt mot golvet.",
+          "Ligg på mage med armarna ut åt sidorna i ett avslappnat T.",
+          "Lyft händerna lite och håll nacken lång och axlarna sänkta.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "03b9ad14-d869-4d1f-956e-d9a5cc13fbc9",
+      "revision": 1,
+      "name": {
+        "en": "Self-resisted shoulder external rotation",
+        "sv": "Självmotstånd utåtrotation"
+      },
+      "category": "upper_body",
+      "movementPattern": "shoulder_external_rotation",
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Keep one elbow against your side and hold that wrist with the opposite hand.",
+          "Try to rotate the forearm outward against gentle resistance without moving it.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Håll ena armbågen intill sidan och greppa handleden med den andra handen.",
+          "Försök vrida underarmen utåt mot ett lätt motstånd utan att röra den.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "3d4acc7f-f7a1-4f8b-a8fd-e1a41ccbf5c7",
+      "revision": 1,
+      "name": {
+        "en": "Self-resisted shoulder internal rotation",
+        "sv": "Självmotstånd inåtrotation"
+      },
+      "category": "upper_body",
+      "movementPattern": "shoulder_internal_rotation",
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Keep one elbow against your side and place the opposite hand outside that wrist.",
+          "Try to turn the forearm inward against gentle hand resistance.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Håll ena armbågen intill sidan och placera den andra handen utanför handleden.",
+          "Försök vrida underarmen inåt mot ett lätt motstånd från handen.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "eaf0a421-5b39-46fe-9e78-0e6a2da0e5a9",
+      "revision": 1,
+      "name": {
+        "en": "Wall internal-rotation isometric",
+        "sv": "Inåtrotation mot vägg"
+      },
+      "category": "upper_body",
+      "movementPattern": "shoulder_internal_rotation_isometric",
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Stand side-on with elbow bent and tucked against your side, wall in front of your palm.",
+          "Press your palm gently into the wall without moving your arm.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Stå med sidan mot väggen, böjd armbåge intill kroppen och väggen framför handflatan.",
+          "Pressa handflatan mjukt mot väggen utan att armen rör sig.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "c3968918-5021-4d51-8187-d0be85cfab6e",
+      "revision": 1,
+      "name": {
+        "en": "Wall shoulder-flexion isometric",
+        "sv": "Axelböjning mot vägg"
+      },
+      "category": "upper_body",
+      "movementPattern": "shoulder_flexion_isometric",
+      "muscleGroups": [
+        "shoulders"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Face the wall with one elbow bent and hand at chest height.",
+          "Press the fist gently forward into the wall without shrugging or leaning.",
+          "Breathe normally, release the effort gradually, and stay within a comfortable range."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Stå vänd mot väggen med böjd armbåge och handen i brösthöjd.",
+          "Pressa knytnäven lätt framåt mot väggen utan att höja axeln eller luta dig.",
+          "Andas normalt, släpp anspänningen gradvis och håll dig inom ett bekvämt rörelseomfång."
+        ]
+      }
+    },
+    {
+      "exerciseId": "37e8b11c-a6e1-4149-a08f-c8ddf602c91e",
+      "revision": 1,
+      "name": {
+        "en": "Supine serratus reach",
+        "sv": "Serratusreach på rygg"
+      },
+      "category": "upper_body",
+      "movementPattern": "supine_serratus_reach",
+      "muscleGroups": [
+        "shoulders",
+        "chest"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your back with your head relaxed and knees bent unless stated otherwise.",
+          "Lie on your back and point one arm toward the ceiling with elbow straight.",
+          "Reach the hand upward by lifting the shoulder blade slightly, then settle it back down.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på rygg med avslappnat huvud och böjda knän om inget annat anges.",
+          "Ligg på rygg och sträck ena armen mot taket med rak armbåge.",
+          "Sträck handen uppåt genom att lyfta skulderbladet lite och sänk det sedan igen.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "1349131c-2110-480b-ab14-bdd6f3b3e169",
+      "revision": 1,
+      "name": {
+        "en": "Snap-down landing",
+        "sv": "Landning till atletisk position"
+      },
+      "category": "lower_body",
+      "movementPattern": "landing_mechanics",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Stand tall with feet hip-width apart and arms relaxed.",
+          "Rise lightly onto your toes, then quickly settle into a shallow athletic stance.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Stå upprätt med fötterna höftbrett och avslappnade armar.",
+          "Res dig lätt på tå och sjunk sedan snabbt ned i en grund atletisk position.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "084bbffa-0f99-4b8e-9c08-7ab2247a9483",
+      "revision": 1,
+      "name": {
+        "en": "Squat jump and stick",
+        "sv": "Knäböjshopp med landning"
+      },
+      "category": "lower_body",
+      "movementPattern": "bilateral_jump_landing",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Bend into a shallow squat, jump a little and land softly in the same spot.",
+          "Keep jumps low; choose squat-to-calf-raise instead if lower-leg symptoms are active.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Böj till en grund knäböj, hoppa lite och landa mjukt på samma plats.",
+          "Håll hoppen låga; välj knäböj till tåhävning i stället vid aktiva underbensbesvär.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "7f502d71-3931-4ef1-9534-bc0727f9ad2f",
+      "revision": 1,
+      "name": {
+        "en": "Low pogo hops",
+        "sv": "Små tåstudsar"
+      },
+      "category": "lower_body",
+      "movementPattern": "bilateral_pogo",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Make small, quick ankle-driven hops with minimal knee bend.",
+          "Keep contacts low and brief; skip hopping while shin pain is active.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Gör små, snabba fotledsdrivna studsar med minimal knäböjning.",
+          "Håll kontakterna låga och korta; hoppa inte vid aktiv smalbenssmärta.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "942fc794-680e-429f-873b-cc4d7be6920f",
+      "revision": 1,
+      "name": {
+        "en": "Single-leg pogo hops",
+        "sv": "Enbens tåstudsar"
+      },
+      "category": "lower_body",
+      "movementPattern": "single_leg_pogo",
+      "muscleGroups": [
+        "calves",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Make tiny hops and land quietly on the same foot.",
+          "Progress from bilateral hops only when controlled; skip for active shin pain.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Gör mycket små hopp och landa tyst på samma fot.",
+          "Gå vidare från tvåbenshopp först när de är kontrollerade; hoppa inte vid aktiv smalbenssmärta.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "6bf21a40-e2f4-4396-9fcf-d37a6f5ecc30",
+      "revision": 1,
+      "name": {
+        "en": "Low forward-back hops",
+        "sv": "Små hopp fram och tillbaka"
+      },
+      "category": "lower_body",
+      "movementPattern": "forward_backward_hop",
+      "muscleGroups": [
+        "calves",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Hop a short distance forward and back, landing quietly each time.",
+          "Use only when lower-leg symptoms are settled; begin with very small hops.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Hoppa en kort sträcka fram och tillbaka och landa tyst varje gång.",
+          "Använd först när underbenen känns bra; börja med mycket små hopp.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "fecfcad4-1786-4862-a781-6aa3d9931d5d",
+      "revision": 1,
+      "name": {
+        "en": "Low lateral line hops",
+        "sv": "Små sidledshopp"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_hop",
+      "muscleGroups": [
+        "calves",
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Hop side to side over an imagined narrow line with quiet landings.",
+          "Keep the line narrow and skip hops if shin symptoms are active.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Hoppa sida till sida över en tänkt smal linje och landa tyst.",
+          "Håll linjen smal och hoppa inte vid aktiva smalbensbesvär.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "0016fdc3-6c8b-418c-a8c8-49095c114ea1",
+      "revision": 1,
+      "name": {
+        "en": "Skater step",
+        "sv": "Skridskosteg"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_bound_step",
+      "muscleGroups": [
+        "glutes",
+        "hips",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Stand on one foot with the other foot ready to step sideways.",
+          "Take a controlled side step and settle your weight over the landing leg.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Stå på ena foten med den andra redo att kliva åt sidan.",
+          "Ta ett kontrollerat sidosteg och landa med vikten över stegsidans ben.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "96cc881d-da0a-4c9f-9523-756ce20e1d85",
+      "revision": 1,
+      "name": {
+        "en": "Skater hop and stick",
+        "sv": "Skridskohopp med stopp"
+      },
+      "category": "lower_body",
+      "movementPattern": "lateral_bound_stick",
+      "muscleGroups": [
+        "glutes",
+        "hips",
+        "quadriceps"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Make a small side hop and hold the landing with the knee tracking over the foot.",
+          "Use the skater step instead if lower-leg symptoms are active.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Gör ett litet sidledshopp och håll landningen med knät i linje med foten.",
+          "Välj skridskosteget i stället vid aktiva underbensbesvär.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "98d288d1-735b-4a82-bc3a-d9e2c97e0bc9",
+      "revision": 1,
+      "name": {
+        "en": "Wall sprint-drive",
+        "sv": "Sprintposition mot vägg"
+      },
+      "category": "lower_body",
+      "movementPattern": "acceleration_wall_drive",
+      "muscleGroups": [
+        "glutes",
+        "hamstrings",
+        "abdominals"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand facing or beside a clear wall, close enough to touch it lightly.",
+          "Face the wall, lean forward with hands lightly supported and one knee raised.",
+          "Drive the raised foot down as the opposite knee lifts, then switch slowly.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå vänd mot eller bredvid en fri vägg, nära nog att nudda den lätt.",
+          "Stå vänd mot väggen, luta fram med händerna lätt mot den och lyft ena knät.",
+          "Driv ned den lyfta foten samtidigt som motsatt knä går upp; växla lugnt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "eb7357dd-7f4d-4042-bb1f-455eb169dcde",
+      "revision": 1,
+      "name": {
+        "en": "Three-step acceleration and stop",
+        "sv": "Tre steg och kontrollerat stopp"
+      },
+      "category": "lower_body",
+      "movementPattern": "acceleration_deceleration",
+      "muscleGroups": [
+        "quadriceps",
+        "glutes",
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand in a balanced athletic stance with feet hip-width apart.",
+          "Accelerate for three short steps, then lower your centre and stop under control.",
+          "Start at a walk and build speed only while lower legs stay comfortable.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå balanserat i en atletisk position med fötterna höftbrett isär.",
+          "Öka farten i tre korta steg och sänk sedan tyngdpunkten för ett kontrollerat stopp.",
+          "Börja gående och öka farten bara så länge underbenen känns bra.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "5e53c069-61b2-4d28-b836-5f934c1f67f3",
+      "revision": 1,
+      "name": {
+        "en": "Front-to-back leg swing",
+        "sv": "Bensving fram och bak"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "dynamic_hip_flexion_extension",
+      "muscleGroups": [
+        "hips",
+        "hamstrings"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall and hold nothing; keep one hand near a wall only if balance requires it.",
+          "Swing one relaxed leg forward and back through a small range.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt utan att hålla i något; håll handen nära en vägg bara om balansen kräver det.",
+          "Svinga ett avslappnat ben fram och tillbaka genom ett litet rörelseomfång.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "8931fdfb-8fc8-45a0-b141-e3417f52d88c",
+      "revision": 1,
+      "name": {
+        "en": "Side-to-side leg swing",
+        "sv": "Bensving i sidled"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "dynamic_hip_abduction_adduction",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand upright and place a hand near a wall for optional balance support.",
+          "Swing one leg gently across and away from your body without rotating your trunk.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt och håll handen nära en vägg om du vill ha balansstöd.",
+          "Svinga ett ben mjukt över och bort från kroppen utan att vrida överkroppen.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "c36cdebc-cd7b-4a99-9b35-b2980d07afce",
+      "revision": 1,
+      "name": {
+        "en": "Hip open-and-close gates",
+        "sv": "Höftgrindar"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "hip_gate_mobility",
+      "muscleGroups": [
+        "hips"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall with feet hip-width apart and hands relaxed.",
+          "Lift one knee, open it out to the side, then return it in a controlled arc.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt med fötterna höftbrett och avslappnade händer.",
+          "Lyft ett knä, öppna det åt sidan och för tillbaka det i en kontrollerad båge.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "74793676-4f2a-44aa-b833-16aa7ad62afc",
+      "revision": 1,
+      "name": {
+        "en": "Walking hamstring sweep",
+        "sv": "Gående hamstringsvep"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "dynamic_hamstring_mobility",
+      "muscleGroups": [
+        "hamstrings"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall with one foot a short step forward and heel on the floor.",
+          "Hinge at the hips and sweep both hands toward the front toes, then step through.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt med ena foten ett kort steg fram och hälen i golvet.",
+          "Fäll i höfterna och för händerna mot främre tårna, res dig och kliv igenom.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "b84919ca-c58d-4462-8b4a-ec9b7cd744f4",
+      "revision": 1,
+      "name": {
+        "en": "Ankle circles",
+        "sv": "Fotledscirklar"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "ankle_circles",
+      "muscleGroups": [
+        "calves"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Sit tall on the floor with legs relaxed and your trunk upright.",
+          "Sit or stand with weight supported and one foot relaxed off the floor.",
+          "Draw slow circles from the ankle in both directions without forcing the range.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Sitt upprätt på golvet med avslappnade ben och rak överkropp.",
+          "Sitt eller stå med vikten stödd och ena foten avslappnad från golvet.",
+          "Rita långsamma cirklar från fotleden åt båda håll utan att tvinga rörelsen.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "a29cf6ab-f926-4122-8e76-61528b1d0770",
+      "revision": 1,
+      "name": {
+        "en": "Side-lying thoracic rotation",
+        "sv": "Bröstryggsrotation på sidan"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "thoracic_rotation",
+      "muscleGroups": [
+        "back",
+        "obliques"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Lie on your side with your hips stacked and your head supported by your lower arm.",
+          "Lie on your side with knees bent and arms extended in front of your chest.",
+          "Open the top arm toward the floor behind you while knees stay together.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Ligg på sidan med höfterna staplade och huvudet stöttat av den undre armen.",
+          "Ligg på sidan med böjda knän och armarna sträckta framför bröstet.",
+          "Öppna övre armen mot golvet bakom dig medan knäna hålls ihop.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "e68135e6-e4fc-4ba9-9c7a-2eaf5d44ae10",
+      "revision": 1,
+      "name": {
+        "en": "Standing thoracic rotation",
+        "sv": "Stående bröstryggsrotation"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "standing_thoracic_rotation",
+      "muscleGroups": [
+        "back",
+        "obliques"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand hip-width apart with arms crossed comfortably over your chest.",
+          "Rotate your ribcage gently to one side while your hips face forward.",
+          "Return with control, then repeat on the other side; stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå höftbrett med armarna bekvämt korsade över bröstet.",
+          "Rotera bröstkorgen mjukt åt sidan medan höfterna pekar framåt.",
+          "Återgå kontrollerat och upprepa på andra sidan; avbryt vid skarp smärta."
+        ]
+      }
+    },
+    {
+      "exerciseId": "ba921ea0-b979-4372-b57d-37d8447ad61b",
+      "revision": 1,
+      "name": {
+        "en": "Arm and shoulder circles",
+        "sv": "Arm- och skuldercirklar"
+      },
+      "category": "warmup_mobility",
+      "movementPattern": "shoulder_circles",
+      "muscleGroups": [
+        "shoulders",
+        "back"
+      ],
+      "equipment": [],
+      "instructions": {
+        "en": [
+          "Stand tall with feet hip-width apart and soften your knees.",
+          "Stand tall with arms relaxed beside you.",
+          "Draw small circles with your shoulders, then make gentle arm circles in both directions.",
+          "Return slowly to the start; use a comfortable range and stop if you feel sharp pain."
+        ],
+        "sv": [
+          "Stå upprätt med fötterna höftbrett isär och mjuka knän.",
+          "Stå upprätt med armarna avslappnade längs sidorna.",
+          "Rita små cirklar med axlarna och gör sedan mjuka armcirklar åt båda håll.",
+          "Återgå långsamt till start; håll dig inom ett bekvämt rörelseomfång och avbryt vid skarp smärta."
+        ]
       }
     }
   ]

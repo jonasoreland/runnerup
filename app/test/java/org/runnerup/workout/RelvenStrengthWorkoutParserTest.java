@@ -98,6 +98,43 @@ public class RelvenStrengthWorkoutParserTest {
   }
 
   @Test
+  public void acceptsHistoricalLibraryRevisionWhenThePinnedExerciseIsUnchanged() {
+    Map<String, RelvenExerciseReference> currentCatalog =
+        Map.of(
+            "3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
+            new RelvenExerciseReference(
+                2,
+                1,
+                "Bodyweight squat",
+                "Stand with your feet about shoulder-width apart.\n"
+                    + "Bend your knees and hips as far as comfortable while keeping your chest lifted.\n"
+                    + "Press through your feet to stand tall again.",
+                List.of()));
+
+    assertEquals(1, RelvenStrengthWorkoutParser.parse(WORKOUT, currentCatalog).exercises().size());
+  }
+
+  @Test
+  public void rejectsLibraryRevisionsNewerThanTheInstalledCatalog() {
+    String futureLibrary = WORKOUT.replace("\"libraryRevision\":1", "\"libraryRevision\":3");
+    Map<String, RelvenExerciseReference> currentCatalog =
+        Map.of(
+            "3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
+            new RelvenExerciseReference(
+                2,
+                1,
+                "Bodyweight squat",
+                "Stand with your feet about shoulder-width apart.\n"
+                    + "Bend your knees and hips as far as comfortable while keeping your chest lifted.\n"
+                    + "Press through your feet to stand tall again.",
+                List.of()));
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> RelvenStrengthWorkoutParser.parse(futureLibrary, currentCatalog));
+  }
+
+  @Test
   public void rejectsCatalogRevisionMismatch() {
     assertThrows(
         IllegalArgumentException.class,
