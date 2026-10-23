@@ -68,6 +68,7 @@ private class RelvenMapHost(
   private var style: Style? = null
   private var mapInstance: org.maplibre.android.maps.MapLibreMap? = null
   private var currentMetric = metric
+  private val followPolicy = LiveMapFollowPolicy()
   private val failedLoadingListener = MapView.OnDidFailLoadingMapListener {
     mapView.visibility = View.GONE
     fallback.visibility = View.VISIBLE
@@ -193,17 +194,27 @@ private class RelvenMapHost(
       (loadedStyle.getSource(currentSourceId) as? GeoJsonSource)
           ?.setGeoJson(buildCurrentLocationGeoJson(currentLocation))
     }
-    if (followRunner && currentLocation != null) centerOnRunner(currentLocation)
+    if (followRunner && currentLocation != null && followPolicy.shouldFollow(currentLocation)) {
+      followRunnerTo(currentLocation)
+    }
   }
 
   override fun recenter() {
     followRunner = true
-    currentLocation?.let(::centerOnRunner) ?: mapInstance?.let(::fitRoute)
+    currentLocation?.let {
+      followPolicy.setCameraCenter(it)
+      centerOnRunner(it)
+    } ?: mapInstance?.let(::fitRoute)
   }
 
   private fun centerOnRunner(point: RoutePoint) {
-    mapInstance?.moveCamera(
-        CameraUpdateFactory.newLatLngZoom(LatLng(point.latitude, point.longitude), 16.0))
+    followPolicy.setCameraCenter(point)
+    mapInstance?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(point.latitude, point.longitude), 16.0))
+  }
+
+  private fun followRunnerTo(point: RoutePoint) {
+    mapInstance?.animateCamera(
+        CameraUpdateFactory.newLatLng(LatLng(point.latitude, point.longitude)), FOLLOW_ANIMATION_MS)
   }
 
   override fun onStart() = mapView.onStart()
@@ -222,6 +233,7 @@ private class RelvenMapHost(
 
   companion object {
     private const val STYLE_URL = "https://tiles.openfreemap.org/styles/dark"
+    private const val FOLLOW_ANIMATION_MS = 700
   }
 }
 

@@ -1,5 +1,12 @@
 # Implementation status — 23 October 2026
 
+## Running experience redesign — live follow-camera stability (PR in progress)
+
+- The camera now keeps its current zoom during automatic follow, moves with a 700 ms animation, and recenters only after 12 m of accepted movement from its last camera anchor. Panning still disables follow; **Centrera** immediately reanchors to the current accepted location. This gate affects only camera rendering: Tracker acceptance, stored GPS samples, and route distance are unchanged.
+- Added unit coverage for initial follow, sub-threshold jitter, meaningful displacement, recenter anchoring, and invalid coordinates. The test was run before implementation and failed to compile because `LiveMapFollowPolicy` did not exist; it passed after implementation.
+- Full app, Wear, HR and common unit-test tasks passed. MapLibre Latest debug assembly, phone and Wear release bundles, all release lint tasks, no-map phone release bundle, Spotless, and `git diff --check` passed. A new emulator capture of the smooth-follow behavior remains pending because shell commands to the isolated emulator stopped responding during PR #106's short QA run.
+- Remaining in this redesign: throttle route-source/snapshot rendering, process and service recovery checks, and paired Wear notification/HR/session verification. No physical device has been used.
+
 ## Running experience redesign — map visual correction
 
 - The current Stitch `Running Mode & GPS Route` reference uses a near-black basemap and orange route. The shared Relven MapLibre host now loads OpenFreeMap Dark, and the standard route uses the Stitch orange (`#FF5A1F`); measured metric palettes remain unchanged. This is a visual correction only; accepted route persistence and Tracker ownership are untouched.
