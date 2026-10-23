@@ -5,6 +5,7 @@ import android.location.Location
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import org.runnerup.common.util.Constants
 import org.runnerup.db.DBHelper
 import org.runnerup.tracker.Tracker
 import org.runnerup.tracker.TrackerLocationObserver
@@ -15,6 +16,7 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
   val mapHost: LiveWorkoutMapHost = createLiveWorkoutMapHost(appContext)
   val gpsState = ActiveWorkoutGpsState()
   private val route = ActiveWorkoutRouteState()
+  private val mapRenderGate = LiveRouteRenderGate()
   private val mainHandler = Handler(Looper.getMainLooper())
   private var tracker: Tracker? = null
   private var latestLocation: Location? = null
@@ -36,7 +38,7 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
       latestLocation = Location(location)
       updateGps(location)
       val point = route.points.lastOrNull()
-      mapHost.updateLiveRoute(route.points, point ?: routePoint(location, value.distance, value.timeMs / 1000.0))
+      renderRouteNow(point ?: routePoint(location, value.distance, value.timeMs / 1000.0))
     }
     val activityId = value.activityId
     Thread(
@@ -56,11 +58,8 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
                 val restored = mergePersistedAndLiveRoute(persistedRoute, livePoints)
                 route.restore(restored, value.lastKnownLocation?.elapsedRealtimeNanos)
                 val location = latestLocation ?: value.lastKnownLocation
-                mapHost.updateLiveRoute(
-                    route.points,
-                    location?.let {
-                      routePoint(it, value.distance, value.timeMs / 1000.0)
-                    })
+                renderRouteNow(
+                    location?.let { routePoint(it, value.distance, value.timeMs / 1000.0) })
               }
             },
             "relven-live-route-restore")
@@ -76,7 +75,8 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
   fun onPaused(paused: Boolean) {
     if (paused) route.onPause() else route.onResume()
     latestLocation?.let { location ->
-      mapHost.updateLiveRoute(route.points, routePoint(location, tracker?.distance ?: 0.0, (tracker?.timeMs ?: 0L) / 1000.0))
+      renderRouteNow(
+          routePoint(location, tracker?.distance ?: 0.0, (tracker?.timeMs ?: 0L) / 1000.0))
     }
   }
 
@@ -100,7 +100,18 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
           heartRate?.toDouble(),
           if (copy.hasSpeed()) copy.speed.toDouble() else null,
           elevationMeters)
-      mapHost.updateLiveRoute(route.points, routePoint(copy, totalDistanceMeters, activeTimeNanos / 1_000_000_000.0, heartRate, elevationMeters))
+      val currentPoint =
+          routePoint(
+              copy,
+              totalDistanceMeters,
+              activeTimeNanos / 1_000_000_000.0,
+              heartRate,
+              elevationMeters)
+      if (persistedType != Constants.DB.LOCATION.TYPE_GPS) {
+        renderRouteNow(currentPoint)
+      } else if (mapRenderGate.shouldRender(SystemClock.elapsedRealtime())) {
+        mapHost.updateLiveRoute(route.points, currentPoint)
+      }
       updateGps(copy)
     }
   }
@@ -111,6 +122,11 @@ internal class ActiveWorkoutMapController(context: Context) : TrackerLocationObs
         if (location.hasAccuracy()) location.accuracy else null,
         age,
         location.latitude.isFinite() && location.longitude.isFinite())
+  }
+
+  private fun renderRouteNow(currentLocation: RoutePoint?) {
+    mapRenderGate.reset()
+    mapHost.updateLiveRoute(route.points, currentLocation)
   }
 
   private fun routePoint(
