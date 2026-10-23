@@ -10,6 +10,7 @@ internal data class RoutePoint(
     val distanceMeters: Double,
     val heartRate: Double? = null,
     val speedMetersPerSecond: Double? = null,
+    val cadencePerMinute: Double? = null,
     val elevationMeters: Double? = null,
     val segment: Int = lap)
 
@@ -17,6 +18,7 @@ internal enum class RouteMetric {
   STANDARD,
   PACE,
   HEART_RATE,
+  CADENCE,
   SPEED,
   ELEVATION;
 
@@ -32,6 +34,7 @@ internal enum class RouteMetric {
           }
         }
         HEART_RATE -> point.heartRate
+        CADENCE -> point.cadencePerMinute
         SPEED -> point.speedMetersPerSecond?.times(3.6)
         ELEVATION -> point.elevationMeters
       }
@@ -45,10 +48,7 @@ internal enum class RouteMetric {
                   before.hasValidCoordinates() &&
                   after.hasValidCoordinates()
             }
-        else ->
-            route.indices.count { index ->
-              value(route[index], route.getOrNull(index - 1))?.isFinite() == true
-            } >= 2
+        else -> routeMetricRange(route, this) != null
       }
 }
 
@@ -65,11 +65,22 @@ internal fun routeMapAttributionMaxWidthPx(
 
 internal fun routeMetricRange(route: List<RoutePoint>, metric: RouteMetric): RouteMetricRange? {
   val values = route.indices.mapNotNull { index ->
-    metric.value(route[index], route.getOrNull(index - 1))?.takeIf(Double::isFinite)
+    metric.value(route[index], route.getOrNull(index - 1))?.takeIf { metric.isPlausibleForDisplay(it) }
   }
   if (values.size < 2) return null
   return RouteMetricRange(values.min(), values.max(), values.size)
 }
+
+internal fun RouteMetric.isPlausibleForDisplay(value: Double): Boolean =
+    value.isFinite() &&
+        when (this) {
+          RouteMetric.STANDARD -> true
+          RouteMetric.PACE -> value in 1.0..60.0
+          RouteMetric.HEART_RATE -> value in 30.0..240.0
+          RouteMetric.CADENCE -> value in 20.0..300.0
+          RouteMetric.SPEED -> value in 1.0..43.2
+          RouteMetric.ELEVATION -> value in -500.0..9_000.0
+        }
 
 internal fun routeMetricColor(value: Double?, range: RouteMetricRange?): String {
   val colors = listOf("#2979FF", "#35B8FF", "#62D8B0", "#FFB547", "#FF6A00")
@@ -85,7 +96,9 @@ internal fun routeMetricColor(
     metric: RouteMetric,
     value: Double?,
     range: RouteMetricRange?): String =
-    if (metric == RouteMetric.STANDARD) "#2979FF" else routeMetricColor(value, range)
+    if (metric == RouteMetric.STANDARD) "#2979FF"
+    else if (value == null || !metric.isPlausibleForDisplay(value)) "#808080"
+    else routeMetricColor(value, range)
 
 /** Emits a GeoJSON FeatureCollection with one colored line feature per adjacent same-lap pair. */
 internal fun buildRouteGeoJson(route: List<RoutePoint>, metric: RouteMetric): String {

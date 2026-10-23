@@ -169,4 +169,25 @@
     <string name="workout_manager_empty_body">Skapa ett pass eller importera en fil för att komma igång.</string>
     <string name="workout_manager_no_search_results">Inga matchande pass</string>
     <string name="workout_manager_no_search_results_body">Prova en kortare eller annan sökning.</string>
+    <string name="activity_review_route">Rutt</string>
+    <string name="activity_review_open_map">Öppna helskärmskarta</string>
+    <string name="activity_review_no_route">Ingen användbar GPS-rutt registrerades för passet.</string>
+    <string name="activity_review_title">Granska träningspass</string>
+    <string name="activity_review_resume">Fortsätt passet</string>
+    <string name="activity_review_saving">Sparar…</string>
+    <string name="activity_review_discard_confirmation">Ta bort träningspasset? Registrerade data raderas.</string>
+    <string name="activity_review_chart">Prestation</string>
+    <string name="activity_review_chart_description">Diagram för %1$s, värden från %2$.1f till %3$.1f</string>
+    <string name="activity_review_chart_range">Intervall %1$.1f – %2$.1f</string>
+    <string name="activity_review_distance_axis">Distans %1$.1f–%2$.1f km</string>
+    <string name="activity_review_kilometer_splits">Kilometersplits</string>
+    <string name="activity_review_kilometer_number">Km %1$d</string>
+    <string name="activity_review_target">Mål: %1$s</string>
+    <string name="activity_review_upload_options">Uppladdningsalternativ</string>
+    <string name="activity_review_no_upload_services">Inga konfigurerade uppladdningstjänster.</string>
+    <string name="activity_review_uploaded">Uppladdat</string>
+    <string name="activity_review_manage_uploads">Hantera uppladdningstjänster</string>
+    <string name="activity_review_activity_type">Aktivitetstyp</string>
+    <string name="activity_review_manual_distance_meters">Manuell distans (m)</string>
+    <string name="route_metric_cadence">Stegfrekvens (steg/min)</string>
 </resources>

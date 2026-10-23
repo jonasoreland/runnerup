@@ -275,6 +275,7 @@ private fun RouteMetric.labelResource(): Int =
       RouteMetric.STANDARD -> AppR.string.route_metric_standard
       RouteMetric.PACE -> AppR.string.route_metric_pace
       RouteMetric.HEART_RATE -> AppR.string.route_metric_heart_rate
+      RouteMetric.CADENCE -> AppR.string.route_metric_cadence
       RouteMetric.SPEED -> AppR.string.route_metric_speed
       RouteMetric.ELEVATION -> AppR.string.route_metric_elevation
     }

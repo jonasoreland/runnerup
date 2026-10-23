@@ -19,9 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -41,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -52,13 +48,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.DateFormat
-import java.util.Date
 import org.runnerup.common.R
-import org.runnerup.BuildConfig
 import org.runnerup.util.Formatter
 import org.runnerup.workout.Intensity
-import org.runnerup.workout.Sport
 
 @Composable
 internal fun ActivityDetailScreen(
@@ -156,59 +148,10 @@ private fun ActivityDetailContent(
     onOpenMap: () -> Unit,
     onShareActivity: (ActivityShareFormat) -> Unit,
     onOpenMoreActions: () -> Unit) {
-  val context = LocalContext.current
   var shareDialogVisible by remember(activity.id) { mutableStateOf(false) }
   var shareFormat by remember(activity.id) { mutableStateOf(ActivityShareFormat.Tcx) }
-  val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
-  val sport = Sport.textOf(LocalResources.current, activity.sport)
-  val date =
-      remember(activity.startedAtSeconds, LocalConfiguration.current) {
-        DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-            .format(Date(activity.startedAtSeconds * 1000L))
-      }
-  val measurements = activityDetailMeasurements(activity)
-  val hasMapRoute = activityHasMapRoute(
-      activity, mapEnabled = BuildConfig.OSMDROID_ENABLED || BuildConfig.MAPBOX_ENABLED)
-  val metrics = buildList {
-    measurements.distanceMeters?.let {
-      add(
-          stringResource(R.string.Home_activity_detail_distance) to
-              formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong()))
-    }
-    measurements.durationSeconds?.let {
-      add(
-          stringResource(R.string.Home_activity_detail_duration) to
-              formatter.formatElapsedTime(Formatter.Format.TXT_LONG, it))
-    }
-    measurements.averageSpeedMetersPerSecond?.let {
-      add(
-          formatter.formatVelocityLabel() to
-              formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, it))
-    }
-    measurements.averageHeartRate?.let {
-      add(stringResource(R.string.Home_activity_detail_average_hr) to heartRateLabel(it))
-    }
-    measurements.maximumHeartRate?.let {
-      add(stringResource(R.string.Home_activity_detail_maximum_hr) to heartRateLabel(it))
-    }
-  }
-
   Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-      Text(sport, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Bold)
-      Text(date, fontSize = 14.sp, color = RelvenColors.MutedText)
-    }
-
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-      metrics.chunked(2).forEach { rowMetrics ->
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-          rowMetrics.forEach { (label, value) ->
-            ActivityMetric(label, value, Modifier.weight(1f))
-          }
-          if (rowMetrics.size == 1) Spacer(Modifier.weight(1f))
-        }
-      }
-    }
+    ActivityReviewOverview(activity)
 
     if (isEditing) {
       ActivityEditForm(
@@ -232,19 +175,10 @@ private fun ActivityDetailContent(
       ActivityLapSection(activity.laps)
     }
 
-    if (!isEditing && hasMapRoute) {
-      Button(
-          onClick = onOpenMap,
-          modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-          shape = RoundedCornerShape(16.dp),
-          colors = ButtonDefaults.buttonColors(
-              containerColor = RelvenColors.Orange, contentColor = RelvenColors.Background)) {
-        Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-        Text(
-            stringResource(R.string.Home_activity_detail_open_map),
-            color = RelvenColors.Background,
-            fontWeight = FontWeight.SemiBold)
-      }
+    if (!isEditing) {
+      ActivityReviewMapCard(activity) { onOpenMap() }
+      ActivityReviewChartCard(activity.route)
+      ActivityReviewSplitsCard(activity.route)
     }
 
     if (!isEditing) {
@@ -317,7 +251,7 @@ private fun ActivityDetailContent(
 }
 
 @Composable
-private fun ActivityLapSection(laps: List<ActivityLapDetails>) {
+internal fun ActivityLapSection(laps: List<ActivityLapDetails>) {
   val context = LocalContext.current
   val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
   Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -373,6 +307,24 @@ private fun ActivityLapSection(laps: List<ActivityLapDetails>) {
               }
             }
           }
+          val targets = buildList {
+            lap.plannedDurationSeconds?.takeIf { it > 0 }?.let {
+              add(
+                  stringResource(R.string.Home_activity_detail_duration) + " " +
+                      formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, it))
+            }
+            lap.plannedDistanceMeters?.takeIf { it > 0.0 }?.let {
+              add(
+                  stringResource(R.string.Home_activity_detail_distance) + " " +
+                      formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong()))
+            }
+          }
+          if (targets.isNotEmpty()) {
+            Text(
+                stringResource(org.runnerup.R.string.activity_review_target, targets.joinToString(" · ")),
+                color = RelvenColors.MutedText,
+                fontSize = 12.sp)
+          }
           lap.averageHeartRate?.let { heartRate ->
             Text(
                 stringResource(R.string.Home_activity_detail_average_hr) + " · " +
@@ -405,7 +357,7 @@ private fun ActivityLapMetric(label: String, value: String, modifier: Modifier =
 }
 
 @Composable
-private fun ActivityMetric(label: String, value: String, modifier: Modifier = Modifier) {
+internal fun ActivityMetric(label: String, value: String, modifier: Modifier = Modifier) {
   Surface(
       modifier = modifier.heightIn(min = 92.dp),
       color = RelvenColors.Surface,
@@ -458,5 +410,5 @@ private fun ActivityDetailMessage(
 }
 
 @Composable
-private fun heartRateLabel(beatsPerMinute: Int): String =
+internal fun heartRateLabel(beatsPerMinute: Int): String =
     stringResource(R.string.Home_activity_detail_bpm, beatsPerMinute)

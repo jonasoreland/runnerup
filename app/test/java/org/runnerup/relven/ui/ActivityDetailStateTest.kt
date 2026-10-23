@@ -50,6 +50,7 @@ class ActivityDetailStateTest {
           ${DB.ACTIVITY.COMMENT} TEXT,
           ${DB.ACTIVITY.AVG_HR} INTEGER,
           ${DB.ACTIVITY.MAX_HR} INTEGER,
+          ${DB.ACTIVITY.AVG_CADENCE} REAL,
           ${DB.ACTIVITY.DELETED} INTEGER NOT NULL DEFAULT 0
         )
         """.trimIndent())
@@ -62,6 +63,9 @@ class ActivityDetailStateTest {
           ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
           ${DB.LAP.TIME} INTEGER,
           ${DB.LAP.DISTANCE} REAL,
+          ${DB.LAP.PLANNED_TIME} INTEGER,
+          ${DB.LAP.PLANNED_DISTANCE} REAL,
+          ${DB.LAP.PLANNED_PACE} REAL,
           ${DB.LAP.AVG_HR} INTEGER
         )
         """.trimIndent())
@@ -83,6 +87,7 @@ class ActivityDetailStateTest {
           put(DB.ACTIVITY.COMMENT, "Morning run")
           put(DB.ACTIVITY.AVG_HR, 145)
           put(DB.ACTIVITY.MAX_HR, 171)
+          put(DB.ACTIVITY.AVG_CADENCE, 174.5)
         }
     database.insertOrThrow(DB.ACTIVITY.TABLE, null, saved)
     val deleted = ContentValues(saved).apply { put("_id", 8L); put(DB.ACTIVITY.DELETED, 1) }
@@ -96,6 +101,9 @@ class ActivityDetailStateTest {
           put(DB.LAP.INTENSITY, 0)
           put(DB.LAP.TIME, 360L)
           put(DB.LAP.DISTANCE, 1_000.0)
+          put(DB.LAP.PLANNED_TIME, 360L)
+          put(DB.LAP.PLANNED_DISTANCE, 1_000.0)
+          put(DB.LAP.PLANNED_PACE, 5.5)
           put(DB.LAP.AVG_HR, 142)
         })
     database.insertOrThrow(
@@ -120,7 +128,18 @@ class ActivityDetailStateTest {
               comment = "Morning run",
               averageHeartRate = 145,
               maximumHeartRate = 171,
-              laps = listOf(ActivityLapDetails(2, 0, 360L, 1_000.0, 142))),
+              averageCadence = 174.5,
+              laps =
+                  listOf(
+                      ActivityLapDetails(
+                          2,
+                          0,
+                          360L,
+                          1_000.0,
+                          142,
+                          plannedDurationSeconds = 360L,
+                          plannedDistanceMeters = 1_000.0,
+                          plannedPace = 5.5))),
           readHistoryActivityDetails(database, 7L))
       assertNull(readHistoryActivityDetails(database, 8L))
     } finally {
@@ -187,6 +206,9 @@ class ActivityDetailStateTest {
           ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
           ${DB.LAP.TIME} INTEGER,
           ${DB.LAP.DISTANCE} REAL,
+          ${DB.LAP.PLANNED_TIME} INTEGER,
+          ${DB.LAP.PLANNED_DISTANCE} REAL,
+          ${DB.LAP.PLANNED_PACE} REAL,
           ${DB.LAP.AVG_HR} INTEGER
         )
         """.trimIndent())
@@ -210,6 +232,9 @@ class ActivityDetailStateTest {
           put(DB.LAP.INTENSITY, 2)
           put(DB.LAP.TIME, 300L)
           put(DB.LAP.DISTANCE, 800.0)
+          put(DB.LAP.PLANNED_TIME, 300L)
+          put(DB.LAP.PLANNED_DISTANCE, 800.0)
+          put(DB.LAP.PLANNED_PACE, 4.5)
           put(DB.LAP.AVG_HR, 150)
         })
     database.insertOrThrow(
@@ -226,7 +251,15 @@ class ActivityDetailStateTest {
     try {
       assertEquals(
           listOf(
-              ActivityLapDetails(2, 2, 300L, 800.0, 150),
+              ActivityLapDetails(
+                  2,
+                  2,
+                  300L,
+                  800.0,
+                  150,
+                  plannedDurationSeconds = 300L,
+                  plannedDistanceMeters = 800.0,
+                  plannedPace = 4.5),
               ActivityLapDetails(3, 0, null, null, null)),
           readActivityLaps(database, 11L))
     } finally {
