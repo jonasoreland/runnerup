@@ -76,6 +76,7 @@ internal fun PlanCalendarScreen(
     completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
     onStartRunning: (org.runnerup.workout.Workout) -> Unit = {},
+    onSaveFavoriteWorkout: (String, String) -> Unit = { _, _ -> },
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit = {},
     onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
@@ -105,6 +106,7 @@ internal fun PlanCalendarScreen(
             completedStrengthSessions,
             onStartStrength,
             onStartRunning,
+            onSaveFavoriteWorkout,
             onViewStrengthCompletion,
             onOpenPlanLibrary,
             onReschedule,
@@ -126,6 +128,7 @@ private fun LoadedPlanCalendar(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onStartRunning: (org.runnerup.workout.Workout) -> Unit,
+    onSaveFavoriteWorkout: (String, String) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
     onOpenPlanLibrary: () -> Unit,
     onReschedule: (String, String) -> Unit,
@@ -223,6 +226,7 @@ private fun LoadedPlanCalendar(
             editMin = segment.target?.minimum?.toString().orEmpty()
             editMax = segment.target?.maximum?.toString().orEmpty()
           },
+          onSaveFavoriteWorkout = onSaveFavoriteWorkout,
           onStartStrength = { onStartStrength(plan.id(), openedWorkout) },
           onStartRunning = { openedWorkout.runningWorkout?.let(onStartRunning) },
           onViewStrengthCompletion = onViewStrengthCompletion)

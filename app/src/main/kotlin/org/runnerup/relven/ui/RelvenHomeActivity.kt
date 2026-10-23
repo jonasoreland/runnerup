@@ -147,6 +147,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var planCreationError by mutableStateOf<String?>(null)
   private var pendingPlanActivationJson by mutableStateOf<String?>(null)
   private var planRevisionStatus by mutableStateOf<PlanRevisionStatus>(PlanRevisionStatus.Idle)
+  private var favoriteWorkouts by mutableStateOf<List<FavoriteWorkout>>(emptyList())
   private var exerciseCatalogLoadState by mutableStateOf<ExerciseCatalogLoadState>(ExerciseCatalogLoadState.Loading)
   private var exerciseCollectionMessage by mutableStateOf<String?>(null)
   private var exerciseCollectionBusy by mutableStateOf(false)
@@ -218,6 +219,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         savedInstanceState?.takeIf { it.containsKey(HISTORY_ACTIVITY_DETAIL_STATE) }
             ?.getLong(HISTORY_ACTIVITY_DETAIL_STATE)
     favoriteExerciseIds = ExerciseFavoritesStore(applicationContext).read()
+    loadFavoriteWorkouts()
     loadExerciseCatalog()
     setContent {
       RelvenTheme {
@@ -317,6 +319,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { selectHomeDestination(HomeDestination.Start) },
             planLibraryState = planLibraryState,
+            favoriteWorkouts = favoriteWorkouts,
             planLibraryOpen = planLibraryOpen,
             planLibraryBusy = planLibraryBusy,
             planCreationOpen = planCreationOpen,
@@ -358,6 +361,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onRemovePlanEntry = ::removeActivePlanEntry,
             onRenamePlan = ::renameActivePlan,
             onRenameWorkout = ::renameActivePlanWorkout,
+            onSaveFavoriteWorkout = ::saveFavoriteWorkout,
+            onStartFavoriteWorkout = ::startFavoriteWorkout,
+            onRemoveFavoriteWorkout = ::removeFavoriteWorkout,
             onEditRunningEnd = ::editActivePlanRunningEnd,
             onEditRunningTarget = ::editActivePlanRunningTarget,
             onRetryExerciseCatalog = ::loadExerciseCatalog,
@@ -425,6 +431,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     activePlanState = ActivePlanLoadState.Loading
     planLibraryState = PlanLibraryState()
     loadPlanLibrary()
+    loadFavoriteWorkouts()
     planRevisionStatus = PlanRevisionStatus.Idle
     currentTimeMillis = System.currentTimeMillis()
     progressState = ProgressLoadState.Loading
@@ -536,6 +543,81 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         Log.w("RelvenHome", "Could not load saved plans", it)
         PlanLibraryState(loading = false, unavailable = true)
       }
+    }
+  }
+
+  private fun loadFavoriteWorkouts() {
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching { FavoriteWorkoutStore.read(applicationContext) }
+      }
+      favoriteWorkouts = result.getOrElse { error ->
+        Log.w("RelvenHome", "Could not load favorite workouts", error)
+        planLibraryMessage = getString(R.string.plan_favorite_error)
+        emptyList()
+      }
+    }
+  }
+
+  private fun saveFavoriteWorkout(name: String, workoutJson: String) {
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          FavoriteWorkoutStore.save(applicationContext, name, workoutJson)
+          FavoriteWorkoutStore.read(applicationContext)
+        }
+      }
+      result.fold(
+          onSuccess = { savedFavorites ->
+            favoriteWorkouts = savedFavorites
+            planLibraryMessage = getString(R.string.plan_favorite_saved)
+          },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not save favorite workout", error)
+            planLibraryMessage = getString(R.string.plan_favorite_error)
+          })
+    }
+  }
+
+  private fun removeFavoriteWorkout(id: String) {
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          FavoriteWorkoutStore.remove(applicationContext, id)
+          FavoriteWorkoutStore.read(applicationContext)
+        }
+      }
+      result.fold(
+          onSuccess = { favoriteWorkouts = it },
+          onFailure = { error ->
+            Log.w("RelvenHome", "Could not remove favorite workout", error)
+            planLibraryMessage = getString(R.string.plan_favorite_error)
+          })
+    }
+  }
+
+  private fun startFavoriteWorkout(favorite: FavoriteWorkout) {
+    try {
+      val document = org.json.JSONObject(favorite.workoutJson)
+      when (favorite.sport) {
+        "running" -> startPlannedRunningWorkout(
+            org.runnerup.workout.RelvenWorkoutImporter.parse(favorite.workoutJson))
+        "strength", "prehab" -> {
+          val workout = org.runnerup.workout.RelvenStrengthWorkoutParser.parse(favorite.workoutJson)
+          val entry = PlanCalendarEntry.Workout(
+              favorite.id,
+              document.getString("id"),
+              favorite.name,
+              "",
+              strengthDetails = workout,
+              workoutDocument = favorite.workoutJson)
+          startStrengthSession("favorite-workout", entry)
+        }
+        else -> throw IllegalArgumentException("Unsupported favorite workout type")
+      }
+    } catch (error: Exception) {
+      Log.w("RelvenHome", "Could not start favorite workout", error)
+      planLibraryMessage = getString(R.string.plan_favorite_error)
     }
   }
 
@@ -1566,6 +1648,7 @@ private fun RelvenHome(
     pendingPlannedRunningWorkout: org.runnerup.workout.Workout?,
     destination: HomeDestination,
     planLibraryState: PlanLibraryState,
+    favoriteWorkouts: List<FavoriteWorkout>,
     planLibraryOpen: Boolean,
     planLibraryBusy: Boolean,
     planCreationOpen: Boolean,
@@ -1601,6 +1684,9 @@ private fun RelvenHome(
     onRemovePlanEntry: (String) -> Unit,
     onRenamePlan: (String) -> Unit,
     onRenameWorkout: (String, String) -> Unit,
+    onSaveFavoriteWorkout: (String, String) -> Unit,
+    onStartFavoriteWorkout: (FavoriteWorkout) -> Unit,
+    onRemoveFavoriteWorkout: (String) -> Unit,
     onEditRunningEnd: (String, String, org.json.JSONObject) -> Unit,
     onEditRunningTarget: (String, String, org.json.JSONObject?) -> Unit,
     onRetryExerciseCatalog: () -> Unit,
@@ -1764,6 +1850,7 @@ private fun RelvenHome(
       } else if (planLibraryOpen || activePlanState !is ActivePlanLoadState.Loaded) {
         PlanLibraryScreen(
             state = planLibraryState,
+            favoriteWorkouts = favoriteWorkouts,
             currentTimeMillis = currentTimeMillis,
             busy = planLibraryBusy,
             onRetry = onRetryPlanLibrary,
@@ -1776,6 +1863,8 @@ private fun RelvenHome(
             onClearActive = onClearActivePlan,
             onArchive = onArchivePlan,
             onRestore = onRestoreArchivedPlan,
+            onStartFavoriteWorkout = onStartFavoriteWorkout,
+            onRemoveFavoriteWorkout = onRemoveFavoriteWorkout,
             onOpenCalendar = onOpenPlanCalendar)
       } else {
         PlanCalendarScreen(
@@ -1783,6 +1872,7 @@ private fun RelvenHome(
             revisionStatus = planRevisionStatus,
             nowMillis = currentTimeMillis,
             completedStrengthSessions = completedStrengthSessions,
+            onSaveFavoriteWorkout = onSaveFavoriteWorkout,
             onStartStrength = onStartStrength,
             onStartRunning = onStartPlannedRunningWorkout,
             onViewStrengthCompletion = onViewStrengthCompletion,

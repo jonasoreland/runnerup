@@ -3,6 +3,7 @@ package org.runnerup.relven.ui
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.runnerup.workout.RelvenPlanImporter
 
@@ -52,6 +53,18 @@ class RunningWorkoutDefinitionsTest {
   @Test
   fun nonRunningWorkoutHasNoEditableRunningSegments() {
     assertEquals(emptyList<RunningSegmentSummary>(), runningWorkoutSegments(nestedPlan, "missing"))
+  }
+
+  @Test
+  fun sourceWorkoutCanBeCopiedWithoutChangingThePlanDocument() {
+    val originalPlanJson = nestedPlan.sourceJson()
+
+    val copied = plannedWorkoutDocument(nestedPlan, "run")
+
+    assertNotNull(copied)
+    assertEquals("run", org.json.JSONObject(requireNotNull(copied)).getString("id"))
+    assertEquals(originalPlanJson, nestedPlan.sourceJson())
+    assertNull(plannedWorkoutDocument(nestedPlan, "missing"))
   }
 
   @Test
