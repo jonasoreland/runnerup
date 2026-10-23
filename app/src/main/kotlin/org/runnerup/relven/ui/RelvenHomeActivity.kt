@@ -324,8 +324,14 @@ class RelvenHomeActivity : FragmentActivity() {
             onClearActivePlan = ::clearActivePlan,
             onArchivePlan = ::archiveSavedPlan,
             onRestoreArchivedPlan = ::restoreArchivedPlan,
-            onOpenPlanLibrary = { planLibraryOpen = true },
-            onOpenPlanCalendar = { planLibraryOpen = false },
+            onOpenPlanLibrary = {
+              planLibraryOpen = true
+              selectHomeDestination(HomeDestination.Plan)
+            },
+            onOpenPlanCalendar = {
+              planLibraryOpen = false
+              selectHomeDestination(HomeDestination.Plan)
+            },
             onOpenHistory = {
               selectHomeDestination(HomeDestination.History)
             },
@@ -1530,7 +1536,10 @@ private fun RelvenHome(
             fontSize = 15.sp,
             color = RelvenColors.MutedText)
       }
-      TodayPlanCard(todayPlan)
+      TodayPlanCard(
+          state = todayPlan,
+          onOpenPlanLibrary = onOpenPlanLibrary,
+          onOpenPlanCalendar = onOpenPlanCalendar)
       Surface(
           shape = RoundedCornerShape(16.dp),
           color = RelvenColors.Surface,
@@ -1909,7 +1918,10 @@ private fun HomeNavigationItem(
 }
 
 @Composable
-private fun TodayPlanCard(state: TodayPlanState) {
+private fun TodayPlanCard(
+    state: TodayPlanState,
+    onOpenPlanLibrary: () -> Unit,
+    onOpenPlanCalendar: () -> Unit) {
   Surface(
       shape = RoundedCornerShape(24.dp),
       color = RelvenColors.Surface,
@@ -1933,7 +1945,7 @@ private fun TodayPlanCard(state: TodayPlanState) {
               fontSize = 18.sp,
               fontWeight = FontWeight.Bold)
           Text(
-              stringResource(org.runnerup.common.R.string.Activate_a_plan_hint),
+              stringResource(org.runnerup.common.R.string.Today_plan_create_hint),
               color = RelvenColors.MutedText,
               fontSize = 14.sp)
         }
@@ -1980,6 +1992,23 @@ private fun TodayPlanCard(state: TodayPlanState) {
             Text(state.notes, color = RelvenColors.MutedText, fontSize = 14.sp)
           }
         }
+      }
+      when (todayPlanAction(state)) {
+        TodayPlanAction.CreateOrManagePlans ->
+            Button(
+                onClick = onOpenPlanLibrary,
+                colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+              Text(stringResource(org.runnerup.common.R.string.Today_plan_open_library))
+            }
+        TodayPlanAction.ManageActivePlan ->
+            Button(
+                onClick = onOpenPlanCalendar,
+                colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+              Text(stringResource(org.runnerup.common.R.string.Today_plan_open_calendar))
+            }
+        null -> Unit
       }
     }
   }

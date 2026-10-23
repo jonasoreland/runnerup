@@ -21,6 +21,21 @@ internal sealed interface TodayPlanState {
       TodayPlanState
 }
 
+internal enum class TodayPlanAction {
+  CreateOrManagePlans,
+  ManageActivePlan
+}
+
+internal fun todayPlanAction(state: TodayPlanState): TodayPlanAction? =
+    when (state) {
+      TodayPlanState.NoActivePlan -> TodayPlanAction.CreateOrManagePlans
+      is TodayPlanState.NoPlannedItem,
+      is TodayPlanState.RestDay,
+      is TodayPlanState.PlannedWorkout -> TodayPlanAction.ManageActivePlan
+      TodayPlanState.Loading,
+      TodayPlanState.Unavailable -> null
+    }
+
 internal fun todayPlanState(
     plan: RelvenPlanImporter.Plan?,
     nowMillis: Long

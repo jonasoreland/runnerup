@@ -328,7 +328,9 @@
   <string name="Today_plan_title">Dagens plan</string>
   <string name="Today_plan_loading">Läser dagens plan…</string>
   <string name="No_active_plan">Ingen aktiv plan</string>
-  <string name="Activate_a_plan_hint">Aktivera en sparad plan i träningsvyn för att se dagens pass här.</string>
+  <string name="Today_plan_create_hint">Skapa en plan eller välj en i biblioteket för att se dagens träning här.</string>
+  <string name="Today_plan_open_library">Skapa eller hantera planer</string>
+  <string name="Today_plan_open_calendar">Hantera plan</string>
   <string name="Today_plan_unavailable">Den aktiva planen kunde inte läsas</string>
   <string name="Today_plan_unavailable_hint">Öppna träningsvyn och kontrollera dina sparade planer.</string>
   <string name="No_plan_item_today">Inget pass planerat idag</string>
