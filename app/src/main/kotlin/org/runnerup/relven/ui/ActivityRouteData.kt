@@ -96,7 +96,7 @@ internal fun routeMetricColor(
     metric: RouteMetric,
     value: Double?,
     range: RouteMetricRange?): String =
-    if (metric == RouteMetric.STANDARD) "#2979FF"
+    if (metric == RouteMetric.STANDARD) "#FF5A1F"
     else if (value == null || !metric.isPlausibleForDisplay(value)) "#808080"
     else routeMetricColor(value, range)
 
