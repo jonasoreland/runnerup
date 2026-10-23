@@ -1,14 +1,20 @@
 # Implementation status — 23 October 2026
 
-## Running experience redesign — one-shot workout completion (PR in progress)
+## Running experience redesign — trustworthy elevation (current PR)
+
+- New GPS-derived elevations are available only when the fix includes Android vertical-accuracy metadata no worse than 5 m; otherwise elevation is omitted from the persisted activity row and the optional raw GPS-altitude export field. Poor GPS altitude cannot calibrate the pressure-derived offset. This does not affect accepted horizontal route fixes, distance, time, or GPS recording. Pressure-sensor elevation remains available.
+- `TrackerElevationTest` covers the exact accuracy boundary, missing vertical accuracy, missing altitude, NaN/infinite altitude, and pressure calibration eligibility. `PersistentGpsLoggerListenerTest` verifies low-confidence raw altitude is omitted while trusted altitude remains exportable. The focused tests first failed because the guards were absent and pass after implementation. Full-suite/build and hosted review are pending.
+
+## Running experience redesign — one-shot workout completion (PR #112 merged)
 
 - `Tracker.completeActivity` now accepts only the first completion request while the activity is `PAUSED` or `STOPPED`. Duplicate Save/Discard callbacks and out-of-state calls return before writing an end marker, final metrics, deletion state, or resetting the Tracker. A new activity resets the gate when its database row is created.
-- `ActivityCompletionGateTest` covers stopped/paused eligibility, repeated completion rejection, and gate reset for the next activity. The focused test first failed because the production gate was absent, then passed after implementation. Full-suite and hosted verification are pending.
+- `ActivityCompletionGateTest` covers stopped/paused eligibility, repeated completion rejection, and gate reset for the next activity. Merged to master as `302d8ad4` after focused/full app, Wear, HR-device and common tests, builds, lint and style checks passed. Hosted CI passed.
 
-## Running experience redesign — saved route first-layout fit (PR in progress)
+## Running experience redesign — saved route first-layout fit (PR #111 merged)
 
 - Saved activity maps now defer the initial route fit until both the map style and the `MapView`'s nonzero measured viewport are ready. A fit stays pending until the camera request is issued, covering the first-layout race where the route could render outside the visible map until the user tapped **Fit route**. Unit tests cover style-first and viewport-first ordering, retry-before-issue, one-time fitting, and routes with fewer than two points.
 - Isolated emulator verification on `emulator-5586` at ADB port 5039: opening a saved 74 m route displays its orange geometry and finish marker without touching the recenter control. Capture: `app/build/outputs/qa/relven-pr111-review-initial-fit-final.png`. No physical ADB device was used.
+- Merged to master as `ae18a712` after independent review and hosted checks passed.
 
 ## Running experience redesign — live route geometry (PR #110 merged)
 

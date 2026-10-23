@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import org.runnerup.R;
+import org.runnerup.tracker.GpsAltitudeQuality;
 import org.runnerup.tracker.Tracker;
 
 public class TrackerElevation extends DefaultTrackerComponent implements SensorEventListener {
@@ -77,7 +78,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
             (mAverageGpsElevation != null) ? (mAverageGpsElevation - pressureElevation) : 0D;
         // Apply correction to mean-sea-level
         Double offset =
-            mAltitudeConverter == null
+            mAltitudeConverter == null || !mayUseGpsAltitudeForPressureCalibration(lastLocation)
                 ? Double.valueOf(0D)
                 : mAltitudeConverter.getOffset(lastLocation);
         if (offset != null) {
@@ -87,6 +88,8 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
         }
       }
       val = pressureElevation + (mPressureOffset != null ? mPressureOffset : 0D);
+    } else if (!GpsAltitudeQuality.isReliable(lastLocation)) {
+      return null;
     } else if (AltitudeConverterWrapper.hasMslAltitude(lastLocation)) {
       // note that msl offset is still applied in mock mode (use "raw" data when testing)
       val = LocationCompat.getMslAltitudeMeters(lastLocation);
@@ -103,7 +106,7 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
   }
 
   public void onLocationChanged(android.location.Location arg0) {
-    if (arg0.hasAltitude()
+    if (GpsAltitudeQuality.isReliable(arg0)
         && (!isStarted || mPressureOffset == null || arg0.getTime() < minEleAverageCutoffTime)) {
       // If mPressureOffset is not "used" yet or shortly after first GPS, update the average
       final int minElevationStabilizeTime = 60;
@@ -124,6 +127,10 @@ public class TrackerElevation extends DefaultTrackerComponent implements SensorE
       // Recalculate offset when needed
       mPressureOffset = null;
     }
+  }
+
+  static boolean mayUseGpsAltitudeForPressureCalibration(Location location) {
+    return GpsAltitudeQuality.isReliable(location);
   }
 
   @Override
