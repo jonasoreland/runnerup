@@ -318,6 +318,11 @@ internal fun ActivityLapSection(laps: List<ActivityLapDetails>) {
                   stringResource(R.string.Home_activity_detail_distance) + " " +
                       formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong()))
             }
+            lap.plannedPace?.takeIf { it > 0.0 }?.let {
+              add(
+                  formatter.formatVelocityLabel() + " " +
+                      formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, it))
+            }
           }
           if (targets.isNotEmpty()) {
             Text(
