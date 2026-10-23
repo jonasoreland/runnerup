@@ -51,6 +51,8 @@
     <string name="plan_library_calendar_no_plan">Skapa eller importera en plan för att lägga till pass i kalendern.</string>
     <string name="plan_library_preview_calendar">Förhandsgranska schema</string>
     <string name="plan_library_previewing">Förhandsgranskar</string>
+    <string name="plan_library_preview_short">Visa schema</string>
+    <string name="plan_library_previewing_short">Visar schema</string>
     <string name="plan_library_import_title">Granska plan</string>
     <string name="plan_library_save">Spara plan</string>
     <string name="plan_library_cancel">Avbryt</string>
