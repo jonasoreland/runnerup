@@ -111,6 +111,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private long mLapId = 0;
   private long mActivityId = 0;
+  private final ActivityCompletionGate activityCompletionGate = new ActivityCompletionGate();
   private long mElapsedTimeNanos = 0;
   private double mElapsedDistance = 0;
   private double mHeartbeats = 0;
@@ -315,6 +316,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
         prefs.getBoolean(res.getString(R.string.pref_speed_from_gps_points), false);
 
     // Create an Activity instance
+    activityCompletionGate.beginActivity();
     ContentValues tmp = new ContentValues();
     tmp.put(DB.ACTIVITY.SPORT, sport);
     try {
@@ -557,10 +559,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       };
 
   public void completeActivity(boolean save, Double manualDistance) {
-    if (BuildConfig.DEBUG
-        && state.get() != TrackerState.PAUSED
-        && state.get() != TrackerState.STOPPED) {
-      throw new AssertionError();
+    if (!activityCompletionGate.tryBeginCompletion(state.get())) {
+      return;
     }
 
     setNextLocationType(DB.LOCATION.TYPE_END);

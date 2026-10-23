@@ -1,5 +1,10 @@
 # Implementation status — 23 October 2026
 
+## Running experience redesign — one-shot workout completion (PR in progress)
+
+- `Tracker.completeActivity` now accepts only the first completion request while the activity is `PAUSED` or `STOPPED`. Duplicate Save/Discard callbacks and out-of-state calls return before writing an end marker, final metrics, deletion state, or resetting the Tracker. A new activity resets the gate when its database row is created.
+- `ActivityCompletionGateTest` covers stopped/paused eligibility, repeated completion rejection, and gate reset for the next activity. The focused test first failed because the production gate was absent, then passed after implementation. Full-suite and hosted verification are pending.
+
 ## Running experience redesign — saved route first-layout fit (PR in progress)
 
 - Saved activity maps now defer the initial route fit until both the map style and the `MapView`'s nonzero measured viewport are ready. A fit stays pending until the camera request is issued, covering the first-layout race where the route could render outside the visible map until the user tapped **Fit route**. Unit tests cover style-first and viewport-first ordering, retry-before-issue, one-time fitting, and routes with fewer than two points.
