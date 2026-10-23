@@ -375,11 +375,14 @@
   <string name="Activity_map_title">Karta</string>
   <string name="Activity_map_no_route">Det finns ingen GPS-rutt för det här passet.</string>
   <string name="Activity_map_unavailable">Kartan är inte tillgänglig i den här versionen.</string>
-  <string name="Activity_map_full_details">Visa alla detaljer</string>
+  <string name="Activity_map_full_details">Tillbaka till passet</string>
   <string name="Home_activity_detail_bpm">%1$d slag/min</string>
   <string name="Home_activity_detail_note">Anteckningar</string>
-  <string name="Home_activity_detail_open_map">Visa rutt och alla detaljer</string>
-  <string name="Home_activity_detail_open_full">Visa alla detaljer</string>
+  <string name="Home_activity_detail_splits">Varvtider</string>
+  <string name="Home_activity_detail_split_number">Varv %1$d</string>
+  <string name="Home_activity_detail_unavailable_value">—</string>
+  <string name="Home_activity_detail_open_map">Visa rutt</string>
+  <string name="Home_activity_detail_more_actions">Redigera, exportera och ladda upp</string>
   <string name="Home_nav_exercises">Övningar</string>
   <string name="Progress_title">Utveckling</string>
   <string name="Progress_entry_summary">Se dina senaste träningstotaler</string>

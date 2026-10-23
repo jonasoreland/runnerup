@@ -1,7 +1,6 @@
 package org.runnerup.relven.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -48,6 +48,7 @@ import java.util.Date
 import org.runnerup.common.R
 import org.runnerup.BuildConfig
 import org.runnerup.util.Formatter
+import org.runnerup.workout.Intensity
 import org.runnerup.workout.Sport
 
 @Composable
@@ -55,48 +56,54 @@ internal fun ActivityDetailScreen(
     loadState: ActivityDetailLoadState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
-    onOpenMapAndDetails: (Long) -> Unit) {
+    onOpenMap: (Long) -> Unit,
+    onOpenMoreActions: (Long) -> Unit) {
   BackHandler(onBack = onBack)
-  Column(
-      modifier =
-          Modifier.fillMaxSize()
-              .background(RelvenColors.Background)
-              .statusBarsPadding()
-              .navigationBarsPadding()
-              .verticalScroll(rememberScrollState())
-              .padding(horizontal = 24.dp)
-              .padding(top = 12.dp, bottom = 28.dp),
-      verticalArrangement = Arrangement.spacedBy(20.dp)) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-      IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
-        Icon(
-            Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = stringResource(R.string.Home_activity_detail_back),
-            tint = RelvenColors.Orange)
+  Surface(
+      modifier = Modifier.fillMaxSize(),
+      color = RelvenColors.Background,
+      contentColor = RelvenColors.Text) {
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+                .padding(top = 12.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
+          Icon(
+              Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(R.string.Home_activity_detail_back),
+              tint = RelvenColors.Orange)
+        }
+        Text(
+            stringResource(R.string.Home_activity_detail_title),
+            fontSize = 24.sp,
+            lineHeight = 30.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.semantics { heading() })
       }
-      Text(
-          stringResource(R.string.Home_activity_detail_title),
-          fontSize = 24.sp,
-          lineHeight = 30.sp,
-          fontWeight = FontWeight.Bold,
-          modifier = Modifier.semantics { heading() })
-    }
 
-    when (loadState) {
-      ActivityDetailLoadState.Loading -> ActivityDetailMessage(loading = true)
-      ActivityDetailLoadState.NotFound ->
-          ActivityDetailMessage(
-              message = stringResource(R.string.Home_activity_detail_not_found),
-              onBack = onBack)
-      ActivityDetailLoadState.Unavailable ->
-          ActivityDetailMessage(
-              message = stringResource(R.string.Home_activity_detail_unavailable),
-              onBack = onBack,
-              onRetry = onRetry)
-      is ActivityDetailLoadState.Loaded ->
-          ActivityDetailContent(
-              loadState.activity,
-              onOpenMapAndDetails = { onOpenMapAndDetails(loadState.activity.id) })
+      when (loadState) {
+        ActivityDetailLoadState.Loading -> ActivityDetailMessage(loading = true)
+        ActivityDetailLoadState.NotFound ->
+            ActivityDetailMessage(
+                message = stringResource(R.string.Home_activity_detail_not_found),
+                onBack = onBack)
+        ActivityDetailLoadState.Unavailable ->
+            ActivityDetailMessage(
+                message = stringResource(R.string.Home_activity_detail_unavailable),
+                onBack = onBack,
+                onRetry = onRetry)
+        is ActivityDetailLoadState.Loaded ->
+            ActivityDetailContent(
+                loadState.activity,
+                onOpenMap = { onOpenMap(loadState.activity.id) },
+                onOpenMoreActions = { onOpenMoreActions(loadState.activity.id) })
+      }
     }
   }
 }
@@ -104,7 +111,8 @@ internal fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailContent(
     activity: HistoryActivityDetails,
-    onOpenMapAndDetails: () -> Unit) {
+    onOpenMap: () -> Unit,
+    onOpenMoreActions: () -> Unit) {
   val context = LocalContext.current
   val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
   val sport = Sport.textOf(LocalResources.current, activity.sport)
@@ -169,21 +177,111 @@ private fun ActivityDetailContent(
       }
     }
 
-    Button(
-        onClick = onOpenMapAndDetails,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
-      if (hasMapRoute) {
-        Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
-      }
-      Text(
-          stringResource(
-              if (!hasMapRoute) R.string.Home_activity_detail_open_full
-              else R.string.Home_activity_detail_open_map),
-          color = RelvenColors.Background,
-          fontWeight = FontWeight.SemiBold)
+    if (activity.laps.isNotEmpty()) {
+      ActivityLapSection(activity.laps)
     }
+
+    if (hasMapRoute) {
+      Button(
+          onClick = onOpenMap,
+          modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+          shape = RoundedCornerShape(16.dp),
+          colors = ButtonDefaults.buttonColors(
+              containerColor = RelvenColors.Orange, contentColor = RelvenColors.Background)) {
+        Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.padding(end = 8.dp))
+        Text(
+            stringResource(R.string.Home_activity_detail_open_map),
+            color = RelvenColors.Background,
+            fontWeight = FontWeight.SemiBold)
+      }
+    }
+
+    OutlinedButton(
+        onClick = onOpenMoreActions,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+      Text(stringResource(R.string.Home_activity_detail_more_actions))
+    }
+  }
+}
+
+@Composable
+private fun ActivityLapSection(laps: List<ActivityLapDetails>) {
+  val context = LocalContext.current
+  val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
+  Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Text(
+        stringResource(R.string.Home_activity_detail_splits),
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.semantics { heading() })
+    laps.forEach { lap ->
+      Surface(color = RelvenColors.Surface, shape = RoundedCornerShape(16.dp)) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.Home_activity_detail_split_number, lap.number),
+                modifier = Modifier.weight(1f),
+                fontWeight = FontWeight.SemiBold)
+            val intensity = Intensity.valueOf(lap.intensity)
+            if (intensity != null && intensity != Intensity.ACTIVE) {
+              Text(
+                  stringResource(intensity.getTextId()),
+                  color = RelvenColors.Orange,
+                  fontSize = 13.sp)
+            }
+          }
+          val distance = lap.distanceMeters?.takeIf { it > 0.0 }
+          val duration = lap.durationSeconds?.takeIf { it > 0L }
+          val speed = if (distance != null && duration != null) distance / duration else null
+          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            ActivityLapMetric(
+                stringResource(R.string.Home_activity_detail_distance),
+                distance?.let {
+                  formatter.formatDistance(Formatter.Format.TXT_LONG, it.toLong())
+                } ?: stringResource(R.string.Home_activity_detail_unavailable_value),
+                Modifier.weight(1f))
+            ActivityLapMetric(
+                stringResource(R.string.Home_activity_detail_duration),
+                duration?.let { formatter.formatElapsedTime(Formatter.Format.TXT_SHORT, it) }
+                    ?: stringResource(R.string.Home_activity_detail_unavailable_value),
+                Modifier.weight(1f))
+            ActivityLapMetric(
+                formatter.formatVelocityLabel(),
+                speed?.let {
+                  formatter.formatVelocityByPreferredUnit(Formatter.Format.TXT_LONG, it)
+                } ?: stringResource(R.string.Home_activity_detail_unavailable_value),
+                Modifier.weight(1f))
+          }
+          lap.averageHeartRate?.let { heartRate ->
+            Text(
+                stringResource(R.string.Home_activity_detail_average_hr) + " · " +
+                    stringResource(R.string.Home_activity_detail_bpm, heartRate),
+                color = RelvenColors.MutedText,
+                fontSize = 13.sp)
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun ActivityLapMetric(label: String, value: String, modifier: Modifier = Modifier) {
+  Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Text(
+        label,
+        fontSize = 11.sp,
+        color = RelvenColors.MutedText,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis)
+    Text(
+        value,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.Medium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis)
   }
 }
 

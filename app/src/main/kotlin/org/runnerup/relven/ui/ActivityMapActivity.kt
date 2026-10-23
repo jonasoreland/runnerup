@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.runnerup.BuildConfig
 import org.runnerup.db.DBHelper
-import org.runnerup.view.DetailActivity
 
 internal class ActivityMapActivity : ComponentActivity() {
   private var activityId: Long = -1L
@@ -37,7 +36,7 @@ internal class ActivityMapActivity : ComponentActivity() {
             state = screenState,
             onBack = ::finish,
             onRetry = ::loadActivity,
-            onOpenFullDetails = ::openFullDetails,
+            onOpenFullDetails = { finish() },
             activityId = activityId,
             mapContent = { modifier, route, metric ->
               AndroidView(
@@ -90,13 +89,6 @@ internal class ActivityMapActivity : ComponentActivity() {
           },
           onFailure = { screenState = ActivityMapScreenState.Unavailable })
     }
-  }
-
-  private fun openFullDetails(id: Long) {
-    startActivity(
-        Intent(this, DetailActivity::class.java)
-            .putExtra("ID", id)
-            .putExtra("mode", "details"))
   }
 
   override fun onStart() {

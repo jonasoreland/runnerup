@@ -114,6 +114,18 @@ class ActivityMapStateTest {
               ${DB.LOCATION.SPEED} REAL
             )
             """.trimIndent())
+        execSQL(
+            """
+            CREATE TABLE ${DB.LAP.TABLE} (
+              _id INTEGER PRIMARY KEY,
+              ${DB.LAP.ACTIVITY} INTEGER NOT NULL,
+              ${DB.LAP.LAP} INTEGER NOT NULL,
+              ${DB.LAP.INTENSITY} INTEGER NOT NULL DEFAULT 0,
+              ${DB.LAP.TIME} INTEGER,
+              ${DB.LAP.DISTANCE} REAL,
+              ${DB.LAP.AVG_HR} INTEGER
+            )
+            """.trimIndent())
       }
 
   private fun insertActivity(
