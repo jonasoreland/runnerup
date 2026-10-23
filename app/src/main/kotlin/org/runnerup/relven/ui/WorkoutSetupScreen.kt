@@ -128,6 +128,9 @@ private fun GymWorkoutSetup(state: WorkoutSetupState, listener: WorkoutSetupList
       Text(stringResource(org.runnerup.R.string.gym_exercises_loading), color = RelvenColors.MutedText)
     } else if (state.gymCatalogError) {
       Text(stringResource(org.runnerup.R.string.gym_exercises_error), color = RelvenColors.MutedText)
+      TextButton(onClick = listener::onRetryGymCatalog) {
+        Text(stringResource(org.runnerup.R.string.gym_exercises_retry), color = RelvenColors.Orange)
+      }
     } else {
       val selectedIds = state.gymDraft.mapTo(HashSet(), GymExerciseDraft::exerciseId)
       val query = state.gymQuery.trim()

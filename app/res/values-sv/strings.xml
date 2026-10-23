@@ -196,7 +196,8 @@
     <string name="gym_exercises_title">Lägg till övningar</string>
     <string name="gym_exercise_search">Sök övningar</string>
     <string name="gym_exercises_loading">Läser in övningsbiblioteket offline…</string>
-    <string name="gym_exercises_error">Övningsbiblioteket kunde inte läsas in. Öppna Start igen för att försöka på nytt.</string>
+    <string name="gym_exercises_error">Övningsbiblioteket kunde inte läsas in.</string>
+    <string name="gym_exercises_retry">Försök igen</string>
     <string name="gym_exercises_empty">Sök eller välj en övning nedan för att börja.</string>
     <string name="gym_exercise_no_matches">Inga fler övningar matchar.</string>
     <string name="gym_exercise_add">Lägg till</string>

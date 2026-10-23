@@ -385,6 +385,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
               }
 
               @Override
+              public void onRetryGymCatalog() {
+                loadGymCatalog();
+              }
+
+              @Override
               public void onStartGymWorkout() {
                 onStartWorkoutAction();
               }

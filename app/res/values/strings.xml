@@ -230,7 +230,8 @@
     <string name="gym_exercises_title">Add exercises</string>
     <string name="gym_exercise_search">Search exercises</string>
     <string name="gym_exercises_loading">Loading the offline exercise library…</string>
-    <string name="gym_exercises_error">The exercise library could not be loaded. Reopen Start to try again.</string>
+    <string name="gym_exercises_error">The exercise library could not be loaded.</string>
+    <string name="gym_exercises_retry">Try again</string>
     <string name="gym_exercises_empty">Search or choose an exercise below to begin.</string>
     <string name="gym_exercise_no_matches">No more matching exercises.</string>
     <string name="gym_exercise_add">Add</string>

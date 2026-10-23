@@ -21,5 +21,7 @@ public interface WorkoutSetupListener {
 
   void onUpdateGymExercise(String exerciseId, String sets, String repetitions, String restSeconds);
 
+  void onRetryGymCatalog();
+
   void onStartGymWorkout();
 }
