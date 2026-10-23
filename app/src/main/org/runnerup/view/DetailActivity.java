@@ -92,6 +92,7 @@ import org.runnerup.workout.Sport;
 public class DetailActivity extends AppCompatActivity implements Constants {
 
   public static final String EXTRA_OPEN_MAP = "open_map";
+  public static final String EXTRA_OPEN_UPLOAD = "open_upload";
 
   private long mID = 0;
   private SQLiteDatabase mDB = null;
@@ -279,6 +280,11 @@ public class DetailActivity extends AppCompatActivity implements Constants {
       if (tab != null) {
         detailTabs.selectTab(tab);
       }
+    } else if (getIntent().getBooleanExtra(EXTRA_OPEN_UPLOAD, false)) {
+      TabLayout.Tab tab = detailTabs.getTabAt(detailTabs.getTabCount() - 1);
+      if (tab != null) {
+        detailTabs.selectTab(tab);
+      }
     }
 
     fillHeaderData();
@@ -424,6 +430,13 @@ public class DetailActivity extends AppCompatActivity implements Constants {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.detail_menu, menu);
+    if (getIntent().getBooleanExtra(EXTRA_OPEN_UPLOAD, false)) {
+      menu.findItem(R.id.menu_share_activity).setVisible(false);
+      menu.findItem(R.id.menu_edit_activity).setVisible(false);
+      menu.findItem(R.id.menu_recompute_activity).setVisible(false);
+      menu.findItem(R.id.menu_simplify_path).setVisible(false);
+      menu.findItem(R.id.menu_delete_activity).setVisible(false);
+    }
     return true;
   }
 

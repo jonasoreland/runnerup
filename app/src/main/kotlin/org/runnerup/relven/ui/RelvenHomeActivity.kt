@@ -84,6 +84,8 @@ import org.runnerup.R
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.content.ActivityProvider
 import org.runnerup.db.DBHelper
+import org.runnerup.db.ActivityCleaner
+import org.runnerup.db.PathSimplifier
 import org.runnerup.workout.RelvenPlanStore
 import org.runnerup.workout.RelvenPlanImport
 import org.runnerup.workout.RelvenPlanKit
@@ -157,6 +159,7 @@ class RelvenHomeActivity : FragmentActivity() {
   private var activityHistoryRequest = 0
   private var activityDetailId by mutableStateOf<Long?>(null)
   private var activityDetailState by mutableStateOf<ActivityDetailLoadState?>(null)
+  private var activityEditSaveState by mutableStateOf<ActivityEditSaveState>(ActivityEditSaveState.Idle)
   private var activityDetailRequest = 0
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
@@ -277,9 +280,12 @@ class RelvenHomeActivity : FragmentActivity() {
         } else if (activityDetailState != null) {
           ActivityDetailScreen(
               loadState = requireNotNull(activityDetailState),
+              editSaveState = activityEditSaveState,
               onBack = ::closeHistoryActivityDetail,
               onRetry = { activityDetailId?.let(::loadHistoryActivityDetail) },
               onOpenMap = ::openHistoryActivityMap,
+              onBeginEdit = { activityEditSaveState = ActivityEditSaveState.Idle },
+              onSaveActivityEdit = ::saveHistoryActivityEdit,
               onShareActivity = ::shareHistoryActivity,
               onOpenMoreActions = ::openLegacyHistoryActivityActions)
         } else RelvenHome(
@@ -803,7 +809,7 @@ class RelvenHomeActivity : FragmentActivity() {
         Intent(this, DetailActivity::class.java)
             .putExtra("ID", id)
             .putExtra("mode", "details")
-            .putExtra(DetailActivity.EXTRA_OPEN_MAP, false))
+            .putExtra(DetailActivity.EXTRA_OPEN_UPLOAD, true))
   }
 
   private fun shareHistoryActivity(activity: HistoryActivityDetails, format: ActivityShareFormat) {
@@ -820,6 +826,42 @@ class RelvenHomeActivity : FragmentActivity() {
         }
     startActivity(
         Intent.createChooser(shareIntent, getString(org.runnerup.common.R.string.Share_activity)))
+  }
+
+  private fun saveHistoryActivityEdit(command: ActivityEditCommand) {
+    if (activityEditSaveState is ActivityEditSaveState.Saving) return
+    activityEditSaveState = ActivityEditSaveState.Saving
+    lifecycleScope.launch {
+      val result =
+          withContext(Dispatchers.IO) {
+            runCatching {
+              val database = DBHelper.getWritableDatabase(applicationContext)
+              if (!saveHistoryActivityEdit(database, command)) return@runCatching false
+              try {
+                val simplifier = PathSimplifier.getPathSimplifierForSave(applicationContext)
+                if (simplifier != null) {
+                  val ids = simplifier.getNoisyLocationIDsAsStrings(database, command.activityId)
+                  ActivityCleaner.deleteLocations(database, ids)
+                  ActivityCleaner().recompute(database, command.activityId)
+                }
+              } catch (error: Exception) {
+                Log.e("RelvenHome", "Failed to simplify edited activity path", error)
+              }
+              true
+            }
+          }
+      if (activityDetailId != command.activityId) return@launch
+      val saved = result.getOrElse { error ->
+        Log.e("RelvenHome", "Could not save activity edit", error)
+        false
+      }
+      if (saved) {
+        activityEditSaveState = ActivityEditSaveState.Saved
+        loadHistoryActivityDetail(command.activityId)
+      } else {
+        activityEditSaveState = ActivityEditSaveState.Failed
+      }
+    }
   }
 
   private fun loadHistoryActivityDetail(id: Long) {
