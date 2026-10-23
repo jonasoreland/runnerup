@@ -39,7 +39,7 @@ public final class ActiveWorkoutCheckpointStore {
       int count;
       while ((count = input.read(buffer)) != -1) bytes.write(buffer, 0, count);
       return ActiveWorkoutCheckpoint.fromJson(
-          new JSONObject(bytes.toString(StandardCharsets.UTF_8)));
+          new JSONObject(new String(bytes.toByteArray(), StandardCharsets.UTF_8)));
     } catch (IOException | JSONException exception) {
       return null;
     }

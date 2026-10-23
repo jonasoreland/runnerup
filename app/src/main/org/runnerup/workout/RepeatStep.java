@@ -64,6 +64,14 @@ public class RepeatStep extends Step {
     return true;
   }
 
+  @Override
+  void onRecoverPaused(Workout workout) {
+    super.onRecoverPaused(workout);
+    if (currentStep >= 0 && currentStep < steps.size()) {
+      steps.get(currentStep).onRecoverPaused(workout);
+    }
+  }
+
   final ArrayList<Step> steps = new ArrayList<>();
 
   private int currentStep = 0;

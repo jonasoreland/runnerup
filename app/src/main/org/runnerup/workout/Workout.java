@@ -613,6 +613,12 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
         .put("steps", stepStates);
   }
 
+  /** Marks a restored session as paused after a device reboot without emitting workout cues. */
+  public void pauseForRecovery() {
+    paused = true;
+    if (currentStep != null) currentStep.onRecoverPaused(this);
+  }
+
   /** Restores runtime progress only when the saved step tree matches this workout definition. */
   public boolean restoreRuntimeCheckpoint(JSONObject state) {
     if (state == null || state.optInt("version", -1) != 1) return false;

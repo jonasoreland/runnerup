@@ -111,6 +111,11 @@ public class TargetTrigger extends Trigger {
     return true;
   }
 
+  @Override
+  void onRecoverPaused(Workout workout) {
+    paused = true;
+  }
+
   private static JSONArray arrayToJson(double[] values) throws JSONException {
     JSONArray result = new JSONArray();
     for (double value : values) result.put(value);

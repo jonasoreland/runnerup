@@ -47,6 +47,11 @@ public class AutoPauseTrigger extends Trigger {
     return true;
   }
 
+  @Override
+  void onRecoverPaused(Workout workout) {
+    resetPaused(true);
+  }
+
   private static final long NANO_IN_MILLI = 1000000;
 
   public AutoPauseTrigger(float autoPauseAfterSeconds, float autoPauseMinSpeed) {

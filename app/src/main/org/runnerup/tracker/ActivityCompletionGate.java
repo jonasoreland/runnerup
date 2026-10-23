@@ -17,4 +17,8 @@ final class ActivityCompletionGate {
     completionStarted = true;
     return true;
   }
+
+  void cancelCompletion() {
+    completionStarted = false;
+  }
 }

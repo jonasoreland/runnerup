@@ -149,6 +149,10 @@ public class Step implements TickComponent {
     return restoreBaseRuntimeCheckpoint(state, "step");
   }
 
+  void onRecoverPaused(Workout workout) {
+    for (Trigger trigger : triggers) trigger.onRecoverPaused(workout);
+  }
+
   final boolean restoreBaseRuntimeCheckpoint(JSONObject state, String expectedStepType)
       throws JSONException {
     if (state == null

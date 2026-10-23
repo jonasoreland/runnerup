@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Binder;
@@ -39,10 +40,20 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationListenerCompat;
 import androidx.preference.PreferenceManager;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
@@ -71,6 +82,7 @@ import org.runnerup.util.Formatter;
 import org.runnerup.util.HRZones;
 import org.runnerup.workout.Scope;
 import org.runnerup.workout.Workout;
+import org.runnerup.workout.WorkoutSerializer;
 
 /**
  * GpsTracker - this class tracks Location updates
@@ -81,6 +93,7 @@ import org.runnerup.workout.Workout;
  * @author jonas.oreland@gmail.com
  */
 public class Tracker extends Service implements LocationListenerCompat, Constants {
+  private static final String ACTION_ACTIVE_WORKOUT = "org.runnerup.tracker.ACTIVE_WORKOUT";
   // Max age for current data to be considered valid
   private static final int MAX_CURRENT_AGE = 15000;
   private static final long NANO_IN_MILLI = 1000000;
@@ -111,6 +124,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private long mLapId = 0;
   private long mActivityId = 0;
+  private long mStartedAtEpochMillis = 0;
   private final ActivityCompletionGate activityCompletionGate = new ActivityCompletionGate();
   private long mElapsedTimeNanos = 0;
   private double mElapsedDistance = 0;
@@ -139,10 +153,26 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   private Workout workout = null;
   private NotificationStateManager notificationStateManager;
   private NotificationState activityOngoingState;
+  private ActiveWorkoutCheckpointStore checkpointStore;
+  private ActiveWorkoutCheckpoint pendingRecoveryCheckpoint;
+  private boolean recoveryStarted;
+  private final ExecutorService checkpointExecutor = Executors.newSingleThreadExecutor();
+  private final Runnable checkpointRunnable =
+      new Runnable() {
+        @Override
+        public void run() {
+          if (state.get() == TrackerState.STARTED || state.get() == TrackerState.PAUSED) {
+            queueActiveCheckpoint();
+            handler.postDelayed(this, 1000);
+          }
+        }
+      };
 
   @Override
   public void onCreate() {
     mDB = DBHelper.getWritableDatabase(this);
+    checkpointStore =
+        new ActiveWorkoutCheckpointStore(new File(getFilesDir(), "active-workout-checkpoint.json"));
     notificationStateManager =
         new NotificationStateManager(new ForegroundNotificationDisplayStrategy(this));
 
@@ -151,19 +181,27 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    // We want this service to continue running until it is explicitly
-    // stopped, so return sticky.
+    maybeRestoreActiveWorkout(/* startForegroundService= */ false);
     return START_STICKY;
   }
 
   @Override
   public void onDestroy() {
+    handler.removeCallbacks(checkpointRunnable);
+    queueActiveCheckpoint();
     if (mDB != null) {
       DBHelper.closeDB(mDB);
       mDB = null;
     }
 
-    reset();
+    if (state.get() == TrackerState.STARTED) {
+      wakeLock(false);
+      if (workout != null) workout.setTracker(null);
+      workout = null;
+    } else {
+      reset();
+    }
+    checkpointExecutor.shutdown();
   }
 
   public void setup() {
@@ -209,6 +247,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
             state.set(TrackerState.ERROR);
           } else {
             state.set(TrackerState.INITIALIZED);
+            if (pendingRecoveryCheckpoint != null) {
+              connect();
+              return;
+            }
           }
 
           Log.d(getClass().getName(), "state.set(" + getState() + ")");
@@ -303,6 +345,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
           state.set(TrackerState.CONNECTED);
           /* now we're connected */
           components.onConnected();
+          if (pendingRecoveryCheckpoint != null) restoreActiveWorkoutAfterConnect();
         }
       };
 
@@ -350,6 +393,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
     // create the DB activity
     createActivity(workout.getSport());
+    mStartedAtEpochMillis = System.currentTimeMillis();
 
     // do bindings
     doBind();
@@ -379,6 +423,11 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
     // And finally let workout know that we started
     workout.onStart(Scope.ACTIVITY, this.workout);
+    ContextCompat.startForegroundService(
+        this, new Intent(this, Tracker.class).setAction(ACTION_ACTIVE_WORKOUT));
+    notificationStateManager.displayNotificationState(activityOngoingState);
+    handler.removeCallbacks(checkpointRunnable);
+    handler.post(checkpointRunnable);
   }
 
   private void doBind() {
@@ -437,6 +486,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
     saveActivity(/* manualDistance= */ null);
     components.onPause();
+    queueActiveCheckpoint();
   }
 
   /** Refresh the ongoing notification from the workout */
@@ -469,6 +519,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
     saveActivity(/* manualDistance= */ null);
     components.onPause(); // TODO add new callback for this
+    queueActiveCheckpoint();
   }
 
   private void internalOnLocationChanged(Location arg0) {
@@ -506,6 +557,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     gpsCurrentSpeedFilter.reset();
     mCurrentSpeed = 0.0;
     components.onResume();
+    queueActiveCheckpoint();
   }
 
   public void reset() {
@@ -562,6 +614,13 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     if (!activityCompletionGate.tryBeginCompletion(state.get())) {
       return;
     }
+    handler.removeCallbacks(checkpointRunnable);
+    if (!clearActiveCheckpointBeforeCompletion()) {
+      activityCompletionGate.cancelCompletion();
+      Log.e("Tracker", "Unable to clear active workout checkpoint before completion");
+      handler.post(checkpointRunnable);
+      return;
+    }
 
     setNextLocationType(DB.LOCATION.TYPE_END);
     internalOnLocationChanged(mLastLocationStarted);
@@ -585,6 +644,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     components.onComplete(!save);
     notificationStateManager.cancelNotification();
     reset();
+    stopSelf();
   }
 
   private void saveActivity(Double manualDistance) {
@@ -819,6 +879,270 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     }
   }
 
+  private void queueActiveCheckpoint() {
+    if (checkpointStore == null || workout == null || mActivityId <= 0) return;
+    TrackerState currentState = state.get();
+    if (currentState != TrackerState.STARTED && currentState != TrackerState.PAUSED) return;
+    try {
+      StringWriter workoutDefinition = new StringWriter();
+      WorkoutSerializer.writeJSON(workoutDefinition, workout);
+      ActiveWorkoutCheckpoint checkpoint =
+          new ActiveWorkoutCheckpoint(
+              mActivityId,
+              currentState,
+              mElapsedTimeNanos,
+              mElapsedDistance,
+              mHeartbeats,
+              Math.round(mHeartbeatNanos),
+              mMaxHR,
+              workoutDefinition.toString(),
+              workout.toRuntimeCheckpoint().toString(),
+              mLapId,
+              mStartedAtEpochMillis,
+              SystemClock.elapsedRealtimeNanos(),
+              workout.getSport(),
+              workout.getWorkoutType(),
+              workout.getMute(),
+              trackerGPS.isWithoutGps());
+      checkpointExecutor.execute(
+          () -> {
+            try {
+              checkpointStore.save(checkpoint);
+            } catch (IOException exception) {
+              Log.e("Tracker", "Unable to persist active workout checkpoint", exception);
+            }
+          });
+    } catch (JSONException | IOException | IllegalArgumentException exception) {
+      Log.e("Tracker", "Unable to create active workout checkpoint", exception);
+    }
+  }
+
+  private void clearActiveCheckpoint() {
+    if (checkpointStore == null) return;
+    try {
+      checkpointExecutor.execute(checkpointStore::clear);
+    } catch (RuntimeException exception) {
+      Log.e("Tracker", "Unable to clear active workout checkpoint", exception);
+    }
+  }
+
+  private boolean clearActiveCheckpointBeforeCompletion() {
+    if (checkpointStore == null) return false;
+    try {
+      Future<?> clearTask = checkpointExecutor.submit(checkpointStore::clear);
+      clearTask.get();
+      return true;
+    } catch (InterruptedException exception) {
+      Thread.currentThread().interrupt();
+      Log.e("Tracker", "Interrupted while clearing active workout checkpoint", exception);
+      return false;
+    } catch (ExecutionException | RuntimeException exception) {
+      Log.e("Tracker", "Unable to clear active workout checkpoint", exception);
+      return false;
+    }
+  }
+
+  private void maybeRestoreActiveWorkout(boolean startForegroundService) {
+    if (recoveryStarted || workout != null || state.get() != TrackerState.INIT) return;
+    recoveryStarted = true;
+    ActiveWorkoutCheckpoint checkpoint = checkpointStore == null ? null : checkpointStore.load();
+    if (checkpoint == null) return;
+    if (!isRecoverableActivity(checkpoint.getActivityId())) {
+      clearActiveCheckpoint();
+      return;
+    }
+
+    try {
+      Workout restored =
+          WorkoutSerializer.readJSON(new StringReader(checkpoint.getWorkoutDefinitionJson()));
+      restored.sport = checkpoint.getSport();
+      restored.setWorkoutType(checkpoint.getWorkoutType());
+      restored.setMute(checkpoint.isMute());
+      restored.setTracker(this);
+      restored.onInit(restored);
+      if (!restored.restoreRuntimeCheckpoint(new JSONObject(checkpoint.getWorkoutRuntimeJson()))) {
+        Log.e("Tracker", "Workout runtime checkpoint does not match its definition");
+        clearActiveCheckpoint();
+        return;
+      }
+      if (restored.isPaused() != (checkpoint.getTrackerState() == TrackerState.PAUSED)) {
+        Log.e("Tracker", "Tracker and workout pause states do not match in checkpoint");
+        clearActiveCheckpoint();
+        return;
+      }
+
+      workout = restored;
+      mActivityId = checkpoint.getActivityId();
+      mLapId = checkpoint.getLapId();
+      mStartedAtEpochMillis = checkpoint.getStartedAtEpochMillis();
+      mElapsedTimeNanos = checkpoint.getElapsedTimeNanos();
+      mElapsedDistance = checkpoint.getDistanceMeters();
+      mHeartbeats = checkpoint.getHeartbeats();
+      mHeartbeatNanos = checkpoint.getHeartbeatNanos();
+      mMaxHR = checkpoint.getMaxHeartRate();
+      trackerGPS.setWithoutGps(checkpoint.isWithoutGps());
+      restorePersistedLocationState(checkpoint);
+
+      boolean clockReset =
+          SystemClock.elapsedRealtimeNanos() < checkpoint.getCheckpointElapsedRealtimeNanos();
+      if (clockReset && checkpoint.getTrackerState() == TrackerState.STARTED) {
+        workout.pauseForRecovery();
+        pendingRecoveryCheckpoint = checkpoint;
+      } else {
+        pendingRecoveryCheckpoint = checkpoint;
+      }
+      activityOngoingState = new OngoingState(new Formatter(this), workout, this);
+      if (startForegroundService) {
+        ContextCompat.startForegroundService(
+            this, new Intent(this, Tracker.class).setAction(ACTION_ACTIVE_WORKOUT));
+      }
+      notificationStateManager.displayNotificationState(activityOngoingState);
+      setup();
+      if (state.get() == TrackerState.INITIALIZED) connect();
+    } catch (JSONException | RuntimeException exception) {
+      Log.e("Tracker", "Unable to restore active workout checkpoint", exception);
+      workout = null;
+      pendingRecoveryCheckpoint = null;
+      clearActiveCheckpoint();
+    }
+  }
+
+  private boolean isRecoverableActivity(long activityId) {
+    if (mDB == null) return false;
+    try (Cursor cursor =
+        mDB.query(
+            DB.ACTIVITY.TABLE,
+            new String[] {DB.ACTIVITY.DELETED},
+            "_id = ?",
+            new String[] {Long.toString(activityId)},
+            null,
+            null,
+            null)) {
+      return isRecoverableActivity(cursor);
+    } catch (IllegalStateException exception) {
+      Log.e("Tracker", "Unable to validate active workout activity", exception);
+      return false;
+    }
+  }
+
+  static boolean isRecoverableActivity(Cursor cursor) {
+    return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 0;
+  }
+
+  private void restorePersistedLocationState(ActiveWorkoutCheckpoint checkpoint) {
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+    Resources resources = getResources();
+    boolean logGpxAccuracy =
+        preferences.getBoolean(resources.getString(R.string.pref_log_gpx_accuracy), false);
+    mTimeFromGpsPoints =
+        preferences.getBoolean(resources.getString(R.string.pref_time_from_gps_points), false);
+    mCurrentSpeedFromGpsPoints =
+        preferences.getBoolean(resources.getString(R.string.pref_speed_from_gps_points), false);
+
+    ContentValues key = new ContentValues();
+    key.put(DB.LOCATION.ACTIVITY, mActivityId);
+    key.put(DB.LOCATION.LAP, 0);
+    key.put(DB.LOCATION.TYPE, DB.LOCATION.TYPE_START);
+    mLastLocation = null;
+    mLastLocationStarted = null;
+    mLocationType = DB.LOCATION.TYPE_START;
+
+    try (Cursor cursor =
+        mDB.query(
+            DB.LOCATION.TABLE,
+            new String[] {
+              DB.LOCATION.LATITUDE,
+              DB.LOCATION.LONGITUDE,
+              DB.LOCATION.TIME,
+              DB.LOCATION.ELAPSED,
+              DB.LOCATION.DISTANCE,
+              DB.LOCATION.ACCURANCY,
+              DB.LOCATION.LAP
+            },
+            DB.LOCATION.ACTIVITY + " = ?",
+            new String[] {Long.toString(mActivityId)},
+            null,
+            null,
+            "_id DESC",
+            "1")) {
+      if (cursor.moveToFirst()) {
+        Location location = new Location("Relven recovered track");
+        location.setLatitude(cursor.getDouble(0));
+        location.setLongitude(cursor.getDouble(1));
+        location.setTime(cursor.getLong(2));
+        location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+        if (!cursor.isNull(5)) location.setAccuracy((float) cursor.getDouble(5));
+        mLastLocation = location;
+        if (checkpoint.getTrackerState() == TrackerState.STARTED) {
+          mLastLocationStarted = new Location(location);
+        }
+        if (!cursor.isNull(3)) {
+          mElapsedTimeNanos =
+              Math.max(mElapsedTimeNanos, Math.round(cursor.getDouble(3) * NANO_IN_MILLI));
+        }
+        if (!cursor.isNull(4)) mElapsedDistance = Math.max(mElapsedDistance, cursor.getDouble(4));
+        key.put(
+            DB.LOCATION.LAP,
+            resolveRecoveryLapNumber(mDB, mActivityId, checkpoint.getLapId(), cursor.getInt(6)));
+        key.put(DB.LOCATION.TYPE, DB.LOCATION.TYPE_RESUME);
+        mLocationType = DB.LOCATION.TYPE_RESUME;
+      }
+    } catch (IllegalStateException exception) {
+      Log.e("Tracker", "Unable to restore route checkpoint", exception);
+    }
+    mDBWriter = new PersistentGpsLoggerListener(mDB, DB.LOCATION.TABLE, key, logGpxAccuracy);
+    gpsFixFilter.reset();
+    gpsCurrentSpeedFilter.reset();
+    mCurrentSpeed = 0.0;
+  }
+
+  static int resolveRecoveryLapNumber(
+      SQLiteDatabase database, long activityId, long lapId, int persistedLocationLap) {
+    if (database == null || activityId <= 0 || lapId <= 0) return persistedLocationLap;
+    try (Cursor cursor =
+        database.query(
+            DB.LAP.TABLE,
+            new String[] {DB.LAP.LAP},
+            "_id = ? AND " + DB.LAP.ACTIVITY + " = ?",
+            new String[] {Long.toString(lapId), Long.toString(activityId)},
+            null,
+            null,
+            null,
+            "1")) {
+      return cursor.moveToFirst() ? cursor.getInt(0) : persistedLocationLap;
+    } catch (IllegalStateException exception) {
+      Log.e("Tracker", "Unable to restore current lap number", exception);
+      return persistedLocationLap;
+    }
+  }
+
+  private void restoreActiveWorkoutAfterConnect() {
+    ActiveWorkoutCheckpoint checkpoint = pendingRecoveryCheckpoint;
+    if (checkpoint == null || workout == null || mDBWriter == null) return;
+    wakeLock(true);
+    SyncManager liveSyncManager = new SyncManager(getApplicationContext());
+    liveSyncManager.loadLiveLoggers(liveLoggers);
+    liveSyncManager.close();
+    doBind();
+    TrackerState recoveredState = workout.isPaused() ? TrackerState.PAUSED : TrackerState.STARTED;
+    activityCompletionGate.beginActivity();
+    state.set(recoveredState);
+    if (components.getResultCode(TrackerWear.NAME) == TrackerComponent.ResultCode.RESULT_OK
+        && !liveLoggers.contains(trackerWear)) liveLoggers.add(trackerWear);
+    activityOngoingState = new OngoingState(new Formatter(this), workout, this);
+    notificationStateManager.displayNotificationState(activityOngoingState);
+    if (mLocationType == DB.LOCATION.TYPE_RESUME) {
+      setNextLocationType(DB.LOCATION.TYPE_RESUME);
+    }
+    pendingRecoveryCheckpoint = null;
+    handler.removeCallbacks(checkpointRunnable);
+    handler.post(checkpointRunnable);
+    queueActiveCheckpoint();
+
+    components.onStart();
+    if (recoveredState == TrackerState.PAUSED) components.onPause();
+  }
+
   private void liveLog(int type) {
     for (WorkoutObserver l : liveLoggers) {
       l.workoutEvent(workout, type);
@@ -859,6 +1183,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   @Override
   public IBinder onBind(Intent intent) {
+    maybeRestoreActiveWorkout(/* startForegroundService= */ true);
     return mBinder;
   }
 

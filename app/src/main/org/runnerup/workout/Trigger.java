@@ -36,6 +36,8 @@ public abstract class Trigger implements TickComponent {
     return state != null && getClass().getName().equals(state.optString("triggerType"));
   }
 
+  void onRecoverPaused(Workout workout) {}
+
   @Override
   public void onInit(Workout s) {
     for (Feedback f : triggerAction) {
