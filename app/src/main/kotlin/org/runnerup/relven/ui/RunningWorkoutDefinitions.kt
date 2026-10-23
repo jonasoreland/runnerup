@@ -23,18 +23,23 @@ internal fun runningWorkoutSegments(
     workoutId: String
 ): List<RunningSegmentSummary> {
   try {
-    val workouts = JSONObject(plan.sourceJson()).getJSONArray("workouts")
-    val workout =
-        (0 until workouts.length())
-            .map(workouts::getJSONObject)
-            .firstOrNull { it.getString("id") == workoutId && it.getString("sport") == "running" }
-            ?: return emptyList()
+    val workoutJson = plannedWorkoutDocument(plan, workoutId) ?: return emptyList()
+    val workout = JSONObject(workoutJson)
+    if (workout.getString("sport") != "running") return emptyList()
     val segments = mutableListOf<RunningSegmentSummary>()
     collectRunningSegments(workout.getJSONArray("steps"), 1L, segments)
     return segments
   } catch (error: JSONException) {
     throw IllegalArgumentException("Saved running workout definition is invalid", error)
   }
+}
+
+internal fun plannedWorkoutDocument(plan: RelvenPlanImporter.Plan, workoutId: String): String? {
+  val workouts = JSONObject(plan.sourceJson()).getJSONArray("workouts")
+  return (0 until workouts.length())
+      .map(workouts::getJSONObject)
+      .firstOrNull { it.optString("id") == workoutId }
+      ?.toString()
 }
 
 private fun collectRunningSegments(

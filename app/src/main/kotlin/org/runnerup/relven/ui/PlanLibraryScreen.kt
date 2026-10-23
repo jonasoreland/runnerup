@@ -107,6 +107,7 @@ internal fun libraryPreviewPlan(
 @Composable
 internal fun PlanLibraryScreen(
     state: PlanLibraryState,
+    favoriteWorkouts: List<FavoriteWorkout>,
     currentTimeMillis: Long,
     busy: Boolean,
     onRetry: () -> Unit,
@@ -119,6 +120,8 @@ internal fun PlanLibraryScreen(
     onClearActive: () -> Unit,
     onArchive: (String) -> Unit,
     onRestore: (String) -> Unit,
+    onStartFavoriteWorkout: (FavoriteWorkout) -> Unit,
+    onRemoveFavoriteWorkout: (String) -> Unit,
     onOpenCalendar: () -> Unit) {
   val weekdays = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekdays)
   val weekdayNames = stringArrayResource(org.runnerup.common.R.array.Plan_calendar_weekday_names)
@@ -152,6 +155,7 @@ internal fun PlanLibraryScreen(
   var showArchivedPlans by rememberSaveable { mutableStateOf(false) }
   var expandedHistoryRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
   var archiveConfirmationRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
+  var favoriteRemovalId by rememberSaveable { mutableStateOf<String?>(null) }
   LazyColumn(
       modifier = Modifier.fillMaxSize().padding(bottom = 112.dp).background(RelvenColors.Background),
       contentPadding = androidx.compose.foundation.layout.PaddingValues(
@@ -169,6 +173,38 @@ internal fun PlanLibraryScreen(
           colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
           modifier = Modifier.fillMaxWidth().heightIn(min = 54.dp)) {
         Text(stringResource(R.string.plan_create_title))
+      }
+    }
+    item {
+      Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(stringResource(R.string.plan_favorite_title), fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+        if (favoriteWorkouts.isEmpty()) {
+          Text(stringResource(R.string.plan_favorite_empty), color = RelvenColors.MutedText, fontSize = 14.sp)
+        }
+      }
+    }
+    items(favoriteWorkouts, key = FavoriteWorkout::id) { favorite ->
+      Surface(color = RelvenColors.Surface, shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          Text(favorite.name, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+          Text(
+              stringResource(
+                  if (favorite.sport == "running") R.string.plan_favorite_running
+                  else R.string.plan_favorite_strength),
+              color = RelvenColors.MutedText,
+              fontSize = 13.sp)
+          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = { onStartFavoriteWorkout(favorite) },
+                enabled = !busy,
+                colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
+              Text(stringResource(R.string.plan_favorite_start))
+            }
+            TextButton(enabled = !busy, onClick = { favoriteRemovalId = favorite.id }) {
+              Text(stringResource(R.string.plan_favorite_remove), color = RelvenColors.MutedText)
+            }
+          }
+        }
       }
     }
     item {
@@ -542,6 +578,24 @@ internal fun PlanLibraryScreen(
         },
         dismissButton = {
           TextButton(enabled = !busy, onClick = { archiveConfirmationRootPlanId = null }) {
+            Text(stringResource(R.string.plan_library_cancel))
+          }
+        })
+  }
+  favoriteRemovalId?.let { favoriteId ->
+    val favorite = favoriteWorkouts.firstOrNull { it.id == favoriteId }
+    AlertDialog(
+        onDismissRequest = { if (!busy) favoriteRemovalId = null },
+        title = { Text(stringResource(R.string.plan_favorite_remove_title)) },
+        text = { Text(stringResource(R.string.plan_favorite_remove_message, favorite?.name.orEmpty())) },
+        confirmButton = {
+          TextButton(enabled = !busy, onClick = {
+            onRemoveFavoriteWorkout(favoriteId)
+            favoriteRemovalId = null
+          }) { Text(stringResource(R.string.plan_favorite_remove)) }
+        },
+        dismissButton = {
+          TextButton(enabled = !busy, onClick = { favoriteRemovalId = null }) {
             Text(stringResource(R.string.plan_library_cancel))
           }
         })

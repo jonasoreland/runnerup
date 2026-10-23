@@ -14,12 +14,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,11 +50,41 @@ internal fun PlanWorkoutDetailsScreen(
     onRemove: (String) -> Unit,
     onEditRunningEnd: (String, RunningSegmentSummary) -> Unit,
     onEditRunningTarget: (String, RunningSegmentSummary) -> Unit,
+    onSaveFavoriteWorkout: (String, String) -> Unit,
     onStartStrength: () -> Unit,
     onStartRunning: () -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit
 ) {
   var moreActionsExpanded by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
+  var showFavoriteDialog by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
+  var favoriteName by rememberSaveable(workout.sessionId) { mutableStateOf(workout.workoutName) }
+  val workoutDocument = workout.workoutDocument
+
+  if (showFavoriteDialog && workoutDocument != null) {
+    AlertDialog(
+        onDismissRequest = { showFavoriteDialog = false },
+        title = { Text(stringResource(org.runnerup.R.string.plan_favorite_save_title)) },
+        text = {
+          OutlinedTextField(
+              value = favoriteName,
+              onValueChange = { favoriteName = it.take(80) },
+              label = { Text(stringResource(org.runnerup.R.string.plan_favorite_name)) },
+              singleLine = true)
+        },
+        confirmButton = {
+          TextButton(
+              enabled = favoriteName.trim().isNotEmpty(),
+              onClick = {
+                onSaveFavoriteWorkout(favoriteName.trim(), workoutDocument)
+                showFavoriteDialog = false
+              }) { Text(stringResource(org.runnerup.R.string.plan_favorite_save)) }
+        },
+        dismissButton = {
+          TextButton(onClick = { showFavoriteDialog = false }) {
+            Text(stringResource(R.string.Plan_calendar_cancel_reschedule))
+          }
+        })
+  }
 
   Column(
       modifier = Modifier.fillMaxWidth(),
@@ -108,6 +140,15 @@ internal fun PlanWorkoutDetailsScreen(
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
       Text(workout.workoutName, fontSize = 28.sp, fontWeight = FontWeight.Bold)
       Text(dateLabel, color = RelvenColors.MutedText, fontSize = 14.sp)
+    }
+
+    if (workoutDocument != null) {
+      TextButton(
+          onClick = { favoriteName = workout.workoutName; showFavoriteDialog = true },
+          enabled = enabled,
+          modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+        Text(stringResource(org.runnerup.R.string.plan_favorite_save_action), color = RelvenColors.Orange)
+      }
     }
 
     workout.strengthDetails?.let { details ->

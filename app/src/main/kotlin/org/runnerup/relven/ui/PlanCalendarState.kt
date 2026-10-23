@@ -71,7 +71,8 @@ internal sealed interface PlanCalendarEntry {
       val strengthDetails: org.runnerup.workout.RelvenStrengthWorkoutParser.Workout? = null,
       val runningSegments: List<RunningSegmentSummary> = emptyList(),
       val completion: CompletedStrengthSession? = null,
-      val runningWorkout: org.runnerup.workout.Workout? = null) :
+      val runningWorkout: org.runnerup.workout.Workout? = null,
+      val workoutDocument: String? = null) :
       PlanCalendarEntry
 
   data class Rest(val sessionId: String, val notes: String) : PlanCalendarEntry
@@ -247,7 +248,8 @@ private fun sessionEntry(
               strengthDetails,
               runningWorkoutSegments(plan, workoutId),
               if (strengthDetails == null) null else completedStrengthSessions[session.id()],
-              plan.workouts()[workoutId])
+              plan.workouts()[workoutId],
+              plannedWorkoutDocument(plan, workoutId))
         }
       }
       "rest" -> PlanCalendarEntry.Rest(session.id(), session.notes())
