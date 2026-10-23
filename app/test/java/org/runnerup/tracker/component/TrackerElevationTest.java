@@ -43,6 +43,18 @@ public class TrackerElevationTest {
   }
 
   @Test
+  public void nonFiniteAltitudeIsUnavailableEvenWithGoodVerticalAccuracy() {
+    Location location = new Location("gps");
+    location.setAltitude(Double.NaN);
+    LocationCompat.setVerticalAccuracyMeters(location, 2.0f);
+
+    assertFalse(GpsAltitudeQuality.isReliable(location));
+
+    location.setAltitude(Double.POSITIVE_INFINITY);
+    assertFalse(GpsAltitudeQuality.isReliable(location));
+  }
+
+  @Test
   public void unreliableGpsAltitudeCannotCalibratePressureElevation() {
     Location location = new Location("gps");
     location.setAltitude(-117.0);

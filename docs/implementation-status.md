@@ -3,7 +3,7 @@
 ## Running experience redesign — trustworthy elevation (current PR)
 
 - New GPS-derived elevations are available only when the fix includes Android vertical-accuracy metadata no worse than 5 m; otherwise elevation is omitted from the persisted activity row and the optional raw GPS-altitude export field. Poor GPS altitude cannot calibrate the pressure-derived offset. This does not affect accepted horizontal route fixes, distance, time, or GPS recording. Pressure-sensor elevation remains available.
-- `TrackerElevationTest` covers the exact accuracy boundary, missing vertical accuracy, missing altitude, and pressure calibration eligibility. `PersistentGpsLoggerListenerTest` verifies low-confidence raw altitude is omitted while trusted altitude remains exportable. The focused tests first failed because the guards were absent and pass after implementation. Full-suite/build and hosted review are pending.
+- `TrackerElevationTest` covers the exact accuracy boundary, missing vertical accuracy, missing altitude, NaN/infinite altitude, and pressure calibration eligibility. `PersistentGpsLoggerListenerTest` verifies low-confidence raw altitude is omitted while trusted altitude remains exportable. The focused tests first failed because the guards were absent and pass after implementation. Full-suite/build and hosted review are pending.
 
 ## Running experience redesign — one-shot workout completion (PR #112 merged)
 

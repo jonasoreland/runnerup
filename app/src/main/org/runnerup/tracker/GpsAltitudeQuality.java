@@ -13,6 +13,7 @@ public final class GpsAltitudeQuality {
   public static boolean isReliable(@Nullable Location location) {
     if (location == null
         || !location.hasAltitude()
+        || !Double.isFinite(location.getAltitude())
         || !LocationCompat.hasVerticalAccuracy(location)) {
       return false;
     }
