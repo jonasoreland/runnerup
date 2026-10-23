@@ -271,6 +271,7 @@
   <string name="Push">Tryck</string>
   <string name="Android_text_to_speech_settings">Android text-till-tal inställningar</string>
   <string name="Start">Start</string>
+  <string name="Start_workout_action">Starta pass</string>
   <string name="History">Historik</string>
   <string name="Basic">Standard</string>
   <string name="Advanced">Avancerat</string>

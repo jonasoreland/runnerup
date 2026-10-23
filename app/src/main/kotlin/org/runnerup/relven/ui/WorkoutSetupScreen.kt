@@ -1,19 +1,26 @@
 package org.runnerup.relven.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,12 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.semantics.Role
-import androidx.compose.foundation.text.KeyboardOptions
 import org.runnerup.common.R as CommonR
 
 class WorkoutSetupStateHolder(
@@ -64,8 +70,11 @@ object WorkoutSetupCompose {
 @Composable
 private fun WorkoutSetupContent(state: WorkoutSetupState, listener: WorkoutSetupListener) {
   Column(
-    Modifier.fillMaxWidth().background(RelvenColors.Background).verticalScroll(rememberScrollState()).padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 112.dp),
-    verticalArrangement = Arrangement.spacedBy(14.dp),
+    Modifier.fillMaxWidth()
+      .background(RelvenColors.Background)
+      .verticalScroll(rememberScrollState())
+      .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 160.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp),
   ) {
     when (state.selectedTab) {
       0 -> BasicSetup(state, listener)
@@ -87,13 +96,18 @@ private fun BasicSetup(state: WorkoutSetupState, listener: WorkoutSetupListener)
     )
     if (WorkoutSetupPresentation.showsPace(state.targetType)) {
       SetupInput(
-        stringResource(CommonR.string.Target_pace_HHMMSS), state.pace, time = true,
+        stringResource(CommonR.string.Target_pace_HHMMSS),
+        state.pace,
+        time = true,
         isValid = WorkoutSetupInput::isTime,
       ) {
         if (WorkoutSetupInput.isTime(it)) listener.onPreferenceChanged("basic_target_pace_max", it)
       }
     }
-    if (WorkoutSetupPresentation.showsHeartRate(state.targetType, state.heartRateZones.isNotEmpty())) {
+    if (WorkoutSetupPresentation.showsHeartRate(
+        state.targetType,
+        state.heartRateZones.isNotEmpty(),
+      )) {
       SetupDropdown(
         label = stringResource(CommonR.string.Target_heart_rate_zone),
         selected = state.heartRateZone,
@@ -102,10 +116,12 @@ private fun BasicSetup(state: WorkoutSetupState, listener: WorkoutSetupListener)
       )
     }
   }
-  AudioSection(state.basicAudio, state.basicAudioSchemes) {
-    listener.onPreferenceChanged("basicAudio", it)
-  }
-  ManageAudioButton { listener.onManageAudio(0) }
+  AudioSection(
+    selected = state.basicAudio,
+    options = state.basicAudioSchemes,
+    onSelected = { listener.onPreferenceChanged("basicAudio", it) },
+    onManage = { listener.onManageAudio(0) },
+  )
 }
 
 @Composable
@@ -113,7 +129,8 @@ private fun IntervalSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
   SetupSection {
     SectionTitle(stringResource(CommonR.string.Interval))
     SetupInput(
-      stringResource(CommonR.string.Repetitions), state.intervalRepetitions,
+      stringResource(CommonR.string.Repetitions),
+      state.intervalRepetitions,
       isValid = { it.toIntOrNull()?.let { count -> count in 1..1000 } == true },
     ) {
       if (it.toIntOrNull()?.let { count -> count in 1..1000 } == true) {
@@ -128,14 +145,17 @@ private fun IntervalSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
     )
     if (WorkoutSetupPresentation.showsActiveTime(state.intervalType)) {
       SetupInput(
-        stringResource(org.runnerup.R.string.setup_interval_duration), state.intervalTime, time = true,
+        stringResource(org.runnerup.R.string.setup_interval_duration),
+        state.intervalTime,
+        time = true,
         isValid = WorkoutSetupInput::isTime,
       ) {
         if (WorkoutSetupInput.isTime(it)) listener.onPreferenceChanged("intervalTime", it)
       }
     } else {
       SetupInput(
-        stringResource(org.runnerup.R.string.setup_interval_distance), state.intervalDistance,
+        stringResource(org.runnerup.R.string.setup_interval_distance),
+        state.intervalDistance,
         isValid = WorkoutSetupInput::isPositive,
       ) {
         if (WorkoutSetupInput.isPositive(it)) listener.onPreferenceChanged("intervalDistance", it)
@@ -149,14 +169,17 @@ private fun IntervalSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
     )
     if (WorkoutSetupPresentation.showsRestTime(state.restType)) {
       SetupInput(
-        stringResource(org.runnerup.R.string.setup_rest_duration), state.restTime, time = true,
+        stringResource(org.runnerup.R.string.setup_rest_duration),
+        state.restTime,
+        time = true,
         isValid = WorkoutSetupInput::isTime,
       ) {
         if (WorkoutSetupInput.isTime(it)) listener.onPreferenceChanged("intervalRestTime", it)
       }
     } else {
       SetupInput(
-        stringResource(org.runnerup.R.string.setup_rest_distance), state.restDistance,
+        stringResource(org.runnerup.R.string.setup_rest_distance),
+        state.restDistance,
         isValid = WorkoutSetupInput::isPositive,
       ) {
         if (WorkoutSetupInput.isPositive(it)) listener.onPreferenceChanged("intervalRestDistance", it)
@@ -171,10 +194,12 @@ private fun IntervalSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
       Text("✓  ${stringResource(CommonR.string.cool_down)}", color = RelvenColors.MutedText, fontSize = 13.sp)
     }
   }
-  AudioSection(state.intervalAudio, state.intervalAudioSchemes) {
-    listener.onPreferenceChanged("intervalAudio", it)
-  }
-  ManageAudioButton { listener.onManageAudio(1) }
+  AudioSection(
+    selected = state.intervalAudio,
+    options = state.intervalAudioSchemes,
+    onSelected = { listener.onPreferenceChanged("intervalAudio", it) },
+    onManage = { listener.onManageAudio(1) },
+  )
 }
 
 @Composable
@@ -189,7 +214,11 @@ private fun AdvancedSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
         onSelected = listener::onSelectWorkout,
       )
     } else {
-      Text(stringResource(org.runnerup.R.string.setup_workouts_empty), color = RelvenColors.MutedText, fontSize = 14.sp)
+      Text(
+        stringResource(org.runnerup.R.string.setup_workouts_empty),
+        color = RelvenColors.MutedText,
+        fontSize = 14.sp,
+      )
     }
     TextButton(onClick = listener::onManageWorkouts) {
       Text(stringResource(CommonR.string.Manage_workouts), color = RelvenColors.Orange)
@@ -207,18 +236,27 @@ private fun AdvancedSetup(state: WorkoutSetupState, listener: WorkoutSetupListen
           verticalAlignment = Alignment.CenterVertically,
         ) {
           Column(Modifier.weight(1f)) {
-            Text(step.title, color = RelvenColors.Text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
-            if (step.detail.isNotBlank()) Text(step.detail, color = RelvenColors.MutedText, fontSize = 12.sp)
+            Text(
+              step.title,
+              color = RelvenColors.Text,
+              fontSize = 14.sp,
+              fontWeight = FontWeight.Medium,
+            )
+            if (step.detail.isNotBlank()) {
+              Text(step.detail, color = RelvenColors.MutedText, fontSize = 12.sp)
+            }
           }
           Text(stringResource(CommonR.string.Edit_step), color = RelvenColors.Orange, fontSize = 12.sp)
         }
       }
     }
   }
-  AudioSection(state.advancedAudio, state.advancedAudioSchemes) {
-    listener.onPreferenceChanged("advancedAudio", it)
-  }
-  ManageAudioButton { listener.onManageAudio(2) }
+  AudioSection(
+    selected = state.advancedAudio,
+    options = state.advancedAudioSchemes,
+    onSelected = { listener.onPreferenceChanged("advancedAudio", it) },
+    onManage = { listener.onManageAudio(2) },
+  )
 }
 
 @Composable
@@ -226,6 +264,7 @@ private fun AudioSection(
   selected: String,
   options: List<WorkoutSetupChoice>,
   onSelected: (String) -> Unit,
+  onManage: () -> Unit,
 ) {
   SetupSection {
     SetupDropdown(
@@ -234,28 +273,30 @@ private fun AudioSection(
       options = options,
       onSelected = onSelected,
     )
-  }
-}
-
-@Composable
-private fun ManageAudioButton(onClick: () -> Unit) {
-  TextButton(onClick = onClick) {
-    Text(stringResource(CommonR.string.Manage_audio_cues), color = RelvenColors.MutedText)
-  }
-}
-
-@Composable
-private fun SetupSection(content: @Composable () -> Unit) {
-  Surface(color = RelvenColors.Surface, shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)) {
-    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-      content()
+    TextButton(onClick = onManage) {
+      Text(stringResource(CommonR.string.Manage_audio_cues), color = RelvenColors.Orange)
     }
   }
 }
 
 @Composable
+private fun SetupSection(content: @Composable ColumnScope.() -> Unit) {
+  Surface(
+    color = RelvenColors.Surface,
+    shape = RoundedCornerShape(24.dp),
+    border = BorderStroke(1.dp, RelvenColors.SurfaceRaised.copy(alpha = 0.72f)),
+  ) {
+    Column(
+      Modifier.fillMaxWidth().padding(20.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+      content = content,
+    )
+  }
+}
+
+@Composable
 private fun SectionTitle(text: String) {
-  Text(text, color = RelvenColors.Text, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+  Text(text, color = RelvenColors.Text, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
 }
 
 @Composable
@@ -267,12 +308,25 @@ private fun SetupDropdown(
 ) {
   var expanded by remember { mutableStateOf(false) }
   val shown = options.firstOrNull { it.value == selected }?.label ?: label
-  Column {
-    Text(label, color = RelvenColors.MutedText, fontSize = 12.sp)
-    TextButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-      Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+  Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Text(label, color = RelvenColors.MutedText, fontSize = 13.sp)
+    Surface(
+      color = RelvenColors.Background,
+      shape = RoundedCornerShape(16.dp),
+      border = BorderStroke(1.dp, RelvenColors.SurfaceRaised),
+      modifier =
+        Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(role = Role.Button) { expanded = true },
+    ) {
+      Row(
+        Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
         Text(shown, color = RelvenColors.Text, modifier = Modifier.weight(1f), fontSize = 15.sp)
-        Text("⌄", color = RelvenColors.Orange)
+        Icon(
+          Icons.Default.ExpandMore,
+          contentDescription = null,
+          tint = RelvenColors.Orange,
+        )
       }
     }
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
@@ -300,19 +354,27 @@ private fun SetupInput(
   var draft by remember(value) { mutableStateOf(value) }
   OutlinedTextField(
     value = draft,
-    onValueChange = { draft = it; onCommit(it) },
+    onValueChange = {
+      draft = it
+      onCommit(it)
+    },
     modifier = Modifier.fillMaxWidth(),
     label = { Text(label) },
     singleLine = true,
+    shape = RoundedCornerShape(16.dp),
     isError = draft.isNotEmpty() && !isValid(draft),
     supportingText = {
       if (draft.isNotEmpty() && !isValid(draft)) {
         Text(
-          stringResource(if (time) org.runnerup.R.string.setup_invalid_time else org.runnerup.R.string.setup_invalid_number),
+          stringResource(
+            if (time) org.runnerup.R.string.setup_invalid_time
+            else org.runnerup.R.string.setup_invalid_number,
+          ),
         )
       }
     },
-    keyboardOptions = KeyboardOptions(keyboardType = if (time) KeyboardType.Number else KeyboardType.Decimal),
+    keyboardOptions =
+      KeyboardOptions(keyboardType = if (time) KeyboardType.Number else KeyboardType.Decimal),
   )
 }
 
@@ -322,4 +384,3 @@ private fun intervalKinds(): List<WorkoutSetupChoice> =
     WorkoutSetupChoice("0", stringResource(CommonR.string.Time)),
     WorkoutSetupChoice("1", stringResource(CommonR.string.Distance)),
   )
-

@@ -1,20 +1,29 @@
 package org.runnerup.relven.ui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.runnerup.common.R as CommonR
-import androidx.compose.ui.res.stringResource
 import org.runnerup.relven.ui.StartWorkoutTabSelectionListener
 
 class StartWorkoutTabsStateHolder(
@@ -57,15 +66,39 @@ private fun StartWorkoutTabs(selectedIndex: Int, onSelected: (Int) -> Unit) {
       stringResource(CommonR.string.Interval),
       stringResource(CommonR.string.Advanced),
     )
-  PrimaryTabRow(selectedTabIndex = selectedIndex, modifier = Modifier.fillMaxWidth()) {
-    labels.forEachIndexed { index, label ->
-      Tab(
-        selected = selectedIndex == index,
-        onClick = { onSelected(index) },
-        selectedContentColor = RelvenColors.Orange,
-        unselectedContentColor = RelvenColors.MutedText,
-        text = { Text(label, fontSize = 14.sp, fontWeight = FontWeight.SemiBold) },
-      )
+  Surface(
+    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+    color = RelvenColors.Surface,
+    shape = RoundedCornerShape(20.dp),
+    border = BorderStroke(1.dp, RelvenColors.SurfaceRaised.copy(alpha = 0.65f)),
+  ) {
+    Row(
+      Modifier.fillMaxWidth().selectableGroup().padding(4.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      labels.forEachIndexed { index, label ->
+        val selected = selectedIndex == index
+        Surface(
+          modifier =
+            Modifier.weight(1f)
+              .heightIn(min = 48.dp)
+              .selectable(selected = selected, role = Role.Tab) { onSelected(index) },
+          color = if (selected) RelvenColors.Orange else RelvenColors.Surface,
+          shape = RoundedCornerShape(16.dp),
+        ) {
+          androidx.compose.foundation.layout.Box(
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            contentAlignment = Alignment.Center,
+          ) {
+            Text(
+              label,
+              color = if (selected) RelvenColors.Text else RelvenColors.MutedText,
+              fontSize = 14.sp,
+              fontWeight = FontWeight.SemiBold,
+            )
+          }
+        }
+      }
     }
   }
 }

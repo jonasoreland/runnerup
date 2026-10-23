@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -66,8 +67,11 @@ object StartScreenChromeCompose {
     detailsExpanded: Boolean,
     showGpsAction: Boolean,
     gpsActionLabel: String,
+    canStartWorkout: Boolean,
+    startWorkoutLabel: String,
     onToggleDetails: Runnable,
     onGpsAction: Runnable,
+    onStartWorkout: Runnable,
   ) {
     view.setContent {
       RelvenTheme {
@@ -76,8 +80,11 @@ object StartScreenChromeCompose {
           detailsExpanded,
           showGpsAction,
           gpsActionLabel,
+          canStartWorkout,
+          startWorkoutLabel,
           onToggleDetails,
           onGpsAction,
+          onStartWorkout,
         )
       }
     }
@@ -90,8 +97,11 @@ private fun StartReadinessBar(
   detailsExpanded: Boolean,
   showGpsAction: Boolean,
   gpsActionLabel: String,
+  canStartWorkout: Boolean,
+  startWorkoutLabel: String,
   onToggleDetails: Runnable,
   onGpsAction: Runnable,
+  onStartWorkout: Runnable,
 ) {
   val readinessState =
     stringResource(
@@ -149,6 +159,19 @@ private fun StartReadinessBar(
         ) {
           Text(gpsActionLabel)
         }
+      }
+    }
+    if (canStartWorkout) {
+      Button(
+        onClick = onStartWorkout::run,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
+      ) {
+        Text(
+          startWorkoutLabel,
+          fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+        )
       }
     }
     presentation.gpsDetails?.let { detail ->

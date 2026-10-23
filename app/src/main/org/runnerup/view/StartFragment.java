@@ -42,7 +42,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -81,6 +80,7 @@ import org.runnerup.relven.ui.StartReadinessItem;
 import org.runnerup.relven.ui.StartReadinessPresentation;
 import org.runnerup.relven.ui.StartReadinessPresentationFactory;
 import org.runnerup.relven.ui.StartScreenChromeCompose;
+import org.runnerup.relven.ui.StartWorkoutAvailability;
 import org.runnerup.relven.ui.StartWorkoutTabsCompose;
 import org.runnerup.relven.ui.StartWorkoutTabsStateHolder;
 import org.runnerup.relven.ui.WorkoutSetupChoice;
@@ -137,7 +137,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           result -> handleActivityResult(START_ACTIVITY, result.getResultCode(), result.getData()));
   private ComposeView workoutSetupView;
   private WorkoutSetupStateHolder workoutSetupState;
-  private View startButton = null;
+  private boolean startWorkoutReady;
 
   private ComposeView readinessComposeView = null;
   private boolean gpsActionVisible;
@@ -223,9 +223,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
     sportSpinner.setViewSelection(
         prefs.getInt(getResources().getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING));
-
-    startButton = view.findViewById(R.id.start_button);
-    startButton.setOnClickListener(startButtonClick);
 
     StartScreenChromeCompose.installHeader(sportToolbar, sportSpinner);
     readinessComposeView = view.findViewById(R.id.status_layout);
@@ -454,14 +451,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
           requireActivity()
               .runOnUiThread(
                   () -> {
-                    if (mTracker == null || startButton.getVisibility() != View.VISIBLE) {
+                    if (mTracker == null || !startWorkoutReady) {
                       return;
                     }
 
                     if (mTracker.getState() == TrackerState.INIT /* this will start gps */
                         || mTracker.getState() == TrackerState.INITIALIZED /* ...start a workout*/
                         || mTracker.getState() == TrackerState.CONNECTED) {
-                      startButton.performClick();
+                      onStartWorkoutAction();
                     }
                   });
         }
@@ -802,14 +799,14 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     notificationStateManager.cancelNotification(); // will be added by RunActivity
   }
 
-  private final OnClickListener startButtonClick =
-      v -> {
-        if (mTracker.getState() == TrackerState.CONNECTED) {
-          startWorkout();
-          return;
-        }
-        updateView();
-      };
+  private void onStartWorkoutAction() {
+    updateStartButtonView();
+    if (startWorkoutReady && mTracker != null && mTracker.getState() == TrackerState.CONNECTED) {
+      startWorkout();
+    } else {
+      updateView();
+    }
+  }
 
   private final OnClickListener gpsEnableClick =
       v -> {
@@ -998,19 +995,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
   private void toggleStatusDetails() {
     statusDetailsShown = !statusDetailsShown;
-    float bottomMargin;
-
-    if (statusDetailsShown) {
-      bottomMargin = getResources().getDimension(R.dimen.fab_margin_68row);
-    } else {
-      bottomMargin = getResources().getDimension(R.dimen.fab_margin_44row);
-    }
-
-    ViewGroup.MarginLayoutParams params =
-        (ViewGroup.MarginLayoutParams) startButton.getLayoutParams();
-    params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, (int) bottomMargin);
-    startButton.setLayoutParams(params);
-
     updateView();
   }
 
@@ -1052,43 +1036,26 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         statusDetailsShown,
         gpsActionVisible,
         gpsActionLabel,
+        startWorkoutReady,
+        getString(org.runnerup.common.R.string.Start_workout_action),
         () -> toggleStatusDetails(),
-        () -> gpsEnableClick.onClick(null));
+        () -> gpsEnableClick.onClick(null),
+        () -> onStartWorkoutAction());
   }
 
   private void updateStartButtonView() {
-    do {
-      if (!mGpsStatus.isStarted()) {
-        break;
-      }
-
-      if (!sportWithoutGps) {
-        if (!mGpsStatus.isLogging()) {
-          break;
-        }
-
-        if (!mGpsStatus.isFixed()) {
-          break;
-        }
-      }
-
-      if (mTracker == null || !mIsBound) {
-        break;
-      }
-
-      if (mTracker.getState() != TrackerState.CONNECTED) {
-        break;
-      }
-
-      if (getSelectedTabTag().contentEquals(TAB_ADVANCED) && advancedWorkout == null) {
-        break;
-      }
-
-      startButton.setVisibility(View.VISIBLE);
-      return;
-    } while (false);
-
-    startButton.setVisibility(View.GONE);
+    boolean gpsStarted = mGpsStatus != null && mGpsStatus.isStarted();
+    boolean gpsLogging = mGpsStatus != null && mGpsStatus.isLogging();
+    boolean gpsFixed = mGpsStatus != null && mGpsStatus.isFixed();
+    startWorkoutReady =
+        StartWorkoutAvailability.isAvailable(
+            gpsStarted,
+            sportWithoutGps,
+            gpsLogging,
+            gpsFixed,
+            mTracker != null && mIsBound && mTracker.getState() == TrackerState.CONNECTED,
+            getSelectedTabTag().contentEquals(TAB_ADVANCED),
+            advancedWorkout != null);
   }
 
   private void updateStartGpsButtonView() {

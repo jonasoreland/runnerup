@@ -258,6 +258,7 @@
     <string name="Push">Press here</string>
     <string name="Android_text_to_speech_settings">Android text-to-speech settings</string>
     <string name="Start">Start</string>
+    <string name="Start_workout_action">Start workout</string>
     <string name="History">History</string>
     <string name="Basic">Basic</string>
     <string name="Advanced">Advanced</string>
