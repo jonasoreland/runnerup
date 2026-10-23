@@ -49,6 +49,7 @@ internal fun PlanWorkoutDetailsScreen(
     onEditRunningEnd: (String, RunningSegmentSummary) -> Unit,
     onEditRunningTarget: (String, RunningSegmentSummary) -> Unit,
     onStartStrength: () -> Unit,
+    onStartRunning: () -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit
 ) {
   var moreActionsExpanded by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
@@ -160,14 +161,17 @@ internal fun PlanWorkoutDetailsScreen(
         TextButton(onClick = { onViewStrengthCompletion(completion) }) {
           Text(stringResource(R.string.Strength_session_view_summary))
         }
-      } ?: Button(
+      }
+      Button(
           onClick = onStartStrength,
           enabled = enabled,
           modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
           shape = RoundedCornerShape(16.dp),
           colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
             Text(
-                stringResource(R.string.Strength_session_start),
+                stringResource(
+                    if (workout.completion == null) R.string.Strength_session_start
+                    else R.string.Strength_session_start_again),
                 color = RelvenColors.Background,
                 fontWeight = FontWeight.SemiBold)
           }
@@ -223,6 +227,14 @@ internal fun PlanWorkoutDetailsScreen(
             }
           }
         }
+      }
+      Button(
+          onClick = onStartRunning,
+          enabled = enabled,
+          modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+          shape = RoundedCornerShape(16.dp),
+          colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
+        Text(stringResource(R.string.Plan_calendar_start_workout), color = RelvenColors.Background, fontWeight = FontWeight.SemiBold)
       }
     }
 

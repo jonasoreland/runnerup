@@ -149,6 +149,7 @@ class PlanCalendarStateTest {
     assertEquals("Easy run", runningEntry.workoutName)
     assertEquals("Keep it easy", runningEntry.notes)
     assertEquals("step-a", runningEntry.runningSegments.single().id)
+    assertTrue(runningEntry.runningWorkout != null)
     assertEquals(1800.0, runningEntry.runningSegments.single().end.value!!, 0.0)
     assertEquals(
         listOf(PlanCalendarEntry.Rest("october-rest", "Recovery")),

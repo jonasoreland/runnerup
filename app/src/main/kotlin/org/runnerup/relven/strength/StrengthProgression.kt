@@ -24,7 +24,7 @@ internal fun exerciseProgressions(
   sessions.forEach { completed ->
     completed.state.results.forEach { result ->
       val exerciseId = completed.state.workout.exercises()[result.exerciseIndex].exerciseId()
-      val key = exerciseId to completed.state.scheduledEntryId
+      val key = exerciseId to completed.state.executionId
       grouped.getOrPut(key, ::ArrayList).add(result)
       metadata[key] = completed
     }

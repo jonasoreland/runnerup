@@ -44,7 +44,7 @@ internal object StrengthSessionStore {
           throw error
         }
     if (finishedAt != null) throw IOException("Saved active session has already been completed")
-    if (state.isComplete && completed(context, state.scheduledEntryId) != null) {
+    if (state.isComplete && completedExecution(context, state.executionId) != null) {
       AtomicFile(file).delete()
       return null
     }
@@ -56,8 +56,8 @@ internal object StrengthSessionStore {
   fun complete(context: Context, state: StrengthSession, finishedAtMillis: Long) {
     require(state.isComplete) { "Session is not complete" }
     require(finishedAtMillis > 0) { "Invalid completion time" }
-    val completionFile = file(context, "completed-${hash(state.scheduledEntryId)}.json")
-    if (completionFile.exists()) throw IOException("Scheduled workout is already complete")
+    val completionFile = file(context, "completed-${hash(state.executionId)}.json")
+    if (completionFile.exists()) throw IOException("This workout execution is already complete")
     write(context, completionFile.name, StrengthSessionCodec.encode(state, finishedAtMillis))
     val activeFile = AtomicFile(file(context, "active.json"))
     activeFile.delete()
@@ -67,11 +67,29 @@ internal object StrengthSessionStore {
   @Throws(IOException::class)
   fun completed(context: Context, scheduledEntryId: String): CompletedStrengthSession? {
     require(scheduledEntryId.isNotBlank()) { "Missing scheduled entry identity" }
-    val file = file(context, "completed-${hash(scheduledEntryId)}.json")
-    if (!file.exists()) return null
+    val newest = completedSessions(context).sessions
+        .firstOrNull { it.state.scheduledEntryId == scheduledEntryId }
+    if (newest != null) return newest
+    // Version 1 stored exactly one completion under the scheduled entry ID.
+    val legacy = file(context, "completed-${hash(scheduledEntryId)}.json")
+    if (!legacy.exists()) return null
+    return readCompletion(legacy, scheduledEntryId)
+  }
+
+  private fun readCompletion(file: File, scheduledEntryId: String): CompletedStrengthSession {
     val (state, finishedAt) = read(file)
     if (state.scheduledEntryId != scheduledEntryId || !state.isComplete || finishedAt == null) {
       throw IOException("Completion record does not match its scheduled workout")
+    }
+    return CompletedStrengthSession(state, finishedAt)
+  }
+
+  private fun completedExecution(context: Context, executionId: String): CompletedStrengthSession? {
+    val file = file(context, "completed-${hash(executionId)}.json")
+    if (!file.exists()) return null
+    val (state, finishedAt) = read(file)
+    if (state.executionId != executionId || !state.isComplete || finishedAt == null) {
+      throw IOException("Completion record does not match its execution")
     }
     return CompletedStrengthSession(state, finishedAt)
   }
@@ -102,7 +120,7 @@ internal object StrengthSessionStore {
             !state.isComplete ||
                 finishedAt == null ||
                 finishedAt <= 0 ||
-                file.name != "completed-${hash(state.scheduledEntryId)}.json") {
+                file.name != "completed-${hash(state.executionId)}.json") {
           invalidCount++
         } else {
           sessions.add(CompletedStrengthSession(state, finishedAt))
@@ -174,6 +192,7 @@ internal object StrengthSessionCodec {
             .put("schemaVersion", VERSION)
             .put("planId", state.planId)
             .put("scheduledEntryId", state.scheduledEntryId)
+            .put("executionId", state.executionId)
             .put("workoutJson", state.workout.sourceJson())
             .put("exerciseIndex", state.exerciseIndex)
             .put("setNumber", state.setNumber)
@@ -190,12 +209,14 @@ internal object StrengthSessionCodec {
     requireKeys(
         root,
         setOf(
-            "schemaVersion", "planId", "scheduledEntryId", "workoutJson", "exerciseIndex",
+            "schemaVersion", "planId", "scheduledEntryId", "executionId", "workoutJson", "exerciseIndex",
             "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis"))
     require(root.optInt("schemaVersion", -1) == VERSION) { "Unknown strength session version" }
     val planId = root.getString("planId")
     val scheduledId = root.getString("scheduledEntryId")
+    val executionId = root.optString("executionId", scheduledId)
     require(planId.isNotBlank() && scheduledId.isNotBlank()) { "Missing session identity" }
+    require(executionId.isNotBlank()) { "Missing execution identity" }
     val workout = RelvenStrengthWorkoutParser.parse(root.getString("workoutJson"))
     val exerciseIndex = root.getInt("exerciseIndex")
     val setNumber = root.getInt("setNumber")
@@ -241,7 +262,7 @@ internal object StrengthSessionCodec {
     val finishedAt = root.optionalLong("finishedAtMillis")
     val state =
         StrengthSession(
-            planId, scheduledId, workout, exerciseIndex, setNumber, phase, seconds, results, resumePhase)
+            planId, scheduledId, workout, exerciseIndex, setNumber, phase, seconds, results, resumePhase, executionId)
     val expectedResults = buildSet {
       workout.exercises().forEachIndexed { index, exercise ->
         val completedSets =

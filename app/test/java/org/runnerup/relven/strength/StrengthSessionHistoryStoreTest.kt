@@ -40,6 +40,16 @@ class StrengthSessionHistoryStoreTest {
   }
 
   @Test
+  fun storesRepeatedRunsOfOnePlanEntryIndependentlyAndReturnsLatestCompletion() {
+    val first = completeSession("scheduled", "run-1", 100)
+    val second = completeSession("scheduled", "run-2", 200)
+
+    assertEquals(listOf("run-2", "run-1"), StrengthSessionStore.completedSessions(context).sessions.map { it.state.executionId })
+    assertEquals(second.executionId, StrengthSessionStore.completed(context, "scheduled")?.state?.executionId)
+    assertEquals(first.scheduledEntryId, second.scheduledEntryId)
+  }
+
+  @Test
   fun skipsAndCountsInvalidCompletionRecords() {
     save("valid", 100)
     completionFile("damaged").writeText("not json")
@@ -84,8 +94,19 @@ class StrengthSessionHistoryStoreTest {
             0,
             listOf(
                 StrengthSession.SetResult(
-                    0, exercise.stepId(), exercise.name(), 1, 10, null)))
+                    0, exercise.stepId(), exercise.name(), 1, 10, null)),
+            executionId = entryId)
     StrengthSessionStore.complete(context, state, finishedAt)
+  }
+
+  private fun completeSession(entryId: String, executionId: String, finishedAt: Long): StrengthSession {
+    val exercise = workout.exercises().single()
+    val state = StrengthSession(
+        "plan", entryId, workout, 0, 1, StrengthSession.Phase.COMPLETE, 0,
+        listOf(StrengthSession.SetResult(0, exercise.stepId(), exercise.name(), 1, 10, null)),
+        executionId = executionId)
+    StrengthSessionStore.complete(context, state, finishedAt)
+    return state
   }
 
   private fun completionFile(entryId: String): File =
