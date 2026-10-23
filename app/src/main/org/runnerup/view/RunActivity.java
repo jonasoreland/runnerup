@@ -52,6 +52,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ServiceCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.preference.PreferenceManager;
 import java.util.Arrays;
@@ -261,6 +262,7 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     super.onResume();
     if (activeWorkoutMap != null) activeWorkoutMap.getMapHost().onResume();
     showOnLockScreen(showOnLockScreen);
+    if (activeWorkoutRoot != null) ViewCompat.requestApplyInsets(activeWorkoutRoot);
   }
 
   @Override
