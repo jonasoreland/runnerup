@@ -15,7 +15,7 @@ import org.runnerup.common.util.Constants;
 @Config(sdk = 33)
 public class TrackerRecoveryEligibilityTest {
   @Test
-  public void pausedActivityWithPersistedSummaryRemainsRecoverable() {
+  public void nonDeletedActivityWithPersistedSummaryIsRecoverable() {
     SQLiteDatabase database = createActivityDatabase();
     try {
       database.execSQL(
@@ -68,6 +68,29 @@ public class TrackerRecoveryEligibilityTest {
     }
   }
 
+  @Test
+  public void missingActivityIsNotRecoverable() {
+    SQLiteDatabase database = createActivityDatabase();
+    try {
+      try (Cursor cursor = queryActivity(database, 81)) {
+        assertFalse(Tracker.isRecoverableActivity(cursor));
+      }
+    } finally {
+      database.close();
+    }
+  }
+
+  private static Cursor queryActivity(SQLiteDatabase database, long activityId) {
+    return database.query(
+        Constants.DB.ACTIVITY.TABLE,
+        new String[] {Constants.DB.ACTIVITY.DELETED},
+        "_id = ?",
+        new String[] {Long.toString(activityId)},
+        null,
+        null,
+        null);
+  }
+
   private static SQLiteDatabase createActivityDatabase() {
     SQLiteDatabase database = SQLiteDatabase.create(null);
     database.execSQL(
@@ -75,7 +98,9 @@ public class TrackerRecoveryEligibilityTest {
             + Constants.DB.ACTIVITY.TABLE
             + " (_id INTEGER PRIMARY KEY, "
             + Constants.DB.ACTIVITY.TIME
-            + " INTEGER, deleted INTEGER NOT NULL DEFAULT 0)");
+            + " INTEGER, "
+            + Constants.DB.ACTIVITY.DELETED
+            + " INTEGER NOT NULL DEFAULT 0)");
     return database;
   }
 }

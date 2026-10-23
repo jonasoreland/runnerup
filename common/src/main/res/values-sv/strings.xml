@@ -309,11 +309,11 @@
   <string name="Plan_saved">Planen har sparats på den här enheten. Den är inte aktiverad.</string>
   <string name="View_saved_plans">Visa sparade planer</string>
   <string name="AI_plan_kit_title">AI-planpaket</string>
-  <string name="AI_plan_kit_copy_prompt">Kopiera instruktioner för planskapande</string>
+  <string name="AI_plan_kit_copy_prompt">Kopiera hela AI-paketet</string>
   <string name="AI_plan_kit_share">Dela hela paketet som ZIP</string>
   <string name="AI_plan_kit_save">Spara hela paketet som ZIP</string>
-  <string name="AI_plan_kit_prompt_copied">Instruktionerna för planskapande har kopierats.</string>
-  <string name="AI_plan_kit_copy_failed">Det gick inte att kopiera instruktionerna för planskapande.</string>
+  <string name="AI_plan_kit_prompt_copied">Hela AI-paketet och din övningskatalog har kopierats.</string>
+  <string name="AI_plan_kit_copy_failed">Det gick inte att kopiera hela AI-paketet.</string>
   <string name="AI_plan_kit_saved">AI-planpaketet har sparats.</string>
   <string name="AI_plan_kit_save_failed">Det gick inte att spara AI-planpaketet.</string>
   <string name="AI_plan_kit_share_failed">Det gick inte att förbereda AI-planpaketet för delning.</string>

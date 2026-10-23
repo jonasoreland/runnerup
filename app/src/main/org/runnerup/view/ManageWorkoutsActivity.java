@@ -296,7 +296,7 @@ public class ManageWorkoutsActivity extends AppCompatActivity implements Constan
               } else if (which == 1) {
                 sharePlanKit();
               } else if (which == 2) {
-                savePlanKitLauncher.launch("relven-ai-plan-kit-v1.zip");
+                savePlanKitLauncher.launch("relven-ai-plan-kit-v2.zip");
               }
             })
         .setNegativeButton(org.runnerup.common.R.string.Cancel, (dialog, which) -> dialog.dismiss())

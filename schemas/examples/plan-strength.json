@@ -20,7 +20,7 @@
           },
           "exercise": {
             "exerciseId": "3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
-            "libraryRevision": 1,
+            "libraryRevision": 2,
             "snapshot": {
               "name": "Bodyweight squat",
               "instructions": "Stand with your feet about shoulder-width apart.\nBend your knees and hips as far as comfortable while keeping your chest lifted.\nPress through your feet to stand tall again.",
@@ -43,7 +43,7 @@
           },
           "exercise": {
             "exerciseId": "09a2a7b3-0798-4ef8-98a8-02a446068ee0",
-            "libraryRevision": 1,
+            "libraryRevision": 2,
             "snapshot": {
               "name": "Push-up",
               "instructions": "Start in a high plank with hands under or just outside your shoulders.\nKeep your body in a comfortable straight line and lower your chest toward the floor.\nPress the floor away to return to the start.",
@@ -75,7 +75,7 @@
           },
           "exercise": {
             "exerciseId": "a112bc26-c38c-45c8-a855-6bb8b412daf2",
-            "libraryRevision": 1,
+            "libraryRevision": 2,
             "snapshot": {
               "name": "Glute bridge",
               "instructions": "Lie on your back with knees bent and feet flat on the floor.\nGently brace your middle and lift your hips until your body forms a comfortable line from shoulders to knees.\nLower your hips with control.",
