@@ -55,6 +55,24 @@ public class TrackerElevationTest {
   }
 
   @Test
+  @Config(sdk = 35)
+  public void nonFiniteMslAltitudeIsUnavailableEvenWhenEllipsoidAltitudeIsValid() {
+    Location location = new Location("gps");
+    location.setAltitude(42.0);
+    LocationCompat.setVerticalAccuracyMeters(location, 2.0f);
+    LocationCompat.setMslAltitudeMeters(location, Double.NaN);
+
+    assertFalse(GpsAltitudeQuality.isReliable(location));
+
+    LocationCompat.setMslAltitudeMeters(location, 40.0);
+    LocationCompat.setMslAltitudeAccuracyMeters(location, 8.0f);
+    assertFalse(GpsAltitudeQuality.isReliable(location));
+
+    LocationCompat.setMslAltitudeAccuracyMeters(location, 3.0f);
+    assertTrue(GpsAltitudeQuality.isReliable(location));
+  }
+
+  @Test
   public void unreliableGpsAltitudeCannotCalibratePressureElevation() {
     Location location = new Location("gps");
     location.setAltitude(-117.0);

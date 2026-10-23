@@ -18,8 +18,20 @@ public final class GpsAltitudeQuality {
       return false;
     }
     float verticalAccuracy = LocationCompat.getVerticalAccuracyMeters(location);
-    return Float.isFinite(verticalAccuracy)
+    if (!(Float.isFinite(verticalAccuracy)
         && verticalAccuracy > 0.0f
-        && verticalAccuracy <= MAX_VERTICAL_ACCURACY_METERS;
+        && verticalAccuracy <= MAX_VERTICAL_ACCURACY_METERS)) {
+      return false;
+    }
+    if (!LocationCompat.hasMslAltitude(location)) return true;
+
+    double mslAltitude = LocationCompat.getMslAltitudeMeters(location);
+    if (!Double.isFinite(mslAltitude)) return false;
+    if (!LocationCompat.hasMslAltitudeAccuracy(location)) return true;
+
+    float mslAccuracy = LocationCompat.getMslAltitudeAccuracyMeters(location);
+    return Float.isFinite(mslAccuracy)
+        && mslAccuracy > 0.0f
+        && mslAccuracy <= MAX_VERTICAL_ACCURACY_METERS;
   }
 }
