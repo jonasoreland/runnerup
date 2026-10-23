@@ -99,6 +99,13 @@ private class RelvenMapHost(
         FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM or Gravity.END).apply {
           setMargins(dp(context, 8), dp(context, 8), dp(context, 8), dp(context, 8))
         })
+    root.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+      attribution.maxWidth =
+          routeMapAttributionMaxWidthPx(
+              mapWidthPx = view.width,
+              leftClearancePx = dp(context, 120),
+              marginPx = dp(context, 8))
+    }
     mapView.addOnDidFailLoadingMapListener(failedLoadingListener)
     mapView.onCreate(null)
     mapView.getMapAsync { map ->

@@ -54,6 +54,15 @@ internal enum class RouteMetric {
 
 internal data class RouteMetricRange(val minimum: Double, val maximum: Double, val count: Int)
 
+internal fun routeMapAttributionMaxWidthPx(
+    mapWidthPx: Int,
+    leftClearancePx: Int,
+    marginPx: Int): Int =
+    (mapWidthPx.coerceAtLeast(0) -
+            leftClearancePx.coerceAtLeast(0) -
+            2 * marginPx.coerceAtLeast(0))
+        .coerceAtLeast(0)
+
 internal fun routeMetricRange(route: List<RoutePoint>, metric: RouteMetric): RouteMetricRange? {
   val values = route.indices.mapNotNull { index ->
     metric.value(route[index], route.getOrNull(index - 1))?.takeIf(Double::isFinite)
