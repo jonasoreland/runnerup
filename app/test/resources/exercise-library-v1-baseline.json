@@ -1,0 +1,215 @@
+{
+  "format": "relven.exercise-library",
+  "schemaVersion": 1,
+  "libraryRevision": 1,
+  "exercises": [
+    {
+      "exerciseId": "3b0e6f4b-9252-4e8c-96e5-7df5e0bb18d0",
+      "revision": 1,
+      "name": { "en": "Bodyweight squat", "sv": "Knäböj" },
+      "category": "lower_body",
+      "movementPattern": "squat",
+      "muscleGroups": ["quadriceps", "glutes"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand with your feet about shoulder-width apart.", "Bend your knees and hips as far as comfortable while keeping your chest lifted.", "Press through your feet to stand tall again."],
+        "sv": ["Stå med fötterna ungefär axelbrett isär.", "Böj knän och höfter så långt det känns bekvämt och håll bröstet upprätt.", "Tryck genom fötterna och res dig upp igen."]
+      }
+    },
+    {
+      "exerciseId": "584a307a-9b1f-4be8-8a25-ea8800d0ff55",
+      "revision": 1,
+      "name": { "en": "Reverse lunge", "sv": "Bakåtutfall" },
+      "category": "lower_body",
+      "movementPattern": "lunge",
+      "muscleGroups": ["quadriceps", "glutes"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand tall with your feet hip-width apart.", "Step one foot back and lower under control, keeping your front foot planted.", "Push through the front foot to return. Repeat on both sides."],
+        "sv": ["Stå upprätt med fötterna höftbrett isär.", "Ta ett steg bakåt och sänk kroppen kontrollerat med främre foten kvar i golvet.", "Tryck ifrån med främre foten och återgå. Upprepa på båda sidor."]
+      }
+    },
+    {
+      "exerciseId": "a112bc26-c38c-45c8-a855-6bb8b412daf2",
+      "revision": 1,
+      "name": { "en": "Glute bridge", "sv": "Höftlyft" },
+      "category": "lower_body",
+      "movementPattern": "hip_extension",
+      "muscleGroups": ["glutes", "hamstrings"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Lie on your back with knees bent and feet flat on the floor.", "Gently brace your middle and lift your hips until your body forms a comfortable line from shoulders to knees.", "Lower your hips with control."],
+        "sv": ["Ligg på rygg med böjda knän och fötterna i golvet.", "Spänn bålen lätt och lyft höfterna tills kroppen bildar en bekväm linje från axlar till knän.", "Sänk höfterna kontrollerat."]
+      }
+    },
+    {
+      "exerciseId": "78a2e792-7974-495b-80dd-c21c842890ab",
+      "revision": 1,
+      "name": { "en": "Calf raise", "sv": "Tåhävning" },
+      "category": "lower_body",
+      "movementPattern": "calf_raise",
+      "muscleGroups": ["calves"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand with your feet hip-width apart on a stable surface.", "Rise onto the balls of your feet at a controlled pace.", "Lower your heels slowly and repeat."],
+        "sv": ["Stå höftbrett på ett stadigt underlag.", "Res dig kontrollerat upp på framfoten.", "Sänk hälarna långsamt och upprepa."]
+      }
+    },
+    {
+      "exerciseId": "101a9b68-62c3-47a4-a619-2073893303c2",
+      "revision": 1,
+      "name": { "en": "Wall sit", "sv": "Väggsittning" },
+      "category": "lower_body",
+      "movementPattern": "isometric_squat",
+      "muscleGroups": ["quadriceps", "glutes"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand with your back against a wall and feet slightly forward.", "Slide down to a comfortable knee bend while keeping your back supported.", "Hold while breathing steadily, then press through your feet to stand."],
+        "sv": ["Stå med ryggen mot en vägg och fötterna något framför dig.", "Glid ned till en bekväm knävinkel med ryggen stödd mot väggen.", "Håll positionen och andas lugnt. Tryck sedan genom fötterna för att resa dig."]
+      }
+    },
+    {
+      "exerciseId": "09a2a7b3-0798-4ef8-98a8-02a446068ee0",
+      "revision": 1,
+      "name": { "en": "Push-up", "sv": "Armhävning" },
+      "category": "upper_body",
+      "movementPattern": "push",
+      "muscleGroups": ["chest", "triceps", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Start in a high plank with hands under or just outside your shoulders.", "Keep your body in a comfortable straight line and lower your chest toward the floor.", "Press the floor away to return to the start."],
+        "sv": ["Börja i hög plankposition med händerna under eller strax utanför axlarna.", "Håll kroppen i en bekväm rak linje och sänk bröstet mot golvet.", "Pressa golvet ifrån dig och återgå till startpositionen."]
+      }
+    },
+    {
+      "exerciseId": "a3ac8fc8-fbbc-4284-a968-737494a8f0ef",
+      "revision": 1,
+      "name": { "en": "Knee push-up", "sv": "Armhävning på knä" },
+      "category": "upper_body",
+      "movementPattern": "push",
+      "muscleGroups": ["chest", "triceps", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Start on your hands and knees with hands under your shoulders.", "Keep a straight line from your head to your knees as you lower your chest toward the floor.", "Press through your hands to return."],
+        "sv": ["Börja på händer och knän med händerna under axlarna.", "Håll en rak linje från huvudet till knäna och sänk bröstet mot golvet.", "Pressa genom händerna och återgå."]
+      }
+    },
+    {
+      "exerciseId": "b3dff0aa-e44b-4c53-9519-dd99a032a19a",
+      "revision": 1,
+      "name": { "en": "Forearm plank", "sv": "Planka på underarmarna" },
+      "category": "core",
+      "movementPattern": "anti_extension",
+      "muscleGroups": ["abdominals", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Place your forearms on the floor with elbows under your shoulders.", "Step your feet back and keep your body in a comfortable straight line.", "Breathe steadily and end the hold when you can no longer keep the position comfortably."],
+        "sv": ["Placera underarmarna i golvet med armbågarna under axlarna.", "Ta fötterna bakåt och håll kroppen i en bekväm rak linje.", "Andas lugnt och avsluta när du inte längre kan hålla positionen bekvämt."]
+      }
+    },
+    {
+      "exerciseId": "be1a39c1-1675-467e-a5ca-e4352ac87809",
+      "revision": 1,
+      "name": { "en": "Side plank", "sv": "Sidoplanka" },
+      "category": "core",
+      "movementPattern": "lateral_stability",
+      "muscleGroups": ["obliques", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Lie on one side and place your forearm below your shoulder.", "Lift your hips until your body forms a comfortable line.", "Hold while breathing steadily, then repeat on the other side."],
+        "sv": ["Ligg på sidan och placera underarmen under axeln.", "Lyft höfterna tills kroppen bildar en bekväm linje.", "Håll positionen och andas lugnt. Upprepa sedan på andra sidan."]
+      }
+    },
+    {
+      "exerciseId": "d99ad912-22e5-44eb-9e55-462005238910",
+      "revision": 1,
+      "name": { "en": "Dead bug", "sv": "Dead bug" },
+      "category": "core",
+      "movementPattern": "anti_extension",
+      "muscleGroups": ["abdominals"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Lie on your back with arms pointing upward and hips and knees bent.", "Slowly reach one arm overhead while extending the opposite leg only as far as comfortable.", "Return to the start and alternate sides while keeping your lower back comfortable."],
+        "sv": ["Ligg på rygg med armarna uppåt och höfter och knän böjda.", "Sträck långsamt ena armen bakåt samtidigt som du sträcker motsatt ben så långt det känns bekvämt.", "Återgå och byt sida. Håll ländryggen bekväm mot underlaget."]
+      }
+    },
+    {
+      "exerciseId": "af39b3fd-304e-47a2-a22e-3f10f0063f6d",
+      "revision": 1,
+      "name": { "en": "Bird dog", "sv": "Fågelhund" },
+      "category": "core",
+      "movementPattern": "contralateral_stability",
+      "muscleGroups": ["back", "abdominals", "glutes"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Start on your hands and knees with your back in a comfortable neutral position.", "Reach one arm forward and the opposite leg back without twisting your trunk.", "Return to the start and alternate sides."],
+        "sv": ["Börja på händer och knän med ryggen i en bekväm neutral position.", "Sträck fram ena armen och bak motsatt ben utan att vrida överkroppen.", "Återgå och byt sida."]
+      }
+    },
+    {
+      "exerciseId": "566b7625-6ad7-4b31-aa50-399795388855",
+      "revision": 1,
+      "name": { "en": "Mountain climber", "sv": "Bergsklättrare" },
+      "category": "core",
+      "movementPattern": "dynamic_core",
+      "muscleGroups": ["abdominals", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Start in a high plank with hands below your shoulders.", "Bring one knee toward your chest, then return it as the other knee moves forward.", "Continue at a pace that lets you keep control of your position."],
+        "sv": ["Börja i hög plankposition med händerna under axlarna.", "För ett knä mot bröstet och för tillbaka det medan det andra knät går fram.", "Fortsätt i ett tempo där du kan behålla kontrollen."]
+      }
+    },
+    {
+      "exerciseId": "1d8dbf3c-e768-4876-935d-d90881fb87e4",
+      "revision": 1,
+      "name": { "en": "Hip hinge", "sv": "Höftfällning" },
+      "category": "warmup_mobility",
+      "movementPattern": "hinge",
+      "muscleGroups": ["hamstrings", "glutes"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand tall with feet hip-width apart and knees softly bent.", "Move your hips backward while keeping your back comfortable and torso long.", "Press through your feet and return to standing."],
+        "sv": ["Stå upprätt med fötterna höftbrett isär och knäna lätt böjda.", "För höfterna bakåt med bekväm rygg och lång överkropp.", "Tryck genom fötterna och återgå till stående."]
+      }
+    },
+    {
+      "exerciseId": "c444dd89-62fa-425b-955e-567c4b853241",
+      "revision": 1,
+      "name": { "en": "Marching knee raise", "sv": "Gående knälyft" },
+      "category": "warmup_mobility",
+      "movementPattern": "march",
+      "muscleGroups": ["hips", "abdominals"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand tall with your feet hip-width apart.", "Lift one knee to a comfortable height while keeping your torso upright.", "Lower with control and alternate sides at an easy pace."],
+        "sv": ["Stå upprätt med fötterna höftbrett isär.", "Lyft ett knä till en bekväm höjd och håll överkroppen upprätt.", "Sänk kontrollerat och växla sida i lugnt tempo."]
+      }
+    },
+    {
+      "exerciseId": "2e65df65-017b-4fbb-9c02-ecc5ca64fc4f",
+      "revision": 1,
+      "name": { "en": "Jumping jack", "sv": "Jumping jack" },
+      "category": "warmup_mobility",
+      "movementPattern": "cardiovascular",
+      "muscleGroups": ["calves", "shoulders"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand tall with arms by your sides.", "Step or jump your feet apart as you raise your arms overhead.", "Return to the start. Use side steps instead of jumps whenever you prefer."],
+        "sv": ["Stå upprätt med armarna längs sidorna.", "Kliv eller hoppa ut med fötterna samtidigt som du lyfter armarna över huvudet.", "Återgå till start. Välj sidosteg i stället för hopp när du vill."]
+      }
+    },
+    {
+      "exerciseId": "5c778d2a-2be6-4366-8f10-72786048d8db",
+      "revision": 1,
+      "name": { "en": "Standing quad stretch", "sv": "Stående framsida lår" },
+      "category": "warmup_mobility",
+      "movementPattern": "static_stretch",
+      "muscleGroups": ["quadriceps"],
+      "equipment": [],
+      "instructions": {
+        "en": ["Stand tall and shift your weight onto one foot.", "Bend the other knee and bring your heel toward your seat, holding your ankle if comfortable.", "Keep your knees close and hold gently. Repeat on the other side."],
+        "sv": ["Stå upprätt och flytta vikten till ena foten.", "Böj det andra knät och för hälen mot sätet. Håll i fotleden om det känns bekvämt.", "Håll knäna nära varandra och stretcha mjukt. Upprepa på andra sidan."]
+      }
+    }
+  ]
+}
