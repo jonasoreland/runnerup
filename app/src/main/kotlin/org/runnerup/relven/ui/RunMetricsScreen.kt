@@ -40,6 +40,10 @@ data class RunMetricsPresentation(
     val heartRateNotice: String?
 )
 
+/** Do not present near-zero GPS drift as a plausible current running pace. */
+internal fun currentPaceDisplay(speedMetersPerSecond: Double, formattedPace: String): String =
+    if (speedMetersPerSecond.isFinite() && speedMetersPerSecond in 0.5..12.0) formattedPace else "--:--"
+
 fun runMetricsPresentation(
     total: RunMetricValues,
     lap: RunMetricValues,

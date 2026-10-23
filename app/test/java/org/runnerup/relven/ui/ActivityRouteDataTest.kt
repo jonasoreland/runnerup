@@ -53,7 +53,7 @@ class ActivityRouteDataTest {
   }
 
   @Test
-  fun standardMetricUsesRelvenOrangeAndNeedsTwoRoutePoints() {
+  fun standardMetricUsesStitchBlueAndNeedsTwoRoutePoints() {
     val route =
         listOf(
             RoutePoint(59.0, 18.0, 1, 0.0, 0.0),
@@ -65,8 +65,8 @@ class ActivityRouteDataTest {
     assertFalse(
         RouteMetric.STANDARD.isAvailable(
             route.mapIndexed { index, point -> point.copy(segment = index) }))
-    assertEquals("#FF5A1F", routeMetricColor(RouteMetric.STANDARD, null, null))
-    assertTrue(buildRouteGeoJson(route, RouteMetric.STANDARD).contains("\"color\":\"#FF5A1F\""))
+    assertEquals("#2979FF", routeMetricColor(RouteMetric.STANDARD, null, null))
+    assertTrue(buildRouteGeoJson(route, RouteMetric.STANDARD).contains("\"color\":\"#2979FF\""))
   }
 
   @Test

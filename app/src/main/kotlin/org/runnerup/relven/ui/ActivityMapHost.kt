@@ -14,3 +14,8 @@ internal interface ActivityMapHost {
   fun onLowMemory()
   fun onDestroy()
 }
+
+internal interface LiveWorkoutMapHost : ActivityMapHost {
+  fun updateLiveRoute(route: List<RoutePoint>, currentLocation: RoutePoint?)
+  fun recenter()
+}

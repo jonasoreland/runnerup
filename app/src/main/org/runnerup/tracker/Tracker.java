@@ -125,6 +125,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   // Last location given by LocationManager
   private Location mLastLocation = null;
   private final GpsFixFilter gpsFixFilter = new GpsFixFilter();
+  private final GpsCurrentSpeedFilter gpsCurrentSpeedFilter = new GpsCurrentSpeedFilter();
   // Last location given by LocationManager when in state STARTED
   private Location mLastLocationStarted = null;
 
@@ -132,6 +133,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   private PersistentGpsLoggerListener mDBWriter = null;
   private PowerManager.WakeLock mWakeLock = null;
   private final List<WorkoutObserver> liveLoggers = new ArrayList<>();
+  private final List<TrackerLocationObserver> locationObservers = new ArrayList<>();
 
   private Workout workout = null;
   private NotificationStateManager notificationStateManager;
@@ -364,6 +366,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     mLastLocationStarted = null;
     mLastLocation = null;
     gpsFixFilter.reset();
+    gpsCurrentSpeedFilter.reset();
 
     // New location update will be tagged with START
     setNextLocationType(DB.LOCATION.TYPE_START);
@@ -427,6 +430,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
     gpsFixFilter.reset();
+    gpsCurrentSpeedFilter.reset();
     mCurrentSpeed = 0.0;
 
     saveActivity(/* manualDistance= */ null);
@@ -458,6 +462,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     // This saves a PAUSE location
     internalOnLocationChanged(mLastLocationStarted);
     gpsFixFilter.reset();
+    gpsCurrentSpeedFilter.reset();
     mCurrentSpeed = 0.0;
 
     saveActivity(/* manualDistance= */ null);
@@ -496,6 +501,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     // save a resume location
     internalOnLocationChanged(mLastLocation);
     gpsFixFilter.reset();
+    gpsCurrentSpeedFilter.reset();
     mCurrentSpeed = 0.0;
     components.onResume();
   }
@@ -646,6 +652,20 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     return mActivityId;
   }
 
+  /** Register a read-only observer for accepted location samples. Call from the main thread. */
+  public void addLocationObserver(TrackerLocationObserver observer) {
+    synchronized (locationObservers) {
+      if (!locationObservers.contains(observer)) locationObservers.add(observer);
+    }
+  }
+
+  /** Remove a previously registered read-only location observer. */
+  public void removeLocationObserver(TrackerLocationObserver observer) {
+    synchronized (locationObservers) {
+      locationObservers.remove(observer);
+    }
+  }
+
   @Override
   public void onLocationChanged(@NonNull Location arg0) {
     GpsFixFilter.Result fixResult = null;
@@ -682,6 +702,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private void onLocationChangedImpl(
       Location arg0, boolean internal, GpsFixFilter.Result fixResult) {
+    int persistedType = mLocationType;
     if ((!mTimeFromGpsPoints && fixResult == null) || internal) {
       long elapsedNs = SystemClock.elapsedRealtimeNanos();
       arg0.setElapsedRealtimeNanos(elapsedNs);
@@ -706,7 +727,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       float speed = arg0.getSpeed();
       if (fixResult != null && fixResult.startsNewSegment()) {
         speed = 0.0f;
-      } else if (!arg0.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints) {
+      } else if (fixResult != null && fixResult.hasDerivedSpeed()) {
+        speed = (float) fixResult.getSpeedMetersPerSecond();
+      } else if (fixResult == null
+          && (!arg0.hasSpeed() || speed == 0.0f || mCurrentSpeedFromGpsPoints)) {
         // at least the emulator can return 0 speed with hasSpeed()
         speed =
             (timeDiffNanos == 0)
@@ -715,9 +739,13 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       }
 
       if (!internal && timeDiffNanos > 0 && (fixResult == null || !fixResult.startsNewSegment())) {
-        // Low pass filter, maintain also when paused
-        final float alpha = 0.4f;
-        mCurrentSpeed = speed * alpha + (1 - alpha) * mCurrentSpeed;
+        if (fixResult != null) {
+          mCurrentSpeed = gpsCurrentSpeedFilter.onFix(fixResult, arg0.getElapsedRealtimeNanos());
+        } else {
+          // Low pass filter, maintain also when paused
+          final float alpha = 0.4f;
+          mCurrentSpeed = speed * alpha + (1 - alpha) * mCurrentSpeed;
+        }
       }
 
       if (internal || state.get() == TrackerState.STARTED) {
@@ -762,6 +790,20 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
           break;
       }
       liveLog(mLocationType);
+
+      List<TrackerLocationObserver> observers;
+      synchronized (locationObservers) {
+        observers = new ArrayList<>(locationObservers);
+      }
+      for (TrackerLocationObserver observer : observers) {
+        observer.onAcceptedLocation(
+            new Location(arg0),
+            persistedType,
+            mElapsedDistance,
+            mElapsedTimeNanos,
+            hrValue,
+            eleValue);
+      }
 
       notificationStateManager.displayNotificationState(activityOngoingState);
     }
