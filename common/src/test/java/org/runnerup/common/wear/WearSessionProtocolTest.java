@@ -2,13 +2,80 @@ package org.runnerup.common.wear;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.UUID;
 import org.junit.Test;
 
 public class WearSessionProtocolTest {
+  @Test
+  public void handshakeAttemptIgnoresWrongSourcePathAndRequestThenVerifiesOnce() throws Exception {
+    String requestId = WearHandshakeAttempt.createRequestId();
+    WearHandshakeAttempt attempt = new WearHandshakeAttempt("watch-1", requestId);
+    WearSessionProtocol.Message pong =
+        WearSessionProtocol.decode(
+            WearSessionProtocol.encodePong(requestId, 1, WearSessionProtocol.CURRENT_VERSION));
+
+    assertEquals(
+        WearHandshakeAttempt.Result.IGNORE,
+        attempt.onMessage("watch-2", WearHandshakeAttempt.PONG_PATH, pong));
+    assertEquals(
+        WearHandshakeAttempt.Result.IGNORE, attempt.onMessage("watch-1", "/wrong/path", pong));
+    assertEquals(
+        WearHandshakeAttempt.Result.IGNORE,
+        attempt.onMessage(
+            "watch-1",
+            WearHandshakeAttempt.PONG_PATH,
+            WearSessionProtocol.decode(WearSessionProtocol.encodePong("other", 1, 1))));
+    assertEquals(
+        WearHandshakeAttempt.Result.VERIFIED,
+        attempt.onMessage("watch-1", WearHandshakeAttempt.PONG_PATH, pong));
+    assertEquals(
+        WearHandshakeAttempt.Result.IGNORE,
+        attempt.onMessage("watch-1", WearHandshakeAttempt.PONG_PATH, pong));
+    assertEquals(WearHandshakeAttempt.Result.IGNORE, attempt.onTimeout());
+  }
+
+  @Test
+  public void timeoutCompletesAnAttemptOnceAndRejectsLatePong() throws Exception {
+    String requestId = WearHandshakeAttempt.createRequestId();
+    WearHandshakeAttempt attempt = new WearHandshakeAttempt("watch-1", requestId);
+    WearSessionProtocol.Message latePong =
+        WearSessionProtocol.decode(
+            WearSessionProtocol.encodePong(requestId, 1, WearSessionProtocol.CURRENT_VERSION));
+
+    assertEquals(WearHandshakeAttempt.Result.TIMEOUT, attempt.onTimeout());
+    assertEquals(WearHandshakeAttempt.Result.IGNORE, attempt.onTimeout());
+    assertEquals(
+        WearHandshakeAttempt.Result.IGNORE,
+        attempt.onMessage("watch-1", WearHandshakeAttempt.PONG_PATH, latePong));
+  }
+
+  @Test
+  public void matchingRequestWithDifferentProtocolVersionCompletesAsMismatch() throws Exception {
+    String requestId = WearHandshakeAttempt.createRequestId();
+    WearHandshakeAttempt attempt = new WearHandshakeAttempt("watch-1", requestId);
+    WearSessionProtocol.Message mismatch =
+        WearSessionProtocol.decode(WearSessionProtocol.encodePong(requestId, 2, 1));
+
+    assertEquals(
+        WearHandshakeAttempt.Result.PROTOCOL_MISMATCH,
+        attempt.onMessage("watch-1", WearHandshakeAttempt.PONG_PATH, mismatch));
+  }
+
+  @Test
+  public void eachHandshakeAttemptGetsAUniqueUuidRequestId() {
+    String first = WearHandshakeAttempt.createRequestId();
+    String second = WearHandshakeAttempt.createRequestId();
+
+    assertNotEquals(first, second);
+    assertEquals(UUID.fromString(first).toString(), first);
+    assertEquals(UUID.fromString(second).toString(), second);
+  }
+
   @Test
   public void pingAndPongRoundTripAndCorrelateByRequestId() throws Exception {
     WearSessionProtocol.Message ping =

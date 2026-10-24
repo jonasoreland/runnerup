@@ -1,9 +1,21 @@
 package org.runnerup.relven.ui
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WearHandshakePresentationTest {
+  @Test
+  fun newerConnectionTestInvalidatesOlderCallbacks() {
+    val gate = WearHandshakeRequestGate()
+    val firstRequest = gate.begin()
+    val secondRequest = gate.begin()
+
+    assertFalse(gate.isCurrent(firstRequest))
+    assertTrue(gate.isCurrent(secondRequest))
+  }
+
   @Test
   fun connectedNodeIsOnlyTransportPresenceUntilApplicationHandshakeSucceeds() {
     assertEquals(

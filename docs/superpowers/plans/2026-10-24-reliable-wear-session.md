@@ -48,6 +48,7 @@
 - [x] Implement watch listener pong response and phone test with timeout, matching source node and request ID.
 - [x] Show transport presence separately from app handshake in Settings; add explicit connection-test action and RTT/status.
 - [x] Verify build variants, package IDs, and listener manifest merge; run focused then full app/Wear tests and lint/build checks.
+- [x] Apply review fixes: test source/path/request/version filtering, single terminal completion, timeout/late response handling, unique request IDs, and stale Settings callback invalidation.
 - [ ] Review, create exactly one PR, wait for checks, merge, then rebuild both debug APKs from updated master.
 
 ### Task 2 — Workout preparation and transfer

@@ -8,10 +8,9 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.WearHandshakeAttempt;
 import org.runnerup.common.wear.WearSessionProtocol;
 
 /** Reads only currently connected Wear OS nodes through the existing Wear Data Layer. */
@@ -101,41 +100,30 @@ public final class WearConnectionProvider {
 
   private static void pingNode(
       Context context, Node node, List<String> names, ConnectionTestCallback callback) {
-    final String requestId = UUID.randomUUID().toString();
+    final String requestId = WearHandshakeAttempt.createRequestId();
     final AtomicLong sentAt = new AtomicLong(-1);
     final MessageClient client = Wearable.getMessageClient(context);
     final Handler handler = new Handler(Looper.getMainLooper());
-    final AtomicBoolean completed = new AtomicBoolean(false);
+    final WearHandshakeAttempt attempt = new WearHandshakeAttempt(node.getId(), requestId);
     final MessageClient.OnMessageReceivedListener[] listenerRef =
         new MessageClient.OnMessageReceivedListener[1];
     listenerRef[0] =
         event -> {
-          if (!node.getId().equals(event.getSourceNodeId())
-              || !Constants.Wear.Path.MSG_SESSION_PONG.equals(event.getPath())) return;
           try {
             WearSessionProtocol.Message pong = WearSessionProtocol.decode(event.getData());
-            if (pong.getType() != WearSessionProtocol.PONG
-                || !requestId.equals(pong.getRequestId())) return;
-            HandshakeStatus status =
-                pong.getRequestedVersion() == WearSessionProtocol.CURRENT_VERSION
-                        && pong.getSupportedVersion() == WearSessionProtocol.CURRENT_VERSION
-                    ? HandshakeStatus.VERIFIED
-                    : HandshakeStatus.PROTOCOL_MISMATCH;
-            if (!completed.compareAndSet(false, true)) return;
-            handler.removeCallbacksAndMessages(listenerRef[0]);
-            client.removeListener(listenerRef[0]);
-            callback.onResult(
-                new ConnectionTestResult(
-                    status, names, android.os.SystemClock.elapsedRealtime() - sentAt.get()));
+            WearHandshakeAttempt.Result result =
+                attempt.onMessage(event.getSourceNodeId(), event.getPath(), pong);
+            if (result != WearHandshakeAttempt.Result.IGNORE) {
+              finishAttempt(result, names, sentAt, handler, listenerRef[0], client, callback);
+            }
           } catch (java.io.IOException malformedResponse) {
             // Ignore malformed or unrelated payloads and let the bounded timeout report failure.
           }
         };
     Runnable timeout =
         () -> {
-          if (!completed.compareAndSet(false, true)) return;
-          client.removeListener(listenerRef[0]);
-          callback.onResult(new ConnectionTestResult(HandshakeStatus.TIMEOUT, names, -1));
+          finishAttempt(
+              attempt.onTimeout(), names, sentAt, handler, listenerRef[0], client, callback);
         };
     handler.postAtTime(
         timeout, listenerRef[0], android.os.SystemClock.uptimeMillis() + HANDSHAKE_TIMEOUT_MS);
@@ -143,7 +131,7 @@ public final class WearConnectionProvider {
         .addListener(listenerRef[0])
         .addOnSuccessListener(
             ignored -> {
-              if (completed.get()) return;
+              if (attempt.isCompleted()) return;
               try {
                 byte[] request =
                     WearSessionProtocol.encodePing(requestId, WearSessionProtocol.CURRENT_VERSION);
@@ -152,28 +140,71 @@ public final class WearConnectionProvider {
                     .sendMessage(node.getId(), Constants.Wear.Path.MSG_SESSION_PING, request)
                     .addOnFailureListener(
                         error -> {
-                          if (!completed.compareAndSet(false, true)) return;
-                          handler.removeCallbacksAndMessages(listenerRef[0]);
-                          client.removeListener(listenerRef[0]);
-                          callback.onResult(
-                              new ConnectionTestResult(HandshakeStatus.TRANSPORT_ERROR, names, -1));
+                          finishAttempt(
+                              attempt.onTransportError(),
+                              names,
+                              sentAt,
+                              handler,
+                              listenerRef[0],
+                              client,
+                              callback);
                         });
               } catch (java.io.IOException error) {
-                if (!completed.compareAndSet(false, true)) return;
-                handler.removeCallbacksAndMessages(listenerRef[0]);
-                client.removeListener(listenerRef[0]);
-                callback.onResult(
-                    new ConnectionTestResult(HandshakeStatus.TRANSPORT_ERROR, names, -1));
+                finishAttempt(
+                    attempt.onTransportError(),
+                    names,
+                    sentAt,
+                    handler,
+                    listenerRef[0],
+                    client,
+                    callback);
               }
             })
         .addOnFailureListener(
             error -> {
-              if (!completed.compareAndSet(false, true)) return;
-              handler.removeCallbacksAndMessages(listenerRef[0]);
-              client.removeListener(listenerRef[0]);
-              callback.onResult(
-                  new ConnectionTestResult(HandshakeStatus.TRANSPORT_ERROR, names, -1));
+              finishAttempt(
+                  attempt.onTransportError(),
+                  names,
+                  sentAt,
+                  handler,
+                  listenerRef[0],
+                  client,
+                  callback);
             });
+  }
+
+  private static void finishAttempt(
+      WearHandshakeAttempt.Result result,
+      List<String> names,
+      AtomicLong sentAt,
+      Handler handler,
+      MessageClient.OnMessageReceivedListener listener,
+      MessageClient client,
+      ConnectionTestCallback callback) {
+    if (result == WearHandshakeAttempt.Result.IGNORE) return;
+    handler.removeCallbacksAndMessages(listener);
+    client.removeListener(listener);
+    HandshakeStatus status;
+    switch (result) {
+      case VERIFIED:
+        status = HandshakeStatus.VERIFIED;
+        break;
+      case PROTOCOL_MISMATCH:
+        status = HandshakeStatus.PROTOCOL_MISMATCH;
+        break;
+      case TIMEOUT:
+        status = HandshakeStatus.TIMEOUT;
+        break;
+      default:
+        status = HandshakeStatus.TRANSPORT_ERROR;
+        break;
+    }
+    long start = sentAt.get();
+    long roundTripTime =
+        result == WearHandshakeAttempt.Result.VERIFIED && start >= 0
+            ? android.os.SystemClock.elapsedRealtime() - start
+            : -1;
+    callback.onResult(new ConnectionTestResult(status, names, roundTripTime));
   }
 
   private static String displayName(Node node) {

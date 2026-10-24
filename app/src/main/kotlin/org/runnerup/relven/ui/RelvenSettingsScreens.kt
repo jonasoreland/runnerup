@@ -167,7 +167,10 @@ internal fun RelvenSettingsPageContent(
         deviceState.connectedWatchNames.forEach { Text(it, fontWeight = FontWeight.Medium) }
         Text(handshakeStateLabel(deviceState.wearHandshakeState, deviceState.wearHandshakeRoundTripTimeMillis), color = RelvenColors.MutedText)
         Text("Klocknärvaro visar bara transportanslutning. Bekräftad appkontakt kräver svar från Relven på klockan.", color = RelvenColors.MutedText, fontSize = 13.sp, lineHeight = 18.sp)
-        SettingsInlineAction("Testa Relven på klockan", actions.onRefreshWatch)
+        SettingsInlineAction(
+            label = if (deviceState.wearHandshakeState == WearHandshakeState.Testing) "Testar anslutningen…" else "Testa Relven på klockan",
+            onClick = actions.onRefreshWatch,
+            enabled = deviceState.wearHandshakeState != WearHandshakeState.Testing)
       }
     }
     SettingsPage.Appearance -> SettingsCard {
@@ -285,7 +288,12 @@ private fun SettingsPrimaryButton(label: String, onClick: () -> Unit) {
 
 @Composable
 private fun SettingsInlineAction(label: String, onClick: () -> Unit) {
-  TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+  SettingsInlineAction(label = label, enabled = true, onClick = onClick)
+}
+
+@Composable
+private fun SettingsInlineAction(label: String, enabled: Boolean, onClick: () -> Unit) {
+  TextButton(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
     Text(label, modifier = Modifier.fillMaxWidth())
   }
 }
