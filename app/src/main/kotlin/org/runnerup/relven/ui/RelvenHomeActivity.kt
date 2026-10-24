@@ -49,6 +49,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.AlertDialog
@@ -129,6 +131,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   companion object {
     private const val EXTRA_OPEN_PLAN_LIBRARY = "relven.home.open_plan_library"
     private const val HOME_DESTINATION_STATE = "relven.home.destination"
+    private const val HOME_SETTINGS_ROUTE_STATE = "relven.home.settings_route"
     private const val PLAN_LIBRARY_OPEN_STATE = "relven.home.plan_library_open"
     private const val HISTORY_ACTIVITY_DETAIL_STATE = "relven.home.history_activity_detail"
     private const val PENDING_PLAN_ACTIVATION_PREFERENCES = "relven.pending-plan-activation"
@@ -164,6 +167,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var exerciseProgressionState by mutableStateOf<ExerciseProgressionLoadState>(ExerciseProgressionLoadState.Loading)
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
+  private var settingsRoute by mutableStateOf<SettingsRoute>(SettingsRoute.Overview)
   private var planLibraryOpen by mutableStateOf(false)
   private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
   private var activityHistoryRequest = 0
@@ -229,6 +233,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     destination =
         homeDestinationFromRequest(
             savedInstanceState?.getString(HOME_DESTINATION_STATE), openPlanLibrary)
+    settingsRoute = settingsRouteFromSaved(savedInstanceState?.getString(HOME_SETTINGS_ROUTE_STATE))
     planLibraryOpen =
         openPlanLibrary || (savedInstanceState?.getBoolean(PLAN_LIBRARY_OPEN_STATE) ?: false)
     pendingPlanActivationJson = savedInstanceState?.getString("relven.home.pending_plan_activation")
@@ -366,6 +371,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             currentTimeMillis = currentTimeMillis,
             pendingPlannedRunningWorkout = pendingPlannedRunningWorkout,
             destination = destination,
+            settingsRoute = settingsRoute,
+            onSettingsRouteChanged = { settingsRoute = it },
             startFragmentManager = supportFragmentManager,
             onSelectDestination = ::selectHomeDestination,
             onRetryProgress = ::loadProgress,
@@ -507,6 +514,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   override fun onSaveInstanceState(outState: Bundle) {
     outState.putString(HOME_DESTINATION_STATE, destination.name)
+    outState.putString(
+        HOME_SETTINGS_ROUTE_STATE,
+        (settingsRoute as? SettingsRoute.Page)?.page?.name)
     outState.putBoolean(PLAN_LIBRARY_OPEN_STATE, planLibraryOpen)
     outState.putBoolean("relven.home.plan_creation_open", planCreationOpen)
     pendingPlanActivationJson?.let { outState.putString("relven.home.pending_plan_activation", it) }
@@ -1858,6 +1868,7 @@ private data class PendingStrengthSessionChoice(
 
 internal enum class HomeDestination {
   Today,
+  Settings,
   Start,
   Plan,
   Exercises,
@@ -1886,6 +1897,8 @@ private fun RelvenHome(
     currentTimeMillis: Long,
     pendingPlannedRunningWorkout: org.runnerup.workout.Workout?,
     destination: HomeDestination,
+    settingsRoute: SettingsRoute,
+    onSettingsRouteChanged: (SettingsRoute) -> Unit,
     planLibraryState: PlanLibraryState,
     favoriteWorkouts: List<FavoriteWorkout>,
     planLibraryOpen: Boolean,
@@ -1979,6 +1992,9 @@ private fun RelvenHome(
               stringResource(org.runnerup.common.R.string.Home_today_brand_subtitle),
               color = RelvenColors.MutedText,
               fontSize = 12.sp)
+        }
+        IconButton(onClick = { onSelectDestination(HomeDestination.Settings) }) {
+          Icon(Icons.Default.Settings, contentDescription = "Inställningar", tint = RelvenColors.MutedText)
         }
       }
       sessionStatus?.let { status ->
@@ -2095,6 +2111,10 @@ private fun RelvenHome(
     }
     } else if (destination == HomeDestination.Start) {
       StartDestinationScreen(startFragmentManager, pendingPlannedRunningWorkout)
+    } else if (destination == HomeDestination.Settings) {
+      RelvenSettingsOverview(
+          route = settingsRoute,
+          onRouteChanged = onSettingsRouteChanged)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,
