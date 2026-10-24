@@ -1,5 +1,8 @@
 package org.runnerup.relven.ui
 
+import java.text.NumberFormat
+import java.util.Locale
+
 internal enum class ActivityReviewMode {
   UNFINISHED,
   SAVED
@@ -39,6 +42,27 @@ internal data class ActivityChartPoint(
     val distanceKm: Double,
     val value: Double,
     val segment: Int)
+
+internal fun activityChartDistanceRangeLabel(
+    minimumKm: Double,
+    maximumKm: Double,
+    locale: Locale
+): String {
+  val rangeKm = (maximumKm - minimumKm).coerceAtLeast(0.0)
+  val fractionDigits =
+      when {
+        rangeKm < 0.01 -> 3
+        rangeKm < 0.1 -> 2
+        else -> 1
+      }
+  val formatter =
+      NumberFormat.getNumberInstance(locale).apply {
+        isGroupingUsed = false
+        minimumFractionDigits = fractionDigits
+        maximumFractionDigits = fractionDigits
+      }
+  return "${formatter.format(minimumKm)}–${formatter.format(maximumKm)}"
+}
 
 internal fun activityChartMetrics(route: List<RoutePoint>): List<RouteMetric> =
     listOf(

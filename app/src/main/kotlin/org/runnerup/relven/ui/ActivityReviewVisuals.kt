@@ -205,6 +205,7 @@ internal fun ActivityReviewMapCard(activity: HistoryActivityDetails, onOpenFullM
 internal fun ActivityReviewChartCard(route: List<RoutePoint>) {
   val metrics = remember(route) { activityChartMetrics(route) }
   if (metrics.isEmpty()) return
+  val locale = LocalLocale.current.platformLocale
   var selectedMetric by remember(route) { mutableStateOf(metrics.first()) }
   LaunchedEffect(metrics) {
     if (selectedMetric !in metrics) selectedMetric = metrics.first()
@@ -279,7 +280,9 @@ internal fun ActivityReviewChartCard(route: List<RoutePoint>) {
             color = RelvenColors.MutedText,
             fontSize = 12.sp)
         Text(
-            stringResource(AppR.string.activity_review_distance_axis, lowDistance, highDistance),
+            stringResource(
+                AppR.string.activity_review_distance_axis,
+                activityChartDistanceRangeLabel(lowDistance, highDistance, locale)),
             color = RelvenColors.MutedText,
             fontSize = 12.sp)
       }
