@@ -83,6 +83,15 @@ confirmation moves it into `results`; no repetition value is inferred from the
 prescription. Fixed one-repetition timed holds record their elapsed work
 duration automatically and never ask the user for a repetition count.
 
+When an inter-set rest ends or is skipped, active elapsed rest seconds are saved
+on the set that preceded that rest. The same value is retained on a timed set
+that is still awaiting its explicit repetition entry. Time spent paused is
+excluded. A prescribed zero-second rest between sets is stored as an explicit
+zero; the final set has no rest value because no following inter-set rest was
+prescribed. Older version 3 pending-result records without this optional field
+remain readable. Summary totals show only measured rest durations and keep an
+unknown total distinct from zero.
+
 The user may explicitly skip a pending timed result or the current exercise.
 Skipped sets are stored with `status: "SKIPPED"` and no performance values. An
 exercise skip marks its remaining sets skipped and advances immediately. A

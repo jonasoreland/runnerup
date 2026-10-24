@@ -31,6 +31,7 @@ class StrengthSessionTest {
     val secondSet = resting.tick().tick()
     assertEquals(StrengthSession.Phase.REPETITIONS, secondSet.phase)
     assertEquals(2, secondSet.setNumber)
+    assertEquals(2, secondSet.results.single().restDurationSeconds)
 
     val nextExercise = secondSet.completeRepetitions(9)
     assertEquals(StrengthSession.Phase.REST, nextExercise.phase)
@@ -360,6 +361,66 @@ class StrengthSessionTest {
     assertEquals(10, rebooted.secondsRemaining)
     assertEquals(10_500L, rebooted.timerDeadlineElapsedRealtimeMillis)
   }
+
+  @Test
+  fun recordsElapsedRestOnTheSetThatPrecededTheRest() {
+    val firstSet = StrengthSession.start("plan", "entry", workout).completeRepetitions(8, 1_000)
+    val afterTwoSeconds = firstSet.skipRest(nowElapsedRealtimeMillis = 3_000)
+
+    assertEquals(2, afterTwoSeconds.results.single().restDurationSeconds)
+    assertEquals(2, afterTwoSeconds.setNumber)
+  }
+
+  @Test
+  fun restDurationExcludesTimeSpentPaused() {
+    val resting = StrengthSession.start("plan", "entry", workout)
+        .completeRepetitions(8, 1_000)
+    val paused = resting.pause(2_000)
+    val resumed = paused.resume(100_000).skipRest(101_000)
+
+    assertEquals(2, resumed.results.single().restDurationSeconds)
+  }
+
+  @Test
+  fun recordsZeroRestAsMeasuredWhenThereIsAnotherSet() {
+    val zeroRestWorkout = workoutWithRest(sets = 2, rest = 0)
+    val secondSet = StrengthSession.start("plan", "entry", zeroRestWorkout).completeRepetitions(8)
+
+    assertEquals(0, secondSet.results.single().restDurationSeconds)
+    assertEquals(2, secondSet.setNumber)
+  }
+
+  @Test
+  fun pendingTimedResultReceivesRestWhenRestEndsBeforeLogging() {
+    val session = StrengthSession.start("plan", "entry", timedWorkout(restSeconds = 5), 1_000)
+        .tickAt(31_000)
+        .tickAt(36_000)
+        .completeRepetitions(17, 37_000)
+
+    assertEquals(5, session.results.single().restDurationSeconds)
+  }
+
+  @Test
+  fun skipExerciseDuringRestRecordsElapsedRestOnPreviousSet() {
+    val twoExerciseWorkout = workoutWithNextExercise(rest = 10)
+    val skipped = StrengthSession.start("plan", "entry", twoExerciseWorkout)
+        .completeRepetitions(8, 1_000)
+        .skipCurrentExercise(4_000)
+
+    assertEquals(3, skipped.results.first { it.exerciseIndex == 0 }.restDurationSeconds)
+  }
+
+  private fun workoutWithRest(sets: Int, rest: Int) =
+      RelvenStrengthWorkoutParser.Workout(
+          "rest-workout", "Rest workout", "strength",
+          listOf(exercise("squat", "Squat", sets, 1, 20, rest)), "{}")
+
+  private fun workoutWithNextExercise(rest: Int) =
+      RelvenStrengthWorkoutParser.Workout(
+          "two-exercise", "Two exercise workout", "strength",
+          listOf(
+              exercise("first", "First", 1, 1, 20, rest),
+              exercise("second", "Second", 1, 1, 20, 0)), "{}")
 
   private fun timedWorkout(restSeconds: Int) =
       RelvenStrengthWorkoutParser.Workout(

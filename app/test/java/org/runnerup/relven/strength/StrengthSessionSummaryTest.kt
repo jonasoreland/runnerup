@@ -48,6 +48,7 @@ class StrengthSessionSummaryTest {
     assertEquals(17, summary.bestSetRepetitions)
     assertEquals(17.0, summary.averageRepetitionsPerSet!!, 0.0)
     assertEquals(60L, summary.totalWorkSeconds)
+    assertNull(summary.totalRestSeconds)
 
     val pushUps = summary.exercises.first()
     assertEquals(17, pushUps.bestSetRepetitions)
@@ -106,6 +107,20 @@ class StrengthSessionSummaryTest {
     assertNull(summary.exercises.first().totalRepetitions)
     assertNull(summary.exercises.first().leftRepetitions)
     assertNull(summary.exercises.first().rightRepetitions)
+  }
+
+  @Test
+  fun summarizesOnlyRecordedRestAndPreservesExplicitZero() {
+    val session = StrengthSession.start("plan", "entry", workout).copy(
+        results = listOf(
+            result(0, "push-ups", "Push-ups", 1, 10, 30).copy(restDurationSeconds = 0),
+            result(0, "push-ups", "Push-ups", 2, 8, 30).copy(restDurationSeconds = 12)))
+
+    val summary = strengthSessionSummary(session)
+
+    assertEquals(12L, summary.totalRestSeconds)
+    assertEquals(12L, summary.exercises.first().totalRestSeconds)
+    assertNull(summary.exercises.last().totalRestSeconds)
   }
 
   private fun result(

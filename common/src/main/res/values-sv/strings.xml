@@ -601,6 +601,7 @@
   <string name="Strength_session_summary_average_set">Snitt per set</string>
   <string name="Strength_session_summary_average_value">%1$.1f reps per set</string>
   <string name="Strength_session_summary_work_time">Registrerad arbetstid</string>
+  <string name="Strength_session_summary_rest_time">Registrerad vilotid</string>
   <string name="Strength_session_summary_set_progress">%1$d av %2$d set</string>
   <string name="Strength_session_summary_reps_count">%1$d reps</string>
   <string name="Strength_session_summary_seconds">%1$d sek</string>

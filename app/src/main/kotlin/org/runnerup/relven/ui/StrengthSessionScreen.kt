@@ -318,7 +318,12 @@ private fun SessionResultsSummary(session: StrengthSession) {
               stringResource(R.string.Strength_session_summary_work_time),
               stringResource(R.string.Strength_session_summary_seconds, it))
         }
-        if (summary.totalRepetitions == null && summary.totalWorkSeconds == null) {
+        summary.totalRestSeconds?.let {
+          SummaryMetric(
+              stringResource(R.string.Strength_session_summary_rest_time),
+              stringResource(R.string.Strength_session_summary_seconds, it))
+        }
+        if (summary.totalRepetitions == null && summary.totalWorkSeconds == null && summary.totalRestSeconds == null) {
           Text(stringResource(R.string.Strength_session_unknown_result), color = RelvenColors.MutedText)
         }
       }
@@ -356,6 +361,11 @@ private fun SessionResultsSummary(session: StrengthSession) {
           exerciseSummary.totalWorkSeconds?.let {
             SummaryMetric(
                 stringResource(R.string.Strength_session_summary_work_time),
+                stringResource(R.string.Strength_session_summary_seconds, it))
+          }
+          exerciseSummary.totalRestSeconds?.let {
+            SummaryMetric(
+                stringResource(R.string.Strength_session_summary_rest_time),
                 stringResource(R.string.Strength_session_summary_seconds, it))
           }
           if (exerciseSummary.leftRepetitions != null && exerciseSummary.rightRepetitions != null) {

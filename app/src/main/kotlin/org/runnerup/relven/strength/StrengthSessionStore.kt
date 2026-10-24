@@ -252,7 +252,8 @@ internal object StrengthSessionCodec {
               .put("exerciseStepId", pending.exerciseStepId)
               .put("exerciseName", pending.exerciseName)
               .put("setNumber", pending.setNumber)
-              .put("durationSeconds", pending.durationSeconds))
+              .put("durationSeconds", pending.durationSeconds)
+              .putOpt("restDurationSeconds", pending.restDurationSeconds))
     }
     val root =
         JSONObject()
@@ -369,7 +370,9 @@ internal object StrengthSessionCodec {
     val pendingResults = ArrayList<StrengthSession.PendingSetResult>(pendingJson.length())
     repeat(pendingJson.length()) { index ->
       val item = pendingJson.getJSONObject(index)
-      requireKeys(item, setOf("exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "durationSeconds"))
+      requireKeys(
+          item,
+          setOf("exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "durationSeconds", "restDurationSeconds"))
       val pendingExerciseIndex = item.getInt("exerciseIndex")
       require(pendingExerciseIndex in workout.exercises().indices) { "Invalid pending exercise position" }
       val exercise = workout.exercises()[pendingExerciseIndex]
@@ -382,9 +385,11 @@ internal object StrengthSessionCodec {
       require(setNumber in 1..exercise.sets()) { "Invalid pending set position" }
       val duration = item.getInt("durationSeconds")
       require(duration in 0..86_400) { "Invalid pending set duration" }
+      val restDuration = item.optionalInt("restDurationSeconds")
+      require(restDuration == null || restDuration in 0..86_400) { "Invalid pending rest duration" }
       pendingResults.add(
           StrengthSession.PendingSetResult(
-              pendingExerciseIndex, stepId, item.getString("exerciseName"), setNumber, duration))
+              pendingExerciseIndex, stepId, item.getString("exerciseName"), setNumber, duration, restDuration))
     }
     val pendingKeys = pendingResults.map { it.exerciseIndex to it.setNumber }
     require(pendingKeys.toSet().size == pendingKeys.size) { "Duplicate pending timed result" }

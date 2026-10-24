@@ -13,6 +13,7 @@ internal data class StrengthExercisePerformanceSummary(
     val bestSetRepetitions: Int?,
     val averageRepetitionsPerSet: Double?,
     val totalWorkSeconds: Long?,
+    val totalRestSeconds: Long?,
     val leftRepetitions: Int?,
     val rightRepetitions: Int?,
     val sideDifference: Int?,
@@ -28,6 +29,7 @@ internal data class StrengthSessionSummary(
     val bestSetRepetitions: Int?,
     val averageRepetitionsPerSet: Double?,
     val totalWorkSeconds: Long?,
+    val totalRestSeconds: Long?,
     val exercises: List<StrengthExercisePerformanceSummary>)
 
 /**
@@ -55,6 +57,7 @@ internal fun strengthSessionSummary(session: StrengthSession): StrengthSessionSu
       bestSetRepetitions = all.bestSetRepetitions,
       averageRepetitionsPerSet = all.averageRepetitionsPerSet,
       totalWorkSeconds = all.totalWorkSeconds,
+      totalRestSeconds = all.totalRestSeconds,
       exercises = exercises)
 }
 
@@ -83,6 +86,7 @@ private fun summarizeExercise(
       bestSetRepetitions = totals.bestSetRepetitions,
       averageRepetitionsPerSet = totals.averageRepetitionsPerSet,
       totalWorkSeconds = totals.totalWorkSeconds,
+      totalRestSeconds = totals.totalRestSeconds,
       leftRepetitions = left,
       rightRepetitions = right,
       sideDifference = if (left != null && right != null) kotlin.math.abs(left - right) else null,
@@ -93,17 +97,20 @@ private data class MeasuredTotals(
     val totalRepetitions: Int?,
     val bestSetRepetitions: Int?,
     val averageRepetitionsPerSet: Double?,
-    val totalWorkSeconds: Long?)
+    val totalWorkSeconds: Long?,
+    val totalRestSeconds: Long?)
 
 private fun summarizeResults(results: List<StrengthSession.SetResult>): MeasuredTotals {
   val completed = results.filter { it.status == StrengthSession.SetResult.ResultStatus.COMPLETED }
   val repetitionCounts = completed.mapNotNull(::knownRepetitionCount)
   val durations = completed.mapNotNull(StrengthSession.SetResult::durationSeconds)
+  val restDurations = results.mapNotNull(StrengthSession.SetResult::restDurationSeconds)
   return MeasuredTotals(
       totalRepetitions = repetitionCounts.takeIf { it.isNotEmpty() }?.sum(),
       bestSetRepetitions = repetitionCounts.maxOrNull(),
       averageRepetitionsPerSet = repetitionCounts.takeIf { it.isNotEmpty() }?.average(),
-      totalWorkSeconds = durations.takeIf { it.isNotEmpty() }?.sumOf { it.toLong() })
+      totalWorkSeconds = durations.takeIf { it.isNotEmpty() }?.sumOf { it.toLong() },
+      totalRestSeconds = restDurations.takeIf { it.isNotEmpty() }?.sumOf { it.toLong() })
 }
 
 private fun knownRepetitionCount(result: StrengthSession.SetResult): Int? =

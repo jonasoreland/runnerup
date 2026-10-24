@@ -215,14 +215,28 @@ class StrengthSessionCodecTest {
   @Test
   fun roundTripsPendingTimedResultAndMonotonicRestDeadline() {
     val active = StrengthSession.start("plan", "entry", workout, nowElapsedRealtimeMillis = 1_000)
-    val state = active.tickAt(31_000)
+    val resting = active.tickAt(31_000)
+    val state = resting.copy(
+        pendingResults = resting.pendingResults.map { it.copy(restDurationSeconds = 7) })
 
     val restored = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
 
     assertEquals(state, restored)
     assertEquals(StrengthSession.Phase.REST, restored.phase)
     assertEquals(1, restored.pendingResults.single().setNumber)
+    assertEquals(7, restored.pendingResults.single().restDurationSeconds)
     assertEquals(46_000L, restored.timerDeadlineElapsedRealtimeMillis)
+  }
+
+  @Test
+  fun readsVersionThreePendingResultWithoutOptionalRestDuration() {
+    val active = StrengthSession.start("plan", "entry", workout, nowElapsedRealtimeMillis = 1_000)
+    val json = JSONObject(StrengthSessionCodec.encode(active.tickAt(31_000), null))
+    json.getJSONArray("pendingResults").getJSONObject(0).remove("restDurationSeconds")
+
+    val restored = StrengthSessionCodec.decode(json.toString()).first
+
+    assertNull(restored.pendingResults.single().restDurationSeconds)
   }
 
   @Test
