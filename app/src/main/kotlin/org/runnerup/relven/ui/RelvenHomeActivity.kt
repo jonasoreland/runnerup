@@ -294,6 +294,12 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               onLogRepetitions = { count ->
                 updateStrengthSession { it.completeRepetitions(count, SystemClock.elapsedRealtime()) }
               },
+              onSkipPendingResult = {
+                updateStrengthSession { it.skipPendingTimedResult(SystemClock.elapsedRealtime()) }
+              },
+              onSkipExercise = {
+                updateStrengthSession { it.skipCurrentExercise(SystemClock.elapsedRealtime()) }
+              },
               onSkipRest = { updateStrengthSession { it.skipRest(SystemClock.elapsedRealtime()) } },
               onPause = { updateStrengthSession { it.pause(SystemClock.elapsedRealtime()) } },
               onResume = { updateStrengthSession { it.resume(SystemClock.elapsedRealtime()) } },

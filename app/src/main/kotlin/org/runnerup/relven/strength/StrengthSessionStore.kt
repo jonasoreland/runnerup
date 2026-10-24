@@ -423,7 +423,8 @@ internal object StrengthSessionCodec {
       workout.exercises().forEachIndexed { index, exercise ->
         val completedSets =
             when {
-              phase == StrengthSession.Phase.COMPLETE -> exercise.sets()
+              phase == StrengthSession.Phase.COMPLETE || phase == StrengthSession.Phase.AWAITING_RESULT ->
+                  exercise.sets()
               index < exerciseIndex -> exercise.sets()
               index == exerciseIndex -> setNumber - 1
               else -> 0

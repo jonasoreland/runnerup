@@ -47,11 +47,72 @@ class StrengthSessionTest {
         .tick()
         .completeRepetitions(8)
 
-    val timed = session.tick().tick().tick().tick().tick().completeRepetitions(0)
+    val timed = session.tick().tick().tick().tick().tick()
 
     assertTrue(timed.isComplete)
     assertEquals(3, timed.results.last().durationSeconds)
     assertEquals(3, timed.results.size)
+  }
+
+  @Test
+  fun timedHoldRecordsDurationWithoutAskingForRepetitions() {
+    val hold =
+        StrengthSession.start("plan", "entry", workout)
+            .completeRepetitions(8)
+            .skipRest()
+            .completeRepetitions(8)
+            .skipRest()
+
+    val completed = hold.tickAt(3_000)
+
+    assertTrue(completed.isComplete)
+    assertTrue(completed.pendingResults.isEmpty())
+    assertEquals(3, completed.results.last().durationSeconds)
+    assertNull(completed.results.last().repetitions)
+  }
+
+  @Test
+  fun finalTimedHoldDoesNotHideAnEarlierPendingRepetitionResult() {
+    val mixedWorkout =
+        RelvenStrengthWorkoutParser.Workout(
+            "mixed",
+            "Mixed timed work",
+            "strength",
+            listOf(
+                exercise("rep-test", "Push-up test", 1, 1, 20, 0, duration = 2),
+                exercise("hold", "Plank", 1, 1, 1, 0, duration = 3)),
+            "{}")
+    val firstComplete = StrengthSession.start("plan", "entry", mixedWorkout, 1_000).tickAt(3_000)
+
+    val finished = firstComplete.tickAt(6_000)
+
+    assertEquals(StrengthSession.Phase.AWAITING_RESULT, finished.phase)
+    assertEquals(1, finished.pendingResults.single().setNumber)
+    assertEquals("Plank", finished.results.single().exerciseName)
+    assertEquals(3, finished.results.single().durationSeconds)
+  }
+
+  @Test
+  fun pendingTimedResultIsLoggedBeforeTheCurrentManualSet() {
+    val mixedWorkout =
+        RelvenStrengthWorkoutParser.Workout(
+            "mixed",
+            "Mixed workout",
+            "strength",
+            listOf(
+                exercise("rep-test", "Push-up test", 1, 1, 20, 0, duration = 3),
+                exercise("squat", "Squat", 1, 8, 12, 0)),
+            "{}")
+    val manualSet = StrengthSession.start("plan", "entry", mixedWorkout, 1_000).tickAt(4_000)
+
+    val loggedPending = manualSet.completeRepetitions(11, nowElapsedRealtimeMillis = 4_000)
+    assertEquals(0, loggedPending.results.single().exerciseIndex)
+    assertEquals(StrengthSession.Phase.REPETITIONS, loggedPending.phase)
+
+    val complete = loggedPending.completeRepetitions(12, nowElapsedRealtimeMillis = 5_000)
+    assertTrue(complete.isComplete)
+    assertEquals(listOf(11, 12), complete.results.map { it.repetitions })
+    assertEquals(listOf(0, 1), complete.results.map { it.exerciseIndex })
   }
 
   @Test
@@ -90,7 +151,6 @@ class StrengthSessionTest {
             .tick()
             .tick()
             .tick()
-            .completeRepetitions(0)
     val repeated = StrengthSession.start("plan", "scheduled", workout)
 
     assertTrue(completed.isComplete)
@@ -140,6 +200,46 @@ class StrengthSessionTest {
     assertEquals(2, logged.setNumber)
     assertEquals(beforeLog, logged.timerDeadlineElapsedRealtimeMillis)
     assertEquals(18, logged.secondsRemaining)
+  }
+
+  @Test
+  fun skippingPendingTimedResultIsExplicitAndDoesNotResetRest() {
+    val active = StrengthSession.start("plan", "entry", timedWorkout(restSeconds = 20), 1_000)
+    val rest = active.tickAt(31_000)
+    val deadline = rest.timerDeadlineElapsedRealtimeMillis
+
+    val skipped = rest.skipPendingTimedResult(nowElapsedRealtimeMillis = 33_000)
+
+    val result = skipped.results.single()
+    assertEquals(StrengthSession.SetResult.ResultStatus.SKIPPED, result.status)
+    assertNull(result.repetitions)
+    assertNull(result.durationSeconds)
+    assertEquals(deadline, skipped.timerDeadlineElapsedRealtimeMillis)
+    assertEquals(18, skipped.secondsRemaining)
+    assertEquals(2, skipped.setNumber)
+  }
+
+  @Test
+  fun skippingExerciseMarksRemainingSetsAndAdvancesWithoutInventingPerformance() {
+    val skipped = StrengthSession.start("plan", "entry", workout).skipCurrentExercise(10_000)
+
+    assertEquals(1, skipped.exerciseIndex)
+    assertEquals(1, skipped.setNumber)
+    assertEquals(StrengthSession.Phase.TIMED_WORK, skipped.phase)
+    assertEquals(listOf(1, 2), skipped.results.map { it.setNumber })
+    assertTrue(skipped.results.all { it.status == StrengthSession.SetResult.ResultStatus.SKIPPED })
+    assertTrue(skipped.results.all { it.repetitions == null && it.durationSeconds == null })
+  }
+
+  @Test
+  fun skippingFinalExerciseKeepsEarlierPendingResultAvailable() {
+    val rest = StrengthSession.start("plan", "entry", timedWorkout(restSeconds = 20), 1_000).tickAt(31_000)
+
+    val skipped = rest.skipCurrentExercise(nowElapsedRealtimeMillis = 32_000)
+
+    assertEquals(StrengthSession.Phase.AWAITING_RESULT, skipped.phase)
+    assertEquals(listOf(1), skipped.pendingResults.map { it.setNumber })
+    assertEquals(StrengthSession.SetResult.ResultStatus.SKIPPED, skipped.results.single().status)
   }
 
   @Test

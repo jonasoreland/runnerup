@@ -85,19 +85,79 @@ internal data class StrengthSession(
               pending.setNumber,
               repetitions,
               pending.durationSeconds)
-      val remainingPending = refreshed.pendingResults.drop(1)
-      val updatedResults = sortedResults(refreshed.results + result)
-      val nextPhase =
-          if (refreshed.phase == Phase.AWAITING_RESULT && remainingPending.isEmpty()) Phase.COMPLETE else refreshed.phase
-      return refreshed.copy(
-          phase = nextPhase,
-          secondsRemaining = if (nextPhase == Phase.COMPLETE) 0 else refreshed.secondsRemaining,
-          results = updatedResults,
-          pendingResults = remainingPending,
-          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+      return resolvePendingResult(refreshed, result, nowElapsedRealtimeMillis)
     }
     check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
     return completeManualSet(repetitions, nowElapsedRealtimeMillis)
+  }
+
+  /** Skip a timed repetition count without inventing a result or interrupting an active rest timer. */
+  fun skipPendingTimedResult(
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
+    val refreshed =
+        if ((phase == Phase.REST || phase == Phase.TIMED_WORK) && timerDeadlineElapsedRealtimeMillis != null) {
+          tickAt(nowElapsedRealtimeMillis)
+        } else {
+          this
+        }
+    val pending = refreshed.pendingResults.firstOrNull()
+        ?: throw IllegalStateException("Session has no pending timed result")
+    val skipped =
+        SetResult(
+            pending.exerciseIndex,
+            pending.exerciseStepId,
+            pending.exerciseName,
+            pending.setNumber,
+            repetitions = null,
+            durationSeconds = null,
+            status = SetResult.ResultStatus.SKIPPED)
+    return resolvePendingResult(refreshed, skipped, nowElapsedRealtimeMillis)
+  }
+
+  /** Skip the current exercise and its remaining sets without fabricating completed performance. */
+  fun skipCurrentExercise(
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
+    check(phase != Phase.PAUSED && phase != Phase.AWAITING_RESULT && phase != Phase.COMPLETE) {
+      "Session cannot skip an exercise in its current phase"
+    }
+    val exercise = currentExercise()
+    val skippedResults =
+        (setNumber..exercise.sets()).map { skippedSet ->
+          SetResult(
+              exerciseIndex,
+              exercise.stepId(),
+              exercise.name(),
+              skippedSet,
+              repetitions = null,
+              durationSeconds = null,
+              status = SetResult.ResultStatus.SKIPPED)
+        }
+    val updatedResults = sortedResults(results + skippedResults)
+    val nextIndex = exerciseIndex + 1
+    if (nextIndex >= workout.exercises().size) {
+      val nextPhase = if (pendingResults.isEmpty()) Phase.COMPLETE else Phase.AWAITING_RESULT
+      return clearTimer(nowElapsedRealtimeMillis).copy(
+          phase = nextPhase,
+          secondsRemaining = 0,
+          results = updatedResults)
+    }
+    return beginWork(nextIndex, 1, nowElapsedRealtimeMillis).copy(results = updatedResults)
+  }
+
+  private fun resolvePendingResult(
+      refreshed: StrengthSession,
+      result: SetResult,
+      nowElapsedRealtimeMillis: Long): StrengthSession {
+    val remainingPending = refreshed.pendingResults.drop(1)
+    val updatedResults = sortedResults(refreshed.results + result)
+    val nextPhase =
+        if (refreshed.phase == Phase.AWAITING_RESULT && remainingPending.isEmpty()) Phase.COMPLETE else refreshed.phase
+    return refreshed.copy(
+        phase = nextPhase,
+        secondsRemaining = if (nextPhase == Phase.COMPLETE) 0 else refreshed.secondsRemaining,
+        results = updatedResults,
+        pendingResults = remainingPending,
+        timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
   }
 
   /** Replace a confirmed result without changing its stable set identity or workout prescription. */
@@ -228,8 +288,9 @@ internal data class StrengthSession(
     val updatedResults = sortedResults(results + result)
     val next = nextSetPosition(exerciseIndex, setNumber)
     if (next == null) {
+      val nextPhase = if (pendingResults.isEmpty()) Phase.COMPLETE else Phase.AWAITING_RESULT
       return clearTimer(nowElapsedRealtimeMillis).copy(
-          phase = Phase.COMPLETE, secondsRemaining = 0, results = updatedResults)
+          phase = nextPhase, secondsRemaining = 0, results = updatedResults)
     }
     val rest = exercise.restSeconds()
     val advanced = beginWork(next.first, next.second, nowElapsedRealtimeMillis).copy(results = updatedResults)
@@ -238,8 +299,30 @@ internal data class StrengthSession(
 
   private fun finishTimedSet(nowElapsedRealtimeMillis: Long): StrengthSession {
     val exercise = currentExercise()
+    val duration = requireNotNull(exercise.durationSeconds())
+    if (exercise.maxRepetitions() == 1) {
+      val updatedResults =
+          sortedResults(
+              results +
+                  SetResult(
+                      exerciseIndex,
+                      exercise.stepId(),
+                      exercise.name(),
+                      setNumber,
+                      repetitions = null,
+                      durationSeconds = duration))
+      val next = nextSetPosition(exerciseIndex, setNumber)
+      if (next == null) {
+        val nextPhase = if (pendingResults.isEmpty()) Phase.COMPLETE else Phase.AWAITING_RESULT
+        return clearTimer(nowElapsedRealtimeMillis).copy(
+            phase = nextPhase, secondsRemaining = 0, results = updatedResults)
+      }
+      val advanced = beginWork(next.first, next.second, nowElapsedRealtimeMillis).copy(results = updatedResults)
+      val rest = exercise.restSeconds()
+      return if (rest > 0) advanced.withPhaseTimer(Phase.REST, rest, nowElapsedRealtimeMillis) else advanced
+    }
     val pending =
-        PendingSetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, requireNotNull(exercise.durationSeconds()))
+        PendingSetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, duration)
     val nextPending = pendingResults + pending
     val next = nextSetPosition(exerciseIndex, setNumber)
     if (next == null) {

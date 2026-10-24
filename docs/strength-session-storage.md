@@ -58,11 +58,20 @@ timer, and a process restart in the same boot resumes the remaining interval.
 The timer refresh updates in-memory state; the full session file is written at
 phase transitions and confirmed result changes rather than every display tick.
 
-When timed work ends, its exercise/set identity and measured duration enter
-`pendingResults`. A rest countdown advances independently while the result is
-unlogged. If rest ends first, the next set can begin and the pending record
-remains attached to its original set. Only explicit repetition confirmation
-moves it into `results`; no repetition value is inferred from the prescription.
+When timed maximum-repetition work ends (a timed prescription with a maximum
+repetition count greater than one), its exercise/set identity and planned test
+duration enter `pendingResults`. A rest countdown advances independently while
+the result is unlogged. If rest ends first, the next set can begin and the
+pending record remains attached to its original set. Only explicit repetition
+confirmation moves it into `results`; no repetition value is inferred from the
+prescription. Fixed one-repetition timed holds record their elapsed work
+duration automatically and never ask the user for a repetition count.
+
+The user may explicitly skip a pending timed result or the current exercise.
+Skipped sets are stored with `status: "SKIPPED"` and no performance values. An
+exercise skip marks its remaining sets skipped and advances immediately. A
+pending result from the same exercise remains available and blocks final session
+completion until the user records or skips it.
 
 Ratings are bounded (RPE and discomfort 0–10), durations are 0–86,400 seconds,
 repetition counts are 0–10,000, notes are at most 1,000 characters, and supplied

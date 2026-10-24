@@ -552,6 +552,11 @@
     <string name="Strength_session_log_repetitions">Log repetitions</string>
     <string name="Strength_session_pending_result">Record timed result</string>
     <string name="Strength_session_how_many_repetitions">How many clean reps?</string>
+    <string name="Strength_session_skip_result">Skip this result</string>
+    <string name="Strength_session_skip_exercise">Skip this exercise</string>
+    <string name="Strength_session_skipped">Skipped</string>
+    <string name="Strength_session_incomplete">Incomplete</string>
+    <string name="Strength_session_log_pending_first">Record the earlier timed result before this set</string>
     <string name="Strength_session_enter_manually">Enter exact count</string>
     <string name="Strength_session_choose_count">Choose a repetition count</string>
     <string name="Strength_session_log_count">Log %1$d reps</string>

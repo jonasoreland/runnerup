@@ -11,7 +11,7 @@ class StrengthSessionCodecTest {
   private val workout =
       RelvenStrengthWorkoutParser.parse(
           """{"schemaVersion":3,"id":"bodyweight","name":"Bodyweight","sport":"strength","steps":[
-            {"id":"plank","kind":"segment","phase":"work","end":{"type":"time","seconds":30},"exercise":{"exerciseId":"00000000-0000-0000-0000-000000000001","libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Plank","instructions":"Hold steady.","equipment":[],"images":[]},"sets":2,"minRepetitions":1,"maxRepetitions":1,"restSeconds":15}},
+            {"id":"plank","kind":"segment","phase":"work","end":{"type":"time","seconds":30},"exercise":{"exerciseId":"00000000-0000-0000-0000-000000000001","libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Timed repetition test","instructions":"Complete clean repetitions.","equipment":[],"images":[]},"sets":2,"minRepetitions":1,"maxRepetitions":20,"restSeconds":15}},
             {"id":"squat","kind":"segment","phase":"work","end":{"type":"manual"},"exercise":{"exerciseId":"00000000-0000-0000-0000-000000000002","libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Squat","instructions":"Move slowly.","equipment":[],"images":[]},"sets":1,"minRepetitions":8,"maxRepetitions":12,"restSeconds":0}}
           ]}""")
 
@@ -70,7 +70,7 @@ class StrengthSessionCodecTest {
         StrengthSession.SetResult(
             exerciseIndex = 0,
             exerciseStepId = "plank",
-            exerciseName = "Plank",
+            exerciseName = "Timed repetition test",
             setNumber = 1,
             repetitions = 17,
             durationSeconds = 27,
@@ -110,7 +110,7 @@ class StrengthSessionCodecTest {
                 results =
                     listOf(
                         StrengthSession.SetResult(
-                            0, "plank", "Plank", 1, 0, 30)))
+                            0, "plank", "Timed repetition test", 1, 0, 30)))
 
     val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
 
@@ -123,7 +123,7 @@ class StrengthSessionCodecTest {
         StrengthSession.SetResult(
             exerciseIndex = 0,
             exerciseStepId = "plank",
-            exerciseName = "Plank",
+            exerciseName = "Timed repetition test",
             setNumber = 1,
             repetitions = null,
             durationSeconds = 30,
@@ -169,7 +169,7 @@ class StrengthSessionCodecTest {
                 results =
                     listOf(
                         StrengthSession.SetResult(
-                            0, "plank", "Plank", 1, 10, 30, rpe = 11.0)))
+                            0, "plank", "Timed repetition test", 1, 10, 30, rpe = 11.0)))
 
     StrengthSessionCodec.decode(StrengthSessionCodec.encode(invalid, null))
   }
@@ -186,7 +186,7 @@ class StrengthSessionCodecTest {
                         phase = StrengthSession.Phase.REST,
                         secondsRemaining = 15,
                         results =
-                            listOf(StrengthSession.SetResult(0, "plank", "Plank", 1, null, 30))),
+                            listOf(StrengthSession.SetResult(0, "plank", "Timed repetition test", 1, null, 30))),
                 null))
     legacy.put("schemaVersion", 1)
     listOf(
@@ -217,6 +217,23 @@ class StrengthSessionCodecTest {
     assertEquals(StrengthSession.Phase.REST, restored.phase)
     assertEquals(1, restored.pendingResults.single().setNumber)
     assertEquals(46_000L, restored.timerDeadlineElapsedRealtimeMillis)
+  }
+
+  @Test
+  fun roundTripsSkippedFinalSetWhileAnEarlierTimedResultIsStillPending() {
+    val finalTimedWorkout =
+        RelvenStrengthWorkoutParser.parse(
+            """{"schemaVersion":3,"id":"timed","name":"Timed","sport":"strength","steps":[
+              {"id":"test","kind":"segment","phase":"work","end":{"type":"time","seconds":30},"exercise":{"exerciseId":"00000000-0000-0000-0000-000000000001","libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Timed test","instructions":"Complete clean repetitions.","equipment":[],"images":[]},"sets":2,"minRepetitions":1,"maxRepetitions":20,"restSeconds":20}}
+            ]}""")
+    val resting = StrengthSession.start("plan", "entry", finalTimedWorkout, 1_000).tickAt(31_000)
+    val skipped = resting.skipCurrentExercise(32_000)
+
+    val restored = StrengthSessionCodec.decode(StrengthSessionCodec.encode(skipped, null)).first
+
+    assertEquals(StrengthSession.Phase.AWAITING_RESULT, restored.phase)
+    assertEquals(listOf(1), restored.pendingResults.map { it.setNumber })
+    assertEquals(StrengthSession.SetResult.ResultStatus.SKIPPED, restored.results.single().status)
   }
 
   @Test
