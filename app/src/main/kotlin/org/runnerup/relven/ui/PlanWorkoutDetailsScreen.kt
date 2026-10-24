@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.runnerup.common.R
+import org.runnerup.relven.exercise.ExerciseCatalog
 import org.runnerup.relven.strength.CompletedStrengthSession
 
 @Composable
@@ -53,7 +54,8 @@ internal fun PlanWorkoutDetailsScreen(
     onSaveFavoriteWorkout: (String, String) -> Unit,
     onStartStrength: () -> Unit,
     onStartRunning: () -> Unit,
-    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit
+    onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
+    exerciseCatalog: ExerciseCatalog?
 ) {
   var moreActionsExpanded by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
   var showFavoriteDialog by rememberSaveable(workout.sessionId) { mutableStateOf(false) }
@@ -160,6 +162,9 @@ internal fun PlanWorkoutDetailsScreen(
           fontWeight = FontWeight.SemiBold)
       Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         details.exercises().forEachIndexed { index, exercise ->
+          val presentation =
+              planExercisePresentation(
+                  exercise.exerciseId(), exercise.name(), exercise.instructions(), exerciseCatalog)
           Surface(
               modifier = Modifier.fillMaxWidth(),
               color = RelvenColors.Surface,
@@ -168,7 +173,7 @@ internal fun PlanWorkoutDetailsScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
               Text(
-                  "${index + 1}. ${exercise.name()}",
+                  "${index + 1}. ${presentation.name}",
                   fontSize = 18.sp,
                   fontWeight = FontWeight.SemiBold)
               Text(
@@ -187,7 +192,7 @@ internal fun PlanWorkoutDetailsScreen(
               Text(
                   stringResource(R.string.Plan_calendar_strength_rest, exercise.restSeconds()),
                   color = RelvenColors.MutedText)
-              exercise.instructions().takeIf(String::isNotBlank)?.let {
+              presentation.instructions.takeIf(String::isNotBlank)?.let {
                 Text(it, lineHeight = 22.sp, color = RelvenColors.MutedText)
               }
             }

@@ -66,6 +66,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import org.json.JSONObject
 import org.runnerup.common.R
+import org.runnerup.relven.exercise.ExerciseCatalog
 import org.runnerup.relven.strength.CompletedStrengthSession
 
 @Composable
@@ -74,6 +75,7 @@ internal fun PlanCalendarScreen(
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
     completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
+    exerciseCatalog: ExerciseCatalog? = null,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
     onStartRunning: (org.runnerup.workout.Workout) -> Unit = {},
     onSaveFavoriteWorkout: (String, String) -> Unit = { _, _ -> },
@@ -104,6 +106,7 @@ internal fun PlanCalendarScreen(
             nowMillis,
             revisionStatus,
             completedStrengthSessions,
+            exerciseCatalog,
             onStartStrength,
             onStartRunning,
             onSaveFavoriteWorkout,
@@ -126,6 +129,7 @@ private fun LoadedPlanCalendar(
     nowMillis: Long,
     revisionStatus: PlanRevisionStatus,
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
+    exerciseCatalog: ExerciseCatalog?,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onStartRunning: (org.runnerup.workout.Workout) -> Unit,
     onSaveFavoriteWorkout: (String, String) -> Unit,
@@ -229,7 +233,8 @@ private fun LoadedPlanCalendar(
           onSaveFavoriteWorkout = onSaveFavoriteWorkout,
           onStartStrength = { onStartStrength(plan.id(), openedWorkout) },
           onStartRunning = { openedWorkout.runningWorkout?.let(onStartRunning) },
-          onViewStrengthCompletion = onViewStrengthCompletion)
+          onViewStrengthCompletion = onViewStrengthCompletion,
+          exerciseCatalog = exerciseCatalog)
     } else {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
       Text(stringResource(R.string.Plan_calendar_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)

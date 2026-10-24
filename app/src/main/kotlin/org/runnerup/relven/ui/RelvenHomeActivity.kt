@@ -1872,6 +1872,7 @@ private fun RelvenHome(
             revisionStatus = planRevisionStatus,
             nowMillis = currentTimeMillis,
             completedStrengthSessions = completedStrengthSessions,
+            exerciseCatalog = (exerciseCatalogLoadState as? ExerciseCatalogLoadState.Loaded)?.catalog,
             onSaveFavoriteWorkout = onSaveFavoriteWorkout,
             onStartStrength = onStartStrength,
             onStartRunning = onStartPlannedRunningWorkout,
