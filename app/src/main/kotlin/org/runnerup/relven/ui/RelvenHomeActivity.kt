@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
@@ -289,11 +290,13 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               saveError = strengthSaveError,
               isSavingProgress = strengthTransitionSaving,
               isSavingCompletion = strengthFinishing,
-              onTick = { updateStrengthSession { it.tick() } },
-              onLogRepetitions = { count -> updateStrengthSession { it.completeRepetitions(count) } },
-              onSkipRest = { updateStrengthSession { it.skipRest() } },
-              onPause = { updateStrengthSession { it.pause() } },
-              onResume = { updateStrengthSession { it.resume() } },
+              onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime()) } },
+              onLogRepetitions = { count ->
+                updateStrengthSession { it.completeRepetitions(count, SystemClock.elapsedRealtime()) }
+              },
+              onSkipRest = { updateStrengthSession { it.skipRest(SystemClock.elapsedRealtime()) } },
+              onPause = { updateStrengthSession { it.pause(SystemClock.elapsedRealtime()) } },
+              onResume = { updateStrengthSession { it.resume(SystemClock.elapsedRealtime()) } },
               onFinish = ::finishStrengthSession,
               onClose = ::closeStrengthSession)
         } else if (activityDetailState != null) {
@@ -1193,7 +1196,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           strengthStoreMutex.withLock {
             val saved = StrengthSessionStore.loadInProgress(applicationContext)
             if (saved != null) saved
-            else StrengthSession.start(planId, entry.sessionId, workout).also {
+            else StrengthSession.start(
+                planId, entry.sessionId, workout, SystemClock.elapsedRealtime()).also {
               StrengthSessionStore.saveInProgress(applicationContext, it)
             }
           }
@@ -1234,7 +1238,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           strengthStoreMutex.withLock {
             val saved = StrengthSessionStore.loadInProgress(applicationContext)
             if (saved != null) saved
-            else StrengthSession.start("quick-workout", UUID.randomUUID().toString(), workout).also {
+            else StrengthSession.start(
+                "quick-workout", UUID.randomUUID().toString(), workout, SystemClock.elapsedRealtime()).also {
               StrengthSessionStore.saveInProgress(applicationContext, it)
             }
           }
@@ -1255,7 +1260,19 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   private fun updateStrengthSession(transform: (StrengthSession) -> StrengthSession) {
     if (strengthTransitionSaving) return
-    val next = strengthSession?.let(transform) ?: return
+    val current = strengthSession ?: return
+    val next = transform(current)
+    val mustPersist =
+        current.phase != next.phase ||
+            current.exerciseIndex != next.exerciseIndex ||
+            current.setNumber != next.setNumber ||
+            current.results != next.results ||
+            current.pendingResults != next.pendingResults ||
+            current.timerDeadlineElapsedRealtimeMillis != next.timerDeadlineElapsedRealtimeMillis
+    if (!mustPersist) {
+      strengthSession = next
+      return
+    }
     strengthTransitionSaving = true
     strengthSaveError = false
     lifecycleScope.launch {
@@ -1306,7 +1323,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     val current = strengthSession
     if (current != null && current.phase != StrengthSession.Phase.PAUSED && !current.isComplete) {
       if (strengthTransitionSaving) return
-      val paused = current.pause()
+      val paused = current.pause(SystemClock.elapsedRealtime())
       strengthTransitionSaving = true
       lifecycleScope.launch {
         try {

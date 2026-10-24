@@ -244,6 +244,16 @@ internal object StrengthSessionCodec {
       result.exerciseCategory?.let { item.put("exerciseCategory", it) }
       results.put(item)
     }
+    val pendingResults = JSONArray()
+    state.pendingResults.forEach { pending ->
+      pendingResults.put(
+          JSONObject()
+              .put("exerciseIndex", pending.exerciseIndex)
+              .put("exerciseStepId", pending.exerciseStepId)
+              .put("exerciseName", pending.exerciseName)
+              .put("setNumber", pending.setNumber)
+              .put("durationSeconds", pending.durationSeconds))
+    }
     val root =
         JSONObject()
             .put("schemaVersion", VERSION)
@@ -256,7 +266,11 @@ internal object StrengthSessionCodec {
             .put("phase", state.phase.name)
             .put("secondsRemaining", state.secondsRemaining)
             .put("results", results)
+            .put("pendingResults", pendingResults)
     state.resumePhase?.let { root.put("resumePhase", it.name) }
+    state.timerDeadlineElapsedRealtimeMillis?.let { root.put("timerDeadlineElapsedRealtimeMillis", it) }
+    state.timerAnchorElapsedRealtimeMillis?.let { root.put("timerAnchorElapsedRealtimeMillis", it) }
+    state.timerClockObservedElapsedRealtimeMillis?.let { root.put("timerClockObservedElapsedRealtimeMillis", it) }
     finishedAtMillis?.let { root.put("finishedAtMillis", it) }
     return root.toString()
   }
@@ -267,7 +281,9 @@ internal object StrengthSessionCodec {
         root,
         setOf(
             "schemaVersion", "planId", "scheduledEntryId", "executionId", "workoutJson", "exerciseIndex",
-            "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis"))
+            "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis",
+            "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
+            "timerClockObservedElapsedRealtimeMillis"))
     val version = root.optInt("schemaVersion", -1)
     require(version in 1..VERSION) { "Unknown strength session version" }
     val planId = root.getString("planId")
@@ -348,15 +364,58 @@ internal object StrengthSessionCodec {
     require(results.map { it.exerciseIndex to it.setNumber }.toSet().size == results.size) {
       "Duplicate saved set result"
     }
+    val pendingJson = if (version >= 3) root.getJSONArray("pendingResults") else JSONArray()
+    require(pendingJson.length() <= 100_000) { "Too many pending timed results" }
+    val pendingResults = ArrayList<StrengthSession.PendingSetResult>(pendingJson.length())
+    repeat(pendingJson.length()) { index ->
+      val item = pendingJson.getJSONObject(index)
+      requireKeys(item, setOf("exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "durationSeconds"))
+      val pendingExerciseIndex = item.getInt("exerciseIndex")
+      require(pendingExerciseIndex in workout.exercises().indices) { "Invalid pending exercise position" }
+      val exercise = workout.exercises()[pendingExerciseIndex]
+      val stepId = item.getString("exerciseStepId")
+      require(stepId == exercise.stepId() && item.getString("exerciseName") == exercise.name()) {
+        "Pending result does not match its exercise snapshot"
+      }
+      require(exercise.durationSeconds() != null) { "Pending result is not a timed set" }
+      val setNumber = item.getInt("setNumber")
+      require(setNumber in 1..exercise.sets()) { "Invalid pending set position" }
+      val duration = item.getInt("durationSeconds")
+      require(duration in 0..86_400) { "Invalid pending set duration" }
+      pendingResults.add(
+          StrengthSession.PendingSetResult(
+              pendingExerciseIndex, stepId, item.getString("exerciseName"), setNumber, duration))
+    }
+    val pendingKeys = pendingResults.map { it.exerciseIndex to it.setNumber }
+    require(pendingKeys.toSet().size == pendingKeys.size) { "Duplicate pending timed result" }
+    require((results.map { it.exerciseIndex to it.setNumber }.toSet() intersect pendingKeys.toSet()).isEmpty()) {
+      "Set cannot be both logged and pending"
+    }
     val resumePhase = if (root.has("resumePhase")) StrengthSession.Phase.valueOf(root.getString("resumePhase")) else null
     require((phase == StrengthSession.Phase.PAUSED) == (resumePhase != null)) { "Invalid paused state" }
     require(resumePhase != StrengthSession.Phase.PAUSED && resumePhase != StrengthSession.Phase.COMPLETE) {
       "Invalid resume phase"
     }
     val finishedAt = root.optionalLong("finishedAtMillis")
+    val timerDeadline = root.optionalLong("timerDeadlineElapsedRealtimeMillis")
+    val timerAnchor = root.optionalLong("timerAnchorElapsedRealtimeMillis")
+    val timerObserved = root.optionalLong("timerClockObservedElapsedRealtimeMillis")
     val state =
         StrengthSession(
-            planId, scheduledId, workout, exerciseIndex, setNumber, phase, seconds, results, resumePhase, executionId)
+            planId,
+            scheduledId,
+            workout,
+            exerciseIndex,
+            setNumber,
+            phase,
+            seconds,
+            results,
+            resumePhase,
+            executionId,
+            pendingResults,
+            timerDeadline,
+            timerAnchor,
+            timerObserved)
     if (version >= 2) {
       results.forEach { result -> state.validateResult(result, workout.exercises()[result.exerciseIndex]) }
     }
@@ -372,7 +431,8 @@ internal object StrengthSessionCodec {
         for (set in 1..completedSets) add(index to set)
       }
     }
-    val actualResults = results.map { it.exerciseIndex to it.setNumber }.toSet()
+    val actualResults =
+        (results.map { it.exerciseIndex to it.setNumber } + pendingKeys).toSet()
     require(actualResults == expectedResults) { "Saved set results do not match session progress" }
     if (phase == StrengthSession.Phase.COMPLETE) require(exerciseIndex == workout.exercises().lastIndex) {
       "Completed session has invalid exercise position"
@@ -386,8 +446,18 @@ internal object StrengthSessionCodec {
     }
     if (effectivePhase == StrengthSession.Phase.TIMED_WORK || effectivePhase == StrengthSession.Phase.REST) {
       require(seconds > 0) { "Active timer has no remaining time" }
+      if (version >= 3 && timerDeadline != null) {
+        require(timerAnchor != null && timerDeadline >= timerAnchor) { "Invalid monotonic timer anchor" }
+      }
     } else {
       require(seconds == 0) { "Unexpected timer value" }
+      require(timerDeadline == null && timerAnchor == null) { "Inactive timer has a deadline" }
+    }
+    require(timerDeadline == null || timerDeadline >= 0) { "Invalid timer deadline" }
+    require(timerAnchor == null || timerAnchor >= 0) { "Invalid timer anchor" }
+    require(timerObserved == null || timerObserved >= 0) { "Invalid timer observation" }
+    if (phase == StrengthSession.Phase.AWAITING_RESULT) {
+      require(pendingResults.isNotEmpty()) { "Awaiting result has no pending timed set" }
     }
     require(finishedAt == null || state.isComplete) { "Completion timestamp does not match session state" }
     return state to finishedAt
@@ -402,5 +472,5 @@ internal object StrengthSessionCodec {
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key)) getLong(key) else null
   private fun JSONObject.optionalDouble(key: String): Double? = if (has(key)) getDouble(key) else null
 
-  private const val VERSION = 2
+  private const val VERSION = 3
 }

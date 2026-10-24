@@ -563,6 +563,8 @@
   <string name="Strength_session_set">Set %1$d av %2$d</string>
   <string name="Strength_session_repetitions">Repetitioner</string>
   <string name="Strength_session_log_repetitions">Spara repetitioner</string>
+  <string name="Strength_session_pending_result">Registrera resultat från testet</string>
+  <string name="Strength_session_how_many_repetitions">Hur många rena repetitioner?</string>
   <string name="Strength_session_resting">Vila</string>
   <string name="Strength_session_skip_rest">Hoppa över vilan</string>
   <string name="Strength_session_pause">Pausa</string>

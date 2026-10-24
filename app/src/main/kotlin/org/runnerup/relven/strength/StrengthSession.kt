@@ -1,5 +1,6 @@
 package org.runnerup.relven.strength
 
+import kotlin.math.ceil
 import org.runnerup.workout.RelvenStrengthWorkoutParser
 
 /** Immutable phone-side execution state for a validated strength or prehab workout. */
@@ -13,8 +14,20 @@ internal data class StrengthSession(
     val secondsRemaining: Int,
     val results: List<SetResult>,
     val resumePhase: Phase? = null,
-    val executionId: String = scheduledEntryId) {
-  enum class Phase { REPETITIONS, TIMED_WORK, REST, PAUSED, COMPLETE }
+    val executionId: String = scheduledEntryId,
+    val pendingResults: List<PendingSetResult> = emptyList(),
+    val timerDeadlineElapsedRealtimeMillis: Long? = null,
+    val timerAnchorElapsedRealtimeMillis: Long? = null,
+    val timerClockObservedElapsedRealtimeMillis: Long? = null) {
+  enum class Phase { REPETITIONS, TIMED_WORK, REST, AWAITING_RESULT, PAUSED, COMPLETE }
+
+  /** Identity and measured duration are retained until the user explicitly logs the timed result. */
+  data class PendingSetResult(
+      val exerciseIndex: Int,
+      val exerciseStepId: String,
+      val exerciseName: String,
+      val setNumber: Int,
+      val durationSeconds: Int)
 
   data class SetResult(
       val exerciseIndex: Int,
@@ -51,10 +64,40 @@ internal data class StrengthSession(
     return workout.exercises()[exerciseIndex]
   }
 
-  fun completeRepetitions(repetitions: Int): StrengthSession {
-    check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
+  /** Logs the oldest pending timed test first; otherwise completes the current manual-rep set. */
+  fun completeRepetitions(
+      repetitions: Int,
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
     require(repetitions in 0..10_000) { "Repetitions must be from 0 to 10000" }
-    return completeSet(repetitions, null)
+    val refreshed =
+        if ((phase == Phase.REST || phase == Phase.TIMED_WORK) && timerDeadlineElapsedRealtimeMillis != null) {
+          tickAt(nowElapsedRealtimeMillis)
+        } else {
+          this
+        }
+    val pending = refreshed.pendingResults.firstOrNull()
+    if (pending != null) {
+      val result =
+          SetResult(
+              pending.exerciseIndex,
+              pending.exerciseStepId,
+              pending.exerciseName,
+              pending.setNumber,
+              repetitions,
+              pending.durationSeconds)
+      val remainingPending = refreshed.pendingResults.drop(1)
+      val updatedResults = sortedResults(refreshed.results + result)
+      val nextPhase =
+          if (refreshed.phase == Phase.AWAITING_RESULT && remainingPending.isEmpty()) Phase.COMPLETE else refreshed.phase
+      return refreshed.copy(
+          phase = nextPhase,
+          secondsRemaining = if (nextPhase == Phase.COMPLETE) 0 else refreshed.secondsRemaining,
+          results = updatedResults,
+          pendingResults = remainingPending,
+          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+    }
+    check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
+    return completeManualSet(repetitions, nowElapsedRealtimeMillis)
   }
 
   /** Replace a confirmed result without changing its stable set identity or workout prescription. */
@@ -87,49 +130,177 @@ internal data class StrengthSession(
             status = SetResult.ResultStatus.INCOMPLETE))
   }
 
-  fun tick(): StrengthSession {
+  /** Refresh a timer from its monotonic deadline; delayed UI frames do not accumulate drift. */
+  fun tickAt(nowElapsedRealtimeMillis: Long): StrengthSession {
     check(phase == Phase.REST || phase == Phase.TIMED_WORK) { "Session is not counting down" }
-    if (secondsRemaining > 1) return copy(secondsRemaining = secondsRemaining - 1)
-    return if (phase == Phase.REST) {
-      beginWork(exerciseIndex, setNumber)
-    } else {
-      completeSet(null, currentExercise().durationSeconds())
+    require(nowElapsedRealtimeMillis >= 0) { "Invalid monotonic time" }
+    var current =
+        when {
+          timerDeadlineElapsedRealtimeMillis == null || timerAnchorElapsedRealtimeMillis == null ->
+              withTimer(secondsRemaining, nowElapsedRealtimeMillis)
+          nowElapsedRealtimeMillis < timerAnchorElapsedRealtimeMillis ->
+              withTimer(secondsRemaining, nowElapsedRealtimeMillis)
+          else -> this
+        }
+    var elapsedTransitions = 0
+    while (true) {
+      val deadline = requireNotNull(current.timerDeadlineElapsedRealtimeMillis)
+      val remaining = ceil((deadline - nowElapsedRealtimeMillis).coerceAtLeast(0L) / 1_000.0).toInt()
+      if (remaining > 0) {
+        return current.copy(
+            secondsRemaining = remaining,
+            timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+      }
+      val expired =
+          current.copy(secondsRemaining = 0, timerClockObservedElapsedRealtimeMillis = deadline)
+      current =
+          if (current.phase == Phase.REST) {
+            expired.beginWork(current.exerciseIndex, current.setNumber, deadline)
+          } else {
+            expired.finishTimedSet(deadline)
+          }
+      elapsedTransitions++
+      if (current.phase != Phase.REST && current.phase != Phase.TIMED_WORK) {
+        return current.copy(timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+      }
+      // Bound catch-up after a long suspension. The next refresh continues from the stored deadlines.
+      if (elapsedTransitions >= 10_000) {
+        return current.copy(
+            secondsRemaining = 0,
+            timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+      }
     }
   }
 
-  fun skipRest(): StrengthSession {
+  /** Legacy deterministic one-second step, retained for existing state-machine callers/tests. */
+  fun tick(): StrengthSession {
+    val deadline = timerDeadlineElapsedRealtimeMillis
+    val now =
+        if (deadline == null) {
+          (timerClockObservedElapsedRealtimeMillis ?: 0L) + 1_000L
+        } else {
+          deadline - (secondsRemaining - 1).coerceAtLeast(0) * 1_000L
+        }
+    return tickAt(now)
+  }
+
+  fun skipRest(
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
     check(phase == Phase.REST) { "Session is not resting" }
-    return beginWork(exerciseIndex, setNumber)
+    return beginWork(exerciseIndex, setNumber, nowElapsedRealtimeMillis)
   }
 
-  fun pause(): StrengthSession {
+  fun pause(
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
     check(phase != Phase.PAUSED && phase != Phase.COMPLETE) { "Session cannot be paused" }
-    return copy(phase = Phase.PAUSED, resumePhase = phase)
+    val remaining =
+        if (phase == Phase.REST || phase == Phase.TIMED_WORK) {
+          remainingSeconds(nowElapsedRealtimeMillis)
+        } else {
+          secondsRemaining
+        }
+    return copy(
+        phase = Phase.PAUSED,
+        secondsRemaining = remaining,
+        resumePhase = phase,
+        timerDeadlineElapsedRealtimeMillis = null,
+        timerAnchorElapsedRealtimeMillis = null,
+        timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
   }
 
-  fun resume(): StrengthSession {
+  fun resume(
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
     check(phase == Phase.PAUSED && resumePhase != null) { "Session is not paused" }
-    return copy(phase = requireNotNull(resumePhase), resumePhase = null)
+    val resumedPhase = requireNotNull(resumePhase)
+    val resumed = copy(phase = resumedPhase, resumePhase = null)
+    return if (resumedPhase == Phase.REST || resumedPhase == Phase.TIMED_WORK) {
+      resumed.withTimer(secondsRemaining, nowElapsedRealtimeMillis)
+    } else {
+      resumed.copy(timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+    }
   }
 
-  private fun completeSet(repetitions: Int?, durationSeconds: Int?): StrengthSession {
+  private fun completeManualSet(repetitions: Int, nowElapsedRealtimeMillis: Long): StrengthSession {
+    check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
     val exercise = currentExercise()
-    val updatedResults =
-        results + SetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, repetitions, durationSeconds)
-    val hasAnotherSet = setNumber < exercise.sets()
-    val nextExerciseIndex = if (hasAnotherSet) exerciseIndex else exerciseIndex + 1
-    if (nextExerciseIndex >= workout.exercises().size) {
-      return copy(phase = Phase.COMPLETE, secondsRemaining = 0, results = updatedResults)
+    val result =
+        SetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, repetitions, null)
+    val updatedResults = sortedResults(results + result)
+    val next = nextSetPosition(exerciseIndex, setNumber)
+    if (next == null) {
+      return clearTimer(nowElapsedRealtimeMillis).copy(
+          phase = Phase.COMPLETE, secondsRemaining = 0, results = updatedResults)
     }
-    val nextSet = if (hasAnotherSet) setNumber + 1 else 1
     val rest = exercise.restSeconds()
+    val advanced = beginWork(next.first, next.second, nowElapsedRealtimeMillis).copy(results = updatedResults)
+    return if (rest > 0) advanced.withPhaseTimer(Phase.REST, rest, nowElapsedRealtimeMillis) else advanced
+  }
+
+  private fun finishTimedSet(nowElapsedRealtimeMillis: Long): StrengthSession {
+    val exercise = currentExercise()
+    val pending =
+        PendingSetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, requireNotNull(exercise.durationSeconds()))
+    val nextPending = pendingResults + pending
+    val next = nextSetPosition(exerciseIndex, setNumber)
+    if (next == null) {
+      return copy(
+          phase = Phase.AWAITING_RESULT,
+          secondsRemaining = 0,
+          pendingResults = nextPending,
+          timerDeadlineElapsedRealtimeMillis = null,
+          timerAnchorElapsedRealtimeMillis = null,
+          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+    }
+    val advanced = beginWork(next.first, next.second, nowElapsedRealtimeMillis).copy(pendingResults = nextPending)
+    val rest = exercise.restSeconds()
+    return if (rest > 0) advanced.withPhaseTimer(Phase.REST, rest, nowElapsedRealtimeMillis) else advanced
+  }
+
+  private fun nextSetPosition(index: Int, set: Int): Pair<Int, Int>? {
+    val exercise = workout.exercises()[index]
+    if (set < exercise.sets()) return index to set + 1
+    val nextIndex = index + 1
+    return if (nextIndex < workout.exercises().size) nextIndex to 1 else null
+  }
+
+  private fun beginWork(index: Int, set: Int, nowElapsedRealtimeMillis: Long): StrengthSession {
+    val exercise = workout.exercises()[index]
+    val duration = workDuration(exercise)
+    val phase = workPhase(exercise)
     val next = copy(
-        exerciseIndex = nextExerciseIndex,
-        setNumber = nextSet,
-        phase = workPhase(workout.exercises()[nextExerciseIndex]),
-        secondsRemaining = workDuration(workout.exercises()[nextExerciseIndex]),
-        results = updatedResults)
-    return if (rest > 0) next.copy(phase = Phase.REST, secondsRemaining = rest) else next
+        exerciseIndex = index,
+        setNumber = set,
+        phase = phase,
+        secondsRemaining = duration,
+        resumePhase = null,
+        timerDeadlineElapsedRealtimeMillis = null,
+        timerAnchorElapsedRealtimeMillis = null,
+        timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+    return if (phase == Phase.TIMED_WORK) next.withTimer(duration, nowElapsedRealtimeMillis) else next
+  }
+
+  private fun withPhaseTimer(phase: Phase, seconds: Int, nowElapsedRealtimeMillis: Long): StrengthSession =
+      copy(phase = phase, secondsRemaining = seconds).withTimer(seconds, nowElapsedRealtimeMillis)
+
+  private fun withTimer(seconds: Int, nowElapsedRealtimeMillis: Long): StrengthSession =
+      copy(
+          secondsRemaining = seconds,
+          timerDeadlineElapsedRealtimeMillis = nowElapsedRealtimeMillis + seconds * 1_000L,
+          timerAnchorElapsedRealtimeMillis = nowElapsedRealtimeMillis,
+          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+
+  private fun clearTimer(nowElapsedRealtimeMillis: Long): StrengthSession =
+      copy(
+          timerDeadlineElapsedRealtimeMillis = null,
+          timerAnchorElapsedRealtimeMillis = null,
+          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+
+  private fun remainingSeconds(nowElapsedRealtimeMillis: Long): Int {
+    val deadline = timerDeadlineElapsedRealtimeMillis ?: return secondsRemaining
+    if (timerAnchorElapsedRealtimeMillis != null && nowElapsedRealtimeMillis < timerAnchorElapsedRealtimeMillis) {
+      return secondsRemaining
+    }
+    return ceil((deadline - nowElapsedRealtimeMillis).coerceAtLeast(0L) / 1_000.0).toInt()
   }
 
   internal fun validateResult(result: SetResult, exercise: RelvenStrengthWorkoutParser.Exercise) {
@@ -171,35 +342,36 @@ internal data class StrengthSession(
     }
   }
 
-  private fun beginWork(index: Int, set: Int): StrengthSession {
-    val exercise = workout.exercises()[index]
-    return copy(
-        exerciseIndex = index,
-        setNumber = set,
-        phase = workPhase(exercise),
-        secondsRemaining = workDuration(exercise),
-        resumePhase = null)
-  }
+  private fun sortedResults(values: List<SetResult>): List<SetResult> =
+      values.sortedWith(compareBy(SetResult::exerciseIndex, SetResult::setNumber))
 
   companion object {
     fun start(
         planId: String,
         scheduledEntryId: String,
-        workout: RelvenStrengthWorkoutParser.Workout): StrengthSession {
+        workout: RelvenStrengthWorkoutParser.Workout,
+        nowElapsedRealtimeMillis: Long = 0L): StrengthSession {
       require(planId.isNotBlank() && scheduledEntryId.isNotBlank()) { "Missing plan entry identity" }
       require(workout.exercises().isNotEmpty()) { "Strength workout has no exercises" }
       require(workout.exercises().sumOf { it.sets().toLong() } <= 100_000) { "Strength workout has too many sets" }
+      require(nowElapsedRealtimeMillis >= 0) { "Invalid monotonic time" }
       val first = workout.exercises().first()
+      val phase = workPhase(first)
+      val duration = workDuration(first)
+      val timerDeadline = if (phase == Phase.TIMED_WORK) nowElapsedRealtimeMillis + duration * 1_000L else null
       return StrengthSession(
           planId,
           scheduledEntryId,
           workout,
           0,
           1,
-          workPhase(first),
-          workDuration(first),
+          phase,
+          duration,
           emptyList(),
-          executionId = java.util.UUID.randomUUID().toString())
+          executionId = java.util.UUID.randomUUID().toString(),
+          timerDeadlineElapsedRealtimeMillis = timerDeadline,
+          timerAnchorElapsedRealtimeMillis = if (timerDeadline != null) nowElapsedRealtimeMillis else null,
+          timerClockObservedElapsedRealtimeMillis = if (timerDeadline != null) nowElapsedRealtimeMillis else null)
     }
 
     internal fun workPhase(exercise: RelvenStrengthWorkoutParser.Exercise) =

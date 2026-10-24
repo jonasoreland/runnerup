@@ -6,9 +6,9 @@ to `active.json`; finished executions are immutable files keyed by the execution
 ID. Writes replace a complete JSON document atomically. No network or separate
 database is required.
 
-## Session file version 2
+## Session file version 3
 
-The root `schemaVersion` is `2`. `workoutJson` is the original validated Workout
+The root `schemaVersion` is `3`. `workoutJson` is the original validated Workout
 v3 document and remains the source of the **planned** prescription. `results`
 contains only user-confirmed **actual** set records. A prescription such as
 `1–20 repetitions` never supplies an actual result.
@@ -51,6 +51,19 @@ has no performance counts or duration. Replacing a saved result preserves its
 stable key. Clearing it leaves an `INCOMPLETE` marker so that progression is not
 misreported as a completed result.
 
+Timed work and rest store a monotonic elapsed-realtime deadline and its clock
+anchor. Display refreshes derive remaining seconds from that deadline instead
+of subtracting one per UI callback. A delayed frame therefore does not extend a
+timer, and a process restart in the same boot resumes the remaining interval.
+The timer refresh updates in-memory state; the full session file is written at
+phase transitions and confirmed result changes rather than every display tick.
+
+When timed work ends, its exercise/set identity and measured duration enter
+`pendingResults`. A rest countdown advances independently while the result is
+unlogged. If rest ends first, the next set can begin and the pending record
+remains attached to its original set. Only explicit repetition confirmation
+moves it into `results`; no repetition value is inferred from the prescription.
+
 Ratings are bounded (RPE and discomfort 0–10), durations are 0–86,400 seconds,
 repetition counts are 0–10,000, notes are at most 1,000 characters, and supplied
 timestamps must be positive and ordered. These are storage validation bounds,
@@ -58,10 +71,12 @@ not recommended workout targets.
 
 ## Backward compatibility
 
-Version 1 records remain readable. They map to `COMPLETED` results with no
-optional metadata, preserve their original 1–500 repetition validation, and
-require timed duration to equal the old planned duration. When next written,
-they use version 2. Workout v3, Plan v1/v2, exercise snapshots, and older JSON
+Version 1 and version 2 records remain readable. Version 1 results map to
+`COMPLETED` with no optional metadata and keep the original 1–500 repetition
+validation and planned-duration equality check. Version 2 retains its expanded
+result metadata but has no monotonic deadline or pending timed-result state;
+its first active timer refresh anchors the remaining saved seconds. When next
+written, both use version 3. Workout v3, Plan v1/v2, exercise snapshots, and older JSON
 plan exports are unchanged.
 
 Completed filenames use a hash of the execution ID, so repeating a scheduled

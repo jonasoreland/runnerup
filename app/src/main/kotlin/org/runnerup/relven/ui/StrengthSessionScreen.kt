@@ -61,14 +61,28 @@ internal fun StrengthSessionScreen(
   BackHandler(onBack = onClose)
   val completed = completedAtMillis != null
   val exercise = session.currentExerciseOrNull()
+  val pendingResult = session.pendingResults.firstOrNull()
   var repetitions by remember(session.exerciseIndex, session.setNumber) {
     mutableStateOf(exercise?.let { ((it.minRepetitions() + it.maxRepetitions()) / 2).toString() }.orEmpty())
   }
+  var pendingRepetitions by remember(
+      session.executionId, pendingResult?.exerciseIndex, pendingResult?.setNumber) {
+        mutableStateOf("")
+      }
 
-  LaunchedEffect(session.phase, session.exerciseIndex, session.setNumber, session.secondsRemaining, isSavingProgress) {
+  LaunchedEffect(
+      session.executionId,
+      session.phase,
+      session.exerciseIndex,
+      session.setNumber,
+      session.timerDeadlineElapsedRealtimeMillis,
+      isSavingProgress) {
     if (!completed && !isSavingProgress && (session.phase == StrengthSession.Phase.TIMED_WORK || session.phase == StrengthSession.Phase.REST)) {
-      delay(1_000)
       onTick()
+      while (true) {
+        delay(1_000)
+        onTick()
+      }
     }
   }
 
@@ -90,6 +104,41 @@ internal fun StrengthSessionScreen(
             stringResource(R.string.Strength_session_error),
             color = RelvenColors.Text,
             modifier = Modifier.padding(16.dp))
+      }
+    }
+
+    pendingResult?.let { pending ->
+      Surface(
+          color = RelvenColors.Surface,
+          shape = RoundedCornerShape(24.dp),
+          modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+          Text(
+              stringResource(R.string.Strength_session_pending_result),
+              color = RelvenColors.Orange,
+              fontWeight = FontWeight.SemiBold)
+          Text(pending.exerciseName, color = RelvenColors.Text, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+          Text(
+              stringResource(R.string.Strength_session_how_many_repetitions),
+              color = RelvenColors.MutedText)
+          OutlinedTextField(
+              value = pendingRepetitions,
+              onValueChange = { candidate ->
+                if (candidate.length <= 5 && candidate.all(Char::isDigit)) pendingRepetitions = candidate
+              },
+              label = { Text(stringResource(R.string.Strength_session_repetitions)) },
+              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+              singleLine = true,
+              modifier = Modifier.fillMaxWidth())
+          Button(
+              onClick = { pendingRepetitions.toIntOrNull()?.let(onLogRepetitions) },
+              enabled =
+                  !isSavingProgress && pendingRepetitions.toIntOrNull()?.let { it in 0..10_000 } == true,
+              colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+              modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+            Text(stringResource(R.string.Strength_session_log_repetitions))
+          }
+        }
       }
     }
 
@@ -157,7 +206,7 @@ internal fun StrengthSessionScreen(
                 OutlinedTextField(
                     value = repetitions,
                     onValueChange = { candidate ->
-                      if (candidate.length <= 3 && candidate.all(Char::isDigit)) repetitions = candidate
+                      if (candidate.length <= 5 && candidate.all(Char::isDigit)) repetitions = candidate
                     },
                     label = { Text(stringResource(R.string.Strength_session_repetitions)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -165,7 +214,7 @@ internal fun StrengthSessionScreen(
                     modifier = Modifier.fillMaxWidth())
                 Button(
                     onClick = { repetitions.toIntOrNull()?.let(onLogRepetitions) },
-                    enabled = !isSavingProgress && repetitions.toIntOrNull()?.let { it in 1..500 } == true,
+                    enabled = !isSavingProgress && repetitions.toIntOrNull()?.let { it in 0..10_000 } == true,
                     colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
                     modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
                   Text(stringResource(R.string.Strength_session_log_repetitions))
@@ -192,6 +241,9 @@ internal fun StrengthSessionScreen(
                     fontSize = 64.sp,
                     fontWeight = FontWeight.Bold)
                 TextButton(onClick = onSkipRest, enabled = !isSavingProgress) { Text(stringResource(R.string.Strength_session_skip_rest)) }
+              }
+              StrengthSession.Phase.AWAITING_RESULT -> {
+                Text(stringResource(R.string.Strength_session_pending_result), color = RelvenColors.MutedText)
               }
               StrengthSession.Phase.PAUSED -> {
                 Text(stringResource(R.string.Strength_session_paused), color = RelvenColors.MutedText)

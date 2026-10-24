@@ -550,6 +550,8 @@
     <string name="Strength_session_set">Set %1$d of %2$d</string>
     <string name="Strength_session_repetitions">Repetitions</string>
     <string name="Strength_session_log_repetitions">Log repetitions</string>
+    <string name="Strength_session_pending_result">Record timed result</string>
+    <string name="Strength_session_how_many_repetitions">How many clean reps?</string>
     <string name="Strength_session_resting">Rest</string>
     <string name="Strength_session_skip_rest">Skip rest</string>
     <string name="Strength_session_pause">Pause</string>

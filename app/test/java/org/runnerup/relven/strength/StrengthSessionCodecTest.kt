@@ -25,8 +25,10 @@ class StrengthSessionCodecTest {
 
     var complete = paused.resume()
     repeat(30) { complete = complete.tick() }
+    complete = complete.completeRepetitions(9)
     repeat(15) { complete = complete.tick() }
     repeat(30) { complete = complete.tick() }
+    complete = complete.completeRepetitions(9)
     repeat(15) { complete = complete.tick() }
     complete = complete.completeRepetitions(9)
     assertTrue(complete.isComplete)
@@ -51,6 +53,10 @@ class StrengthSessionCodecTest {
     val json = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
     json.put("schemaVersion", 1)
     json.remove("executionId")
+    listOf(
+            "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
+            "timerClockObservedElapsedRealtimeMillis")
+        .forEach(json::remove)
 
     val restored = StrengthSessionCodec.decode(json.toString()).first
 
@@ -142,6 +148,7 @@ class StrengthSessionCodecTest {
   fun persistsAnExplicitIncompleteMarkerWhenACountedSetIsCleared() {
     var progressed = StrengthSession.start("plan", "entry", workout)
     repeat(30) { progressed = progressed.tick() }
+    progressed = progressed.completeRepetitions(9)
     val cleared = progressed.clearResult(0, 1)
 
     val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(cleared, null)).first
@@ -168,7 +175,7 @@ class StrengthSessionCodecTest {
   }
 
   @Test
-  fun readsVersionOneResultShapeAndWritesVersionTwo() {
+  fun readsVersionOneResultShapeAndWritesVersionThree() {
     val legacy =
         JSONObject(
             StrengthSessionCodec.encode(
@@ -182,6 +189,10 @@ class StrengthSessionCodecTest {
                             listOf(StrengthSession.SetResult(0, "plank", "Plank", 1, null, 30))),
                 null))
     legacy.put("schemaVersion", 1)
+    listOf(
+            "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
+            "timerClockObservedElapsedRealtimeMillis")
+        .forEach(legacy::remove)
     val oldResult = legacy.getJSONArray("results").getJSONObject(0)
     listOf(
             "startedAtMillis", "completedAtMillis", "restDurationSeconds", "leftRepetitions",
@@ -192,7 +203,36 @@ class StrengthSessionCodecTest {
     val current = JSONObject(StrengthSessionCodec.encode(decoded, null))
 
     assertEquals(30, decoded.results.single().durationSeconds)
-    assertEquals(2, current.getInt("schemaVersion"))
+    assertEquals(3, current.getInt("schemaVersion"))
+  }
+
+  @Test
+  fun roundTripsPendingTimedResultAndMonotonicRestDeadline() {
+    val active = StrengthSession.start("plan", "entry", workout, nowElapsedRealtimeMillis = 1_000)
+    val state = active.tickAt(31_000)
+
+    val restored = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
+
+    assertEquals(state, restored)
+    assertEquals(StrengthSession.Phase.REST, restored.phase)
+    assertEquals(1, restored.pendingResults.single().setNumber)
+    assertEquals(46_000L, restored.timerDeadlineElapsedRealtimeMillis)
+  }
+
+  @Test
+  fun readsVersionTwoSessionWithoutTimerAnchors() {
+    val legacy = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
+    legacy.put("schemaVersion", 2)
+    listOf(
+            "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
+            "timerClockObservedElapsedRealtimeMillis")
+        .forEach(legacy::remove)
+
+    val restored = StrengthSessionCodec.decode(legacy.toString()).first
+    val upgraded = JSONObject(StrengthSessionCodec.encode(restored, null))
+
+    assertEquals(StrengthSession.Phase.TIMED_WORK, restored.phase)
+    assertEquals(3, upgraded.getInt("schemaVersion"))
   }
 
   @Test(expected = IllegalArgumentException::class)

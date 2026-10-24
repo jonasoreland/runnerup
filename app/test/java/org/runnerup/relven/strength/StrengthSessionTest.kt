@@ -47,7 +47,7 @@ class StrengthSessionTest {
         .tick()
         .completeRepetitions(8)
 
-    val timed = session.tick().tick().tick().tick().tick()
+    val timed = session.tick().tick().tick().tick().tick().completeRepetitions(0)
 
     assertTrue(timed.isComplete)
     assertEquals(3, timed.results.last().durationSeconds)
@@ -90,6 +90,7 @@ class StrengthSessionTest {
             .tick()
             .tick()
             .tick()
+            .completeRepetitions(0)
     val repeated = StrengthSession.start("plan", "scheduled", workout)
 
     assertTrue(completed.isComplete)
@@ -120,6 +121,86 @@ class StrengthSessionTest {
     assertNull(cleared.repetitions)
     assertEquals(1, cleared.setNumber)
   }
+
+  @Test
+  fun timedResultCanBeLoggedDuringRestWithoutResettingItsTimer() {
+    val timedWorkout = timedWorkout(restSeconds = 20)
+    val active = StrengthSession.start("plan", "entry", timedWorkout, nowElapsedRealtimeMillis = 1_000)
+    val rest = active.tickAt(31_000)
+    assertEquals(StrengthSession.Phase.REST, rest.phase)
+    assertEquals(2, rest.setNumber)
+    assertEquals(20, rest.secondsRemaining)
+    assertEquals(1, rest.pendingResults.single().setNumber)
+
+    val beforeLog = rest.timerDeadlineElapsedRealtimeMillis
+    val logged = rest.completeRepetitions(17, nowElapsedRealtimeMillis = 33_000)
+
+    assertEquals(17, logged.results.single().repetitions)
+    assertEquals(1, logged.results.single().setNumber)
+    assertEquals(2, logged.setNumber)
+    assertEquals(beforeLog, logged.timerDeadlineElapsedRealtimeMillis)
+    assertEquals(18, logged.secondsRemaining)
+  }
+
+  @Test
+  fun pendingTimedResultSurvivesRestEndAndNextSetStart() {
+    val timedWorkout = timedWorkout(restSeconds = 20)
+    val active = StrengthSession.start("plan", "entry", timedWorkout, nowElapsedRealtimeMillis = 1_000)
+    val rest = active.tickAt(31_000)
+    val secondWork = rest.tickAt(51_000)
+
+    assertEquals(StrengthSession.Phase.TIMED_WORK, secondWork.phase)
+    assertEquals(2, secondWork.setNumber)
+    assertEquals(1, secondWork.pendingResults.single().setNumber)
+
+    val withFirstLogged = secondWork.completeRepetitions(15, nowElapsedRealtimeMillis = 52_000)
+    val complete = withFirstLogged.tickAt(82_000).completeRepetitions(12, nowElapsedRealtimeMillis = 82_000)
+
+    assertTrue(complete.isComplete)
+    assertEquals(listOf(1, 2), complete.results.map { it.setNumber })
+    assertEquals(listOf(15, 12), complete.results.map { it.repetitions })
+  }
+
+  @Test
+  fun zeroRestKeepsBothTimedResultsPendingAfterDelayedUiRefresh() {
+    val active = StrengthSession.start("plan", "entry", timedWorkout(restSeconds = 0), 1_000)
+
+    val awaiting = active.tickAt(61_000)
+
+    assertEquals(StrengthSession.Phase.AWAITING_RESULT, awaiting.phase)
+    assertEquals(listOf(1, 2), awaiting.pendingResults.map { it.setNumber })
+    assertTrue(awaiting.results.isEmpty())
+
+    val firstLogged = awaiting.completeRepetitions(17, nowElapsedRealtimeMillis = 61_000)
+    assertEquals(StrengthSession.Phase.AWAITING_RESULT, firstLogged.phase)
+    assertEquals(2, firstLogged.pendingResults.single().setNumber)
+
+    val bothLogged = firstLogged.completeRepetitions(12, nowElapsedRealtimeMillis = 61_000)
+    assertTrue(bothLogged.isComplete)
+    assertEquals(listOf(17, 12), bothLogged.results.map { it.repetitions })
+  }
+
+  @Test
+  fun monotonicCountdownAccountsForDelayedUiTicksAndReanchorsAfterReboot() {
+    val active = StrengthSession.start("plan", "entry", timedWorkout(restSeconds = 0), 1_000)
+    val lateTick = active.tickAt(21_250)
+
+    assertEquals(10, lateTick.secondsRemaining)
+    assertEquals(31_000L, lateTick.timerDeadlineElapsedRealtimeMillis)
+
+    val rebooted = lateTick.tickAt(500)
+
+    assertEquals(10, rebooted.secondsRemaining)
+    assertEquals(10_500L, rebooted.timerDeadlineElapsedRealtimeMillis)
+  }
+
+  private fun timedWorkout(restSeconds: Int) =
+      RelvenStrengthWorkoutParser.Workout(
+          "timed-workout",
+          "Push-up test",
+          "strength",
+          listOf(exercise("push-ups", "Push-ups", sets = 2, min = 1, max = 20, rest = restSeconds, duration = 30)),
+          "{}")
 
   private fun exercise(
       id: String,
