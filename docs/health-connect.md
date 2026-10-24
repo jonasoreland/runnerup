@@ -4,12 +4,16 @@ Relven is the source of truth for workouts. Health Connect is a publication targ
 integration must remain one-way: the app declares only write permissions and must not read or
 import Health Connect records.
 
-## Current implementation slice
+## Current implementation
 
-The app now includes AndroidX Health Connect Client 1.1.0, a write-only permission-name provider,
-provider availability reporting, and a deterministic mapper from already-recorded session values
-to Health Connect records. This is groundwork for the later opt-in UI, persistent outbox, worker,
-history backfill, edit/delete handling, and export status. It does not yet publish workouts.
+The app uses AndroidX Health Connect Client 1.1.0 with a write-only permission boundary, provider
+availability reporting, deterministic record mapping, an opt-in Settings flow, and a durable local
+export outbox delivered by WorkManager. Saving an eligible completed activity while export is
+enabled queues publication; users can also preview and explicitly queue previously saved activities.
+The outbox records delivery status, retries transient failures, reuses stable client record IDs, and
+deletes only records Relven has recorded as its own. Workout save, edit, and deletion remain local
+and available when Health Connect is unavailable or export is disabled. See
+[Health Connect export outbox](health-connect-outbox.md) for delivery and ownership details.
 
 Relven supports Android API 24. The Health Connect SDK requires API 26, so `HealthConnectAvailability`
 returns `UNSUPPORTED_ANDROID_VERSION` below API 26 and loads its typed SDK bridge reflectively only
