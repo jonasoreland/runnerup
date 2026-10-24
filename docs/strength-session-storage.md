@@ -55,6 +55,13 @@ set's stable identity and are available in the saved session summary. The same
 fields survive an offline save and reload through the versioned session codec;
 this feature does not change the Workout v3 prescription or private file schema.
 
+The completion summary derives set counts from the workout prescription and its
+unique result rows. It separates completed, skipped, explicitly incomplete,
+and unrecorded sets. Repetition totals and per-exercise best/average values use
+only completed results with a known bilateral count or both side counts. A
+one-sided result is not treated as a complete total, and an unrecorded set is
+never shown as zero. Recorded timed work durations are summed separately.
+
 `status` is `COMPLETED`, `SKIPPED`, or `INCOMPLETE`. A skipped/incomplete marker
 has no performance counts or duration. Replacing a saved result preserves its
 stable key. Clearing it leaves an `INCOMPLETE` marker so that progression is not

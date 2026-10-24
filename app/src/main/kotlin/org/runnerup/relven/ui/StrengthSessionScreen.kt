@@ -54,6 +54,7 @@ import androidx.compose.material.icons.filled.Remove
 import kotlinx.coroutines.delay
 import org.runnerup.common.R
 import org.runnerup.relven.strength.StrengthSession
+import org.runnerup.relven.strength.strengthSessionSummary
 
 @Composable
 internal fun StrengthSessionScreen(
@@ -139,42 +140,7 @@ internal fun StrengthSessionScreen(
     }
 
     if (completed || session.phase == StrengthSession.Phase.COMPLETE) {
-      Text(
-          stringResource(R.string.Strength_session_summary_sets, session.results.size),
-          color = RelvenColors.Orange,
-          fontSize = 20.sp,
-          fontWeight = FontWeight.SemiBold)
-      session.results.forEach { result ->
-        val detail =
-            when (result.status) {
-              StrengthSession.SetResult.ResultStatus.SKIPPED ->
-                  stringResource(R.string.Strength_session_skipped)
-              StrengthSession.SetResult.ResultStatus.INCOMPLETE ->
-                  stringResource(R.string.Strength_session_incomplete)
-              StrengthSession.SetResult.ResultStatus.COMPLETED ->
-                  result.repetitions?.let {
-                    "$it ${stringResource(R.string.Strength_session_repetitions).lowercase()}"
-                  } ?: if (result.leftRepetitions != null && result.rightRepetitions != null) {
-                    "${stringResource(R.string.Strength_session_left_side)} ${result.leftRepetitions} · " +
-                        "${stringResource(R.string.Strength_session_right_side)} ${result.rightRepetitions}"
-                  } else {
-                    "${result.durationSeconds} s"
-                  }
-            }
-        Text("${result.exerciseName} · ${result.setNumber}: $detail", color = RelvenColors.Text)
-        result.notes?.takeIf(String::isNotBlank)?.let {
-          Text(it, color = RelvenColors.MutedText, fontSize = 14.sp)
-        }
-        if (result.rpe != null || result.painRating != null) {
-          Text(
-              listOfNotNull(
-                      result.rpe?.let { "${stringResource(R.string.Strength_session_rpe)} $it" },
-                      result.painRating?.let { "${stringResource(R.string.Strength_session_discomfort)} $it/10" })
-                  .joinToString(" · "),
-              color = RelvenColors.MutedText,
-              fontSize = 14.sp)
-        }
-      }
+      SessionResultsSummary(session)
       if (completed) {
         Button(
             onClick = onClose,
@@ -308,6 +274,148 @@ internal fun StrengthSessionScreen(
       }
     }
     Spacer(Modifier.height(12.dp))
+  }
+}
+
+@Composable
+private fun SessionResultsSummary(session: StrengthSession) {
+  val summary = remember(session.executionId, session.results) { strengthSessionSummary(session) }
+  Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Text(
+        stringResource(
+            R.string.Strength_session_summary_completion,
+            summary.completedSetCount,
+            summary.prescribedSetCount),
+        color = RelvenColors.Orange,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold)
+    val otherStatuses =
+        listOfNotNull(
+                summary.skippedSetCount.takeIf { it > 0 }?.let {
+                  stringResource(R.string.Strength_session_summary_skipped_count, it)
+                },
+                summary.incompleteSetCount.takeIf { it > 0 }?.let {
+                  stringResource(R.string.Strength_session_summary_incomplete_count, it)
+                },
+                summary.unrecordedSetCount.takeIf { it > 0 }?.let {
+                  stringResource(R.string.Strength_session_summary_unrecorded_count, it)
+                })
+            .joinToString(" · ")
+    if (otherStatuses.isNotEmpty()) Text(otherStatuses, color = RelvenColors.MutedText)
+
+    Surface(
+        color = RelvenColors.Surface,
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth()) {
+      Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        summary.totalRepetitions?.let {
+          SummaryMetric(
+              stringResource(R.string.Strength_session_summary_total_reps),
+              stringResource(R.string.Strength_session_summary_reps_count, it))
+        }
+        summary.totalWorkSeconds?.let {
+          SummaryMetric(
+              stringResource(R.string.Strength_session_summary_work_time),
+              stringResource(R.string.Strength_session_summary_seconds, it))
+        }
+        if (summary.totalRepetitions == null && summary.totalWorkSeconds == null) {
+          Text(stringResource(R.string.Strength_session_unknown_result), color = RelvenColors.MutedText)
+        }
+      }
+    }
+
+    summary.exercises.forEach { exerciseSummary ->
+      val exerciseResults = session.results.filter { it.exerciseIndex == exerciseSummary.exerciseIndex }
+      Surface(
+          color = RelvenColors.Surface,
+          shape = RoundedCornerShape(20.dp),
+          modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          Text(exerciseSummary.exerciseName, color = RelvenColors.Text, fontWeight = FontWeight.SemiBold)
+          Text(
+              stringResource(
+                  R.string.Strength_session_summary_set_progress,
+                  exerciseSummary.completedSetCount,
+                  exerciseSummary.prescribedSetCount),
+              color = RelvenColors.MutedText)
+          exerciseSummary.totalRepetitions?.let {
+            SummaryMetric(
+                stringResource(R.string.Strength_session_summary_total_reps),
+                stringResource(R.string.Strength_session_summary_reps_count, it))
+          }
+          exerciseSummary.bestSetRepetitions?.let {
+            SummaryMetric(
+                stringResource(R.string.Strength_session_summary_best_set),
+                stringResource(R.string.Strength_session_summary_reps_count, it))
+          }
+          exerciseSummary.averageRepetitionsPerSet?.let {
+            SummaryMetric(
+                stringResource(R.string.Strength_session_summary_average_set),
+                stringResource(R.string.Strength_session_summary_average_value, it))
+          }
+          exerciseSummary.totalWorkSeconds?.let {
+            SummaryMetric(
+                stringResource(R.string.Strength_session_summary_work_time),
+                stringResource(R.string.Strength_session_summary_seconds, it))
+          }
+          if (exerciseSummary.leftRepetitions != null && exerciseSummary.rightRepetitions != null) {
+            Text(
+                stringResource(
+                    R.string.Strength_session_summary_sides,
+                    exerciseSummary.leftRepetitions,
+                    exerciseSummary.rightRepetitions,
+                    requireNotNull(exerciseSummary.sideDifference)),
+                color = RelvenColors.MutedText)
+          }
+          exerciseResults.sortedBy { it.setNumber }.forEach { result ->
+            val detail =
+                when (result.status) {
+                  StrengthSession.SetResult.ResultStatus.SKIPPED ->
+                      stringResource(R.string.Strength_session_skipped)
+                  StrengthSession.SetResult.ResultStatus.INCOMPLETE ->
+                      stringResource(R.string.Strength_session_incomplete)
+                  StrengthSession.SetResult.ResultStatus.COMPLETED ->
+                      result.repetitions?.let {
+                        stringResource(R.string.Strength_session_summary_reps_count, it)
+                      } ?: if (result.leftRepetitions != null && result.rightRepetitions != null) {
+                        "${stringResource(R.string.Strength_session_left_side)} ${result.leftRepetitions} · " +
+                            "${stringResource(R.string.Strength_session_right_side)} ${result.rightRepetitions}"
+                      } else {
+                        result.durationSeconds?.let {
+                          stringResource(R.string.Strength_session_summary_seconds, it)
+                        } ?: stringResource(R.string.Strength_session_unknown_result)
+                      }
+                }
+            Text(
+                stringResource(R.string.Strength_session_set, result.setNumber, exerciseSummary.prescribedSetCount) +
+                    " · $detail",
+                color = RelvenColors.Text)
+            result.notes?.takeIf(String::isNotBlank)?.let {
+              Text(it, color = RelvenColors.MutedText, fontSize = 14.sp)
+            }
+            if (result.rpe != null || result.painRating != null) {
+              Text(
+                  listOfNotNull(
+                          result.rpe?.let { "${stringResource(R.string.Strength_session_rpe)} $it" },
+                          result.painRating?.let {
+                            "${stringResource(R.string.Strength_session_discomfort)} $it/10"
+                          })
+                      .joinToString(" · "),
+                  color = RelvenColors.MutedText,
+                  fontSize = 14.sp)
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun SummaryMetric(label: String, value: String) {
+  Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Text(label, color = RelvenColors.MutedText)
+    Text(value, color = RelvenColors.Text, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
   }
 }
 
