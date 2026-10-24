@@ -72,11 +72,33 @@
         app:iconSpaceReserved="false">
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_autopause_active"
             android:persistent="true"
             android:summary="@string/Autopause_summary"
             android:title="@string/Autopause"
+            app:iconSpaceReserved="false" />
+
+        <!-- Enabled state depends upon pref_autopause_active (set in SettingsWorkoutFragment). -->
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="5"
+            android:enabled="true"
+            android:inputType="number"
+            android:key="@string/pref_autopause_afterseconds"
+            android:minHeight="48dp"
+            android:persistent="true"
+            android:title="@string/Autopause_after_s"
+            app:iconSpaceReserved="false" />
+
+        <!-- Enabled state depends upon pref_autopause_active (set in SettingsWorkoutFragment). -->
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="20"
+            android:enabled="true"
+            android:inputType="number"
+            android:key="@string/pref_autopause_minpace"
+            android:minHeight="48dp"
+            android:persistent="true"
+            android:title="@string/Autopause_min_pace_minkm"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
 

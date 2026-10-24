@@ -176,34 +176,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="@string/Autopause_category"
-        android:title="@string/Autopause_category"
-        app:iconSpaceReserved="false">
-
-        <!-- Enabled state depends upon pref_autopause_active (set in SettingsSensorsFragment). -->
-        <org.runnerup.widget.TextPreference
-            android:defaultValue="5"
-            android:enabled="true"
-            android:inputType="number"
-            android:key="@string/pref_autopause_afterseconds"
-            android:minHeight="48dp"
-            android:persistent="true"
-            android:title="@string/Autopause_after_s"
-            app:iconSpaceReserved="false" />
-
-        <!-- Enabled state depends upon pref_autopause_active (set in SettingsSensorsFragment). -->
-        <org.runnerup.widget.TextPreference
-            android:defaultValue="20"
-            android:enabled="true"
-            android:inputType="number"
-            android:key="@string/pref_autopause_minpace"
-            android:minHeight="48dp"
-            android:persistent="true"
-            android:title="@string/Autopause_min_pace_minkm"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:key="@string/Phone_sensors_category"
         android:title="@string/Phone_sensors_category"
         app:iconSpaceReserved="false">

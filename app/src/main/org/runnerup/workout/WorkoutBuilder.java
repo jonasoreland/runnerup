@@ -102,7 +102,7 @@ public class WorkoutBuilder {
 
   private static void addAutoPauseTrigger(Resources res, Step step, SharedPreferences prefs) {
     boolean enableAutoPause =
-        prefs.getBoolean(res.getString(R.string.pref_autopause_active), false);
+        prefs.getBoolean(res.getString(R.string.pref_autopause_active), true);
     if (!enableAutoPause) return;
 
     float autoPauseMinSpeed = 0;
