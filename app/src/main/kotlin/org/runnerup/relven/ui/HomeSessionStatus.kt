@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.annotation.StringRes
+import org.runnerup.common.R
 import org.runnerup.common.tracker.TrackerState
 import org.runnerup.common.util.ValueModel
 import org.runnerup.tracker.Tracker
@@ -13,9 +15,9 @@ import org.runnerup.view.RunActivity
 internal fun runActivityIntent(context: Context): Intent =
     Intent(context, RunActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
 
-internal enum class HomeSessionStatus(val label: String) {
-  ACTIVE("Pågående pass"),
-  PAUSED("Pausat pass")
+internal enum class HomeSessionStatus(@StringRes val labelResource: Int) {
+  ACTIVE(R.string.Home_session_active),
+  PAUSED(R.string.Home_session_paused)
 }
 
 internal fun homeSessionStatus(state: TrackerState?): HomeSessionStatus? =
