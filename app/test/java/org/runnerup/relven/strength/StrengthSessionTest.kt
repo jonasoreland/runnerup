@@ -2,6 +2,7 @@ package org.runnerup.relven.strength
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.runnerup.workout.RelvenStrengthWorkoutParser
@@ -97,9 +98,27 @@ class StrengthSessionTest {
     assertTrue(repeated.results.isEmpty())
   }
 
-  @Test(expected = IllegalArgumentException::class)
-  fun rejectsRepetitionBelowOne() {
-    StrengthSession.start("plan", "scheduled", workout).completeRepetitions(0)
+  @Test
+  fun zeroIsAValidExplicitResultAndHighCountsAreNotCappedAtFiveHundred() {
+    val zero = StrengthSession.start("plan", "scheduled", workout).completeRepetitions(0)
+    assertEquals(0, zero.results.single().repetitions)
+
+    val high = StrengthSession.start("plan", "scheduled", workout).completeRepetitions(750)
+    assertEquals(750, high.results.single().repetitions)
+  }
+
+  @Test
+  fun resultCorrectionAndClearingKeepTheStableSetIdentity() {
+    val session = StrengthSession.start("plan", "scheduled", workout).completeRepetitions(12)
+    val corrected = session.replaceResult(session.results.single().copy(repetitions = 10, rpe = 7.5))
+
+    assertEquals(10, corrected.results.single().repetitions)
+    assertEquals(7.5, corrected.results.single().rpe!!, 0.0)
+
+    val cleared = corrected.clearResult(0, 1).results.single()
+    assertEquals(StrengthSession.SetResult.ResultStatus.INCOMPLETE, cleared.status)
+    assertNull(cleared.repetitions)
+    assertEquals(1, cleared.setNumber)
   }
 
   private fun exercise(

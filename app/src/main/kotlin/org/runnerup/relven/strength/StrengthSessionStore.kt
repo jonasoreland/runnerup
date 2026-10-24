@@ -1,15 +1,21 @@
 package org.runnerup.relven.strength
 
 import android.content.Context
-import android.util.AtomicFile
+import android.os.Build
+import android.system.Os
+import androidx.core.util.AtomicFile
 import org.json.JSONArray
 import org.json.JSONObject
 import org.runnerup.workout.RelvenStrengthWorkoutParser
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 internal data class CompletedStrengthSession(val state: StrengthSession, val finishedAtMillis: Long)
 
@@ -20,7 +26,6 @@ internal data class StrengthSessionHistoryLoad(
 
 /** Private, offline persistence for the single resumable strength session and its completions. */
 internal object StrengthSessionStore {
-  private const val VERSION = 1
   private const val MAX_SAVED_SESSION_BYTES = 16_777_216
   private const val MAX_HISTORY_SCAN = 500
   private const val MAX_HISTORY_READ_BYTES = 33_554_432L
@@ -57,7 +62,11 @@ internal object StrengthSessionStore {
     require(state.isComplete) { "Session is not complete" }
     require(finishedAtMillis > 0) { "Invalid completion time" }
     val completionFile = file(context, "completed-${hash(state.executionId)}.json")
-    if (completionFile.exists()) throw IOException("This workout execution is already complete")
+    if (completionFile.exists()) {
+      val (existing, existingFinishedAt) = read(completionFile)
+      if (existing == state && existingFinishedAt == finishedAtMillis) return
+      throw IOException("This workout execution is already complete")
+    }
     write(context, completionFile.name, StrengthSessionCodec.encode(state, finishedAtMillis))
     val activeFile = AtomicFile(file(context, "active.json"))
     activeFile.delete()
@@ -151,6 +160,44 @@ internal object StrengthSessionStore {
     }
     val target = file(context, name)
     val atomic = AtomicFile(target)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      val backup = File(target.path + ".bak")
+      if (target.exists() || backup.exists()) {
+        atomic.openRead().use { /* Recover any legacy AtomicFile backup before replacing it. */ }
+      }
+      val replacement = File(target.path + ".new")
+      if (replacement.exists() && !replacement.delete()) {
+        throw IOException("Could not clear an incomplete strength session write")
+      }
+      try {
+        FileOutputStream(replacement).use { output ->
+          output.write(content.toByteArray(StandardCharsets.UTF_8))
+          output.fd.sync()
+        }
+        try {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+              Files.move(
+                  replacement.toPath(),
+                  target.toPath(),
+                  StandardCopyOption.ATOMIC_MOVE,
+                  StandardCopyOption.REPLACE_EXISTING)
+            } catch (_: AtomicMoveNotSupportedException) {
+              Files.move(replacement.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+          } else {
+            Os.rename(replacement.absolutePath, target.absolutePath)
+          }
+        } catch (error: Exception) {
+          throw IOException("Could not atomically replace strength session", error)
+        }
+      } catch (error: Exception) {
+        replacement.delete()
+        if (error is IOException) throw error
+        throw IOException("Could not atomically replace strength session", error)
+      }
+      return
+    }
     var output: java.io.FileOutputStream? = null
     try {
       output = atomic.startWrite()
@@ -185,6 +232,16 @@ internal object StrengthSessionCodec {
               .put("setNumber", result.setNumber)
       result.repetitions?.let { item.put("repetitions", it) }
       result.durationSeconds?.let { item.put("durationSeconds", it) }
+      result.startedAtMillis?.let { item.put("startedAtMillis", it) }
+      result.completedAtMillis?.let { item.put("completedAtMillis", it) }
+      result.restDurationSeconds?.let { item.put("restDurationSeconds", it) }
+      result.leftRepetitions?.let { item.put("leftRepetitions", it) }
+      result.rightRepetitions?.let { item.put("rightRepetitions", it) }
+      result.rpe?.let { item.put("rpe", it) }
+      result.painRating?.let { item.put("painRating", it) }
+      result.notes?.let { item.put("notes", it) }
+      item.put("status", result.status.name)
+      result.exerciseCategory?.let { item.put("exerciseCategory", it) }
       results.put(item)
     }
     val root =
@@ -211,7 +268,8 @@ internal object StrengthSessionCodec {
         setOf(
             "schemaVersion", "planId", "scheduledEntryId", "executionId", "workoutJson", "exerciseIndex",
             "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis"))
-    require(root.optInt("schemaVersion", -1) == VERSION) { "Unknown strength session version" }
+    val version = root.optInt("schemaVersion", -1)
+    require(version in 1..VERSION) { "Unknown strength session version" }
     val planId = root.getString("planId")
     val scheduledId = root.getString("scheduledEntryId")
     val executionId = root.optString("executionId", scheduledId)
@@ -230,7 +288,12 @@ internal object StrengthSessionCodec {
     val results = ArrayList<StrengthSession.SetResult>(resultsJson.length())
     repeat(resultsJson.length()) { index ->
       val item = resultsJson.getJSONObject(index)
-      requireKeys(item, setOf("exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "repetitions", "durationSeconds"))
+      requireKeys(
+          item,
+          setOf(
+              "exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "repetitions", "durationSeconds",
+              "startedAtMillis", "completedAtMillis", "restDurationSeconds", "leftRepetitions", "rightRepetitions",
+              "rpe", "painRating", "notes", "status", "exerciseCategory"))
       val resultExerciseIndex = item.getInt("exerciseIndex")
       require(resultExerciseIndex in workout.exercises().indices) { "Invalid result exercise position" }
       val stepId = item.getString("exerciseStepId")
@@ -240,16 +303,47 @@ internal object StrengthSessionCodec {
       }
       val repetitions = item.optionalInt("repetitions")
       val duration = item.optionalInt("durationSeconds")
-      require((repetitions != null) xor (duration != null)) { "Set result must contain repetitions or duration" }
-      require(repetitions == null || repetitions in 1..500) { "Invalid repetition result" }
-      require(
-          (repetitions != null && exercise.durationSeconds() == null) ||
-              (duration != null && exercise.durationSeconds() != null && duration == exercise.durationSeconds())) {
-        "Set result does not match its exercise type"
+      val startedAt = item.optionalLong("startedAtMillis")
+      val completedAt = item.optionalLong("completedAtMillis")
+      val restDuration = item.optionalInt("restDurationSeconds")
+      val leftRepetitions = item.optionalInt("leftRepetitions")
+      val rightRepetitions = item.optionalInt("rightRepetitions")
+      val rpe = item.optionalDouble("rpe")
+      val painRating = item.optionalInt("painRating")
+      val notes = if (item.has("notes")) item.getString("notes") else null
+      val exerciseCategory = if (item.has("exerciseCategory")) item.getString("exerciseCategory") else null
+      val status =
+          if (version == 1) StrengthSession.SetResult.ResultStatus.COMPLETED
+          else StrengthSession.SetResult.ResultStatus.valueOf(item.getString("status"))
+      if (version == 1) {
+        require((repetitions != null) xor (duration != null)) { "Set result must contain repetitions or duration" }
+        require(repetitions == null || repetitions in 1..500) { "Invalid repetition result" }
+        require(
+            (repetitions != null && exercise.durationSeconds() == null) ||
+                (duration != null && exercise.durationSeconds() != null && duration == exercise.durationSeconds())) {
+          "Set result does not match its exercise type"
+        }
       }
       val resultSet = item.getInt("setNumber")
       require(resultSet in 1..exercise.sets()) { "Invalid completed set number" }
-      results.add(StrengthSession.SetResult(resultExerciseIndex, stepId, item.getString("exerciseName"), resultSet, repetitions, duration))
+      results.add(
+          StrengthSession.SetResult(
+              resultExerciseIndex,
+              stepId,
+              item.getString("exerciseName"),
+              resultSet,
+              repetitions,
+              duration,
+              startedAt,
+              completedAt,
+              restDuration,
+              leftRepetitions,
+              rightRepetitions,
+              rpe,
+              painRating,
+              notes,
+              status,
+              exerciseCategory))
     }
     require(results.map { it.exerciseIndex to it.setNumber }.toSet().size == results.size) {
       "Duplicate saved set result"
@@ -263,6 +357,9 @@ internal object StrengthSessionCodec {
     val state =
         StrengthSession(
             planId, scheduledId, workout, exerciseIndex, setNumber, phase, seconds, results, resumePhase, executionId)
+    if (version >= 2) {
+      results.forEach { result -> state.validateResult(result, workout.exercises()[result.exerciseIndex]) }
+    }
     val expectedResults = buildSet {
       workout.exercises().forEachIndexed { index, exercise ->
         val completedSets =
@@ -275,9 +372,8 @@ internal object StrengthSessionCodec {
         for (set in 1..completedSets) add(index to set)
       }
     }
-    require(results.map { it.exerciseIndex to it.setNumber }.toSet() == expectedResults) {
-      "Saved set results do not match session progress"
-    }
+    val actualResults = results.map { it.exerciseIndex to it.setNumber }.toSet()
+    require(actualResults == expectedResults) { "Saved set results do not match session progress" }
     if (phase == StrengthSession.Phase.COMPLETE) require(exerciseIndex == workout.exercises().lastIndex) {
       "Completed session has invalid exercise position"
     }
@@ -304,6 +400,7 @@ internal object StrengthSessionCodec {
 
   private fun JSONObject.optionalInt(key: String): Int? = if (has(key)) getInt(key) else null
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key)) getLong(key) else null
+  private fun JSONObject.optionalDouble(key: String): Double? = if (has(key)) getDouble(key) else null
 
-  private const val VERSION = 1
+  private const val VERSION = 2
 }
