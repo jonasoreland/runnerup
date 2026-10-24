@@ -72,6 +72,29 @@ class StrengthSessionHistoryStoreTest {
   }
 
   @Test
+  fun savingConfirmedProgressIsReplaceableAndCompletionRetryIsIdempotent() {
+    val initial = StrengthSession.start("plan", "entry", workout).completeRepetitions(10)
+    StrengthSessionStore.saveInProgress(context, initial)
+    val corrected = initial.replaceResult(initial.results.single().copy(repetitions = 9))
+    assertEquals(9, corrected.results.single().repetitions)
+    assertEquals(
+        9,
+        org.json.JSONObject(StrengthSessionCodec.encode(corrected, null))
+            .getJSONArray("results").getJSONObject(0).getInt("repetitions"))
+    StrengthSessionStore.saveInProgress(context, corrected)
+    val activeJson = File(historyDirectory(), "active.json").readText()
+    assertTrue(activeJson, activeJson.contains("\"repetitions\":9"))
+
+    assertEquals(corrected, StrengthSessionStore.loadInProgress(context))
+
+    val completed = corrected.copy(phase = StrengthSession.Phase.COMPLETE)
+    StrengthSessionStore.complete(context, completed, 200)
+    StrengthSessionStore.complete(context, completed, 200)
+
+    assertEquals(completed, StrengthSessionStore.completedSessions(context).sessions.single().state)
+  }
+
+  @Test
   fun boundsTheFileScanToFiveHundredRecentRecords() {
     repeat(501) { index -> save("entry-$index", index + 1L) }
 

@@ -49,11 +49,150 @@ class StrengthSessionCodecTest {
   @Test
   fun readsLegacySessionRecordsUsingScheduledEntryAsExecutionIdentity() {
     val json = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
+    json.put("schemaVersion", 1)
     json.remove("executionId")
 
     val restored = StrengthSessionCodec.decode(json.toString()).first
 
     assertEquals("entry", restored.executionId)
+  }
+
+  @Test
+  fun roundTripsConfirmedPerformanceWithoutChangingThePrescription() {
+    val original = StrengthSession.start("plan", "entry", workout)
+    val result =
+        StrengthSession.SetResult(
+            exerciseIndex = 0,
+            exerciseStepId = "plank",
+            exerciseName = "Plank",
+            setNumber = 1,
+            repetitions = 17,
+            durationSeconds = 27,
+            startedAtMillis = 1_000,
+            completedAtMillis = 28_000,
+            restDurationSeconds = 12,
+            rpe = 8.5,
+            painRating = 1,
+            notes = "Clean repetitions",
+            exerciseCategory = "upper_body")
+    val state =
+        original.copy(
+            exerciseIndex = 0,
+            setNumber = 2,
+            phase = StrengthSession.Phase.REST,
+            secondsRemaining = 15,
+            results = listOf(result))
+
+    val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
+
+    assertEquals(state, decoded)
+    assertEquals(30, decoded.workout.exercises()[0].durationSeconds())
+    assertEquals(17, decoded.results.single().repetitions)
+    assertEquals(27, decoded.results.single().durationSeconds)
+    assertEquals("upper_body", decoded.results.single().exerciseCategory)
+  }
+
+  @Test
+  fun acceptsAnExplicitZeroRepetitionResult() {
+    val state =
+        StrengthSession.start("plan", "entry", workout)
+            .copy(
+                exerciseIndex = 0,
+                setNumber = 2,
+                phase = StrengthSession.Phase.REST,
+                secondsRemaining = 15,
+                results =
+                    listOf(
+                        StrengthSession.SetResult(
+                            0, "plank", "Plank", 1, 0, 30)))
+
+    val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
+
+    assertEquals(0, decoded.results.single().repetitions)
+  }
+
+  @Test
+  fun roundTripsSeparateLeftAndRightCounts() {
+    val result =
+        StrengthSession.SetResult(
+            exerciseIndex = 0,
+            exerciseStepId = "plank",
+            exerciseName = "Plank",
+            setNumber = 1,
+            repetitions = null,
+            durationSeconds = 30,
+            leftRepetitions = 8,
+            rightRepetitions = 7)
+    val state =
+        StrengthSession.start("plan", "entry", workout)
+            .copy(
+                exerciseIndex = 0,
+                setNumber = 2,
+                phase = StrengthSession.Phase.REST,
+                secondsRemaining = 15,
+                results = listOf(result))
+
+    val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(state, null)).first
+
+    assertEquals(8, decoded.results.single().leftRepetitions)
+    assertEquals(7, decoded.results.single().rightRepetitions)
+  }
+
+  @Test
+  fun persistsAnExplicitIncompleteMarkerWhenACountedSetIsCleared() {
+    var progressed = StrengthSession.start("plan", "entry", workout)
+    repeat(30) { progressed = progressed.tick() }
+    val cleared = progressed.clearResult(0, 1)
+
+    val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(cleared, null)).first
+
+    assertEquals(StrengthSession.SetResult.ResultStatus.INCOMPLETE, decoded.results.single().status)
+    assertNull(decoded.results.single().durationSeconds)
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun rejectsRatingsOutsideTheirDocumentedRange() {
+    val invalid =
+        StrengthSession.start("plan", "entry", workout)
+            .copy(
+                exerciseIndex = 0,
+                setNumber = 2,
+                phase = StrengthSession.Phase.REST,
+                secondsRemaining = 15,
+                results =
+                    listOf(
+                        StrengthSession.SetResult(
+                            0, "plank", "Plank", 1, 10, 30, rpe = 11.0)))
+
+    StrengthSessionCodec.decode(StrengthSessionCodec.encode(invalid, null))
+  }
+
+  @Test
+  fun readsVersionOneResultShapeAndWritesVersionTwo() {
+    val legacy =
+        JSONObject(
+            StrengthSessionCodec.encode(
+                StrengthSession.start("plan", "entry", workout)
+                    .copy(
+                        exerciseIndex = 0,
+                        setNumber = 2,
+                        phase = StrengthSession.Phase.REST,
+                        secondsRemaining = 15,
+                        results =
+                            listOf(StrengthSession.SetResult(0, "plank", "Plank", 1, null, 30))),
+                null))
+    legacy.put("schemaVersion", 1)
+    val oldResult = legacy.getJSONArray("results").getJSONObject(0)
+    listOf(
+            "startedAtMillis", "completedAtMillis", "restDurationSeconds", "leftRepetitions",
+            "rightRepetitions", "rpe", "painRating", "notes", "status", "exerciseCategory")
+        .forEach(oldResult::remove)
+
+    val decoded = StrengthSessionCodec.decode(legacy.toString()).first
+    val current = JSONObject(StrengthSessionCodec.encode(decoded, null))
+
+    assertEquals(30, decoded.results.single().durationSeconds)
+    assertEquals(2, current.getInt("schemaVersion"))
   }
 
   @Test(expected = IllegalArgumentException::class)

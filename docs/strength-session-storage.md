@@ -1,0 +1,73 @@
+# Strength session performance storage
+
+Strength and prehab execution is stored locally in the app-private
+`relven-strength-sessions` directory. The single resumable execution is written
+to `active.json`; finished executions are immutable files keyed by the execution
+ID. Writes replace a complete JSON document atomically. No network or separate
+database is required.
+
+## Session file version 2
+
+The root `schemaVersion` is `2`. `workoutJson` is the original validated Workout
+v3 document and remains the source of the **planned** prescription. `results`
+contains only user-confirmed **actual** set records. A prescription such as
+`1–20 repetitions` never supplies an actual result.
+
+Each result is associated with one execution, exercise step, and set number. That
+combination is its stable idempotency key; a retry replaces that exact set
+instead of adding a duplicate. The exercise index, step ID, and exact name are
+checked against the workout snapshot when loaded.
+
+```json
+{
+  "exerciseIndex": 0,
+  "exerciseStepId": "push-ups",
+  "exerciseName": "Armhävningar",
+  "exerciseCategory": "upper_body",
+  "setNumber": 2,
+  "status": "COMPLETED",
+  "repetitions": 17,
+  "durationSeconds": 30,
+  "startedAtMillis": 1792830000000,
+  "completedAtMillis": 1792830030000,
+  "restDurationSeconds": 20,
+  "rpe": 8.5,
+  "painRating": 0,
+  "notes": "Clean repetitions"
+}
+```
+
+Fields other than the stable exercise/set identity and status are optional.
+`exerciseCategory` is an optional category snapshot and does not extend Workout
+v3 or mutate its immutable exercise snapshot.
+`repetitions` is a bilateral count; unilateral performance uses
+`leftRepetitions` and/or `rightRepetitions` instead. Zero is a real, explicitly
+recorded value. Unknown measurements are omitted, never changed to zero. Timed
+sets retain actual duration, which may be shorter than the planned duration;
+they can also retain repetitions for a timed maximum-repetition test.
+
+`status` is `COMPLETED`, `SKIPPED`, or `INCOMPLETE`. A skipped/incomplete marker
+has no performance counts or duration. Replacing a saved result preserves its
+stable key. Clearing it leaves an `INCOMPLETE` marker so that progression is not
+misreported as a completed result.
+
+Ratings are bounded (RPE and discomfort 0–10), durations are 0–86,400 seconds,
+repetition counts are 0–10,000, notes are at most 1,000 characters, and supplied
+timestamps must be positive and ordered. These are storage validation bounds,
+not recommended workout targets.
+
+## Backward compatibility
+
+Version 1 records remain readable. They map to `COMPLETED` results with no
+optional metadata, preserve their original 1–500 repetition validation, and
+require timed duration to equal the old planned duration. When next written,
+they use version 2. Workout v3, Plan v1/v2, exercise snapshots, and older JSON
+plan exports are unchanged.
+
+Completed filenames use a hash of the execution ID, so repeating a scheduled
+plan entry creates a separate session. Repeating the same completion write with
+the same execution contents and finish timestamp is idempotent; conflicting
+reuse of that execution ID is rejected. The prescribed workout and confirmed
+results remain together in each session file for offline recovery. Portable
+Relven JSON export/import is a later implementation step and will use its own
+versioned public schema rather than exposing this private file format.
