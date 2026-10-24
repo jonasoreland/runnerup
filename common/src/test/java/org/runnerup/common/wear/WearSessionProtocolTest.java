@@ -17,7 +17,10 @@ public class WearSessionProtocolTest {
     WearHandshakeAttempt attempt = new WearHandshakeAttempt("watch-1", requestId);
     WearSessionProtocol.Message pong =
         WearSessionProtocol.decode(
-            WearSessionProtocol.encodePong(requestId, 1, WearSessionProtocol.CURRENT_VERSION));
+            WearSessionProtocol.encodePong(
+                requestId,
+                WearSessionProtocol.CURRENT_VERSION,
+                WearSessionProtocol.CURRENT_VERSION));
 
     assertEquals(
         WearHandshakeAttempt.Result.IGNORE,
@@ -45,7 +48,10 @@ public class WearSessionProtocolTest {
     WearHandshakeAttempt attempt = new WearHandshakeAttempt("watch-1", requestId);
     WearSessionProtocol.Message latePong =
         WearSessionProtocol.decode(
-            WearSessionProtocol.encodePong(requestId, 1, WearSessionProtocol.CURRENT_VERSION));
+            WearSessionProtocol.encodePong(
+                requestId,
+                WearSessionProtocol.CURRENT_VERSION,
+                WearSessionProtocol.CURRENT_VERSION));
 
     assertEquals(WearHandshakeAttempt.Result.TIMEOUT, attempt.onTimeout());
     assertEquals(WearHandshakeAttempt.Result.IGNORE, attempt.onTimeout());
@@ -106,7 +112,8 @@ public class WearSessionProtocolTest {
   @Test
   public void incompatibleProtocolVersionDoesNotCompleteHandshake() throws Exception {
     WearSessionProtocol.Message ping =
-        WearSessionProtocol.decode(WearSessionProtocol.encodePing("request-a", 2));
+        WearSessionProtocol.decode(
+            WearSessionProtocol.encodePing("request-a", WearSessionProtocol.CURRENT_VERSION));
     WearSessionProtocol.Message pong =
         WearSessionProtocol.decode(WearSessionProtocol.encodePong("request-a", 2, 1));
 
@@ -117,20 +124,34 @@ public class WearSessionProtocolTest {
   @Test
   public void watchCanAcknowledgeSupportedAndIncompatibleRequests() throws Exception {
     WearSessionProtocol.Message currentRequest =
-        WearSessionProtocol.decode(WearSessionProtocol.encodePing("current", 1));
+        WearSessionProtocol.decode(
+            WearSessionProtocol.encodePing("current", WearSessionProtocol.CURRENT_VERSION));
     WearSessionProtocol.Message response =
         WearSessionProtocol.decode(
-            WearSessionProtocol.respondToPing(WearSessionProtocol.encodePing("current", 1)));
+            WearSessionProtocol.respondToPing(
+                WearSessionProtocol.encodePing("current", WearSessionProtocol.CURRENT_VERSION)));
     assertTrue(WearSessionProtocol.isSuccessfulHandshake(currentRequest, response));
 
     WearSessionProtocol.Message futureRequest =
-        WearSessionProtocol.decode(WearSessionProtocol.encodePing("future", 2));
+        WearSessionProtocol.decode(
+            WearSessionProtocol.encodePing("future", WearSessionProtocol.CURRENT_VERSION + 1));
     WearSessionProtocol.Message compatibilityResponse =
         WearSessionProtocol.decode(
-            WearSessionProtocol.respondToPing(WearSessionProtocol.encodePing("future", 2)));
+            WearSessionProtocol.respondToPing(
+                WearSessionProtocol.encodePing("future", WearSessionProtocol.CURRENT_VERSION + 1)));
     assertFalse(WearSessionProtocol.isSuccessfulHandshake(futureRequest, compatibilityResponse));
-    assertEquals(2, compatibilityResponse.getRequestedVersion());
+    assertEquals(
+        WearSessionProtocol.CURRENT_VERSION + 1, compatibilityResponse.getRequestedVersion());
     assertEquals(WearSessionProtocol.CURRENT_VERSION, compatibilityResponse.getSupportedVersion());
+
+    WearSessionProtocol.Message oldPhoneRequest =
+        WearSessionProtocol.decode(WearSessionProtocol.encodePing("legacy", 1));
+    WearSessionProtocol.Message newWatchResponse =
+        WearSessionProtocol.decode(
+            WearSessionProtocol.respondToPing(WearSessionProtocol.encodePing("legacy", 1)));
+    assertFalse(WearSessionProtocol.isSuccessfulHandshake(oldPhoneRequest, newWatchResponse));
+    assertEquals(1, newWatchResponse.getRequestedVersion());
+    assertEquals(WearSessionProtocol.CURRENT_VERSION, newWatchResponse.getSupportedVersion());
   }
 
   @Test

@@ -86,6 +86,19 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     Workout workout = tracker.getWorkout();
     if (workout == null) return;
 
+    if (Constants.Intents.NEW_LAP.contentEquals(action)
+        && tracker.requestPhoneWearSessionAction(
+            org.runnerup.common.wear.WorkoutSessionProtocol.Action.LAP)) return;
+    if (Constants.Intents.PAUSE_WORKOUT.contentEquals(action)
+        && tracker.requestPhoneWearSessionAction(
+            org.runnerup.common.wear.WorkoutSessionProtocol.Action.PAUSE)) return;
+    if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)
+        && tracker.requestPhoneWearSessionAction(
+            org.runnerup.common.wear.WorkoutSessionProtocol.Action.RESUME)) return;
+    if (Constants.Intents.STOP_WORKOUT.contentEquals(action)
+        && tracker.requestPhoneWearSessionAction(
+            org.runnerup.common.wear.WorkoutSessionProtocol.Action.FINISH)) return;
+
     if (Constants.Intents.PAUSE_RESUME.contentEquals(action)) {
       if (workout.isPaused()) workout.onResume(workout);
       else workout.onPause(workout);
@@ -95,6 +108,8 @@ public class TrackerReceiver extends DefaultTrackerComponent {
       if (!workout.isPaused()) workout.onPause(workout);
     } else if (Constants.Intents.RESUME_WORKOUT.contentEquals(action)) {
       if (workout.isPaused()) workout.onResume(workout);
+    } else if (Constants.Intents.STOP_WORKOUT.contentEquals(action)) {
+      tracker.stop();
     } else {
       Log.d(getClass().getName(), "onReceive: unhandled action: " + action);
     }
@@ -104,6 +119,7 @@ public class TrackerReceiver extends DefaultTrackerComponent {
     IntentFilter intentFilter = new IntentFilter();
     intentFilter.addAction(Constants.Intents.PAUSE_WORKOUT);
     intentFilter.addAction(Constants.Intents.RESUME_WORKOUT);
+    intentFilter.addAction(Constants.Intents.STOP_WORKOUT);
     intentFilter.addAction(Constants.Intents.NEW_LAP);
     intentFilter.addAction(Constants.Intents.PAUSE_RESUME);
     ContextCompat.registerReceiver(

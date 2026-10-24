@@ -48,13 +48,22 @@ public class PauseResumeFragment extends Fragment
     composeView = new ComposeView(activity);
     presentationState = new WearControlPresentationState();
     WearControlsComposeContent.bindPauseResume(
-        composeView, presentationState, this::sendNewLap, this::sendPauseResume);
+        composeView,
+        presentationState,
+        this::sendNewLap,
+        this::sendSkip,
+        this::sendPauseResume,
+        this::sendFinish);
     updateView(activity.getTrackerState());
     return composeView;
   }
 
   private void updateView(TrackerState state) {
     if (presentationState != null) presentationState.updatePauseAction(state);
+    if (presentationState != null) {
+      StateService stateService = activity == null ? null : activity.getStateService();
+      presentationState.updateSkipSupport(stateService != null && stateService.isSkipSupported());
+    }
   }
 
   private void sendPauseResume() {
@@ -81,6 +90,16 @@ public class PauseResumeFragment extends Fragment
     if (stateService == null) return;
     clickCount++;
     stateService.sendNewLap();
+  }
+
+  private void sendSkip() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService != null) stateService.sendSkip();
+  }
+
+  private void sendFinish() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService != null) stateService.sendFinish();
   }
 
   @Override

@@ -17,6 +17,7 @@
 package org.runnerup.tracker.component;
 
 import android.content.Context;
+import org.runnerup.common.wear.WorkoutSessionProtocol;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.workout.WorkoutInfo;
@@ -44,6 +45,30 @@ public class TrackerWear extends DefaultTrackerComponent implements WorkoutObser
 
   @Override
   public void workoutEvent(WorkoutInfo workoutInfo, int type) {}
+
+  public void prepareWorkoutSession(String sessionId, boolean watchReady) {}
+
+  public void resetWorkoutSession(String sessionId, boolean watchReady) {}
+
+  public WorkoutSessionProtocol.Result applySessionCommand(WorkoutSessionProtocol.Command command) {
+    return WorkoutSessionProtocol.Result.REJECTED;
+  }
+
+  public WorkoutSessionProtocol.Command getLastAcceptedWatchCommand() {
+    return null;
+  }
+
+  public boolean requestPhoneSessionCommand(WorkoutSessionProtocol.Command command) {
+    return false;
+  }
+
+  public boolean requestPhoneSessionAction(WorkoutSessionProtocol.Action action) {
+    return false;
+  }
+
+  public void holdScheduledWatchSessionStart() {}
+
+  public void releaseScheduledWatchSessionStart() {}
 
   public static class WearNotifier {
     public WearNotifier(Context context) {}

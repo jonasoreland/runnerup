@@ -88,6 +88,11 @@
   <string name="Lap">Varv</string>
   <string name="Pause">Pausa</string>
   <string name="Stop">Stoppa</string>
+  <string name="Wear_finish">Avsluta</string>
+  <string name="Wear_finish_confirmation">Avsluta passet?</string>
+  <string name="Wear_keep_workout">Fortsätt</string>
+  <string name="Wear_finish_workout">Avsluta</string>
+  <string name="Wear_skip_step">Hoppa steg</string>
   <string name="Workout">Träningspass</string>
   <string name="Audio_cue_settings">Ljudmeddelanden</string>
   <string name="Sport">Sport</string>

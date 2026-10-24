@@ -37,11 +37,55 @@ class WearControlPresentationState {
   internal var pauseAction by mutableStateOf(WearPauseAction.DISABLED)
     private set
 
+  internal var preparedCountdownSeconds by mutableStateOf<Int?>(null)
+    private set
+
+  internal var preparedStartPending by mutableStateOf(false)
+    private set
+
+  internal var finishConfirmationRequested by mutableStateOf(false)
+    private set
+
+  internal var skipSupported by mutableStateOf(false)
+    private set
+
   fun updateStartState(state: TrackerState?) {
     startMode = wearStartMode(state)
   }
 
   fun updatePauseAction(state: TrackerState?) {
     pauseAction = wearPauseAction(state)
+    if (pauseAction == WearPauseAction.DISABLED) finishConfirmationRequested = false
+  }
+
+  fun updateSkipSupport(supported: Boolean) {
+    skipSupported = supported
+  }
+
+  fun requestFinish() {
+    if (pauseAction != WearPauseAction.DISABLED) finishConfirmationRequested = true
+  }
+
+  fun cancelFinish() {
+    finishConfirmationRequested = false
+  }
+
+  fun confirmFinish(): Boolean {
+    if (!finishConfirmationRequested || pauseAction == WearPauseAction.DISABLED) return false
+    finishConfirmationRequested = false
+    return true
+  }
+
+  fun startRequestSent() {
+    preparedStartPending = true
+    preparedCountdownSeconds = null
+  }
+
+  fun updatePreparedCountdown(deadlineElapsedRealtimeMs: Long?, nowElapsedRealtimeMs: Long) {
+    preparedStartPending = false
+    preparedCountdownSeconds =
+        deadlineElapsedRealtimeMs?.let { deadline ->
+          ((deadline - nowElapsedRealtimeMs).coerceAtLeast(0L) + 999L).div(1000L).toInt()
+        }
   }
 }

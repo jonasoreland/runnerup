@@ -266,6 +266,7 @@ public final class WearConnectionProvider {
       String workoutName,
       String upcomingStep,
       String workoutJson,
+      boolean skipSupported,
       WorkoutPreparationCallback callback) {
     testConnection(
         context,
@@ -284,6 +285,7 @@ public final class WearConnectionProvider {
               workoutName,
               upcomingStep,
               workoutJson,
+              skipSupported,
               callback);
         });
   }
@@ -339,6 +341,7 @@ public final class WearConnectionProvider {
       String workoutName,
       String upcomingStep,
       String workoutJson,
+      boolean skipSupported,
       WorkoutPreparationCallback callback) {
     final String requestId = WearHandshakeAttempt.createRequestId();
     final WorkoutPreparationAttempt attempt =
@@ -369,7 +372,12 @@ public final class WearConnectionProvider {
               try {
                 byte[] payload =
                     WorkoutPreparationProtocol.encodePrepare(
-                        sessionId, requestId, workoutName, upcomingStep, workoutJson);
+                        sessionId,
+                        requestId,
+                        workoutName,
+                        upcomingStep,
+                        workoutJson,
+                        skipSupported);
                 client
                     .sendMessage(nodeId, Constants.Wear.Path.MSG_WORKOUT_PREPARE, payload)
                     .addOnFailureListener(

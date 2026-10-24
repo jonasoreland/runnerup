@@ -20,6 +20,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,12 @@ public class StartFragment extends Fragment
   private ComposeView composeView;
   private WearControlPresentationState presentationState;
   private MainActivity activity;
+  private final Handler countdownHandler = new Handler(Looper.getMainLooper());
+  private final Runnable countdownTick = this::updatePreparedCountdown;
+  private final ValueModel.ChangeListener<Long> countdownListener =
+      (instance, oldValue, newValue) -> {
+        if (isAdded()) activity.runOnUiThread(this::updatePreparedCountdown);
+      };
 
   public StartFragment() {}
 
@@ -60,8 +69,17 @@ public class StartFragment extends Fragment
     try {
       WorkoutPreparationProtocol.PrepareMessage prepared =
           WorkoutPreparationProtocol.decodePrepare(payload);
+      if (activity.getStateService() != null) {
+        activity
+            .getStateService()
+            .setPreparedWorkoutSession(prepared.getSessionId(), prepared.isSkipSupported());
+      }
       WearControlsComposeContent.bindPreparedWorkout(
-          composeView, prepared.getWorkoutName(), prepared.getUpcomingStep());
+          composeView,
+          prepared.getWorkoutName(),
+          prepared.getUpcomingStep(),
+          presentationState,
+          () -> startPreparedWorkout(prepared.getSessionId()));
     } catch (java.io.IOException ignored) {
       presentationState.updateStartState(state);
       WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
@@ -73,10 +91,35 @@ public class StartFragment extends Fragment
     if (stateService != null) stateService.sendStart();
   }
 
+  private void startPreparedWorkout(String sessionId) {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (stateService == null) return;
+    presentationState.startRequestSent();
+    if (!stateService.sendStart(sessionId)) {
+      presentationState.updatePreparedCountdown(null, SystemClock.elapsedRealtime());
+    }
+  }
+
+  private void updatePreparedCountdown() {
+    StateService stateService = activity == null ? null : activity.getStateService();
+    if (presentationState == null || stateService == null) return;
+    long now = SystemClock.elapsedRealtime();
+    Long deadline = stateService.getPreparedCountdownDeadlineElapsedRealtimeMs();
+    presentationState.updatePreparedCountdown(deadline, now);
+    countdownHandler.removeCallbacks(countdownTick);
+    if (deadline != null && now < deadline) {
+      countdownHandler.postDelayed(countdownTick, 75L);
+    }
+  }
+
   @Override
   public void onResume() {
     super.onResume();
     activity.registerTrackerStateListener(this);
+    if (activity.getStateService() != null) {
+      activity.getStateService().registerPreparedCountdownListener(countdownListener);
+      updatePreparedCountdown();
+    }
     activity
         .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
         .registerOnSharedPreferenceChangeListener(this);
@@ -85,6 +128,10 @@ public class StartFragment extends Fragment
 
   @Override
   public void onPause() {
+    countdownHandler.removeCallbacks(countdownTick);
+    if (activity.getStateService() != null) {
+      activity.getStateService().unregisterPreparedCountdownListener(countdownListener);
+    }
     activity.unregisterTrackerStateListener(this);
     activity
         .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)

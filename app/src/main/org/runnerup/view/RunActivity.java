@@ -428,6 +428,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
   }
 
   private void newLap() {
+    if (mTracker != null
+        && mTracker.requestPhoneWearSessionAction(
+            org.runnerup.common.wear.WorkoutSessionProtocol.Action.LAP)) return;
     if (workout != null) {
       workout.onNewLapOrNextStep();
     }
@@ -444,6 +447,11 @@ public class RunActivity extends AppCompatActivity implements TickListener {
     }
 
     boolean wasPaused = workout.isPaused();
+    if (mTracker != null
+        && mTracker.requestPhoneWearSessionAction(
+            wasPaused
+                ? org.runnerup.common.wear.WorkoutSessionProtocol.Action.RESUME
+                : org.runnerup.common.wear.WorkoutSessionProtocol.Action.PAUSE)) return;
     if (wasPaused) {
       workout.onResume(workout);
     } else {
@@ -498,6 +506,9 @@ public class RunActivity extends AppCompatActivity implements TickListener {
                   Toast.LENGTH_SHORT)
               .show();
         } else {
+          if (mTracker != null
+              && mTracker.requestPhoneWearSessionAction(
+                  org.runnerup.common.wear.WorkoutSessionProtocol.Action.FINISH)) return;
           doStop();
         }
       };

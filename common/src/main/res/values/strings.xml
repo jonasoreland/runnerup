@@ -73,6 +73,11 @@
     <string name="Lap">Lap</string>
     <string name="Pause">Pause</string>
     <string name="Stop">Stop</string>
+    <string name="Wear_finish">Finish</string>
+    <string name="Wear_finish_confirmation">Finish this workout?</string>
+    <string name="Wear_keep_workout">Keep going</string>
+    <string name="Wear_finish_workout">Finish</string>
+    <string name="Wear_skip_step">Skip step</string>
     <string name="Workout">Workout</string>
     <string name="Audio_cue_settings">Audio cue settings</string>
     <string name="Sport">Sport</string>

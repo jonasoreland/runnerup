@@ -45,6 +45,16 @@ internal fun WorkoutPreparationScreen(
         fontWeight = FontWeight.Bold)
     Text(text = state.workoutName, color = RelvenColors.MutedText, fontSize = 16.sp)
 
+    if (state.phase == WorkoutPreparationPhase.COUNTDOWN) {
+      Text(
+          text = if (state.countdownValue == 0) "KÖR" else state.countdownValue.toString(),
+          color = RelvenColors.Orange,
+          fontSize = 88.sp,
+          lineHeight = 96.sp,
+          fontWeight = FontWeight.Black,
+          modifier = Modifier.align(Alignment.CenterHorizontally))
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = RelvenColors.Surface,
@@ -93,7 +103,7 @@ internal fun WorkoutPreparationScreen(
     Button(
         onClick = onStart,
         enabled =
-            state.phase == WorkoutPreparationPhase.READY &&
+                state.phase == WorkoutPreparationPhase.READY &&
                 trackerReady &&
                 selectedWorkoutAvailable,
         modifier = Modifier.fillMaxWidth().height(58.dp),
@@ -103,7 +113,10 @@ internal fun WorkoutPreparationScreen(
           text =
               when {
                 !selectedWorkoutAvailable -> "Passet kunde inte återställas"
-                trackerReady -> "Starta pass"
+                state.phase == WorkoutPreparationPhase.START_REQUESTED -> "Väntar på klockan"
+                state.phase == WorkoutPreparationPhase.CANCEL_REQUESTED -> "Avbryter nedräkning"
+                state.phase == WorkoutPreparationPhase.COUNTDOWN -> "Startar om ${state.countdownValue}"
+                trackerReady -> "Starta pass · 3 sek nedräkning"
                 else -> "Förbereder träningsmotorn"
               },
           color = RelvenColors.Background,
@@ -112,7 +125,10 @@ internal fun WorkoutPreparationScreen(
     }
     OutlinedButton(
         onClick = onCancel,
-        enabled = state.phase != WorkoutPreparationPhase.STARTING,
+        enabled =
+            state.phase != WorkoutPreparationPhase.STARTING &&
+                state.phase != WorkoutPreparationPhase.START_REQUESTED &&
+                state.phase != WorkoutPreparationPhase.CANCEL_REQUESTED,
         modifier = Modifier.fillMaxWidth().height(54.dp),
         shape = RoundedCornerShape(18.dp)) {
       Text("Avbryt", color = RelvenColors.MutedText)

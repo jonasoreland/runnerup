@@ -40,6 +40,7 @@ public final class WorkoutPreparationProtocol {
     return existing.workoutName.equals(incoming.workoutName)
             && existing.upcomingStep.equals(incoming.upcomingStep)
             && existing.workoutJson.equals(incoming.workoutJson)
+            && existing.skipSupported == incoming.skipSupported
         ? StorageDecision.DUPLICATE
         : StorageDecision.CONFLICT;
   }
@@ -51,12 +52,24 @@ public final class WorkoutPreparationProtocol {
       String upcomingStep,
       String workoutJson)
       throws IOException {
+    return encodePrepare(sessionId, requestId, workoutName, upcomingStep, workoutJson, false);
+  }
+
+  public static byte[] encodePrepare(
+      String sessionId,
+      String requestId,
+      String workoutName,
+      String upcomingStep,
+      String workoutJson,
+      boolean skipSupported)
+      throws IOException {
     validateUuid(sessionId, "session id");
     validateUuid(requestId, "request id");
     validateLabel(workoutName, "workout name");
     validateLabel(upcomingStep, "upcoming step");
-    validateWorkoutJson(workoutJson);
-    byte[] workout = workoutJson.getBytes(StandardCharsets.UTF_8);
+    String preparedWorkoutJson = addSkipCapability(workoutJson, skipSupported);
+    validateWorkoutJson(preparedWorkoutJson);
+    byte[] workout = preparedWorkoutJson.getBytes(StandardCharsets.UTF_8);
     if (workout.length > MAX_WORKOUT_BYTES) throw new IOException("Workout payload too large");
     return encode(
         PREPARE,
@@ -91,7 +104,13 @@ public final class WorkoutPreparationProtocol {
     validateLabel(workoutName, "workout name");
     validateLabel(upcomingStep, "upcoming step");
     validateWorkoutJson(workoutJson);
-    return new PrepareMessage(sessionId, requestId, workoutName, upcomingStep, workoutJson);
+    return new PrepareMessage(
+        sessionId,
+        requestId,
+        workoutName,
+        upcomingStep,
+        workoutJson,
+        readSkipCapability(workoutJson));
   }
 
   public static byte[] encodeAcknowledgement(String sessionId, String requestId, boolean accepted)
@@ -204,6 +223,23 @@ public final class WorkoutPreparationProtocol {
     }
   }
 
+  private static String addSkipCapability(String json, boolean skipSupported) throws IOException {
+    if (!skipSupported) return json;
+    try {
+      return new JSONObject(json).put("relvenSkipSupported", skipSupported).toString();
+    } catch (JSONException malformed) {
+      throw new IOException("Invalid workout document", malformed);
+    }
+  }
+
+  private static boolean readSkipCapability(String json) throws IOException {
+    try {
+      return new JSONObject(json).optBoolean("relvenSkipSupported", false);
+    } catch (JSONException malformed) {
+      throw new IOException("Invalid workout document", malformed);
+    }
+  }
+
   private static void ensureConsumed(DataInputStream input) throws IOException {
     if (input.available() != 0) throw new IOException("Trailing preparation payload data");
   }
@@ -218,18 +254,21 @@ public final class WorkoutPreparationProtocol {
     private final String workoutName;
     private final String upcomingStep;
     private final String workoutJson;
+    private final boolean skipSupported;
 
     private PrepareMessage(
         String sessionId,
         String requestId,
         String workoutName,
         String upcomingStep,
-        String workoutJson) {
+        String workoutJson,
+        boolean skipSupported) {
       this.sessionId = sessionId;
       this.requestId = requestId;
       this.workoutName = workoutName;
       this.upcomingStep = upcomingStep;
       this.workoutJson = workoutJson;
+      this.skipSupported = skipSupported;
     }
 
     public String getSessionId() {
@@ -250,6 +289,10 @@ public final class WorkoutPreparationProtocol {
 
     public String getWorkoutJson() {
       return workoutJson;
+    }
+
+    public boolean isSkipSupported() {
+      return skipSupported;
     }
   }
 

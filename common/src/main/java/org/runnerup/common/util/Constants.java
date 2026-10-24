@@ -205,6 +205,12 @@ public interface Constants {
     String START_WORKOUT = BuildConfig.applicationIdFull + ".START_WORKOUT";
     String PAUSE_WORKOUT = BuildConfig.applicationIdFull + ".PAUSE_WORKOUT";
     String RESUME_WORKOUT = BuildConfig.applicationIdFull + ".RESUME_WORKOUT";
+    String STOP_WORKOUT = BuildConfig.applicationIdFull + ".STOP_WORKOUT";
+    String WORKOUT_SESSION_COMMAND = BuildConfig.applicationIdFull + ".WORKOUT_SESSION_COMMAND";
+    String WORKOUT_SESSION_COMMAND_REJECTED =
+        BuildConfig.applicationIdFull + ".WORKOUT_SESSION_COMMAND_REJECTED";
+    String EXTRA_WORKOUT_SESSION_COMMAND =
+        BuildConfig.applicationIdFull + ".EXTRA_WORKOUT_SESSION_COMMAND";
 
     /** ID of the node (device) that sent the message/data */
     String EXTRA_SOURCE_NODE_ID = BuildConfig.applicationIdFull + ".EXTRA_SOURCE_NODE_ID";
@@ -262,16 +268,22 @@ public interface Constants {
       /* Msg: versioned app-level handshake */
       String MSG_SESSION_PING = PREFIX + "/session/ping";
       String MSG_SESSION_PONG = PREFIX + "/session/pong";
+      String MSG_SESSION_CLOCK_REQUEST = PREFIX + "/session/clock/request";
+      String MSG_SESSION_CLOCK_REPLY = PREFIX + "/session/clock/reply";
 
       /* Msg: versioned workout preparation handoff */
       String MSG_WORKOUT_PREPARE = PREFIX + "/workout/prepare";
       String MSG_WORKOUT_PREPARED = PREFIX + "/workout/prepared";
       String MSG_WORKOUT_CANCEL = PREFIX + "/workout/cancel";
+      String MSG_WORKOUT_SESSION_COMMAND = PREFIX + "/workout/session/command";
+      String MSG_WORKOUT_SESSION_ACK = PREFIX + "/workout/session/ack";
+      String MSG_WORKOUT_SESSION_REJECT = PREFIX + "/workout/session/reject";
 
       /* Msg: pause/resume from wear to phone */
       String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
       String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
       String MSG_CMD_WORKOUT_NEW_LAP = PREFIX + "/workout/new_lap";
+      String MSG_CMD_WORKOUT_FINISH = PREFIX + "/workout/finish";
       String MSG_CMD_WORKOUT_START = PREFIX + "/workout/start";
 
       /* Msg: start/stop HR from phone to wear */

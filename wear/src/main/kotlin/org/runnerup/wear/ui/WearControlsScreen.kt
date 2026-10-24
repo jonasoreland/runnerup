@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,8 +46,15 @@ object WearControlsComposeContent {
   }
 
   @JvmStatic
-  fun bindPreparedWorkout(view: ComposeView, workoutName: String, upcomingStep: String) {
-    view.setContent { WearPreparedWorkoutScreen(workoutName, upcomingStep) }
+  fun bindPreparedWorkout(
+      view: ComposeView,
+      workoutName: String,
+      upcomingStep: String,
+      state: WearControlPresentationState,
+      startClick: Runnable) {
+    view.setContent {
+      WearPreparedWorkoutScreen(workoutName, upcomingStep, state) { startClick.run() }
+    }
   }
 
   @JvmStatic
@@ -52,19 +62,27 @@ object WearControlsComposeContent {
       view: ComposeView,
       state: WearControlPresentationState,
       lapClick: Runnable,
-      pauseResumeClick: Runnable
+      skipClick: Runnable,
+      pauseResumeClick: Runnable,
+      finishClick: Runnable
   ) {
     view.setContent {
       WearPauseResumeScreen(
-          state.pauseAction,
+          state,
           onLap = { lapClick.run() },
-          onPauseResume = { pauseResumeClick.run() })
+          onSkip = { skipClick.run() },
+          onPauseResume = { pauseResumeClick.run() },
+          onFinish = { finishClick.run() })
     }
   }
 }
 
 @Composable
-internal fun WearPreparedWorkoutScreen(workoutName: String, upcomingStep: String) {
+internal fun WearPreparedWorkoutScreen(
+    workoutName: String,
+    upcomingStep: String,
+    state: WearControlPresentationState,
+    onStart: () -> Unit) {
   WearControlFrame {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,7 +90,33 @@ internal fun WearPreparedWorkoutScreen(workoutName: String, upcomingStep: String
       Text("REDO ATT STARTA", color = AccentBlue, fontSize = 10.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
       Text(workoutName, color = PrimaryText, fontSize = 13.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
       Text("Nästa: $upcomingStep", color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
-      Text("Starta passet på mobilen", color = SecondaryText, fontSize = 9.sp, textAlign = TextAlign.Center, maxLines = 2)
+      when {
+        state.preparedCountdownSeconds != null ->
+            Text(
+                text = if (state.preparedCountdownSeconds == 0) "KÖR" else state.preparedCountdownSeconds.toString(),
+                color = AccentBlue,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.Center)
+        state.preparedStartPending ->
+            Text(
+                "Väntar på mobilen…",
+                color = SecondaryText,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center)
+        else -> {
+          FilledIconButton(
+              onClick = onStart,
+              modifier = Modifier.size(60.dp).semantics { contentDescription = "Starta pass" },
+              colors = controlColors()) {
+            Icon(
+                painter = painterResource(org.runnerup.common.R.drawable.ic_av_play_arrow),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp))
+          }
+          Text("STARTA PASS", color = PrimaryText, fontSize = 9.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+        }
+      }
     }
   }
 }
@@ -112,10 +156,13 @@ internal fun WearStartScreen(mode: WearStartMode?, onStart: () -> Unit) {
 
 @Composable
 internal fun WearPauseResumeScreen(
-    action: WearPauseAction,
+    state: WearControlPresentationState,
     onLap: () -> Unit,
-    onPauseResume: () -> Unit
+    onSkip: () -> Unit,
+    onPauseResume: () -> Unit,
+    onFinish: () -> Unit
 ) {
+  val action = state.pauseAction
   val pauseResumeLabel =
       stringResource(
           if (action == WearPauseAction.RESUME) org.runnerup.common.R.string.Resume
@@ -126,19 +173,58 @@ internal fun WearPauseResumeScreen(
   val enabled = action != WearPauseAction.DISABLED
 
   WearControlFrame {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(28.dp),
-        verticalAlignment = Alignment.CenterVertically) {
-      WearControlButton(
-          label = stringResource(org.runnerup.common.R.string.Lap),
-          icon = org.runnerup.common.R.drawable.ic_av_newlap,
-          enabled = enabled,
-          onClick = onLap)
-      WearControlButton(
-          label = pauseResumeLabel,
-          icon = pauseResumeIcon,
-          enabled = enabled,
-          onClick = onPauseResume)
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+      Row(
+          horizontalArrangement = Arrangement.spacedBy(24.dp),
+          verticalAlignment = Alignment.CenterVertically) {
+        WearControlButton(
+            label = stringResource(org.runnerup.common.R.string.Lap),
+            icon = org.runnerup.common.R.drawable.ic_av_newlap,
+            enabled = enabled,
+            onClick = onLap)
+        WearControlButton(
+            label = pauseResumeLabel,
+            icon = pauseResumeIcon,
+            enabled = enabled,
+            onClick = onPauseResume)
+      }
+      if (state.skipSupported) {
+        TextButton(
+            onClick = onSkip,
+            enabled = enabled,
+            modifier = Modifier.semantics { contentDescription = "Hoppa över steg" }) {
+          Text(
+              stringResource(org.runnerup.common.R.string.Wear_skip_step),
+              fontSize = 10.sp,
+              fontWeight = FontWeight.SemiBold)
+        }
+      }
+      if (state.finishConfirmationRequested) {
+        Text(
+            text = stringResource(org.runnerup.common.R.string.Wear_finish_confirmation),
+            color = PrimaryText,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center)
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+          TextButton(onClick = state::cancelFinish, enabled = enabled) {
+            Text(stringResource(org.runnerup.common.R.string.Wear_keep_workout), fontSize = 10.sp)
+          }
+          Button(
+              onClick = { if (state.confirmFinish()) onFinish() },
+              enabled = enabled,
+              colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB3261E))) {
+            Text(stringResource(org.runnerup.common.R.string.Wear_finish_workout), fontSize = 10.sp)
+          }
+        }
+      } else {
+        TextButton(
+            onClick = state::requestFinish,
+            enabled = enabled,
+            modifier = Modifier.semantics { contentDescription = "Avsluta pass" }) {
+          Text(stringResource(org.runnerup.common.R.string.Wear_finish), fontSize = 10.sp)
+        }
+      }
     }
   }
 }

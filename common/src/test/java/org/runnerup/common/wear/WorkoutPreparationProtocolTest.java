@@ -29,6 +29,23 @@ public class WorkoutPreparationProtocolTest {
     assertEquals("Intervaller", decoded.getWorkoutName());
     assertEquals("Uppvärmning", decoded.getUpcomingStep());
     assertEquals(workoutJson, decoded.getWorkoutJson());
+    assertFalse(decoded.isSkipSupported());
+  }
+
+  @Test
+  public void preparedIntervalAdvertisesSkipWithoutChangingBasicWorkoutPayloads() throws Exception {
+    WorkoutPreparationProtocol.PrepareMessage decoded =
+        WorkoutPreparationProtocol.decodePrepare(
+            WorkoutPreparationProtocol.encodePrepare(
+                UUID.randomUUID().toString(),
+                UUID.randomUUID().toString(),
+                "Intervaller",
+                "Uppvärmning",
+                WORKOUT_JSON,
+                true));
+
+    assertTrue(decoded.isSkipSupported());
+    assertTrue(decoded.getWorkoutJson().contains("\"relvenSkipSupported\":true"));
   }
 
   @Test

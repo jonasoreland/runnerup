@@ -59,6 +59,7 @@ import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.WorkoutSessionProtocol;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
@@ -126,6 +127,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private long mLapId = 0;
   private long mActivityId = 0;
+  private boolean applyingWatchSessionCommand;
   private long mStartedAtEpochMillis = 0;
   private final ActivityCompletionGate activityCompletionGate = new ActivityCompletionGate();
   private long mElapsedTimeNanos = 0;
@@ -381,6 +383,72 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     this.workout = workout;
   }
 
+  /** Associates the already prepared RunnerUp tracker with its one logical phone/watch session. */
+  public void prepareWearWorkoutSession(String sessionId, boolean watchReady) {
+    trackerWear.prepareWorkoutSession(sessionId, watchReady);
+  }
+
+  public void resetWearWorkoutSession(String sessionId, boolean watchReady) {
+    trackerWear.resetWorkoutSession(sessionId, watchReady);
+  }
+
+  public WorkoutSessionProtocol.Result applyWearSessionCommand(
+      WorkoutSessionProtocol.Command command) {
+    return trackerWear.applySessionCommand(command);
+  }
+
+  public WorkoutSessionProtocol.Command getLastAcceptedWatchSessionCommand() {
+    return trackerWear.getLastAcceptedWatchCommand();
+  }
+
+  /**
+   * Sends a phone UI request to the connected watch session authority without applying it locally.
+   */
+  public boolean requestWearSessionCommand(WorkoutSessionProtocol.Command command) {
+    return trackerWear.requestPhoneSessionCommand(command);
+  }
+
+  public boolean requestPhoneWearSessionAction(WorkoutSessionProtocol.Action action) {
+    return trackerWear.requestPhoneSessionAction(action);
+  }
+
+  public void holdWearSessionStart() {
+    trackerWear.holdScheduledWatchSessionStart();
+  }
+
+  public void releaseWearSessionStart() {
+    trackerWear.releaseScheduledWatchSessionStart();
+  }
+
+  /** Applies an already committed watch event to the phone's RunnerUp recording engine. */
+  public void applyWatchSessionAction(WorkoutSessionProtocol.Action action) {
+    boolean previous = applyingWatchSessionCommand;
+    applyingWatchSessionCommand = true;
+    try {
+      switch (action) {
+        case PAUSE:
+          pause();
+          break;
+        case RESUME:
+          resume();
+          break;
+        case LAP:
+          if (workout != null) workout.onNewLapOrNextStep();
+          break;
+        case SKIP:
+          if (workout != null) workout.onNextStep();
+          break;
+        case FINISH:
+          stop();
+          break;
+        default:
+          break;
+      }
+    } finally {
+      applyingWatchSessionCommand = previous;
+    }
+  }
+
   public void start() {
     if (BuildConfig.DEBUG && state.get() != TrackerState.CONNECTED) {
       throw new AssertionError();
@@ -432,6 +500,15 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     handler.post(checkpointRunnable);
   }
 
+  /** Starts the prepared recording once, including when the session controller scheduled it. */
+  public boolean startIfConnected() {
+    TrackerState current = state.get();
+    if (current == TrackerState.STARTED) return true;
+    if (current != TrackerState.CONNECTED) return false;
+    start();
+    return true;
+  }
+
   private void doBind() {
     // Let components populate bindValues
     HashMap<String, Object> bindValues = new HashMap<>();
@@ -464,6 +541,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   public void pause() {
+    if (!applyingWatchSessionCommand
+        && requestPhoneWearSessionAction(WorkoutSessionProtocol.Action.PAUSE)) return;
     switch (state.get()) {
       case INIT:
       case ERROR:
@@ -497,6 +576,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   public void stop() {
+    if (!applyingWatchSessionCommand
+        && requestPhoneWearSessionAction(WorkoutSessionProtocol.Action.FINISH)) return;
     switch (state.get()) {
       case INIT:
       case ERROR:
@@ -532,6 +613,8 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   public void resume() {
+    if (!applyingWatchSessionCommand
+        && requestPhoneWearSessionAction(WorkoutSessionProtocol.Action.RESUME)) return;
     switch (state.get()) {
       case INIT:
       case ERROR:

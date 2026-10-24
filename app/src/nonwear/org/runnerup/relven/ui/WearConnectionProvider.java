@@ -78,6 +78,7 @@ public final class WearConnectionProvider {
       String workoutName,
       String upcomingStep,
       String workoutJson,
+      boolean skipSupported,
       WorkoutPreparationCallback callback) {
     callback.onResult(new WorkoutPreparationResult(PreparationStatus.UNSUPPORTED, sessionId, null));
   }

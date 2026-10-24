@@ -9,10 +9,11 @@ import java.nio.charset.StandardCharsets;
 
 /** Small bounded protocol envelope for application-level Wear OS requests and acknowledgements. */
 public final class WearSessionProtocol {
-  public static final int CURRENT_VERSION = 1;
+  public static final int CURRENT_VERSION = 2;
   public static final int PING = 1;
   public static final int PONG = 2;
-  private static final int MAGIC = 0x52564E31; // RVN1
+  private static final int MAGIC =
+      0x52564E31; // RVN1 wire format; CURRENT_VERSION negotiates app capabilities.
   private static final int MAX_PAYLOAD_BYTES = 512;
   private static final int MAX_REQUEST_ID_BYTES = 128;
 
