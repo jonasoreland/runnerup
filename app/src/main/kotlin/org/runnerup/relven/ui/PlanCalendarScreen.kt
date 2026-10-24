@@ -466,6 +466,8 @@ private fun LoadedPlanCalendar(
 
     SelectedPlanDay(
         dateLabel = state.selectedDateLabel,
+        selectedDate = state.selectedDate,
+        todayDate = state.todayDate,
         entries = state.selectedEntries,
         totalEntries = plan.days().size,
         reschedulingSessionId = reschedulingSessionId,
@@ -834,6 +836,8 @@ internal fun CalendarDateCell(
 @Composable
 private fun SelectedPlanDay(
     dateLabel: String,
+    selectedDate: String,
+    todayDate: String,
     entries: List<PlanCalendarEntry>,
     totalEntries: Int,
     reschedulingSessionId: String?,
@@ -850,27 +854,53 @@ private fun SelectedPlanDay(
       modifier = Modifier.fillMaxWidth()) {
     Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(dateLabel, color = RelvenColors.Orange, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-      TextButton(onClick = onAdd, enabled = enabled && reschedulingSessionId == null) {
-        Text(stringResource(R.string.Plan_calendar_add_item))
-      }
       if (entries.isEmpty()) {
         Text(stringResource(R.string.Plan_calendar_no_item), fontSize = 18.sp, fontWeight = FontWeight.Bold)
       } else {
-        entries.forEach { entry ->
+        entries.forEachIndexed { index, entry ->
+          if (index > 0) {
+            Box(
+                Modifier.fillMaxWidth()
+                    .height(1.dp)
+                    .background(RelvenColors.MutedText.copy(alpha = 0.14f)))
+          }
           Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             when (entry) {
               is PlanCalendarEntry.Workout -> {
+                val preview = planWorkoutPreview(entry, selectedDate, todayDate)
                 Column(
-                    modifier = Modifier.fillMaxWidth().clickable(
-                        enabled = enabled,
-                        role = Role.Button,
-                        onClick = { onOpenWorkout(entry.sessionId) }),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(4.dp)) {
                   Text(entry.workoutName, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                  val category =
+                      stringResource(
+                          when (preview.category) {
+                            WorkoutCategory.RUNNING -> R.string.Plan_calendar_preview_running
+                            WorkoutCategory.STRENGTH -> R.string.Plan_calendar_preview_strength
+                            WorkoutCategory.PREHAB -> R.string.Plan_calendar_preview_prehab
+                          })
+                  val duration =
+                      preview.duration?.let { previewDurationLabel(it) }
+                          ?: stringResource(R.string.Plan_calendar_preview_duration_unavailable)
+                  val status =
+                      stringResource(
+                          when (preview.status) {
+                            PlanWorkoutStatus.UPCOMING -> R.string.Plan_calendar_preview_upcoming
+                            PlanWorkoutStatus.TODAY -> R.string.Plan_calendar_preview_today
+                            PlanWorkoutStatus.PAST -> R.string.Plan_calendar_preview_past
+                            PlanWorkoutStatus.COMPLETED -> R.string.Plan_calendar_preview_completed
+                          })
                   Text(
-                      stringResource(R.string.Plan_calendar_open_workout_details),
-                      color = RelvenColors.Orange,
-                      fontSize = 14.sp)
+                      stringResource(R.string.Plan_calendar_preview_metadata, category, duration, status),
+                      color = RelvenColors.MutedText,
+                      fontSize = 14.sp,
+                      maxLines = 2)
+                }
+                TextButton(
+                    onClick = { onOpenWorkout(entry.sessionId) },
+                    enabled = enabled,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                  Text(stringResource(R.string.Plan_calendar_open_workout_details), color = RelvenColors.Orange)
                 }
                 if (entry.notes.isNotBlank()) Text(entry.notes, color = RelvenColors.MutedText)
               }
@@ -897,7 +927,24 @@ private fun SelectedPlanDay(
           }
         }
       }
+      TextButton(onClick = onAdd, enabled = enabled && reschedulingSessionId == null) {
+        Text(stringResource(R.string.Plan_calendar_add_item), color = RelvenColors.Orange)
+      }
     }
+  }
+}
+
+@Composable
+private fun previewDurationLabel(duration: DurationEstimate): String {
+  val minimumMinutes = ((duration.minimumSeconds + 59L) / 60L).toInt()
+  val maximumMinutes = ((duration.maximumSeconds + 59L) / 60L).toInt()
+  return when {
+    duration.approximate && minimumMinutes != maximumMinutes ->
+        stringResource(
+            R.string.Plan_calendar_preview_duration_range, minimumMinutes, maximumMinutes)
+    duration.approximate ->
+        stringResource(R.string.Plan_calendar_preview_duration_approximate, minimumMinutes)
+    else -> stringResource(R.string.Plan_calendar_preview_duration_exact, minimumMinutes)
   }
 }
 
