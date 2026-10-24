@@ -3,7 +3,12 @@
 ## Active workout background/foreground re-entry check
 
 - On isolated API 36 phone emulator `emulator-5608` at ADB port 5039, started a free run, sent the app to the background, reopened `RelvenHomeActivity`, confirmed the **Pågående pass** card, and reopened the existing `RunActivity`. Android's service dump showed the same `Tracker` foreground service remained active with its ongoing workout notification. No second workout was started. Screenshot: `app/build/outputs/qa/relven-home-during-active.png`; active screen before re-entry: `app/build/outputs/qa/relven-active-recovery-before.png`.
-- This emulator sequence had no accepted movement points (0 m); it verifies background/foreground UI and service continuity only, not GPS route recovery or wearable synchronization. The shell stopped responding after the stop-confirmation UI was opened, so the temporary unsaved emulator workout could not be confirmed discarded in this pass. The isolated emulator may need to be restarted before more device QA. No physical device was used.
+- This emulator sequence had no accepted movement points (0 m); it verifies background/foreground UI and service continuity only, not GPS route recovery or wearable synchronization. The shell stopped responding after the stop-confirmation UI was opened, so the temporary unsaved emulator workout could not be confirmed discarded in this pass. No physical device was used.
+
+## Active workout checkpoint after emulator restart
+
+- Restarted the isolated phone AVD `RelvenRecoveryPR119Clean` after its shell stopped responding. On relaunch, Today showed **Pausat pass**; opening it returned to `RunActivity` with the paused state, elapsed time, and lap control visible. Screenshot: `app/build/outputs/qa/relven-active-after-emulator-restart.png`. This demonstrates checkpoint recovery across the AVD restart and Activity re-entry for the current synthetic 0 m session.
+- The emulator shell stopped responding again on subsequent interaction, so resume/discard and Tracker service state after the cold restart could not be confirmed. Pairing, route recovery, and Wear synchronization remain unverified; this was not a physical device test.
 
 ## FIT import end-to-end and short-route chart axis
 
