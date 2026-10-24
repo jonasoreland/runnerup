@@ -189,7 +189,7 @@ private fun CatalogBrowser(
       showArchived = showArchived)
   val matches = state.visibleEntries(catalog)
   Column(
-      modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 116.dp),
+      modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp).padding(top = 24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -351,7 +351,7 @@ private fun ExerciseDetail(
   Column(
       modifier =
           Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-              .padding(horizontal = 24.dp).padding(top = 12.dp, bottom = 120.dp),
+          .padding(horizontal = 24.dp).padding(top = 12.dp),
       verticalArrangement = Arrangement.spacedBy(18.dp)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       IconButton(onClick = onBack) {
@@ -479,7 +479,7 @@ private fun CustomExerciseEditor(
   }
   val muscles = listOf("abdominals", "back", "calves", "chest", "glutes", "hamstrings", "hips", "obliques", "quadriceps", "shoulders", "triceps")
   Column(
-      Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(top = 16.dp, bottom = 120.dp),
+      Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(top = 16.dp),
       verticalArrangement = Arrangement.spacedBy(12.dp)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       IconButton(onClick = onCancel) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.Exercise_catalog_back)) }

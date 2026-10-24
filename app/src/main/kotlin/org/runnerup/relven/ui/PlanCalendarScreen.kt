@@ -195,7 +195,7 @@ private fun LoadedPlanCalendar(
   val weekdayNames = stringArrayResource(R.array.Plan_calendar_weekday_names)
   Column(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-          .padding(horizontal = horizontalPadding).padding(top = 24.dp, bottom = 116.dp),
+          .padding(horizontal = horizontalPadding).padding(top = 24.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
     if (openedWorkout != null) {
       PlanWorkoutDetailsScreen(
@@ -1035,7 +1035,7 @@ private fun PlanCalendarEntry.sessionId(): String =
 private fun PlanCalendarEmpty(title: String, body: String, action: String, onAction: () -> Unit) {
   Column(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-          .padding(horizontal = 24.dp).padding(top = 32.dp, bottom = 116.dp),
+          .padding(horizontal = 24.dp).padding(top = 32.dp),
       verticalArrangement = Arrangement.spacedBy(14.dp)) {
     Text(stringResource(R.string.Plan_calendar_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)
     Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -1052,7 +1052,7 @@ private fun PlanCalendarEmpty(title: String, body: String, action: String, onAct
 private fun PlanCalendarMessage(message: String) {
   Column(
       modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-          .padding(horizontal = 24.dp).padding(top = 32.dp, bottom = 116.dp),
+          .padding(horizontal = 24.dp).padding(top = 32.dp),
       verticalArrangement = Arrangement.spacedBy(14.dp)) {
     Text(stringResource(R.string.Plan_calendar_title), fontSize = 30.sp, fontWeight = FontWeight.Bold)
     Text(message, color = RelvenColors.MutedText, fontSize = 15.sp)

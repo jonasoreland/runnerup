@@ -59,6 +59,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
@@ -70,6 +71,10 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -1752,12 +1757,21 @@ private fun RelvenHome(
     onContinueExistingStrengthSession: () -> Unit,
     onCancelExistingStrengthSession: () -> Unit) {
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
-  Box(Modifier.fillMaxSize()) {
+  var rootHeightPx by remember { mutableIntStateOf(0) }
+  var navigationTopPx by remember { mutableIntStateOf(-1) }
+  val density = LocalDensity.current
+  val showsHomeNavigation = destination != HomeDestination.Plan || !planCreationOpen
+  val bottomObstructionPx =
+      if (showsHomeNavigation) homeNavigationContentObstructionPx(rootHeightPx, navigationTopPx)
+      else 0
+  val bottomObstruction = with(density) { bottomObstructionPx.toDp() }
+  Box(Modifier.fillMaxSize().onSizeChanged { rootHeightPx = it.height }) {
+  Box(Modifier.fillMaxSize().padding(bottom = bottomObstruction)) {
     if (destination == HomeDestination.Today) {
       val homeLocale = LocalLocale.current.platformLocale
       Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp).padding(bottom = 120.dp),
+            .padding(horizontal = 24.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
       Spacer(Modifier.height(20.dp))
       Row(verticalAlignment = Alignment.CenterVertically) {
@@ -1966,12 +1980,16 @@ private fun RelvenHome(
           favoriteExerciseIds = favoriteExerciseIds,
           onToggleFavorite = onToggleExerciseFavorite)
     }
+  }
     if (destination != HomeDestination.Plan || !planCreationOpen) {
       HomeNavigationBar(
           destination = destination,
           onSelectDestination = onSelectDestination,
           onOpenHistory = onOpenHistory,
-          modifier = Modifier.align(Alignment.BottomCenter))
+          modifier =
+              Modifier.align(Alignment.BottomCenter).onGloballyPositioned {
+                navigationTopPx = it.positionInRoot().y.toInt()
+              })
     }
     if (strengthRecoveryNotice) {
       AlertDialog(
@@ -2072,7 +2090,7 @@ private fun ProgressScreen(
           Modifier.fillMaxSize()
               .verticalScroll(rememberScrollState())
               .padding(horizontal = 24.dp)
-              .padding(top = 20.dp, bottom = 120.dp),
+              .padding(top = 20.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
     TextButton(onClick = onBack) {
       Text(stringResource(org.runnerup.common.R.string.Progress_back))

@@ -144,7 +144,7 @@ internal fun PlanCreationScreen(
       ?.catalog?.exercises?.filter { !it.isArchived && it.equipment.isEmpty() }.orEmpty()
   Column(
       modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
-          .padding(horizontal = 24.dp).padding(top = 24.dp, bottom = 132.dp),
+          .padding(horizontal = 24.dp).padding(top = 24.dp),
       verticalArrangement = Arrangement.spacedBy(18.dp)) {
     TextButton(onClick = handleBack, enabled = !busy) { Text(stringResource(R.string.plan_create_back)) }
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
