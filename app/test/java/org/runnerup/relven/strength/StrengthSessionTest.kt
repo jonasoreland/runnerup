@@ -3,6 +3,7 @@ package org.runnerup.relven.strength
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.runnerup.workout.RelvenStrengthWorkoutParser
@@ -37,6 +38,72 @@ class StrengthSessionTest {
     assertEquals("Plank", plank.currentExercise().name())
     assertEquals(StrengthSession.Phase.TIMED_WORK, plank.phase)
     assertEquals(3, plank.secondsRemaining)
+  }
+
+  @Test
+  fun recordsPerSideCountsAndOptionalSetDetails() {
+    val result =
+        StrengthSession.start("plan", "scheduled", workout)
+            .completeResult(
+                StrengthSession.RepetitionResultInput(
+                    leftRepetitions = 8,
+                    rightRepetitions = 7,
+                    rpe = 7.5,
+                    painRating = 1,
+                    notes = "Vänster sida tröttare"))
+            .results.single()
+
+    assertNull(result.repetitions)
+    assertEquals(8, result.leftRepetitions)
+    assertEquals(7, result.rightRepetitions)
+    assertEquals(7.5, result.rpe!!, 0.0)
+    assertEquals(1, result.painRating)
+    assertEquals("Vänster sida tröttare", result.notes)
+  }
+
+  @Test
+  fun rejectsIncompletePerSideCountsAndMixedBilateralCounts() {
+    val session = StrengthSession.start("plan", "scheduled", workout)
+
+    assertThrows(IllegalArgumentException::class.java) {
+      session.completeResult(StrengthSession.RepetitionResultInput(leftRepetitions = 5))
+    }
+    assertThrows(IllegalArgumentException::class.java) {
+      session.completeResult(
+          StrengthSession.RepetitionResultInput(repetitions = 5, leftRepetitions = 5, rightRepetitions = 5))
+    }
+    assertThrows(IllegalArgumentException::class.java) {
+      session.completeResult(StrengthSession.RepetitionResultInput(repetitions = 5, rpe = 10.5))
+    }
+  }
+
+  @Test
+  fun advancedDetailsAttachToOriginalTimedSetWhileRestContinues() {
+    val timedWorkout =
+        RelvenStrengthWorkoutParser.Workout(
+            "timed",
+            "Timed",
+            "strength",
+            listOf(exercise("test", "Push-up test", 2, 1, 20, 5, duration = 2)),
+            "{}")
+    val resting = StrengthSession.start("plan", "scheduled", timedWorkout, 1_000).tickAt(3_000)
+
+    val recorded =
+        resting.completeResult(
+            StrengthSession.RepetitionResultInput(
+                leftRepetitions = 9,
+                rightRepetitions = 8,
+                rpe = 8.0,
+                painRating = 0,
+                notes = "Stable"),
+            nowElapsedRealtimeMillis = 4_000)
+
+    assertEquals(StrengthSession.Phase.REST, recorded.phase)
+    assertEquals(4, recorded.secondsRemaining)
+    assertEquals(1, recorded.results.single().setNumber)
+    assertEquals(9, recorded.results.single().leftRepetitions)
+    assertEquals(8, recorded.results.single().rightRepetitions)
+    assertEquals(2, recorded.results.single().durationSeconds)
   }
 
   @Test

@@ -63,7 +63,7 @@ internal fun StrengthSessionScreen(
     isSavingProgress: Boolean,
     isSavingCompletion: Boolean,
     onTick: () -> Unit,
-    onLogRepetitions: (Int) -> Unit,
+    onLogRepetitions: (StrengthSession.RepetitionResultInput) -> Unit,
     onSkipPendingResult: () -> Unit,
     onSkipExercise: () -> Unit,
     onSkipRest: () -> Unit,
@@ -154,9 +154,26 @@ internal fun StrengthSessionScreen(
               StrengthSession.SetResult.ResultStatus.COMPLETED ->
                   result.repetitions?.let {
                     "$it ${stringResource(R.string.Strength_session_repetitions).lowercase()}"
-                  } ?: "${result.durationSeconds} s"
+                  } ?: if (result.leftRepetitions != null && result.rightRepetitions != null) {
+                    "${stringResource(R.string.Strength_session_left_side)} ${result.leftRepetitions} · " +
+                        "${stringResource(R.string.Strength_session_right_side)} ${result.rightRepetitions}"
+                  } else {
+                    "${result.durationSeconds} s"
+                  }
             }
         Text("${result.exerciseName} · ${result.setNumber}: $detail", color = RelvenColors.Text)
+        result.notes?.takeIf(String::isNotBlank)?.let {
+          Text(it, color = RelvenColors.MutedText, fontSize = 14.sp)
+        }
+        if (result.rpe != null || result.painRating != null) {
+          Text(
+              listOfNotNull(
+                      result.rpe?.let { "${stringResource(R.string.Strength_session_rpe)} $it" },
+                      result.painRating?.let { "${stringResource(R.string.Strength_session_discomfort)} $it/10" })
+                  .joinToString(" · "),
+              color = RelvenColors.MutedText,
+              fontSize = 14.sp)
+        }
       }
       if (completed) {
         Button(
@@ -298,10 +315,20 @@ private fun StrengthSession.currentExerciseOrNull() =
     if (phase == StrengthSession.Phase.COMPLETE) null else workout.exercises().getOrNull(exerciseIndex)
 
 @Composable
-private fun RepetitionCountEntry(key: String, isSaving: Boolean, onConfirm: (Int) -> Unit) {
+private fun RepetitionCountEntry(
+    key: String,
+    isSaving: Boolean,
+    onConfirm: (StrengthSession.RepetitionResultInput) -> Unit) {
   var selectedCount by remember(key) { mutableStateOf<Int?>(null) }
   var manualEntryVisible by remember(key) { mutableStateOf(false) }
   var manualValue by remember(key) { mutableStateOf("") }
+  var advancedDetailsVisible by remember(key) { mutableStateOf(false) }
+  var perSide by remember(key) { mutableStateOf(false) }
+  var leftCount by remember(key) { mutableStateOf<Int?>(null) }
+  var rightCount by remember(key) { mutableStateOf<Int?>(null) }
+  var rpe by remember(key) { mutableStateOf<Int?>(null) }
+  var discomfort by remember(key) { mutableStateOf<Int?>(null) }
+  var notes by remember(key) { mutableStateOf("") }
   val haptic = LocalHapticFeedback.current
   fun selectCount(value: Int?) {
     selectedCount = value
@@ -309,78 +336,239 @@ private fun RepetitionCountEntry(key: String, isSaving: Boolean, onConfirm: (Int
   }
 
   Text(stringResource(R.string.Strength_session_how_many_repetitions), color = RelvenColors.MutedText)
-  Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically) {
-    RepetitionAdjustmentButton(
-        delta = -1,
-        enabled = !isSaving && selectedCount != 0,
-        onAdjust = { selectCount(adjustRepetitionCount(selectedCount, -1)) })
-    Text(
-        selectedCount?.toString() ?: "—",
-        color = RelvenColors.Text,
-        fontSize = 48.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.semantics {
-          if (selectedCount != null) liveRegion = LiveRegionMode.Polite
-        })
-    RepetitionAdjustmentButton(
-        delta = 1,
-        enabled = !isSaving && selectedCount != 10_000,
-        onAdjust = { selectCount(adjustRepetitionCount(selectedCount, 1)) })
-  }
-  Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.spacedBy(4.dp),
-      verticalAlignment = Alignment.CenterVertically) {
-    listOf(5, 10, 15, 20).forEach { count ->
-      FilterChip(
-          selected = selectedCount == count,
-          onClick = { if (!isSaving) selectCount(count) },
-          label = { Text(count.toString()) },
-          enabled = !isSaving)
+  if (!perSide) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically) {
+      RepetitionAdjustmentButton(
+          delta = -1,
+          enabled = !isSaving && selectedCount != 0,
+          onAdjust = { selectCount(adjustRepetitionCount(selectedCount, -1)) })
+      Text(
+          selectedCount?.toString() ?: "—",
+          color = RelvenColors.Text,
+          fontSize = 48.sp,
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier.semantics {
+            if (selectedCount != null) liveRegion = LiveRegionMode.Polite
+          })
+      RepetitionAdjustmentButton(
+          delta = 1,
+          enabled = !isSaving && selectedCount != 10_000,
+          onAdjust = { selectCount(adjustRepetitionCount(selectedCount, 1)) })
+    }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+      listOf(5, 10, 15, 20).forEach { count ->
+        FilterChip(
+            selected = selectedCount == count,
+            onClick = { if (!isSaving) selectCount(count) },
+            label = { Text(count.toString()) },
+            enabled = !isSaving)
+      }
+    }
+    TextButton(
+        onClick = {
+          if (!manualEntryVisible) manualValue = selectedCount?.toString().orEmpty()
+          manualEntryVisible = !manualEntryVisible
+        },
+        enabled = !isSaving,
+        modifier = Modifier.heightIn(min = 48.dp)) {
+      Text(stringResource(R.string.Strength_session_enter_manually))
+    }
+    if (manualEntryVisible) {
+      OutlinedTextField(
+          value = manualValue,
+          onValueChange = { candidate ->
+            if (candidate.length <= 5 && candidate.all(Char::isDigit)) {
+              val parsed = parseRepetitionCount(candidate)
+              if (candidate.isEmpty() || parsed != null) {
+                manualValue = candidate
+                selectedCount = parsed
+              }
+            }
+          },
+          label = { Text(stringResource(R.string.Strength_session_repetitions)) },
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth())
     }
   }
+
   TextButton(
-      onClick = {
-        if (!manualEntryVisible) manualValue = selectedCount?.toString().orEmpty()
-        manualEntryVisible = !manualEntryVisible
-      },
+      onClick = { advancedDetailsVisible = !advancedDetailsVisible },
       enabled = !isSaving,
       modifier = Modifier.heightIn(min = 48.dp)) {
-    Text(stringResource(R.string.Strength_session_enter_manually))
+    Text(
+        stringResource(
+            if (advancedDetailsVisible) R.string.Strength_session_hide_advanced_details
+            else R.string.Strength_session_advanced_details))
   }
-  if (manualEntryVisible) {
+  if (advancedDetailsVisible) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      FilterChip(
+          selected = !perSide,
+          onClick = { perSide = false },
+          label = { Text(stringResource(R.string.Strength_session_total_count)) },
+          enabled = !isSaving)
+      FilterChip(
+          selected = perSide,
+          onClick = { perSide = true },
+          label = { Text(stringResource(R.string.Strength_session_per_side)) },
+          enabled = !isSaving)
+    }
+    if (perSide) {
+      SideRepetitionCounter(
+          label = stringResource(R.string.Strength_session_left_side),
+          value = leftCount,
+          enabled = !isSaving,
+          onValueChange = { leftCount = it })
+      SideRepetitionCounter(
+          label = stringResource(R.string.Strength_session_right_side),
+          value = rightCount,
+          enabled = !isSaving,
+          onValueChange = { rightCount = it })
+    }
+    OptionalRating(
+        label = stringResource(R.string.Strength_session_rpe),
+        selected = rpe,
+        enabled = !isSaving,
+        onSelected = { rpe = it })
+    OptionalRating(
+        label = stringResource(R.string.Strength_session_discomfort),
+        selected = discomfort,
+        enabled = !isSaving,
+        onSelected = { discomfort = it })
     OutlinedTextField(
-        value = manualValue,
-        onValueChange = { candidate ->
-          if (candidate.length <= 5 && candidate.all(Char::isDigit)) {
-            val parsed = parseRepetitionCount(candidate)
-            if (candidate.isEmpty() || parsed != null) {
-              manualValue = candidate
-              selectedCount = parsed
-            }
-          }
-        },
-        label = { Text(stringResource(R.string.Strength_session_repetitions)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth())
+        value = notes,
+        onValueChange = { if (it.length <= 1_000) notes = it },
+        label = { Text(stringResource(R.string.Strength_session_optional_notes)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        modifier = Modifier.fillMaxWidth(),
+        minLines = 2,
+        maxLines = 4)
   }
+
+  val readyToConfirm = if (perSide) leftCount != null && rightCount != null else selectedCount != null
   Button(
       onClick = {
-        selectedCount?.let {
+        if (readyToConfirm) {
           haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-          onConfirm(it)
+          onConfirm(
+              StrengthSession.RepetitionResultInput(
+                  repetitions = if (perSide) null else selectedCount,
+                  leftRepetitions = if (perSide) leftCount else null,
+                  rightRepetitions = if (perSide) rightCount else null,
+                  rpe = rpe?.toDouble(),
+                  painRating = discomfort,
+                  notes = notes.takeIf(String::isNotBlank)))
         }
       },
-      enabled = !isSaving && selectedCount?.let { it in 0..10_000 } == true,
+      enabled = !isSaving && readyToConfirm &&
+          (if (perSide) leftCount in 0..10_000 && rightCount in 0..10_000
+          else selectedCount in 0..10_000),
       colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
       modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) {
     Text(
-        selectedCount?.let { stringResource(R.string.Strength_session_log_count, it) }
-            ?: stringResource(R.string.Strength_session_choose_count))
+        if (perSide) {
+          if (readyToConfirm) {
+            "${stringResource(R.string.Strength_session_log_repetitions)} · $leftCount / $rightCount"
+          } else stringResource(R.string.Strength_session_choose_count)
+        } else {
+          selectedCount?.let { stringResource(R.string.Strength_session_log_count, it) }
+              ?: stringResource(R.string.Strength_session_choose_count)
+        })
+  }
+}
+
+@Composable
+private fun SideRepetitionCounter(
+    label: String,
+    value: Int?,
+    enabled: Boolean,
+    onValueChange: (Int?) -> Unit) {
+  var manualVisible by remember(label) { mutableStateOf(false) }
+  var manualValue by remember(label) { mutableStateOf("") }
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Text(label, color = RelvenColors.MutedText)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically) {
+      RepetitionAdjustmentButton(
+          delta = -1,
+          enabled = enabled && value != null && value > 0,
+          onAdjust = {
+            val updated = adjustRepetitionCount(value, -1)
+            onValueChange(updated)
+            if (manualVisible) manualValue = updated.toString()
+          })
+      Text(value?.toString() ?: "—", color = RelvenColors.Text, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+      RepetitionAdjustmentButton(
+          delta = 1,
+          enabled = enabled && value != 10_000,
+          onAdjust = {
+            val updated = adjustRepetitionCount(value, 1)
+            onValueChange(updated)
+            if (manualVisible) manualValue = updated.toString()
+          })
+    }
+    TextButton(
+        onClick = {
+          if (!manualVisible) manualValue = value?.toString().orEmpty()
+          manualVisible = !manualVisible
+        },
+        enabled = enabled,
+        modifier = Modifier.heightIn(min = 48.dp)) {
+      Text(stringResource(R.string.Strength_session_enter_manually))
+    }
+    if (manualVisible) {
+      OutlinedTextField(
+          value = manualValue,
+          onValueChange = { candidate ->
+            if (candidate.length <= 5 && candidate.all(Char::isDigit)) {
+              val parsed = parseRepetitionCount(candidate)
+              if (candidate.isEmpty() || parsed != null) {
+                manualValue = candidate
+                onValueChange(parsed)
+              }
+            }
+          },
+          label = { Text(stringResource(R.string.Strength_session_repetitions)) },
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth())
+    }
+  }
+}
+
+@Composable
+private fun OptionalRating(
+    label: String,
+    selected: Int?,
+    enabled: Boolean,
+    onSelected: (Int?) -> Unit) {
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      Text(label, color = RelvenColors.MutedText, modifier = Modifier.weight(1f))
+      TextButton(onClick = { onSelected(null) }, enabled = enabled && selected != null) {
+        Text(stringResource(R.string.Strength_session_clear))
+      }
+    }
+    listOf(0..5, 6..10).forEach { range ->
+      Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        range.forEach { value ->
+          FilterChip(
+              selected = selected == value,
+              onClick = { if (enabled) onSelected(value) },
+              label = { Text(value.toString()) },
+              enabled = enabled)
+        }
+      }
+    }
   }
 }
 

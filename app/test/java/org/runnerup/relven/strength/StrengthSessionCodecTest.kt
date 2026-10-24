@@ -128,7 +128,10 @@ class StrengthSessionCodecTest {
             repetitions = null,
             durationSeconds = 30,
             leftRepetitions = 8,
-            rightRepetitions = 7)
+            rightRepetitions = 7,
+            rpe = 7.5,
+            painRating = 1,
+            notes = "Left side felt less stable")
     val state =
         StrengthSession.start("plan", "entry", workout)
             .copy(
@@ -142,6 +145,9 @@ class StrengthSessionCodecTest {
 
     assertEquals(8, decoded.results.single().leftRepetitions)
     assertEquals(7, decoded.results.single().rightRepetitions)
+    assertEquals(7.5, decoded.results.single().rpe!!, 0.0)
+    assertEquals(1, decoded.results.single().painRating)
+    assertEquals("Left side felt less stable", decoded.results.single().notes)
   }
 
   @Test

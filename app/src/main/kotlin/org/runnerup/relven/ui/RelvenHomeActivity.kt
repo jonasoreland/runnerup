@@ -291,8 +291,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               isSavingProgress = strengthTransitionSaving,
               isSavingCompletion = strengthFinishing,
               onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime()) } },
-              onLogRepetitions = { count ->
-                updateStrengthSession { it.completeRepetitions(count, SystemClock.elapsedRealtime()) }
+              onLogRepetitions = { input ->
+                updateStrengthSession { it.completeResult(input, SystemClock.elapsedRealtime()) }
               },
               onSkipPendingResult = {
                 updateStrengthSession { it.skipPendingTimedResult(SystemClock.elapsedRealtime()) }

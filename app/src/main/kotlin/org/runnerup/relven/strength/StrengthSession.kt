@@ -29,6 +29,15 @@ internal data class StrengthSession(
       val setNumber: Int,
       val durationSeconds: Int)
 
+  /** Explicitly confirmed measured values from the fast logger. Null fields remain unknown. */
+  data class RepetitionResultInput(
+      val repetitions: Int? = null,
+      val leftRepetitions: Int? = null,
+      val rightRepetitions: Int? = null,
+      val rpe: Double? = null,
+      val painRating: Int? = null,
+      val notes: String? = null)
+
   data class SetResult(
       val exerciseIndex: Int,
       val exerciseStepId: String,
@@ -68,7 +77,14 @@ internal data class StrengthSession(
   fun completeRepetitions(
       repetitions: Int,
       nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
-    require(repetitions in 0..10_000) { "Repetitions must be from 0 to 10000" }
+    return completeResult(RepetitionResultInput(repetitions = repetitions), nowElapsedRealtimeMillis)
+  }
+
+  /** Confirms bilateral or per-side reps plus optional advanced details for the associated set. */
+  fun completeResult(
+      input: RepetitionResultInput,
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
+    validateInput(input)
     val refreshed =
         if ((phase == Phase.REST || phase == Phase.TIMED_WORK) && timerDeadlineElapsedRealtimeMillis != null) {
           tickAt(nowElapsedRealtimeMillis)
@@ -83,12 +99,36 @@ internal data class StrengthSession(
               pending.exerciseStepId,
               pending.exerciseName,
               pending.setNumber,
-              repetitions,
-              pending.durationSeconds)
+              input.repetitions,
+              pending.durationSeconds,
+              leftRepetitions = input.leftRepetitions,
+              rightRepetitions = input.rightRepetitions,
+              rpe = input.rpe,
+              painRating = input.painRating,
+              notes = input.notes)
       return resolvePendingResult(refreshed, result, nowElapsedRealtimeMillis)
     }
     check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
-    return completeManualSet(repetitions, nowElapsedRealtimeMillis)
+    return completeManualSet(input, nowElapsedRealtimeMillis)
+  }
+
+  private fun validateInput(input: RepetitionResultInput) {
+    require((input.repetitions != null) xor
+        (input.leftRepetitions != null && input.rightRepetitions != null)) {
+      "Enter either a total count or both side counts"
+    }
+    require(input.leftRepetitions == null || input.rightRepetitions != null) {
+      "Both side counts are required"
+    }
+    require(input.rightRepetitions == null || input.leftRepetitions != null) {
+      "Both side counts are required"
+    }
+    require(input.repetitions == null || input.repetitions in 0..10_000) { "Invalid repetition count" }
+    require(input.leftRepetitions == null || input.leftRepetitions in 0..10_000) { "Invalid left repetition count" }
+    require(input.rightRepetitions == null || input.rightRepetitions in 0..10_000) { "Invalid right repetition count" }
+    require(input.rpe == null || input.rpe.isFinite() && input.rpe in 0.0..10.0) { "Invalid RPE" }
+    require(input.painRating == null || input.painRating in 0..10) { "Invalid discomfort rating" }
+    require(input.notes == null || input.notes.length <= 1_000) { "Set notes are too long" }
   }
 
   /** Skip a timed repetition count without inventing a result or interrupting an active rest timer. */
@@ -280,11 +320,22 @@ internal data class StrengthSession(
     }
   }
 
-  private fun completeManualSet(repetitions: Int, nowElapsedRealtimeMillis: Long): StrengthSession {
+  private fun completeManualSet(input: RepetitionResultInput, nowElapsedRealtimeMillis: Long): StrengthSession {
     check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
     val exercise = currentExercise()
     val result =
-        SetResult(exerciseIndex, exercise.stepId(), exercise.name(), setNumber, repetitions, null)
+        SetResult(
+            exerciseIndex,
+            exercise.stepId(),
+            exercise.name(),
+            setNumber,
+            input.repetitions,
+            null,
+            leftRepetitions = input.leftRepetitions,
+            rightRepetitions = input.rightRepetitions,
+            rpe = input.rpe,
+            painRating = input.painRating,
+            notes = input.notes)
     val updatedResults = sortedResults(results + result)
     val next = nextSetPosition(exerciseIndex, setNumber)
     if (next == null) {

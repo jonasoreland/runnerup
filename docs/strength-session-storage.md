@@ -41,10 +41,19 @@ Fields other than the stable exercise/set identity and status are optional.
 `exerciseCategory` is an optional category snapshot and does not extend Workout
 v3 or mutate its immutable exercise snapshot.
 `repetitions` is a bilateral count; unilateral performance uses
-`leftRepetitions` and/or `rightRepetitions` instead. Zero is a real, explicitly
-recorded value. Unknown measurements are omitted, never changed to zero. Timed
+`leftRepetitions` and `rightRepetitions` instead. The fast logger requires both
+side counts together and does not also store a bilateral total. Zero is a real,
+explicitly recorded value. Unknown measurements are omitted, never changed to zero. Timed
 sets retain actual duration, which may be shorter than the planned duration;
 they can also retain repetitions for a timed maximum-repetition test.
+
+The default logger records only the total count. Per-side counts and optional
+RPE, discomfort (0–10), and notes (up to 1,000 characters) are entered from its
+advanced-details section. No advanced value is prefilled or recorded without
+the user's explicit set confirmation. Confirmed fields are written with that
+set's stable identity and are available in the saved session summary. The same
+fields survive an offline save and reload through the versioned session codec;
+this feature does not change the Workout v3 prescription or private file schema.
 
 `status` is `COMPLETED`, `SKIPPED`, or `INCOMPLETE`. A skipped/incomplete marker
 has no performance counts or duration. Replacing a saved result preserves its

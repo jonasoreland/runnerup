@@ -562,6 +562,16 @@
     <string name="Strength_session_log_count">Log %1$d reps</string>
     <string name="Strength_session_increase_count">Increase repetitions</string>
     <string name="Strength_session_decrease_count">Decrease repetitions</string>
+    <string name="Strength_session_advanced_details">Advanced details</string>
+    <string name="Strength_session_hide_advanced_details">Hide advanced details</string>
+    <string name="Strength_session_total_count">Total</string>
+    <string name="Strength_session_per_side">Per side</string>
+    <string name="Strength_session_left_side">Left</string>
+    <string name="Strength_session_right_side">Right</string>
+    <string name="Strength_session_rpe">Effort (RPE)</string>
+    <string name="Strength_session_discomfort">Discomfort</string>
+    <string name="Strength_session_optional_notes">Notes (optional)</string>
+    <string name="Strength_session_clear">Clear</string>
     <string name="Strength_session_resting">Rest</string>
     <string name="Strength_session_skip_rest">Skip rest</string>
     <string name="Strength_session_pause">Pause</string>

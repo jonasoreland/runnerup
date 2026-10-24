@@ -575,6 +575,16 @@
   <string name="Strength_session_log_count">Logga %1$d reps</string>
   <string name="Strength_session_increase_count">Öka antal repetitioner</string>
   <string name="Strength_session_decrease_count">Minska antal repetitioner</string>
+  <string name="Strength_session_advanced_details">Fler detaljer</string>
+  <string name="Strength_session_hide_advanced_details">Dölj detaljer</string>
+  <string name="Strength_session_total_count">Totalt</string>
+  <string name="Strength_session_per_side">Per sida</string>
+  <string name="Strength_session_left_side">Vänster</string>
+  <string name="Strength_session_right_side">Höger</string>
+  <string name="Strength_session_rpe">Ansträngning (RPE)</string>
+  <string name="Strength_session_discomfort">Obehag</string>
+  <string name="Strength_session_optional_notes">Anteckning (valfri)</string>
+  <string name="Strength_session_clear">Rensa</string>
   <string name="Strength_session_resting">Vila</string>
   <string name="Strength_session_skip_rest">Hoppa över vilan</string>
   <string name="Strength_session_pause">Pausa</string>
