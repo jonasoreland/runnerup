@@ -18,6 +18,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-sdk tools:overrideLibrary="androidx.health.connect.client" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -51,6 +53,12 @@
         android:name="android.permission.FOREGROUND_SERVICE_HEALTH"
         android:minSdkVersion="34" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.health.WRITE_EXERCISE" />
+    <uses-permission android:name="android.permission.health.WRITE_EXERCISE_ROUTE" />
+    <uses-permission android:name="android.permission.health.WRITE_DISTANCE" />
+    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.WRITE_SPEED" />
+    <uses-permission android:name="android.permission.health.WRITE_STEPS" />
 
     <uses-permission
         android:name="android.permission.BLUETOOTH"
@@ -74,6 +82,7 @@
         android:protectionLevel="signature" />
 
     <queries>
+        <package android:name="com.google.android.apps.healthdata" />
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>

@@ -3,12 +3,12 @@
 
     <issue
         id="UnusedAttribute"
-        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 23)"
+        message="Attribute `usesPermissionFlags` is only used in API level 31 and higher (current min is 24)"
         errorLine1="        android:usesPermissionFlags=&quot;neverForLocation&quot; />"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="AndroidManifest.xml"
-            line="64"
+            line="71"
             column="9"/>
     </issue>
 
@@ -19,238 +19,557 @@
         errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/org/runnerup/view/MainLayout.java"
-            line="88"
+            line="100"
             column="7"/>
     </issue>
 
     <issue
-        id="SourceLockedOrientationActivity"
-        message="You should not lock orientation of your activities, so that you can support a good user experience for any device or orientation"
-        errorLine1="      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);"
-        errorLine2="      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/org/runnerup/view/RunActivity.java"
-            line="127"
-            column="7"/>
-    </issue>
-
-    <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-ca/cues.xml"
+            file="res/values-es/cues.xml"
             line="32"
             column="3"/>
     </issue>
 
     <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="32"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="32"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="32"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="32"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-ca/cues.xml"
-            line="36"
+            file="res/values-es/cues.xml"
+            line="37"
             column="3"/>
     </issue>
 
     <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="37"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="37"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="37"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="37"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-ca/cues.xml"
-            line="40"
+            file="res/values-es/cues.xml"
+            line="42"
             column="3"/>
     </issue>
 
     <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="42"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="42"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="42"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="42"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-ca/cues.xml"
-            line="44"
+            file="res/values-es/cues.xml"
+            line="47"
             column="3"/>
     </issue>
 
     <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="47"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="47"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="47"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="47"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-ca/cues.xml"
-            line="48"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-ca/cues.xml"
+            file="res/values-es/cues.xml"
             line="52"
             column="3"/>
     </issue>
 
     <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-ca/cues.xml"
-            line="56"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-ca/cues.xml"
-            line="60"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-ca/cues.xml"
-            line="64"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="MissingQuantity"
-        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-ca/cues.xml"
-            line="68"
-            column="3"/>
-    </issue>
-
-    <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_hour&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-iw/cues.xml"
-            line="32"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_minute&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-iw/cues.xml"
-            line="38"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_second&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-iw/cues.xml"
-            line="44"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
-        errorLine1="  &lt;plurals name=&quot;cue_meter&quot;>"
-        errorLine2="  ^">
-        <location
-            file="res/values-iw/cues.xml"
-            line="50"
-            column="3"/>
-    </issue>
-
-    <issue
-        id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
-            line="56"
+            file="res/values-fr/cues.xml"
+            line="52"
             column="3"/>
     </issue>
 
     <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="52"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="52"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometer&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="52"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
+            file="res/values-es/cues.xml"
+            line="57"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="57"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="57"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="57"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_mile&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="57"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-es/cues.xml"
             line="62"
             column="3"/>
     </issue>
 
     <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
-            line="68"
+            file="res/values-fr/cues.xml"
+            line="62"
             column="3"/>
     </issue>
 
     <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="62"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="62"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_kilometers_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="62"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
-            line="74"
+            file="res/values-es/cues.xml"
+            line="67"
             column="3"/>
     </issue>
 
     <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="67"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="67"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="67"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_miles_per_hour&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="67"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
-            line="80"
+            file="res/values-es/cues.xml"
+            line="72"
             column="3"/>
     </issue>
 
     <issue
         id="UnusedQuantity"
-        message="For language &quot;iw&quot; (Hebrew) the following quantities are not relevant: `many`"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="72"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="72"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="72"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_bpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="72"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;es&quot; (Spanish) the following quantities are not relevant: `many`"
         errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
         errorLine2="  ^">
         <location
-            file="res/values-iw/cues.xml"
-            line="86"
+            file="res/values-es/cues.xml"
+            line="77"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;fr&quot; (French) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-fr/cues.xml"
+            line="77"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;it&quot; (Italian) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-it/cues.xml"
+            line="77"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt-rBR/cues.xml"
+            line="77"
+            column="3"/>
+    </issue>
+
+    <issue
+        id="UnusedQuantity"
+        message="For language &quot;pt&quot; (Portuguese) the following quantities are not relevant: `many`"
+        errorLine1="  &lt;plurals name=&quot;cue_rpm&quot;>"
+        errorLine2="  ^">
+        <location
+            file="res/values-pt/cues.xml"
+            line="77"
             column="3"/>
     </issue>
 
