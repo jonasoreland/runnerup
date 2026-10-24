@@ -1,5 +1,10 @@
 # Implementation status — 24 October 2026
 
+## Planned workout start through active run and review
+
+- On isolated API 36 emulator `emulator-5608` at ADB port 5039, opened the plan calendar's `Långpass · 50 min` entry for 24 October 2026 and tapped **Starta pass**. The app opened Start with the planned workout selected. Tapping **Starta GPS** and the waiting status opened the redesigned active workout view, which displayed **PASS PÅGÅR**, timer, distance/pace metrics, GPS quality, map attribution, lap, pause, and end controls. Ending the short synthetic session opened the Relven review. After an AVD restart, the 13-second run appeared in History and reopened in Relven's saved-activity detail with its planned 50-minute target and map section. Captures: `app/build/qa/plan-run-after-avd-restart.png`, `plan-run-history-after-restart.png`, and `plan-run-history-detail-after-restart.png`.
+- The synthetic workout had 0 m and no accepted route points, so this verifies navigation, saved-activity persistence, and historical detail reopening, not GPS route quality. `StrengthSessionTest.completedScheduledWorkoutCanBeRepeatedAsANewExecution` and `FavoriteWorkoutStoreTest` pass; source inspection confirms the plan-detail start action has no date- or completion-based disablement. Starting past/future entries, rerunning a completed entry in the UI, custom-name favorite creation/reuse, and plan completion display still need focused emulator verification. No physical ADB device was used.
+
 ## Active workout background/foreground re-entry check
 
 - On isolated API 36 phone emulator `emulator-5608` at ADB port 5039, started a free run, sent the app to the background, reopened `RelvenHomeActivity`, confirmed the **Pågående pass** card, and reopened the existing `RunActivity`. Android's service dump showed the same `Tracker` foreground service remained active with its ongoing workout notification. No second workout was started. Screenshot: `app/build/outputs/qa/relven-home-during-active.png`; active screen before re-entry: `app/build/outputs/qa/relven-active-recovery-before.png`.
