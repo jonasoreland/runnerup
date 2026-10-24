@@ -80,7 +80,7 @@ class SettingsNavigationTest {
         SettingsPage.About to "2.0.0")
 
     composeRule.onNodeWithText("Klocka").performClick()
-    composeRule.onNodeWithText("Uppdatera klockstatus").fetchSemanticsNode()
+    composeRule.onNodeWithText("Testa Relven på klockan").fetchSemanticsNode()
     composeRule.onNodeWithText("Inställningar").performClick()
     composeRule.onNodeWithText("Hantera Relven och dina träningsinställningar").fetchSemanticsNode()
 

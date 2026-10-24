@@ -45,6 +45,6 @@ class SettingsDestinationTest {
     assertEquals(WearConnectionState.Unavailable, wearConnectionState(false, false, null))
     assertEquals(WearConnectionState.Error, wearConnectionState(true, false, null))
     assertEquals(WearConnectionState.Disconnected, wearConnectionState(true, true, emptyList()))
-    assertEquals(WearConnectionState.Connected, wearConnectionState(true, true, listOf("Watch")))
+    assertEquals(WearConnectionState.TransportConnected, wearConnectionState(true, true, listOf("Watch")))
   }
 }

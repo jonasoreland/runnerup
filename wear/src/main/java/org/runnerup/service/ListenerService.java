@@ -33,10 +33,12 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.WearableListenerService;
+import java.io.IOException;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
@@ -133,6 +135,21 @@ public class ListenerService extends WearableListenerService {
         continue;
       }
       maybeShowNotification();
+    }
+  }
+
+  @Override
+  public void onMessageReceived(com.google.android.gms.wearable.MessageEvent messageEvent) {
+    super.onMessageReceived(messageEvent);
+    if (!Constants.Wear.Path.MSG_SESSION_PING.equals(messageEvent.getPath())) return;
+    try {
+      byte[] response = WearSessionProtocol.respondToPing(messageEvent.getData());
+      com.google.android.gms.wearable.Wearable.getMessageClient(this)
+          .sendMessage(
+              messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_SESSION_PONG, response)
+          .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge session ping", error));
+    } catch (IOException error) {
+      Log.w(TAG, "Ignoring invalid session handshake payload", error);
     }
   }
 

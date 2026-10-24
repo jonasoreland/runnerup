@@ -431,7 +431,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onAutoLapIntervalsChanged = settingsRepository::setAutoLapIntervals,
             settingsDeviceState = settingsDeviceState,
             settingsPageActions = SettingsPageActions(
-                onRefreshWatch = ::refreshSettingsDeviceState,
+                onRefreshWatch = ::testWatchConnection,
                 onCadenceSensorChanged = settingsRepository::setUseCadenceSensor,
                 onTemperatureSensorChanged = settingsRepository::setUseTemperatureSensor,
                 onPressureSensorChanged = settingsRepository::setUsePressureSensor,
@@ -711,6 +711,27 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
       settingsDeviceState = settingsDeviceState.copy(
           wearState = wearConnectionState(supported, succeeded, connectedNodes),
           connectedWatchNames = connectedNodes.orEmpty())
+    }
+  }
+
+  private fun testWatchConnection() {
+    settingsDeviceState =
+        settingsDeviceState.copy(
+            wearHandshakeState = WearHandshakeState.Testing,
+            wearHandshakeRoundTripTimeMillis = null)
+    WearConnectionProvider.testConnection(this) { result ->
+      val supported = result.status != WearConnectionProvider.HandshakeStatus.UNSUPPORTED
+      val transportRequestSucceeded =
+          result.status != WearConnectionProvider.HandshakeStatus.TRANSPORT_ERROR
+      val nodeNames = result.connectedNodes
+      settingsDeviceState =
+          settingsDeviceState.copy(
+              wearState =
+                  wearConnectionState(supported, transportRequestSucceeded, nodeNames),
+              connectedWatchNames = nodeNames.orEmpty(),
+              wearHandshakeState = wearHandshakeState(result.status.name),
+              wearHandshakeRoundTripTimeMillis =
+                  result.roundTripTimeMillis.takeIf { it >= 0 })
     }
   }
 

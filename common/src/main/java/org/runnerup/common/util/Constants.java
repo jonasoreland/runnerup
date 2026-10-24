@@ -259,6 +259,10 @@ public interface Constants {
       /* Msg: workout event */
       String MSG_WORKOUT_EVENT = PREFIX + "/workout/event";
 
+      /* Msg: versioned app-level handshake */
+      String MSG_SESSION_PING = PREFIX + "/session/ping";
+      String MSG_SESSION_PONG = PREFIX + "/session/pong";
+
       /* Msg: pause/resume from wear to phone */
       String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
       String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
