@@ -59,6 +59,19 @@ internal object StrengthSessionStore {
   @Synchronized
   @Throws(IOException::class)
   fun complete(context: Context, state: StrengthSession, finishedAtMillis: Long) {
+    writeCompleted(context, state, finishedAtMillis)
+    val activeFile = AtomicFile(file(context, "active.json"))
+    activeFile.delete()
+  }
+
+  /** Store imported history without affecting the user's independently resumable active session. */
+  @Synchronized
+  @Throws(IOException::class)
+  fun importCompleted(context: Context, state: StrengthSession, finishedAtMillis: Long) {
+    writeCompleted(context, state, finishedAtMillis)
+  }
+
+  private fun writeCompleted(context: Context, state: StrengthSession, finishedAtMillis: Long) {
     require(state.isComplete) { "Session is not complete" }
     require(finishedAtMillis > 0) { "Invalid completion time" }
     val completionFile = file(context, "completed-${hash(state.executionId)}.json")
@@ -68,8 +81,6 @@ internal object StrengthSessionStore {
       throw IOException("This workout execution is already complete")
     }
     write(context, completionFile.name, StrengthSessionCodec.encode(state, finishedAtMillis))
-    val activeFile = AtomicFile(file(context, "active.json"))
-    activeFile.delete()
   }
 
   @Synchronized

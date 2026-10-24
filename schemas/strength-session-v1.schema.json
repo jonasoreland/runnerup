@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relven.app/schemas/strength-session-v1.schema.json",
+  "title": "Relven completed strength session export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schemaVersion", "prescription", "performance"],
+  "properties": {
+    "format": { "const": "relven.strength-session" },
+    "schemaVersion": { "const": 1 },
+    "prescription": {
+      "allOf": [
+        { "$ref": "workout-v3.schema.json" },
+        { "properties": { "sport": { "enum": ["strength", "prehab"] } }, "required": ["sport"] }
+      ]
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sessionId", "planId", "scheduledEntryId", "sessionStatus", "completion", "finishedAtMillis", "sets"],
+      "properties": {
+        "sessionId": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "planId": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "scheduledEntryId": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "sessionStatus": { "const": "COMPLETED" },
+        "completion": { "enum": ["complete", "partial"] },
+        "finishedAtMillis": { "type": "integer", "minimum": 1 },
+        "sets": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "status"],
+            "properties": {
+              "exerciseIndex": { "type": "integer", "minimum": 0 },
+              "exerciseStepId": { "type": "string", "minLength": 1, "maxLength": 128 },
+              "exerciseName": { "type": "string", "minLength": 1, "maxLength": 256 },
+              "setNumber": { "type": "integer", "minimum": 1, "maximum": 100 },
+              "status": { "enum": ["COMPLETED", "SKIPPED", "INCOMPLETE"] },
+              "repetitions": { "type": "integer", "minimum": 0, "maximum": 10000 },
+              "durationSeconds": { "type": "integer", "minimum": 0, "maximum": 86400 },
+              "restDurationSeconds": { "type": "integer", "minimum": 0, "maximum": 86400 },
+              "leftRepetitions": { "type": "integer", "minimum": 0, "maximum": 10000 },
+              "rightRepetitions": { "type": "integer", "minimum": 0, "maximum": 10000 },
+              "startedAtMillis": { "type": "integer", "minimum": 1 },
+              "completedAtMillis": { "type": "integer", "minimum": 1 },
+              "rpe": { "type": "number", "minimum": 0, "maximum": 10 },
+              "painRating": { "type": "integer", "minimum": 0, "maximum": 10 },
+              "notes": { "type": "string", "maxLength": 1000 },
+              "exerciseCategory": { "type": "string", "minLength": 1, "maxLength": 64 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

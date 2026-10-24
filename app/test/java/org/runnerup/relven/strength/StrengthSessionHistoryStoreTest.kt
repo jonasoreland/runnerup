@@ -95,6 +95,32 @@ class StrengthSessionHistoryStoreTest {
   }
 
   @Test
+  fun portableExportImportPersistsToHistoryAndIsIdempotent() {
+    val active = StrengthSession.start("active-plan", "active-entry", workout)
+    StrengthSessionStore.saveInProgress(context, active)
+    val exercise = workout.exercises().single()
+    val original = StrengthSession.start("portable-plan", "portable-entry", workout).copy(
+        executionId = "portable-run",
+        phase = StrengthSession.Phase.COMPLETE,
+        secondsRemaining = 0,
+        results = listOf(StrengthSession.SetResult(0, exercise.stepId(), exercise.name(), 1, 10, null)),
+        timerDeadlineElapsedRealtimeMillis = null,
+        timerAnchorElapsedRealtimeMillis = null,
+        timerClockObservedElapsedRealtimeMillis = null)
+    val exported = StrengthSessionExportCodec.encode(CompletedStrengthSession(original, 500))
+    val imported = StrengthSessionExportCodec.decode(exported)
+
+    StrengthSessionStore.importCompleted(context, imported.state, imported.finishedAtMillis)
+    StrengthSessionStore.importCompleted(context, imported.state, imported.finishedAtMillis)
+
+    val restored = StrengthSessionStore.completedSessions(context).sessions
+        .single { it.state.executionId == "portable-run" }
+    assertEquals(original.results, restored.state.results)
+    assertEquals(500, restored.finishedAtMillis)
+    assertEquals(active, StrengthSessionStore.loadInProgress(context))
+  }
+
+  @Test
   fun boundsTheFileScanToFiveHundredRecentRecords() {
     repeat(501) { index -> save("entry-$index", index + 1L) }
 

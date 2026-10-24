@@ -51,12 +51,12 @@ jobs:
 
       - name: Validate offline AI Plan Kit
         run: |
+          python3 -m pip install -r tools/requirements-exercise-validation.txt
           python3 tools/test_build_ai_plan_kit.py
           python3 tools/build_ai_plan_kit.py --check
 
       - name: Validate offline exercise catalog
         run: |
-          python3 -m pip install -r tools/requirements-exercise-validation.txt
           python3 tools/validate_exercise_library.py
 
       - name: Setup Android SDK

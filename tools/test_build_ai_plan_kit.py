@@ -6,6 +6,8 @@ import subprocess
 import sys
 import unittest
 import zipfile
+import jsonschema
+from referencing import Registry, Resource
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +20,7 @@ ARCHIVE_SOURCES = {
     "schemas/plan-v1.schema.json": ROOT / "schemas" / "plan-v1.schema.json",
     "schemas/plan-v2.schema.json": ROOT / "schemas" / "plan-v2.schema.json",
     "schemas/workout-v3.schema.json": ROOT / "schemas" / "workout-v3.schema.json",
+    "schemas/strength-session-v1.schema.json": ROOT / "schemas" / "strength-session-v1.schema.json",
     "schemas/exercise-library-v1.schema.json": ROOT / "schemas" / "exercise-library-v1.schema.json",
     "schemas/exercise-collection-v1.schema.json": ROOT / "schemas" / "exercise-collection-v1.schema.json",
     "catalog/exercise-library-v1.json": ROOT / "app" / "assets" / "relven" / "exercise-library-v1.json",
@@ -83,6 +86,38 @@ class AiPlanKitBuildTest(unittest.TestCase):
         self.assertTrue(capabilities["strengthPrehab"]["planImport"])
         self.assertTrue(capabilities["strengthPrehab"]["guidedPhoneSession"])
         self.assertFalse(capabilities["planZipImport"])
+        self.assertEqual("relven.strength-session", capabilities["strengthPrehab"]["portablePerformanceFormat"])
+        self.assertFalse(capabilities["strengthPrehab"]["planImportAcceptsPerformanceExports"])
+
+    def test_performance_export_schema_accepts_prescription_plus_explicit_partial_results(self):
+        schema = json.loads((ROOT / "schemas" / "strength-session-v1.schema.json").read_text(encoding="utf-8"))
+        plan = json.loads((ROOT / "schemas" / "examples" / "plan-strength.json").read_text(encoding="utf-8"))
+        workout = plan["workouts"][0]
+        workout["steps"] = workout["steps"][:1]
+        export = {
+            "format": "relven.strength-session",
+            "schemaVersion": 1,
+            "prescription": workout,
+            "performance": {
+                "sessionId": "run-1",
+                "planId": plan["id"],
+                "scheduledEntryId": "day-1",
+                "sessionStatus": "COMPLETED",
+                "completion": "partial",
+                "finishedAtMillis": 1792830030000,
+                "sets": [
+                    {"exerciseIndex": 0, "exerciseStepId": "squat-step", "exerciseName": "Bodyweight squat", "setNumber": 1, "status": "COMPLETED", "repetitions": 10},
+                    {"exerciseIndex": 0, "exerciseStepId": "squat-step", "exerciseName": "Bodyweight squat", "setNumber": 2, "status": "SKIPPED"},
+                    {"exerciseIndex": 0, "exerciseStepId": "squat-step", "exerciseName": "Bodyweight squat", "setNumber": 3, "status": "INCOMPLETE"},
+                ],
+            },
+        }
+        workout_schema = json.loads((ROOT / "schemas" / "workout-v3.schema.json").read_text(encoding="utf-8"))
+        registry = Registry().with_resource(
+            "https://relven.app/schemas/workout-v3.schema.json",
+            Resource.from_contents(workout_schema),
+        )
+        jsonschema.Draft202012Validator(schema, registry=registry).validate(export)
 
     def test_complete_kit_contains_the_exercise_database_and_interchange_guide(self):
         with zipfile.ZipFile(OUTPUT) as archive:

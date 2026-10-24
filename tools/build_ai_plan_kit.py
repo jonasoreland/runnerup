@@ -18,6 +18,7 @@ FILES = {
     "schemas/plan-v1.schema.json": "schemas/plan-v1.schema.json",
     "schemas/plan-v2.schema.json": "schemas/plan-v2.schema.json",
     "schemas/workout-v3.schema.json": "schemas/workout-v3.schema.json",
+    "schemas/strength-session-v1.schema.json": "schemas/strength-session-v1.schema.json",
     "schemas/exercise-library-v1.schema.json": "schemas/exercise-library-v1.schema.json",
     "schemas/exercise-collection-v1.schema.json": "schemas/exercise-collection-v1.schema.json",
     "catalog/exercise-library-v1.json": "app/assets/relven/exercise-library-v1.json",

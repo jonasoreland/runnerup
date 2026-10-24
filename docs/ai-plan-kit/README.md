@@ -20,6 +20,7 @@ AI output must be one JSON plan document using `format: "relven.plan"` and `sche
 - `schemas/plan-v1.schema.json` — new AI plan package schema.
 - `schemas/plan-v2.schema.json` — Relven-managed immutable revision schema; do not generate new v2 plans.
 - `schemas/workout-v3.schema.json` — running and exercise workout document structure.
+- `schemas/strength-session-v1.schema.json` — completed strength-session export containing both a Workout v3 prescription and actual per-set performance. This is a history/export format, not a plan-import format.
 - `schemas/exercise-library-v1.schema.json` — bundled exercise catalog structure.
 - `schemas/exercise-collection-v1.schema.json` — user-created custom exercise collection structure.
 - `catalog/exercise-library-v1.json` — every bundled exercise with stable IDs, revisions, bilingual names/instructions, category, pattern, muscle groups, and equipment.

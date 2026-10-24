@@ -118,5 +118,12 @@ plan entry creates a separate session. Repeating the same completion write with
 the same execution contents and finish timestamp is idempotent; conflicting
 reuse of that execution ID is rejected. The prescribed workout and confirmed
 results remain together in each session file for offline recovery. Portable
-Relven JSON export/import is a later implementation step and will use its own
-versioned public schema rather than exposing this private file format.
+export/import uses the separate public `relven.strength-session` schema v1 in
+`schemas/strength-session-v1.schema.json`; private session files are never copied
+directly. The public document contains the validated Workout v3 prescription and
+actual per-set rows. The History screen can import and export these files. Import
+validates the workout, set identities, set count, statuses and completion marker
+before asking the user to save. Each completed record is written atomically using
+its stable session ID. An exact retry is idempotent, while conflicting reuse of an
+ID is rejected rather than overwriting the existing result. The ordinary plan
+importer continues to accept `relven.plan` only.

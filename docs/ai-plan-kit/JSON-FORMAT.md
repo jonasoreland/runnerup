@@ -121,6 +121,12 @@ Each exercise prescription has this shape:
 
 `exerciseId` must exist in the currently installed bundled or custom catalog. `libraryRevision` is the exact bundled library revision (`2` in this kit); `exerciseRevision` is the exact revision of that exercise. The app checks the exact English snapshot and equipment. Use the English instruction array joined with literal newline characters. Generated plans must use no equipment (`[]`) and no images (`[]`). Bounds: sets 1–100; repetitions 1–500 with max ≥ min; rest 0–3,600 seconds. Use only active exercises with empty equipment. Archived custom exercises are included for inventory context but must not be newly prescribed.
 
+## Recorded strength-session performance
+
+Guided phone sessions can retain actual set results offline and export them separately as `format: "relven.strength-session"`, `schemaVersion: 1`. See `schemas/strength-session-v1.schema.json` for the exact portable format. The root contains `prescription` (the immutable Workout v3 document) and `performance` (session identifiers, completion time/state, and one explicit status row for every prescribed set). Set rows retain actual repetitions or hold duration, optional left/right counts, rest, timestamps, RPE, discomfort and notes. Missing values stay absent; an explicit zero remains zero. `completion` is `complete` only when all set rows are completed; skipped/incomplete sets make it `partial`.
+
+This performance document is for exporting or importing workout history. It is not accepted by the plan importer and must not be returned when generating a new training plan. Plan packages remain `relven.plan` v1 with Workout v3 prescriptions only. A prescription never implies that the user completed its target.
+
 ## Exercise catalog documents
 
 The bundled library uses `format: "relven.exercise-library"`, `schemaVersion: 1`, `libraryRevision`, and an `exercises` array (maximum 256). Each entry has a stable lowercase UUID, own `revision`, localized English/Swedish `name` and `instructions` arrays, category, `movementPattern`, `muscleGroups`, and `equipment`. Categories are `lower_body`, `upper_body`, `core`, and `warmup_mobility`; valid muscle groups are defined in `schemas/exercise-library-v1.schema.json`.

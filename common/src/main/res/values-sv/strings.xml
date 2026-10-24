@@ -380,6 +380,17 @@
   <string name="Home_history_filter_cycling">Cykling</string>
   <string name="Home_history_filter_walking">Promenad</string>
   <string name="Home_history_filter_strength">Styrka</string>
+  <string name="Strength_session_export">Exportera passresultat</string>
+  <string name="Strength_session_import">Importera styrkeresultat</string>
+  <string name="Strength_session_history">Styrke- och prehabpass</string>
+  <string name="Strength_session_history_metrics">%1$d av %2$d set registrerade</string>
+  <string name="Strength_session_history_repetitions">%1$d repetitioner</string>
+  <string name="Strength_session_history_duration">%1$d sek arbete</string>
+  <string name="Strength_session_import_confirm_title">Importera passresultat?</string>
+  <string name="Strength_session_import_confirm_body">%1$s läggs till i träningshistoriken. Befintliga resultat ersätts inte.</string>
+  <string name="Strength_session_import_success">Passresultatet har importerats.</string>
+  <string name="Strength_session_import_error">Kunde inte importera träningsfilen. Kontrollera att den är en giltig Relven-export för styrkepass.</string>
+  <string name="Strength_session_export_error">Kunde inte exportera passresultatet.</string>
   <string name="Home_history_filter_other">Övrigt</string>
   <string name="Home_activity_detail_title">Aktivitet</string>
   <string name="activity_recovery_title">Avbrutet pass</string>

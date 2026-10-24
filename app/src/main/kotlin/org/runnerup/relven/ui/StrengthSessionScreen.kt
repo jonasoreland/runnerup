@@ -63,6 +63,7 @@ internal fun StrengthSessionScreen(
     saveError: Boolean,
     isSavingProgress: Boolean,
     isSavingCompletion: Boolean,
+    onExport: (() -> Unit)? = null,
     onTick: () -> Unit,
     onLogRepetitions: (StrengthSession.RepetitionResultInput) -> Unit,
     onSkipPendingResult: () -> Unit,
@@ -142,6 +143,11 @@ internal fun StrengthSessionScreen(
     if (completed || session.phase == StrengthSession.Phase.COMPLETE) {
       SessionResultsSummary(session)
       if (completed) {
+        onExport?.let { export ->
+          TextButton(onClick = export, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+            Text(stringResource(R.string.Strength_session_export))
+          }
+        }
         Button(
             onClick = onClose,
             colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),

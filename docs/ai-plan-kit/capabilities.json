@@ -68,7 +68,13 @@
       "repetitions": [1, 500],
       "restSeconds": [0, 3600],
       "timedSeconds": [1, 86400]
-    }
+    },
+    "performanceLogging": true,
+    "portablePerformanceFormat": "relven.strength-session",
+    "portablePerformanceSchemaVersion": 1,
+    "portablePerformanceIncludesPrescription": true,
+    "portablePerformanceIncludesOnlyExplicitActualResults": true,
+    "planImportAcceptsPerformanceExports": false
   },
   "exerciseCatalog": {
     "bundledPath": "catalog/exercise-library-v1.json",

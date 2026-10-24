@@ -367,6 +367,17 @@
     <string name="Home_history_filter_cycling">Cycling</string>
     <string name="Home_history_filter_walking">Walking</string>
     <string name="Home_history_filter_strength">Strength</string>
+    <string name="Strength_session_export">Export workout results</string>
+    <string name="Strength_session_import">Import strength results</string>
+    <string name="Strength_session_history">Strength and prehab sessions</string>
+    <string name="Strength_session_history_metrics">%1$d of %2$d sets recorded</string>
+    <string name="Strength_session_history_repetitions">%1$d reps</string>
+    <string name="Strength_session_history_duration">%1$d sec work</string>
+    <string name="Strength_session_import_confirm_title">Import workout results?</string>
+    <string name="Strength_session_import_confirm_body">%1$s will be added to workout history. Existing results will not be replaced.</string>
+    <string name="Strength_session_import_success">Workout results imported.</string>
+    <string name="Strength_session_import_error">Could not import this workout file. Check that it is a valid Relven strength-session export.</string>
+    <string name="Strength_session_export_error">Could not export workout results.</string>
     <string name="Home_history_filter_other">Other</string>
     <string name="Home_activity_detail_title">Activity</string>
     <string name="activity_recovery_title">Interrupted workout</string>

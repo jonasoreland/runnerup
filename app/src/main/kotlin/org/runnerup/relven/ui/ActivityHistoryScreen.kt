@@ -53,6 +53,8 @@ import java.util.Date
 import org.runnerup.common.R
 import org.runnerup.util.Formatter
 import org.runnerup.workout.Sport
+import org.runnerup.relven.strength.CompletedStrengthSession
+import org.runnerup.relven.strength.strengthSessionSummary
 
 internal sealed interface ActivityHistoryLoadState {
   data object Loading : ActivityHistoryLoadState
@@ -68,7 +70,10 @@ internal fun ActivityHistoryScreen(
     onRetry: () -> Unit,
     onAddActivity: () -> Unit,
     onImportActivity: () -> Unit,
-    onOpenActivity: (Long) -> Unit) {
+    onOpenActivity: (Long) -> Unit,
+    completedStrengthSessions: List<CompletedStrengthSession> = emptyList(),
+    onImportStrengthSession: () -> Unit = {},
+    onOpenStrengthSession: (CompletedStrengthSession) -> Unit = {}) {
   var selectedFilter by rememberSaveable { mutableStateOf(HistorySportFilter.ALL) }
   val context = LocalContext.current
   val formatter = remember(context, LocalConfiguration.current) { Formatter(context) }
@@ -90,6 +95,9 @@ internal fun ActivityHistoryScreen(
           fontWeight = FontWeight.Bold,
           modifier = Modifier.semantics { heading() })
       Row {
+        IconButton(onClick = onImportStrengthSession) {
+          Icon(Icons.Default.FileOpen, contentDescription = stringResource(R.string.Strength_session_import), tint = RelvenColors.Orange)
+        }
         IconButton(onClick = onImportActivity) {
           Icon(
               Icons.Default.FileOpen,
@@ -135,7 +143,7 @@ internal fun ActivityHistoryScreen(
           filteredHistory(activities, selectedFilter)
         }
         when {
-          activities.isEmpty() ->
+          activities.isEmpty() && completedStrengthSessions.isEmpty() ->
               Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                 HistoryMessage(
                     title = stringResource(R.string.Home_history_empty_title),
@@ -143,7 +151,7 @@ internal fun ActivityHistoryScreen(
                     action = stringResource(R.string.Home_history_add),
                     onAction = onAddActivity)
               }
-          visibleActivities.isEmpty() ->
+          visibleActivities.isEmpty() && completedStrengthSessions.isEmpty() ->
               Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                 HistoryMessage(body = stringResource(R.string.Home_history_filter_empty))
               }
@@ -151,6 +159,30 @@ internal fun ActivityHistoryScreen(
               LazyColumn(
                   modifier = Modifier.weight(1f).fillMaxWidth(),
                   contentPadding = PaddingValues(bottom = 8.dp)) {
+                    if (completedStrengthSessions.isNotEmpty()) {
+                      item(key = "strength-session-heading") {
+                        Text(stringResource(R.string.Strength_session_history), color = RelvenColors.Orange, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 8.dp, bottom = 4.dp))
+                      }
+                      itemsIndexed(completedStrengthSessions, key = { _, session -> "strength-${session.state.executionId}" }) { _, session ->
+                        val summary = remember(session) { strengthSessionSummary(session.state) }
+                        val date = remember(session.finishedAtMillis, LocalConfiguration.current) {
+                          DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(session.finishedAtMillis))
+                        }
+                        Column(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpenStrengthSession(session) }.padding(vertical = 14.dp)) {
+                          Text(session.state.workout.name(), color = RelvenColors.Text, fontWeight = FontWeight.SemiBold)
+                          Text(date, color = RelvenColors.MutedText, fontSize = 12.sp)
+                          val metrics = buildList {
+                            add(stringResource(R.string.Strength_session_history_metrics, summary.completedSetCount, summary.prescribedSetCount))
+                            summary.totalRepetitions?.let { add(stringResource(R.string.Strength_session_history_repetitions, it)) }
+                            if (summary.totalRepetitions == null) {
+                              summary.totalWorkSeconds?.let { add(stringResource(R.string.Strength_session_history_duration, it)) }
+                            }
+                          }
+                          Text(metrics.joinToString(" · "), color = RelvenColors.MutedText, fontSize = 13.sp)
+                        }
+                      }
+                    }
+                    if (visibleActivities.isNotEmpty()) {
                     itemsIndexed(visibleActivities, key = { _, activity -> activity.id }) {
                         index,
                         activity ->
@@ -161,6 +193,7 @@ internal fun ActivityHistoryScreen(
                             color = RelvenColors.MutedText.copy(alpha = 0.16f),
                             modifier = Modifier.fillMaxWidth().height(1.dp)) {}
                       }
+                    }
                     }
                   }
         }

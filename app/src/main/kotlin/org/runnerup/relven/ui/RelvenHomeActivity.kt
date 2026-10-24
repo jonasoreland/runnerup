@@ -126,6 +126,7 @@ import org.runnerup.relven.analysis.summarizeActivities
 import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
+import org.runnerup.relven.strength.StrengthSessionExportCodec
 import java.util.UUID
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
@@ -180,6 +181,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
   private var viewedStrengthCompletion by mutableStateOf<CompletedStrengthSession?>(null)
   private var completedStrengthSessions by mutableStateOf<Map<String, CompletedStrengthSession>>(emptyMap())
+  private var strengthHistorySessions by mutableStateOf<List<CompletedStrengthSession>>(emptyList())
+  private var pendingStrengthImport by mutableStateOf<CompletedStrengthSession?>(null)
+  private var strengthTransferMessage by mutableStateOf<String?>(null)
+  private var strengthExportTarget by mutableStateOf<CompletedStrengthSession?>(null)
   private var strengthSaveError by mutableStateOf(false)
   private var strengthTransitionSaving by mutableStateOf(false)
   private var pendingStrengthSessionChoice by mutableStateOf<PendingStrengthSessionChoice?>(null)
@@ -193,6 +198,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private lateinit var exerciseCollectionImportPicker: ActivityResultLauncher<Array<String>>
   private lateinit var exerciseCollectionExportPicker: ActivityResultLauncher<String>
   private lateinit var planImportPicker: ActivityResultLauncher<Array<String>>
+  private lateinit var strengthImportPicker: ActivityResultLauncher<Array<String>>
+  private lateinit var strengthExportPicker: ActivityResultLauncher<String>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -214,6 +221,13 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         }
     planImportPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
       if (uri != null) readPlanImport(uri)
+    }
+    strengthImportPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+      if (uri != null) importStrengthSession(uri)
+    }
+    strengthExportPicker = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+      if (uri != null) strengthExportTarget?.let { exportStrengthSession(uri, it) }
+      strengthExportTarget = null
     }
     val openPlanLibrary = intent.getBooleanExtra(EXTRA_OPEN_PLAN_LIBRARY, false)
     if (openPlanLibrary) intent.removeExtra(EXTRA_OPEN_PLAN_LIBRARY)
@@ -271,6 +285,23 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               onDismiss = { pendingPlanImport = null },
               onSave = { savePlanImport(pending) })
         }
+        pendingStrengthImport?.let { completion ->
+          AlertDialog(
+              onDismissRequest = { pendingStrengthImport = null },
+              title = { Text(getString(org.runnerup.common.R.string.Strength_session_import_confirm_title)) },
+              text = { Text(getString(org.runnerup.common.R.string.Strength_session_import_confirm_body, completion.state.workout.name())) },
+              confirmButton = {
+                TextButton(onClick = { confirmStrengthSessionImport(completion) }) {
+                  Text(getString(org.runnerup.common.R.string.Strength_session_import))
+                }
+              },
+              dismissButton = { TextButton(onClick = { pendingStrengthImport = null }) { Text(stringResource(org.runnerup.common.R.string.Home_import_ok)) } })
+        }
+        strengthTransferMessage?.let { message ->
+          AlertDialog(onDismissRequest = { strengthTransferMessage = null }, text = { Text(message) }, confirmButton = {
+            TextButton(onClick = { strengthTransferMessage = null }) { Text(stringResource(org.runnerup.common.R.string.Home_import_ok)) }
+          })
+        }
         planLibraryMessage?.let { message ->
           AlertDialog(
               onDismissRequest = { planLibraryMessage = null },
@@ -290,6 +321,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               saveError = strengthSaveError,
               isSavingProgress = strengthTransitionSaving,
               isSavingCompletion = strengthFinishing,
+              onExport = if (completionSummary != null) {{ chooseStrengthSessionExport(completionSummary) }} else null,
               onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime()) } },
               onLogRepetitions = { input ->
                 updateStrengthSession { it.completeResult(input, SystemClock.elapsedRealtime()) }
@@ -339,6 +371,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onAddActivity = { startActivity(Intent(this, ManualActivity::class.java)) },
             onImportActivity = { activityDocumentPicker.launch(arrayOf("*/*")) },
             onOpenActivity = ::openHistoryActivity,
+            strengthSessionHistory = strengthHistorySessions,
+            onImportStrengthSession = { strengthImportPicker.launch(arrayOf("application/json", "text/json", "*/*")) },
+            onOpenStrengthSession = { viewedStrengthCompletion = it },
             onOpenActiveSession = { startActivity(runActivityIntent(this)) },
             onOpenWorkout = { selectHomeDestination(HomeDestination.Start) },
             planLibraryState = planLibraryState,
@@ -479,7 +514,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   override fun onResume() {
     super.onResume()
-    if (destination == HomeDestination.History) loadActivityHistory()
+    if (destination == HomeDestination.History) {
+      loadActivityHistory()
+      loadStrengthSessionHistory()
+    }
     activityDetailId?.let { activityId ->
       if (activityDetailState is ActivityDetailLoadState.Loaded) {
         loadHistoryActivityDetail(activityId)
@@ -557,6 +595,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   }
 
   private fun selectHomeDestination(next: HomeDestination) {
+    if (next == HomeDestination.History) loadStrengthSessionHistory()
     if (next != HomeDestination.Start) pendingPlannedRunningWorkout = null
     if (next != HomeDestination.Plan) {
       planLibraryOpen = false
@@ -1194,6 +1233,93 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     }
   }
 
+  private fun loadStrengthSessionHistory() {
+    lifecycleScope.launch {
+      val loaded = withContext(Dispatchers.IO) {
+        runCatching { strengthStoreMutex.withLock { StrengthSessionStore.completedSessions(applicationContext) } }
+      }
+      loaded.onSuccess { strengthHistorySessions = it.sessions }
+          .onFailure { Log.w("RelvenHome", "Could not load strength session history", it) }
+    }
+  }
+
+  private fun importStrengthSession(uri: Uri) {
+    lifecycleScope.launch {
+      val decoded = withContext(Dispatchers.IO) {
+        runCatching {
+          val bytes = contentResolver.openInputStream(uri)?.use { input ->
+            val output = java.io.ByteArrayOutputStream()
+            val buffer = ByteArray(8192)
+            var total = 0
+            while (true) {
+              val count = input.read(buffer)
+              if (count < 0) break
+              total += count
+              require(total <= 16_777_216) { "Session export is too large" }
+              output.write(buffer, 0, count)
+            }
+            output.toByteArray()
+          } ?: throw IOException("Could not open selected file")
+          StrengthSessionExportCodec.decode(bytes.toString(Charsets.UTF_8))
+        }
+      }
+      decoded.onSuccess { pendingStrengthImport = it }
+          .onFailure {
+            Log.w("RelvenHome", "Could not validate strength session import", it)
+            strengthTransferMessage = getString(org.runnerup.common.R.string.Strength_session_import_error)
+          }
+    }
+  }
+
+  private fun confirmStrengthSessionImport(completion: CompletedStrengthSession) {
+    if (strengthTransitionSaving) return
+    strengthTransitionSaving = true
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          strengthStoreMutex.withLock {
+            StrengthSessionStore.importCompleted(applicationContext, completion.state, completion.finishedAtMillis)
+            StrengthSessionStore.completedSessions(applicationContext)
+          }
+        }
+      }
+      strengthTransitionSaving = false
+      pendingStrengthImport = null
+      result.fold(
+          onSuccess = { loaded ->
+            strengthHistorySessions = loaded.sessions
+            strengthTransferMessage = getString(org.runnerup.common.R.string.Strength_session_import_success)
+            viewedStrengthCompletion = loaded.sessions.firstOrNull { it.state.executionId == completion.state.executionId }
+          },
+          onFailure = {
+            Log.w("RelvenHome", "Could not save imported strength session", it)
+            strengthTransferMessage = getString(org.runnerup.common.R.string.Strength_session_import_error)
+          })
+    }
+  }
+
+  private fun chooseStrengthSessionExport(completion: CompletedStrengthSession) {
+    strengthExportTarget = completion
+    val name = completion.state.workout.name().replace(Regex("[^A-Za-z0-9_-]+"), "-").trim('-').take(50)
+    strengthExportPicker.launch("$name-strength-session.json")
+  }
+
+  private fun exportStrengthSession(uri: Uri, completion: CompletedStrengthSession) {
+    lifecycleScope.launch {
+      val result = withContext(Dispatchers.IO) {
+        runCatching {
+          val json = StrengthSessionExportCodec.encode(completion)
+          contentResolver.openOutputStream(uri, "wt")?.bufferedWriter(Charsets.UTF_8)?.use { it.write(json) }
+              ?: throw IOException("Could not create selected file")
+        }
+      }
+      result.onFailure {
+        Log.w("RelvenHome", "Could not export strength session", it)
+        strengthTransferMessage = getString(org.runnerup.common.R.string.Strength_session_export_error)
+      }
+    }
+  }
+
   private fun startStrengthSession(planId: String, entry: PlanCalendarEntry.Workout) {
     val workout = entry.strengthDetails ?: return
     lifecycleScope.launch {
@@ -1747,6 +1873,9 @@ private fun RelvenHome(
     onAddActivity: () -> Unit,
     onImportActivity: () -> Unit,
     onOpenActivity: (Long) -> Unit,
+    strengthSessionHistory: List<CompletedStrengthSession>,
+    onImportStrengthSession: () -> Unit,
+    onOpenStrengthSession: (CompletedStrengthSession) -> Unit,
     onOpenActiveSession: () -> Unit,
     onOpenWorkout: () -> Unit,
     onOpenHistory: () -> Unit,
@@ -1931,7 +2060,10 @@ private fun RelvenHome(
           onRetry = onRetryHistory,
           onAddActivity = onAddActivity,
           onImportActivity = onImportActivity,
-          onOpenActivity = onOpenActivity)
+          onOpenActivity = onOpenActivity,
+          completedStrengthSessions = strengthSessionHistory,
+          onImportStrengthSession = onImportStrengthSession,
+          onOpenStrengthSession = onOpenStrengthSession)
     } else if (destination == HomeDestination.Progress) {
       ProgressScreen(
           progressState = progressState,
