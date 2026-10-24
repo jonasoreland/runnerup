@@ -21,6 +21,7 @@ AI output must be one JSON plan document using `format: "relven.plan"` and `sche
 - `schemas/plan-v2.schema.json` — Relven-managed immutable revision schema; do not generate new v2 plans.
 - `schemas/workout-v3.schema.json` — running and exercise workout document structure.
 - `schemas/strength-session-v1.schema.json` — completed strength-session export containing both a Workout v3 prescription and actual per-set performance. This is a history/export format, not a plan-import format.
+- `schemas/activity-v1.schema.json` — compact saved-activity export with measured summary, lap/split results and stored planned lap targets; route coordinates are omitted.
 - `schemas/exercise-library-v1.schema.json` — bundled exercise catalog structure.
 - `schemas/exercise-collection-v1.schema.json` — user-created custom exercise collection structure.
 - `catalog/exercise-library-v1.json` — every bundled exercise with stable IDs, revisions, bilingual names/instructions, category, pattern, muscle groups, and equipment.
@@ -28,6 +29,7 @@ AI output must be one JSON plan document using `format: "relven.plan"` and `sche
 - `user-data/custom-exercise-collection-v1.json` — the current device's custom exercise snapshot, appended by the phone at export time, including archived entries.
 - `user-data/custom-exercise-inventory.md` — a readable index of the same device-local custom exercises, including IDs, revisions, active/archive status, and equipment.
 - `examples/plan-running.json` and `examples/plan-strength.json` — full v1 plan examples that reference bundled exercises.
+- `examples/activity.json` — compact example of an exported running activity; unavailable values are omitted.
 
 The bundled inventory is 116 exercises from the offline catalog. The phone also exports all user-created custom exercises currently stored on that device; archived entries remain visible for context but cannot be selected for new plans. These local records remain on-device and are added only when the user explicitly chooses Copy, Share, or Save. The two Markdown inventories are quick indexes; use the canonical JSON documents for exact instructions and exercise snapshots.
 

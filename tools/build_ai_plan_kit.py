@@ -19,12 +19,14 @@ FILES = {
     "schemas/plan-v2.schema.json": "schemas/plan-v2.schema.json",
     "schemas/workout-v3.schema.json": "schemas/workout-v3.schema.json",
     "schemas/strength-session-v1.schema.json": "schemas/strength-session-v1.schema.json",
+    "schemas/activity-v1.schema.json": "schemas/activity-v1.schema.json",
     "schemas/exercise-library-v1.schema.json": "schemas/exercise-library-v1.schema.json",
     "schemas/exercise-collection-v1.schema.json": "schemas/exercise-collection-v1.schema.json",
     "catalog/exercise-library-v1.json": "app/assets/relven/exercise-library-v1.json",
     "catalog/exercise-inventory.md": "app/assets/relven/exercise-library-v1.json",
     "examples/plan-running.json": "schemas/examples/plan-running.json",
     "examples/plan-strength.json": "schemas/examples/plan-strength.json",
+    "examples/activity.json": "schemas/examples/activity.json",
 }
 
 

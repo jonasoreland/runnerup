@@ -21,12 +21,14 @@ ARCHIVE_SOURCES = {
     "schemas/plan-v2.schema.json": ROOT / "schemas" / "plan-v2.schema.json",
     "schemas/workout-v3.schema.json": ROOT / "schemas" / "workout-v3.schema.json",
     "schemas/strength-session-v1.schema.json": ROOT / "schemas" / "strength-session-v1.schema.json",
+    "schemas/activity-v1.schema.json": ROOT / "schemas" / "activity-v1.schema.json",
     "schemas/exercise-library-v1.schema.json": ROOT / "schemas" / "exercise-library-v1.schema.json",
     "schemas/exercise-collection-v1.schema.json": ROOT / "schemas" / "exercise-collection-v1.schema.json",
     "catalog/exercise-library-v1.json": ROOT / "app" / "assets" / "relven" / "exercise-library-v1.json",
     "JSON-FORMAT.md": ROOT / "docs" / "ai-plan-kit" / "JSON-FORMAT.md",
     "examples/plan-running.json": ROOT / "schemas" / "examples" / "plan-running.json",
     "examples/plan-strength.json": ROOT / "schemas" / "examples" / "plan-strength.json",
+    "examples/activity.json": ROOT / "schemas" / "examples" / "activity.json",
 }
 GENERATED_ENTRIES = {"catalog/exercise-inventory.md"}
 
@@ -118,6 +120,16 @@ class AiPlanKitBuildTest(unittest.TestCase):
             Resource.from_contents(workout_schema),
         )
         jsonschema.Draft202012Validator(schema, registry=registry).validate(export)
+
+    def test_activity_export_example_validates_as_compact_without_route_coordinates(self):
+        schema = json.loads((ROOT / "schemas" / "activity-v1.schema.json").read_text(encoding="utf-8"))
+        example = json.loads((ROOT / "schemas" / "examples" / "activity.json").read_text(encoding="utf-8"))
+        jsonschema.Draft202012Validator(schema).validate(example)
+        self.assertFalse(example["dataQuality"]["rawRouteIncluded"])
+        self.assertNotIn("route", example["activity"])
+        with zipfile.ZipFile(OUTPUT) as archive:
+            self.assertIn("relven-ai-plan-kit/schemas/activity-v1.schema.json", archive.namelist())
+            self.assertIn("relven-ai-plan-kit/examples/activity.json", archive.namelist())
 
     def test_complete_kit_contains_the_exercise_database_and_interchange_guide(self):
         with zipfile.ZipFile(OUTPUT) as archive:

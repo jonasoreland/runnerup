@@ -295,6 +295,17 @@ private fun ActivityDetailContent(
                   onClick = null)
               Text("TCX")
             }
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth().selectable(
+                        selected = shareFormat == ActivityShareFormat.Json,
+                        role = Role.RadioButton) { shareFormat = ActivityShareFormat.Json },
+                verticalAlignment = Alignment.CenterVertically) {
+              RadioButton(
+                  selected = shareFormat == ActivityShareFormat.Json,
+                  onClick = null)
+              Text(stringResource(R.string.activity_share_json_description))
+            }
           }
         },
         confirmButton = {

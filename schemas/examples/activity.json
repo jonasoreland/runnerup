@@ -1,0 +1,40 @@
+{
+  "format": "relven.activity",
+  "schemaVersion": 1,
+  "activity": {
+    "id": "activity:42",
+    "startedAtEpochSeconds": 1792721400,
+    "sport": "Running",
+    "status": "completed",
+    "summary": {
+      "durationSeconds": 1200,
+      "distanceMeters": 5000,
+      "averagePaceSecondsPerKm": 240,
+      "averageHeartRateBpm": 158,
+      "maximumHeartRateBpm": 181,
+      "averageCadenceStepsPerMinute": 174
+    },
+    "notes": "Felt controlled.",
+    "splits": [
+      {
+        "number": 1,
+        "durationSeconds": 240,
+        "distanceMeters": 1000,
+        "averageHeartRateBpm": 152,
+        "planned": {
+          "distanceMeters": 1000
+        }
+      },
+      {
+        "number": 2,
+        "durationSeconds": 245,
+        "distanceMeters": 1000,
+        "averageHeartRateBpm": 159
+      }
+    ]
+  },
+  "dataQuality": {
+    "gpsSampleCount": 243,
+    "rawRouteIncluded": false
+  }
+}

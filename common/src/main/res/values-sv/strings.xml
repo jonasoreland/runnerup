@@ -421,6 +421,7 @@
   <string name="Home_activity_detail_more_actions">Ladda upp till tjänster</string>
   <string name="Home_activity_detail_share">Dela träningspass</string>
   <string name="Home_activity_detail_share_format">Välj filformat</string>
+  <string name="activity_share_json_description">JSON · kompakt, utan GPS-rutt</string>
   <string name="Home_activity_detail_edit">Redigera träningspass</string>
   <string name="Home_activity_detail_edit_title">Redigera träningspass</string>
   <string name="Home_activity_detail_edit_sport">Aktivitetstyp</string>

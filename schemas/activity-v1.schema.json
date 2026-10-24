@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relven.app/schemas/activity-v1.schema.json",
+  "title": "Relven activity export",
+  "description": "Compact portable summary of a saved activity. Raw GPS and high-volume sensor samples are excluded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "schemaVersion", "activity", "dataQuality"],
+  "properties": {
+    "format": {"const": "relven.activity"},
+    "schemaVersion": {"const": 1},
+    "activity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "startedAtEpochSeconds", "sport", "status", "splits"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "startedAtEpochSeconds": {"type": "integer", "minimum": 1},
+        "sport": {"type": "string", "minLength": 1},
+        "status": {"enum": ["completed", "partial"]},
+        "summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "durationSeconds": {"type": "integer", "minimum": 0},
+            "distanceMeters": {"type": "number", "exclusiveMinimum": 0},
+            "averagePaceSecondsPerKm": {"type": "number", "exclusiveMinimum": 0},
+            "averageHeartRateBpm": {"type": "integer", "minimum": 1},
+            "maximumHeartRateBpm": {"type": "integer", "minimum": 1},
+            "averageCadenceStepsPerMinute": {"type": "number", "exclusiveMinimum": 0},
+            "averagePedalCadenceRpm": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "notes": {"type": "string"},
+        "splits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["number"],
+            "properties": {
+              "number": {"type": "integer", "minimum": 1},
+              "durationSeconds": {"type": "integer", "minimum": 0},
+              "distanceMeters": {"type": "number", "minimum": 0},
+              "averageHeartRateBpm": {"type": "integer", "minimum": 1},
+              "planned": {
+                "type": "object",
+                "additionalProperties": false,
+                "minProperties": 1,
+                "properties": {
+                  "durationSeconds": {"type": "integer", "minimum": 0},
+                  "distanceMeters": {"type": "number", "exclusiveMinimum": 0}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dataQuality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gpsSampleCount", "rawRouteIncluded"],
+      "properties": {
+        "gpsSampleCount": {"type": "integer", "minimum": 0},
+        "rawRouteIncluded": {"const": false}
+      }
+    }
+  }
+}

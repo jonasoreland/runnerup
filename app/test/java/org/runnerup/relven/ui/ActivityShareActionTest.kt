@@ -36,4 +36,18 @@ class ActivityShareActionTest {
         target.uri.toString())
     assertEquals("application/vnd.garmin.tcx+xml", target.mimeType)
   }
+
+  @Test
+  fun jsonShareUsesProviderUriAndJsonMimeType() {
+    val target = activityShareTarget(
+        authority = "se.hampusandersson.relven.activity.provider",
+        activityId = 19L,
+        fileName = "Run.json",
+        format = ActivityShareFormat.Json)
+
+    assertEquals(
+        "content://se.hampusandersson.relven.activity.provider/json/19/Run.json",
+        target.uri.toString())
+    assertEquals("application/json", target.mimeType)
+  }
 }

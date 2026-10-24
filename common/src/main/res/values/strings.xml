@@ -408,6 +408,7 @@
     <string name="Home_activity_detail_more_actions">Upload to services</string>
     <string name="Home_activity_detail_share">Share workout file</string>
     <string name="Home_activity_detail_share_format">Choose file format</string>
+    <string name="activity_share_json_description">JSON · compact, no GPS route</string>
     <string name="Home_activity_detail_edit">Edit activity</string>
     <string name="Home_activity_detail_edit_title">Edit workout</string>
     <string name="Home_activity_detail_edit_sport">Activity type</string>

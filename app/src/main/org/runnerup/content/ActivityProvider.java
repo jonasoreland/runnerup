@@ -64,6 +64,9 @@ public class ActivityProvider extends ContentProvider {
   @SuppressWarnings("WeakerAccess")
   static final int TCX = 2;
 
+  @SuppressWarnings("WeakerAccess")
+  static final int JSON = 3;
+
   private UriMatcher uriMatcher;
 
   @Override
@@ -71,6 +74,7 @@ public class ActivityProvider extends ContentProvider {
     uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     uriMatcher.addURI(AUTHORITY, "gpx/#/*", GPX);
     uriMatcher.addURI(AUTHORITY, "tcx/#/*", TCX);
+    uriMatcher.addURI(AUTHORITY, "json/#/*", JSON);
     return true;
   }
 
@@ -115,10 +119,12 @@ public class ActivityProvider extends ContentProvider {
     switch (res) {
       case GPX:
       case TCX:
+      case JSON:
         final List<String> list = uri.getPathSegments();
         final String id = list.get(list.size() - 2);
         final long activityId = Long.parseLong(id);
-        final String parcelFile = "activity." + list.get(list.size() - 3);
+        final String parcelFile =
+            "activity." + list.get(list.size() - 3) + (res == JSON ? "." + activityId : "");
         final Pair<File, OutputStream> out = openCacheFile(parcelFile);
         if (out == null) {
           Log.i(getClass().getName(), "Failed to open cacheFile(" + parcelFile + ")");
@@ -134,6 +140,9 @@ public class ActivityProvider extends ContentProvider {
 
         try {
           switch (res) {
+            case JSON:
+              ActivityJsonExporter.export(mDB, activityId, new OutputStreamWriter(out.second));
+              break;
             case TCX:
               {
                 var options = ExportOptions.builder();
@@ -164,6 +173,18 @@ public class ActivityProvider extends ContentProvider {
           out.second.close();
           Log.d(getClass().getName(), "wrote " + out.first.length() + " bytes...");
         } catch (Exception e) {
+          if (res == JSON) {
+            try {
+              out.second.close();
+            } catch (IOException ignored) {
+            }
+            out.first.delete();
+            DBHelper.closeDB(mDB);
+            FileNotFoundException failure =
+                new FileNotFoundException("Could not export activity JSON");
+            failure.initCause(e);
+            throw failure;
+          }
           e.printStackTrace();
         }
         DBHelper.closeDB(mDB);
@@ -196,6 +217,8 @@ public class ActivityProvider extends ContentProvider {
         return GPX_MIME;
       case TCX:
         return TCX_MIME;
+      case JSON:
+        return "application/json";
     }
     return null;
   }

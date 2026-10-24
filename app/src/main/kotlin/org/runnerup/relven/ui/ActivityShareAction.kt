@@ -4,7 +4,8 @@ import android.net.Uri
 
 internal enum class ActivityShareFormat(val extension: String, val mimeType: String) {
   Gpx("gpx", "application/gpx+xml"),
-  Tcx("tcx", "application/vnd.garmin.tcx+xml")
+  Tcx("tcx", "application/vnd.garmin.tcx+xml"),
+  Json("json", "application/json")
 }
 
 internal data class ActivityShareTarget(val uri: Uri, val mimeType: String)
