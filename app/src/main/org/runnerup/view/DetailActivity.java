@@ -67,6 +67,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.content.ActivityProvider;
 import org.runnerup.db.ActivityCleaner;
 import org.runnerup.db.DBHelper;
+import org.runnerup.relven.health.HealthConnectActivitySync;
 import org.runnerup.db.PathSimplifier;
 import org.runnerup.export.SyncManager;
 import org.runnerup.export.Synchronizer;
@@ -946,6 +947,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
     } catch (Exception e) {
       Log.e(getClass().getName(), "Failed to simplify path: " + e.getMessage());
     }
+    HealthConnectActivitySync.onActivitySaved(this, mDB, mID);
   }
 
   private final OnClickListener saveButtonClick =
@@ -1007,6 +1009,7 @@ public class DetailActivity extends AppCompatActivity implements Constants {
               .setPositiveButton(
                   org.runnerup.common.R.string.Yes,
                   (dialog, which) -> {
+                    HealthConnectActivitySync.onActivityDeleted(DetailActivity.this, mID);
                     DBHelper.deleteActivity(mDB, mID);
                     dialog.dismiss();
                     DetailActivity.this.setResult(RESULT_OK);

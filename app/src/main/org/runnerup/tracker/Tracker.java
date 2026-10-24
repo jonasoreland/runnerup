@@ -60,6 +60,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.db.DBHelper;
+import org.runnerup.relven.health.HealthConnectActivitySync;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
 import org.runnerup.notification.ForegroundNotificationDisplayStrategy;
@@ -629,6 +630,9 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     if (save) {
       saveActivity(manualDistance);
       liveLog(DB.LOCATION.TYPE_END);
+      if (mDB != null) {
+        HealthConnectActivitySync.onActivitySaved(this, mDB, mActivityId);
+      }
     } else {
       ContentValues tmp = new ContentValues();
       tmp.put("deleted", 1);

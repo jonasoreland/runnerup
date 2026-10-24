@@ -166,6 +166,7 @@ dependencies {
     implementation project(':common')
     implementation project(':hrdevice')
     implementation 'androidx.health.connect:connect-client:1.1.0'
+    implementation 'androidx.work:work-runtime-ktx:2.12.0'
 
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
     implementation "androidx.appcompat:appcompat:${rootProject.ext.appcompat_version}"

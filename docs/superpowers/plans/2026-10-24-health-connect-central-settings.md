@@ -96,9 +96,9 @@
 
 **Interfaces:** stable `clientRecordId` is derived from Relven session identity; monotonically increasing client version represents updates; only IDs recorded as Relven-owned may be deleted.
 
-- [ ] Test outbox persistence across recreation and unique-work scheduling.
-- [ ] Test success, transient retry, permission denial, partial export, repeated delivery, update, and owned-record deletion.
-- [ ] Connect completion, edit, and delete paths without making workout save depend on Health Connect.
+- [x] Test outbox persistence across recreation, per-session serialized work, and tombstone ordering during an in-flight upsert.
+- [x] Test success, transient retry, permission denial, partial export, repeated delivery, update, cancellation, and owned-record deletion.
+- [x] Connect completion, edit, and delete paths without making workout save depend on Health Connect.
 
 ### Task 6: Health Connect Settings, opt-in, history backfill, and status
 

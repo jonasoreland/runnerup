@@ -108,6 +108,7 @@ import org.runnerup.importer.ActivityFileImporter
 import org.runnerup.importer.ActivityImportStore
 import org.runnerup.importer.ActivityImportException
 import org.runnerup.importer.ImportedActivity
+import org.runnerup.relven.health.HealthConnectActivitySync
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
 import org.runnerup.relven.exercise.ExerciseFavoritesStore
 import org.runnerup.relven.exercise.CustomExerciseInput
@@ -1121,6 +1122,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               } catch (error: Exception) {
                 Log.e("RelvenHome", "Failed to simplify edited activity path", error)
               }
+              HealthConnectActivitySync.onActivitySaved(applicationContext, database, command.activityId)
               true
             }
           }

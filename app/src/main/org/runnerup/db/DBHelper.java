@@ -19,6 +19,7 @@ package org.runnerup.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import org.runnerup.relven.health.HealthConnectActivitySync;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -639,6 +640,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
           () -> {
             int currentProgress = 0;
             for (Long id : list) {
+              HealthConnectActivitySync.onActivityDeleted(ctx, id);
               deleteActivity(db, id);
               currentProgress++;
               final int progressToShow = currentProgress;
