@@ -43,6 +43,11 @@ object WearControlsComposeContent {
   }
 
   @JvmStatic
+  fun bindPreparedWorkout(view: ComposeView, workoutName: String, upcomingStep: String) {
+    view.setContent { WearPreparedWorkoutScreen(workoutName, upcomingStep) }
+  }
+
+  @JvmStatic
   fun bindPauseResume(
       view: ComposeView,
       state: WearControlPresentationState,
@@ -54,6 +59,20 @@ object WearControlsComposeContent {
           state.pauseAction,
           onLap = { lapClick.run() },
           onPauseResume = { pauseResumeClick.run() })
+    }
+  }
+}
+
+@Composable
+internal fun WearPreparedWorkoutScreen(workoutName: String, upcomingStep: String) {
+  WearControlFrame {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp)) {
+      Text("REDO ATT STARTA", color = AccentBlue, fontSize = 10.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+      Text(workoutName, color = PrimaryText, fontSize = 13.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
+      Text("Nästa: $upcomingStep", color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
+      Text("Starta passet på mobilen", color = SecondaryText, fontSize = 9.sp, textAlign = TextAlign.Center, maxLines = 2)
     }
   }
 }

@@ -22,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.compose.ui.platform.ComposeView;
+import org.runnerup.common.wear.WorkoutPreparationProtocol;
+import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.wear.ui.WearConnectWaitingComposeContent;
 
 /**
@@ -40,7 +42,18 @@ public final class ConnectToPhoneFragment extends Fragment {
     composeView.setLayoutParams(
         new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-    WearConnectWaitingComposeContent.bind(composeView);
+    String workoutName = null;
+    String upcomingStep = null;
+    byte[] payload = new PreparedWorkoutStore(getActivity()).load();
+    try {
+      WorkoutPreparationProtocol.PrepareMessage prepared =
+          WorkoutPreparationProtocol.decodePrepare(payload);
+      workoutName = prepared.getWorkoutName();
+      upcomingStep = prepared.getUpcomingStep();
+    } catch (java.io.IOException ignored) {
+      // Invalid or missing state falls back to the honest idle/waiting surface.
+    }
+    WearConnectWaitingComposeContent.bind(composeView, workoutName, upcomingStep);
     return composeView;
   }
 

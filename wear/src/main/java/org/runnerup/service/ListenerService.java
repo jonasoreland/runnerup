@@ -141,16 +141,78 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onMessageReceived(com.google.android.gms.wearable.MessageEvent messageEvent) {
     super.onMessageReceived(messageEvent);
-    if (!Constants.Wear.Path.MSG_SESSION_PING.equals(messageEvent.getPath())) return;
-    try {
-      byte[] response = WearSessionProtocol.respondToPing(messageEvent.getData());
-      com.google.android.gms.wearable.Wearable.getMessageClient(this)
-          .sendMessage(
-              messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_SESSION_PONG, response)
-          .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge session ping", error));
-    } catch (IOException error) {
-      Log.w(TAG, "Ignoring invalid session handshake payload", error);
+    if (Constants.Wear.Path.MSG_SESSION_PING.equals(messageEvent.getPath())) {
+      try {
+        byte[] response = WearSessionProtocol.respondToPing(messageEvent.getData());
+        com.google.android.gms.wearable.Wearable.getMessageClient(this)
+            .sendMessage(
+                messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_SESSION_PONG, response)
+            .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge session ping", error));
+      } catch (IOException error) {
+        Log.w(TAG, "Ignoring invalid session handshake payload", error);
+      }
+      return;
     }
+    if (Constants.Wear.Path.MSG_WORKOUT_CANCEL.equals(messageEvent.getPath())) {
+      PreparedWorkoutReceiver receiver =
+          new PreparedWorkoutReceiver(new PreparedWorkoutStore(this));
+      if (receiver.cancel(messageEvent.getData())
+          && new PreparedWorkoutStore(this).load() == null) {
+        NotificationManagerCompat.from(this).cancel(11);
+      }
+      return;
+    }
+    if (!Constants.Wear.Path.MSG_WORKOUT_PREPARE.equals(messageEvent.getPath())) return;
+
+    byte[] payload = messageEvent.getData();
+    PreparedWorkoutReceiver receiver = new PreparedWorkoutReceiver(new PreparedWorkoutStore(this));
+    byte[] response = receiver.receive(payload);
+    if (response == null) {
+      Log.w(TAG, "Ignoring invalid workout preparation payload");
+      return;
+    }
+    try {
+      var acknowledgement =
+          org.runnerup.common.wear.WorkoutPreparationProtocol.decodeAcknowledgement(response);
+      var preparation = org.runnerup.common.wear.WorkoutPreparationProtocol.decodePrepare(payload);
+      if (acknowledgement.isAccepted()) notifyPreparedWorkout(preparation.getWorkoutName());
+    } catch (IOException impossibleAfterReceiverValidation) {
+      Log.w(TAG, "Could not read stored workout preparation", impossibleAfterReceiverValidation);
+    }
+    com.google.android.gms.wearable.Wearable.getMessageClient(this)
+        .sendMessage(
+            messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_WORKOUT_PREPARED, response)
+        .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge prepared workout", error));
+  }
+
+  private void notifyPreparedWorkout(String workoutName) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) return;
+
+    String channelId = "runnerup_prepared_workout";
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      NotificationManager manager = getSystemService(NotificationManager.class);
+      if (manager.getNotificationChannel(channelId) == null) {
+        manager.createNotificationChannel(
+            new NotificationChannel(
+                channelId, "Förberedda träningspass", NotificationManager.IMPORTANCE_DEFAULT));
+      }
+    }
+    Intent intent = new Intent(this, MainActivity.class);
+    PendingIntent contentIntent =
+        PendingIntent.getActivity(
+            this, 11, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    Notification notification =
+        new NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_ongoing_notification)
+            .setContentTitle("Redo att starta")
+            .setContentText(workoutName)
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .build();
+    NotificationManagerCompat.from(this).notify(11, notification);
   }
 
   @Override

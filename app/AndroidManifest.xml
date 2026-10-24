@@ -126,6 +126,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name="org.runnerup.relven.ui.WorkoutPreparationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name="org.runnerup.relven.ui.ActivityUploadActivity"
             android:exported="false"
             android:configChanges="orientation|screenSize|smallestScreenSize"

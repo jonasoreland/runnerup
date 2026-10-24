@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import androidx.compose.ui.platform.ComposeView;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.WorkoutPreparationProtocol;
+import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
 import org.runnerup.wear.ui.WearControlPresentationState;
 import org.runnerup.wear.ui.WearControlsComposeContent;
@@ -42,13 +44,22 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     composeView = new ComposeView(activity);
     presentationState = new WearControlPresentationState();
-    WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
     updateView(activity.getTrackerState());
     return composeView;
   }
 
   private void updateView(TrackerState state) {
-    if (presentationState != null) presentationState.updateStartState(state);
+    if (composeView == null || presentationState == null) return;
+    byte[] payload = new PreparedWorkoutStore(activity).load();
+    try {
+      WorkoutPreparationProtocol.PrepareMessage prepared =
+          WorkoutPreparationProtocol.decodePrepare(payload);
+      WearControlsComposeContent.bindPreparedWorkout(
+          composeView, prepared.getWorkoutName(), prepared.getUpcomingStep());
+    } catch (java.io.IOException ignored) {
+      presentationState.updateStartState(state);
+      WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
+    }
   }
 
   private void startActivity() {

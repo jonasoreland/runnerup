@@ -53,10 +53,10 @@
 
 ### Task 2 — Workout preparation and transfer
 
-- [ ] Define canonical bounded workout/session envelope using current plan/workout contracts and stable session ID.
-- [ ] Implement prepare/ready/cancel messages, idempotent transfer acknowledgement, receiver validation, and phone-only continuation.
-- [ ] Change selected-workout Start to preparation only; do not call `Tracker.start()` until an accepted start transition.
-- [ ] Render watch preparation state with selected workout and truthful sensor/connection readiness; use supported visible continuation.
+- [x] Define canonical bounded workout/session envelope using current plan/workout contracts and stable session ID.
+- [x] Implement prepare/ready/cancel messages, idempotent transfer acknowledgement, receiver validation, and phone-only continuation.
+- [x] Change selected-workout Start to preparation only; do not call `Tracker.start()` until an accepted start transition.
+- [x] Render watch preparation state with selected workout and truthful sensor/connection readiness; use supported visible continuation.
 - [ ] Add transfer/lifecycle tests and merge as the next single PR after Task 1.
 
 ### Task 3 — Shared start, countdown and controls

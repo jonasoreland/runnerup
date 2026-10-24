@@ -28,11 +28,12 @@ import androidx.compose.ui.unit.sp
 private val ScreenBackground = Color(0xFF03050B)
 private val AccentBlue = Color(0xFF9BCBFF)
 private val PrimaryText = Color(0xFFF7F8FC)
+private val SecondaryText = Color(0xFFAAB1BE)
 
 object WearConnectWaitingComposeContent {
   @JvmStatic
-  fun bind(view: ComposeView) {
-    view.setContent { WearConnectWaitingScreen() }
+  fun bind(view: ComposeView, workoutName: String? = null, upcomingStep: String? = null) {
+    view.setContent { WearConnectWaitingScreen(workoutName, upcomingStep) }
   }
 }
 
@@ -40,7 +41,7 @@ internal fun isCompactWearConnectLayout(widthDp: Float, heightDp: Float): Boolea
     widthDp < 220f || heightDp < 220f
 
 @Composable
-internal fun WearConnectWaitingScreen() {
+internal fun WearConnectWaitingScreen(workoutName: String?, upcomingStep: String?) {
   Box(
       modifier = Modifier.fillMaxSize().clip(CircleShape).background(ScreenBackground),
       contentAlignment = Alignment.Center) {
@@ -64,7 +65,7 @@ internal fun WearConnectWaitingScreen() {
             overflow = TextOverflow.Clip)
         PhoneGlyph(Modifier.padding(top = if (compact) 8.dp else 12.dp))
         Text(
-            text = stringResource(org.runnerup.common.R.string.Waiting_for_phone),
+            text = if (workoutName == null) stringResource(org.runnerup.common.R.string.Waiting_for_phone) else "REDO ATT STARTA",
             modifier = Modifier.padding(top = if (compact) 7.dp else 10.dp),
             color = PrimaryText,
             fontSize = if (compact) 12.sp else 14.sp,
@@ -73,6 +74,33 @@ internal fun WearConnectWaitingScreen() {
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis)
+        if (workoutName != null) {
+          Text(
+              text = workoutName,
+              modifier = Modifier.padding(top = 4.dp),
+              color = PrimaryText,
+              fontSize = if (compact) 11.sp else 13.sp,
+              fontWeight = FontWeight.Bold,
+              textAlign = TextAlign.Center,
+              maxLines = 2,
+              overflow = TextOverflow.Ellipsis)
+          Text(
+              text = "Nästa: ${upcomingStep.orEmpty()}",
+              modifier = Modifier.padding(top = 3.dp),
+              color = AccentBlue,
+              fontSize = if (compact) 9.sp else 11.sp,
+              textAlign = TextAlign.Center,
+              maxLines = 2,
+              overflow = TextOverflow.Ellipsis)
+          Text(
+              text = "Starta passet på mobilen när du är redo",
+              modifier = Modifier.padding(top = 3.dp),
+              color = SecondaryText,
+              fontSize = if (compact) 8.sp else 10.sp,
+              textAlign = TextAlign.Center,
+              maxLines = 2,
+              overflow = TextOverflow.Ellipsis)
+        }
       }
     }
   }
