@@ -107,10 +107,10 @@
 - Modify: Health Connect worker/store as required
 - Tests: permission flow, export toggle, backfill eligibility/deduplication, status history.
 
-- [ ] Add user-initiated write permission request and opt-in.
-- [ ] Add manual historical export preview/progress and per-session failure reporting.
-- [ ] Show real persisted statuses, retry action, permission settings action, and Swedish Samsung Health guidance.
-- [ ] Ensure no Health Connect reads/import paths exist.
+- [x] Add user-initiated write permission request and opt-in.
+- [x] Add manual historical export preview/progress and per-session failure reporting.
+- [x] Show real persisted statuses, retry action, permission settings action, and Swedish Samsung Health guidance.
+- [x] Ensure no Health Connect reads/import paths exist.
 
 ### Task 7: Integration verification, docs, builds, and PR delivery
 

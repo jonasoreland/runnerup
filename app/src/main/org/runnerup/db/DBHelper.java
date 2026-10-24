@@ -19,7 +19,6 @@ package org.runnerup.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-import org.runnerup.relven.health.HealthConnectActivitySync;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -48,6 +47,7 @@ import org.runnerup.export.RunnerUpLiveSynchronizer;
 import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
+import org.runnerup.relven.health.HealthConnectActivitySync;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.workout.FileFormats;
