@@ -204,6 +204,9 @@ dependencies {
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
     testImplementation 'org.json:json:20260814'
     testImplementation 'org.robolectric:robolectric:4.17'
+    testImplementation platform('androidx.compose:compose-bom:2026.09.00')
+    testImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }
 
 def props = new Properties()

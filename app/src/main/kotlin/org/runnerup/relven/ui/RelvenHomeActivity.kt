@@ -60,7 +60,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
@@ -72,10 +71,6 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -322,6 +317,13 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               isSavingProgress = strengthTransitionSaving,
               isSavingCompletion = strengthFinishing,
               onExport = if (completionSummary != null) {{ chooseStrengthSessionExport(completionSummary) }} else null,
+              onEditResult = { result ->
+                if (currentStrengthSession != null) {
+                  updateStrengthSession { it.replaceResult(result) }
+                } else {
+                  completionSummary?.let { updateCompletedStrengthResult(it, result) }
+                }
+              },
               onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime()) } },
               onLogRepetitions = { input ->
                 updateStrengthSession { it.completeResult(input, SystemClock.elapsedRealtime()) }
@@ -1425,7 +1427,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   }
 
   private fun finishStrengthSession() {
-    if (strengthFinishing) return
+    if (strengthFinishing || strengthTransitionSaving) return
     val finished = strengthSession?.takeIf { it.isComplete } ?: return
     strengthFinishing = true
     val finishedAt = System.currentTimeMillis()
@@ -1447,6 +1449,45 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         Log.w("RelvenHome", "Could not complete strength session", error)
         strengthSaveError = true
         strengthFinishing = false
+      }
+    }
+  }
+
+  private fun updateCompletedStrengthResult(
+      expected: CompletedStrengthSession,
+      updatedResult: StrengthSession.SetResult) {
+    if (strengthTransitionSaving) return
+    val updatedState =
+        try {
+          expected.state.replaceResult(updatedResult)
+        } catch (error: Exception) {
+          Log.w("RelvenHome", "Could not validate edited strength set", error)
+          strengthSaveError = true
+          return
+        }
+    if (updatedState == expected.state) return
+    val replacement = expected.copy(state = updatedState)
+    strengthTransitionSaving = true
+    strengthSaveError = false
+    lifecycleScope.launch {
+      try {
+        withContext(Dispatchers.IO) {
+          strengthStoreMutex.withLock {
+            StrengthSessionStore.replaceCompleted(applicationContext, expected, replacement)
+          }
+        }
+        strengthHistorySessions = strengthHistorySessions.map {
+          if (it.state.executionId == replacement.state.executionId) replacement else it
+        }
+        completedStrengthSessions = completedStrengthSessions.mapValues { (_, completion) ->
+          if (completion.state.executionId == replacement.state.executionId) replacement else completion
+        }
+        viewedStrengthCompletion = replacement
+      } catch (error: Exception) {
+        Log.w("RelvenHome", "Could not save edited strength set", error)
+        strengthSaveError = true
+      } finally {
+        strengthTransitionSaving = false
       }
     }
   }
@@ -1908,17 +1949,17 @@ private fun RelvenHome(
     pendingStrengthSessionChoice: PendingStrengthSessionChoice?,
     onContinueExistingStrengthSession: () -> Unit,
     onCancelExistingStrengthSession: () -> Unit) {
-  Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
-  var rootHeightPx by remember { mutableIntStateOf(0) }
-  var navigationTopPx by remember { mutableIntStateOf(-1) }
-  val density = LocalDensity.current
   val showsHomeNavigation = destination != HomeDestination.Plan || !planCreationOpen
-  val bottomObstructionPx =
-      if (showsHomeNavigation) homeNavigationContentObstructionPx(rootHeightPx, navigationTopPx)
-      else 0
-  val bottomObstruction = with(density) { bottomObstructionPx.toDp() }
-  Box(Modifier.fillMaxSize().onSizeChanged { rootHeightPx = it.height }) {
-  Box(Modifier.fillMaxSize().padding(bottom = bottomObstruction)) {
+  HomeNavigationScaffold(
+      navigationBar = {
+        if (showsHomeNavigation) {
+          HomeNavigationBar(
+              destination = destination,
+              onSelectDestination = onSelectDestination,
+              onOpenHistory = onOpenHistory)
+        }
+      }) {
+  Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
       val homeLocale = LocalLocale.current.platformLocale
       Column(
@@ -2134,17 +2175,6 @@ private fun RelvenHome(
           exerciseCollectionBusy = exerciseCollectionBusy,
           favoriteExerciseIds = favoriteExerciseIds,
           onToggleFavorite = onToggleExerciseFavorite)
-    }
-  }
-    if (destination != HomeDestination.Plan || !planCreationOpen) {
-      HomeNavigationBar(
-          destination = destination,
-          onSelectDestination = onSelectDestination,
-          onOpenHistory = onOpenHistory,
-          modifier =
-              Modifier.align(Alignment.BottomCenter).onGloballyPositioned {
-                navigationTopPx = it.positionInRoot().y.toInt()
-              })
     }
     if (strengthRecoveryNotice) {
       AlertDialog(

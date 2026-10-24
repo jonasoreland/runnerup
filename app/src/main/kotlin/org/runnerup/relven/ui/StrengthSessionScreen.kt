@@ -64,6 +64,7 @@ internal fun StrengthSessionScreen(
     isSavingProgress: Boolean,
     isSavingCompletion: Boolean,
     onExport: (() -> Unit)? = null,
+    onEditResult: (StrengthSession.SetResult) -> Unit,
     onTick: () -> Unit,
     onLogRepetitions: (StrengthSession.RepetitionResultInput) -> Unit,
     onSkipPendingResult: () -> Unit,
@@ -78,6 +79,15 @@ internal fun StrengthSessionScreen(
   val completed = completedAtMillis != null
   val exercise = session.currentExerciseOrNull()
   val pendingResult = session.pendingResults.firstOrNull()
+  var editingResultKey by remember(session.executionId) { mutableStateOf<String?>(null) }
+  val haptic = LocalHapticFeedback.current
+  var previousPhase by remember(session.executionId) { mutableStateOf(session.phase) }
+  LaunchedEffect(session.phase) {
+    if (shouldSignalTimedWorkFinished(previousPhase, session.phase)) {
+      haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+    }
+    previousPhase = session.phase
+  }
   LaunchedEffect(
       session.executionId,
       session.phase,
@@ -141,7 +151,15 @@ internal fun StrengthSessionScreen(
     }
 
     if (completed || session.phase == StrengthSession.Phase.COMPLETE) {
-      SessionResultsSummary(session)
+      SessionResultsSummary(
+          session = session,
+          editingResultKey = editingResultKey,
+          isSaving = isSavingProgress,
+          onBeginEdit = { editingResultKey = it.editIdentity(session.executionId) },
+          onEditResult = { result ->
+            onEditResult(result)
+            editingResultKey = null
+          })
       if (completed) {
         onExport?.let { export ->
           TextButton(onClick = export, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
@@ -160,7 +178,7 @@ internal fun StrengthSessionScreen(
             color = RelvenColors.MutedText)
         Button(
             onClick = onFinish,
-            enabled = !isSavingCompletion,
+            enabled = !isSavingCompletion && !isSavingProgress,
             colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
           Text(stringResource(R.string.Strength_session_finish))
@@ -245,6 +263,18 @@ internal fun StrengthSessionScreen(
               }
               StrengthSession.Phase.COMPLETE -> Unit
             }
+            session.results.filter { it.exerciseIndex == session.exerciseIndex }.forEach { result ->
+              RecordedSetResult(
+                  result = result,
+                  setCount = it.sets(),
+                  editing = editingResultKey == result.editIdentity(session.executionId),
+                  isSaving = isSavingProgress,
+                  onBeginEdit = { editingResultKey = result.editIdentity(session.executionId) },
+                  onEditResult = { updated ->
+                    onEditResult(updated)
+                    editingResultKey = null
+                  })
+            }
             val nextExercise =
                 if (session.setNumber < it.sets()) it
                 else session.workout.exercises().getOrNull(session.exerciseIndex + 1)
@@ -284,7 +314,12 @@ internal fun StrengthSessionScreen(
 }
 
 @Composable
-private fun SessionResultsSummary(session: StrengthSession) {
+private fun SessionResultsSummary(
+    session: StrengthSession,
+    editingResultKey: String?,
+    isSaving: Boolean,
+    onBeginEdit: (StrengthSession.SetResult) -> Unit,
+    onEditResult: (StrengthSession.SetResult) -> Unit) {
   val summary = remember(session.executionId, session.results) { strengthSessionSummary(session) }
   Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
     Text(
@@ -402,10 +437,14 @@ private fun SessionResultsSummary(session: StrengthSession) {
                         } ?: stringResource(R.string.Strength_session_unknown_result)
                       }
                 }
-            Text(
-                stringResource(R.string.Strength_session_set, result.setNumber, exerciseSummary.prescribedSetCount) +
-                    " · $detail",
-                color = RelvenColors.Text)
+            RecordedSetResult(
+                result = result,
+                setCount = exerciseSummary.prescribedSetCount,
+                detailOverride = detail,
+                editing = editingResultKey == result.editIdentity(session.executionId),
+                isSaving = isSaving,
+                onBeginEdit = { onBeginEdit(result) },
+                onEditResult = onEditResult)
             result.notes?.takeIf(String::isNotBlank)?.let {
               Text(it, color = RelvenColors.MutedText, fontSize = 14.sp)
             }
@@ -435,24 +474,83 @@ private fun SummaryMetric(label: String, value: String) {
   }
 }
 
+@Composable
+private fun RecordedSetResult(
+    result: StrengthSession.SetResult,
+    setCount: Int,
+    editing: Boolean,
+    isSaving: Boolean,
+    detailOverride: String? = null,
+    onBeginEdit: () -> Unit,
+    onEditResult: (StrengthSession.SetResult) -> Unit) {
+  val detail =
+      detailOverride ?: result.repetitions?.let { stringResource(R.string.Strength_session_summary_reps_count, it) }
+          ?: if (result.leftRepetitions != null && result.rightRepetitions != null) {
+            "${stringResource(R.string.Strength_session_left_side)} ${result.leftRepetitions} · " +
+                "${stringResource(R.string.Strength_session_right_side)} ${result.rightRepetitions}"
+          } else {
+            stringResource(R.string.Strength_session_unknown_result)
+          }
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+      Text(
+          stringResource(R.string.Strength_session_set, result.setNumber, setCount) + " · $detail",
+          color = RelvenColors.Text,
+          modifier = Modifier.weight(1f))
+      if (result.status == StrengthSession.SetResult.ResultStatus.COMPLETED &&
+          (result.repetitions != null || result.leftRepetitions != null || result.rightRepetitions != null)) {
+        TextButton(
+            onClick = onBeginEdit,
+            enabled = !isSaving,
+            modifier = Modifier.heightIn(min = 48.dp)) {
+          Text(stringResource(R.string.Strength_session_edit_result), color = RelvenColors.Orange)
+        }
+      }
+    }
+    if (editing) {
+      RepetitionCountEntry(
+          key = "edit:${result.exerciseIndex}:${result.setNumber}",
+          initialResult = result,
+          isEditing = true,
+          isSaving = isSaving,
+          onConfirm = { input ->
+            onEditResult(
+                result.copy(
+                    repetitions = input.repetitions,
+                    leftRepetitions = input.leftRepetitions,
+                    rightRepetitions = input.rightRepetitions,
+                    rpe = input.rpe,
+                    painRating = input.painRating,
+                    notes = input.notes,
+                    status = StrengthSession.SetResult.ResultStatus.COMPLETED))
+          })
+    }
+  }
+}
+
+private fun StrengthSession.SetResult.editIdentity(executionId: String): String =
+    "$executionId:$exerciseIndex:$setNumber"
+
 private fun StrengthSession.currentExerciseOrNull() =
     if (phase == StrengthSession.Phase.COMPLETE) null else workout.exercises().getOrNull(exerciseIndex)
 
 @Composable
 private fun RepetitionCountEntry(
     key: String,
+    initialResult: StrengthSession.SetResult? = null,
+    isEditing: Boolean = false,
     isSaving: Boolean,
     onConfirm: (StrengthSession.RepetitionResultInput) -> Unit) {
-  var selectedCount by remember(key) { mutableStateOf<Int?>(null) }
+  var selectedCount by remember(key) { mutableStateOf(initialResult?.repetitions) }
   var manualEntryVisible by remember(key) { mutableStateOf(false) }
-  var manualValue by remember(key) { mutableStateOf("") }
+  var manualValue by remember(key) { mutableStateOf(initialResult?.repetitions?.toString().orEmpty()) }
   var advancedDetailsVisible by remember(key) { mutableStateOf(false) }
-  var perSide by remember(key) { mutableStateOf(false) }
-  var leftCount by remember(key) { mutableStateOf<Int?>(null) }
-  var rightCount by remember(key) { mutableStateOf<Int?>(null) }
-  var rpe by remember(key) { mutableStateOf<Int?>(null) }
-  var discomfort by remember(key) { mutableStateOf<Int?>(null) }
-  var notes by remember(key) { mutableStateOf("") }
+  var perSide by remember(key) { mutableStateOf(initialResult?.leftRepetitions != null || initialResult?.rightRepetitions != null) }
+  var leftCount by remember(key) { mutableStateOf(initialResult?.leftRepetitions) }
+  var rightCount by remember(key) { mutableStateOf(initialResult?.rightRepetitions) }
+  var rpe by remember(key) { mutableStateOf(initialResult?.rpe?.toInt()) }
+  var discomfort by remember(key) { mutableStateOf(initialResult?.painRating) }
+  var notes by remember(key) { mutableStateOf(initialResult?.notes.orEmpty()) }
   val haptic = LocalHapticFeedback.current
   fun selectCount(value: Int?) {
     selectedCount = value
@@ -597,7 +695,9 @@ private fun RepetitionCountEntry(
       colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
       modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) {
     Text(
-        if (perSide) {
+        if (isEditing) {
+          stringResource(R.string.Strength_session_save_edit)
+        } else if (perSide) {
           if (readyToConfirm) {
             "${stringResource(R.string.Strength_session_log_repetitions)} · $leftCount / $rightCount"
           } else stringResource(R.string.Strength_session_choose_count)
@@ -746,3 +846,9 @@ internal fun adjustRepetitionCount(current: Int?, delta: Int): Int =
 
 internal fun parseRepetitionCount(value: String): Int? =
     if (value.isEmpty()) null else value.toIntOrNull()?.takeIf { it in 0..10_000 }
+
+internal fun shouldSignalTimedWorkFinished(
+    previousPhase: StrengthSession.Phase,
+    currentPhase: StrengthSession.Phase): Boolean =
+    previousPhase == StrengthSession.Phase.TIMED_WORK &&
+        currentPhase != StrengthSession.Phase.TIMED_WORK && currentPhase != StrengthSession.Phase.PAUSED

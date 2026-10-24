@@ -71,6 +71,33 @@ internal object StrengthSessionStore {
     writeCompleted(context, state, finishedAtMillis)
   }
 
+  /** Replace one completed record only when it still matches the version the user edited. */
+  @Synchronized
+  @Throws(IOException::class)
+  fun replaceCompleted(
+      context: Context,
+      expected: CompletedStrengthSession,
+      replacement: CompletedStrengthSession) {
+    require(expected.state.executionId == replacement.state.executionId) {
+      "Edited workout execution identity cannot change"
+    }
+    require(expected.state.scheduledEntryId == replacement.state.scheduledEntryId) {
+      "Edited workout plan entry identity cannot change"
+    }
+    require(expected.finishedAtMillis == replacement.finishedAtMillis) {
+      "Edited workout completion time cannot change"
+    }
+    require(replacement.state.isComplete) { "Edited workout must remain complete" }
+    val completionFile = file(context, "completed-${hash(expected.state.executionId)}.json")
+    if (!completionFile.exists()) throw IOException("Completed workout no longer exists")
+    val (savedState, savedFinishedAt) = read(completionFile)
+    if (savedState == replacement.state && savedFinishedAt == replacement.finishedAtMillis) return
+    if (savedState != expected.state || savedFinishedAt != expected.finishedAtMillis) {
+      throw IOException("Completed workout changed since it was opened")
+    }
+    write(context, completionFile.name, StrengthSessionCodec.encode(replacement.state, replacement.finishedAtMillis))
+  }
+
   private fun writeCompleted(context: Context, state: StrengthSession, finishedAtMillis: Long) {
     require(state.isComplete) { "Session is not complete" }
     require(finishedAtMillis > 0) { "Invalid completion time" }

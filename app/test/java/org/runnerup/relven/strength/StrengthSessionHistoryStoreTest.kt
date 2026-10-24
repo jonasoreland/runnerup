@@ -5,6 +5,7 @@ import java.io.File
 import java.security.MessageDigest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -92,6 +93,24 @@ class StrengthSessionHistoryStoreTest {
     StrengthSessionStore.complete(context, completed, 200)
 
     assertEquals(completed, StrengthSessionStore.completedSessions(context).sessions.single().state)
+  }
+
+  @Test
+  fun editingACompletedSetPersistsAtomicallyAndRejectsAStaleOverwrite() {
+    val originalState = completeSession("scheduled", "run-1", 500)
+    val original = CompletedStrengthSession(originalState, 500)
+    val correctedState = originalState.replaceResult(originalState.results.single().copy(repetitions = 9))
+    val corrected = CompletedStrengthSession(correctedState, 500)
+
+    StrengthSessionStore.replaceCompleted(context, original, corrected)
+
+    val restored = StrengthSessionStore.completedSessions(context).sessions.single()
+    assertEquals(9, restored.state.results.single().repetitions)
+    assertEquals(500, restored.finishedAtMillis)
+    assertThrows(java.io.IOException::class.java) {
+      StrengthSessionStore.replaceCompleted(context, original, originalState.replaceResult(
+          originalState.results.single().copy(repetitions = 8)).let { CompletedStrengthSession(it, 500) })
+    }
   }
 
   @Test
