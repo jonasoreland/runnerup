@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,9 @@ import org.runnerup.service.StateService;
 import org.runnerup.wear.ui.WearControlPresentationState;
 import org.runnerup.wear.ui.WearControlsComposeContent;
 
-public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
+public class StartFragment extends Fragment
+    implements ValueModel.ChangeListener<TrackerState>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
   private ComposeView composeView;
   private WearControlPresentationState presentationState;
@@ -50,7 +53,10 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
 
   private void updateView(TrackerState state) {
     if (composeView == null || presentationState == null) return;
-    byte[] payload = new PreparedWorkoutStore(activity).load();
+    byte[] payload =
+        state == TrackerState.INITIALIZED || state == TrackerState.CONNECTED
+            ? new PreparedWorkoutStore(activity).load()
+            : null;
     try {
       WorkoutPreparationProtocol.PrepareMessage prepared =
           WorkoutPreparationProtocol.decodePrepare(payload);
@@ -71,12 +77,18 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   public void onResume() {
     super.onResume();
     activity.registerTrackerStateListener(this);
+    activity
+        .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .registerOnSharedPreferenceChangeListener(this);
     updateView(this.activity.getTrackerState());
   }
 
   @Override
   public void onPause() {
     activity.unregisterTrackerStateListener(this);
+    activity
+        .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .unregisterOnSharedPreferenceChangeListener(this);
     super.onPause();
   }
 
@@ -90,6 +102,13 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   public void onValueChanged(
       ValueModel<TrackerState> obj, TrackerState oldValue, TrackerState newValue) {
     if (isAdded()) updateView(newValue);
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+    if (PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key) && isAdded()) {
+      updateView(activity.getTrackerState());
+    }
   }
 
   @Override

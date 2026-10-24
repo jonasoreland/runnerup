@@ -17,6 +17,7 @@
 package org.runnerup.view;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,8 @@ import org.runnerup.wear.ui.WearConnectWaitingComposeContent;
 /**
  * Relven-styled waiting surface; phone and tracker connection state remain owned by MainActivity.
  */
-public final class ConnectToPhoneFragment extends Fragment {
+public final class ConnectToPhoneFragment extends Fragment
+    implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   private ComposeView composeView;
 
@@ -42,6 +44,12 @@ public final class ConnectToPhoneFragment extends Fragment {
     composeView.setLayoutParams(
         new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    updatePreview();
+    return composeView;
+  }
+
+  private void updatePreview() {
+    if (composeView == null || getActivity() == null) return;
     String workoutName = null;
     String upcomingStep = null;
     byte[] payload = new PreparedWorkoutStore(getActivity()).load();
@@ -53,8 +61,35 @@ public final class ConnectToPhoneFragment extends Fragment {
     } catch (java.io.IOException ignored) {
       // Invalid or missing state falls back to the honest idle/waiting surface.
     }
-    WearConnectWaitingComposeContent.bind(composeView, workoutName, upcomingStep);
-    return composeView;
+    org.runnerup.common.tracker.TrackerState state =
+        getActivity() instanceof MainActivity
+            ? ((MainActivity) getActivity()).getTrackerState()
+            : null;
+    WearConnectWaitingComposeContent.bind(composeView, workoutName, upcomingStep, state);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    getActivity()
+        .getSharedPreferences(
+            PreparedWorkoutStore.PREFERENCES_NAME, android.app.Activity.MODE_PRIVATE)
+        .registerOnSharedPreferenceChangeListener(this);
+    updatePreview();
+  }
+
+  @Override
+  public void onPause() {
+    getActivity()
+        .getSharedPreferences(
+            PreparedWorkoutStore.PREFERENCES_NAME, android.app.Activity.MODE_PRIVATE)
+        .unregisterOnSharedPreferenceChangeListener(this);
+    super.onPause();
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+    if (PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key)) updatePreview();
   }
 
   @Override

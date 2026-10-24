@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
 
   private val runActivityLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
         setResult(result.resultCode, result.data)
         finish()
       }
@@ -82,6 +84,11 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             onCancel = ::cancelPreparation)
       }
     }
+    onBackPressedDispatcher.addCallback(
+        this,
+        object : OnBackPressedCallback(true) {
+          override fun handleOnBackPressed() = cancelPreparation()
+        })
     bound = bindService(Intent(this, Tracker::class.java), connection, Context.BIND_AUTO_CREATE)
     prepareWatch()
   }
@@ -128,6 +135,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
       state.onStartFailed()
       return
     }
+    // The watch preparation is no longer pending once RunnerUp accepts the real start.
+    WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
     runActivityLauncher.launch(Intent(this, RunActivity::class.java))
   }
 

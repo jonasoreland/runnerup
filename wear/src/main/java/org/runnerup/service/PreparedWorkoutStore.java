@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
 
 /** Durable single-slot store for the workout most recently prepared on the watch. */
@@ -11,14 +13,16 @@ import org.runnerup.common.wear.WorkoutPreparationProtocol;
     "ApplySharedPref") // The listener acknowledges only after the watch has durably stored it.
 public final class PreparedWorkoutStore {
   private static final String KEY = "prepared_workout_envelope";
-  private static final String CANCELLED_SESSION_KEY = "cancelled_workout_session";
+  private static final String CANCELLED_SESSION_KEY = "cancelled_workout_sessions";
+  public static final String PREFERENCES_NAME = "wear_workout_preparation";
+  public static final String PREPARED_WORKOUT_KEY = KEY;
   private final Storage storage;
 
   public PreparedWorkoutStore(Context context) {
     SharedPreferences preferences =
         context
             .getApplicationContext()
-            .getSharedPreferences("wear_workout_preparation", Context.MODE_PRIVATE);
+            .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     storage =
         new Storage() {
           @Override
@@ -50,9 +54,7 @@ public final class PreparedWorkoutStore {
     } catch (IOException invalid) {
       return false;
     }
-    String cancelledSession = storage.read(CANCELLED_SESSION_KEY);
-    if (incoming.getSessionId().equals(cancelledSession)) return false;
-    if (cancelledSession != null) storage.remove(CANCELLED_SESSION_KEY);
+    if (cancelledSessions().contains(incoming.getSessionId())) return false;
     byte[] existingPayload = load();
     WorkoutPreparationProtocol.PrepareMessage existing = null;
     if (existingPayload != null) {
@@ -94,7 +96,11 @@ public final class PreparedWorkoutStore {
     } catch (IOException invalid) {
       return false;
     }
-    if (!storage.write(CANCELLED_SESSION_KEY, sessionId)) return false;
+    Set<String> cancelled = cancelledSessions();
+    if (cancelled.add(sessionId)
+        && !storage.write(CANCELLED_SESSION_KEY, String.join("\n", cancelled))) {
+      return false;
+    }
     byte[] current = load();
     if (current != null) {
       try {
@@ -106,6 +112,17 @@ public final class PreparedWorkoutStore {
       }
     }
     return true;
+  }
+
+  private Set<String> cancelledSessions() {
+    Set<String> sessions = new HashSet<>();
+    String encoded = storage.read(CANCELLED_SESSION_KEY);
+    if (encoded != null && !encoded.isEmpty()) {
+      for (String session : encoded.split("\\n")) {
+        if (!session.isEmpty()) sessions.add(session);
+      }
+    }
+    return sessions;
   }
 
   private static String toHex(byte[] bytes) {

@@ -74,6 +74,41 @@ public class PreparedWorkoutStoreTest {
         currentSession, WorkoutPreparationProtocol.decodePrepare(store.load()).getSessionId());
   }
 
+  @Test
+  public void delayedPrepareCannotResurrectSessionCancelledBeforeNewerPreparation()
+      throws Exception {
+    PreparedWorkoutStore store = new PreparedWorkoutStore(new MemoryStorage());
+    String cancelledId = UUID.randomUUID().toString();
+    byte[] cancelled = prepare(cancelledId, "Old", "Start", WORKOUT_JSON);
+    byte[] current = prepare(UUID.randomUUID().toString(), "Current", "Warm-up", WORKOUT_JSON);
+
+    assertTrue(store.save(cancelled));
+    assertTrue(store.cancel(cancelledId));
+    assertTrue(store.save(current));
+
+    assertFalse(store.save(cancelled));
+    assertEquals(
+        "Current", WorkoutPreparationProtocol.decodePrepare(store.load()).getWorkoutName());
+  }
+
+  @Test
+  public void cancellationHistoryRejectsDelayedPreparesAfterMultipleSessions() throws Exception {
+    PreparedWorkoutStore store = new PreparedWorkoutStore(new MemoryStorage());
+    byte[] first = prepare(UUID.randomUUID().toString(), "First", "Start", WORKOUT_JSON);
+    byte[] second = prepare(UUID.randomUUID().toString(), "Second", "Start", WORKOUT_JSON);
+    String firstId = WorkoutPreparationProtocol.decodePrepare(first).getSessionId();
+    String secondId = WorkoutPreparationProtocol.decodePrepare(second).getSessionId();
+
+    assertTrue(store.save(first));
+    assertTrue(store.cancel(firstId));
+    assertTrue(store.save(second));
+    assertTrue(store.cancel(secondId));
+
+    assertFalse(store.save(first));
+    assertFalse(store.save(second));
+    assertNull(store.load());
+  }
+
   private byte[] prepare(String sessionId, String name, String next, String json) throws Exception {
     return WorkoutPreparationProtocol.encodePrepare(
         sessionId, UUID.randomUUID().toString(), name, next, json);

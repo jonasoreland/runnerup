@@ -1126,6 +1126,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       StringWriter serialized = new StringWriter();
       WorkoutSerializer.writeJSON(serialized, workout);
       String workoutName = Sport.textOf(getResources(), workout.getSport());
+      if (advancedWorkout != null && advancedWorkout == workout) {
+        String selectedName =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.pref_advanced_workout), "");
+        if (selectedName != null && !selectedName.isBlank()) workoutName = selectedName;
+      }
       String upcomingStep = "Första steget";
       if (!workout.getStepList().isEmpty()) {
         String stepName = workout.getStepList().get(0).step().getName();
