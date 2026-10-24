@@ -6,8 +6,11 @@ import android.content.Intent
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
 import android.os.SystemClock
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -23,6 +26,7 @@ import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import androidx.core.os.ConfigurationCompat
 import androidx.compose.foundation.BorderStroke
@@ -178,6 +182,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var destination by mutableStateOf(HomeDestination.Today)
   private var settingsRoute by mutableStateOf<SettingsRoute>(SettingsRoute.Overview)
   private var settingsSnapshot by mutableStateOf(RelvenSettingsSnapshot(false, true, false, false, false))
+  private var settingsDeviceState by mutableStateOf(RelvenSettingsDeviceState())
   private lateinit var settingsRepository: RelvenSettingsRepository
   private var healthConnectSnapshot by mutableStateOf(HealthConnectSettingsSnapshot(
       HealthConnectAvailabilityStatus.UNKNOWN_ERROR, false, emptySet(), 0, 0, 0, emptyList()))
@@ -424,6 +429,23 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onAutoPauseChanged = settingsRepository::setAutoPause,
             onAutoLapChanged = settingsRepository::setAutoLap,
             onAutoLapIntervalsChanged = settingsRepository::setAutoLapIntervals,
+            settingsDeviceState = settingsDeviceState,
+            settingsPageActions = SettingsPageActions(
+                onRefreshWatch = ::refreshSettingsDeviceState,
+                onCadenceSensorChanged = settingsRepository::setUseCadenceSensor,
+                onTemperatureSensorChanged = settingsRepository::setUseTemperatureSensor,
+                onPressureSensorChanged = settingsRepository::setUsePressureSensor,
+                onImportCustomExercises = ::chooseExerciseCollectionImport,
+                onExportCustomExercises = ::chooseExerciseCollectionExport,
+                onOpenHistory = { selectHomeDestination(HomeDestination.History) },
+                onOpenPlans = {
+                  planLibraryOpen = true
+                  selectHomeDestination(HomeDestination.Plan)
+                },
+                onOpenExercises = { selectHomeDestination(HomeDestination.Exercises) },
+                onOpenHealthConnect = { settingsRoute = SettingsRoute.Page(SettingsPage.HealthConnect) },
+                onDistanceUnitChanged = settingsRepository::setDistanceUnit,
+                onSpeedUnitChanged = settingsRepository::setSpeedUnit),
             startFragmentManager = supportFragmentManager,
             onSelectDestination = ::selectHomeDestination,
             onRetryProgress = ::loadProgress,
@@ -583,6 +605,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   override fun onResume() {
     super.onResume()
     refreshHealthConnectSettings()
+    if (destination == HomeDestination.Settings) refreshSettingsDeviceState()
     if (destination == HomeDestination.History) {
       loadActivityHistory()
       loadStrengthSessionHistory()
@@ -663,7 +686,43 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     }
   }
 
+  private fun refreshSettingsDeviceState() {
+    val sensors = getSystemService(SensorManager::class.java)
+    val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
+    val appLocale = ConfigurationCompat.getLocales(resources.configuration).get(0) ?: Locale.getDefault()
+    settingsDeviceState = RelvenSettingsDeviceState(
+        locationPermissionGranted =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED,
+        gpsProviderEnabled = runCatching {
+          getSystemService(LocationManager::class.java)?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
+        }.getOrDefault(false),
+        cadenceSensorAvailable = sensors?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null,
+        temperatureSensorAvailable = isTemperatureSensorAvailable(sensors),
+        pressureSensorAvailable = sensors?.getDefaultSensor(Sensor.TYPE_PRESSURE) != null,
+        activityRecognitionPermissionGranted = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) ==
+                PackageManager.PERMISSION_GRANTED,
+        notificationsEnabled = NotificationManagerCompat.from(this).areNotificationsEnabled(),
+        localeDisplayName = appLocale.getDisplayName(appLocale),
+        appVersion = packageInfo?.versionName ?: BuildConfig.VERSION_NAME,
+        wearState = WearConnectionState.Loading)
+    WearConnectionProvider.query(this) { supported, succeeded, connectedNodes ->
+      settingsDeviceState = settingsDeviceState.copy(
+          wearState = wearConnectionState(supported, succeeded, connectedNodes),
+          connectedWatchNames = connectedNodes.orEmpty())
+    }
+  }
+
+  @Suppress("DEPRECATION")
+  private fun isTemperatureSensorAvailable(sensors: SensorManager?): Boolean =
+      sensors?.let {
+        it.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null ||
+            it.getDefaultSensor(Sensor.TYPE_TEMPERATURE) != null
+      } ?: false
+
   private fun selectHomeDestination(next: HomeDestination) {
+    if (next == HomeDestination.Settings) refreshSettingsDeviceState()
     if (next == HomeDestination.History) loadStrengthSessionHistory()
     if (next != HomeDestination.Start) pendingPlannedRunningWorkout = null
     if (next != HomeDestination.Plan) {
@@ -2085,6 +2144,8 @@ private fun RelvenHome(
     settingsRoute: SettingsRoute,
     onSettingsRouteChanged: (SettingsRoute) -> Unit,
     settingsSnapshot: RelvenSettingsSnapshot,
+    settingsDeviceState: RelvenSettingsDeviceState,
+    settingsPageActions: SettingsPageActions,
     healthConnectSnapshot: HealthConnectSettingsSnapshot,
     healthConnectBusy: Boolean,
     healthConnectMessage: String?,
@@ -2333,7 +2394,9 @@ private fun RelvenHome(
           onExportHistoricalWorkouts = onExportHistoricalWorkouts,
           onSyncHealthConnectNow = onSyncHealthConnectNow,
           onRefreshHealthConnectStatus = onRefreshHealthConnectStatus,
-          onRetryHealthConnectSession = onRetryHealthConnectSession)
+          onRetryHealthConnectSession = onRetryHealthConnectSession,
+          deviceState = settingsDeviceState,
+          pageActions = settingsPageActions)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,

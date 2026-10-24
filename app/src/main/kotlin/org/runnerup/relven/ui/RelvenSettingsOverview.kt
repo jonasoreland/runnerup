@@ -29,7 +29,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -64,7 +63,9 @@ internal fun RelvenSettingsOverview(
     onSyncHealthConnectNow: () -> Unit,
     onRefreshHealthConnectStatus: () -> Unit,
     onRetryHealthConnectSession: (String) -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier,
+    deviceState: RelvenSettingsDeviceState = RelvenSettingsDeviceState(),
+    pageActions: SettingsPageActions = SettingsPageActions()) {
   BackHandler(enabled = route is SettingsRoute.Page) {
     onRouteChanged(SettingsRoute.Overview)
   }
@@ -98,7 +99,6 @@ internal fun RelvenSettingsOverview(
         }
       }
       is SettingsRoute.Page -> {
-        val context = LocalContext.current
         TextButton(onClick = { onRouteChanged(SettingsRoute.Overview) }) {
           Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
           Text("Inställningar", modifier = Modifier.padding(start = 8.dp))
@@ -106,37 +106,8 @@ internal fun RelvenSettingsOverview(
         Text(route.page.title(), fontSize = 28.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.semantics { heading() })
         Text(route.page.intro(), color = RelvenColors.MutedText, lineHeight = 22.sp)
-        when (route.page) {
-          SettingsPage.Workout -> SettingsCard {
-            SettingsSwitch(
-                title = "Håll skärmen tänd under pass",
-                summary = "Gäller nästa träningspass",
-                checked = settings.keepScreenOn,
-                onCheckedChange = onKeepScreenOnChanged)
-            SettingsSwitch(
-                title = "Automatisk paus",
-                summary = "Pausa registreringen när du står stilla",
-                checked = settings.autoPause,
-                onCheckedChange = onAutoPauseChanged)
-            SettingsSwitch(
-                title = "Automatiska varv för fria pass",
-                summary = "Registrera varv enligt din befintliga varvlängd",
-                checked = settings.autoLap,
-                onCheckedChange = onAutoLapChanged)
-            SettingsSwitch(
-                title = "Automatiska varv för intervallpass",
-                summary = "Registrera varv för intervallpass",
-                checked = settings.autoLapIntervals,
-                onCheckedChange = onAutoLapIntervalsChanged)
-          }
-          SettingsPage.GpsSensors -> SettingsCard {
-            SettingsSwitch(
-                title = "Starta GPS automatiskt",
-                summary = "Förbered GPS när du öppnar träningsvyn",
-                checked = settings.autoStartGps,
-                onCheckedChange = onAutoStartGpsChanged)
-          }
-          SettingsPage.HealthConnect -> HealthConnectSettingsContent(
+        if (route.page == SettingsPage.HealthConnect) {
+          HealthConnectSettingsContent(
               snapshot = healthConnect,
               busy = healthConnectBusy,
               message = healthConnectMessage,
@@ -148,28 +119,17 @@ internal fun RelvenSettingsOverview(
               onSyncNow = onSyncHealthConnectNow,
               onRefreshStatus = onRefreshHealthConnectStatus,
               onRetry = onRetryHealthConnectSession)
-          else -> Surface(
-              color = RelvenColors.Surface,
-              shape = RoundedCornerShape(22.dp),
-              border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))) {
-            Text(
-                route.page.detail(),
-                modifier = Modifier.fillMaxWidth().padding(18.dp),
-                color = RelvenColors.MutedText,
-                lineHeight = 21.sp)
-          }
-        }
-        if (route.page == SettingsPage.Voice) {
-          Button(
-              onClick = {
-                context.startActivity(
-                    android.content.Intent(
-                        context, org.runnerup.view.AudioCueSettingsActivity::class.java))
-              },
-              colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
-              modifier = Modifier.fillMaxWidth()) {
-            Text("Öppna röstinställningar")
-          }
+        } else {
+          RelvenSettingsPageContent(
+              page = route.page,
+              settings = settings,
+              deviceState = deviceState,
+              onKeepScreenOnChanged = onKeepScreenOnChanged,
+              onAutoStartGpsChanged = onAutoStartGpsChanged,
+              onAutoPauseChanged = onAutoPauseChanged,
+              onAutoLapChanged = onAutoLapChanged,
+              onAutoLapIntervalsChanged = onAutoLapIntervalsChanged,
+              actions = pageActions)
         }
       }
     }
@@ -381,7 +341,7 @@ private fun org.runnerup.relven.health.HealthConnectAvailabilityStatus.toSwedish
 }
 
 @Composable
-private fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
+internal fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
   Surface(
       color = RelvenColors.Surface,
       shape = RoundedCornerShape(22.dp),
@@ -391,7 +351,7 @@ private fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-private fun SettingsSwitch(
+internal fun SettingsSwitch(
     title: String,
     summary: String,
     checked: Boolean,
@@ -455,16 +415,4 @@ private fun SettingsPage.intro(): String = when (this) {
   SettingsPage.Notifications -> "Påminnelser och träningsnotiser"
   SettingsPage.DataExport -> "Import, export och lokal träningsdata"
   SettingsPage.About -> "Appversion och information"
-}
-
-private fun SettingsPage.detail(): String = when (this) {
-  SettingsPage.HealthConnect -> "Export till Health Connect är ännu inte tillgänglig. Dina träningspass sparas fortsatt i Relven."
-  SettingsPage.Watch -> "Wear OS-anslutningen fortsätter att hantera träningssynkronisering. Klockans anslutningsstatus visas inte här ännu."
-  SettingsPage.Voice -> "Röstcoachning använder Relvens befintliga talinställningar och fungerar utan en molntjänst."
-  SettingsPage.Appearance -> "Relven använder sitt mörka tema. Temaväxling är inte tillgänglig ännu."
-  SettingsPage.LanguageUnits -> "Enhetsvalen använder fortfarande de befintliga appinställningarna. Dina sparade träningsvärden ändras inte."
-  SettingsPage.Notifications -> "Befintliga Android-notiser fortsätter att fungera. Separata notisval finns inte ännu."
-  SettingsPage.DataExport -> "Import och export är tillgängliga från respektive tränings- och planvyer."
-  SettingsPage.About -> "Relven – din träning, sparad lokalt på enheten."
-  SettingsPage.Workout, SettingsPage.GpsSensors -> ""
 }

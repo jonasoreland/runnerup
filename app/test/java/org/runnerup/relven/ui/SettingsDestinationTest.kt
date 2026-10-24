@@ -39,4 +39,12 @@ class SettingsDestinationTest {
     assertEquals(SettingsRoute.Page(SettingsPage.Voice), settingsRouteFromSaved("Voice"))
     assertTrue(SettingsPage.entries.all { settingsRouteFromSaved(it.name) == SettingsRoute.Page(it) })
   }
+
+  @Test
+  fun wearConnectionMappingDistinguishesDisconnectedUnsupportedAndFailedQueries() {
+    assertEquals(WearConnectionState.Unavailable, wearConnectionState(false, false, null))
+    assertEquals(WearConnectionState.Error, wearConnectionState(true, false, null))
+    assertEquals(WearConnectionState.Disconnected, wearConnectionState(true, true, emptyList()))
+    assertEquals(WearConnectionState.Connected, wearConnectionState(true, true, listOf("Watch")))
+  }
 }

@@ -80,4 +80,61 @@ class RelvenSettingsRepositoryTest {
 
     assertFalse(repository.state.value.autoStartGps)
   }
+
+  @Test
+  fun sensorAndUnitSettingsUseExistingRunnerUpPreferenceKeys() {
+    val repository = RelvenSettingsRepository(context)
+
+    repository.setUseCadenceSensor(false)
+    repository.setUseTemperatureSensor(true)
+    repository.setUsePressureSensor(true)
+    repository.setDistanceUnit("mi")
+    repository.setSpeedUnit("speed")
+
+    assertFalse(preferences.getBoolean(context.getString(R.string.pref_use_cadence_step_sensor), true))
+    assertTrue(preferences.getBoolean(context.getString(R.string.pref_use_temperature_sensor), false))
+    assertTrue(preferences.getBoolean(context.getString(R.string.pref_use_pressure_sensor), false))
+    assertEquals("mi", preferences.getString(context.getString(R.string.pref_unit), null))
+    assertEquals("speed", preferences.getString(context.getString(R.string.pref_speedunit), null))
+    assertEquals(false, repository.state.value.useCadenceSensor)
+    assertEquals(true, repository.state.value.useTemperatureSensor)
+    assertEquals(true, repository.state.value.usePressureSensor)
+    assertEquals("mi", repository.state.value.distanceUnit)
+    assertEquals("speed", repository.state.value.speedUnit)
+  }
+
+  @Test
+  fun invalidUnitValuesAreIgnoredAndUnitDefaultsFollowExistingFormatterRules() {
+    val distanceKey = context.getString(R.string.pref_unit)
+    val speedKey = context.getString(R.string.pref_speedunit)
+    preferences.edit().putString(distanceKey, "yards").putString(speedKey, "knots").commit()
+    val repository = RelvenSettingsRepository(context)
+
+    repository.setDistanceUnit("yards")
+    repository.setSpeedUnit("knots")
+
+    val expectedDistanceUnit = if (java.util.Locale.getDefault().country in setOf("US", "GB")) "mi" else "km"
+    assertEquals(expectedDistanceUnit, repository.state.value.distanceUnit)
+    assertEquals("pace", repository.state.value.speedUnit)
+    assertEquals("yards", preferences.getString(distanceKey, null))
+    assertEquals("knots", preferences.getString(speedKey, null))
+  }
+
+  @Test
+  fun unitChangesFromLegacyPreferencesAndRepositoryAreVisibleAfterReopen() {
+    val repository = RelvenSettingsRepository(context)
+    val unitKey = context.getString(R.string.pref_unit)
+    val speedKey = context.getString(R.string.pref_speedunit)
+
+    preferences.edit().putString(unitKey, "mi").putString(speedKey, "speed").commit()
+
+    assertEquals("mi", repository.state.value.distanceUnit)
+    assertEquals("speed", repository.state.value.speedUnit)
+    repository.close()
+
+    val reopened = RelvenSettingsRepository(context)
+    assertEquals("mi", reopened.state.value.distanceUnit)
+    assertEquals("speed", reopened.state.value.speedUnit)
+    reopened.close()
+  }
 }
