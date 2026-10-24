@@ -56,6 +56,8 @@ import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -460,9 +462,13 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       if (mTracker != null) {
         mTracker.setWithoutGps(false);
         mTracker.reset();
-        if (mGpsStatus.isStarted()) {
+        if (getAutoStartGps()) {
+          if (!checkPermissions(false)) {
+            startGps(false);
+          }
+        } else if (mGpsStatus.isStarted()) {
           mTracker.setup();
-          startGps();
+          startGps(true);
         }
       }
     }
@@ -508,8 +514,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         .unregisterOnSharedPreferenceChangeListener(prefChangeListener);
 
     if (getAutoStartGps()) {
-      // If autoStartGps, then stop it during pause
-      stopGps();
+      if (shouldStopGpsForLifecycle()) {
+        stopGps();
+      }
     } else {
       if (mTracker != null
           && ((mTracker.getState() == TrackerState.INITIALIZED)
@@ -538,7 +545,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   @Override
   public void onDestroy() {
     gymCatalogExecutor.shutdownNow();
-    stopGps();
+    if (shouldStopGpsForLifecycle()) {
+      stopGps();
+    } else if (mGpsStatus != null) {
+      // The home activity owns the shared Tracker warm-up across in-app navigation.
+      mGpsStatus.stop(this);
+    }
     unbindGpsTracker();
     mGpsStatus = null;
 
@@ -596,7 +608,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     boolean missingEssentialPermission = sportWithoutGps ? false : checkPermissions(false);
     mTracker.setWithoutGps(sportWithoutGps);
     if (!missingEssentialPermission && getAutoStartGps()) {
-      startGps();
+      startGps(false);
     } else {
       Log.d(getClass().getName(), "onGpsTrackerBound state: " + mTracker.getState());
       switch (mTracker.getState()) {
@@ -622,19 +634,34 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   public boolean getAutoStartGps() {
     Context ctx = requireActivity().getApplicationContext();
     SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ctx);
-    return pref.getBoolean(getString(R.string.pref_startgps), false);
+    return pref.getBoolean(getString(R.string.pref_startgps), true);
   }
 
-  private void startGps() {
+  private boolean shouldStopGpsForLifecycle() {
+    if (!getAutoStartGps()) {
+      return true;
+    }
+    Activity activity = getActivity();
+    return !(activity instanceof FragmentActivity)
+        || !((FragmentActivity) activity)
+            .getLifecycle()
+            .getCurrentState()
+            .isAtLeast(Lifecycle.State.RESUMED);
+  }
+
+  private void startGps(boolean openLocationSettingsIfDisabled) {
     Log.d(getClass().getName(), "StartFragment.startGps()");
     if (!sportWithoutGps) {
       if (!mGpsStatus.isEnabled()) {
-        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        if (openLocationSettingsIfDisabled) {
+          startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        }
+        return;
       }
       notificationStateManager.displayNotificationState(gpsSearchingState);
     }
 
-    if (mGpsStatus != null && !mGpsStatus.isStarted()) {
+    if (!sportWithoutGps && mGpsStatus != null && !mGpsStatus.isStarted()) {
       mGpsStatus.start(this);
     }
 
@@ -1137,7 +1164,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         }
 
         if (mTracker.getState() != TrackerState.CONNECTED) {
-          startGps();
+          startGps(true);
         }
         updateView();
       };
@@ -1273,7 +1300,7 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
     final boolean suppressOptimizeBatteryPopup =
         prefs.getBoolean(res.getString(R.string.pref_suppress_battery_optimization_popup), false);
     PowerManager pm = ContextCompat.getSystemService(ctx, PowerManager.class);
-    if ((popup || getAutoStartGps())
+    if (popup
         && !suppressOptimizeBatteryPopup
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
         && !pm.isIgnoringBatteryOptimizations(ctx.getPackageName())) {

@@ -68,7 +68,7 @@
         app:iconSpaceReserved="false">
 
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/pref_startgps"
             android:persistent="true"
             android:title="@string/Auto_start_GPS"

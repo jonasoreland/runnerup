@@ -77,4 +77,42 @@ class HomeTrackerSessionBindingTest {
 
     Mockito.verify(context, Mockito.never()).unbindService(Mockito.any(ServiceConnection::class.java))
   }
+
+  @Test
+  fun preparesBoundTrackerAndReleasesItOnceWhenBindingStops() {
+    val context = Mockito.mock(Context::class.java)
+    Mockito.`when`(
+            context.bindService(
+                Mockito.any(Intent::class.java),
+                Mockito.any(ServiceConnection::class.java),
+                Mockito.eq(Context.BIND_AUTO_CREATE)))
+        .thenReturn(true)
+    val prepared = mutableListOf<Tracker>()
+    val released = mutableListOf<Tracker>()
+    val binding =
+        HomeTrackerSessionBinding(
+            context = context,
+            onStatusChanged = {},
+            onTrackerBound = { tracker -> prepared += tracker },
+            onTrackerUnbound = released::add)
+
+    binding.start()
+    val connectionCaptor = ArgumentCaptor.forClass(ServiceConnection::class.java)
+    Mockito.verify(context)
+        .bindService(
+            Mockito.any(Intent::class.java),
+            connectionCaptor.capture(),
+            Mockito.eq(Context.BIND_AUTO_CREATE))
+    val tracker = Mockito.mock(Tracker::class.java)
+    Mockito.`when`(tracker.state).thenReturn(TrackerState.CONNECTED)
+    val binder = Mockito.mock(Tracker.LocalBinder::class.java)
+    Mockito.`when`(binder.service).thenReturn(tracker)
+
+    connectionCaptor.value.onServiceConnected(Mockito.mock(ComponentName::class.java), binder)
+    binding.stop()
+    binding.stop()
+
+    assertEquals(listOf(tracker), prepared)
+    assertEquals(listOf(tracker), released)
+  }
 }

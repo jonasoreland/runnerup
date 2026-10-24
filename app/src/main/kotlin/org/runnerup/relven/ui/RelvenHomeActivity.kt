@@ -3,6 +3,9 @@ package org.runnerup.relven.ui
 import android.content.Context
 import android.content.ClipData
 import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.database.Cursor
@@ -17,7 +20,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import androidx.core.os.ConfigurationCompat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -93,6 +98,7 @@ import org.runnerup.workout.RelvenPlanKit
 import org.runnerup.workout.RelvenPlanImporter
 import org.runnerup.workout.Sport
 import org.runnerup.view.StartFragment
+import org.runnerup.tracker.Tracker
 import org.runnerup.view.ManualActivity
 import org.runnerup.util.FileNameHelper
 import org.runnerup.importer.ActivityFileImporter
@@ -185,6 +191,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     super.onCreate(savedInstanceState)
+    migrateGpsWarmupPreference(
+        PreferenceManager.getDefaultSharedPreferences(applicationContext),
+        getString(R.string.pref_startgps))
     activityDocumentPicker =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
           if (uri != null) readActivityImport(uri)
@@ -392,9 +401,44 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   override fun onStart() {
     super.onStart()
     trackerSessionBinding =
-        HomeTrackerSessionBinding(this) { status ->
-          runOnUiThread { sessionStatus = status }
-        }.also { it.start() }
+        HomeTrackerSessionBinding(
+            context = this,
+            onStatusChanged = { status -> runOnUiThread { sessionStatus = status } },
+            onTrackerBound = ::prepareGpsWarmup,
+            onTrackerUnbound = ::releaseGpsWarmup)
+            .also { it.start() }
+  }
+
+  private fun prepareGpsWarmup(tracker: Tracker) {
+    val context = applicationContext
+    val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val fineLocationGranted =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED
+    val locationProviderEnabled =
+        runCatching {
+              ContextCompat.getSystemService(context, LocationManager::class.java)
+                  ?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true
+            }
+            .getOrDefault(false)
+    val sportWithoutGps =
+        Sport.isWithoutGps(
+            preferences.getInt(getString(R.string.pref_sport), DB.ACTIVITY.SPORT_RUNNING))
+    if (!shouldWarmUpGps(
+        tracker.state,
+        autoStartEnabled = preferences.getBoolean(getString(R.string.pref_startgps), true),
+        fineLocationGranted = fineLocationGranted,
+        locationProviderEnabled = locationProviderEnabled,
+        sportWithoutGps = sportWithoutGps)) {
+      return
+    }
+
+    tracker.setWithoutGps(false)
+    tracker.connect()
+  }
+
+  private fun releaseGpsWarmup(tracker: Tracker) {
+    releaseIdleGpsWarmup(tracker)
   }
 
   override fun onNewIntent(intent: Intent) {

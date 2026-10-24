@@ -52,10 +52,16 @@ internal class HomeTrackerSessionObserver(
 
 internal class HomeTrackerSessionBinding(
     private val context: Context,
+    private val onTrackerBound: (Tracker) -> Unit,
+    private val onTrackerUnbound: (Tracker) -> Unit,
     private val onStatusChanged: (HomeSessionStatus?) -> Unit
 ) {
+  constructor(context: Context, onStatusChanged: (HomeSessionStatus?) -> Unit) :
+      this(context, {}, {}, onStatusChanged)
+
   private var started = false
   private var bound = false
+  private var tracker: Tracker? = null
   private var observer: HomeTrackerSessionObserver? = null
 
   private val connection =
@@ -63,12 +69,15 @@ internal class HomeTrackerSessionBinding(
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
           if (!started || service !is Tracker.LocalBinder) return
           observer?.close()
+          tracker = service.service
           observer = HomeTrackerSessionObserver(service.service, onStatusChanged)
+          onTrackerBound(service.service)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
           observer?.close()
           observer = null
+          tracker = null
           if (started) onStatusChanged(null)
         }
       }
@@ -82,6 +91,8 @@ internal class HomeTrackerSessionBinding(
   fun stop() {
     if (!started) return
     started = false
+    tracker?.let(onTrackerUnbound)
+    tracker = null
     observer?.close()
     observer = null
     onStatusChanged(null)
