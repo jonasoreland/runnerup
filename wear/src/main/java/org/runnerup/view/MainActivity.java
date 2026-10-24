@@ -19,7 +19,6 @@ package org.runnerup.view;
 import static com.google.android.gms.wearable.PutDataRequest.WEAR_URI_SCHEME;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.ComponentName;
@@ -38,6 +37,7 @@ import android.support.wearable.view.FragmentGridPagerAdapter;
 import android.support.wearable.view.GridViewPager;
 import android.util.Log;
 import android.widget.LinearLayout;
+import androidx.activity.ComponentActivity;
 import com.google.android.gms.wearable.DataClient;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -49,7 +49,7 @@ import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
 
-public class MainActivity extends Activity
+public class MainActivity extends ComponentActivity
     implements Constants, ValueModel.ChangeListener<TrackerState> {
   private static final String TAG = "RU:MainActivity";
   private final Handler handler = new Handler();
