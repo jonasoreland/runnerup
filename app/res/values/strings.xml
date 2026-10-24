@@ -177,7 +177,7 @@
     <string name="activity_review_chart">Performance</string>
     <string name="activity_review_chart_description">%1$s chart, values from %2$.1f to %3$.1f</string>
     <string name="activity_review_chart_range">Range %1$.1f – %2$.1f</string>
-    <string name="activity_review_distance_axis">Distance %1$.1f–%2$.1f km</string>
+    <string name="activity_review_distance_axis">Distance %1$s km</string>
     <string name="activity_review_kilometer_splits">Kilometer splits</string>
     <string name="activity_review_kilometer_number">Km %1$d</string>
     <string name="activity_review_target">Target: %1$s</string>

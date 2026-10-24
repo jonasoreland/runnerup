@@ -193,7 +193,7 @@
     <string name="activity_review_chart">Prestation</string>
     <string name="activity_review_chart_description">Diagram för %1$s, värden från %2$.1f till %3$.1f</string>
     <string name="activity_review_chart_range">Intervall %1$.1f – %2$.1f</string>
-    <string name="activity_review_distance_axis">Distans %1$.1f–%2$.1f km</string>
+    <string name="activity_review_distance_axis">Distans %1$s km</string>
     <string name="activity_review_kilometer_splits">Kilometersplits</string>
     <string name="activity_review_kilometer_number">Km %1$d</string>
     <string name="activity_review_target">Mål: %1$s</string>

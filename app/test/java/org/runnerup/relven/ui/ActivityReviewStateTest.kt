@@ -7,6 +7,22 @@ import org.junit.Test
 
 class ActivityReviewStateTest {
   @Test
+  fun shortActivityDistanceAxisRetainsUsefulPrecision() {
+    assertEquals("0.00–0.03", activityChartDistanceRangeLabel(0.0, 0.033, java.util.Locale.US))
+    assertEquals("0,00–0,03", activityChartDistanceRangeLabel(0.0, 0.033, java.util.Locale.forLanguageTag("sv-SE")))
+  }
+
+  @Test
+  fun subTenMeterDistanceAxisUsesMeterScalePrecision() {
+    assertEquals("0.000–0.005", activityChartDistanceRangeLabel(0.0, 0.005, java.util.Locale.US))
+  }
+
+  @Test
+  fun longerActivityDistanceAxisUsesCompactPrecision() {
+    assertEquals("0.0–5.2", activityChartDistanceRangeLabel(0.0, 5.234, java.util.Locale.US))
+  }
+
+  @Test
   fun onlyUnfinishedReviewOffersResumeSaveAndDiscard() {
     val unfinished = activityReviewActions(ActivityReviewMode.UNFINISHED)
     val saved = activityReviewActions(ActivityReviewMode.SAVED)
