@@ -2,11 +2,11 @@
 
 The manual workflow at **Actions → Publish Relven to Play Internal Testing → Run workflow** builds and uploads both the phone and Wear app bundles. It only runs on `master`, requires typing `PUBLISH_INTERNAL`, and requires an even phone version code that exceeds the highest version code already uploaded for this app. Wear uses the next code. The current local phone build is `24000374`, so the default suggested first code is `24000376`; check Play Console before running and raise it if any track already contains a higher code.
 
-The action signs with the original Relven upload keystore. Google Play uses the package ID `se.hampusandersson.relven`. Do not run the workflow until all five repository secrets below have been added.
+The action signs with the original Relven upload keystore. Google Play uses the package ID `se.hampusandersson.relven`. The target repository currently has all five secret names below. GitHub never reveals their values, so their presence does not prove that the values are current or valid; validate them with a deliberately reviewed internal-track publish only when you are ready to publish.
 
 ## Add the five repository secrets
 
-In `HampusAndersson01/Relven-2.0`, open **Settings → Secrets and variables → Actions → New repository secret**. Add these exact names:
+In `HampusAndersson01/Relven-2.0`, open **Settings → Secrets and variables → Actions** to check the existing names. As of 24 October 2026, the repository has `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, and `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64`. Do not create duplicate entries. If a value needs replacing, use the edit control for that exact secret and enter the value from your secure local file or password manager.
 
 | Secret | Value |
 | --- | --- |
@@ -16,7 +16,7 @@ In `HampusAndersson01/Relven-2.0`, open **Settings → Secrets and variables →
 | `ANDROID_KEY_PASSWORD` | The password for that alias/key |
 | `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64` | Base64 encoding of the Google Play service-account JSON key file |
 
-GitHub cannot show or copy secret values from the old `Relven` repository; it only exposes their names. The old repo currently has all five names, while `Relven-2.0` has none, so add the values again from your local credential files/password manager. Do not paste credentials into a chat, commit them, or store the generated `release.properties` file.
+GitHub cannot show or copy secret values from either repository; `gh secret list` and the Actions settings page expose names only. The five names are present in `Relven-2.0`, but this repository has not run the publishing workflow to validate that they contain the original upload key and service-account key. Do not paste credentials into a chat, commit them, or store the generated `release.properties` file. If a secret value is missing or invalid, replace it from your secure credential files/password manager; do not assume GitHub can recover the old value.
 
 For the binary keystore and JSON key, PowerShell can pipe base64 directly into `gh secret set` without printing the encoded data:
 
