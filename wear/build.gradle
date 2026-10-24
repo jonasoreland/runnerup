@@ -85,6 +85,7 @@ dependencies {
     implementation "androidx.fragment:fragment:1.9.1"
 
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+    testImplementation 'org.json:json:20260814'
 }
 
 def props = new Properties()

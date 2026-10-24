@@ -59,11 +59,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.preference.PreferenceManager;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.json.JSONArray;
@@ -1110,19 +1112,60 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   private void startWorkout() {
-    mGpsStatus.stop(StartFragment.this);
-
     // unregister receivers
     unregisterStartEventListener();
 
-    // RunnerUp's Tracker owns workout execution.
-    mTracker.setWorkout(prepareWorkout());
-    mTracker.start();
-
-    runActivityPending = true;
-    Intent intent = new Intent(requireContext(), RunActivity.class);
-    runActivityLauncher.launch(intent);
-    notificationStateManager.cancelNotification(); // will be added by RunActivity
+    // RunnerUp's Tracker remains the execution engine, but selection only prepares the session.
+    Workout workout = prepareWorkout();
+    if (workout == null || mTracker == null) {
+      registerStartEventListener();
+      updateView();
+      return;
+    }
+    try {
+      StringWriter serialized = new StringWriter();
+      WorkoutSerializer.writeJSON(serialized, workout);
+      String workoutName = Sport.textOf(getResources(), workout.getSport());
+      if (advancedWorkout != null && advancedWorkout == workout) {
+        String selectedName =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.pref_advanced_workout), "");
+        if (selectedName != null && !selectedName.isBlank()) workoutName = selectedName;
+      }
+      String upcomingStep = "Första steget";
+      if (!workout.getStepList().isEmpty()) {
+        String stepName = workout.getStepList().get(0).step().getName();
+        if (stepName != null && !stepName.isBlank()) upcomingStep = stepName;
+      }
+      mTracker.setWorkout(workout);
+      // This screen's UI-only location listener must not compete with the active workout UI.
+      // Tracker keeps its own location subscription and is intentionally left connected.
+      if (mGpsStatus != null) mGpsStatus.stop(this);
+      runActivityPending = true;
+      runActivityLauncher.launch(
+          org.runnerup.relven.ui.WorkoutPreparationActivity.intent(
+              requireContext(),
+              UUID.randomUUID().toString(),
+              workoutName,
+              upcomingStep,
+              serialized.toString(),
+              workout.getSport(),
+              workout.getWorkoutType()));
+    } catch (Exception error) {
+      runActivityPending = false;
+      Log.w(getClass().getName(), "Could not prepare workout", error);
+      if (!sportWithoutGps && mGpsStatus != null && !mGpsStatus.isStarted()) {
+        mGpsStatus.start(this);
+      }
+      registerStartEventListener();
+      updateView();
+      new AlertDialog.Builder(requireContext(), R.style.RelvenStartDialogTheme)
+          .setTitle(org.runnerup.common.R.string.Failed_to_load_workout)
+          .setMessage(
+              error.getLocalizedMessage() == null ? error.toString() : error.getLocalizedMessage())
+          .setPositiveButton(org.runnerup.common.R.string.OK, (dialog, which) -> dialog.dismiss())
+          .show();
+    }
   }
 
   private void onStartWorkoutAction() {

@@ -18,6 +18,7 @@ package org.runnerup.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +26,15 @@ import android.view.ViewGroup;
 import androidx.compose.ui.platform.ComposeView;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.WorkoutPreparationProtocol;
+import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
 import org.runnerup.wear.ui.WearControlPresentationState;
 import org.runnerup.wear.ui.WearControlsComposeContent;
 
-public class StartFragment extends Fragment implements ValueModel.ChangeListener<TrackerState> {
+public class StartFragment extends Fragment
+    implements ValueModel.ChangeListener<TrackerState>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
   private ComposeView composeView;
   private WearControlPresentationState presentationState;
@@ -42,13 +47,25 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     composeView = new ComposeView(activity);
     presentationState = new WearControlPresentationState();
-    WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
     updateView(activity.getTrackerState());
     return composeView;
   }
 
   private void updateView(TrackerState state) {
-    if (presentationState != null) presentationState.updateStartState(state);
+    if (composeView == null || presentationState == null) return;
+    byte[] payload =
+        state == TrackerState.INITIALIZED || state == TrackerState.CONNECTED
+            ? new PreparedWorkoutStore(activity).load()
+            : null;
+    try {
+      WorkoutPreparationProtocol.PrepareMessage prepared =
+          WorkoutPreparationProtocol.decodePrepare(payload);
+      WearControlsComposeContent.bindPreparedWorkout(
+          composeView, prepared.getWorkoutName(), prepared.getUpcomingStep());
+    } catch (java.io.IOException ignored) {
+      presentationState.updateStartState(state);
+      WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
+    }
   }
 
   private void startActivity() {
@@ -60,12 +77,18 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   public void onResume() {
     super.onResume();
     activity.registerTrackerStateListener(this);
+    activity
+        .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .registerOnSharedPreferenceChangeListener(this);
     updateView(this.activity.getTrackerState());
   }
 
   @Override
   public void onPause() {
     activity.unregisterTrackerStateListener(this);
+    activity
+        .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .unregisterOnSharedPreferenceChangeListener(this);
     super.onPause();
   }
 
@@ -79,6 +102,13 @@ public class StartFragment extends Fragment implements ValueModel.ChangeListener
   public void onValueChanged(
       ValueModel<TrackerState> obj, TrackerState oldValue, TrackerState newValue) {
     if (isAdded()) updateView(newValue);
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+    if (PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key) && isAdded()) {
+      updateView(activity.getTrackerState());
+    }
   }
 
   @Override

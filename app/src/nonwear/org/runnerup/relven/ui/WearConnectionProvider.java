@@ -27,12 +27,39 @@ public final class WearConnectionProvider {
     }
   }
 
+  public enum PreparationStatus {
+    PREPARED,
+    NO_WATCH,
+    TIMEOUT,
+    REJECTED,
+    PROTOCOL_MISMATCH,
+    TRANSPORT_ERROR,
+    UNSUPPORTED
+  }
+
+  public static final class WorkoutPreparationResult {
+    public final PreparationStatus status;
+    public final String sessionId;
+    public final List<String> connectedNodes;
+
+    private WorkoutPreparationResult(
+        PreparationStatus status, String sessionId, List<String> connectedNodes) {
+      this.status = status;
+      this.sessionId = sessionId;
+      this.connectedNodes = connectedNodes;
+    }
+  }
+
   public interface ConnectionTestCallback {
     void onResult(ConnectionTestResult result);
   }
 
   public interface Callback {
     void onResult(boolean supported, boolean succeeded, List<String> connectedNodes);
+  }
+
+  public interface WorkoutPreparationCallback {
+    void onResult(WorkoutPreparationResult result);
   }
 
   private WearConnectionProvider() {}
@@ -44,4 +71,16 @@ public final class WearConnectionProvider {
   public static void testConnection(Context context, ConnectionTestCallback callback) {
     callback.onResult(new ConnectionTestResult(HandshakeStatus.UNSUPPORTED, null, -1));
   }
+
+  public static void prepareWorkout(
+      Context context,
+      String sessionId,
+      String workoutName,
+      String upcomingStep,
+      String workoutJson,
+      WorkoutPreparationCallback callback) {
+    callback.onResult(new WorkoutPreparationResult(PreparationStatus.UNSUPPORTED, sessionId, null));
+  }
+
+  public static void cancelWorkoutPreparation(Context context, String sessionId) {}
 }

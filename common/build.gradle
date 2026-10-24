@@ -73,6 +73,7 @@ dependencies {
     implementation "androidx.annotation:annotation:${rootProject.ext.annotation_version}"
 
     testImplementation 'org.hamcrest:hamcrest:3.0'
+    testImplementation 'org.json:json:20260814'
     testImplementation "junit:junit:${rootProject.ext.junitVersion}"
     testImplementation "org.mockito:mockito-core:${rootProject.ext.mockitoVersion}"
 

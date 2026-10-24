@@ -263,6 +263,11 @@ public interface Constants {
       String MSG_SESSION_PING = PREFIX + "/session/ping";
       String MSG_SESSION_PONG = PREFIX + "/session/pong";
 
+      /* Msg: versioned workout preparation handoff */
+      String MSG_WORKOUT_PREPARE = PREFIX + "/workout/prepare";
+      String MSG_WORKOUT_PREPARED = PREFIX + "/workout/prepared";
+      String MSG_WORKOUT_CANCEL = PREFIX + "/workout/cancel";
+
       /* Msg: pause/resume from wear to phone */
       String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";
       String MSG_CMD_WORKOUT_RESUME = PREFIX + "/workout/resume";
