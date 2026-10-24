@@ -67,9 +67,9 @@
 
 **Interfaces:** each category screen consumes repository state and explicit action callbacks. Watch state comes from the existing Wear Data Layer; voice controls reuse the existing TTS/prefs implementation; unsupported switches are omitted.
 
-- [ ] Add navigation and persistence tests for each settings subpage.
-- [ ] Wire functional training, GPS/sensors, appearance, units, notifications, data/export, watch, voice, and About controls where currently supported.
-- [ ] Verify long-screen scrolling, system insets, persistence, and no false sensor/watch status.
+- [x] Add navigation and persistence tests for each settings subpage.
+- [x] Wire functional training, GPS/sensors, appearance, units, notifications, data/export, watch, voice, and About controls where currently supported.
+- [x] Verify long-screen scrolling, system insets, persistence, and no false sensor/watch status.
 
 ### Task 4: Health Connect dependency, permission boundary, and mapping
 
@@ -116,8 +116,8 @@
 
 **Files:** docs for architecture, permissions, mapping limits, settings keys, and Samsung validation limits.
 
-- [ ] Run focused and full app unit tests, lint, phone debug build, and Wear debug build.
-- [ ] Verify package IDs and inspect changed permission declarations.
-- [ ] Capture emulator screenshots for Settings and Health Connect state where available.
+- [x] Run focused and full app unit tests, lint, phone debug build, and Wear debug build.
+- [x] Verify package IDs and inspect changed permission declarations.
+- [x] Capture emulator screenshots for Settings and Health Connect state where available.
 - [ ] Open one PR, obtain code review, merge it, then begin the next PR.
 - [ ] After each merge, build both APKs from `master` and report exact absolute paths.
