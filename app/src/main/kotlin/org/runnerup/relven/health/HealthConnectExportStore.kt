@@ -126,6 +126,49 @@ internal object HealthConnectExportStore {
 
   @Synchronized
   @Throws(IOException::class)
+  fun all(context: Context): List<HealthConnectExportEntry> = entries(context).sortedByDescending {
+    it.updatedAtMillis
+  }
+
+  @Synchronized
+  @Throws(IOException::class)
+  fun retry(context: Context, sessionId: String, nowMillis: Long): HealthConnectExportEntry? {
+    val current = read(context, sessionId) ?: return null
+    if (current.operation == HealthConnectExportOperation.DONE) return null
+    val updated = current.copy(
+        status = HealthConnectExportStatus.PENDING,
+        attemptCount = 0,
+        lastError = null,
+        updatedAtMillis = nowMillis)
+    write(context, updated)
+    return updated
+  }
+
+  @Synchronized
+  @RequiresApi(Build.VERSION_CODES.O)
+  @Throws(IOException::class)
+  fun retryOmitted(context: Context, sessionId: String, nowMillis: Long): HealthConnectExportEntry? {
+    val current = read(context, sessionId) ?: return null
+    if (current.operation != HealthConnectExportOperation.DONE ||
+        current.status != HealthConnectExportStatus.EXPORTED_WITH_OMISSIONS ||
+        current.omittedPermissions.isEmpty() || current.payload == null) return null
+    val nextVersion = current.version + 1L
+    val updated = current.copy(
+        version = nextVersion,
+        operation = HealthConnectExportOperation.UPSERT,
+        status = HealthConnectExportStatus.PENDING,
+        payload = HealthConnectWorkoutCodec.encode(
+            HealthConnectWorkoutCodec.decode(current.payload).copy(version = nextVersion)),
+        omittedPermissions = emptySet(),
+        attemptCount = 0,
+        lastError = null,
+        updatedAtMillis = nowMillis)
+    write(context, updated)
+    return updated
+  }
+
+  @Synchronized
+  @Throws(IOException::class)
   fun markExported(
       context: Context,
       sessionId: String,

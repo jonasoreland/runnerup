@@ -109,6 +109,12 @@ import org.runnerup.importer.ActivityImportStore
 import org.runnerup.importer.ActivityImportException
 import org.runnerup.importer.ImportedActivity
 import org.runnerup.relven.health.HealthConnectActivitySync
+import org.runnerup.relven.health.HealthConnectAvailability
+import org.runnerup.relven.health.HealthConnectAvailabilityStatus
+import org.runnerup.relven.health.HealthConnectExportPreferences
+import org.runnerup.relven.health.HealthConnectSettingsAccess
+import org.runnerup.relven.health.HealthConnectSettingsSnapshot
+import org.runnerup.relven.health.canEnableHealthConnectExport
 import org.runnerup.relven.exercise.ExerciseCatalogRepository
 import org.runnerup.relven.exercise.ExerciseFavoritesStore
 import org.runnerup.relven.exercise.CustomExerciseInput
@@ -173,6 +179,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var settingsRoute by mutableStateOf<SettingsRoute>(SettingsRoute.Overview)
   private var settingsSnapshot by mutableStateOf(RelvenSettingsSnapshot(false, true, false, false, false))
   private lateinit var settingsRepository: RelvenSettingsRepository
+  private var healthConnectSnapshot by mutableStateOf(HealthConnectSettingsSnapshot(
+      HealthConnectAvailabilityStatus.UNKNOWN_ERROR, false, emptySet(), 0, 0, 0, emptyList()))
+  private var healthConnectBusy by mutableStateOf(false)
+  private var healthConnectMessage by mutableStateOf<String?>(null)
   private var planLibraryOpen by mutableStateOf(false)
   private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
   private var activityHistoryRequest = 0
@@ -204,6 +214,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private lateinit var planImportPicker: ActivityResultLauncher<Array<String>>
   private lateinit var strengthImportPicker: ActivityResultLauncher<Array<String>>
   private lateinit var strengthExportPicker: ActivityResultLauncher<String>
+  private var healthConnectPermissionLauncher:
+      ActivityResultLauncher<Set<String>>? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -237,6 +249,18 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     strengthExportPicker = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
       if (uri != null) strengthExportTarget?.let { exportStrengthSession(uri, it) }
       strengthExportTarget = null
+    }
+    HealthConnectSettingsAccess.permissionRequestContract()?.let { contract ->
+      healthConnectPermissionLauncher = registerForActivityResult(contract) { granted ->
+        if (canEnableHealthConnectExport(granted)) {
+          HealthConnectExportPreferences.setEnabled(applicationContext, true)
+          healthConnectMessage = "Automatisk export är aktiverad. Tidigare pass exporteras bara när du väljer det."
+        } else {
+          HealthConnectExportPreferences.setEnabled(applicationContext, false)
+          healthConnectMessage = "Tillåt skrivning av träningspass i Health Connect för att aktivera export."
+        }
+        refreshHealthConnectSettings()
+      }
     }
     val openPlanLibrary = intent.getBooleanExtra(EXTRA_OPEN_PLAN_LIBRARY, false)
     if (openPlanLibrary) intent.removeExtra(EXTRA_OPEN_PLAN_LIBRARY)
@@ -384,6 +408,17 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             settingsRoute = settingsRoute,
             onSettingsRouteChanged = { settingsRoute = it },
             settingsSnapshot = settingsSnapshot,
+            healthConnectSnapshot = healthConnectSnapshot,
+            healthConnectBusy = healthConnectBusy,
+            healthConnectMessage = healthConnectMessage,
+            onEnableHealthConnectExport = ::requestHealthConnectExport,
+            onDisableHealthConnectExport = ::disableHealthConnectExport,
+            onRequestHealthConnectPermissions = ::requestHealthConnectPermissions,
+            onManageHealthConnectPermissions = ::openHealthConnectSettings,
+            onExportHistoricalWorkouts = ::exportHistoricalWorkouts,
+            onSyncHealthConnectNow = ::syncPendingHealthConnect,
+            onRefreshHealthConnectStatus = ::refreshHealthConnectSettings,
+            onRetryHealthConnectSession = ::retryHealthConnectSession,
             onKeepScreenOnChanged = settingsRepository::setKeepScreenOn,
             onAutoStartGpsChanged = settingsRepository::setAutoStartGps,
             onAutoPauseChanged = settingsRepository::setAutoPause,
@@ -547,6 +582,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   override fun onResume() {
     super.onResume()
+    refreshHealthConnectSettings()
     if (destination == HomeDestination.History) {
       loadActivityHistory()
       loadStrengthSessionHistory()
@@ -648,6 +684,133 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     }
     destination = next
     if (next == HomeDestination.History) loadActivityHistory()
+  }
+
+  private fun requestHealthConnectExport() {
+    if (healthConnectSnapshot.availability != HealthConnectAvailabilityStatus.AVAILABLE) {
+      healthConnectMessage = "Health Connect är inte tillgängligt på den här enheten."
+      return
+    }
+    requestHealthConnectPermissions()
+  }
+
+  private fun requestHealthConnectPermissions() {
+    val permissions = HealthConnectAvailability.declaredWritePermissionNames()
+    val launcher = healthConnectPermissionLauncher
+    if (permissions.isEmpty() || launcher == null) {
+      healthConnectMessage = "Health Connect-behörigheter kan inte begäras på den här Android-versionen."
+      return
+    }
+    launcher.launch(permissions)
+  }
+
+  private fun disableHealthConnectExport() {
+    HealthConnectExportPreferences.setEnabled(applicationContext, false)
+    healthConnectSnapshot = healthConnectSnapshot.copy(exportEnabled = false)
+    healthConnectMessage = "Automatisk export är av. Dina sparade pass finns kvar i Relven."
+  }
+
+  private fun openHealthConnectSettings() {
+    val intent = HealthConnectSettingsAccess.settingsIntent(applicationContext)
+    if (intent == null || intent.resolveActivity(packageManager) == null) {
+      healthConnectMessage = "Health Connect-inställningar kunde inte öppnas på den här enheten."
+      return
+    }
+    runCatching { startActivity(intent) }
+        .onFailure { healthConnectMessage = "Health Connect-inställningar kunde inte öppnas." }
+  }
+
+  private fun exportHistoricalWorkouts() {
+    if (!healthConnectSnapshot.exportEnabled) {
+      healthConnectMessage = "Aktivera export och ge träningsbehörighet innan du väljer historiska pass."
+      return
+    }
+    if (!canEnableHealthConnectExport(healthConnectSnapshot.grantedPermissions)) {
+      healthConnectMessage = "Tillåt skrivning av träningspass innan du exporterar historiken."
+      return
+    }
+    if (healthConnectBusy) return
+    healthConnectBusy = true
+    healthConnectMessage = "Kontrollerar sparade pass…"
+    lifecycleScope.launch {
+      val result = runCatching {
+        withContext(Dispatchers.IO) {
+          val database = DBHelper.getReadableDatabase(applicationContext)
+          HealthConnectSettingsAccess.queueBackfill(applicationContext, database)
+        }
+      }
+      healthConnectBusy = false
+      healthConnectMessage = result.fold(
+          onSuccess = { value ->
+            when {
+              value.failed > 0 ->
+                "${value.queued} pass köade · ${value.alreadyPublished} redan exporterade · ${value.failed} kunde inte köas."
+              value.queued > 0 ->
+                "${value.queued} pass köade för export · ${value.alreadyPublished} redan exporterade."
+              else -> "Inga nya pass behövde exporteras."
+            }
+          },
+          onFailure = {
+            Log.w("RelvenHealthConnect", "Could not queue historical Health Connect exports", it)
+            "Kunde inte läsa träningshistoriken. Försök igen."
+          })
+      refreshHealthConnectSettings()
+    }
+  }
+
+  private fun syncPendingHealthConnect() {
+    if (!healthConnectSnapshot.exportEnabled) return
+    lifecycleScope.launch {
+      val scheduled = runCatching {
+        withContext(Dispatchers.IO) {
+          HealthConnectSettingsAccess.syncPending(
+              applicationContext, healthConnectSnapshot.grantedPermissions)
+        }
+      }
+      healthConnectMessage = scheduled.fold(
+          onSuccess = { if (it > 0) "Synkronisering köad för $it pass." else "Det finns inga väntande pass att synkronisera." },
+          onFailure = {
+            Log.w("RelvenHealthConnect", "Could not retry pending Health Connect exports", it)
+            "Kunde inte starta synkroniseringen. Försök igen."
+          })
+      refreshHealthConnectSettings()
+    }
+  }
+
+  private fun retryHealthConnectSession(sessionId: String) {
+    lifecycleScope.launch {
+      val scheduled = runCatching {
+        withContext(Dispatchers.IO) {
+          HealthConnectSettingsAccess.retry(
+              applicationContext, sessionId, healthConnectSnapshot.grantedPermissions)
+        }
+      }
+      healthConnectMessage = scheduled.fold(
+          onSuccess = { if (it) "Ny export köad." else "Passet kan inte köas igen just nu." },
+          onFailure = {
+            Log.w("RelvenHealthConnect", "Could not retry Health Connect export for $sessionId", it)
+            "Kunde inte starta exporten. Försök igen."
+          })
+      refreshHealthConnectSettings()
+    }
+  }
+
+  private fun refreshHealthConnectSettings() {
+    lifecycleScope.launch {
+      val snapshot = runCatching {
+        withContext(Dispatchers.IO) {
+          val granted = runCatching {
+            HealthConnectSettingsAccess.grantedPermissions(applicationContext)
+          }.getOrDefault(emptySet())
+          HealthConnectSettingsAccess.snapshot(
+              applicationContext,
+              DBHelper.getReadableDatabase(applicationContext),
+              granted)
+        }
+      }
+      snapshot.onSuccess { healthConnectSnapshot = it }
+          .onFailure { Log.w("RelvenHealthConnect", "Could not refresh Health Connect settings", it) }
+    }
   }
 
   private fun openHistoryActivity(id: Long) {
@@ -1922,6 +2085,17 @@ private fun RelvenHome(
     settingsRoute: SettingsRoute,
     onSettingsRouteChanged: (SettingsRoute) -> Unit,
     settingsSnapshot: RelvenSettingsSnapshot,
+    healthConnectSnapshot: HealthConnectSettingsSnapshot,
+    healthConnectBusy: Boolean,
+    healthConnectMessage: String?,
+    onEnableHealthConnectExport: () -> Unit,
+    onDisableHealthConnectExport: () -> Unit,
+    onRequestHealthConnectPermissions: () -> Unit,
+    onManageHealthConnectPermissions: () -> Unit,
+    onExportHistoricalWorkouts: () -> Unit,
+    onSyncHealthConnectNow: () -> Unit,
+    onRefreshHealthConnectStatus: () -> Unit,
+    onRetryHealthConnectSession: (String) -> Unit,
     onKeepScreenOnChanged: (Boolean) -> Unit,
     onAutoStartGpsChanged: (Boolean) -> Unit,
     onAutoPauseChanged: (Boolean) -> Unit,
@@ -2148,7 +2322,18 @@ private fun RelvenHome(
           onAutoStartGpsChanged = onAutoStartGpsChanged,
           onAutoPauseChanged = onAutoPauseChanged,
           onAutoLapChanged = onAutoLapChanged,
-          onAutoLapIntervalsChanged = onAutoLapIntervalsChanged)
+          onAutoLapIntervalsChanged = onAutoLapIntervalsChanged,
+          healthConnect = healthConnectSnapshot,
+          healthConnectBusy = healthConnectBusy,
+          healthConnectMessage = healthConnectMessage,
+          onEnableHealthConnectExport = onEnableHealthConnectExport,
+          onDisableHealthConnectExport = onDisableHealthConnectExport,
+          onRequestHealthConnectPermissions = onRequestHealthConnectPermissions,
+          onManageHealthConnectPermissions = onManageHealthConnectPermissions,
+          onExportHistoricalWorkouts = onExportHistoricalWorkouts,
+          onSyncHealthConnectNow = onSyncHealthConnectNow,
+          onRefreshHealthConnectStatus = onRefreshHealthConnectStatus,
+          onRetryHealthConnectSession = onRetryHealthConnectSession)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,

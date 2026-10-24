@@ -63,6 +63,43 @@ class HealthConnectExportStoreTest {
   }
 
   @Test
+  fun retryResetsAttemptStateWithoutChangingSessionIdentityOrVersion() {
+    val queued = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
+    assertTrue(HealthConnectExportStore.markStatus(
+        context, queued.sessionId, queued.version, HealthConnectExportStatus.RETRYABLE_ERROR,
+        error = "temporary", nowMillis = 200))
+
+    val retried = HealthConnectExportStore.retry(context, queued.sessionId, 300)!!
+
+    assertEquals(queued.sessionId, retried.sessionId)
+    assertEquals(queued.version, retried.version)
+    assertEquals(HealthConnectExportOperation.UPSERT, retried.operation)
+    assertEquals(HealthConnectExportStatus.PENDING, retried.status)
+    assertEquals(0, retried.attemptCount)
+    assertNull(retried.lastError)
+    assertTrue(HealthConnectExportStore.all(context).any { it.sessionId == queued.sessionId })
+  }
+
+  @Test
+  fun retryOmittedExportKeepsRecordOwnershipAndAdvancesSnapshotVersion() {
+    val queued = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
+    val missingRoute = "android.permission.health.WRITE_EXERCISE_ROUTE"
+    assertTrue(HealthConnectExportStore.markExported(
+        context, queued.sessionId, queued.version,
+        setOf(HealthConnectRecordKind.SESSION),
+        setOf(missingRoute), 200))
+
+    val retried = HealthConnectExportStore.retryOmitted(context, queued.sessionId, 300)!!
+
+    assertEquals(queued.version + 1, retried.version)
+    assertEquals(HealthConnectExportOperation.UPSERT, retried.operation)
+    assertEquals(HealthConnectExportStatus.PENDING, retried.status)
+    assertEquals(setOf(HealthConnectRecordKind.SESSION), retried.ownedRecordKinds)
+    assertTrue(retried.omittedPermissions.isEmpty())
+    assertEquals(retried.version, HealthConnectWorkoutCodec.decode(retried.payload!!).version)
+  }
+
+  @Test
   fun deleteQueuesPreviouslyExportedAndInFlightRelvenRecords() {
     val neverExported = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
     val inFlightDelete = HealthConnectExportStore.enqueueDelete(context, neverExported.sessionId, 200)!!

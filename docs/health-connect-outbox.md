@@ -10,6 +10,10 @@ Relven publishes only its own saved activities to Health Connect. The local Runn
 - Saving or editing queues an upsert only while export is opted in. Deleting a local activity queues deletion only for record kinds recorded as owned by Relven. It never deletes by time range or affects records from another app.
 - If optional metric permission is missing, the available records are still written and the omitted permission is recorded. Required exercise-session permission waits for the user. Provider and transient failures remain retryable; permanent invalid payloads are marked failed.
 - Health Connect absence or failure does not block local save, edit, or deletion. On Android versions below the supported Health Connect API gate, the bridge is not loaded.
+- Automatic export is opt-in and stays off until the user requests the Android write-permission flow and grants exercise-session write access. Disabling it stops future upserts; deletion tombstones remain schedulable so Relven can remove only its own records.
+- The Settings page reads permission grants and Relven's private outbox only. It does not call Health Connect record-read APIs. Historical export is an explicit user action; successful sessions are deduplicated by their stable activity-ID identity, while pending/failed sessions remain retryable.
+- Settings reports the real outbox status, most recent update time, omitted optional metric permissions, retryable failures, and a count of eligible completed local activities. “Synkronisera väntande pass” schedules existing outbox operations; “Exportera tidigare pass” previews the eligible count before queuing each saved activity.
+- Samsung Health is an independent Health Connect client. Users may need to enable its read access to exercise sessions in Health Connect or Samsung Health settings. Relven does not claim that Samsung Health will display a record merely because it was written.
 
 ## Source data and limitations
 
