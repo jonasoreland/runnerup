@@ -1138,6 +1138,9 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         if (stepName != null && !stepName.isBlank()) upcomingStep = stepName;
       }
       mTracker.setWorkout(workout);
+      // This screen's UI-only location listener must not compete with the active workout UI.
+      // Tracker keeps its own location subscription and is intentionally left connected.
+      if (mGpsStatus != null) mGpsStatus.stop(this);
       runActivityPending = true;
       runActivityLauncher.launch(
           org.runnerup.relven.ui.WorkoutPreparationActivity.intent(
@@ -1145,10 +1148,15 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
               UUID.randomUUID().toString(),
               workoutName,
               upcomingStep,
-              serialized.toString()));
+              serialized.toString(),
+              workout.getSport(),
+              workout.getWorkoutType()));
     } catch (Exception error) {
       runActivityPending = false;
       Log.w(getClass().getName(), "Could not prepare workout", error);
+      if (!sportWithoutGps && mGpsStatus != null && !mGpsStatus.isStarted()) {
+        mGpsStatus.start(this);
+      }
       registerStartEventListener();
       updateView();
       new AlertDialog.Builder(requireContext(), R.style.RelvenStartDialogTheme)

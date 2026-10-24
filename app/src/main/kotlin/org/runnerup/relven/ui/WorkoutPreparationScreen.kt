@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 internal fun WorkoutPreparationScreen(
     state: WorkoutPreparationUiState,
     trackerReady: Boolean,
+    selectedWorkoutAvailable: Boolean = true,
     onStart: () -> Unit,
     onCancel: () -> Unit
 ) {
@@ -72,6 +73,12 @@ internal fun WorkoutPreparationScreen(
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
           Text(state.status, color = RelvenColors.Text, fontWeight = FontWeight.SemiBold)
+          if (!selectedWorkoutAvailable) {
+            Text(
+                "Passet kunde inte återställas. Avbryt och välj passet igen.",
+                color = RelvenColors.MutedText,
+                fontSize = 13.sp)
+          }
           Text(
               text =
                   if (state.watchReady) "Passet är överfört till klockan"
@@ -85,12 +92,20 @@ internal fun WorkoutPreparationScreen(
     Spacer(Modifier.weight(1f))
     Button(
         onClick = onStart,
-        enabled = state.phase == WorkoutPreparationPhase.READY && trackerReady,
+        enabled =
+            state.phase == WorkoutPreparationPhase.READY &&
+                trackerReady &&
+                selectedWorkoutAvailable,
         modifier = Modifier.fillMaxWidth().height(58.dp),
         shape = RoundedCornerShape(18.dp),
         colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange)) {
       Text(
-          text = if (trackerReady) "Starta pass" else "Förbereder träningsmotorn",
+          text =
+              when {
+                !selectedWorkoutAvailable -> "Passet kunde inte återställas"
+                trackerReady -> "Starta pass"
+                else -> "Förbereder träningsmotorn"
+              },
           color = RelvenColors.Background,
           fontWeight = FontWeight.Bold,
           fontSize = 17.sp)

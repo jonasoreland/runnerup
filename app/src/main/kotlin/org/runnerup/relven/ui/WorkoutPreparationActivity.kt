@@ -18,13 +18,16 @@ import org.runnerup.common.tracker.TrackerState
 import org.runnerup.relven.ui.WearConnectionProvider.PreparationStatus
 import org.runnerup.tracker.Tracker
 import org.runnerup.view.RunActivity
+import org.runnerup.common.util.Constants
 
 internal class WorkoutPreparationActivity : ComponentActivity() {
   private lateinit var state: WorkoutPreparationStateHolder
   private var tracker: Tracker? = null
   private var bound = false
   private var trackerReady by mutableStateOf(false)
+  private var selectedWorkoutAvailable by mutableStateOf(true)
   private var transferStarted = false
+  private var restoreSelectedWorkout = false
 
   private val runActivityLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -38,6 +41,10 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
           tracker = (service as? Tracker.LocalBinder)?.service
           tracker?.let { activeTracker ->
+            if (restoreSelectedWorkout) {
+              restoreSelectedWorkout = false
+              selectedWorkoutAvailable = restoreSelectedWorkoutFromIntent(activeTracker)
+            }
             if (WorkoutPreparationTrackerPolicy.shouldConnect(activeTracker.state)) {
               activeTracker.connect()
             }
@@ -75,11 +82,14 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
       return
     }
     state = WorkoutPreparationStateHolder(sessionId, workoutName, upcomingStep)
+    restoreSelectedWorkout = savedInstanceState != null
+    selectedWorkoutAvailable = !restoreSelectedWorkout
     setContent {
       RelvenTheme {
         WorkoutPreparationScreen(
             state = state.value,
             trackerReady = trackerReady,
+            selectedWorkoutAvailable = selectedWorkoutAvailable,
             onStart = ::startWorkout,
             onCancel = ::cancelPreparation)
       }
@@ -123,12 +133,12 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
   }
 
   private fun updateTrackerState() {
-    trackerReady = tracker?.state == TrackerState.CONNECTED
+    trackerReady = tracker?.state == TrackerState.CONNECTED && selectedWorkoutAvailable
   }
 
   private fun startWorkout() {
     val activeTracker = tracker ?: return
-    if (activeTracker.state != TrackerState.CONNECTED || !state.requestStart()) return
+    if (activeTracker.state != TrackerState.CONNECTED || !selectedWorkoutAvailable || !state.requestStart()) return
     try {
       activeTracker.start()
     } catch (error: RuntimeException) {
@@ -145,6 +155,22 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     finish()
   }
 
+  private fun restoreSelectedWorkoutFromIntent(activeTracker: Tracker): Boolean {
+    return try {
+      val restored =
+          WorkoutPreparationWorkoutRestorer.restore(
+              this,
+              intent.getStringExtra(EXTRA_WORKOUT_JSON).orEmpty(),
+              intent.getIntExtra(EXTRA_SPORT, Constants.DB.ACTIVITY.SPORT_RUNNING),
+              intent.getIntExtra(EXTRA_WORKOUT_TYPE, Constants.WORKOUT_TYPE.BASIC))
+      activeTracker.setWorkout(restored)
+      true
+    } catch (error: Exception) {
+      android.util.Log.e("WorkoutPreparation", "Unable to restore selected workout", error)
+      false
+    }
+  }
+
   override fun onDestroy() {
     tracker?.unregisterTrackerStateListener(trackerStateListener)
     if (bound) {
@@ -159,6 +185,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     private const val EXTRA_WORKOUT_NAME = "org.runnerup.relven.preparation.workout_name"
     private const val EXTRA_UPCOMING_STEP = "org.runnerup.relven.preparation.upcoming_step"
     private const val EXTRA_WORKOUT_JSON = "org.runnerup.relven.preparation.workout_json"
+    private const val EXTRA_SPORT = "org.runnerup.relven.preparation.sport"
+    private const val EXTRA_WORKOUT_TYPE = "org.runnerup.relven.preparation.workout_type"
 
     @JvmStatic
     fun intent(
@@ -166,12 +194,16 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         sessionId: String,
         workoutName: String,
         upcomingStep: String,
-        workoutJson: String
+        workoutJson: String,
+        sport: Int,
+        workoutType: Int
     ): Intent =
         Intent(context, WorkoutPreparationActivity::class.java)
             .putExtra(EXTRA_SESSION_ID, sessionId)
             .putExtra(EXTRA_WORKOUT_NAME, workoutName)
             .putExtra(EXTRA_UPCOMING_STEP, upcomingStep)
             .putExtra(EXTRA_WORKOUT_JSON, workoutJson)
+            .putExtra(EXTRA_SPORT, sport)
+            .putExtra(EXTRA_WORKOUT_TYPE, workoutType)
   }
 }
