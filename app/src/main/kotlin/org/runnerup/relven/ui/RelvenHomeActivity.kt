@@ -124,6 +124,8 @@ import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
 import org.runnerup.relven.strength.StrengthSessionExportCodec
+import org.runnerup.relven.settings.RelvenSettingsRepository
+import org.runnerup.relven.settings.RelvenSettingsSnapshot
 import java.util.UUID
 
 /** Production home screen; RunnerUp remains authoritative for workout controls. */
@@ -168,6 +170,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var currentTimeMillis by mutableLongStateOf(System.currentTimeMillis())
   private var destination by mutableStateOf(HomeDestination.Today)
   private var settingsRoute by mutableStateOf<SettingsRoute>(SettingsRoute.Overview)
+  private var settingsSnapshot by mutableStateOf(RelvenSettingsSnapshot(false, true, false, false, false))
+  private lateinit var settingsRepository: RelvenSettingsRepository
   private var planLibraryOpen by mutableStateOf(false)
   private var activityHistoryState by mutableStateOf<ActivityHistoryLoadState>(ActivityHistoryLoadState.Loading)
   private var activityHistoryRequest = 0
@@ -203,6 +207,11 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     super.onCreate(savedInstanceState)
+    settingsRepository = RelvenSettingsRepository(applicationContext)
+    settingsSnapshot = settingsRepository.state.value
+    lifecycleScope.launch {
+      settingsRepository.state.collect { settingsSnapshot = it }
+    }
     migrateGpsWarmupPreference(
         PreferenceManager.getDefaultSharedPreferences(applicationContext),
         getString(R.string.pref_startgps))
@@ -373,6 +382,12 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             destination = destination,
             settingsRoute = settingsRoute,
             onSettingsRouteChanged = { settingsRoute = it },
+            settingsSnapshot = settingsSnapshot,
+            onKeepScreenOnChanged = settingsRepository::setKeepScreenOn,
+            onAutoStartGpsChanged = settingsRepository::setAutoStartGps,
+            onAutoPauseChanged = settingsRepository::setAutoPause,
+            onAutoLapChanged = settingsRepository::setAutoLap,
+            onAutoLapIntervalsChanged = settingsRepository::setAutoLapIntervals,
             startFragmentManager = supportFragmentManager,
             onSelectDestination = ::selectHomeDestination,
             onRetryProgress = ::loadProgress,
@@ -465,6 +480,11 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onTrackerBound = ::prepareGpsWarmup,
             onTrackerUnbound = ::releaseGpsWarmup)
             .also { it.start() }
+  }
+
+  override fun onDestroy() {
+    if (::settingsRepository.isInitialized) settingsRepository.close()
+    super.onDestroy()
   }
 
   private fun prepareGpsWarmup(tracker: Tracker) {
@@ -1899,6 +1919,12 @@ private fun RelvenHome(
     destination: HomeDestination,
     settingsRoute: SettingsRoute,
     onSettingsRouteChanged: (SettingsRoute) -> Unit,
+    settingsSnapshot: RelvenSettingsSnapshot,
+    onKeepScreenOnChanged: (Boolean) -> Unit,
+    onAutoStartGpsChanged: (Boolean) -> Unit,
+    onAutoPauseChanged: (Boolean) -> Unit,
+    onAutoLapChanged: (Boolean) -> Unit,
+    onAutoLapIntervalsChanged: (Boolean) -> Unit,
     planLibraryState: PlanLibraryState,
     favoriteWorkouts: List<FavoriteWorkout>,
     planLibraryOpen: Boolean,
@@ -2114,7 +2140,13 @@ private fun RelvenHome(
     } else if (destination == HomeDestination.Settings) {
       RelvenSettingsOverview(
           route = settingsRoute,
-          onRouteChanged = onSettingsRouteChanged)
+          onRouteChanged = onSettingsRouteChanged,
+          settings = settingsSnapshot,
+          onKeepScreenOnChanged = onKeepScreenOnChanged,
+          onAutoStartGpsChanged = onAutoStartGpsChanged,
+          onAutoPauseChanged = onAutoPauseChanged,
+          onAutoLapChanged = onAutoLapChanged,
+          onAutoLapIntervalsChanged = onAutoLapIntervalsChanged)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,
