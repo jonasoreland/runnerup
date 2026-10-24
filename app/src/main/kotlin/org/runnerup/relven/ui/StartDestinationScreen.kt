@@ -38,5 +38,5 @@ internal fun StartDestinationScreen(
         (container.getTag(R.id.relven_start_fragment_controller) as? StartFragmentContainerController)
             ?.updatePlannedWorkout(plannedWorkout)
       },
-      modifier = Modifier.fillMaxSize().statusBarsPadding().padding(bottom = 104.dp))
+      modifier = Modifier.fillMaxSize().statusBarsPadding())
 }

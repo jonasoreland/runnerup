@@ -77,7 +77,7 @@ internal fun ActivityHistoryScreen(
       modifier =
           Modifier.fillMaxSize()
               .padding(horizontal = 24.dp)
-              .padding(top = 28.dp, bottom = 108.dp),
+              .padding(top = 28.dp),
       verticalArrangement = Arrangement.spacedBy(18.dp)) {
     Row(
         modifier = Modifier.fillMaxWidth(),

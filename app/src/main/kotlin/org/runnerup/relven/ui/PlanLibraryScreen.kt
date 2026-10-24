@@ -157,9 +157,9 @@ internal fun PlanLibraryScreen(
   var archiveConfirmationRootPlanId by rememberSaveable { mutableStateOf<String?>(null) }
   var favoriteRemovalId by rememberSaveable { mutableStateOf<String?>(null) }
   LazyColumn(
-      modifier = Modifier.fillMaxSize().padding(bottom = 112.dp).background(RelvenColors.Background),
+      modifier = Modifier.fillMaxSize().background(RelvenColors.Background),
       contentPadding = androidx.compose.foundation.layout.PaddingValues(
-          start = 24.dp, end = 24.dp, top = 24.dp, bottom = 120.dp),
+          start = 24.dp, end = 24.dp, top = 24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
     item {
       Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
