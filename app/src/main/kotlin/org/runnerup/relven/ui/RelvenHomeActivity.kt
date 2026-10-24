@@ -58,7 +58,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.selected
@@ -1710,6 +1710,7 @@ private fun RelvenHome(
   Surface(modifier = Modifier.fillMaxSize(), color = RelvenColors.Background) {
   Box(Modifier.fillMaxSize()) {
     if (destination == HomeDestination.Today) {
+      val homeLocale = LocalLocale.current.platformLocale
       Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp).padding(bottom = 120.dp),
@@ -1723,7 +1724,10 @@ private fun RelvenHome(
         }
         Column(Modifier.weight(1f).padding(start = 12.dp)) {
           Text("Relven", fontWeight = FontWeight.Bold, fontSize = 17.sp)
-          Text("Din träning", color = RelvenColors.MutedText, fontSize = 12.sp)
+          Text(
+              stringResource(org.runnerup.common.R.string.Home_today_brand_subtitle),
+              color = RelvenColors.MutedText,
+              fontSize = 12.sp)
         }
       }
       sessionStatus?.let { status ->
@@ -1734,7 +1738,7 @@ private fun RelvenHome(
             modifier = Modifier.fillMaxWidth()) {
           Column(Modifier.padding(top = 14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                status.label,
+                stringResource(status.labelResource),
                 color = RelvenColors.Orange,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1743,15 +1747,18 @@ private fun RelvenHome(
                 onClick = onOpenActiveSession,
                 colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp)) {
-              Text("Öppna pass")
+              Text(stringResource(org.runnerup.common.R.string.Home_today_active_session_open))
             }
           }
         }
       }
       Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Idag", fontSize = 30.sp, fontWeight = FontWeight.Bold)
         Text(
-            "Redo för nästa pass?",
+            stringResource(org.runnerup.common.R.string.Home_today_title),
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Bold)
+        Text(
+            stringResource(org.runnerup.common.R.string.Home_today_subtitle),
             fontSize = 15.sp,
             color = RelvenColors.MutedText)
       }
@@ -1786,16 +1793,19 @@ private fun RelvenHome(
           border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
           modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-          Text("Löpning", fontSize = 19.sp, fontWeight = FontWeight.Bold)
           Text(
-              "Välj ett fritt pass eller bygg intervaller i träningsvyn.",
+              stringResource(org.runnerup.common.R.string.Home_today_running_title),
+              fontSize = 19.sp,
+              fontWeight = FontWeight.Bold)
+          Text(
+              stringResource(org.runnerup.common.R.string.Home_today_running_description),
               fontSize = 14.sp,
               color = RelvenColors.MutedText)
           Button(
               onClick = onOpenWorkout,
               colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
               modifier = Modifier.fillMaxWidth().height(50.dp)) {
-            Text("Öppna träningsvyn")
+            Text(stringResource(org.runnerup.common.R.string.Home_today_running_open))
           }
         }
       }
@@ -1806,17 +1816,28 @@ private fun RelvenHome(
             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
             modifier = Modifier.fillMaxWidth()) {
           Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Senaste passet", fontSize = 16.sp, fontWeight = FontWeight.Bold)
             Text(
-                DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.forLanguageTag("sv-SE"))
+                stringResource(org.runnerup.common.R.string.Home_today_recent_title),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold)
+            Text(
+                DateFormat.getDateInstance(DateFormat.MEDIUM, homeLocale)
                     .format(Date(recentActivity.startedAtSeconds * 1000)),
                 color = RelvenColors.MutedText,
                 fontSize = 13.sp)
             val distance = recentActivity.distanceMeters?.let {
-              String.format(Locale.forLanguageTag("sv-SE"), "%.2f km", it / 1000.0)
-            } ?: "–"
-            val minutes = recentActivity.durationSeconds?.let { "${it / 60} min" } ?: "–"
-            Text("$distance  ·  $minutes", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+              stringResource(
+                  org.runnerup.common.R.string.Home_today_recent_distance, it / 1000.0)
+            } ?: stringResource(org.runnerup.common.R.string.Home_today_unavailable_value)
+            val minutes = recentActivity.durationSeconds?.let {
+              stringResource(
+                  org.runnerup.common.R.string.Home_today_recent_duration_minutes, it / 60)
+            } ?: stringResource(org.runnerup.common.R.string.Home_today_unavailable_value)
+            Text(
+                stringResource(
+                    org.runnerup.common.R.string.Home_today_recent_summary, distance, minutes),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold)
           }
         }
       }
@@ -2070,7 +2091,7 @@ private fun ProgressScreen(
 
 @Composable
 private fun ProgressWindowCard(title: String, summary: ActivityWindowSummary) {
-  val locale = ConfigurationCompat.getLocales(LocalConfiguration.current).get(0) ?: Locale.forLanguageTag("sv-SE")
+  val locale = LocalLocale.current.platformLocale
   Surface(
       shape = RoundedCornerShape(20.dp),
       color = RelvenColors.Surface,

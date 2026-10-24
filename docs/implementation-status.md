@@ -1,5 +1,11 @@
 # Implementation status — 24 October 2026
 
+## Home dashboard locale consistency
+
+- Replaced the Today dashboard's hardcoded Swedish labels with English/Swedish string resources, including active/paused session status. Recent workout dates and distance formatting now follow Compose's observed app locale.
+- Verified on a newly created, isolated API 36 emulator `emulator-5601` using ADB port 5039. The English and Swedish app-locales render consistently; captures are `app/build/qa/relven-home-english.png` and `app/build/qa/relven-home-swedish.png`. The APK package is `se.hampusandersson.relven.debug`; no physical device was used.
+- Localization regression tests cover all dashboard strings and English/Swedish decimal separators. Full Latest debug app unit tests, assembly, `lintLatestDebug` (no new issues; 23 baseline entries filtered), `spotlessCheck`, and `git diff --check` pass.
+
 ## Planned workout start through active run and review
 
 - On isolated API 36 emulator `emulator-5608` at ADB port 5039, opened the plan calendar's `Långpass · 50 min` entry for 24 October 2026 and tapped **Starta pass**. The app opened Start with the planned workout selected. Tapping **Starta GPS** and the waiting status opened the redesigned active workout view, which displayed **PASS PÅGÅR**, timer, distance/pace metrics, GPS quality, map attribution, lap, pause, and end controls. Ending the short synthetic session opened the Relven review. After an AVD restart, the 13-second run appeared in History and reopened in Relven's saved-activity detail with its planned 50-minute target and map section. Captures: `app/build/qa/plan-run-after-avd-restart.png`, `plan-run-history-after-restart.png`, and `plan-run-history-detail-after-restart.png`.
