@@ -28,10 +28,21 @@ import org.runnerup.view.HRSettingsActivity
 
 internal enum class WearConnectionState {
   Loading,
-  Connected,
+  TransportConnected,
   Disconnected,
   Unavailable,
   Error
+}
+
+internal enum class WearHandshakeState {
+  NotTested,
+  Testing,
+  Verified,
+  NoWatch,
+  TimedOut,
+  ProtocolMismatch,
+  Failed,
+  Unsupported
 }
 
 internal fun wearConnectionState(
@@ -42,7 +53,17 @@ internal fun wearConnectionState(
   !supported -> WearConnectionState.Unavailable
   !requestSucceeded -> WearConnectionState.Error
   connectedNodes.isNullOrEmpty() -> WearConnectionState.Disconnected
-  else -> WearConnectionState.Connected
+  else -> WearConnectionState.TransportConnected
+}
+
+internal fun wearHandshakeState(status: String?): WearHandshakeState = when (status) {
+  "VERIFIED" -> WearHandshakeState.Verified
+  "TIMEOUT" -> WearHandshakeState.TimedOut
+  "PROTOCOL_MISMATCH" -> WearHandshakeState.ProtocolMismatch
+  "UNSUPPORTED" -> WearHandshakeState.Unsupported
+  "NO_WATCH" -> WearHandshakeState.NoWatch
+  "TRANSPORT_ERROR" -> WearHandshakeState.Failed
+  else -> WearHandshakeState.NotTested
 }
 
 internal data class RelvenSettingsDeviceState(
@@ -56,7 +77,9 @@ internal data class RelvenSettingsDeviceState(
     val localeDisplayName: String = "",
     val appVersion: String = BuildConfig.VERSION_NAME,
     val wearState: WearConnectionState = WearConnectionState.Loading,
-    val connectedWatchNames: List<String> = emptyList()
+    val connectedWatchNames: List<String> = emptyList(),
+    val wearHandshakeState: WearHandshakeState = WearHandshakeState.NotTested,
+    val wearHandshakeRoundTripTimeMillis: Long? = null
 )
 
 internal data class SettingsPageActions(
@@ -142,8 +165,12 @@ internal fun RelvenSettingsPageContent(
         Text("Anslutna klockor", fontWeight = FontWeight.SemiBold)
         Text(wearStateLabel(deviceState.wearState), color = RelvenColors.MutedText)
         deviceState.connectedWatchNames.forEach { Text(it, fontWeight = FontWeight.Medium) }
-        Text("Anslutningsstatus hämtas från Wear OS Data Layer. Den här sidan ändrar inte parkoppling eller pågående pass.", color = RelvenColors.MutedText, fontSize = 13.sp, lineHeight = 18.sp)
-        SettingsInlineAction("Uppdatera klockstatus", actions.onRefreshWatch)
+        Text(handshakeStateLabel(deviceState.wearHandshakeState, deviceState.wearHandshakeRoundTripTimeMillis), color = RelvenColors.MutedText)
+        Text("Klocknärvaro visar bara transportanslutning. Bekräftad appkontakt kräver svar från Relven på klockan.", color = RelvenColors.MutedText, fontSize = 13.sp, lineHeight = 18.sp)
+        SettingsInlineAction(
+            label = if (deviceState.wearHandshakeState == WearHandshakeState.Testing) "Testar anslutningen…" else "Testa Relven på klockan",
+            onClick = actions.onRefreshWatch,
+            enabled = deviceState.wearHandshakeState != WearHandshakeState.Testing)
       }
     }
     SettingsPage.Appearance -> SettingsCard {
@@ -234,10 +261,21 @@ private fun statusColor(available: Boolean) = if (available) RelvenColors.MutedT
 
 private fun wearStateLabel(state: WearConnectionState): String = when (state) {
   WearConnectionState.Loading -> "Kontrollerar Wear OS-anslutning…"
-  WearConnectionState.Connected -> "Ansluten just nu"
+  WearConnectionState.TransportConnected -> "Wear OS-klocka hittad via Data Layer"
   WearConnectionState.Disconnected -> "Ingen ansluten Wear OS-klocka hittades"
   WearConnectionState.Unavailable -> "Wear OS Data Layer är inte tillgängligt i den här versionen"
   WearConnectionState.Error -> "Klockans anslutning kunde inte kontrolleras"
+}
+
+private fun handshakeStateLabel(state: WearHandshakeState, roundTripMillis: Long?): String = when (state) {
+  WearHandshakeState.NotTested -> "Relven-kontakt: inte testad"
+  WearHandshakeState.Testing -> "Testar svar från Relven på klockan…"
+  WearHandshakeState.Verified -> roundTripMillis?.let { "Relven svarar ($it ms)" } ?: "Relven svarar"
+  WearHandshakeState.NoWatch -> "Ingen ansluten klocka att testa"
+  WearHandshakeState.TimedOut -> "Inget app-svar inom 5 sekunder"
+  WearHandshakeState.ProtocolMismatch -> "Relven svarade, men protokollversionen stöds inte"
+  WearHandshakeState.Failed -> "Anslutningstestet misslyckades"
+  WearHandshakeState.Unsupported -> "Anslutningstest stöds inte i den här appversionen"
 }
 
 @Composable
@@ -250,7 +288,12 @@ private fun SettingsPrimaryButton(label: String, onClick: () -> Unit) {
 
 @Composable
 private fun SettingsInlineAction(label: String, onClick: () -> Unit) {
-  TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+  SettingsInlineAction(label = label, enabled = true, onClick = onClick)
+}
+
+@Composable
+private fun SettingsInlineAction(label: String, enabled: Boolean, onClick: () -> Unit) {
+  TextButton(onClick = onClick, enabled = enabled, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
     Text(label, modifier = Modifier.fillMaxWidth())
   }
 }

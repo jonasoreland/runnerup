@@ -183,6 +183,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var settingsRoute by mutableStateOf<SettingsRoute>(SettingsRoute.Overview)
   private var settingsSnapshot by mutableStateOf(RelvenSettingsSnapshot(false, true, false, false, false))
   private var settingsDeviceState by mutableStateOf(RelvenSettingsDeviceState())
+  private val wearHandshakeRequestGate = WearHandshakeRequestGate()
   private lateinit var settingsRepository: RelvenSettingsRepository
   private var healthConnectSnapshot by mutableStateOf(HealthConnectSettingsSnapshot(
       HealthConnectAvailabilityStatus.UNKNOWN_ERROR, false, emptySet(), 0, 0, 0, emptyList()))
@@ -431,7 +432,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             onAutoLapIntervalsChanged = settingsRepository::setAutoLapIntervals,
             settingsDeviceState = settingsDeviceState,
             settingsPageActions = SettingsPageActions(
-                onRefreshWatch = ::refreshSettingsDeviceState,
+                onRefreshWatch = ::testWatchConnection,
                 onCadenceSensorChanged = settingsRepository::setUseCadenceSensor,
                 onTemperatureSensorChanged = settingsRepository::setUseTemperatureSensor,
                 onPressureSensorChanged = settingsRepository::setUsePressureSensor,
@@ -687,6 +688,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   }
 
   private fun refreshSettingsDeviceState() {
+    val request = wearHandshakeRequestGate.begin()
     val sensors = getSystemService(SensorManager::class.java)
     val packageInfo = runCatching { packageManager.getPackageInfo(packageName, 0) }.getOrNull()
     val appLocale = ConfigurationCompat.getLocales(resources.configuration).get(0) ?: Locale.getDefault()
@@ -708,9 +710,33 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         appVersion = packageInfo?.versionName ?: BuildConfig.VERSION_NAME,
         wearState = WearConnectionState.Loading)
     WearConnectionProvider.query(this) { supported, succeeded, connectedNodes ->
+      if (!wearHandshakeRequestGate.isCurrent(request)) return@query
       settingsDeviceState = settingsDeviceState.copy(
           wearState = wearConnectionState(supported, succeeded, connectedNodes),
           connectedWatchNames = connectedNodes.orEmpty())
+    }
+  }
+
+  private fun testWatchConnection() {
+    val request = wearHandshakeRequestGate.begin()
+    settingsDeviceState =
+        settingsDeviceState.copy(
+            wearHandshakeState = WearHandshakeState.Testing,
+            wearHandshakeRoundTripTimeMillis = null)
+    WearConnectionProvider.testConnection(this) { result ->
+      if (!wearHandshakeRequestGate.isCurrent(request)) return@testConnection
+      val supported = result.status != WearConnectionProvider.HandshakeStatus.UNSUPPORTED
+      val transportRequestSucceeded =
+          result.status != WearConnectionProvider.HandshakeStatus.TRANSPORT_ERROR
+      val nodeNames = result.connectedNodes
+      settingsDeviceState =
+          settingsDeviceState.copy(
+              wearState =
+                  wearConnectionState(supported, transportRequestSucceeded, nodeNames),
+              connectedWatchNames = nodeNames.orEmpty(),
+              wearHandshakeState = wearHandshakeState(result.status.name),
+              wearHandshakeRoundTripTimeMillis =
+                  result.roundTripTimeMillis.takeIf { it >= 0 })
     }
   }
 
