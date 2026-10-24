@@ -552,6 +552,11 @@
     <string name="Strength_session_log_repetitions">Log repetitions</string>
     <string name="Strength_session_pending_result">Record timed result</string>
     <string name="Strength_session_how_many_repetitions">How many clean reps?</string>
+    <string name="Strength_session_enter_manually">Enter exact count</string>
+    <string name="Strength_session_choose_count">Choose a repetition count</string>
+    <string name="Strength_session_log_count">Log %1$d reps</string>
+    <string name="Strength_session_increase_count">Increase repetitions</string>
+    <string name="Strength_session_decrease_count">Decrease repetitions</string>
     <string name="Strength_session_resting">Rest</string>
     <string name="Strength_session_skip_rest">Skip rest</string>
     <string name="Strength_session_pause">Pause</string>

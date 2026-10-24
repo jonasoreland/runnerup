@@ -13,12 +13,18 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,7 +37,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
@@ -39,6 +48,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import kotlinx.coroutines.delay
 import org.runnerup.common.R
 import org.runnerup.relven.strength.StrengthSession
@@ -62,14 +74,6 @@ internal fun StrengthSessionScreen(
   val completed = completedAtMillis != null
   val exercise = session.currentExerciseOrNull()
   val pendingResult = session.pendingResults.firstOrNull()
-  var repetitions by remember(session.exerciseIndex, session.setNumber) {
-    mutableStateOf(exercise?.let { ((it.minRepetitions() + it.maxRepetitions()) / 2).toString() }.orEmpty())
-  }
-  var pendingRepetitions by remember(
-      session.executionId, pendingResult?.exerciseIndex, pendingResult?.setNumber) {
-        mutableStateOf("")
-      }
-
   LaunchedEffect(
       session.executionId,
       session.phase,
@@ -118,26 +122,10 @@ internal fun StrengthSessionScreen(
               color = RelvenColors.Orange,
               fontWeight = FontWeight.SemiBold)
           Text(pending.exerciseName, color = RelvenColors.Text, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-          Text(
-              stringResource(R.string.Strength_session_how_many_repetitions),
-              color = RelvenColors.MutedText)
-          OutlinedTextField(
-              value = pendingRepetitions,
-              onValueChange = { candidate ->
-                if (candidate.length <= 5 && candidate.all(Char::isDigit)) pendingRepetitions = candidate
-              },
-              label = { Text(stringResource(R.string.Strength_session_repetitions)) },
-              keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-              singleLine = true,
-              modifier = Modifier.fillMaxWidth())
-          Button(
-              onClick = { pendingRepetitions.toIntOrNull()?.let(onLogRepetitions) },
-              enabled =
-                  !isSavingProgress && pendingRepetitions.toIntOrNull()?.let { it in 0..10_000 } == true,
-              colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
-              modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
-            Text(stringResource(R.string.Strength_session_log_repetitions))
-          }
+          RepetitionCountEntry(
+              key = "${session.executionId}:${pending.exerciseIndex}:${pending.setNumber}",
+              isSaving = isSavingProgress,
+              onConfirm = onLogRepetitions)
         }
       }
     }
@@ -203,22 +191,10 @@ internal fun StrengthSessionScreen(
                 fontWeight = FontWeight.SemiBold)
             when (session.phase) {
               StrengthSession.Phase.REPETITIONS -> {
-                OutlinedTextField(
-                    value = repetitions,
-                    onValueChange = { candidate ->
-                      if (candidate.length <= 5 && candidate.all(Char::isDigit)) repetitions = candidate
-                    },
-                    label = { Text(stringResource(R.string.Strength_session_repetitions)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth())
-                Button(
-                    onClick = { repetitions.toIntOrNull()?.let(onLogRepetitions) },
-                    enabled = !isSavingProgress && repetitions.toIntOrNull()?.let { it in 0..10_000 } == true,
-                    colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
-                  Text(stringResource(R.string.Strength_session_log_repetitions))
-                }
+                RepetitionCountEntry(
+                    key = "${session.executionId}:${session.exerciseIndex}:${session.setNumber}",
+                    isSaving = isSavingProgress,
+                    onConfirm = onLogRepetitions)
               }
               StrengthSession.Phase.TIMED_WORK -> {
                 Text(
@@ -288,3 +264,141 @@ internal fun StrengthSessionScreen(
 
 private fun StrengthSession.currentExerciseOrNull() =
     if (phase == StrengthSession.Phase.COMPLETE) null else workout.exercises().getOrNull(exerciseIndex)
+
+@Composable
+private fun RepetitionCountEntry(key: String, isSaving: Boolean, onConfirm: (Int) -> Unit) {
+  var selectedCount by remember(key) { mutableStateOf<Int?>(null) }
+  var manualEntryVisible by remember(key) { mutableStateOf(false) }
+  var manualValue by remember(key) { mutableStateOf("") }
+  val haptic = LocalHapticFeedback.current
+  fun selectCount(value: Int?) {
+    selectedCount = value
+    if (manualEntryVisible) manualValue = value?.toString().orEmpty()
+  }
+
+  Text(stringResource(R.string.Strength_session_how_many_repetitions), color = RelvenColors.MutedText)
+  Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically) {
+    RepetitionAdjustmentButton(
+        delta = -1,
+        enabled = !isSaving && selectedCount != 0,
+        onAdjust = { selectCount(adjustRepetitionCount(selectedCount, -1)) })
+    Text(
+        selectedCount?.toString() ?: "—",
+        color = RelvenColors.Text,
+        fontSize = 48.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.semantics {
+          if (selectedCount != null) liveRegion = LiveRegionMode.Polite
+        })
+    RepetitionAdjustmentButton(
+        delta = 1,
+        enabled = !isSaving && selectedCount != 10_000,
+        onAdjust = { selectCount(adjustRepetitionCount(selectedCount, 1)) })
+  }
+  Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.spacedBy(4.dp),
+      verticalAlignment = Alignment.CenterVertically) {
+    listOf(5, 10, 15, 20).forEach { count ->
+      FilterChip(
+          selected = selectedCount == count,
+          onClick = { if (!isSaving) selectCount(count) },
+          label = { Text(count.toString()) },
+          enabled = !isSaving)
+    }
+  }
+  TextButton(
+      onClick = {
+        if (!manualEntryVisible) manualValue = selectedCount?.toString().orEmpty()
+        manualEntryVisible = !manualEntryVisible
+      },
+      enabled = !isSaving,
+      modifier = Modifier.heightIn(min = 48.dp)) {
+    Text(stringResource(R.string.Strength_session_enter_manually))
+  }
+  if (manualEntryVisible) {
+    OutlinedTextField(
+        value = manualValue,
+        onValueChange = { candidate ->
+          if (candidate.length <= 5 && candidate.all(Char::isDigit)) {
+            val parsed = parseRepetitionCount(candidate)
+            if (candidate.isEmpty() || parsed != null) {
+              manualValue = candidate
+              selectedCount = parsed
+            }
+          }
+        },
+        label = { Text(stringResource(R.string.Strength_session_repetitions)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth())
+  }
+  Button(
+      onClick = {
+        selectedCount?.let {
+          haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+          onConfirm(it)
+        }
+      },
+      enabled = !isSaving && selectedCount?.let { it in 0..10_000 } == true,
+      colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+      modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp)) {
+    Text(
+        selectedCount?.let { stringResource(R.string.Strength_session_log_count, it) }
+            ?: stringResource(R.string.Strength_session_choose_count))
+  }
+}
+
+@Composable
+private fun RepetitionAdjustmentButton(delta: Int, enabled: Boolean, onAdjust: () -> Unit) {
+  val interactionSource = remember { MutableInteractionSource() }
+  val isPressed by interactionSource.collectIsPressedAsState()
+  var repeated by remember { mutableStateOf(false) }
+  val description =
+      stringResource(
+          if (delta > 0) R.string.Strength_session_increase_count
+          else R.string.Strength_session_decrease_count)
+
+  LaunchedEffect(isPressed, enabled) {
+    if (isPressed && enabled) {
+      delay(400)
+      if (isPressed && enabled) {
+        repeated = true
+        var intervalMillis = 140L
+        while (isPressed && enabled) {
+          onAdjust()
+          delay(intervalMillis)
+          intervalMillis = (intervalMillis * 0.8).toLong().coerceAtLeast(45L)
+        }
+      }
+    } else {
+      delay(80)
+      repeated = false
+    }
+  }
+
+  IconButton(
+      onClick = {
+        if (repeated) repeated = false else onAdjust()
+      },
+      enabled = enabled,
+      interactionSource = interactionSource,
+      modifier = Modifier.size(64.dp).semantics {
+        contentDescription = description
+      }) {
+    Icon(
+        imageVector = if (delta > 0) Icons.Default.Add else Icons.Default.Remove,
+        contentDescription = null,
+        tint = RelvenColors.Orange,
+        modifier = Modifier.size(32.dp))
+  }
+}
+
+internal fun adjustRepetitionCount(current: Int?, delta: Int): Int =
+    ((current ?: if (delta < 0) 1 else 0) + delta).coerceIn(0, 10_000)
+
+internal fun parseRepetitionCount(value: String): Int? =
+    if (value.isEmpty()) null else value.toIntOrNull()?.takeIf { it in 0..10_000 }
