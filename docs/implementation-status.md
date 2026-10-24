@@ -160,7 +160,7 @@
 ## Phase One — engine audit
 
 - **Completed:** Source owners for workout steps, triggers, session state, GPS, activity persistence, voice feedback, import/export, maps and wearable messages are recorded in [engine audit](engine-audit.md). The existing phone `Tracker` remains the authoritative session owner.
-- **Pending:** Device-level recording, pause/resume, GPS, Swedish voice, third-party GPX/TCX import and device export checks, and process recovery checks.
+- **Pending:** Device-level recording, pause/resume, GPS, Swedish voice, third-party GPX/TCX device export checks, and process recovery checks. The actual Android picker import flow for both GPX and TCX is now verified on the isolated emulator.
 - **Changed modules:** Documentation only.
 - **Build/test status:** No engine refactor was made; Phase Zero build remains the baseline.
 - **Emulator/physical devices:** None connected.
@@ -209,8 +209,8 @@
 - **Current increment:** The import confirmation previews ordered steps, repeat counts, durations and targets before saving; RunnerUp remains responsible for execution.
 - **Current increment:** Protocol compatibility tests cover both supported file header sizes and big-endian message definitions/values alongside the little-endian fixture.
 - **Current increment:** Robolectric tests parse GPX and TCX exports from saved activity rows and verify route points, timestamps, heart rate, summary values, and escaped notes.
-- **Current increment — third-party GPX/TCX import and export round trip:** An offline bounded XML parser normalizes one GPX 1.0/1.1 or TCX 2 activity. History opens a selected file, previews its summary, and saves activity, active lap summary, and GPS samples transactionally. A source-hash ledger prevents duplicate imports. Re-export tests cover both input formats, route points, summaries, HR, cadence, and TCX running-cadence extensions. Multi-segment GPX is declined because RunnerUp's route model cannot represent segment gaps. DTD/external entities, ambiguous multiple activities, invalid required fields, files above 10 MiB, and routes above 100,000 points are rejected.
-- **Pending:** GPX/TCX export from the saved FIT workout, real-device FIT Workout samples, and final device/visual checks. Emulator verification now covers the real Android picker through start, finish, save, History and reopening. [FIT research](fit-import-research.md) records the supported FIT subset and official SDK license constraint.
+- **Current increment — third-party GPX/TCX import and export round trip:** An offline bounded XML parser normalizes one GPX 1.0/1.1 or TCX 2 activity. History opens a selected file, previews its summary, and saves activity, active lap summary, and GPS samples transactionally. A source-hash ledger prevents duplicate imports. Re-export tests cover both input formats, route points, summaries, HR, cadence, and TCX running-cadence extensions. Multi-segment GPX is declined because RunnerUp's route model cannot represent segment gaps. DTD/external entities, ambiguous multiple activities, invalid required fields, files above 10 MiB, and routes above 100,000 points are rejected. On isolated emulator `emulator-5608`, Android DocumentsUI imported both checked-in GPX and TCX fixtures; each previewed and saved as a separate activity with two GPS samples. Repeating the GPX import produced the existing-file message without adding another history row.
+- **Pending:** Opening GPX/TCX export streams in receiving apps, real-device FIT Workout samples, and final device/visual checks. The FIT import emulator run already covers picker through start, finish, save, History and reopening. [FIT research](fit-import-research.md) records the supported FIT subset and official SDK license constraint.
 
 ## Phase Five — plan packages and library
 
