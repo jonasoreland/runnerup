@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 internal fun WorkoutPreparationScreen(
     state: WorkoutPreparationUiState,
     trackerReady: Boolean,
+    gpsReadiness: GpsPreparationUiState = GpsPreparationUiState(GpsPreparationStatus.NOT_REQUIRED),
     selectedWorkoutAvailable: Boolean = true,
     onStart: () -> Unit,
     onCancel: () -> Unit
@@ -95,6 +96,24 @@ internal fun WorkoutPreparationScreen(
                   else "Inspelningen startar först när du trycker på start",
               color = RelvenColors.MutedText,
               fontSize = 13.sp)
+        }
+      }
+    }
+
+    if (gpsReadiness.status != GpsPreparationStatus.NOT_REQUIRED) {
+      Surface(
+          modifier = Modifier.fillMaxWidth(),
+          color = RelvenColors.Surface,
+          shape = RoundedCornerShape(16.dp)) {
+        Column(Modifier.padding(horizontal = 18.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+          Text("GPS", color = RelvenColors.Orange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+          Text(gpsReadiness.label, color = RelvenColors.Text, fontSize = 14.sp)
+          gpsReadiness.accuracyMeters?.let { accuracy ->
+            Text(
+                "Noggrannhet ±${accuracy.toInt()} m",
+                color = RelvenColors.MutedText,
+                fontSize = 12.sp)
+          }
         }
       }
     }

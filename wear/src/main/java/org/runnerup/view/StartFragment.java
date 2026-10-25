@@ -82,13 +82,8 @@ public class StartFragment extends Fragment
           () -> startPreparedWorkout(prepared.getSessionId()));
     } catch (java.io.IOException ignored) {
       presentationState.updateStartState(state);
-      WearControlsComposeContent.bindStart(composeView, presentationState, this::startActivity);
+      WearControlsComposeContent.bindStart(composeView, presentationState);
     }
-  }
-
-  private void startActivity() {
-    StateService stateService = activity == null ? null : activity.getStateService();
-    if (stateService != null) stateService.sendStart();
   }
 
   private void startPreparedWorkout(String sessionId) {

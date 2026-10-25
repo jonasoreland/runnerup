@@ -41,7 +41,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -168,8 +167,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   private Workout plannedWorkout;
 
   private ComposeView readinessComposeView = null;
-  private boolean gpsActionVisible;
-  private String gpsActionLabel = "";
   private StartReadinessItem gpsSummaryItem;
   private StartReadinessItem gpsDetailsItem;
   private StartReadinessItem heartRateItem;
@@ -1192,25 +1189,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       }
       return;
     }
-    if (startWorkoutReady && mTracker != null && mTracker.getState() == TrackerState.CONNECTED) {
+    if (startWorkoutReady && mTracker != null) {
       startWorkout();
     } else {
       updateView();
     }
   }
-
-  private final OnClickListener gpsEnableClick =
-      v -> {
-        if (checkPermissions(true)) {
-          // Handle view update etc in permission callback
-          return;
-        }
-
-        if (mTracker.getState() != TrackerState.CONNECTED) {
-          startGps(true);
-        }
-        updateView();
-      };
 
   private List<String> getPermissions() {
     List<String> requiredPerms = new ArrayList<>();
@@ -1403,7 +1387,6 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
   }
 
   public void updateView() {
-    updateStartGpsButtonView();
     updateStartButtonView();
     updateGPSView();
     updateHRView();
@@ -1427,15 +1410,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
         readinessComposeView,
         presentation,
         statusDetailsShown,
-        gpsActionVisible,
-        gpsActionLabel,
         startWorkoutReady,
         getString(
             isGymSelected()
                 ? R.string.gym_start_workout
                 : org.runnerup.common.R.string.Start_workout_action),
         () -> toggleStatusDetails(),
-        () -> gpsEnableClick.onClick(null),
         () -> onStartWorkoutAction());
   }
 
@@ -1457,44 +1437,11 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
       startWorkoutReady = validDraft && gymExerciseReferences.size() > 0;
       return;
     }
-    boolean gpsStarted = mGpsStatus != null && mGpsStatus.isStarted();
-    boolean gpsLogging = mGpsStatus != null && mGpsStatus.isLogging();
-    boolean gpsFixed = mGpsStatus != null && mGpsStatus.isFixed();
     startWorkoutReady =
         StartWorkoutAvailability.isAvailable(
-            gpsStarted,
-            sportWithoutGps,
-            gpsLogging,
-            gpsFixed,
-            mTracker != null && mIsBound && mTracker.getState() == TrackerState.CONNECTED,
+            mTracker != null && mIsBound,
             getSelectedTabTag().contentEquals(TAB_ADVANCED),
             plannedWorkout != null || advancedWorkout != null);
-  }
-
-  private void updateStartGpsButtonView() {
-    if (isGymSelected()) {
-      gpsActionVisible = false;
-      gpsActionLabel = "";
-      return;
-    }
-    do {
-      if (mGpsStatus.isStarted()) {
-        break;
-      }
-
-      //
-      if (sportWithoutGps) {
-        gpsActionLabel = getString(org.runnerup.common.R.string.Start_tracker);
-      } else if (mGpsStatus.isEnabled()) {
-        gpsActionLabel = getString(org.runnerup.common.R.string.Start_GPS);
-      } else {
-        gpsActionLabel = getString(org.runnerup.common.R.string.Enable_GPS);
-      }
-      gpsActionVisible = true;
-      return;
-    } while (false);
-
-    gpsActionVisible = false;
   }
 
   private void updateGPSView() {

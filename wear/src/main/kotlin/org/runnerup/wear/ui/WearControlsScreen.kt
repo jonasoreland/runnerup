@@ -41,8 +41,8 @@ private val DisabledControl = Color(0xFF303641)
 
 object WearControlsComposeContent {
   @JvmStatic
-  fun bindStart(view: ComposeView, state: WearControlPresentationState, startClick: Runnable) {
-    view.setContent { WearStartScreen(state.startMode) { startClick.run() } }
+  fun bindStart(view: ComposeView, state: WearControlPresentationState) {
+    view.setContent { WearStartScreen(state.startMode) }
   }
 
   @JvmStatic
@@ -122,33 +122,21 @@ internal fun WearPreparedWorkoutScreen(
 }
 
 @Composable
-internal fun WearStartScreen(mode: WearStartMode?, onStart: () -> Unit) {
-  val title =
-      when (mode) {
-        WearStartMode.GPS_READY -> stringResource(org.runnerup.common.R.string.Start_GPS)
-        WearStartMode.ACTIVITY_READY -> stringResource(org.runnerup.common.R.string.Start_activity)
-        null -> stringResource(org.runnerup.common.R.string.Start)
-      }
-
+internal fun WearStartScreen(mode: WearStartMode?) {
   WearControlFrame {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)) {
-      FilledIconButton(
-          onClick = onStart,
-          enabled = mode != null,
-          modifier = Modifier.size(76.dp).semantics { contentDescription = title },
-          colors = controlColors()) {
-        Icon(
-            painter = painterResource(org.runnerup.common.R.drawable.ic_av_play_arrow),
-            contentDescription = null,
-            modifier = Modifier.size(34.dp))
-      }
+        verticalArrangement = Arrangement.spacedBy(8.dp)) {
       Text(
-          text = title,
+          text = if (mode == null) "ANSLUTER TILL RELVEN" else "INGET PASS FÖRBERETT",
           color = if (mode == null) SecondaryText else PrimaryText,
-          fontSize = 12.sp,
-          fontWeight = FontWeight.SemiBold,
+          fontSize = 10.sp,
+          fontWeight = FontWeight.Bold,
+          textAlign = TextAlign.Center)
+      Text(
+          text = "Öppna Relven på mobilen för att välja ett träningspass.",
+          color = SecondaryText,
+          fontSize = 10.sp,
           textAlign = TextAlign.Center)
     }
   }

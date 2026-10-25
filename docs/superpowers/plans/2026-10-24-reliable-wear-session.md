@@ -72,10 +72,11 @@
 
 ### Task 4 — Automatic sensor/GPS preparation
 
-- [ ] Start location acquisition during preparation after permission checks, expose permission/provider/search/fix/accuracy states, and continue without a fix.
-- [ ] Ensure preparatory fixes do not enter the recorded session; begin route acceptance at the authoritative start instant.
+- [x] Start location acquisition during preparation after permission checks, expose permission/provider/search/fix/accuracy states, and continue without a fix (current serial PR).
+- [x] Ensure preparatory fixes do not enter the recorded session; begin route acceptance at the authoritative start instant (current serial PR).
 - [ ] Prepare Wear HR using the existing sensor service and report genuine readiness.
-- [ ] Remove the nonfunctional manual Start GPS controls and test permission/lifecycle cases; merge serially.
+- [x] Remove the nonfunctional manual Start GPS controls and test readiness, accuracy, and route-persistence policies (current serial PR).
+- [ ] Prepare and report Wear HR readiness in a separate PR after the GPS PR merges.
 
 ### Task 5 — Durable disconnect recovery and results
 

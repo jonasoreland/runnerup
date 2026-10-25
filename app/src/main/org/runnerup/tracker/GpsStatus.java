@@ -111,23 +111,11 @@ public class GpsStatus implements LocationListenerCompat {
   }
 
   public void onLocationChanged(Location location) {
-    // If we get a location with accuracy <= mFixAccurancy mFixed => true
-    final float mFixAccurancy = 10;
-    // If we get fixed satellites >= mFixSatellites mFixed => true
-    final int mFixSatellites = 2;
-    // If we get location updates with time difference <= mFixTime mFixed => true
-    final int mFixTime = 3;
-
     System.arraycopy(mHistory, 0, mHistory, 1, HIST_LEN - 1);
     mHistory[0] = location;
-    if (location.hasAccuracy() && location.getAccuracy() < mFixAccurancy) {
-      mIsFixed = true;
-    } else if (mHistory[1] != null
-        && (location.getTime() - mHistory[1].getTime()) <= (1000 * mFixTime)) {
-      mIsFixed = true;
-    } else if (mKnownSatellites >= mFixSatellites) {
-      mIsFixed = true;
-    }
+    // Satellite count and repeated callbacks do not establish horizontal accuracy. Only report a
+    // usable fix when Android supplied a measured accuracy within the existing 10 m threshold.
+    mIsFixed = GpsFixQuality.isUsableFix(location.hasAccuracy(), location.getAccuracy());
     if (listener != null) listener.onTick();
   }
 
@@ -162,6 +150,16 @@ public class GpsStatus implements LocationListenerCompat {
 
   public boolean isFixed() {
     return mIsFixed;
+  }
+
+  public boolean hasLocationFix() {
+    return mHistory[0] != null;
+  }
+
+  /** Returns the latest measured horizontal accuracy, or NaN when Android did not report one. */
+  public float getLatestAccuracyMeters() {
+    Location latest = mHistory[0];
+    return latest != null && latest.hasAccuracy() ? latest.getAccuracy() : Float.NaN;
   }
 
   public int getSatellitesAvailable() {

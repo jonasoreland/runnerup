@@ -6,37 +6,9 @@ import org.junit.Test
 
 class StartWorkoutAvailabilityTest {
   @Test
-  fun gpsWorkoutRequiresStartedLoggingAndFixedGpsAndConnectedTracker() {
-    assertTrue(
-      StartWorkoutAvailability.isAvailable(
-        gpsStarted = true,
-        sportWithoutGps = false,
-        gpsLogging = true,
-        gpsFixed = true,
-        trackerConnected = true,
-        advancedSelected = false,
-        advancedWorkoutAvailable = false,
-      ),
-    )
-    assertFalse(availability(gpsStarted = false))
-    assertFalse(availability(gpsLogging = false))
-    assertFalse(availability(gpsFixed = false))
-    assertFalse(availability(trackerConnected = false))
-  }
-
-  @Test
-  fun gpsFreeSportDoesNotRequireGpsLoggingOrFix() {
-    assertTrue(
-      StartWorkoutAvailability.isAvailable(
-        gpsStarted = true,
-        sportWithoutGps = true,
-        gpsLogging = false,
-        gpsFixed = false,
-        trackerConnected = true,
-        advancedSelected = false,
-        advancedWorkoutAvailable = false,
-      ),
-    )
+  fun startDoesNotRequireGpsPermissionFixOrProvider() {
+    assertTrue(availability())
+    assertFalse(availability(trackerAvailable = false))
   }
 
   @Test
@@ -46,20 +18,12 @@ class StartWorkoutAvailabilityTest {
   }
 
   private fun availability(
-    gpsStarted: Boolean = true,
-    sportWithoutGps: Boolean = false,
-    gpsLogging: Boolean = true,
-    gpsFixed: Boolean = true,
-    trackerConnected: Boolean = true,
+    trackerAvailable: Boolean = true,
     advancedSelected: Boolean = false,
     advancedWorkoutAvailable: Boolean = false,
   ) =
     StartWorkoutAvailability.isAvailable(
-      gpsStarted,
-      sportWithoutGps,
-      gpsLogging,
-      gpsFixed,
-      trackerConnected,
+      trackerAvailable,
       advancedSelected,
       advancedWorkoutAvailable,
     )

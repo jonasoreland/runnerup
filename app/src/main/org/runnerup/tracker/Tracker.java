@@ -243,6 +243,34 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     trackerGPS.setWithoutGps(val);
   }
 
+  public void setGpsReadinessListener(Runnable listener) {
+    trackerGPS.setReadinessListener(listener);
+  }
+
+  public boolean hasGpsLocationPermission() {
+    return trackerGPS.hasFineLocationPermission();
+  }
+
+  public boolean isGpsProviderAvailable() {
+    return trackerGPS.isGpsProviderAvailable();
+  }
+
+  public boolean isGpsProviderEnabled() {
+    return trackerGPS.isGpsProviderEnabled();
+  }
+
+  public boolean areGpsUpdatesActive() {
+    return trackerGPS.areGpsUpdatesActive();
+  }
+
+  public boolean hasGpsLocationFix() {
+    return trackerGPS.hasGpsLocationFix();
+  }
+
+  public float getGpsAccuracyMeters() {
+    return trackerGPS.getGpsAccuracyMeters();
+  }
+
   private final TrackerComponent.Callback onInitCallback =
       new TrackerComponent.Callback() {
         @Override
@@ -853,6 +881,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   private void onLocationChangedImpl(
       Location arg0, boolean internal, GpsFixFilter.Result fixResult) {
+    boolean shouldPersist = TrackerLocationPersistencePolicy.shouldPersist(internal, state.get());
     int persistedType = mLocationType;
     if ((!mTimeFromGpsPoints && fixResult == null) || internal) {
       long elapsedNs = SystemClock.elapsedRealtimeNanos();
@@ -899,7 +928,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
         }
       }
 
-      if (internal || state.get() == TrackerState.STARTED) {
+      if (shouldPersist) {
         if (!internal) {
           if (fixResult == null || !fixResult.startsAfterGap()) {
             mElapsedTimeNanos += activeTimeDiffNanos;
@@ -914,7 +943,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       }
     }
 
-    if (internal || state.get() == TrackerState.STARTED) {
+    if (shouldPersist) {
       mDBWriter.onLocationChanged(
           arg0,
           eleValue,

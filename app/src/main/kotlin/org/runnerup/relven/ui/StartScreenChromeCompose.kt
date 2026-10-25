@@ -19,7 +19,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,12 +64,9 @@ object StartScreenChromeCompose {
     view: ComposeView,
     presentation: StartReadinessPresentation,
     detailsExpanded: Boolean,
-    showGpsAction: Boolean,
-    gpsActionLabel: String,
     canStartWorkout: Boolean,
     startWorkoutLabel: String,
     onToggleDetails: Runnable,
-    onGpsAction: Runnable,
     onStartWorkout: Runnable,
   ) {
     view.setContent {
@@ -78,12 +74,9 @@ object StartScreenChromeCompose {
         StartReadinessBar(
           presentation,
           detailsExpanded,
-          showGpsAction,
-          gpsActionLabel,
           canStartWorkout,
           startWorkoutLabel,
           onToggleDetails,
-          onGpsAction,
           onStartWorkout,
         )
       }
@@ -95,12 +88,9 @@ object StartScreenChromeCompose {
 private fun StartReadinessBar(
   presentation: StartReadinessPresentation,
   detailsExpanded: Boolean,
-  showGpsAction: Boolean,
-  gpsActionLabel: String,
   canStartWorkout: Boolean,
   startWorkoutLabel: String,
   onToggleDetails: Runnable,
-  onGpsAction: Runnable,
   onStartWorkout: Runnable,
 ) {
   val readinessState =
@@ -111,7 +101,7 @@ private fun StartReadinessBar(
   Column(
     modifier = Modifier.fillMaxWidth().background(RelvenColors.Surface).padding(horizontal = 12.dp, vertical = 6.dp),
   ) {
-    if (presentation.summaryItems.isNotEmpty() || showGpsAction) Row(
+    if (presentation.summaryItems.isNotEmpty()) Row(
       modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -151,14 +141,6 @@ private fun StartReadinessBar(
           tint = RelvenColors.MutedText,
           modifier = Modifier.size(20.dp),
         )
-      }
-      if (showGpsAction) {
-        TextButton(
-          onClick = onGpsAction::run,
-          colors = ButtonDefaults.textButtonColors(contentColor = RelvenColors.Orange),
-        ) {
-          Text(gpsActionLabel)
-        }
       }
     }
     if (canStartWorkout) {

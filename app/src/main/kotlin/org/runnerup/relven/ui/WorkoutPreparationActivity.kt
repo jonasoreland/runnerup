@@ -25,12 +25,16 @@ import org.runnerup.relven.ui.WearConnectionProvider.PreparationStatus
 import org.runnerup.tracker.Tracker
 import org.runnerup.view.RunActivity
 import org.runnerup.common.util.Constants
+import org.runnerup.workout.Sport
 
 internal class WorkoutPreparationActivity : ComponentActivity() {
   private lateinit var state: WorkoutPreparationStateHolder
   private var tracker: Tracker? = null
   private var bound = false
+  private var trackerConnection = WorkoutPreparationTrackerConnectionState()
   private var trackerReady by mutableStateOf(false)
+  private var gpsReadiness by
+      mutableStateOf(GpsPreparationUiState(GpsPreparationStatus.NOT_REQUIRED))
   private var selectedWorkoutAvailable by mutableStateOf(true)
   private var transferStarted = false
   private var restoreSelectedWorkout = false
@@ -69,6 +73,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
               finishAfterCancel = false
               if (shouldFinish) {
                 WearConnectionProvider.cancelWorkoutPreparation(this@WorkoutPreparationActivity, state.value.sessionId)
+                resetPreparationTrackerIfOwned()
                 finish()
               }
             }
@@ -164,9 +169,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
               restoreSelectedWorkout = false
               selectedWorkoutAvailable = restoreSelectedWorkoutFromIntent(activeTracker)
             }
-            if (WorkoutPreparationTrackerPolicy.shouldConnect(activeTracker.state)) {
-              activeTracker.connect()
-            }
+            connectTrackerForPreparation()
+            activeTracker.setGpsReadinessListener { runOnUiThread(::updateGpsReadiness) }
             if (state.value.phase != WorkoutPreparationPhase.PREPARING) {
               activeTracker.prepareWearWorkoutSession(
                   state.value.sessionId, state.value.watchReady)
@@ -179,8 +183,11 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
 
         override fun onServiceDisconnected(name: ComponentName?) {
           tracker?.unregisterTrackerStateListener(trackerStateListener)
+          tracker?.setGpsReadinessListener(null)
+          trackerConnection.onServiceDisconnected()
           tracker = null
           trackerReady = false
+          updateGpsReadiness()
         }
       }
 
@@ -191,7 +198,13 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             oldValue: TrackerState,
             newValue: TrackerState
         ) {
-          runOnUiThread(::updateTrackerState)
+          runOnUiThread {
+            if (WorkoutPreparationTrackerPolicy.shouldRetryAfterCleanup(newValue)) {
+              trackerConnection.onTrackerReset()
+              connectTrackerForPreparation()
+            }
+            updateTrackerState()
+          }
         }
       }
 
@@ -206,6 +219,11 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
       return
     }
     state = WorkoutPreparationStateHolder(sessionId, workoutName, upcomingStep)
+    trackerConnection =
+        WorkoutPreparationTrackerConnectionState(
+            initiallyOwnedByPreparation =
+                savedInstanceState?.getBoolean(STATE_TRACKER_CONNECTION_INITIATED, false) ?: false)
+    updateGpsReadiness()
     restoredStartCommand =
         savedInstanceState?.getByteArray(STATE_ACCEPTED_START)?.let { bytes ->
           try {
@@ -221,6 +239,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         WorkoutPreparationScreen(
             state = state.value,
             trackerReady = trackerReady,
+            gpsReadiness = gpsReadiness,
             selectedWorkoutAvailable = selectedWorkoutAvailable,
             onStart = ::startWorkout,
             onCancel = ::cancelPreparation)
@@ -279,6 +298,48 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
 
   private fun updateTrackerState() {
     trackerReady = tracker?.state == TrackerState.CONNECTED && selectedWorkoutAvailable
+    updateGpsReadiness()
+  }
+
+  private fun connectTrackerForPreparation() {
+    val activeTracker = tracker ?: return
+    if (isFinishing || isDestroyed) return
+    if (!trackerConnection.shouldRequestConnection(activeTracker.state)) return
+    trackerConnection.onConnectionRequested()
+    activeTracker.connect()
+  }
+
+  private fun updateGpsReadiness() {
+    val required =
+        !Sport.isWithoutGps(
+            intent.getIntExtra(EXTRA_SPORT, Constants.DB.ACTIVITY.SPORT_RUNNING))
+    if (!required) {
+      gpsReadiness =
+          GpsPreparationPresentation.create(
+              required = false,
+              permissionGranted = false,
+              providerAvailable = false,
+              providerEnabled = false,
+              updatesActive = false,
+              locationReceived = false,
+              accuracyMeters = null)
+      return
+    }
+    val activeTracker = tracker
+    if (activeTracker == null) {
+      gpsReadiness = GpsPreparationUiState(GpsPreparationStatus.SEARCHING)
+      return
+    }
+    val accuracy = activeTracker.gpsAccuracyMeters.takeIf { it.isFinite() && it > 0f }
+    gpsReadiness =
+        GpsPreparationPresentation.create(
+            required = true,
+            permissionGranted = activeTracker.hasGpsLocationPermission(),
+            providerAvailable = activeTracker.isGpsProviderAvailable(),
+            providerEnabled = activeTracker.isGpsProviderEnabled(),
+            updatesActive = activeTracker.areGpsUpdatesActive(),
+            locationReceived = activeTracker.hasGpsLocationFix(),
+            accuracyMeters = accuracy)
   }
 
   private fun startWorkout() {
@@ -339,7 +400,26 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     }
     cancelCountdown("Passförberedelsen avbröts")
     WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
+    resetPreparationTrackerIfOwned()
     finish()
+  }
+
+  private fun resetPreparationTrackerIfOwned(afterRejectedStart: Boolean = false) {
+    val activeTracker = tracker ?: return
+    val shouldReset =
+        if (afterRejectedStart) {
+          WorkoutPreparationTrackerPolicy.shouldResetAfterRejectedStart(
+              cancelWasRequested = true,
+              connectionInitiatedByPreparation = trackerConnection.initiatedByPreparation,
+              state = activeTracker.state)
+        } else {
+          WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+              connectionInitiatedByPreparation = trackerConnection.initiatedByPreparation,
+              state = activeTracker.state)
+        }
+    if (!shouldReset) return
+    trackerConnection.onReset()
+    activeTracker.reset()
   }
 
   private fun cancelCountdown(status: String) {
@@ -372,6 +452,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
       }
       if (finishAfterStartResolution) {
         finishAfterStartResolution = false
+        resetPreparationTrackerIfOwned(afterRejectedStart = true)
         WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
         finish()
       }
@@ -418,6 +499,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
       sessionCommandReceiverRegistered = false
     }
     tracker?.unregisterTrackerStateListener(trackerStateListener)
+    tracker?.setGpsReadinessListener(null)
     if (bound) {
       unbindService(connection)
       bound = false
@@ -426,6 +508,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
+    outState.putBoolean(STATE_TRACKER_CONNECTION_INITIATED, trackerConnection.initiatedByPreparation)
     if (::state.isInitialized && state.value.phase == WorkoutPreparationPhase.COUNTDOWN) {
       state.lastCommand?.let { command ->
         try {
@@ -445,6 +528,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     private const val START_REQUEST_TIMEOUT_MS = 5_000L
     private const val CANCEL_RETRY_INTERVAL_MS = 1_000L
     private const val STATE_ACCEPTED_START = "org.runnerup.relven.preparation.accepted_start"
+    private const val STATE_TRACKER_CONNECTION_INITIATED =
+        "org.runnerup.relven.preparation.tracker_connection_initiated"
     private const val EXTRA_SESSION_ID = "org.runnerup.relven.preparation.session_id"
     private const val EXTRA_WORKOUT_NAME = "org.runnerup.relven.preparation.workout_name"
     private const val EXTRA_UPCOMING_STEP = "org.runnerup.relven.preparation.upcoming_step"

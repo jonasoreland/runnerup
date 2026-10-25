@@ -15,12 +15,89 @@ class WorkoutPreparationStateHolderTest {
     assertTrue(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.INIT))
     assertTrue(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.INITIALIZING))
     assertTrue(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.INITIALIZED))
-    assertTrue(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.CLEANUP))
+    assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.CLEANUP))
     assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.CONNECTED))
     assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.STARTED))
     assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.PAUSED))
     assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.STOPPED))
     assertFalse(WorkoutPreparationTrackerPolicy.shouldConnect(TrackerState.ERROR))
+  }
+
+  @Test
+  fun preparationRetriesConnectionAfterTrackerCleanupSettlesToIdle() {
+    assertTrue(WorkoutPreparationTrackerPolicy.shouldRetryAfterCleanup(TrackerState.INIT))
+    assertFalse(WorkoutPreparationTrackerPolicy.shouldRetryAfterCleanup(TrackerState.CLEANUP))
+    assertFalse(WorkoutPreparationTrackerPolicy.shouldRetryAfterCleanup(TrackerState.CONNECTED))
+  }
+
+  @Test
+  fun recreatedPreparationReconnectsWhenTrackerRestartedAfterProcessDeath() {
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldInitiateConnection(
+            connectionAttemptPending = false, TrackerState.INIT))
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldInitiateConnection(
+            connectionAttemptPending = false, TrackerState.INITIALIZED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldInitiateConnection(
+            connectionAttemptPending = true, TrackerState.INITIALIZED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldInitiateConnection(
+            connectionAttemptPending = false, TrackerState.CONNECTED))
+  }
+
+  @Test
+  fun serviceRebindClearsPendingRequestButRetainsPreparationOwnership() {
+    val state =
+        WorkoutPreparationTrackerConnectionState(
+            initiallyOwnedByPreparation = true, initiallyPending = true)
+    assertFalse(state.shouldRequestConnection(TrackerState.INIT))
+
+    state.onServiceDisconnected()
+
+    assertTrue(state.initiatedByPreparation)
+    assertTrue(state.shouldRequestConnection(TrackerState.INIT))
+  }
+
+  @Test
+  fun preparationCancellationResetsOnlyItsOwnPreStartTrackerConnection() {
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = true, TrackerState.CONNECTED))
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = true, TrackerState.CONNECTING))
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = true, TrackerState.INITIALIZING))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = false, TrackerState.CONNECTED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = true, TrackerState.STARTED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterCancellation(
+            connectionInitiatedByPreparation = true, TrackerState.PAUSED))
+  }
+
+  @Test
+  fun cancelThenRejectedWatchStartResetsOwnedConnectionButOrdinaryRejectionKeepsIt() {
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterRejectedStart(
+            cancelWasRequested = true,
+            connectionInitiatedByPreparation = true,
+            TrackerState.CONNECTED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterRejectedStart(
+            cancelWasRequested = false,
+            connectionInitiatedByPreparation = true,
+            TrackerState.CONNECTED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldResetAfterRejectedStart(
+            cancelWasRequested = true,
+            connectionInitiatedByPreparation = false,
+            TrackerState.CONNECTED))
   }
 
   @Test

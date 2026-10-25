@@ -12,22 +12,15 @@ data class StartReadinessPresentation(
   val gpsDetails: StartReadinessItem?,
 )
 
-/** Mirrors the existing Tracker, GPS, and advanced-workout guards for the visible start action. */
+/** Workout start remains available while GPS is searching or unavailable. */
 object StartWorkoutAvailability {
   @JvmStatic
   fun isAvailable(
-    gpsStarted: Boolean,
-    sportWithoutGps: Boolean,
-    gpsLogging: Boolean,
-    gpsFixed: Boolean,
-    trackerConnected: Boolean,
+    trackerAvailable: Boolean,
     advancedSelected: Boolean,
     advancedWorkoutAvailable: Boolean,
   ): Boolean =
-    gpsStarted &&
-      (sportWithoutGps || (gpsLogging && gpsFixed)) &&
-      trackerConnected &&
-      (!advancedSelected || advancedWorkoutAvailable)
+    trackerAvailable && (!advancedSelected || advancedWorkoutAvailable)
 }
 
 /** Keeps the setup strip's visibility rules separate from Tracker and GPS state collection. */
