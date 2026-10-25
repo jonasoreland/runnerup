@@ -238,7 +238,6 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var pendingStrengthSessionChoice by mutableStateOf<PendingStrengthSessionChoice?>(null)
   private var strengthRecoveryNotice by mutableStateOf(false)
   private var strengthFinishing by mutableStateOf(false)
-  private var pendingPlannedRunningWorkout by mutableStateOf<org.runnerup.workout.Workout?>(null)
   private val strengthStoreMutex = Mutex()
   private var pendingActivityImport by mutableStateOf<PendingActivityImport?>(null)
   private var activityImportMessage by mutableStateOf<String?>(null)
@@ -441,7 +440,6 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             activityHistoryState = activityHistoryState,
             planRevisionStatus = planRevisionStatus,
             currentTimeMillis = currentTimeMillis,
-            pendingPlannedRunningWorkout = pendingPlannedRunningWorkout,
             destination = destination,
             settingsRoute = settingsRoute,
             onSettingsRouteChanged = { settingsRoute = it },
@@ -791,7 +789,6 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private fun selectHomeDestination(next: HomeDestination) {
     if (next == HomeDestination.Settings) refreshSettingsDeviceState()
     if (next == HomeDestination.History) loadStrengthSessionHistory()
-    if (next != HomeDestination.Start) pendingPlannedRunningWorkout = null
     if (next != HomeDestination.Plan) {
       planLibraryOpen = false
       planCreationOpen = false
@@ -1025,7 +1022,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
       val document = org.json.JSONObject(favorite.workoutJson)
       when (favorite.sport) {
         "running" -> startPlannedRunningWorkout(
-            org.runnerup.workout.RelvenWorkoutImporter.parse(favorite.workoutJson))
+            org.runnerup.workout.RelvenWorkoutImporter.parse(favorite.workoutJson), favorite.name)
         "strength", "prehab" -> {
           val workout = org.runnerup.workout.RelvenStrengthWorkoutParser.parse(favorite.workoutJson)
           val entry = PlanCalendarEntry.Workout(
@@ -1680,9 +1677,29 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     }
   }
 
-  private fun startPlannedRunningWorkout(workout: org.runnerup.workout.Workout) {
-    pendingPlannedRunningWorkout = workout
-    selectHomeDestination(HomeDestination.Start)
+  private fun startPlannedRunningWorkout(
+      workout: org.runnerup.workout.Workout,
+      workoutName: String) {
+    try {
+      val launch = plannedRunningWorkoutLaunchData(workout, workoutName)
+      startActivity(
+          WorkoutPreparationActivity.intent(
+              this,
+              UUID.randomUUID().toString(),
+              launch.workoutName,
+              launch.upcomingStep,
+              launch.workoutJson,
+              launch.sport,
+              launch.workoutType,
+              restoreWorkoutFromIntent = true))
+    } catch (error: Exception) {
+      Log.w("RelvenHome", "Could not prepare planned running workout", error)
+      android.widget.Toast.makeText(
+              this,
+              getString(org.runnerup.common.R.string.Failed_to_load_workout),
+              android.widget.Toast.LENGTH_LONG)
+          .show()
+    }
   }
 
   override fun startQuickStrengthWorkout(name: String, workoutJson: String) {
@@ -2264,7 +2281,6 @@ private fun RelvenHome(
     activityHistoryState: ActivityHistoryLoadState,
     planRevisionStatus: PlanRevisionStatus,
     currentTimeMillis: Long,
-    pendingPlannedRunningWorkout: org.runnerup.workout.Workout?,
     destination: HomeDestination,
     settingsRoute: SettingsRoute,
     onSettingsRouteChanged: (SettingsRoute) -> Unit,
@@ -2344,7 +2360,7 @@ private fun RelvenHome(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
-    onStartPlannedRunningWorkout: (org.runnerup.workout.Workout) -> Unit,
+    onStartPlannedRunningWorkout: (org.runnerup.workout.Workout, String) -> Unit,
     strengthRecoveryNotice: Boolean,
     onDismissStrengthRecoveryNotice: () -> Unit,
     pendingStrengthSessionChoice: PendingStrengthSessionChoice?,
@@ -2498,7 +2514,7 @@ private fun RelvenHome(
       }
     }
     } else if (destination == HomeDestination.Start) {
-      StartDestinationScreen(startFragmentManager, pendingPlannedRunningWorkout)
+      StartDestinationScreen(startFragmentManager)
     } else if (destination == HomeDestination.Settings) {
       RelvenSettingsOverview(
           route = settingsRoute,

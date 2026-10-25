@@ -239,7 +239,9 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             null
           }
         }
-    restoreSelectedWorkout = savedInstanceState != null
+    restoreSelectedWorkout =
+        savedInstanceState != null ||
+            intent.getBooleanExtra(EXTRA_RESTORE_WORKOUT_FROM_INTENT, false)
     selectedWorkoutAvailable = !restoreSelectedWorkout
     setContent {
       RelvenTheme {
@@ -584,11 +586,14 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     private const val EXTRA_SESSION_ID = "org.runnerup.relven.preparation.session_id"
     private const val EXTRA_WORKOUT_NAME = "org.runnerup.relven.preparation.workout_name"
     private const val EXTRA_UPCOMING_STEP = "org.runnerup.relven.preparation.upcoming_step"
-    private const val EXTRA_WORKOUT_JSON = "org.runnerup.relven.preparation.workout_json"
+    internal const val EXTRA_WORKOUT_JSON = "org.runnerup.relven.preparation.workout_json"
+    internal const val EXTRA_RESTORE_WORKOUT_FROM_INTENT =
+        "org.runnerup.relven.preparation.restore_workout_from_intent"
     private const val EXTRA_SPORT = "org.runnerup.relven.preparation.sport"
     private const val EXTRA_WORKOUT_TYPE = "org.runnerup.relven.preparation.workout_type"
 
     @JvmStatic
+    @JvmOverloads
     fun intent(
         context: Context,
         sessionId: String,
@@ -596,7 +601,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         upcomingStep: String,
         workoutJson: String,
         sport: Int,
-        workoutType: Int
+        workoutType: Int,
+        restoreWorkoutFromIntent: Boolean = false
     ): Intent =
         Intent(context, WorkoutPreparationActivity::class.java)
             .putExtra(EXTRA_SESSION_ID, sessionId)
@@ -605,5 +611,6 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             .putExtra(EXTRA_WORKOUT_JSON, workoutJson)
             .putExtra(EXTRA_SPORT, sport)
             .putExtra(EXTRA_WORKOUT_TYPE, workoutType)
+            .putExtra(EXTRA_RESTORE_WORKOUT_FROM_INTENT, restoreWorkoutFromIntent)
   }
 }
