@@ -66,19 +66,6 @@ public class SettingsSensorsFragment extends PreferenceFragmentCompat {
           }
           return true;
         });
-
-    // Preference Category - Auto Pause
-    // These preferences should be enabled only if the Auto Pause preference in the
-    // Workout Preference is enabled.
-    SharedPreferences sharedPreferences =
-        PreferenceManager.getDefaultSharedPreferences(requireContext());
-    boolean autoPause =
-        sharedPreferences.getBoolean(getString(R.string.pref_autopause_active), true);
-    Preference autoPauseAfterSeconds =
-        findPreference(getString(R.string.pref_autopause_afterseconds));
-    autoPauseAfterSeconds.setEnabled(autoPause);
-    Preference autoPauseMinPace = findPreference(getString(R.string.pref_autopause_minpace));
-    autoPauseMinPace.setEnabled(autoPause);
   }
 
   public static boolean hasHR(Context ctx) {
