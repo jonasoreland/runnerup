@@ -76,7 +76,7 @@ class WearStrengthExecutionStoreTest {
     val store = WearStrengthExecutionStore(MemoryStorage()) { 5_000L }
     val first = prepared()
     assertTrue(store.savePreparedSession(first))
-    val controller = WearStrengthExecutionController(store) { 5_000L }
+    val controller = WearStrengthExecutionController(store, elapsedRealtimeMillis = { 5_000L })
     controller.update { it.begin(1_000L) }
     controller.update { it.completeRepetitions(5, 2_000L) }
     controller.update { it.skipRest(3_000L) }

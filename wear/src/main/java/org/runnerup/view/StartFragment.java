@@ -166,9 +166,19 @@ public class StartFragment extends Fragment
           repetitions -> logStrengthRepetitions(repetitions),
           () -> updateStrength(s -> s.pause(SystemClock.elapsedRealtime())),
           () -> updateStrength(s -> s.resume(SystemClock.elapsedRealtime())),
-          () -> updateStrength(s -> s.skipPendingTimedResult(SystemClock.elapsedRealtime())),
-          () -> updateStrength(s -> s.skipCurrentExercise(SystemClock.elapsedRealtime())),
-          () -> updateStrength(s -> s.skipRest(SystemClock.elapsedRealtime())),
+          () ->
+              updateStrength(
+                  s ->
+                      s.skipPendingTimedResult(
+                          SystemClock.elapsedRealtime(), System.currentTimeMillis())),
+          () ->
+              updateStrength(
+                  s ->
+                      s.skipCurrentExercise(
+                          SystemClock.elapsedRealtime(), System.currentTimeMillis())),
+          () ->
+              updateStrength(
+                  s -> s.skipRest(SystemClock.elapsedRealtime(), System.currentTimeMillis())),
           () -> updateStrength(s -> s.finishEarly(SystemClock.elapsedRealtime())));
     } else {
       strengthUiState.update(session);
@@ -176,11 +186,14 @@ public class StartFragment extends Fragment
   }
 
   private void startStrengthSession() {
-    updateStrength(s -> s.begin(SystemClock.elapsedRealtime()));
+    updateStrength(s -> s.begin(SystemClock.elapsedRealtime(), System.currentTimeMillis()));
   }
 
   private boolean logStrengthRepetitions(int repetitions) {
-    return updateStrength(s -> s.completeRepetitions(repetitions, SystemClock.elapsedRealtime()));
+    return updateStrength(
+        s ->
+            s.completeRepetitions(
+                repetitions, SystemClock.elapsedRealtime(), System.currentTimeMillis()));
   }
 
   private boolean updateStrength(

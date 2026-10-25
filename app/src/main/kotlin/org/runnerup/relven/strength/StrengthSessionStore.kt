@@ -20,7 +20,15 @@ import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-internal data class CompletedStrengthSession(val state: StrengthSession, val finishedAtMillis: Long)
+internal data class CompletedStrengthSession(
+    val state: StrengthSession,
+    val finishedAtMillis: Long,
+    val healthConnectExportRequested: Boolean = false)
+
+private data class StoredStrengthSession(
+    val state: StrengthSession,
+    val finishedAtMillis: Long?,
+    val healthConnectExportRequested: Boolean)
 
 internal data class StrengthSessionHistoryLoad(
     val sessions: List<CompletedStrengthSession>,
@@ -117,7 +125,7 @@ internal object StrengthSessionStore {
       replaceCompleted(
           context,
           completion,
-          CompletedStrengthSession(updated, completion.finishedAtMillis))
+          completion.copy(state = updated))
     }
   }
 
@@ -207,8 +215,12 @@ internal object StrengthSessionStore {
 
   @Synchronized
   @Throws(IOException::class)
-  fun complete(context: Context, state: StrengthSession, finishedAtMillis: Long) {
-    writeCompleted(context, state, finishedAtMillis)
+  fun complete(
+      context: Context,
+      state: StrengthSession,
+      finishedAtMillis: Long,
+      healthConnectExportRequested: Boolean = false) {
+    writeCompleted(context, state, finishedAtMillis, healthConnectExportRequested)
     val activeFile = AtomicFile(file(context, "active.json"))
     activeFile.delete()
   }
@@ -236,27 +248,48 @@ internal object StrengthSessionStore {
     require(expected.finishedAtMillis == replacement.finishedAtMillis) {
       "Edited workout completion time cannot change"
     }
+    require(expected.healthConnectExportRequested == replacement.healthConnectExportRequested) {
+      "Edited workout export request cannot change"
+    }
     require(replacement.state.isComplete) { "Edited workout must remain complete" }
     val completionFile = file(context, "completed-${hash(expected.state.executionId)}.json")
     if (!completionFile.exists()) throw IOException("Completed workout no longer exists")
-    val (savedState, savedFinishedAt) = read(completionFile)
-    if (savedState == replacement.state && savedFinishedAt == replacement.finishedAtMillis) return
-    if (savedState != expected.state || savedFinishedAt != expected.finishedAtMillis) {
+    val saved = readStored(completionFile)
+    val savedState = saved.state
+    val savedFinishedAt = saved.finishedAtMillis
+    if (savedState == replacement.state && savedFinishedAt == replacement.finishedAtMillis &&
+        saved.healthConnectExportRequested == replacement.healthConnectExportRequested) return
+    if (savedState != expected.state || savedFinishedAt != expected.finishedAtMillis ||
+        saved.healthConnectExportRequested != expected.healthConnectExportRequested) {
       throw IOException("Completed workout changed since it was opened")
     }
-    write(context, completionFile.name, StrengthSessionCodec.encode(replacement.state, replacement.finishedAtMillis))
+    write(
+        context,
+        completionFile.name,
+        StrengthSessionCodec.encode(
+            replacement.state,
+            replacement.finishedAtMillis,
+            replacement.healthConnectExportRequested))
   }
 
-  private fun writeCompleted(context: Context, state: StrengthSession, finishedAtMillis: Long) {
+  private fun writeCompleted(
+      context: Context,
+      state: StrengthSession,
+      finishedAtMillis: Long,
+      healthConnectExportRequested: Boolean = false) {
     require(state.isComplete) { "Session is not complete" }
     require(finishedAtMillis > 0) { "Invalid completion time" }
     val completionFile = file(context, "completed-${hash(state.executionId)}.json")
     if (completionFile.exists()) {
-      val (existing, existingFinishedAt) = read(completionFile)
-      if (existing == state && existingFinishedAt == finishedAtMillis) return
+      val existing = readStored(completionFile)
+      if (existing.state == state && existing.finishedAtMillis == finishedAtMillis &&
+          existing.healthConnectExportRequested == healthConnectExportRequested) return
       throw IOException("This workout execution is already complete")
     }
-    write(context, completionFile.name, StrengthSessionCodec.encode(state, finishedAtMillis))
+    write(
+        context,
+        completionFile.name,
+        StrengthSessionCodec.encode(state, finishedAtMillis, healthConnectExportRequested))
   }
 
   @Synchronized
@@ -273,21 +306,25 @@ internal object StrengthSessionStore {
   }
 
   private fun readCompletion(file: File, scheduledEntryId: String): CompletedStrengthSession {
-    val (state, finishedAt) = read(file)
+    val stored = readStored(file)
+    val state = stored.state
+    val finishedAt = stored.finishedAtMillis
     if (state.scheduledEntryId != scheduledEntryId || !state.isComplete || finishedAt == null) {
       throw IOException("Completion record does not match its scheduled workout")
     }
-    return CompletedStrengthSession(state, finishedAt)
+    return CompletedStrengthSession(state, finishedAt, stored.healthConnectExportRequested)
   }
 
   private fun completedExecution(context: Context, executionId: String): CompletedStrengthSession? {
     val file = file(context, "completed-${hash(executionId)}.json")
     if (!file.exists()) return null
-    val (state, finishedAt) = read(file)
+    val stored = readStored(file)
+    val state = stored.state
+    val finishedAt = stored.finishedAtMillis
     if (state.executionId != executionId || !state.isComplete || finishedAt == null) {
       throw IOException("Completion record does not match its execution")
     }
-    return CompletedStrengthSession(state, finishedAt)
+    return CompletedStrengthSession(state, finishedAt, stored.healthConnectExportRequested)
   }
 
   @Synchronized
@@ -311,7 +348,9 @@ internal object StrengthSessionStore {
       }
       bytesRead += file.length()
       try {
-        val (state, finishedAt) = read(file)
+        val stored = readStored(file)
+        val state = stored.state
+        val finishedAt = stored.finishedAtMillis
         if (
             !state.isComplete ||
                 finishedAt == null ||
@@ -319,7 +358,7 @@ internal object StrengthSessionStore {
                 file.name != "completed-${hash(state.executionId)}.json") {
           invalidCount++
         } else {
-          sessions.add(CompletedStrengthSession(state, finishedAt))
+          sessions.add(CompletedStrengthSession(state, finishedAt, stored.healthConnectExportRequested))
         }
       } catch (_: Exception) {
         invalidCount++
@@ -330,12 +369,21 @@ internal object StrengthSessionStore {
   }
 
   private fun read(file: File): Pair<StrengthSession, Long?> {
+    val stored = readStored(file)
+    return stored.state to stored.finishedAtMillis
+  }
+
+  private fun readStored(file: File): StoredStrengthSession {
     if (file.length() > MAX_SAVED_SESSION_BYTES) {
       throw InvalidSavedSessionException("Saved strength session is too large")
     }
     val content = AtomicFile(file).openRead().use { it.readBytes().toString(StandardCharsets.UTF_8) }
     return try {
-      StrengthSessionCodec.decode(content)
+      val (state, finishedAt) = StrengthSessionCodec.decode(content)
+      StoredStrengthSession(
+          state,
+          finishedAt,
+          StrengthSessionCodec.healthConnectExportRequested(content))
     } catch (error: Exception) {
       throw InvalidSavedSessionException("Saved strength session is invalid", error)
     }

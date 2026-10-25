@@ -62,10 +62,12 @@ object StrengthSessionAuthorityProtocol {
 
   /** Applies a control only on the watch, where the single live authority is hosted. */
   @JvmStatic
+  @JvmOverloads
   fun applyAtWatch(
       current: StrengthSession,
       command: Command,
-      nowElapsedRealtimeMillis: Long): Transition {
+      nowElapsedRealtimeMillis: Long,
+      nowWallClockMillis: Long? = null): Transition {
     if (current.executionId != command.sessionId) return Transition(Outcome.CONFLICT, current)
     if (current.lastAuthorityCommandId == command.requestId) {
       return Transition(Outcome.DUPLICATE, current)
@@ -79,7 +81,7 @@ object StrengthSessionAuthorityProtocol {
     }
     val changed = try {
       when (command.action) {
-        Action.BEGIN -> current.begin(nowElapsedRealtimeMillis)
+        Action.BEGIN -> current.begin(nowElapsedRealtimeMillis, nowWallClockMillis)
         Action.PAUSE -> current.pause(nowElapsedRealtimeMillis)
         Action.RESUME -> current.resume(nowElapsedRealtimeMillis)
       }

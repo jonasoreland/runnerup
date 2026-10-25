@@ -43,6 +43,22 @@ class HealthConnectExportStoreTest {
   }
 
   @Test
+  fun healthConnectPayloadRoundTripsRecordedStrengthSegmentsAndReadsOlderPayloadWithoutThem() {
+    val expected = workout().copy(
+        sessionId = "strength-execution-1",
+        activity = HealthConnectActivity.Strength,
+        segments = listOf(
+            HealthConnectExerciseSegment(
+                start.plusSeconds(10), start.plusSeconds(25), "Armhävning", 14,
+                durationSeconds = 15, leftRepetitions = 7, rightRepetitions = 7, rpe = 8.0, setNumber = 2)))
+    val encoded = HealthConnectWorkoutCodec.encode(expected)
+
+    assertEquals(expected, HealthConnectWorkoutCodec.decode(encoded))
+    val oldPayload = org.json.JSONObject(encoded).also { it.remove("segments") }.toString()
+    assertTrue(HealthConnectWorkoutCodec.decode(oldPayload).segments.isEmpty())
+  }
+
+  @Test
   fun identicalUpsertIsIdempotentAndChangedSourceIncrementsVersion() {
     val first = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
     assertTrue(HealthConnectExportStore.markExported(

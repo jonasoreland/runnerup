@@ -20,6 +20,54 @@ class StrengthSessionTest {
           "{}")
 
   @Test
+  fun capturesWallClockSessionAndConfirmedSetBoundsWithoutChangingMonotonicTimer() {
+    val sessionStart = 1_800_000_000_000L
+    val setStart = sessionStart
+    val setEnd = setStart + 12_000L
+    val session =
+        StrengthSession.prepare("plan", "scheduled", workout)
+            .begin(nowElapsedRealtimeMillis = 1_000L, nowWallClockMillis = sessionStart)
+            .completeRepetitions(
+                repetitions = 10,
+                nowElapsedRealtimeMillis = 13_000L,
+                nowWallClockMillis = setEnd)
+
+    assertEquals(sessionStart, session.sessionStartedAtMillis)
+    assertEquals(setStart, session.results.single().startedAtMillis)
+    assertEquals(setEnd, session.results.single().completedAtMillis)
+    assertEquals(15_000L, session.timerDeadlineElapsedRealtimeMillis)
+  }
+
+  @Test
+  fun timedAmrapUsesTimerDeadlineForSetEndAndKeepsPendingResultBounds() {
+    val timedWorkout =
+        RelvenStrengthWorkoutParser.Workout(
+            "timed", "Timed", "strength", listOf(exercise("test", "Push-up test", 2, 1, 20, 5, duration = 30)), "{}")
+    val start = 1_800_000_000_000L
+    val awaiting = StrengthSession.prepare("plan", "entry", timedWorkout)
+        .begin(1_000L, start)
+        .tickAt(31_250L, start + 30_250L)
+    val logged = awaiting.completeRepetitions(17, 31_250L, start + 30_250L)
+
+    assertEquals(start, logged.results.single().startedAtMillis)
+    assertEquals(start + 30_000L, logged.results.single().completedAtMillis)
+    assertEquals(17, logged.results.single().repetitions)
+    assertNull(logged.results.single().restDurationSeconds)
+  }
+
+  @Test
+  fun pausedWorkSetDoesNotClaimAContinuousHealthConnectSegment() {
+    val started = StrengthSession.prepare("plan", "entry", workout)
+        .begin(1_000L, 1_800_000_000_000L)
+        .pause(2_000L)
+        .resume(20_000L)
+        .completeRepetitions(8, 21_000L, 1_800_000_020_000L)
+
+    assertNull(started.results.single().startedAtMillis)
+    assertEquals(1_800_000_020_000L, started.results.single().completedAtMillis)
+  }
+
+  @Test
   fun recordsActualRepetitionsAndMovesThroughRestAndExercises() {
     val first = StrengthSession.start("plan", "scheduled", workout)
 

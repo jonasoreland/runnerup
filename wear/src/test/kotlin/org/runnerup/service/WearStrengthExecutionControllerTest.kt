@@ -15,7 +15,7 @@ class WearStrengthExecutionControllerTest {
     val store = WearStrengthExecutionStore(MemoryStorage()) { 1_000L }
     val prepared = prepared()
     assertTrue(store.savePreparedSession(prepared))
-    val controller = WearStrengthExecutionController(store) { 1_000L }
+    val controller = WearStrengthExecutionController(store, elapsedRealtimeMillis = { 1_000L })
 
     val begun = controller.update { it.begin(1_000L) }
     val paused = controller.update { it.pause(2_000L) }
@@ -33,7 +33,7 @@ class WearStrengthExecutionControllerTest {
     val store = WearStrengthExecutionStore(MemoryStorage()) { 1_000L }
     val prepared = prepared()
     assertTrue(store.savePreparedSession(prepared))
-    val controller = WearStrengthExecutionController(store) { 1_000L }
+    val controller = WearStrengthExecutionController(store, elapsedRealtimeMillis = { 1_000L })
     controller.update { it.begin(1_000L) }
 
     val logged = controller.update {
@@ -54,7 +54,7 @@ class WearStrengthExecutionControllerTest {
   fun earlyFinishMarksUnperformedSetsSkippedWithoutInventingResults() {
     val store = WearStrengthExecutionStore(MemoryStorage()) { 1_000L }
     assertTrue(store.savePreparedSession(prepared()))
-    val controller = WearStrengthExecutionController(store) { 1_000L }
+    val controller = WearStrengthExecutionController(store, elapsedRealtimeMillis = { 1_000L })
     controller.update { it.begin(1_000L) }
 
     val finished = controller.update { it.finishEarly(2_000L) }
@@ -70,7 +70,7 @@ class WearStrengthExecutionControllerTest {
     val store = WearStrengthExecutionStore(MemoryStorage()) { 31_000L }
     val prepared = StrengthSession.prepare("plan", "timed-entry", timedWorkout(), 1_000L)
     assertTrue(store.savePreparedSession(prepared))
-    val controller = WearStrengthExecutionController(store) { 31_000L }
+    val controller = WearStrengthExecutionController(store, elapsedRealtimeMillis = { 31_000L })
     controller.update { it.begin(1_000L) }
 
     val ended = controller.update { it.finishEarly(31_000L) }.session!!

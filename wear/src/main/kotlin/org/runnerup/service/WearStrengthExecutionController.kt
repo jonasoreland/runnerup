@@ -5,9 +5,10 @@ import org.runnerup.common.wear.StrengthResultProtocol
 import org.runnerup.relven.strength.StrengthSession
 
 /** Applies reducer changes on Wear, durably committing each authority revision before UI publication. */
-class WearStrengthExecutionController(
+class WearStrengthExecutionController @JvmOverloads constructor(
     private val store: WearStrengthExecutionStore,
-    private val elapsedRealtimeMillis: () -> Long = { android.os.SystemClock.elapsedRealtime() }) {
+    private val elapsedRealtimeMillis: () -> Long = { android.os.SystemClock.elapsedRealtime() },
+    private val wallClockMillis: () -> Long = { System.currentTimeMillis() }) {
   data class Update(
       val session: StrengthSession?,
       val committed: Boolean,
@@ -27,7 +28,7 @@ class WearStrengthExecutionController(
     if (current.phase != StrengthSession.Phase.REST && current.phase != StrengthSession.Phase.TIMED_WORK) {
       return Update(current, false, WearStrengthExecutionStore.CommitResult.DUPLICATE)
     }
-    val refreshed = current.tickAt(elapsedRealtimeMillis())
+    val refreshed = current.tickAt(elapsedRealtimeMillis(), wallClockMillis())
     if (!executionChanged(current, refreshed)) {
       return Update(refreshed, false, WearStrengthExecutionStore.CommitResult.DUPLICATE)
     }

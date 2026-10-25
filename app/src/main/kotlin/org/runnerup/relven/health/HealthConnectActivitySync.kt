@@ -9,6 +9,8 @@ import androidx.annotation.RequiresApi
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.workout.Sport
 import org.runnerup.tracker.ActivityFinalizationStore
+import org.runnerup.relven.strength.CompletedStrengthSession
+import org.runnerup.relven.strength.StrengthSessionStore
 import java.time.Instant
 
 /** Safe, non-blocking entry point for legacy RunnerUp Java lifecycle and history actions. */
@@ -24,6 +26,22 @@ object HealthConnectActivitySync {
   @JvmStatic
   fun onActivityDeleted(context: Context, activityId: Long) {
     invoke(context, "onActivityDeleted", null, activityId)
+  }
+
+  @JvmStatic
+  fun onStrengthSessionSaved(context: Context, executionId: String) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || executionId.isBlank()) return
+    try {
+      val target = Class.forName(BRIDGE)
+      target.getMethod("onStrengthSessionSaved", Context::class.java, String::class.java)
+          .invoke(null, context.applicationContext, executionId)
+    } catch (error: ReflectiveOperationException) {
+      Log.w(TAG, "Health Connect strength outbox hook was unavailable", error)
+    } catch (error: LinkageError) {
+      Log.w(TAG, "Health Connect strength outbox hook could not load", error)
+    } catch (error: RuntimeException) {
+      Log.w(TAG, "Could not queue Health Connect strength session", error)
+    }
   }
 
   @JvmStatic
@@ -102,6 +120,32 @@ internal object Api26HealthConnectActivitySyncBridge {
     if (!HealthConnectExportPreferences.isEnabled(context)) return
     ActivityFinalizationStore.pendingHealthConnectExports(database).forEach { activityId ->
       onActivitySaved(context, database, activityId)
+    }
+    StrengthSessionStore.completedSessions(context).sessions
+        .filter(CompletedStrengthSession::healthConnectExportRequested)
+        .forEach { completion ->
+      enqueueStrengthSession(context, completion.state.executionId)
+    }
+  }
+
+  @JvmStatic
+  fun onStrengthSessionSaved(context: Context, executionId: String) {
+    enqueueStrengthSession(context, executionId)
+  }
+
+  private fun enqueueStrengthSession(context: Context, executionId: String) {
+    val completion = StrengthSessionStore.completedSessions(context).sessions
+        .firstOrNull { it.state.executionId == executionId } ?: return
+    val workout = StrengthHealthConnectAdapter.toRecordedWorkout(completion) ?: return
+    val existing = HealthConnectExportStore.get(context, workout.sessionId)
+    val alreadyOwned = existing?.operation == HealthConnectExportOperation.UPSERT ||
+        existing?.status in setOf(
+            HealthConnectExportStatus.EXPORTED,
+            HealthConnectExportStatus.EXPORTED_WITH_OMISSIONS)
+    if (!HealthConnectExportPreferences.isEnabled(context) && !alreadyOwned) return
+    val entry = HealthConnectExportStore.enqueueUpsert(context, workout, System.currentTimeMillis())
+    if (entry.operation == HealthConnectExportOperation.UPSERT) {
+      HealthConnectExportScheduler.enqueue(context, entry.sessionId)
     }
   }
 

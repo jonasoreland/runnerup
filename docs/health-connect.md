@@ -36,13 +36,17 @@ Current exercise mappings are running → running, treadmill → treadmill runni
 biking → biking, stationary bike → stationary biking, gym → strength training, and
 other/orienteering → other workout. `ExerciseLap`
 mapping accepts only explicit timestamped lap bounds contained within the session and omits
-overlapping intervals. The database lap summary stores duration and distance without wall-clock
-bounds; those summaries alone are not sufficient to create laps. The application integration must
-derive bounds only from persisted timestamped lap transitions (and omit a lap if those transitions
-are unavailable). Strength set repetitions, calories, and elevation gain are not currently emitted.
-Relven does not have a supported reliable calorie/elevation-gain source for those exports in this
-mapping slice. Route altitude samples are included only when finite. Cadence is mapped only from
-persisted per-route-point cadence samples; average cadence is not expanded into a sample series.
+overlapping intervals. Strength/prehab sessions use `ExerciseSessionRecord` with confirmed bilateral
+repetition sets represented as `ExerciseSegment` only when real set start/end timestamps are valid,
+inside the session interval, and non-overlapping. Per-side counts, exact exercise names, set numbers,
+RPE, and set notes are retained in the session notes. Imported/legacy strength sessions without a
+trustworthy start time remain in Relven and are excluded from Health Connect. The stable Health
+Connect Client 1.1.0 API exposes segments and repetitions, but not the later alpha's structured set
+index or RPE fields; the app does not claim those are structured Health Connect metrics. Hold-only
+results remain in notes when a repetition count was not recorded. Calories and elevation gain are
+not emitted because Relven has no supported reliable source. Route altitude samples are included
+only when finite. Cadence is mapped only from persisted per-route-point cadence samples; average
+cadence is not expanded into a sample series.
 
 All exported records use stable session-derived client record IDs with distinct suffixes per record
 type and a caller-supplied client record version. The future outbox must keep the same IDs on retry

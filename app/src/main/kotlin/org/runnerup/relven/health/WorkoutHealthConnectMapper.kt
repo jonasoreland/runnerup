@@ -4,6 +4,7 @@ import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.ExerciseLap
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.ExerciseSegment
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.Record
 import androidx.health.connect.client.records.SpeedRecord
@@ -45,6 +46,19 @@ internal data class HealthConnectLap(
     val endTime: Instant,
     val distanceMeters: Double? = null)
 
+/** An actual set result with trustworthy wall-clock bounds; missing repetitions remain unknown. */
+@RequiresApi(Build.VERSION_CODES.O)
+internal data class HealthConnectExerciseSegment(
+    val startTime: Instant,
+    val endTime: Instant,
+    val exerciseName: String,
+    val repetitions: Int? = null,
+    val durationSeconds: Int? = null,
+    val leftRepetitions: Int? = null,
+    val rightRepetitions: Int? = null,
+    val rpe: Double? = null,
+    val setNumber: Int? = null)
+
 /** Recorded values only. Planned prescriptions and summary averages are deliberately excluded. */
 @RequiresApi(Build.VERSION_CODES.O)
 internal data class RecordedWorkoutForHealthConnect(
@@ -58,7 +72,8 @@ internal data class RecordedWorkoutForHealthConnect(
     val disposition: HealthConnectSessionDisposition = HealthConnectSessionDisposition.Completed,
     val distanceMeters: Double? = null,
     val route: List<HealthConnectRouteSample> = emptyList(),
-    val laps: List<HealthConnectLap> = emptyList())
+    val laps: List<HealthConnectLap> = emptyList(),
+    val segments: List<HealthConnectExerciseSegment> = emptyList())
 
 internal data class HealthConnectWriteCapabilities(
     val exercise: Boolean = true,
@@ -114,6 +129,21 @@ internal fun mapWorkoutForHealthConnect(
 
   val records = mutableListOf<Record>()
   val sessionClientId = clientRecordId(workout.sessionId, "session")
+  val exportedSegments = mutableListOf<ExerciseSegment>()
+  var previousSegmentEnd: Instant? = null
+  workout.segments.sortedBy(HealthConnectExerciseSegment::startTime).forEach { segment ->
+    val reps = segment.repetitions?.takeIf { it in 0..10_000 } ?: return@forEach
+    if (segment.startTime < workout.startTime || segment.endTime > endTime || segment.endTime <= segment.startTime) {
+      return@forEach
+    }
+    if (previousSegmentEnd?.let { segment.startTime < it } == true) return@forEach
+    exportedSegments += ExerciseSegment(
+        segment.startTime,
+        segment.endTime,
+        segment.exerciseName.toHealthConnectSegmentType(),
+        reps)
+    previousSegmentEnd = segment.endTime
+  }
   records +=
       ExerciseSessionRecord(
           startTime = workout.startTime,
@@ -124,6 +154,7 @@ internal fun mapWorkoutForHealthConnect(
           exerciseType = workout.activity.toHealthConnectExerciseType(),
           title = workout.title?.takeIf(String::isNotBlank)?.take(200),
           notes = workout.notes?.takeIf(String::isNotBlank)?.take(1_000),
+          segments = exportedSegments,
           laps = exportedLaps,
           exerciseRoute = exportedRoute)
 
@@ -197,6 +228,16 @@ internal fun mapWorkoutForHealthConnect(
     }
   }
   return records
+}
+
+private fun String.toHealthConnectSegmentType(): Int = when (trim().lowercase()) {
+  "squat", "knäböj" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_SQUAT
+  "plank", "planka" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_PLANK
+  "lunge", "utfall", "utfallssteg" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_LUNGE
+  "crunch", "sit-up", "situp" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_CRUNCH
+  "deadlift", "marklyft" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_DEADLIFT
+  "burpee", "burpees" -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_BURPEE
+  else -> ExerciseSegment.EXERCISE_SEGMENT_TYPE_UNKNOWN
 }
 
 private fun HealthConnectActivity.toHealthConnectExerciseType(): Int = when (this) {

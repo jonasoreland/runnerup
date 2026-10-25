@@ -12,6 +12,9 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.runnerup.common.util.Constants.DB
+import org.runnerup.relven.strength.StrengthSession
+import org.runnerup.relven.strength.StrengthSessionStore
+import org.runnerup.workout.RelvenStrengthWorkoutParser
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -123,12 +126,88 @@ class HealthConnectActivitySyncTest {
     HealthConnectExportPreferences.setEnabled(context, false)
   }
 
+  @Test
+  fun completedStrengthSessionUsesOneStableOptInOutboxEntry() {
+    val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    context.getDir("relven-health-connect-outbox", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    context.getDir("relven-strength-sessions", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    HealthConnectExportPreferences.setEnabled(context, true)
+    val start = 1_800_000_000_000L
+    val workout = strengthWorkout()
+    val completed = StrengthSession.prepare("plan", "entry", workout)
+        .begin(1_000L, start)
+        .completeRepetitions(12, 5_000L, start + 4_000L)
+    StrengthSessionStore.complete(context, completed, start + 5_000L, healthConnectExportRequested = true)
+
+    Api26HealthConnectActivitySyncBridge.onStrengthSessionSaved(context, completed.executionId)
+    val first = HealthConnectExportStore.get(context, "strength-${completed.executionId}")!!
+    Api26HealthConnectActivitySyncBridge.onStrengthSessionSaved(context, completed.executionId)
+    val retry = HealthConnectExportStore.get(context, first.sessionId)!!
+    val workoutRecord = HealthConnectWorkoutCodec.decode(requireNotNull(retry.payload))
+
+    assertEquals(first.version, retry.version)
+    assertEquals(first.payload, retry.payload)
+    assertEquals(HealthConnectActivity.Strength, workoutRecord.activity)
+    assertEquals("Wall push-up · set 1: 12 reps", workoutRecord.notes)
+    HealthConnectExportPreferences.setEnabled(context, false)
+  }
+
+  @Test
+  fun startupReconciliationDoesNotSilentlyBackfillUnrequestedStrengthHistory() {
+    val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    context.getDir("relven-health-connect-outbox", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    context.getDir("relven-strength-sessions", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    HealthConnectExportPreferences.setEnabled(context, true)
+    val start = 1_800_000_000_000L
+    val completed = StrengthSession.prepare("plan", "entry", strengthWorkout())
+        .begin(1_000L, start)
+        .completeRepetitions(9, 5_000L, start + 4_000L)
+    // Legacy imports and sessions completed while export was off carry no automatic export request.
+    StrengthSessionStore.complete(context, completed, start + 5_000L)
+    val database = database()
+
+    Api26HealthConnectActivitySyncBridge.reconcilePending(context, database)
+
+    assertNull(HealthConnectExportStore.get(context, "strength-${completed.executionId}"))
+    assertTrue(HealthConnectExportStore.pending(context).isEmpty())
+    database.close()
+    HealthConnectExportPreferences.setEnabled(context, false)
+  }
+
+  @Test
+  fun explicitBackfillIncludesCompletedStrengthSessionsWithRealStartTimes() {
+    val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    context.getDir("relven-health-connect-outbox", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    context.getDir("relven-strength-sessions", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    HealthConnectExportPreferences.setEnabled(context, true)
+    val start = 1_800_000_000_000L
+    val completed = StrengthSession.prepare("plan", "entry", strengthWorkout())
+        .begin(1_000L, start)
+        .completeRepetitions(9, 5_000L, start + 4_000L)
+    StrengthSessionStore.complete(context, completed, start + 5_000L)
+    val database = database()
+
+    val snapshot = Api26HealthConnectSettingsBridge.snapshot(context, database, emptySet())
+    val backfill = Api26HealthConnectSettingsBridge.queueBackfill(context, database)
+
+    assertEquals(1, snapshot.eligibleBackfillCount)
+    assertEquals(1, backfill.queued)
+    assertEquals(HealthConnectExportStatus.PENDING,
+        HealthConnectExportStore.get(context, "strength-${completed.executionId}")!!.status)
+    database.close()
+    HealthConnectExportPreferences.setEnabled(context, false)
+  }
+
   private fun database(): SQLiteDatabase = SQLiteDatabase.create(null).apply {
     execSQL("CREATE TABLE ${DB.ACTIVITY.TABLE} (_id INTEGER PRIMARY KEY, ${DB.ACTIVITY.START_TIME} INTEGER, ${DB.ACTIVITY.DISTANCE} REAL, ${DB.ACTIVITY.TIME} INTEGER, ${DB.ACTIVITY.NAME} TEXT, ${DB.ACTIVITY.COMMENT} TEXT, ${DB.ACTIVITY.SPORT} INTEGER, ${DB.ACTIVITY.DELETED} INTEGER)")
     execSQL("CREATE TABLE ${DB.LOCATION.TABLE} (_id INTEGER PRIMARY KEY AUTOINCREMENT, ${DB.LOCATION.ACTIVITY} INTEGER, ${DB.LOCATION.TYPE} INTEGER, ${DB.LOCATION.TIME} INTEGER, ${DB.LOCATION.LATITUDE} REAL, ${DB.LOCATION.LONGITUDE} REAL, ${DB.LOCATION.ALTITUDE} REAL, ${DB.LOCATION.HR} INTEGER, ${DB.LOCATION.SPEED} REAL, ${DB.LOCATION.CADENCE} REAL, ${DB.LOCATION.LAP} INTEGER)")
     execSQL("CREATE TABLE ${DB.LAP.TABLE} (_id INTEGER PRIMARY KEY AUTOINCREMENT, ${DB.LAP.ACTIVITY} INTEGER, ${DB.LAP.LAP} INTEGER, ${DB.LAP.DISTANCE} REAL)")
     org.runnerup.tracker.ActivityFinalizationStore.ensureSchema(this)
   }
+
+  private fun strengthWorkout() = RelvenStrengthWorkoutParser.parse(
+      """{"schemaVersion":3,"id":"strength","name":"Prehab","sport":"strength","steps":[
+        {"id":"pushup","kind":"segment","phase":"work","end":{"type":"manual"},"exercise":{"exerciseId":"00000000-0000-0000-0000-000000000001","libraryRevision":1,"exerciseRevision":1,"snapshot":{"name":"Wall push-up","instructions":"Push with control.","equipment":[],"images":[]},"sets":1,"minRepetitions":1,"maxRepetitions":20,"restSeconds":0}}]}""")
 
   private fun insertActivity(database: SQLiteDatabase, startSeconds: Long, deleted: Boolean, duration: Long? = 60): Long =
       database.insert(DB.ACTIVITY.TABLE, null, ContentValues().apply {

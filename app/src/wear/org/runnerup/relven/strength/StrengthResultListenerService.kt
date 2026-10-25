@@ -13,6 +13,7 @@ import org.runnerup.common.util.Constants
 import org.runnerup.common.wear.StrengthResultOutboxStore
 import org.runnerup.common.wear.StrengthResultProtocol
 import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
+import org.runnerup.relven.health.HealthConnectActivitySync
 import org.runnerup.relven.ui.WearConnectionProvider
 
 /** Background phone endpoint for durable phone↔watch strength-result delivery. */
@@ -89,6 +90,7 @@ class StrengthResultListenerService : WearableListenerService() {
     val result = StrengthResultProtocol.decodeResult(event.data)
     val outcome = StrengthSessionStore.applySynchronizedResult(applicationContext, result)
     if (outcome == StrengthSessionStore.SynchronizedResultApplyResult.COMMITTED) {
+      HealthConnectActivitySync.onStrengthSessionSaved(applicationContext, result.executionId)
       sendBroadcast(
           Intent(Constants.Intents.STRENGTH_RESULT_UPDATED)
               .setPackage(packageName)

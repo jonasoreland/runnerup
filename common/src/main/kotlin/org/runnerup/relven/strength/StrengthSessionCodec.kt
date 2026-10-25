@@ -5,7 +5,11 @@ import org.json.JSONObject
 import org.runnerup.workout.RelvenStrengthWorkoutParser
 
 object StrengthSessionCodec {
-  fun encode(state: StrengthSession, finishedAtMillis: Long?): String {
+  @JvmOverloads
+  fun encode(
+      state: StrengthSession,
+      finishedAtMillis: Long?,
+      healthConnectExportRequested: Boolean = false): String {
     val results = JSONArray()
     state.results.forEach { result ->
       val item =
@@ -38,7 +42,9 @@ object StrengthSessionCodec {
               .put("exerciseName", pending.exerciseName)
               .put("setNumber", pending.setNumber)
               .put("durationSeconds", pending.durationSeconds)
-              .putOpt("restDurationSeconds", pending.restDurationSeconds))
+              .putOpt("restDurationSeconds", pending.restDurationSeconds)
+              .putOpt("startedAtMillis", pending.startedAtMillis)
+              .putOpt("completedAtMillis", pending.completedAtMillis))
     }
     val root =
         JSONObject()
@@ -59,9 +65,20 @@ object StrengthSessionCodec {
     state.timerAnchorElapsedRealtimeMillis?.let { root.put("timerAnchorElapsedRealtimeMillis", it) }
     state.timerClockObservedElapsedRealtimeMillis?.let { root.put("timerClockObservedElapsedRealtimeMillis", it) }
     state.lastAuthorityCommandId?.let { root.put("lastAuthorityCommandId", it) }
+    state.sessionStartedAtMillis?.let { root.put("sessionStartedAtMillis", it) }
+    state.activeSetStartedAtMillis?.let { root.put("activeSetStartedAtMillis", it) }
     finishedAtMillis?.let { root.put("finishedAtMillis", it) }
+    if (healthConnectExportRequested) {
+      require(finishedAtMillis != null && finishedAtMillis > 0L) {
+        "Health Connect export request must belong to a completed session"
+      }
+    }
+    root.put("healthConnectExportRequested", healthConnectExportRequested)
     return root.toString()
   }
+
+  fun healthConnectExportRequested(json: String): Boolean =
+      JSONObject(json).optBoolean("healthConnectExportRequested", false)
 
   fun decode(json: String): Pair<StrengthSession, Long?> {
     val root = JSONObject(json)
@@ -71,7 +88,8 @@ object StrengthSessionCodec {
             "schemaVersion", "planId", "scheduledEntryId", "executionId", "workoutJson", "exerciseIndex",
             "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis",
             "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
-            "timerClockObservedElapsedRealtimeMillis", "authorityRevision", "lastAuthorityCommandId"))
+            "timerClockObservedElapsedRealtimeMillis", "authorityRevision", "lastAuthorityCommandId",
+            "sessionStartedAtMillis", "activeSetStartedAtMillis", "healthConnectExportRequested"))
     val version = root.optInt("schemaVersion", -1)
     require(version in 1..VERSION) { "Unknown strength session version" }
     val planId = root.getString("planId")
@@ -161,7 +179,9 @@ object StrengthSessionCodec {
       val item = pendingJson.getJSONObject(index)
       requireKeys(
           item,
-          setOf("exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "durationSeconds", "restDurationSeconds"))
+          setOf(
+              "exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "durationSeconds",
+              "restDurationSeconds", "startedAtMillis", "completedAtMillis"))
       val pendingExerciseIndex = item.getInt("exerciseIndex")
       require(pendingExerciseIndex in workout.exercises().indices) { "Invalid pending exercise position" }
       val exercise = workout.exercises()[pendingExerciseIndex]
@@ -175,10 +195,13 @@ object StrengthSessionCodec {
       val duration = item.getInt("durationSeconds")
       require(duration in 0..86_400) { "Invalid pending set duration" }
       val restDuration = item.optionalInt("restDurationSeconds")
+      val startedAt = item.optionalLong("startedAtMillis")
+      val completedAt = item.optionalLong("completedAtMillis")
       require(restDuration == null || restDuration in 0..86_400) { "Invalid pending rest duration" }
       pendingResults.add(
           StrengthSession.PendingSetResult(
-              pendingExerciseIndex, stepId, item.getString("exerciseName"), setNumber, duration, restDuration))
+              pendingExerciseIndex, stepId, item.getString("exerciseName"), setNumber, duration, restDuration,
+              startedAt, completedAt))
     }
     val pendingKeys = pendingResults.map { it.exerciseIndex to it.setNumber }
     require(pendingKeys.toSet().size == pendingKeys.size) { "Duplicate pending timed result" }
@@ -195,6 +218,13 @@ object StrengthSessionCodec {
     val timerAnchor = root.optionalLong("timerAnchorElapsedRealtimeMillis")
     val timerObserved = root.optionalLong("timerClockObservedElapsedRealtimeMillis")
     val authorityRevision = if (version >= 5) root.getLong("authorityRevision") else 0L
+    val sessionStartedAt = root.optionalLong("sessionStartedAtMillis")
+    val activeSetStartedAt = root.optionalLong("activeSetStartedAtMillis")
+    require(sessionStartedAt == null || sessionStartedAt >= 0L) { "Invalid strength session start time" }
+    require(activeSetStartedAt == null || activeSetStartedAt >= 0L) { "Invalid active set start time" }
+    require(activeSetStartedAt == null || sessionStartedAt?.let { activeSetStartedAt >= it } == true) {
+      "Active set starts before its session"
+    }
     val lastAuthorityCommandId = if (root.has("lastAuthorityCommandId")) root.getString("lastAuthorityCommandId") else null
     require(authorityRevision >= 0L) { "Invalid strength authority revision" }
     require((authorityRevision == 0L) == (lastAuthorityCommandId == null)) {
@@ -222,9 +252,23 @@ object StrengthSessionCodec {
             timerAnchor,
             timerObserved,
             authorityRevision,
-            lastAuthorityCommandId)
+            lastAuthorityCommandId,
+            sessionStartedAt,
+            activeSetStartedAt)
     if (version >= 2) {
       results.forEach { result -> state.validateResult(result, workout.exercises()[result.exerciseIndex]) }
+    }
+    (results.map { it.startedAtMillis to it.completedAtMillis } +
+        pendingResults.map { it.startedAtMillis to it.completedAtMillis }).forEach { (startedAt, completedAt) ->
+      require(startedAt == null || completedAt == null || completedAt >= startedAt) {
+        "Set timestamps are out of order"
+      }
+      require(sessionStartedAt == null || startedAt == null || startedAt >= sessionStartedAt) {
+        "Set starts before its session"
+      }
+      require(sessionStartedAt == null || completedAt == null || completedAt >= sessionStartedAt) {
+        "Set completes before its session"
+      }
     }
     val expectedResults = buildSet {
       workout.exercises().forEachIndexed { index, exercise ->
@@ -268,6 +312,11 @@ object StrengthSessionCodec {
       require(pendingResults.isNotEmpty()) { "Awaiting result has no pending timed set" }
     }
     require(finishedAt == null || state.isComplete) { "Completion timestamp does not match session state" }
+    require(
+        !root.optBoolean("healthConnectExportRequested", false) ||
+            (finishedAt != null && finishedAt > 0L && state.isComplete)) {
+      "Health Connect export request does not match a completed session"
+    }
     return state to finishedAt
   }
 
@@ -280,5 +329,5 @@ object StrengthSessionCodec {
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key)) getLong(key) else null
   private fun JSONObject.optionalDouble(key: String): Double? = if (has(key)) getDouble(key) else null
 
-  private const val VERSION = 5
+  private const val VERSION = 6
 }

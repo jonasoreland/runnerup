@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.annotation.RequiresApi
 import java.io.IOException
+import org.runnerup.relven.strength.StrengthSessionStore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -169,7 +170,8 @@ internal object Api26HealthConnectSettingsBridge {
       context: Context,
       database: SQLiteDatabase,
       granted: Set<String>): HealthConnectSettingsSnapshot {
-    val activities = readCompletedActivityIds(database)
+    val strength = completedStrengthWorkouts(context)
+    val activities = readCompletedActivityIds(database) + strength.map(RecordedWorkoutForHealthConnect::sessionId)
     val entries = HealthConnectExportStore.all(context)
     val eligible = HealthConnectBackfillPolicy.eligibleSessionIds(activities, entries)
     val sessions = entries.map { entry ->
@@ -200,7 +202,8 @@ internal object Api26HealthConnectSettingsBridge {
     if (!HealthConnectExportPreferences.isEnabled(context)) return HealthConnectBackfillResult(0, 0, 0)
     val entries = HealthConnectExportStore.all(context)
     val existing = entries.associateBy(HealthConnectExportEntry::sessionId)
-    val ids = readCompletedActivityIds(database)
+    val strength = completedStrengthWorkouts(context).associateBy(RecordedWorkoutForHealthConnect::sessionId)
+    val ids = readCompletedActivityIds(database) + strength.keys
     val eligible = HealthConnectBackfillPolicy.eligibleSessionIds(ids, entries)
     var queued = 0
     val alreadyPublished = ids.count { id ->
@@ -212,12 +215,12 @@ internal object Api26HealthConnectSettingsBridge {
       try {
         val sessionId = activityId
         val databaseId = HealthConnectBackfillPolicy.databaseActivityId(sessionId)
-        if (databaseId == null) {
-          failed++
-          continue
-        }
         val entry = existing[sessionId]?.let { HealthConnectExportStore.retry(context, sessionId, System.currentTimeMillis()) }
-            ?: readRecordedHealthConnectWorkout(context, database, databaseId)?.let {
+            ?: if (databaseId != null) {
+              readRecordedHealthConnectWorkout(context, database, databaseId)
+            } else {
+              strength[sessionId]
+            }?.let {
               HealthConnectExportStore.enqueueUpsert(context, it, System.currentTimeMillis())
             }
         if (entry == null) {
@@ -234,6 +237,11 @@ internal object Api26HealthConnectSettingsBridge {
     }
     return HealthConnectBackfillResult(queued, alreadyPublished, failed)
   }
+
+  private fun completedStrengthWorkouts(context: Context): List<RecordedWorkoutForHealthConnect> =
+      StrengthSessionStore.completedSessions(context).sessions.mapNotNull { completion ->
+        StrengthHealthConnectAdapter.toRecordedWorkout(completion)
+      }
 
   @JvmStatic
   fun syncPending(context: Context, grantedPermissions: Set<String>): Int {

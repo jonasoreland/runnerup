@@ -369,6 +369,20 @@ internal object HealthConnectWorkoutCodec {
       lap.distanceMeters?.let { item.put("distanceMeters", it) }
       laps.put(item)
     }
+    val segments = JSONArray()
+    workout.segments.forEach { segment ->
+      val item = JSONObject()
+          .put("startTime", segment.startTime.toEpochMilli())
+          .put("endTime", segment.endTime.toEpochMilli())
+          .put("exerciseName", segment.exerciseName)
+      segment.repetitions?.let { item.put("repetitions", it) }
+      segment.durationSeconds?.let { item.put("durationSeconds", it) }
+      segment.leftRepetitions?.let { item.put("leftRepetitions", it) }
+      segment.rightRepetitions?.let { item.put("rightRepetitions", it) }
+      segment.rpe?.let { item.put("rpe", it) }
+      segment.setNumber?.let { item.put("setNumber", it) }
+      segments.put(item)
+    }
     val root = JSONObject()
         .put("schemaVersion", 1)
         .put("sessionId", workout.sessionId)
@@ -379,6 +393,7 @@ internal object HealthConnectWorkoutCodec {
         .put("disposition", workout.disposition.name)
         .put("route", route)
         .put("laps", laps)
+        .put("segments", segments)
     workout.title?.let { root.put("title", it) }
     workout.notes?.let { root.put("notes", it) }
     workout.distanceMeters?.let { root.put("distanceMeters", it) }
@@ -404,6 +419,21 @@ internal object HealthConnectWorkoutCodec {
       HealthConnectLap(java.time.Instant.ofEpochMilli(lap.getLong("startTime")),
           java.time.Instant.ofEpochMilli(lap.getLong("endTime")), lap.optionalDouble("distanceMeters"))
     }
+    val segmentsJson = root.optJSONArray("segments") ?: JSONArray()
+    require(segmentsJson.length() <= 100_000) { "Too many Health Connect exercise segments" }
+    val segments = (0 until segmentsJson.length()).map { index ->
+      val segment = segmentsJson.getJSONObject(index)
+      HealthConnectExerciseSegment(
+          java.time.Instant.ofEpochMilli(segment.getLong("startTime")),
+          java.time.Instant.ofEpochMilli(segment.getLong("endTime")),
+          segment.getString("exerciseName"),
+          segment.optionalInt("repetitions"),
+          segment.optionalInt("durationSeconds"),
+          segment.optionalInt("leftRepetitions"),
+          segment.optionalInt("rightRepetitions"),
+          segment.optionalDouble("rpe"),
+          segment.optionalInt("setNumber"))
+    }
     return RecordedWorkoutForHealthConnect(
         sessionId = root.getString("sessionId"),
         version = root.getLong("version"),
@@ -413,10 +443,11 @@ internal object HealthConnectWorkoutCodec {
         startTime = java.time.Instant.ofEpochMilli(root.getLong("startTime")),
         endTime = root.optionalLong("endTime")?.let(java.time.Instant::ofEpochMilli),
         disposition = HealthConnectSessionDisposition.valueOf(root.getString("disposition")),
-        distanceMeters = root.optionalDouble("distanceMeters"), route = route, laps = laps)
+        distanceMeters = root.optionalDouble("distanceMeters"), route = route, laps = laps, segments = segments)
   }
 
   private fun JSONObject.optionalDouble(key: String): Double? = if (has(key) && !isNull(key)) getDouble(key) else null
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key) && !isNull(key)) getLong(key) else null
   private fun JSONObject.optionalString(key: String): String? = if (has(key) && !isNull(key)) getString(key) else null
+  private fun JSONObject.optionalInt(key: String): Int? = if (has(key) && !isNull(key)) getInt(key) else null
 }

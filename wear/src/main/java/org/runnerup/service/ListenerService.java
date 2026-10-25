@@ -381,7 +381,7 @@ public class ListenerService extends WearableListenerService {
     }
     StrengthSessionAuthorityProtocol.Transition transition =
         StrengthSessionAuthorityProtocol.applyAtWatch(
-            current, command, SystemClock.elapsedRealtime());
+            current, command, SystemClock.elapsedRealtime(), System.currentTimeMillis());
     if (transition.getOutcome() == StrengthSessionAuthorityProtocol.Outcome.COMMITTED) {
       WearStrengthExecutionStore.CommitResult commit = store.commit(transition.getSession());
       if (commit != WearStrengthExecutionStore.CommitResult.COMMITTED) {

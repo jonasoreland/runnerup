@@ -398,18 +398,20 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
                   completionSummary?.let { updateCompletedStrengthResult(it, result) }
                 }
               },
-              onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime()) } },
+              onTick = { updateStrengthSession { it.tickAt(SystemClock.elapsedRealtime(), System.currentTimeMillis()) } },
               onLogRepetitions = { input ->
-                updateStrengthSession { it.completeResult(input, SystemClock.elapsedRealtime()) }
+                updateStrengthSession { it.completeResult(input, SystemClock.elapsedRealtime(), System.currentTimeMillis()) }
               },
               onSkipPendingResult = {
-                updateStrengthSession { it.skipPendingTimedResult(SystemClock.elapsedRealtime()) }
+                updateStrengthSession {
+                  it.skipPendingTimedResult(SystemClock.elapsedRealtime(), System.currentTimeMillis())
+                }
               },
               onSkipExercise = {
-                updateStrengthSession { it.skipCurrentExercise(SystemClock.elapsedRealtime()) }
+                updateStrengthSession { it.skipCurrentExercise(SystemClock.elapsedRealtime(), System.currentTimeMillis()) }
               },
-              onSkipRest = { updateStrengthSession { it.skipRest(SystemClock.elapsedRealtime()) } },
-              onBegin = { updateStrengthSession { it.begin(SystemClock.elapsedRealtime()) } },
+              onSkipRest = { updateStrengthSession { it.skipRest(SystemClock.elapsedRealtime(), System.currentTimeMillis()) } },
+              onBegin = { updateStrengthSession { it.begin(SystemClock.elapsedRealtime(), System.currentTimeMillis()) } },
               onPause = { updateStrengthSession { it.pause(SystemClock.elapsedRealtime()) } },
               onResume = { updateStrengthSession { it.resume(SystemClock.elapsedRealtime()) } },
               onFinish = ::finishStrengthSession,
@@ -1800,14 +1802,17 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     val finished = strengthSession?.takeIf { it.isComplete } ?: return
     strengthFinishing = true
     val finishedAt = System.currentTimeMillis()
+    val exportRequested = HealthConnectActivitySync.isAutomaticExportEnabled(applicationContext)
     lifecycleScope.launch {
       try {
         withContext(Dispatchers.IO) {
           strengthStoreMutex.withLock {
-            StrengthSessionStore.complete(applicationContext, finished, finishedAt)
+            StrengthSessionStore.complete(
+                applicationContext, finished, finishedAt, healthConnectExportRequested = exportRequested)
           }
+          HealthConnectActivitySync.onStrengthSessionSaved(applicationContext, finished.executionId)
         }
-        val completion = CompletedStrengthSession(finished, finishedAt)
+        val completion = CompletedStrengthSession(finished, finishedAt, exportRequested)
         completedStrengthSessions = completedStrengthSessions + (finished.scheduledEntryId to completion)
         strengthSession = null
         viewedStrengthCompletion = completion
@@ -1844,6 +1849,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           strengthStoreMutex.withLock {
             StrengthSessionStore.replaceCompleted(applicationContext, expected, replacement)
           }
+          HealthConnectActivitySync.onStrengthSessionSaved(applicationContext, replacement.state.executionId)
         }
         strengthHistorySessions = strengthHistorySessions.map {
           if (it.state.executionId == replacement.state.executionId) replacement else it

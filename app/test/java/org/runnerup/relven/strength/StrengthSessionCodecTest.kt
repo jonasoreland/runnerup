@@ -40,6 +40,28 @@ class StrengthSessionCodecTest {
   }
 
   @Test
+  fun roundTripsSessionAndActiveSetWallClockBoundsAndReadsVersionFiveWithoutThem() {
+    val session =
+        StrengthSession.prepare("plan", "entry", workout)
+            .begin(1_000L, 1_800_000_000_000L)
+    val decoded = StrengthSessionCodec.decode(StrengthSessionCodec.encode(session, null)).first
+
+    assertEquals(1_800_000_000_000L, decoded.sessionStartedAtMillis)
+    assertEquals(1_800_000_000_000L, decoded.activeSetStartedAtMillis)
+
+    val v5 = JSONObject(StrengthSessionCodec.encode(session, null))
+        .put("schemaVersion", 5)
+        .also {
+          it.remove("sessionStartedAtMillis")
+          it.remove("activeSetStartedAtMillis")
+        }
+    val restoredV5 = StrengthSessionCodec.decode(v5.toString()).first
+    assertNull(restoredV5.sessionStartedAtMillis)
+    assertNull(restoredV5.activeSetStartedAtMillis)
+    assertEquals(false, StrengthSessionCodec.healthConnectExportRequested(v5.toString()))
+  }
+
+  @Test
   fun eachRetryKeepsThePlanEntryButGetsANewExecutionIdentity() {
     val first = StrengthSession.start("plan-a", "entry-a", workout)
     val retry = StrengthSession.start("plan-a", "entry-a", workout)
@@ -181,7 +203,7 @@ class StrengthSessionCodecTest {
   }
 
   @Test
-  fun readsVersionOneResultShapeAndWritesVersionFour() {
+  fun readsVersionOneResultShapeAndWritesVersionSix() {
     val legacy =
         JSONObject(
             StrengthSessionCodec.encode(
@@ -209,7 +231,7 @@ class StrengthSessionCodecTest {
     val current = JSONObject(StrengthSessionCodec.encode(decoded, null))
 
     assertEquals(30, decoded.results.single().durationSeconds)
-    assertEquals(5, current.getInt("schemaVersion"))
+    assertEquals(6, current.getInt("schemaVersion"))
   }
 
   @Test
@@ -269,7 +291,7 @@ class StrengthSessionCodecTest {
     val upgraded = JSONObject(StrengthSessionCodec.encode(restored, null))
 
     assertEquals(StrengthSession.Phase.TIMED_WORK, restored.phase)
-    assertEquals(5, upgraded.getInt("schemaVersion"))
+    assertEquals(6, upgraded.getInt("schemaVersion"))
   }
 
   @Test(expected = IllegalArgumentException::class)
@@ -284,6 +306,13 @@ class StrengthSessionCodecTest {
   fun rejectsACompletionTimestampOnAnActiveSession() {
     val json = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
     json.put("finishedAtMillis", 1234L)
+    StrengthSessionCodec.decode(json.toString())
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun rejectsExportRequestOnAnIncompleteSession() {
+    val json = JSONObject(StrengthSessionCodec.encode(StrengthSession.start("plan", "entry", workout), null))
+    json.put("healthConnectExportRequested", true)
     StrengthSessionCodec.decode(json.toString())
   }
 

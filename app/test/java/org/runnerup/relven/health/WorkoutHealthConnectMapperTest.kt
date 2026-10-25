@@ -2,6 +2,7 @@ package org.runnerup.relven.health
 
 import androidx.health.connect.client.records.DistanceRecord
 import androidx.health.connect.client.records.ExerciseSessionRecord
+import androidx.health.connect.client.records.ExerciseSegment
 import androidx.health.connect.client.records.ExerciseRouteResult
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsCadenceRecord
@@ -72,6 +73,33 @@ class WorkoutHealthConnectMapperTest {
           .single()
       assertEquals(expectedType, session.exerciseType)
     }
+  }
+
+  @Test
+  fun mapsOnlyValidRecordedStrengthSetIntervalsAndRpeIntoExerciseSegments() {
+    val records = mapWorkoutForHealthConnect(
+        run().copy(
+            activity = HealthConnectActivity.Strength,
+            notes = "Knäböj set 1: 6/6 reps",
+            segments = listOf(
+                HealthConnectExerciseSegment(
+                    start.plusSeconds(60), start.plusSeconds(90), "Knäböj", repetitions = 12,
+                    leftRepetitions = 6, rightRepetitions = 6, rpe = 7.5, setNumber = 1),
+                HealthConnectExerciseSegment(
+                    start.plusSeconds(80), start.plusSeconds(110), "Planka", repetitions = 0,
+                    durationSeconds = 30),
+                HealthConnectExerciseSegment(
+                    start.minusSeconds(10), start.plusSeconds(20), "Ogiltig", repetitions = 5))))
+
+    val session = records.filterIsInstance<ExerciseSessionRecord>().single()
+    assertEquals(1, session.segments.size)
+    assertEquals(ExerciseSegment.EXERCISE_SEGMENT_TYPE_SQUAT, session.segments.single().segmentType)
+    assertEquals(12, session.segments.single().repetitions)
+    assertEquals(start.plusSeconds(60), session.segments.single().startTime)
+    assertEquals(start.plusSeconds(90), session.segments.single().endTime)
+    val notes = requireNotNull(session.notes)
+    assertTrue(notes.contains("Knäböj"))
+    assertTrue(notes.contains("6/6"))
   }
 
   @Test
