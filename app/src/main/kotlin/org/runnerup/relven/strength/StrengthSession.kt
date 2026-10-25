@@ -1,7 +1,9 @@
 package org.runnerup.relven.strength
 
 import kotlin.math.ceil
+import java.util.UUID
 import org.runnerup.workout.RelvenStrengthWorkoutParser
+import org.runnerup.common.wear.StrengthResultProtocol
 
 /** Immutable phone-side execution state for a validated strength or prehab workout. */
 internal data class StrengthSession(
@@ -55,7 +57,8 @@ internal data class StrengthSession(
       val painRating: Int? = null,
       val notes: String? = null,
       val status: ResultStatus = ResultStatus.COMPLETED,
-      val exerciseCategory: String? = null) {
+      val exerciseCategory: String? = null,
+      val sourceResultId: String? = null) {
     enum class ResultStatus { COMPLETED, SKIPPED, INCOMPLETE }
 
     /** Execution identity + exercise step + set number is the stable, retry-safe result key. */
@@ -65,6 +68,45 @@ internal data class StrengthSession(
 
   val isComplete: Boolean
     get() = phase == Phase.COMPLETE
+
+  /** Assigns deterministic transport identities to confirmed legacy/new results exactly once. */
+  fun withStableResultIds(): StrengthSession {
+    val identified =
+        results.map { result ->
+          if (result.status != SetResult.ResultStatus.COMPLETED || result.sourceResultId != null) {
+            result
+          } else {
+            result.copy(
+                sourceResultId =
+                    StrengthResultProtocol.stableResultId(
+                        executionId, result.exerciseIndex, result.exerciseStepId, result.setNumber))
+          }
+        }
+    return if (identified == results) this else copy(results = identified)
+  }
+
+  fun syncableResults(): List<StrengthResultProtocol.Result> =
+      results.mapNotNull { result ->
+        val resultId = result.sourceResultId ?: return@mapNotNull null
+        if (result.status != SetResult.ResultStatus.COMPLETED) return@mapNotNull null
+        StrengthResultProtocol.Result(
+            executionId,
+            resultId,
+            result.exerciseIndex,
+            result.exerciseStepId,
+            result.exerciseName,
+            result.setNumber,
+            result.repetitions,
+            result.durationSeconds,
+            result.startedAtMillis,
+            result.completedAtMillis,
+            result.restDurationSeconds,
+            result.leftRepetitions,
+            result.rightRepetitions,
+            result.rpe,
+            result.painRating,
+            result.notes)
+      }
 
   fun matchesScheduledEntry(planId: String, scheduledEntryId: String): Boolean =
       this.planId == planId && this.scheduledEntryId == scheduledEntryId
@@ -216,6 +258,54 @@ internal data class StrengthSession(
     val index = results.indexOfFirst { it.hasSameSetIdentity(updated) }
     require(index >= 0) { "Set result does not exist" }
     return copy(results = results.toMutableList().also { it[index] = updated })
+  }
+
+  /** Adds a confirmed remote result and advances the active session from that exact set. */
+  fun withSynchronizedResult(
+      result: SetResult,
+      nowElapsedRealtimeMillis: Long = timerClockObservedElapsedRealtimeMillis ?: 0L): StrengthSession {
+    val exercise = workout.exercises().getOrNull(result.exerciseIndex)
+        ?: throw IllegalArgumentException("Invalid result exercise position")
+    require(result.exerciseStepId == exercise.stepId() && result.exerciseName == exercise.name()) {
+      "Set result does not match its exercise snapshot"
+    }
+    require(result.status == SetResult.ResultStatus.COMPLETED) { "Only completed results can sync" }
+    require(result.sourceResultId != null && runCatching { UUID.fromString(result.sourceResultId) }.isSuccess) {
+      "Synchronized result is missing its source identity"
+    }
+    validateResult(result, exercise)
+    val pendingIndex = pendingResults.indexOfFirst { it.exerciseIndex == result.exerciseIndex && it.setNumber == result.setNumber }
+    if (pendingIndex >= 0) {
+      require(pendingIndex == 0) { "Synchronized result is out of pending order" }
+      val refreshed =
+          if ((phase == Phase.REST || phase == Phase.TIMED_WORK) && timerDeadlineElapsedRealtimeMillis != null) {
+            tickAt(nowElapsedRealtimeMillis)
+          } else {
+            this
+          }
+      return resolvePendingResult(refreshed, result, nowElapsedRealtimeMillis)
+    }
+    require(phase != Phase.COMPLETE && phase != Phase.AWAITING_RESULT) { "Session cannot accept this result now" }
+    require(result.exerciseIndex == exerciseIndex && result.setNumber == setNumber) {
+      "Synchronized result is not for the current set"
+    }
+    val wasPaused = phase == Phase.PAUSED
+    val updatedResults = sortedResults(results + result)
+    val next = nextSetPosition(exerciseIndex, setNumber)
+    var advanced =
+        if (next == null) {
+          val nextPhase = if (pendingResults.isEmpty()) Phase.COMPLETE else Phase.AWAITING_RESULT
+          clearTimer(nowElapsedRealtimeMillis).copy(
+              phase = nextPhase, secondsRemaining = 0, results = updatedResults)
+        } else {
+          val nextWork = beginWork(next.first, next.second, nowElapsedRealtimeMillis).copy(results = updatedResults)
+          val rest = exercise.restSeconds()
+          if (rest > 0) nextWork.withPhaseTimer(Phase.REST, rest, nowElapsedRealtimeMillis) else nextWork
+        }
+    if (wasPaused && advanced.phase != Phase.COMPLETE && advanced.phase != Phase.AWAITING_RESULT) {
+      advanced = advanced.pause(nowElapsedRealtimeMillis)
+    }
+    return advanced
   }
 
   /** Clear a result explicitly while retaining an incomplete marker for that progressed set. */

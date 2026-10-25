@@ -314,6 +314,26 @@
             android:foregroundServiceType="location|health" />
 
         <service
+            android:name="org.runnerup.relven.strength.StrengthResultListenerService"
+            android:enabled="${wearStrengthResultSyncEnabled}"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:path="/org.runnerup/strength/result"
+                    android:scheme="wear" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:host="*"
+                    android:path="/org.runnerup/strength/result/ack"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".export.RunnerUpLiveSynchronizer$LiveService"
             android:foregroundServiceType="location|health" />
 

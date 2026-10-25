@@ -74,6 +74,16 @@ public final class WearConnectionProvider {
 
   private WearConnectionProvider() {}
 
+  public static boolean supportsStrengthResultSync() {
+    return false;
+  }
+
+  public static boolean enqueueStrengthResult(Context context, byte[] encodedResult) {
+    return false;
+  }
+
+  public static void sendPendingStrengthResult(Context context, String nodeId) {}
+
   public static void query(Context context, Callback callback) {
     callback.onResult(false, false, null);
   }
