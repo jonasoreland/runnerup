@@ -9,6 +9,7 @@ Migrate the existing Relven manual Play Internal publishing action to `HampusAnd
 - Trigger only by manual `workflow_dispatch` on `master`, with separate exact confirmations for `VALIDATE_SIGNING_ONLY` and `PUBLISH_INTERNAL`.
 - Use a GitHub hosted Linux runner and this repository's root Gradle tasks (`:app:bundleLatestRelease` and `:wear:bundleRelease`).
 - Use the existing upload keystore and Play service-account credential names from the original Relven repository; never store secret values in source control.
+- Restore Git LFS files during checkout before Gradle setup validates the wrapper JAR.
 - Generate ignored `release.properties` from Actions secrets, sign both release bundles with the original upload key, and remove temporary credential files even after failure.
 - Preserve package ID `se.hampusandersson.relven`. Accept the phone version code as a required dispatch input, require an even code greater than the known local baseline `24000374`, and use the following odd code for Wear. This avoids assuming the version currently uploaded to Play Console.
 - Verify bundle existence, signature validity, package ID, requested version codes, phone/watch form-factor metadata, and matching signing certificates before upload.

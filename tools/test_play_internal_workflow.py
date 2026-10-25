@@ -44,6 +44,13 @@ class PlayInternalWorkflowTest(unittest.TestCase):
         self.assertIn("if: inputs.confirm == 'PUBLISH_INTERNAL'", service_account)
         self.assertIn("secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64", service_account)
 
+    def test_lfs_restoration_precedes_gradle_wrapper_validation(self):
+        self.assertIn("lfs: true", self.workflow)
+        self.assertLess(
+            self.workflow.index("lfs: true"),
+            self.workflow.index("gradle/actions/setup-gradle"),
+        )
+
     def test_both_play_upload_actions_require_publish_mode(self):
         for step_name in (
             "Publish Wear OS bundle to Play Internal Testing",

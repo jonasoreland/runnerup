@@ -27,6 +27,7 @@
 - Missing/malformed base64 or service-account JSON: fail early with a useful message and no credential contents.
 - Bundle package/version/form-factor metadata mismatch: stop before upload.
 - Validation-only mode must have no Play service-account access and must skip both upload actions.
+- Checkout must restore the Git LFS-backed Gradle Wrapper JAR before `setup-gradle` validates it.
 - Partial failure after temporary file creation: unconditional cleanup.
 
 ---
@@ -58,11 +59,17 @@
 - [x] Upload to the same internal tracks as the old workflow and remove all temporary key/JSON/properties files with an always-run cleanup step.
 - [x] Document secret setup and service-account creation/permissions with official links; state that old repository secret values cannot be recovered through GitHub.
 - [x] Validate workflow syntax, run the full local app/Wear build/test/lint/style matrix, inspect the diff. Independent review follows after commit.
-- [ ] Add the no-upload signing-validation dispatch mode, public certificate fingerprint summary, operator instructions, and regression checks proving both upload steps remain publish-only.
+- [x] Add the no-upload signing-validation dispatch mode, public certificate fingerprint summary, operator instructions, and regression checks proving both upload steps remain publish-only (PR #187).
 
 ### Task 3: Verify and merge serially
 
-- [ ] Commit and push as one PR after confirming the open PR queue is empty.
-- [ ] Wait for hosted Android/F-Droid CI and review approval; fix findings before merge.
-- [ ] Merge the sole PR, confirm the queue returns to zero, and update Atomic project context.
-- [ ] After merge, run only `VALIDATE_SIGNING_ONLY` when ready; compare its public certificate fingerprint in Play Console. Do not publish during this task.
+- [x] Commit and push as one PR after confirming the Relven-authored PR queue is empty (PR #187).
+- [x] Wait for hosted Android/F-Droid CI and review approval; fix findings before merge (PR #187 CI passed).
+- [x] Merge the sole PR and fast-forward `master` (PR #187 merged as `975b97ac`).
+- [ ] Run `VALIDATE_SIGNING_ONLY` and compare its public certificate fingerprint in Play Console. Do not publish during this task.
+
+### Task 4: Restore Git LFS before wrapper verification
+
+- [x] Add regression coverage after the first validation dispatch exposed that checkout left the Git LFS pointer for `gradle-wrapper.jar` in place.
+- [ ] Enable LFS-aware checkout before `gradle/actions/setup-gradle` and verify with actionlint and hosted CI.
+- [ ] Merge this single workflow fix, then rerun only `VALIDATE_SIGNING_ONLY`.
