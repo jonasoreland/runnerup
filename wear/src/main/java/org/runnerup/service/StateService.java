@@ -37,6 +37,9 @@ import java.util.Objects;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.StrengthResultInboxStore;
+import org.runnerup.common.wear.StrengthResultOutboxStore;
+import org.runnerup.common.wear.StrengthResultProtocol;
 import org.runnerup.common.wear.WorkoutSessionEventJournal;
 import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
@@ -68,6 +71,10 @@ public class StateService extends Service
   private final ValueModel<Long> preparedCountdownDeadline = new ValueModel<>();
   private WorkoutSessionProtocol.ClockOffset watchClockOffset;
   private WorkoutSessionEventJournalStore sessionEventStore;
+  private StrengthResultOutboxStore strengthResultOutbox;
+  private StrengthResultInboxStore strengthResultInbox;
+  private int strengthResultRetryAttempt;
+  private final Runnable strengthResultRetry = this::retryPendingStrengthResult;
   private long clockSampleReceivedAtWatchElapsedRealtimeMs = -1L;
   private String pendingClockRequestId;
   private long pendingClockRequestSentAtElapsedRealtimeMs = -1L;
@@ -82,6 +89,8 @@ public class StateService extends Service
     super.onCreate();
 
     sessionEventStore = new WorkoutSessionEventJournalStore(getApplicationContext());
+    strengthResultOutbox = new StrengthResultOutboxStore(getApplicationContext());
+    strengthResultInbox = new StrengthResultInboxStore(getApplicationContext());
 
     mDataClient = new WearableClient(getApplicationContext());
     mGoogleApiClient =
@@ -100,6 +109,7 @@ public class StateService extends Service
                     readData(/* force= */ true);
                     restorePendingSessionProjection();
                     retryPendingPhoneProjection();
+                    retryPendingStrengthResult();
                   }
 
                   @Override
@@ -346,11 +356,111 @@ public class StateService extends Service
         messageEvent.getPath())) {
       if (phoneNode == null || !phoneNode.equals(messageEvent.getSourceNodeId())) return;
       handlePhoneSessionRejection(messageEvent.getData());
+    } else if (Constants.Wear.Path.MSG_STRENGTH_RESULT.contentEquals(messageEvent.getPath())) {
+      handlePhoneStrengthResult(messageEvent);
+    } else if (Constants.Wear.Path.MSG_STRENGTH_RESULT_ACK.contentEquals(messageEvent.getPath())) {
+      if (phoneNode == null || !phoneNode.equals(messageEvent.getSourceNodeId())) return;
+      handlePhoneStrengthResultAcknowledgement(messageEvent.getData());
     } else if (Constants.Wear.Path.MSG_WORKOUT_EVENT.contentEquals(messageEvent.getPath())) {
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
     } else {
       Log.d(TAG, "onMessageReceived: " + messageEvent);
+    }
+  }
+
+  /** Durably queues a watch-origin result before making it eligible for transport. */
+  public StrengthResultOutboxStore.EnqueueResult queueStrengthResult(
+      StrengthResultProtocol.Result result) {
+    StrengthResultOutboxStore.EnqueueResult outcome = strengthResultOutbox.enqueue(result);
+    if (outcome == StrengthResultOutboxStore.EnqueueResult.ENQUEUED
+        || outcome == StrengthResultOutboxStore.EnqueueResult.DUPLICATE) {
+      retryPendingStrengthResult();
+    }
+    return outcome;
+  }
+
+  private void handlePhoneStrengthResult(MessageEvent event) {
+    if (phoneNode == null || !phoneNode.equals(event.getSourceNodeId())) return;
+    try {
+      StrengthResultProtocol.Result result = StrengthResultProtocol.decodeResult(event.getData());
+      StrengthResultInboxStore.AcceptResult accepted = strengthResultInbox.accept(result);
+      if (accepted == StrengthResultInboxStore.AcceptResult.STORAGE_ERROR
+          || accepted == StrengthResultInboxStore.AcceptResult.LIMIT_REACHED) return;
+      StrengthResultProtocol.AckOutcome outcome;
+      switch (accepted) {
+        case STORED:
+          outcome = StrengthResultProtocol.AckOutcome.COMMITTED;
+          break;
+        case DUPLICATE:
+          outcome = StrengthResultProtocol.AckOutcome.DUPLICATE;
+          break;
+        case CONFLICT:
+          outcome = StrengthResultProtocol.AckOutcome.CONFLICT;
+          break;
+        default:
+          return;
+      }
+      sendStrengthResultAcknowledgement(
+          phoneNode,
+          new StrengthResultProtocol.Acknowledgement(
+              result.getExecutionId(), result.getResultId(), outcome));
+    } catch (java.io.IOException | IllegalArgumentException malformed) {
+      Log.w(TAG, "Ignoring invalid phone strength result", malformed);
+    }
+  }
+
+  private void handlePhoneStrengthResultAcknowledgement(byte[] payload) {
+    try {
+      StrengthResultProtocol.Acknowledgement acknowledgement =
+          StrengthResultProtocol.decodeAcknowledgement(payload);
+      StrengthResultOutboxStore.AcknowledgeResult result =
+          strengthResultOutbox.acknowledge(acknowledgement);
+      if (result == StrengthResultOutboxStore.AcknowledgeResult.REMOVED) {
+        strengthResultRetryAttempt = 0;
+        handler.removeCallbacks(strengthResultRetry);
+        retryPendingStrengthResult();
+      }
+    } catch (java.io.IOException malformed) {
+      Log.w(TAG, "Ignoring malformed strength result acknowledgment", malformed);
+    }
+  }
+
+  private void sendStrengthResultAcknowledgement(
+      String destination, StrengthResultProtocol.Acknowledgement acknowledgement)
+      throws java.io.IOException {
+    if (checkConnection() != null || destination == null) return;
+    Wearable.MessageApi.sendMessage(
+        mGoogleApiClient,
+        destination,
+        Constants.Wear.Path.MSG_STRENGTH_RESULT_ACK,
+        StrengthResultProtocol.encodeAcknowledgement(acknowledgement));
+  }
+
+  private void retryPendingStrengthResult() {
+    handler.removeCallbacks(strengthResultRetry);
+    if (checkConnection() != null || strengthResultOutbox == null) return;
+    try {
+      java.util.List<StrengthResultProtocol.Result> pending = strengthResultOutbox.pending(1);
+      if (pending.isEmpty()) {
+        strengthResultRetryAttempt = 0;
+        return;
+      }
+      StrengthResultProtocol.Result result = pending.get(0);
+      Wearable.MessageApi.sendMessage(
+              mGoogleApiClient,
+              phoneNode,
+              Constants.Wear.Path.MSG_STRENGTH_RESULT,
+              StrengthResultProtocol.encodeResult(result))
+          .setResultCallback(
+              status -> {
+                long delay = Math.min(60_000L, 2_000L << Math.min(strengthResultRetryAttempt, 5));
+                strengthResultRetryAttempt = Math.min(strengthResultRetryAttempt + 1, 5);
+                handler.postDelayed(strengthResultRetry, delay);
+              });
+    } catch (java.io.IOException | RuntimeException failure) {
+      Log.w(TAG, "Could not send pending strength result", failure);
+      handler.postDelayed(strengthResultRetry, 5_000L);
     }
   }
 
@@ -387,6 +497,7 @@ public class StateService extends Service
       Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=" + phoneNode);
       requestClockSync();
       retryPendingPhoneProjection();
+      retryPendingStrengthResult();
       readDataIfMissing();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");

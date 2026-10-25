@@ -211,6 +211,9 @@ public interface Constants {
         BuildConfig.applicationIdFull + ".WORKOUT_SESSION_COMMAND_REJECTED";
     String EXTRA_WORKOUT_SESSION_COMMAND =
         BuildConfig.applicationIdFull + ".EXTRA_WORKOUT_SESSION_COMMAND";
+    String STRENGTH_RESULT_UPDATED = BuildConfig.applicationIdFull + ".STRENGTH_RESULT_UPDATED";
+    String EXTRA_STRENGTH_EXECUTION_ID =
+        BuildConfig.applicationIdFull + ".EXTRA_STRENGTH_EXECUTION_ID";
 
     /** ID of the node (device) that sent the message/data */
     String EXTRA_SOURCE_NODE_ID = BuildConfig.applicationIdFull + ".EXTRA_SOURCE_NODE_ID";
@@ -278,6 +281,8 @@ public interface Constants {
       String MSG_WORKOUT_SESSION_COMMAND = PREFIX + "/workout/session/command";
       String MSG_WORKOUT_SESSION_ACK = PREFIX + "/workout/session/ack";
       String MSG_WORKOUT_SESSION_REJECT = PREFIX + "/workout/session/reject";
+      String MSG_STRENGTH_RESULT = PREFIX + "/strength/result";
+      String MSG_STRENGTH_RESULT_ACK = PREFIX + "/strength/result/ack";
 
       /* Msg: pause/resume from wear to phone */
       String MSG_CMD_WORKOUT_PAUSE = PREFIX + "/workout/pause";

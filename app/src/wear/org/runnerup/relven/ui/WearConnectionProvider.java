@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.wear.HeartRateReadinessAttempt;
 import org.runnerup.common.wear.HeartRateReadinessProtocol;
+import org.runnerup.common.wear.StrengthResultOutboxStore;
+import org.runnerup.common.wear.StrengthResultProtocol;
 import org.runnerup.common.wear.WearHandshakeAttempt;
 import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.common.wear.WorkoutPreparationAttempt;
@@ -20,6 +22,8 @@ import org.runnerup.common.wear.WorkoutPreparationProtocol;
 
 /** Reads only currently connected Wear OS nodes through the existing Wear Data Layer. */
 public final class WearConnectionProvider {
+  private static final String TRUST_PREFERENCES = "wear_result_sync_trust";
+  private static final String TRUSTED_NODE_KEY = "verified_node_id";
   private static final long HANDSHAKE_TIMEOUT_MS = 5000;
   private static final long HEART_RATE_READINESS_TIMEOUT_MS = 2500;
 
@@ -101,6 +105,78 @@ public final class WearConnectionProvider {
 
   private WearConnectionProvider() {}
 
+  public static boolean supportsStrengthResultSync() {
+    return true;
+  }
+
+  /** Persist each confirmed set before attempting delivery to a connected Relven watch. */
+  public static boolean enqueueStrengthResult(Context context, byte[] encodedResult) {
+    Context appContext = context.getApplicationContext();
+    final StrengthResultOutboxStore.EnqueueResult outcome;
+    try {
+      outcome =
+          new StrengthResultOutboxStore(appContext)
+              .enqueue(StrengthResultProtocol.decodeResult(encodedResult));
+    } catch (java.io.IOException | RuntimeException invalid) {
+      android.util.Log.w("WearConnection", "Invalid strength result outbox event", invalid);
+      return false;
+    }
+    if (outcome == StrengthResultOutboxStore.EnqueueResult.ENQUEUED
+        || outcome == StrengthResultOutboxStore.EnqueueResult.DUPLICATE) {
+      sendPendingStrengthResult(appContext, null);
+    }
+    return outcome == StrengthResultOutboxStore.EnqueueResult.ENQUEUED
+        || outcome == StrengthResultOutboxStore.EnqueueResult.DUPLICATE;
+  }
+
+  /** Retries the oldest durable result to a known connected peer after reconnection or an ACK. */
+  public static void sendPendingStrengthResult(Context context, String nodeId) {
+    Context appContext = context.getApplicationContext();
+    final StrengthResultProtocol.Result next;
+    try {
+      List<StrengthResultProtocol.Result> pending =
+          new StrengthResultOutboxStore(appContext).pending(1);
+      if (pending.isEmpty()) return;
+      next = pending.get(0);
+    } catch (RuntimeException corruptOutbox) {
+      android.util.Log.e("WearConnection", "Cannot read pending strength results", corruptOutbox);
+      return;
+    }
+    testConnection(
+        appContext,
+        connection -> {
+          if (connection.status != HandshakeStatus.VERIFIED || connection.verifiedNodeId == null)
+            return;
+          if (nodeId != null && !nodeId.equals(connection.verifiedNodeId)) return;
+          sendStrengthResult(appContext, connection.verifiedNodeId, next);
+        });
+  }
+
+  public static boolean isVerifiedResultPeer(Context context, String nodeId) {
+    return nodeId != null
+        && nodeId.equals(
+            context
+                .getApplicationContext()
+                .getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
+                .getString(TRUSTED_NODE_KEY, null));
+  }
+
+  private static void sendStrengthResult(
+      Context context, String nodeId, StrengthResultProtocol.Result result) {
+    try {
+      Wearable.getMessageClient(context)
+          .sendMessage(
+              nodeId,
+              Constants.Wear.Path.MSG_STRENGTH_RESULT,
+              StrengthResultProtocol.encodeResult(result))
+          .addOnFailureListener(
+              error ->
+                  android.util.Log.w("WearConnection", "Strength result delivery failed", error));
+    } catch (java.io.IOException | RuntimeException error) {
+      android.util.Log.w("WearConnection", "Could not encode or deliver strength result", error);
+    }
+  }
+
   public static void query(Context context, Callback callback) {
     try {
       Wearable.getNodeClient(context.getApplicationContext())
@@ -144,7 +220,21 @@ public final class WearConnectionProvider {
                       new ConnectionTestResult(HandshakeStatus.NO_WATCH, names, -1, null));
                   return;
                 }
-                pingNode(appContext, nodes.get(0), names, callback);
+                pingNode(
+                    appContext,
+                    nodes.get(0),
+                    names,
+                    result -> {
+                      if (result.status == HandshakeStatus.VERIFIED
+                          && result.verifiedNodeId != null) {
+                        appContext
+                            .getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
+                            .edit()
+                            .putString(TRUSTED_NODE_KEY, result.verifiedNodeId)
+                            .apply();
+                      }
+                      callback.onResult(result);
+                    });
               });
     } catch (RuntimeException exception) {
       callback.onResult(new ConnectionTestResult(HandshakeStatus.TRANSPORT_ERROR, null, -1, null));

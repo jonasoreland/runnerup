@@ -70,6 +70,7 @@ android {
         // The packageId (in the manifest) is never changed
         // See also applicationIdFull in common/build.gradle, must be in sync
         applicationId = rootProject.ext.applicationId
+        manifestPlaceholders = [wearStrengthResultSyncEnabled: rootProject.ext.enableWear.toString()]
         vectorDrawables.useSupportLibrary = true
     }
 

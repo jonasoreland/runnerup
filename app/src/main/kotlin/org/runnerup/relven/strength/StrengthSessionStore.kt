@@ -7,6 +7,7 @@ import androidx.core.util.AtomicFile
 import org.json.JSONArray
 import org.json.JSONObject
 import org.runnerup.workout.RelvenStrengthWorkoutParser
+import org.runnerup.common.wear.StrengthResultProtocol
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -29,6 +30,91 @@ internal object StrengthSessionStore {
   private const val MAX_SAVED_SESSION_BYTES = 16_777_216
   private const val MAX_HISTORY_SCAN = 500
   private const val MAX_HISTORY_READ_BYTES = 33_554_432L
+
+  internal enum class SynchronizedResultApplyResult {
+    COMMITTED,
+    DUPLICATE,
+    CONFLICT,
+    SESSION_MISSING,
+    INVALID
+  }
+
+  @Synchronized
+  @Throws(IOException::class)
+  fun applySynchronizedResult(
+      context: Context,
+      incoming: StrengthResultProtocol.Result): SynchronizedResultApplyResult {
+    val active = loadInProgress(context)
+    if (active != null && active.executionId == incoming.executionId) {
+      return applySynchronizedResult(active, incoming) { updated -> saveInProgress(context, updated) }
+    }
+    val completion = completedExecution(context, incoming.executionId)
+        ?: return SynchronizedResultApplyResult.SESSION_MISSING
+    return applySynchronizedResult(completion.state, incoming) { updated ->
+      replaceCompleted(
+          context,
+          completion,
+          CompletedStrengthSession(updated, completion.finishedAtMillis))
+    }
+  }
+
+  private fun applySynchronizedResult(
+      state: StrengthSession,
+      incoming: StrengthResultProtocol.Result,
+      persist: (StrengthSession) -> Unit): SynchronizedResultApplyResult {
+    val exercise = state.workout.exercises().getOrNull(incoming.exerciseIndex)
+        ?: return SynchronizedResultApplyResult.INVALID
+    if (exercise.stepId() != incoming.exerciseStepId || exercise.name() != incoming.exerciseName) {
+      return SynchronizedResultApplyResult.INVALID
+    }
+    if (incoming.resultId !=
+        StrengthResultProtocol.stableResultId(
+            incoming.executionId,
+            incoming.exerciseIndex,
+            incoming.exerciseStepId,
+            incoming.setNumber)) {
+      return SynchronizedResultApplyResult.INVALID
+    }
+    val result =
+        StrengthSession.SetResult(
+            incoming.exerciseIndex,
+            incoming.exerciseStepId,
+            incoming.exerciseName,
+            incoming.setNumber,
+            incoming.repetitions,
+            incoming.durationSeconds,
+            incoming.startedAtMillis,
+            incoming.completedAtMillis,
+            incoming.restDurationSeconds,
+            incoming.leftRepetitions,
+            incoming.rightRepetitions,
+            incoming.rpe,
+            incoming.painRating,
+            incoming.notes,
+            StrengthSession.SetResult.ResultStatus.COMPLETED,
+            sourceResultId = incoming.resultId)
+    val sameId = state.results.firstOrNull { it.sourceResultId == incoming.resultId }
+    if (sameId != null) {
+      return if (sameId == result) SynchronizedResultApplyResult.DUPLICATE
+      else SynchronizedResultApplyResult.CONFLICT
+    }
+    val sameSetIndex = state.results.indexOfFirst { it.hasSameSetIdentity(result) }
+    val updated =
+        try {
+          if (sameSetIndex >= 0) {
+            val old = state.results[sameSetIndex]
+            if (old.status == StrengthSession.SetResult.ResultStatus.COMPLETED &&
+                old != result.copy(sourceResultId = null)) return SynchronizedResultApplyResult.CONFLICT
+            state.replaceResult(result)
+          } else {
+            state.withSynchronizedResult(result)
+          }
+        } catch (_: IllegalArgumentException) {
+          return SynchronizedResultApplyResult.INVALID
+        }
+    persist(updated)
+    return SynchronizedResultApplyResult.COMMITTED
+  }
 
   @Synchronized
   @Throws(IOException::class)
@@ -280,6 +366,7 @@ internal object StrengthSessionCodec {
       result.notes?.let { item.put("notes", it) }
       item.put("status", result.status.name)
       result.exerciseCategory?.let { item.put("exerciseCategory", it) }
+      result.sourceResultId?.let { item.put("sourceResultId", it) }
       results.put(item)
     }
     val pendingResults = JSONArray()
@@ -348,7 +435,7 @@ internal object StrengthSessionCodec {
           setOf(
               "exerciseIndex", "exerciseStepId", "exerciseName", "setNumber", "repetitions", "durationSeconds",
               "startedAtMillis", "completedAtMillis", "restDurationSeconds", "leftRepetitions", "rightRepetitions",
-              "rpe", "painRating", "notes", "status", "exerciseCategory"))
+              "rpe", "painRating", "notes", "status", "exerciseCategory", "sourceResultId"))
       val resultExerciseIndex = item.getInt("exerciseIndex")
       require(resultExerciseIndex in workout.exercises().indices) { "Invalid result exercise position" }
       val stepId = item.getString("exerciseStepId")
@@ -367,6 +454,7 @@ internal object StrengthSessionCodec {
       val painRating = item.optionalInt("painRating")
       val notes = if (item.has("notes")) item.getString("notes") else null
       val exerciseCategory = if (item.has("exerciseCategory")) item.getString("exerciseCategory") else null
+      val sourceResultId = if (item.has("sourceResultId")) item.getString("sourceResultId") else null
       val status =
           if (version == 1) StrengthSession.SetResult.ResultStatus.COMPLETED
           else StrengthSession.SetResult.ResultStatus.valueOf(item.getString("status"))
@@ -398,7 +486,8 @@ internal object StrengthSessionCodec {
               painRating,
               notes,
               status,
-              exerciseCategory))
+              exerciseCategory,
+              sourceResultId))
     }
     require(results.map { it.exerciseIndex to it.setNumber }.toSet().size == results.size) {
       "Duplicate saved set result"
@@ -516,5 +605,5 @@ internal object StrengthSessionCodec {
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key)) getLong(key) else null
   private fun JSONObject.optionalDouble(key: String): Double? = if (has(key)) getDouble(key) else null
 
-  private const val VERSION = 3
+  private const val VERSION = 4
 }

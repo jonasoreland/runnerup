@@ -181,7 +181,7 @@ class StrengthSessionCodecTest {
   }
 
   @Test
-  fun readsVersionOneResultShapeAndWritesVersionThree() {
+  fun readsVersionOneResultShapeAndWritesVersionFour() {
     val legacy =
         JSONObject(
             StrengthSessionCodec.encode(
@@ -209,7 +209,7 @@ class StrengthSessionCodecTest {
     val current = JSONObject(StrengthSessionCodec.encode(decoded, null))
 
     assertEquals(30, decoded.results.single().durationSeconds)
-    assertEquals(3, current.getInt("schemaVersion"))
+    assertEquals(4, current.getInt("schemaVersion"))
   }
 
   @Test
@@ -269,7 +269,7 @@ class StrengthSessionCodecTest {
     val upgraded = JSONObject(StrengthSessionCodec.encode(restored, null))
 
     assertEquals(StrengthSession.Phase.TIMED_WORK, restored.phase)
-    assertEquals(3, upgraded.getInt("schemaVersion"))
+    assertEquals(4, upgraded.getInt("schemaVersion"))
   }
 
   @Test(expected = IllegalArgumentException::class)

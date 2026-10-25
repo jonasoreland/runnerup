@@ -1,8 +1,10 @@
 package org.runnerup.relven.ui
 
 import android.content.Context
+import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.Intent
+import android.content.IntentFilter
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -135,6 +137,7 @@ import org.runnerup.relven.strength.CompletedStrengthSession
 import org.runnerup.relven.strength.StrengthSession
 import org.runnerup.relven.strength.StrengthSessionStore
 import org.runnerup.relven.strength.StrengthSessionExportCodec
+import org.runnerup.common.wear.StrengthResultProtocol
 import org.runnerup.relven.settings.RelvenSettingsRepository
 import org.runnerup.relven.settings.RelvenSettingsSnapshot
 import java.util.UUID
@@ -198,6 +201,30 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var activityDetailRequest = 0
   private var interruptedRecoveryInProgress by mutableStateOf(false)
   private var trackerSessionBinding: HomeTrackerSessionBinding? = null
+  private var strengthResultReceiverRegistered = false
+  private val strengthResultUpdatedReceiver =
+      object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+          val executionId =
+              intent?.getStringExtra(org.runnerup.common.util.Constants.Intents.EXTRA_STRENGTH_EXECUTION_ID)
+                  ?: return
+          if (strengthSession?.executionId != executionId || strengthTransitionSaving) return
+          lifecycleScope.launch {
+            val refreshed =
+                runCatching {
+                  withContext(Dispatchers.IO) {
+                    strengthStoreMutex.withLock {
+                      StrengthSessionStore.loadInProgress(applicationContext)
+                    }
+                  }
+                }.getOrElse { error ->
+                  Log.w("RelvenHome", "Could not refresh synchronized strength results", error)
+                  return@launch
+                }
+            if (refreshed?.executionId == executionId) strengthSession = refreshed
+          }
+        }
+      }
   private var strengthSession by mutableStateOf<StrengthSession?>(null)
   private var viewedStrengthCompletion by mutableStateOf<CompletedStrengthSession?>(null)
   private var completedStrengthSessions by mutableStateOf<Map<String, CompletedStrengthSession>>(emptyMap())
@@ -532,6 +559,12 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   override fun onStart() {
     super.onStart()
+    ContextCompat.registerReceiver(
+        this,
+        strengthResultUpdatedReceiver,
+        IntentFilter(org.runnerup.common.util.Constants.Intents.STRENGTH_RESULT_UPDATED),
+        ContextCompat.RECEIVER_NOT_EXPORTED)
+    strengthResultReceiverRegistered = true
     trackerSessionBinding =
         HomeTrackerSessionBinding(
             context = this,
@@ -605,6 +638,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   override fun onResume() {
     super.onResume()
+    if (WearConnectionProvider.supportsStrengthResultSync()) {
+      WearConnectionProvider.sendPendingStrengthResult(applicationContext, null)
+    }
     refreshHealthConnectSettings()
     if (destination == HomeDestination.Settings) refreshSettingsDeviceState()
     if (destination == HomeDestination.History) {
@@ -1675,7 +1711,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private fun updateStrengthSession(transform: (StrengthSession) -> StrengthSession) {
     if (strengthTransitionSaving) return
     val current = strengthSession ?: return
-    val next = transform(current)
+    val next = transform(current).withStableResultIds()
+    val alreadyIdentified = current.results.mapNotNullTo(mutableSetOf()) { it.sourceResultId }
+    val resultsToSync =
+        next.syncableResults().filterNot { it.resultId in alreadyIdentified }
     val mustPersist =
         current.phase != next.phase ||
             current.exerciseIndex != next.exerciseIndex ||
@@ -1694,6 +1733,15 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         withContext(Dispatchers.IO) {
           strengthStoreMutex.withLock {
             StrengthSessionStore.saveInProgress(applicationContext, next)
+          }
+          if (WearConnectionProvider.supportsStrengthResultSync()) {
+            resultsToSync.forEach { result ->
+              val payload = runCatching { StrengthResultProtocol.encodeResult(result) }.getOrNull()
+              if (payload == null ||
+                  !WearConnectionProvider.enqueueStrengthResult(applicationContext, payload)) {
+                Log.w("RelvenHome", "Strength result remains local but could not be queued for Wear sync")
+              }
+            }
           }
         }
         strengthSession = next
@@ -2090,6 +2138,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   override fun onStop() {
     trackerSessionBinding?.stop()
     trackerSessionBinding = null
+    if (strengthResultReceiverRegistered) {
+      unregisterReceiver(strengthResultUpdatedReceiver)
+      strengthResultReceiverRegistered = false
+    }
     super.onStop()
   }
 

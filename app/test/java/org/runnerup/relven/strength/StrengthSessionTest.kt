@@ -42,6 +42,27 @@ class StrengthSessionTest {
   }
 
   @Test
+  fun confirmedResultsReceiveStableSyncIdentityWithoutMarkingSkippedSets() {
+    val session =
+        StrengthSession.start("plan", "scheduled", workout)
+            .completeRepetitions(10)
+            .skipCurrentExercise()
+
+    val synchronized = session.withStableResultIds()
+    val confirmed = synchronized.results.first()
+    val skipped = synchronized.results.last()
+
+    assertEquals(
+        org.runnerup.common.wear.StrengthResultProtocol.stableResultId(
+            synchronized.executionId, confirmed.exerciseStepId, confirmed.setNumber),
+        confirmed.sourceResultId)
+    assertNull(skipped.sourceResultId)
+    assertEquals(1, synchronized.syncableResults().size)
+    assertEquals(10, synchronized.syncableResults().single().repetitions)
+    assertEquals(synchronized, synchronized.withStableResultIds())
+  }
+
+  @Test
   fun recordsPerSideCountsAndOptionalSetDetails() {
     val result =
         StrengthSession.start("plan", "scheduled", workout)

@@ -79,19 +79,20 @@
 
 ### Task 5 — Durable disconnect recovery and results (serial sub-PRs)
 
-#### Task 5A — Durable authority event journal (current PR)
+#### Task 5A — Durable authority event journal (merged PR #167)
 
-- [ ] Add a bounded, versioned journal keyed by stable session ID; validate authority, contiguous sequence, command ID and exact duplicate payload; persist events synchronously before projecting them.
-- [ ] Keep acknowledged events as the replayable state history, with an ordered unacknowledged suffix; ACK only the matching head and retry after reconnect without dropping events.
-- [ ] Restore the phone projection from the durable event history without changing WATCH authority; write the phone projection before acknowledging it.
-- [ ] Refuse session commands while disconnected because the current RunnerUp recording engine remains phone-owned; replay only commands already accepted by the authority before transport loss. Do not show a watch-side pause/finish as accepted while the phone continues recording.
-- [ ] Add tests for process recreation including pending-start deadline recovery, Tracker control reconciliation, persisted idempotency markers for LAP/SKIP, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
+- [x] Add a bounded, versioned journal keyed by stable session ID; validate authority, contiguous sequence, command ID and exact duplicate payload; persist events synchronously before projecting them.
+- [x] Keep acknowledged events as the replayable state history, with an ordered unacknowledged suffix; ACK only the matching head and retry after reconnect without dropping events.
+- [x] Restore the phone projection from the durable event history without changing WATCH authority; write the phone projection before acknowledging it.
+- [x] Refuse session commands while disconnected because the current RunnerUp recording engine remains phone-owned; replay only commands already accepted by the authority before transport loss. Do not show a watch-side pause/finish as accepted while the phone continues recording.
+- [x] Add tests for process recreation including pending-start deadline recovery, Tracker control reconciliation, persisted idempotency markers for LAP/SKIP, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
 
 #### Task 5B — Strength result synchronization
 
-- [ ] Define a bounded, stable-ID result message that preserves confirmed repetition/duration, left/right, timestamps and optional notes without treating prescription as performance.
-- [ ] Persist the watch and phone result outboxes before delivery; use exact result IDs to reject duplicates/conflicts and ACK only after the phone's existing `StrengthSessionStore` commits the result.
-- [ ] Reconcile after reconnect and preserve confirmed partial results when the session ends early; add protocol/store and existing strength history/export regression tests.
+- [x] Define a bounded, stable-ID result message that preserves confirmed repetition/duration, left/right, timestamps and optional notes without treating prescription as performance.
+- [x] Persist the watch and phone result outboxes before delivery; use exact result IDs to reject duplicates/conflicts and ACK only after the phone's existing `StrengthSessionStore` commits the result.
+- [x] Reconcile after reconnect and preserve confirmed partial results when the session ends early; add protocol/store and existing strength history/export regression tests.
+- [ ] Add the Wear active strength-set UI and a no-keyboard quick logger that produces these result events; synchronize the watch execution position and rest timer with phone projection.
 
 #### Task 5C — Terminal persistence and Health Connect handoff
 
