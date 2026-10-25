@@ -1,6 +1,7 @@
 package org.runnerup.wear.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledIconButton
@@ -17,6 +19,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +45,7 @@ import androidx.compose.ui.unit.sp
 
 private val ScreenBackground = Color(0xFF03050B)
 private val AccentBlue = Color(0xFF9BCBFF)
+private val StrengthAccent = Color(0xFFFF6A00)
 private val PrimaryText = Color(0xFFF7F8FC)
 private val SecondaryText = Color(0xFFAAB1BE)
 private val DisabledControl = Color(0xFF303641)
@@ -64,10 +75,38 @@ object WearControlsComposeContent {
       workoutName: String,
       exerciseName: String,
       prescription: String,
-      instructions: String) {
+      instructions: String,
+      startClick: Runnable) {
     view.setContent {
       WearPreparedStrengthWorkoutScreen(
-          workoutName, exerciseName, prescription, instructions)
+          workoutName, exerciseName, prescription, instructions) { startClick.run() }
+    }
+  }
+
+  @JvmStatic
+  fun bindActiveStrengthWorkout(
+      view: ComposeView,
+      state: WearStrengthWorkoutUiState,
+      startClick: Runnable,
+      logClick: java.util.function.IntPredicate,
+      pauseClick: Runnable,
+      resumeClick: Runnable,
+      skipPendingClick: Runnable,
+      skipExerciseClick: Runnable,
+      skipRestClick: Runnable,
+      finishClick: Runnable) {
+    view.setContent {
+      val presentation = WearStrengthWorkoutPresentationFactory.from(state.session)
+      WearActiveStrengthWorkoutScreen(
+          presentation,
+          startClick = { startClick.run() },
+          logClick = { logClick.test(it) },
+          pauseClick = { pauseClick.run() },
+          resumeClick = { resumeClick.run() },
+          skipPendingClick = { skipPendingClick.run() },
+          skipExerciseClick = { skipExerciseClick.run() },
+          skipRestClick = { skipRestClick.run() },
+          finishClick = { finishClick.run() })
     }
   }
 
@@ -96,22 +135,158 @@ internal fun WearPreparedStrengthWorkoutScreen(
     workoutName: String,
     exerciseName: String,
     prescription: String,
-    instructions: String) {
+    instructions: String,
+    onStart: () -> Unit) {
   WearControlFrame {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(5.dp),
         modifier = Modifier.padding(horizontal = 12.dp)) {
-      Text("STYRKEPASS", color = AccentBlue, fontSize = 9.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+      Text("STYRKEPASS", color = StrengthAccent, fontSize = 9.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
       Text("REDO ATT STARTA", color = PrimaryText, fontSize = 11.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
       Text(workoutName, color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
       Text(exerciseName, color = PrimaryText, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
-      Text(prescription, color = AccentBlue, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 1)
+      Text(prescription, color = StrengthAccent, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 1)
       Text(instructions, color = SecondaryText, fontSize = 8.sp, textAlign = TextAlign.Center, maxLines = 3)
-      Text("Starta passet på mobilen", color = SecondaryText, fontSize = 9.sp, textAlign = TextAlign.Center)
+      FilledIconButton(onClick = onStart, modifier = Modifier.size(50.dp), colors = IconButtonDefaults.filledIconButtonColors(containerColor = StrengthAccent, contentColor = ScreenBackground)) {
+        Icon(painterResource(org.runnerup.common.R.drawable.ic_av_play_arrow), null)
+      }
+      Text("STARTA PASS", color = PrimaryText, fontSize = 9.sp, fontWeight = FontWeight.Bold)
     }
   }
 }
+
+@Composable
+internal fun WearActiveStrengthWorkoutScreen(
+    state: WearStrengthWorkoutPresentation,
+    startClick: () -> Unit,
+    logClick: (Int) -> Boolean,
+    pauseClick: () -> Unit,
+    resumeClick: () -> Unit,
+    skipPendingClick: () -> Unit,
+    skipExerciseClick: () -> Unit,
+    skipRestClick: () -> Unit,
+    finishClick: () -> Unit) {
+  val resultKey =
+      state.pendingResultExerciseName?.let {
+        "$it:${state.pendingResultSetNumber}"
+      } ?: "${state.exerciseName}:${state.setNumber}"
+  val repCount = remember(resultKey) { mutableIntStateOf(0) }
+  var submissionLocked by remember(resultKey) { mutableStateOf(false) }
+  val haptics = LocalHapticFeedback.current
+  var finishConfirmationRequested by remember(state.workoutName) { mutableStateOf(false) }
+  WearControlFrame {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+        modifier = Modifier.padding(horizontal = 10.dp).verticalScroll(rememberScrollState())) {
+      Text(state.workoutName.uppercase(), color = StrengthAccent, fontSize = 8.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+      if (state.complete) {
+        Text("PASS KLART", color = PrimaryText, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+        Text("${state.completedSetCount} set loggade", color = SecondaryText, fontSize = 10.sp)
+      } else {
+        Text("${state.exerciseIndex + 1}/${state.exerciseCount} · ${state.phaseLabel.uppercase()}", color = SecondaryText, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+        Text(state.exerciseName, color = PrimaryText, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
+        when {
+          state.phaseLabel == "Pausat" -> Text("PAUSAT", color = StrengthAccent, fontSize = 22.sp, fontWeight = FontWeight.Black)
+          state.secondsRemaining > 0 -> Text(formatWatchTime(state.secondsRemaining), color = StrengthAccent, fontSize = 28.sp, fontWeight = FontWeight.Black)
+          else -> Text("${state.setNumber} / ${state.setCount} set", color = StrengthAccent, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+        }
+        if (state.pendingResultExerciseName != null || state.manualResultExpected) {
+          Text(
+              if (state.pendingResultExerciseName != null) "${state.pendingResultExerciseName} · set ${state.pendingResultSetNumber}"
+              else "Set ${state.setNumber} av ${state.setCount}",
+              color = PrimaryText, fontSize = 9.sp, textAlign = TextAlign.Center, maxLines = 1)
+          Text("REPS?", color = SecondaryText, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+          Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Box(
+                modifier =
+                    Modifier.size(48.dp)
+                        .clip(CircleShape)
+                        .background(StrengthAccent)
+                        .combinedClickable(
+                            onClick = {
+                              repCount.intValue = (repCount.intValue - 1).coerceAtLeast(0)
+                              haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            },
+                            onLongClick = {
+                              repCount.intValue = (repCount.intValue - 10).coerceAtLeast(0)
+                              haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            })
+                        .semantics { contentDescription = "Minska repetitioner" },
+                contentAlignment = Alignment.Center) { Text("−", color = ScreenBackground, fontSize = 20.sp) }
+            Text(repCount.intValue.toString(), color = PrimaryText, fontSize = 25.sp, fontWeight = FontWeight.Black, modifier = Modifier.semantics { contentDescription = "${repCount.intValue} repetitioner" })
+            Box(
+                modifier =
+                    Modifier.size(48.dp)
+                        .clip(CircleShape)
+                        .background(StrengthAccent)
+                        .combinedClickable(
+                            onClick = {
+                              repCount.intValue = (repCount.intValue + 1).coerceAtMost(10_000)
+                              haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            },
+                            onLongClick = {
+                              repCount.intValue = (repCount.intValue + 10).coerceAtMost(10_000)
+                              haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                            })
+                        .semantics { contentDescription = "Öka repetitioner" },
+                contentAlignment = Alignment.Center) { Text("+", color = ScreenBackground, fontSize = 20.sp) }
+          }
+          Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+            listOf(5, 10, 15, 20).forEach { value ->
+              TextButton(onClick = { repCount.intValue = value; haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove) }) { Text(value.toString(), fontSize = 9.sp) }
+            }
+          }
+          Button(
+              onClick = {
+                if (!submissionLocked && logClick(repCount.intValue)) {
+                  submissionLocked = true
+                  haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                }
+              },
+              enabled = !submissionLocked,
+              colors = strengthButtonColors(),
+              modifier = Modifier.semantics { contentDescription = "Logga ${repCount.intValue} repetitioner" }) {
+            Text(if (submissionLocked) "SPARAT" else "LOGGA ${repCount.intValue}", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+          }
+          if (state.pendingResultExerciseName != null) {
+            TextButton(onClick = skipPendingClick) { Text("Hoppa över resultat", fontSize = 8.sp) }
+          }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(3.dp), verticalAlignment = Alignment.CenterVertically) {
+          when {
+            state.canStart -> Button(onClick = startClick, colors = strengthButtonColors()) { Text("STARTA") }
+            state.canResume -> Button(onClick = resumeClick, colors = strengthButtonColors()) { Text("FORTSÄTT") }
+            state.canPause -> Button(onClick = pauseClick, colors = strengthButtonColors()) { Text("PAUS") }
+          }
+          if (state.secondsRemaining > 0 && state.phaseLabel.startsWith("Vila")) {
+            TextButton(onClick = skipRestClick) { Text("SKIPPA VILA", fontSize = 8.sp) }
+          } else if (state.canSkip) {
+            TextButton(onClick = skipExerciseClick) { Text("NÄSTA", fontSize = 8.sp) }
+          }
+        }
+        if (finishConfirmationRequested && state.canFinish) {
+          Text("Avsluta passet nu?", color = PrimaryText, fontSize = 9.sp, textAlign = TextAlign.Center)
+          Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+            TextButton(onClick = { finishConfirmationRequested = false }) { Text("FORTSÄTT", fontSize = 8.sp) }
+            Button(onClick = { finishConfirmationRequested = false; finishClick() }, colors = strengthButtonColors()) { Text("AVSLUTA", fontSize = 8.sp) }
+          }
+        } else if (state.canFinish) {
+          TextButton(onClick = { finishConfirmationRequested = true }) { Text("AVSLUTA PASS", fontSize = 8.sp) }
+        }
+        Text("${state.completedSetCount} set klara", color = SecondaryText, fontSize = 8.sp)
+      }
+    }
+  }
+}
+
+private fun formatWatchTime(seconds: Int): String =
+    "%d:%02d".format(seconds / 60, seconds % 60)
+
+@Composable
+private fun strengthButtonColors() =
+    ButtonDefaults.buttonColors(containerColor = StrengthAccent, contentColor = ScreenBackground)
 
 @Composable
 internal fun WearPreparedWorkoutScreen(

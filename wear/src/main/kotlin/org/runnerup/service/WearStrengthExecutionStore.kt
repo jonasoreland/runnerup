@@ -22,7 +22,11 @@ class WearStrengthExecutionStore internal constructor(
     val current = load()
     if (current != null) {
       if (current.executionId != session.executionId) {
-        if (current.phase != StrengthSession.Phase.PREPARING || current.results.isNotEmpty()) return false
+        val acknowledgedComplete =
+            current.phase == StrengthSession.Phase.COMPLETE &&
+                current.authorityRevision <= storage.readAcknowledgedRevision()
+        if (!acknowledgedComplete &&
+            (current.phase != StrengthSession.Phase.PREPARING || current.results.isNotEmpty())) return false
         return storage.write(StrengthSessionCodec.encode(session, null), 0L)
       }
       if (current == session) return true
@@ -91,8 +95,10 @@ class WearStrengthExecutionStore internal constructor(
   }
 
   companion object {
-    private const val PREFERENCES = "wear_strength_execution"
-    private const val STATE = "active_session_json"
+    const val PREFERENCES_NAME = "wear_strength_execution"
+    private const val PREFERENCES = PREFERENCES_NAME
+    const val STATE_KEY = "active_session_json"
+    private const val STATE = STATE_KEY
     private const val ACKNOWLEDGED_REVISION = "acknowledged_revision"
   }
 }

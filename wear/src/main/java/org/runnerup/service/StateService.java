@@ -73,6 +73,9 @@ public class StateService extends Service
   private WorkoutSessionEventJournalStore sessionEventStore;
   private StrengthResultOutboxStore strengthResultOutbox;
   private StrengthResultInboxStore strengthResultInbox;
+  private int strengthAuthorityProjectionRetryAttempt;
+  private final Runnable strengthAuthorityProjectionRetry =
+      this::publishStrengthAuthorityProjection;
   private int strengthResultRetryAttempt;
   private final Runnable strengthResultRetry = this::retryPendingStrengthResult;
   private long clockSampleReceivedAtWatchElapsedRealtimeMs = -1L;
@@ -110,6 +113,7 @@ public class StateService extends Service
                     restorePendingSessionProjection();
                     retryPendingPhoneProjection();
                     retryPendingStrengthResult();
+                    publishStrengthAuthorityProjection();
                   }
 
                   @Override
@@ -277,6 +281,7 @@ public class StateService extends Service
   @Override
   public void onDestroy() {
     Log.d(TAG, "StateService.onDestroy()");
+    handler.removeCallbacks(strengthAuthorityProjectionRetry);
     handler.removeCallbacksAndMessages(null);
     trackerState.clearListeners();
     preparedCountdownDeadline.clearListeners();
@@ -378,6 +383,34 @@ public class StateService extends Service
       retryPendingStrengthResult();
     }
     return outcome;
+  }
+
+  /**
+   * Publishes the watch's already-durable latest strength state; ListenerService owns ACK storage.
+   */
+  public void publishStrengthAuthorityProjection() {
+    if (phoneNode == null) return;
+    WearStrengthExecutionStore executionStore = new WearStrengthExecutionStore(this);
+    org.runnerup.relven.strength.StrengthSession execution = executionStore.load();
+    if (execution != null) {
+      for (var result : execution.syncableResults()) queueStrengthResult(result);
+    }
+    byte[] projection = executionStore.pendingProjection();
+    if (projection == null) {
+      handler.removeCallbacks(strengthAuthorityProjectionRetry);
+      strengthAuthorityProjectionRetryAttempt = 0;
+      return;
+    }
+    Wearable.getMessageClient(this)
+        .sendMessage(phoneNode, Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_PROJECTION, projection)
+        .addOnFailureListener(error -> Log.w(TAG, "Strength authority projection failed", error));
+    long[] delaysMillis = {2_000L, 5_000L, 12_000L};
+    handler.removeCallbacks(strengthAuthorityProjectionRetry);
+    if (strengthAuthorityProjectionRetryAttempt < delaysMillis.length) {
+      handler.postDelayed(
+          strengthAuthorityProjectionRetry,
+          delaysMillis[strengthAuthorityProjectionRetryAttempt++]);
+    }
   }
 
   private void handlePhoneStrengthResult(MessageEvent event) {
@@ -498,6 +531,7 @@ public class StateService extends Service
       requestClockSync();
       retryPendingPhoneProjection();
       retryPendingStrengthResult();
+      publishStrengthAuthorityProjection();
       readDataIfMissing();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");

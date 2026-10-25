@@ -459,6 +459,45 @@ data class StrengthSession(
     }
   }
 
+  /** Ends remaining work explicitly, marking untouched sets skipped and retaining pending results. */
+  fun finishEarly(nowElapsedRealtimeMillis: Long): StrengthSession {
+    require(nowElapsedRealtimeMillis >= 0) { "Invalid monotonic time" }
+    check(phase != Phase.PREPARING) { "Session has not begun" }
+    if (phase == Phase.COMPLETE || phase == Phase.AWAITING_RESULT) return this
+
+    val refreshed =
+        if (phase == Phase.REST || phase == Phase.TIMED_WORK) tickAt(nowElapsedRealtimeMillis) else this
+    if (refreshed.phase == Phase.COMPLETE || refreshed.phase == Phase.AWAITING_RESULT) return refreshed
+    val effectivePhase = if (refreshed.phase == Phase.PAUSED) refreshed.resumePhase ?: Phase.PAUSED else refreshed.phase
+    var current = if (effectivePhase == Phase.REST) refreshed.recordCurrentRest(nowElapsedRealtimeMillis) else refreshed
+    val updated = current.results.toMutableList()
+    for (index in current.exerciseIndex until current.workout.exercises().size) {
+      val exercise = current.workout.exercises()[index]
+      val firstSet = if (index == current.exerciseIndex) current.setNumber else 1
+      for (set in firstSet..exercise.sets()) {
+        val alreadyRecorded = updated.any { it.exerciseIndex == index && it.setNumber == set }
+        val awaitingResult = current.pendingResults.any { it.exerciseIndex == index && it.setNumber == set }
+        if (!alreadyRecorded && !awaitingResult) {
+          updated +=
+              SetResult(
+                  index,
+                  exercise.stepId(),
+                  exercise.name(),
+                  set,
+                  repetitions = null,
+                  durationSeconds = null,
+                  status = SetResult.ResultStatus.SKIPPED)
+        }
+      }
+    }
+    current = current.clearTimer(nowElapsedRealtimeMillis)
+    return current.copy(
+        phase = if (current.pendingResults.isEmpty()) Phase.COMPLETE else Phase.AWAITING_RESULT,
+        secondsRemaining = 0,
+        results = sortedResults(updated),
+        resumePhase = null)
+  }
+
   private fun completeManualSet(input: RepetitionResultInput, nowElapsedRealtimeMillis: Long): StrengthSession {
     check(phase == Phase.REPETITIONS) { "Session is not waiting for repetitions" }
     val exercise = currentExercise()

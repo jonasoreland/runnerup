@@ -66,10 +66,10 @@
 - Add phone receive/apply logic that commits the watch projection to the existing `StrengthSessionStore` before ACK.
 - Reuse existing result outbox and stable event IDs; do not send an ACK before durable commit.
 
-- [ ] Test watch authority, stale revision, duplicate action, reconnect replay, and result/projection ordering.
-- [ ] Implement requests from phone as pending until watch acknowledgement; do not mutate phone state optimistically.
-- [ ] Persist accepted watch changes before notifying the UI or outbox.
-- [ ] Run focused session protocol, store and phone/Wear unit tests.
+- [x] Test watch authority, stale revision, duplicate action, reconnect replay, and result/projection ordering (merged in PR #171).
+- [x] Implement requests from phone as pending until watch acknowledgement; do not mutate phone state optimistically (merged in PR #171).
+- [x] Persist accepted watch changes before notifying the UI or outbox (merged in PR #171).
+- [x] Run focused session protocol, store and phone/Wear unit tests (merged in PR #171).
 
 ### Task 4: Wear active strength UI and quick logger
 
@@ -77,11 +77,11 @@
 - Modify `wear/src/main/kotlin/org/runnerup/wear/ui/WearControlsScreen.kt` and `wear/src/main/java/org/runnerup/view/StartFragment.java`.
 - Add Wear presentation state tests under `wear/src/test/kotlin/org/runnerup/wear/ui/`.
 
-- [ ] Test current exercise/set mapping, manual and timed entry readiness, and compact-screen layout state.
-- [ ] Add large plus/minus repetition controls with explicit save, zero support, and no keyboard launch.
-- [ ] Show actual timer/rest from the shared reducer; keep remaining result input accessible after rest ends.
-- [ ] Add start/pause/resume/skip/finish actions that call the shared authoritative coordinator.
-- [ ] Verify composition disposal and listener cleanup across fragment lifecycle.
+- [x] Test current exercise/set mapping and manual/timed result readiness. Compact-round-screen rendering still needs emulator verification.
+- [x] Add 48 dp plus/minus repetition controls with long-press adjustment, explicit save, zero support, haptics, and no keyboard launch.
+- [x] Show timer/rest from the shared reducer; keep pending timed result logging accessible after rest ends.
+- [x] Add start/pause/resume/skip/finish actions that commit through the durable watch controller.
+- [x] Dispose Compose content and unregister timer/preparation/session listeners across fragment lifecycle; runtime lifecycle verification remains in Task 5.
 
 ### Task 5: Verification, documentation, and integration
 
@@ -89,7 +89,7 @@
 - Update `docs/superpowers/plans/2026-10-24-reliable-wear-session.md` and this plan.
 - Update strength/Wear architecture docs where the ownership contract is documented.
 
-- [ ] Run common, full app, and Wear unit tests; assemble phone and Wear debug APKs; run applicable lint and Spotless.
-- [ ] Confirm release application ID and debug variant IDs remain unchanged.
-- [ ] Inspect final diff, run `git diff --check`, and review all authority and persistence transitions.
+- [x] Run common, full app, and Wear unit tests; assemble phone and Wear debug APKs; run applicable lint and Spotless.
+- [x] Confirm release application ID and debug variant IDs remain unchanged (`se.hampusandersson.relven`, debug `.debug`).
+- [x] Inspect final diff, run `git diff --check`, and review all authority and persistence transitions.
 - [ ] Open exactly one PR, wait for hosted checks, merge it, then rebuild both APKs from updated `master`.

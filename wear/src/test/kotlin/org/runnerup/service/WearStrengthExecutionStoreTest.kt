@@ -4,6 +4,7 @@ import java.util.UUID
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
@@ -68,6 +69,30 @@ class WearStrengthExecutionStoreTest {
 
     assertEquals(WearStrengthExecutionStore.CommitResult.STALE, store.commit(prepared))
     assertEquals(begun, store.load())
+  }
+
+  @Test
+  fun onlyPhoneAcknowledgedCompletedSessionCanBeReplaced() {
+    val store = WearStrengthExecutionStore(MemoryStorage()) { 5_000L }
+    val first = prepared()
+    assertTrue(store.savePreparedSession(first))
+    val controller = WearStrengthExecutionController(store) { 5_000L }
+    controller.update { it.begin(1_000L) }
+    controller.update { it.completeRepetitions(5, 2_000L) }
+    controller.update { it.skipRest(3_000L) }
+    val complete = controller.update { it.completeRepetitions(4, 4_000L) }.session!!
+    assertEquals(StrengthSession.Phase.COMPLETE, complete.phase)
+    val next = prepared()
+
+    assertFalse(store.savePreparedSession(next))
+    assertTrue(store.acknowledge(
+        StrengthSessionAuthorityProtocol.Acknowledgement(
+            first.executionId,
+            requireNotNull(complete.lastAuthorityCommandId),
+            complete.authorityRevision,
+            StrengthSessionAuthorityProtocol.Outcome.COMMITTED)))
+    assertTrue(store.savePreparedSession(next))
+    assertEquals(next.executionId, store.load()?.executionId)
   }
 
   private fun prepared() =
