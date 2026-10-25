@@ -66,6 +66,7 @@ public final class RelvenPlanKit {
       int total = 0;
       while ((entry = archive.getNextEntry()) != null) {
         ZipEntry copy = new ZipEntry(entry.getName());
+        copy.setTime(entry.getTime());
         output.putNextEntry(copy);
         int count;
         while ((count = archive.read(buffer)) != -1) {

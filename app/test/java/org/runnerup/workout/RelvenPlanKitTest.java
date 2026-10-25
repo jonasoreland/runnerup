@@ -92,6 +92,29 @@ public class RelvenPlanKitTest {
   }
 
   @Test
+  public void copiedBundledEntriesKeepTheirStableTimestamps() throws Exception {
+    Context context = RuntimeEnvironment.getApplication();
+    ByteArrayOutputStream copied = new ByteArrayOutputStream();
+    RelvenPlanKit.copyArchive(context, copied);
+
+    try (ZipInputStream original =
+            new ZipInputStream(context.getAssets().open(ASSET), StandardCharsets.UTF_8);
+        ZipInputStream result =
+            new ZipInputStream(
+                new java.io.ByteArrayInputStream(copied.toByteArray()), StandardCharsets.UTF_8)) {
+      ZipEntry originalEntry;
+      while ((originalEntry = original.getNextEntry()) != null) {
+        ZipEntry copiedEntry = result.getNextEntry();
+        assertNotNull(copiedEntry);
+        assertEquals(originalEntry.getName(), copiedEntry.getName());
+        assertEquals(originalEntry.getTime(), copiedEntry.getTime());
+        original.transferTo(java.io.OutputStream.nullOutputStream());
+        result.transferTo(java.io.OutputStream.nullOutputStream());
+      }
+    }
+  }
+
+  @Test
   public void shareProviderIsNonExportedAndLimitedToTheKitCacheDirectory() throws Exception {
     Context context = RuntimeEnvironment.getApplication();
     String authority = context.getPackageName() + ".relven.ai.plan.kit.provider";

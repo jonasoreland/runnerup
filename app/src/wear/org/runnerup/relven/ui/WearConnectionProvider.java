@@ -7,7 +7,9 @@ import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
@@ -18,6 +20,7 @@ import org.runnerup.common.wear.StrengthPreparationAttempt;
 import org.runnerup.common.wear.StrengthResultOutboxStore;
 import org.runnerup.common.wear.StrengthResultProtocol;
 import org.runnerup.common.wear.WearHandshakeAttempt;
+import org.runnerup.common.wear.WearHandshakeDiscovery;
 import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.common.wear.WorkoutPreparationAttempt;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
@@ -304,26 +307,51 @@ public final class WearConnectionProvider {
                 }
                 List<Node> nodes = task.getResult();
                 List<String> names = new ArrayList<>();
-                for (Node node : nodes) names.add(displayName(node));
-                if (nodes.isEmpty()) {
+                Map<String, Node> nodesById = new LinkedHashMap<>();
+                for (Node node : nodes) {
+                  names.add(displayName(node));
+                  nodesById.putIfAbsent(node.getId(), node);
+                }
+                if (nodesById.isEmpty()) {
                   callback.onResult(
                       new ConnectionTestResult(HandshakeStatus.NO_WATCH, names, -1, null));
                   return;
                 }
-                pingNode(
-                    appContext,
-                    nodes.get(0),
-                    names,
+                WearHandshakeDiscovery.discover(
+                    new ArrayList<>(nodesById.keySet()),
+                    (nodeId, pingCallback) -> {
+                      Node candidate = nodesById.get(nodeId);
+                      if (candidate == null) {
+                        pingCallback.onResult(WearHandshakeDiscovery.Status.TRANSPORT_ERROR, -1L);
+                        return;
+                      }
+                      pingNode(
+                          appContext,
+                          candidate,
+                          names,
+                          result ->
+                              pingCallback.onResult(
+                                  WearHandshakeDiscovery.Status.valueOf(result.status.name()),
+                                  result.roundTripTimeMillis));
+                    },
                     result -> {
-                      if (result.status == HandshakeStatus.VERIFIED
-                          && result.verifiedNodeId != null) {
+                      String verifiedNodeId =
+                          result.status == WearHandshakeDiscovery.Status.VERIFIED
+                              ? result.nodeId
+                              : null;
+                      if (verifiedNodeId != null) {
                         appContext
                             .getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
                             .edit()
-                            .putString(TRUSTED_NODE_KEY, result.verifiedNodeId)
+                            .putString(TRUSTED_NODE_KEY, verifiedNodeId)
                             .apply();
                       }
-                      callback.onResult(result);
+                      callback.onResult(
+                          new ConnectionTestResult(
+                              HandshakeStatus.valueOf(result.status.name()),
+                              names,
+                              result.roundTripTimeMillis,
+                              verifiedNodeId));
                     });
               });
     } catch (RuntimeException exception) {
