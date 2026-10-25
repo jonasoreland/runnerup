@@ -1,5 +1,12 @@
 # Implementation status — 24 October 2026
 
+## Wear Data Layer recovery — current increment
+
+- Wear `StateService` now reports transport connection status, retries suspended/failed connections with a capped 1/2/4/8/16-second backoff, and supports an explicit retry from the watch waiting/prepared screen. A connected retry refreshes phone state and resumes pending durable projections.
+- The watch status explicitly distinguishes Data Layer connectivity from the application-level Relven ping/pong handshake. Retrying does not delete the durable prepared workout.
+- Verification on this branch: common 99, app 700, and Wear 75 unit tests passed (0 failures/errors/skips); phone/Wear debug APK assembly, app/Wear lint, Spotless, and `git diff --check` passed. Wear lint has no issues; app lint has no new issues (53 baseline findings filtered).
+- No paired-emulator runtime messaging verification is claimed. Phone RunnerUp remains the GPS/activity recording engine; continued route recording after phone loss and explicit authority transfer remain unimplemented and require later phases.
+
 ## Wear strength preparation handoff — current PR
 
 - Phone strength workouts in the explicit `PREPARING` phase now run the existing application-level phone/watch handshake, then send a bounded versioned session payload with the stable execution ID. A correlated ACK is accepted only from the verified Wear node and matching request/session IDs.

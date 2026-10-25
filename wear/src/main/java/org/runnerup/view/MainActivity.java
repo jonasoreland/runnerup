@@ -339,6 +339,16 @@ public class MainActivity extends ComponentActivity
     return mStateService;
   }
 
+  public void retryPhoneConnection() {
+    if (mStateService != null) mStateService.retryConnection();
+  }
+
+  public org.runnerup.service.WearConnectionStatus getWearConnectionStatus() {
+    return mStateService == null
+        ? org.runnerup.service.WearConnectionStatus.CONNECTING
+        : mStateService.getConnectionStatus().get();
+  }
+
   public void scrollToRunInfo() {
     Point curr = pager.getCurrentItem();
     pager.setCurrentItem(RUN_INFO_ROW, curr.x, true);

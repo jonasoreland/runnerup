@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.runnerup.common.tracker.TrackerState
+import org.runnerup.service.WearConnectionStatus
 
 private val ScreenBackground = Color(0xFF03050B)
 private val AccentBlue = Color(0xFF9BCBFF)
@@ -37,9 +39,14 @@ object WearConnectWaitingComposeContent {
       view: ComposeView,
       workoutName: String? = null,
       upcomingStep: String? = null,
-      trackerState: TrackerState? = null
+      trackerState: TrackerState? = null,
+      connectionStatus: WearConnectionStatus = WearConnectionStatus.CONNECTING,
+      onRetry: Runnable = Runnable {}
   ) {
-    view.setContent { WearConnectWaitingScreen(workoutName, upcomingStep, trackerState) }
+    view.setContent {
+      WearConnectWaitingScreen(
+          workoutName, upcomingStep, trackerState, connectionStatus, onRetry::run)
+    }
   }
 }
 
@@ -53,6 +60,13 @@ internal fun preparedWorkoutConnectionStatus(trackerState: TrackerState?): Strin
       else -> "Väntar på telefonen · sensorer ej kontrollerade"
     }
 
+internal fun wearTransportStatusLabel(status: WearConnectionStatus): String =
+    when (status) {
+      WearConnectionStatus.CONNECTING -> "Ansluter till telefonen"
+      WearConnectionStatus.CONNECTED -> "Data Layer ansluten · Relven-kontroll ej testad"
+      WearConnectionStatus.DISCONNECTED -> "Telefonens Data Layer frånkopplad"
+    }
+
 internal fun isCompactWearConnectLayout(widthDp: Float, heightDp: Float): Boolean =
     widthDp < 220f || heightDp < 220f
 
@@ -60,7 +74,9 @@ internal fun isCompactWearConnectLayout(widthDp: Float, heightDp: Float): Boolea
 internal fun WearConnectWaitingScreen(
     workoutName: String?,
     upcomingStep: String?,
-    trackerState: TrackerState? = null
+    trackerState: TrackerState? = null,
+    connectionStatus: WearConnectionStatus = WearConnectionStatus.CONNECTING,
+    onRetry: () -> Unit = {}
 ) {
   Box(
       modifier = Modifier.fillMaxSize().clip(CircleShape).background(ScreenBackground),
@@ -91,6 +107,14 @@ internal fun WearConnectWaitingScreen(
             fontSize = if (compact) 12.sp else 14.sp,
             lineHeight = if (compact) 15.sp else 17.sp,
             fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis)
+        Text(
+            text = wearTransportStatusLabel(connectionStatus),
+            modifier = Modifier.padding(top = if (compact) 3.dp else 5.dp),
+            color = SecondaryText,
+            fontSize = if (compact) 7.sp else 9.sp,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis)
@@ -128,6 +152,15 @@ internal fun WearConnectWaitingScreen(
               textAlign = TextAlign.Center,
               maxLines = 2,
               overflow = TextOverflow.Ellipsis)
+        }
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.padding(top = if (compact) 5.dp else 8.dp)) {
+          Text(
+              text = "FÖRSÖK IGEN",
+              fontSize = if (compact) 8.sp else 10.sp,
+              maxLines = 1,
+              overflow = TextOverflow.Clip)
         }
       }
     }

@@ -86,6 +86,11 @@ public class StateService extends Service
   private Bundle data;
   private final ValueModel<TrackerState> trackerState = new ValueModel<>();
   private final ValueModel<Bundle> headers = new ValueModel<>();
+  private final ValueModel<WearConnectionStatus> connectionStatus =
+      new ValueModel<>(WearConnectionStatus.CONNECTING);
+  private int connectionFailureCount;
+  private boolean serviceDestroyed;
+  private final Runnable connectionRetry = this::retryAfterDelay;
   private MainActivity headersListener;
 
   @Override
@@ -103,6 +108,9 @@ public class StateService extends Service
                 new GoogleApiClient.ConnectionCallbacks() {
                   @Override
                   public void onConnected(Bundle connectionHint) {
+                    connectionFailureCount = 0;
+                    handler.removeCallbacks(connectionRetry);
+                    connectionStatus.set(WearConnectionStatus.CONNECTED);
                     /* set "our" data */
                     setData();
 
@@ -118,12 +126,18 @@ public class StateService extends Service
                   }
 
                   @Override
-                  public void onConnectionSuspended(int cause) {}
+                  public void onConnectionSuspended(int cause) {
+                    connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+                    scheduleConnectionRetry();
+                  }
                 })
             .addOnConnectionFailedListener(
                 new GoogleApiClient.OnConnectionFailedListener() {
                   @Override
-                  public void onConnectionFailed(@NonNull ConnectionResult result) {}
+                  public void onConnectionFailed(@NonNull ConnectionResult result) {
+                    connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+                    scheduleConnectionRetry();
+                  }
                 })
             .addApi(Wearable.API)
             .build();
@@ -143,6 +157,52 @@ public class StateService extends Service
         + (mGoogleApiClient != null ? mGoogleApiClient.isConnected() : false)
         + ", phoneNode="
         + phoneNode;
+  }
+
+  public ValueModel<WearConnectionStatus> getConnectionStatus() {
+    return connectionStatus;
+  }
+
+  /** Retries the transport now, or refreshes the current snapshot if already connected. */
+  public void retryConnection() {
+    if (serviceDestroyed || mGoogleApiClient == null) return;
+    handler.removeCallbacks(connectionRetry);
+    if (mGoogleApiClient.isConnected()) {
+      connectionStatus.set(WearConnectionStatus.CONNECTED);
+      readData(/* force= */ true);
+      restorePendingSessionProjection();
+      retryPendingPhoneProjection();
+      retryPendingStrengthResult();
+      publishStrengthAuthorityProjection();
+      return;
+    }
+    if (mGoogleApiClient.isConnecting()) return;
+    connectionStatus.set(WearConnectionStatus.CONNECTING);
+    connectionFailureCount = 0;
+    mGoogleApiClient.connect();
+  }
+
+  private void scheduleConnectionRetry() {
+    if (serviceDestroyed || mGoogleApiClient == null) return;
+    handler.removeCallbacks(connectionRetry);
+    long delay = WearConnectionRetryPolicy.delayMillis(connectionFailureCount++);
+    handler.postDelayed(connectionRetry, delay);
+  }
+
+  private void retryAfterDelay() {
+    if (serviceDestroyed || mGoogleApiClient == null) return;
+    if (mGoogleApiClient.isConnected()) {
+      connectionStatus.set(WearConnectionStatus.CONNECTED);
+      readData(/* force= */ true);
+      return;
+    }
+    if (!WearConnectionRetryPolicy.shouldRetry(
+        mGoogleApiClient.isConnected(), mGoogleApiClient.isConnecting())) {
+      scheduleConnectionRetry();
+      return;
+    }
+    connectionStatus.set(WearConnectionStatus.CONNECTING);
+    mGoogleApiClient.connect();
   }
 
   public void readDataIfMissing() {
@@ -282,9 +342,12 @@ public class StateService extends Service
   @Override
   public void onDestroy() {
     Log.d(TAG, "StateService.onDestroy()");
+    serviceDestroyed = true;
+    handler.removeCallbacks(connectionRetry);
     handler.removeCallbacks(strengthAuthorityProjectionRetry);
     handler.removeCallbacksAndMessages(null);
     trackerState.clearListeners();
+    connectionStatus.clearListeners();
     preparedCountdownDeadline.clearListeners();
     if (mGoogleApiClient != null) {
       if (mGoogleApiClient.isConnected()) {
