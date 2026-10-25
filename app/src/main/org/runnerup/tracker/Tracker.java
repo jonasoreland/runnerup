@@ -159,6 +159,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   private NotificationState activityOngoingState;
   private ActiveWorkoutCheckpointStore checkpointStore;
   private ActiveWorkoutCheckpoint pendingRecoveryCheckpoint;
+  private String pendingWatchCommandCheckpointId;
   private boolean recoveryStarted;
   private final ExecutorService checkpointExecutor = Executors.newSingleThreadExecutor();
   private final Runnable checkpointRunnable =
@@ -449,7 +450,23 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   /** Applies an already committed watch event to the phone's RunnerUp recording engine. */
-  public void applyWatchSessionAction(WorkoutSessionProtocol.Action action) {
+  public boolean hasAppliedWatchSessionCommand(String commandId) {
+    return workout != null
+        && workout.hasAppliedWatchSessionCommand(commandId)
+        && !Objects.equals(pendingWatchCommandCheckpointId, commandId);
+  }
+
+  public boolean hasPendingWatchSessionCheckpoint(String commandId) {
+    return commandId != null && commandId.equals(pendingWatchCommandCheckpointId);
+  }
+
+  public boolean applyWatchSessionAction(String commandId, WorkoutSessionProtocol.Action action) {
+    if (commandId != null && workout != null && workout.hasAppliedWatchSessionCommand(commandId)) {
+      if (!Objects.equals(pendingWatchCommandCheckpointId, commandId)) return true;
+      if (!persistActiveCheckpoint()) return false;
+      pendingWatchCommandCheckpointId = null;
+      return true;
+    }
     boolean previous = applyingWatchSessionCommand;
     applyingWatchSessionCommand = true;
     try {
@@ -475,6 +492,15 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     } finally {
       applyingWatchSessionCommand = previous;
     }
+    if (commandId != null && workout != null) {
+      workout.markWatchSessionCommandApplied(commandId);
+      if (state.get() == TrackerState.STARTED || state.get() == TrackerState.PAUSED) {
+        pendingWatchCommandCheckpointId = commandId;
+        if (!persistActiveCheckpoint()) return false;
+        pendingWatchCommandCheckpointId = null;
+      }
+    }
+    return true;
   }
 
   public void start() {
@@ -997,30 +1023,9 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   private void queueActiveCheckpoint() {
-    if (checkpointStore == null || workout == null || mActivityId <= 0) return;
-    TrackerState currentState = state.get();
-    if (currentState != TrackerState.STARTED && currentState != TrackerState.PAUSED) return;
+    ActiveWorkoutCheckpoint checkpoint = createActiveWorkoutCheckpoint();
+    if (checkpoint == null) return;
     try {
-      StringWriter workoutDefinition = new StringWriter();
-      WorkoutSerializer.writeJSON(workoutDefinition, workout);
-      ActiveWorkoutCheckpoint checkpoint =
-          new ActiveWorkoutCheckpoint(
-              mActivityId,
-              currentState,
-              mElapsedTimeNanos,
-              mElapsedDistance,
-              mHeartbeats,
-              Math.round(mHeartbeatNanos),
-              mMaxHR,
-              workoutDefinition.toString(),
-              workout.toRuntimeCheckpoint().toString(),
-              mLapId,
-              mStartedAtEpochMillis,
-              SystemClock.elapsedRealtimeNanos(),
-              workout.getSport(),
-              workout.getWorkoutType(),
-              workout.getMute(),
-              trackerGPS.isWithoutGps());
       checkpointExecutor.execute(
           () -> {
             try {
@@ -1029,8 +1034,63 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
               Log.e("Tracker", "Unable to persist active workout checkpoint", exception);
             }
           });
+    } catch (RuntimeException exception) {
+      Log.e("Tracker", "Unable to queue active workout checkpoint", exception);
+    }
+  }
+
+  private boolean persistActiveCheckpoint() {
+    ActiveWorkoutCheckpoint checkpoint = createActiveWorkoutCheckpoint();
+    if (checkpoint == null) return false;
+    try {
+      Future<?> write =
+          checkpointExecutor.submit(
+              () -> {
+                try {
+                  checkpointStore.save(checkpoint);
+                } catch (IOException exception) {
+                  throw new IllegalStateException(
+                      "Unable to persist active workout checkpoint", exception);
+                }
+              });
+      write.get();
+      return true;
+    } catch (InterruptedException exception) {
+      Thread.currentThread().interrupt();
+      Log.e("Tracker", "Interrupted while persisting active workout checkpoint", exception);
+    } catch (ExecutionException | RuntimeException exception) {
+      Log.e("Tracker", "Unable to persist active workout checkpoint", exception);
+    }
+    return false;
+  }
+
+  private ActiveWorkoutCheckpoint createActiveWorkoutCheckpoint() {
+    if (checkpointStore == null || workout == null || mActivityId <= 0) return null;
+    TrackerState currentState = state.get();
+    if (currentState != TrackerState.STARTED && currentState != TrackerState.PAUSED) return null;
+    try {
+      StringWriter workoutDefinition = new StringWriter();
+      WorkoutSerializer.writeJSON(workoutDefinition, workout);
+      return new ActiveWorkoutCheckpoint(
+          mActivityId,
+          currentState,
+          mElapsedTimeNanos,
+          mElapsedDistance,
+          mHeartbeats,
+          Math.round(mHeartbeatNanos),
+          mMaxHR,
+          workoutDefinition.toString(),
+          workout.toRuntimeCheckpoint().toString(),
+          mLapId,
+          mStartedAtEpochMillis,
+          SystemClock.elapsedRealtimeNanos(),
+          workout.getSport(),
+          workout.getWorkoutType(),
+          workout.getMute(),
+          trackerGPS.isWithoutGps());
     } catch (JSONException | IOException | IllegalArgumentException exception) {
       Log.e("Tracker", "Unable to create active workout checkpoint", exception);
+      return null;
     }
   }
 

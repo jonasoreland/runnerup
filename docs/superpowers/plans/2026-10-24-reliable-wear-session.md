@@ -85,7 +85,7 @@
 - [ ] Keep acknowledged events as the replayable state history, with an ordered unacknowledged suffix; ACK only the matching head and retry after reconnect without dropping events.
 - [ ] Restore the phone projection from the durable event history without changing WATCH authority; write the phone projection before acknowledging it.
 - [ ] Refuse session commands while disconnected because the current RunnerUp recording engine remains phone-owned; replay only commands already accepted by the authority before transport loss. Do not show a watch-side pause/finish as accepted while the phone continues recording.
-- [ ] Add tests for process recreation including pending-start recovery, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
+- [ ] Add tests for process recreation including pending-start deadline recovery, Tracker control reconciliation, persisted idempotency markers for LAP/SKIP, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
 
 #### Task 5B — Strength result synchronization
 

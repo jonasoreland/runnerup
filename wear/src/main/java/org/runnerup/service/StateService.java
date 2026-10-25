@@ -861,15 +861,25 @@ public class StateService extends Service
     try {
       WorkoutSessionProtocol.Command rejection = WorkoutSessionProtocol.decodeCommand(payload);
       WorkoutSessionProtocol.Command pending = pendingPhoneProjection;
-      if (pending == null
-          || pending.getAction() != WorkoutSessionProtocol.Action.START
+      WorkoutSessionProtocol.Command latest = lastCommittedSessionCommand;
+      if (latest == null
+          || latest.getAction() != WorkoutSessionProtocol.Action.START
           || rejection.getActor() != WorkoutSessionProtocol.Actor.WATCH
-          || !pending.getSessionId().equals(rejection.getSessionId())
-          || !pending.getCommandId().equals(rejection.getCommandId())
-          || pending.getSequence() != rejection.getSequence()) return;
-      handler.removeCallbacks(pendingProjectionRetry);
-      pendingPhoneProjection = null;
-      pendingProjectionAttempts = 0;
+          || !latest.getSessionId().equals(rejection.getSessionId())
+          || !latest.getCommandId().equals(rejection.getCommandId())
+          || latest.getSequence() != rejection.getSequence()
+          || (pending != null
+              && (!pending.getSessionId().equals(rejection.getSessionId())
+                  || !pending.getCommandId().equals(rejection.getCommandId())
+                  || pending.getSequence() != rejection.getSequence()))
+          || sessionEventStore.rejectUnstartedStart(
+                  rejection.getSessionId(), rejection.getCommandId())
+              != WorkoutSessionEventJournalStore.RejectionRollbackResult.ROLLED_BACK) return;
+      if (pending != null) {
+        handler.removeCallbacks(pendingProjectionRetry);
+        pendingPhoneProjection = null;
+        pendingProjectionAttempts = 0;
+      }
       preparedCountdownDeadline.set(null);
       workoutSessionState =
           WorkoutSessionProtocol.SessionState.ready(

@@ -15,6 +15,13 @@ public final class WorkoutSessionEventJournalStore {
     STORAGE_ERROR
   }
 
+  public enum RejectionRollbackResult {
+    ROLLED_BACK,
+    NO_JOURNAL,
+    NO_MATCH,
+    STORAGE_ERROR
+  }
+
   public static final String PREFERENCES_NAME = "workout_session_event_journals";
   private final Storage storage;
 
@@ -96,6 +103,21 @@ public final class WorkoutSessionEventJournalStore {
       return persist(sessionId, journal);
     } catch (RuntimeException unavailable) {
       return false;
+    }
+  }
+
+  public synchronized RejectionRollbackResult rejectUnstartedStart(
+      String sessionId, String commandId) {
+    try {
+      WorkoutSessionEventJournal journal = loadOrThrow(sessionId);
+      if (journal == null) return RejectionRollbackResult.NO_JOURNAL;
+      if (journal.getAuthority() != WorkoutSessionProtocol.Actor.WATCH
+          || !journal.rejectUnstartedStart(commandId)) return RejectionRollbackResult.NO_MATCH;
+      return persist(sessionId, journal)
+          ? RejectionRollbackResult.ROLLED_BACK
+          : RejectionRollbackResult.STORAGE_ERROR;
+    } catch (RuntimeException unavailable) {
+      return RejectionRollbackResult.STORAGE_ERROR;
     }
   }
 

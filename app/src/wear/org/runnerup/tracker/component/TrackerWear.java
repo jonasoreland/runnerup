@@ -551,7 +551,16 @@ public class TrackerWear extends DefaultTrackerComponent
       if (command.getAction() == WorkoutSessionProtocol.Action.START) {
         if (tracker.getState() == TrackerState.CONNECTED
             && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.COUNTDOWN) {
-          scheduleWatchSessionStart(command);
+          WorkoutSessionProtocol.Command recoverableStart =
+              WorkoutSessionRecoveryPolicy.startToRecover(
+                  sessionEventStore.load(command.getSessionId()),
+                  tracker.getState(),
+                  android.os.SystemClock.elapsedRealtime());
+          if (recoverableStart == null) {
+            rejectWatchSessionStart(command);
+            return;
+          }
+          scheduleWatchSessionStart(recoverableStart);
         } else if (tracker.getState() == TrackerState.STARTED
             || tracker.getState() == TrackerState.PAUSED) {
           // The persisted start is already reflected in the RunnerUp tracker.
@@ -560,9 +569,13 @@ public class TrackerWear extends DefaultTrackerComponent
         }
         acknowledgeWatchSessionCommand(command);
       } else {
-        if (WorkoutSessionRecoveryPolicy.shouldApplyControl(
-            command.getAction(), tracker.getState())) {
-          tracker.applyWatchSessionAction(command.getAction());
+        if (WorkoutSessionRecoveryPolicy.shouldApplyControl(command.getAction(), tracker.getState())
+            || tracker.hasPendingWatchSessionCheckpoint(command.getCommandId())
+            || ((command.getAction() == WorkoutSessionProtocol.Action.LAP
+                    || command.getAction() == WorkoutSessionProtocol.Action.SKIP)
+                && tracker.getState() == TrackerState.STARTED
+                && !tracker.hasAppliedWatchSessionCommand(command.getCommandId()))) {
+          if (!tracker.applyWatchSessionAction(command.getCommandId(), command.getAction())) return;
         }
         acknowledgeWatchSessionCommand(command);
       }
@@ -654,7 +667,7 @@ public class TrackerWear extends DefaultTrackerComponent
     WorkoutSessionProtocol.Result result = applySessionCommand(command);
     if (result != WorkoutSessionProtocol.Result.ACCEPTED) return;
     clearPendingPhoneSessionRequest(command);
-    tracker.applyWatchSessionAction(command.getAction());
+    if (!tracker.applyWatchSessionAction(command.getCommandId(), command.getAction())) return;
     acknowledgeWatchSessionCommand(command);
   }
 
@@ -698,14 +711,7 @@ public class TrackerWear extends DefaultTrackerComponent
     }
     if (!started) {
       Log.w(getName(), "Accepted watch start reached its deadline without a prepared Tracker");
-      rejectWatchSessionCommand(command);
-      workoutSessionState =
-          WorkoutSessionProtocol.SessionState.ready(
-              command.getSessionId(), WorkoutSessionProtocol.Actor.WATCH);
-      lastSessionCommandSequence = 0L;
-      lastAcceptedWatchCommand = null;
-      sessionStartAnnounced = false;
-      broadcastRejectedSessionCommand(command, WorkoutSessionProtocol.Actor.WATCH);
+      rejectWatchSessionStart(command, WorkoutSessionProtocol.Actor.WATCH);
     }
     scheduledWatchStart = null;
   }
@@ -793,10 +799,28 @@ public class TrackerWear extends DefaultTrackerComponent
     }
   }
 
-  private void rejectWatchSessionStart(WorkoutSessionProtocol.Command command) {
+  private boolean rejectWatchSessionStart(WorkoutSessionProtocol.Command command) {
+    return rejectWatchSessionStart(command, WorkoutSessionProtocol.Actor.PHONE);
+  }
+
+  private boolean rejectWatchSessionStart(
+      WorkoutSessionProtocol.Command command, WorkoutSessionProtocol.Actor rejectionActor) {
+    WorkoutSessionEventJournalStore.RejectionRollbackResult rollback =
+        sessionEventStore.rejectUnstartedStart(command.getSessionId(), command.getCommandId());
+    if (rollback == WorkoutSessionEventJournalStore.RejectionRollbackResult.STORAGE_ERROR
+        || rollback == WorkoutSessionEventJournalStore.RejectionRollbackResult.NO_MATCH) {
+      Log.e(getName(), "Unable to safely roll back rejected workout start: " + rollback);
+      return false;
+    }
+    cancelScheduledWatchSessionStart();
+    workoutSessionState =
+        WorkoutSessionProtocol.SessionState.ready(
+            command.getSessionId(), WorkoutSessionProtocol.Actor.WATCH);
+    lastSessionCommandSequence = 0L;
+    lastAcceptedWatchCommand = null;
     rejectWatchSessionCommand(command);
-    // A phone-start request is still pending until this watch projection is accepted.
-    broadcastRejectedSessionCommand(command, WorkoutSessionProtocol.Actor.PHONE);
+    broadcastRejectedSessionCommand(command, rejectionActor);
+    return true;
   }
 
   private void broadcastRejectedSessionCommand(
@@ -945,9 +969,16 @@ public class TrackerWear extends DefaultTrackerComponent
 
   private void scheduleRestoredWatchSessionStart(WorkoutSessionEventJournal journal) {
     WorkoutSessionProtocol.Command start =
-        WorkoutSessionRecoveryPolicy.startToRecover(journal, tracker.getState());
+        WorkoutSessionRecoveryPolicy.startToRecover(
+            journal, tracker.getState(), android.os.SystemClock.elapsedRealtime());
     if (start != null && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.COUNTDOWN) {
       scheduleWatchSessionStart(start);
+    } else if (journal != null
+        && !journal.events().isEmpty()
+        && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.COUNTDOWN
+        && tracker.getState() == TrackerState.CONNECTED) {
+      WorkoutSessionProtocol.Command last = journal.events().get(journal.events().size() - 1);
+      if (last.getAction() == WorkoutSessionProtocol.Action.START) rejectWatchSessionStart(last);
     }
   }
 

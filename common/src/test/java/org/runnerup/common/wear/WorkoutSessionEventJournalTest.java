@@ -97,6 +97,61 @@ public class WorkoutSessionEventJournalTest {
   }
 
   @Test
+  public void rejectedUnstartedStartCanBeRolledBackAfterItsProjectionWasAcknowledged() {
+    MemoryStorage storage = new MemoryStorage();
+    WorkoutSessionEventJournalStore store = new WorkoutSessionEventJournalStore(storage);
+    WorkoutSessionProtocol.Command start =
+        command(
+            1, "fef77b0a-7012-4dd7-a374-cf7a1dd6f083", WorkoutSessionProtocol.Action.START, 10_000);
+    assertEquals(
+        WorkoutSessionEventJournalStore.AppendResult.APPENDED,
+        store.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, start));
+    assertTrue(store.acknowledge(SESSION, 1, start.getCommandId()));
+
+    assertEquals(
+        WorkoutSessionEventJournalStore.RejectionRollbackResult.ROLLED_BACK,
+        store.rejectUnstartedStart(SESSION, start.getCommandId()));
+    WorkoutSessionEventJournal restored =
+        new WorkoutSessionEventJournalStore(storage).load(SESSION);
+    assertNotNull(restored);
+    assertEquals(0L, restored.lastSequence());
+    assertEquals(WorkoutSessionProtocol.Phase.READY, restored.replayState().getPhase());
+  }
+
+  @Test
+  public void rejectedStartReportsStorageFailureInsteadOfClaimingRollback() {
+    MemoryStorage storage = new MemoryStorage();
+    WorkoutSessionEventJournalStore store = new WorkoutSessionEventJournalStore(storage);
+    WorkoutSessionProtocol.Command start =
+        command(
+            1, "fef77b0a-7012-4dd7-a374-cf7a1dd6f083", WorkoutSessionProtocol.Action.START, 10_000);
+    store.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, start);
+    storage.failWrites = true;
+
+    assertEquals(
+        WorkoutSessionEventJournalStore.RejectionRollbackResult.STORAGE_ERROR,
+        store.rejectUnstartedStart(SESSION, start.getCommandId()));
+    assertNotNull(store.load(SESSION));
+  }
+
+  @Test
+  public void rejectionRollbackDistinguishesMissingJournalFromMismatchedEvent() {
+    WorkoutSessionEventJournalStore store =
+        new WorkoutSessionEventJournalStore(new MemoryStorage());
+    assertEquals(
+        WorkoutSessionEventJournalStore.RejectionRollbackResult.NO_JOURNAL,
+        store.rejectUnstartedStart(SESSION, "fef77b0a-7012-4dd7-a374-cf7a1dd6f083"));
+
+    WorkoutSessionProtocol.Command start =
+        command(
+            1, "fef77b0a-7012-4dd7-a374-cf7a1dd6f083", WorkoutSessionProtocol.Action.START, 10_000);
+    store.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, start);
+    assertEquals(
+        WorkoutSessionEventJournalStore.RejectionRollbackResult.NO_MATCH,
+        store.rejectUnstartedStart(SESSION, "671a25fc-cdb2-4d62-a3a2-175f2826040b"));
+  }
+
+  @Test
   public void corruptAndMismatchedJournalPayloadIsNotRestored() throws Exception {
     MemoryStorage storage = new MemoryStorage();
     WorkoutSessionEventJournalStore store = new WorkoutSessionEventJournalStore(storage);
@@ -182,6 +237,7 @@ public class WorkoutSessionEventJournalTest {
 
   private static final class MemoryStorage implements WorkoutSessionEventJournalStore.Storage {
     byte[] bytes;
+    boolean failWrites;
 
     @Override
     public byte[] read(String sessionId) {
@@ -190,6 +246,7 @@ public class WorkoutSessionEventJournalTest {
 
     @Override
     public boolean write(String sessionId, byte[] encoded) {
+      if (failWrites) return false;
       bytes = encoded.clone();
       return true;
     }

@@ -16,9 +16,11 @@ public class WorkoutSessionRecoveryPolicyTest {
 
     assertEquals(
         START_ID,
-        WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.CONNECTED)
+        WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.CONNECTED, 5_000L)
             .getCommandId());
-    assertNull(WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.STARTED));
+    assertNull(WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.STARTED, 5_000L));
+    assertNull(
+        WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.CONNECTED, 10_000L));
   }
 
   @Test
@@ -36,7 +38,8 @@ public class WorkoutSessionRecoveryPolicyTest {
                 11_000L,
                 0L)));
 
-    assertNull(WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.CONNECTED));
+    assertNull(
+        WorkoutSessionRecoveryPolicy.startToRecover(journal, TrackerState.CONNECTED, 5_000L));
   }
 
   @Test

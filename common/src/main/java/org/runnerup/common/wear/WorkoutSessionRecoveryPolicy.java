@@ -9,14 +9,17 @@ public final class WorkoutSessionRecoveryPolicy {
 
   /** Returns a persisted start that still needs its phone Tracker start effect. */
   public static WorkoutSessionProtocol.Command startToRecover(
-      WorkoutSessionEventJournal journal, TrackerState trackerState) {
+      WorkoutSessionEventJournal journal, TrackerState trackerState, long nowElapsedRealtimeMs) {
     if (journal == null
         || journal.getAuthority() != WorkoutSessionProtocol.Actor.WATCH
         || trackerState != TrackerState.CONNECTED) return null;
     List<WorkoutSessionProtocol.Command> events = journal.events();
     if (events.isEmpty()) return null;
     WorkoutSessionProtocol.Command last = events.get(events.size() - 1);
-    return last.getAction() == WorkoutSessionProtocol.Action.START ? last : null;
+    return last.getAction() == WorkoutSessionProtocol.Action.START
+            && WorkoutSessionProtocol.isStartDeadlineInFuture(last, nowElapsedRealtimeMs)
+        ? last
+        : null;
   }
 
   /** State-changing controls can be replayed when Tracker state proves the effect is missing. */

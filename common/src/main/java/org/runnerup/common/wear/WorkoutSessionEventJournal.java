@@ -75,6 +75,17 @@ public final class WorkoutSessionEventJournal {
     return true;
   }
 
+  /** Rolls back a start that the phone rejected before RunnerUp began recording. */
+  public boolean rejectUnstartedStart(String commandId) {
+    if (events.isEmpty()) return false;
+    WorkoutSessionProtocol.Command last = events.get(events.size() - 1);
+    if (last.getAction() != WorkoutSessionProtocol.Action.START
+        || !last.getCommandId().equals(commandId)) return false;
+    events.remove(events.size() - 1);
+    acknowledgedThrough = Math.min(acknowledgedThrough, events.size());
+    return true;
+  }
+
   public String getSessionId() {
     return sessionId;
   }
