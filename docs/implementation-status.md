@@ -1,13 +1,22 @@
-# Implementation status — 24 October 2026
+# Implementation status — 25 October 2026
 
-## Wear Data Layer recovery — current increment
+## Latest master checkpoint — Wear prepared-screen launch (PR #185)
+
+- `master` is at `b84719ee6dea3ce229d1e439a15cab39fd534f1f`. PR #185 merged after its hosted Android/F-Droid workflow passed.
+- After a correlated `PREPARED` acknowledgement, both running and strength handoffs request `relven://workout/prepared` on the verified watch node through `RemoteActivityHelper`. Rejected, timed-out, and invalid preparation results do not request a launch. The existing prepared-workout notification remains the fallback; request delivery is not treated as proof that the watch UI became visible.
+- Local checks passed: common, phone, and Wear unit tests; phone/Wear debug APK assembly; phone/Wear lint; `spotlessCheck`; and both phone/Wear release bundle builds. The hosted workflow also passed its bundle build, tests, release lint, Java style, and F-Droid build.
+- Rebuilt from merged `master`: phone APK `app/build/outputs/apk/latest/debug/app-latest-debug.apk`, package `se.hampusandersson.relven.debug`, version code `24000374`, version `2.0.0-dev-b84719ee`, SHA-256 `8183D2519E1040A3940819D610DF5A7B1AD30684631F581E0386E0C100ED2D2A`; Wear APK `wear/build/outputs/apk/debug/wear-debug.apk`, package `se.hampusandersson.relven.debug`, version code `24000375`, version `2.0.0-dev`, SHA-256 `06653ADCDC11E770A79BCFBFD15EEC9FFC16E9E6D59996F1C04C5C6139C77F73`. Gradle reported the Wear artifact up-to-date because PR #185 did not change the Wear module. Release application ID remains `se.hampusandersson.relven`.
+- A read-only Wear AVD on isolated ADB port 5039 verified the browsable route resolves to `org.runnerup.view.MainActivity` and opens the app. With no prepared session or paired phone, the UI correctly showed **Waiting for phone**; this verifies route registration only, not paired handoff or workout presentation.
+- Remaining release gates: paired phone/Wear lifecycle verification; a copied production-era v18 `relven-workouts.db` migration check; and validation that the existing signing identity produces a same-ID Play upgrade. Local and Drive searches found no mobile database backup; `C:\Users\hampe\Documents\GIT\Relven\apps\api\relven.db` belongs to the separate web/API project and is not a valid substitute. GitHub secret names are configured, but their values and signing certificate remain unverified. No Play upload or physical-device ADB use occurred.
+
+## Wear Data Layer recovery — merged behavior
 
 - Wear `StateService` now reports transport connection status, retries suspended/failed connections with a capped 1/2/4/8/16-second backoff, and supports an explicit retry from the watch waiting/prepared screen. A connected retry refreshes phone state and resumes pending durable projections.
 - The watch status explicitly distinguishes Data Layer connectivity from the application-level Relven ping/pong handshake. Retrying does not delete the durable prepared workout.
 - Verification on this branch: common 99, app 700, and Wear 75 unit tests passed (0 failures/errors/skips); phone/Wear debug APK assembly, app/Wear lint, Spotless, and `git diff --check` passed. Wear lint has no issues; app lint has no new issues (53 baseline findings filtered).
 - No paired-emulator runtime messaging verification is claimed. Phone RunnerUp remains the GPS/activity recording engine; continued route recording after phone loss and explicit authority transfer remain unimplemented and require later phases.
 
-## Wear strength preparation handoff — current PR
+## Wear strength preparation handoff — merged behavior
 
 - Phone strength workouts in the explicit `PREPARING` phase now run the existing application-level phone/watch handshake, then send a bounded versioned session payload with the stable execution ID. A correlated ACK is accepted only from the verified Wear node and matching request/session IDs.
 - The watch validates the shared strength-session codec, synchronously commits the prepared session before returning an accepted ACK, and displays its workout name, first exercise, prescription and instructions on the existing Start screen. Since Android restricts background activity launches, receipt posts a user-tappable watch notification instead of claiming the app opened automatically.
