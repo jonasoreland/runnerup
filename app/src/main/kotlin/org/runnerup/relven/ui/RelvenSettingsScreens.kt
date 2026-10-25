@@ -31,7 +31,7 @@ internal enum class WearConnectionState {
   TransportConnected,
   Disconnected,
   Unavailable,
-  Error
+  ServiceUnavailable
 }
 
 internal enum class WearHandshakeState {
@@ -51,7 +51,7 @@ internal fun wearConnectionState(
     connectedNodes: List<String>?
 ): WearConnectionState = when {
   !supported -> WearConnectionState.Unavailable
-  !requestSucceeded -> WearConnectionState.Error
+  !requestSucceeded -> WearConnectionState.ServiceUnavailable
   connectedNodes.isNullOrEmpty() -> WearConnectionState.Disconnected
   else -> WearConnectionState.TransportConnected
 }
@@ -259,12 +259,13 @@ private fun SensorSetting(
 
 private fun statusColor(available: Boolean) = if (available) RelvenColors.MutedText else RelvenColors.Orange
 
-private fun wearStateLabel(state: WearConnectionState): String = when (state) {
+internal fun wearStateLabel(state: WearConnectionState): String = when (state) {
   WearConnectionState.Loading -> "Kontrollerar Wear OS-anslutning…"
   WearConnectionState.TransportConnected -> "Wear OS-klocka hittad via Data Layer"
   WearConnectionState.Disconnected -> "Ingen ansluten Wear OS-klocka hittades"
   WearConnectionState.Unavailable -> "Wear OS Data Layer är inte tillgängligt i den här versionen"
-  WearConnectionState.Error -> "Klockans anslutning kunde inte kontrolleras"
+  WearConnectionState.ServiceUnavailable ->
+    "Wear OS-tjänsten svarade inte. Kontrollera att en kompatibel Wear OS-kompanjon är installerad och att Google Play-tjänster är uppdaterade."
 }
 
 private fun handshakeStateLabel(state: WearHandshakeState, roundTripMillis: Long?): String = when (state) {
