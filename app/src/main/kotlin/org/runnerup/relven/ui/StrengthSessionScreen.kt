@@ -64,6 +64,7 @@ internal fun StrengthSessionScreen(
     isSavingProgress: Boolean,
     isSavingCompletion: Boolean,
     onExport: (() -> Unit)? = null,
+    watchPreparationLabel: String? = null,
     onEditResult: (StrengthSession.SetResult) -> Unit,
     onTick: () -> Unit,
     onLogRepetitions: (StrengthSession.RepetitionResultInput) -> Unit,
@@ -214,6 +215,13 @@ internal fun StrengthSessionScreen(
                 stringResource(R.string.Strength_session_set, session.setNumber, totalSets),
                 color = RelvenColors.Orange,
                 fontWeight = FontWeight.SemiBold)
+            if (session.phase == StrengthSession.Phase.PREPARING && watchPreparationLabel != null) {
+              Text(
+                  watchPreparationLabel,
+                  color = RelvenColors.MutedText,
+                  fontSize = 14.sp,
+                  modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+            }
             when (session.phase) {
               StrengthSession.Phase.PREPARING -> {
                 Text(

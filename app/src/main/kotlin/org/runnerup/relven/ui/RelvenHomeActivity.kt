@@ -233,6 +233,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
   private var strengthTransferMessage by mutableStateOf<String?>(null)
   private var strengthExportTarget by mutableStateOf<CompletedStrengthSession?>(null)
   private var strengthSaveError by mutableStateOf(false)
+  private var strengthWatchPreparationLabel by mutableStateOf<String?>(null)
   private var strengthTransitionSaving by mutableStateOf(false)
   private var pendingStrengthSessionChoice by mutableStateOf<PendingStrengthSessionChoice?>(null)
   private var strengthRecoveryNotice by mutableStateOf(false)
@@ -389,6 +390,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
               isSavingProgress = strengthTransitionSaving,
               isSavingCompletion = strengthFinishing,
               onExport = if (completionSummary != null) {{ chooseStrengthSessionExport(completionSummary) }} else null,
+              watchPreparationLabel = strengthWatchPreparationLabel,
               onEditResult = { result ->
                 if (currentStrengthSession != null) {
                   updateStrengthSession { it.replaceResult(result) }
@@ -1657,6 +1659,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         if (session.matchesScheduledEntry(requestedPlanId, entry.sessionId)) {
           strengthSaveError = false
           strengthSession = session
+          strengthWatchPreparationLabel = "Ansluter till klockan…"
+          prepareStrengthSessionOnWear(session)
           viewedStrengthCompletion = null
         } else {
           pendingStrengthSessionChoice =
@@ -1698,6 +1702,8 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         if (existing.workout.id() == workout.id()) {
           strengthSaveError = false
           strengthSession = existing
+          strengthWatchPreparationLabel = "Ansluter till klockan…"
+          prepareStrengthSessionOnWear(existing)
           viewedStrengthCompletion = null
         } else {
           pendingStrengthSessionChoice = PendingStrengthSessionChoice(existing, name)
@@ -1707,6 +1713,34 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
         strengthSaveError = true
       }
     }
+  }
+
+  private fun prepareStrengthSessionOnWear(session: StrengthSession) {
+    if (session.phase != StrengthSession.Phase.PREPARING) {
+      strengthWatchPreparationLabel = null
+      return
+    }
+    WearConnectionProvider.prepareStrengthSession(
+        this,
+        session,
+        object : WearConnectionProvider.StrengthPreparationCallback {
+          override fun onResult(result: WearConnectionProvider.StrengthPreparationResult) {
+            runOnUiThread {
+              if (strengthSession?.executionId != result.sessionId ||
+                  strengthSession?.phase != StrengthSession.Phase.PREPARING) return@runOnUiThread
+              strengthWatchPreparationLabel =
+                  when (result.status) {
+                    WearConnectionProvider.StrengthPreparationStatus.PREPARED -> "Passet är förberett på klockan"
+                    WearConnectionProvider.StrengthPreparationStatus.NO_WATCH -> "Ingen klocka nåbar · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.TIMEOUT -> "Klockan svarar inte · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.REJECTED -> "Klockan avvisade passet · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.PROTOCOL_MISMATCH -> "Uppdatera Relven på klockan · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.UNSUPPORTED -> "Klockan stöder inte handoff ännu · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.TRANSPORT_ERROR -> "Kunde inte ansluta · fortsätt på mobilen"
+                  }
+            }
+          }
+        })
   }
 
   private fun updateStrengthSession(transform: (StrengthSession) -> StrengthSession) {

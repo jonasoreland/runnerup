@@ -281,6 +281,9 @@ public interface Constants {
       String MSG_WORKOUT_SESSION_COMMAND = PREFIX + "/workout/session/command";
       String MSG_WORKOUT_SESSION_ACK = PREFIX + "/workout/session/ack";
       String MSG_WORKOUT_SESSION_REJECT = PREFIX + "/workout/session/reject";
+      String MSG_STRENGTH_PREPARE = PREFIX + "/strength/prepare";
+      String MSG_STRENGTH_PREPARED = PREFIX + "/strength/prepared";
+      String MSG_STRENGTH_CANCEL = PREFIX + "/strength/cancel";
       String MSG_STRENGTH_RESULT = PREFIX + "/strength/result";
       String MSG_STRENGTH_RESULT_ACK = PREFIX + "/strength/result/ack";
 

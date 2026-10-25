@@ -59,6 +59,19 @@ object WearControlsComposeContent {
   }
 
   @JvmStatic
+  fun bindPreparedStrengthWorkout(
+      view: ComposeView,
+      workoutName: String,
+      exerciseName: String,
+      prescription: String,
+      instructions: String) {
+    view.setContent {
+      WearPreparedStrengthWorkoutScreen(
+          workoutName, exerciseName, prescription, instructions)
+    }
+  }
+
+  @JvmStatic
   fun bindPauseResume(
       view: ComposeView,
       state: WearControlPresentationState,
@@ -74,6 +87,28 @@ object WearControlsComposeContent {
           onSkip = { skipClick.run() },
           onPauseResume = { pauseResumeClick.run() },
           onFinish = { finishClick.run() })
+    }
+  }
+}
+
+@Composable
+internal fun WearPreparedStrengthWorkoutScreen(
+    workoutName: String,
+    exerciseName: String,
+    prescription: String,
+    instructions: String) {
+  WearControlFrame {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp),
+        modifier = Modifier.padding(horizontal = 12.dp)) {
+      Text("STYRKEPASS", color = AccentBlue, fontSize = 9.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+      Text("REDO ATT STARTA", color = PrimaryText, fontSize = 11.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+      Text(workoutName, color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
+      Text(exerciseName, color = PrimaryText, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
+      Text(prescription, color = AccentBlue, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 1)
+      Text(instructions, color = SecondaryText, fontSize = 8.sp, textAlign = TextAlign.Center, maxLines = 3)
+      Text("Starta passet på mobilen", color = SecondaryText, fontSize = 9.sp, textAlign = TextAlign.Center)
     }
   }
 }

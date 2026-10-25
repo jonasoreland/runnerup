@@ -2,6 +2,7 @@ package org.runnerup.relven.ui;
 
 import android.content.Context;
 import java.util.List;
+import org.runnerup.relven.strength.StrengthSession;
 
 /** Keeps the settings UI honest in builds without the Wear OS Data Layer dependency. */
 public final class WearConnectionProvider {
@@ -50,6 +51,29 @@ public final class WearConnectionProvider {
     }
   }
 
+  public enum StrengthPreparationStatus {
+    PREPARED,
+    NO_WATCH,
+    TIMEOUT,
+    REJECTED,
+    PROTOCOL_MISMATCH,
+    TRANSPORT_ERROR,
+    UNSUPPORTED
+  }
+
+  public static final class StrengthPreparationResult {
+    public final StrengthPreparationStatus status;
+    public final String sessionId;
+    public final List<String> connectedNodes;
+
+    private StrengthPreparationResult(
+        StrengthPreparationStatus status, String sessionId, List<String> connectedNodes) {
+      this.status = status;
+      this.sessionId = sessionId;
+      this.connectedNodes = connectedNodes;
+    }
+  }
+
   public interface ConnectionTestCallback {
     void onResult(ConnectionTestResult result);
   }
@@ -62,6 +86,10 @@ public final class WearConnectionProvider {
     void onResult(WorkoutPreparationResult result);
 
     default void onHeartRateReadiness(HeartRateReadinessStatus status) {}
+  }
+
+  public interface StrengthPreparationCallback {
+    void onResult(StrengthPreparationResult result);
   }
 
   public enum HeartRateReadinessStatus {
@@ -101,6 +129,15 @@ public final class WearConnectionProvider {
       boolean skipSupported,
       WorkoutPreparationCallback callback) {
     callback.onResult(new WorkoutPreparationResult(PreparationStatus.UNSUPPORTED, sessionId, null));
+  }
+
+  public static void prepareStrengthSession(
+      Context context, StrengthSession session, StrengthPreparationCallback callback) {
+    callback.onResult(
+        new StrengthPreparationResult(
+            StrengthPreparationStatus.UNSUPPORTED,
+            session == null ? null : session.getExecutionId(),
+            null));
   }
 
   public static void cancelWorkoutPreparation(Context context, String sessionId) {}
