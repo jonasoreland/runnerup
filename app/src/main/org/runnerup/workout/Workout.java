@@ -46,6 +46,7 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
 
   private long lap = 0;
   private int currentStepNo = -1;
+  private String lastWatchSessionCommandId;
   private int workoutType = Constants.WORKOUT_TYPE.BASIC;
   private Step currentStep = null;
   private boolean paused = false;
@@ -605,12 +606,28 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
   public JSONObject toRuntimeCheckpoint() throws JSONException {
     JSONArray stepStates = new JSONArray();
     for (Step step : steps) stepStates.put(step.toRuntimeCheckpoint());
-    return new JSONObject()
-        .put("version", 1)
-        .put("currentStepNo", currentStepNo)
-        .put("lap", lap)
-        .put("paused", paused)
-        .put("steps", stepStates);
+    JSONObject checkpoint =
+        new JSONObject()
+            .put("version", 1)
+            .put("currentStepNo", currentStepNo)
+            .put("lap", lap)
+            .put("paused", paused)
+            .put("steps", stepStates);
+    if (lastWatchSessionCommandId != null) {
+      checkpoint.put("lastWatchSessionCommandId", lastWatchSessionCommandId);
+    }
+    return checkpoint;
+  }
+
+  public boolean hasAppliedWatchSessionCommand(String commandId) {
+    return commandId != null && commandId.equals(lastWatchSessionCommandId);
+  }
+
+  public void markWatchSessionCommandApplied(String commandId) {
+    if (commandId == null || commandId.isBlank() || commandId.length() > 128) {
+      throw new IllegalArgumentException("Invalid watch session command ID");
+    }
+    lastWatchSessionCommandId = commandId;
   }
 
   /** Marks a restored session as paused after a device reboot without emitting workout cues. */
@@ -637,6 +654,11 @@ public class Workout implements WorkoutComponent, WorkoutInfo {
       currentStepNo = savedStepNo;
       lap = savedLap;
       paused = state.getBoolean("paused");
+      String savedCommandId = state.optString("lastWatchSessionCommandId", null);
+      lastWatchSessionCommandId =
+          savedCommandId == null || savedCommandId.isBlank() || savedCommandId.length() > 128
+              ? null
+              : savedCommandId;
       setCurrentStep(steps.get(currentStepNo));
       return true;
     } catch (JSONException | IllegalArgumentException exception) {

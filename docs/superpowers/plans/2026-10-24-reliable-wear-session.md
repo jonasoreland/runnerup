@@ -77,13 +77,27 @@
 - [x] Prepare Wear HR using the existing sensor service and report genuine readiness.
 - [x] Remove the nonfunctional manual Start GPS controls and test readiness, accuracy, and route-persistence policies (current serial PR).
 
-### Task 5 — Durable disconnect recovery and results
+### Task 5 — Durable disconnect recovery and results (serial sub-PRs)
 
-- [ ] Persist accepted watch-authoritative session events locally on the watch with stable session/event IDs, sequence numbers and explicit authority; persist the phone projection without changing ownership.
-- [ ] Buffer watch events offline, replay idempotently, reject stale/conflicting commands, and provide deliberate ownership transfer only after acknowledgement.
-- [ ] Sync set/repetition results through the existing strength-performance system, preserving left/right and confirmation semantics.
-- [ ] Persist completion before adding one Health Connect outbox record; test no duplicate exports/history sessions.
-- [ ] Verify process restart/disconnect/reconnect and merge as the next single PR.
+#### Task 5A — Durable authority event journal (current PR)
+
+- [ ] Add a bounded, versioned journal keyed by stable session ID; validate authority, contiguous sequence, command ID and exact duplicate payload; persist events synchronously before projecting them.
+- [ ] Keep acknowledged events as the replayable state history, with an ordered unacknowledged suffix; ACK only the matching head and retry after reconnect without dropping events.
+- [ ] Restore the phone projection from the durable event history without changing WATCH authority; write the phone projection before acknowledging it.
+- [ ] Refuse session commands while disconnected because the current RunnerUp recording engine remains phone-owned; replay only commands already accepted by the authority before transport loss. Do not show a watch-side pause/finish as accepted while the phone continues recording.
+- [ ] Add tests for process recreation including pending-start deadline recovery, Tracker control reconciliation, persisted idempotency markers for LAP/SKIP, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
+
+#### Task 5B — Strength result synchronization
+
+- [ ] Define a bounded, stable-ID result message that preserves confirmed repetition/duration, left/right, timestamps and optional notes without treating prescription as performance.
+- [ ] Persist the watch and phone result outboxes before delivery; use exact result IDs to reject duplicates/conflicts and ACK only after the phone's existing `StrengthSessionStore` commits the result.
+- [ ] Reconcile after reconnect and preserve confirmed partial results when the session ends early; add protocol/store and existing strength history/export regression tests.
+
+#### Task 5C — Terminal persistence and Health Connect handoff
+
+- [ ] Ensure authoritative completion is durably represented before final phone activity/result persistence; retain retryable terminal state when phone persistence is unavailable.
+- [ ] Queue Health Connect only from the finalized phone record through the existing idempotent outbox; test repeat completion, retry and restart do not create duplicate history or exports.
+- [ ] Run combined phone/Wear tests, APK assemblies and lint; review and merge each sub-PR before starting the next, building both APKs from master after every merge.
 
 ### Task 6 — End-to-end emulator verification
 

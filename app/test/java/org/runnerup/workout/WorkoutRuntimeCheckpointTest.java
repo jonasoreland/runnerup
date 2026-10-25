@@ -161,6 +161,24 @@ public class WorkoutRuntimeCheckpointTest {
     assertEquals(30, restoredTrigger.getDouble("next"), 0.0);
   }
 
+  @Test
+  public void persistsWatchCommandIdWithTheWorkoutRuntimeCheckpoint() throws Exception {
+    String commandId = "fef77b0a-7012-4dd7-a374-cf7a1dd6f083";
+    Workout original = repeatedWorkout();
+    attachClock(original, new AtomicLong(0));
+    original.onInit(original);
+    original.onStart(Scope.ACTIVITY, original);
+    original.markWatchSessionCommandApplied(commandId);
+    JSONObject runtimeState = original.toRuntimeCheckpoint();
+
+    Workout restored = repeatedWorkout();
+    attachClock(restored, new AtomicLong(0));
+    restored.onInit(restored);
+
+    assertTrue(restored.restoreRuntimeCheckpoint(runtimeState));
+    assertTrue(restored.hasAppliedWatchSessionCommand(commandId));
+  }
+
   private static Workout buildBasicRun(Context context, SharedPreferences preferences) {
     Workout workout =
         WorkoutBuilder.createDefaultWorkout(context.getResources(), preferences, null);
