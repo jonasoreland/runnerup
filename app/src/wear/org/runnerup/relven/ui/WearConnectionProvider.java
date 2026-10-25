@@ -1,9 +1,11 @@
 package org.runnerup.relven.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import androidx.wear.remote.interactions.RemoteActivityHelper;
 import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
@@ -16,9 +18,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.PreparedWorkoutLaunchRoute;
 import org.runnerup.common.wear.GpsPreparationProtocol;
 import org.runnerup.common.wear.HeartRateReadinessAttempt;
 import org.runnerup.common.wear.HeartRateReadinessProtocol;
@@ -850,6 +855,7 @@ public final class WearConnectionProvider {
           if (result != WorkoutPreparationAttempt.Result.IGNORE) {
             finishPreparation(result, sessionId, names, handler, listenerRef[0], client, callback);
             if (result == WorkoutPreparationAttempt.Result.PREPARED) {
+              requestPreparedWorkoutUi(context, nodeId);
               queryHeartRateReadiness(context, nodeId, sessionId, callback::onHeartRateReadiness);
             }
           }
@@ -936,6 +942,48 @@ public final class WearConnectionProvider {
         break;
     }
     callback.onResult(new WorkoutPreparationResult(status, sessionId, names));
+  }
+
+  /**
+   * Requests a visible watch activity after the prepared-workout ACK; notification remains
+   * fallback.
+   */
+  private static void requestPreparedWorkoutUi(Context context, String nodeId) {
+    Handler handler = new Handler(Looper.getMainLooper());
+    Executor mainExecutor = command -> handler.post(command);
+    try {
+      Intent targetIntent =
+          new Intent(Intent.ACTION_VIEW, Uri.parse(PreparedWorkoutLaunchRoute.URI_STRING))
+              .addCategory(Intent.CATEGORY_BROWSABLE);
+      var launchRequest =
+          new RemoteActivityHelper(context.getApplicationContext(), mainExecutor)
+              .startRemoteActivity(targetIntent, nodeId);
+      launchRequest.addListener(
+          () -> {
+            try {
+              launchRequest.get();
+              android.util.Log.d(
+                  "WearConnection", "Prepared-workout remote launch request was sent");
+            } catch (InterruptedException interrupted) {
+              Thread.currentThread().interrupt();
+              android.util.Log.w(
+                  "WearConnection",
+                  "Prepared-workout launch did not complete; watch notification remains available",
+                  interrupted);
+            } catch (ExecutionException | RuntimeException failure) {
+              android.util.Log.w(
+                  "WearConnection",
+                  "Prepared-workout launch failed; watch notification remains available",
+                  failure);
+            }
+          },
+          mainExecutor);
+    } catch (RuntimeException failure) {
+      android.util.Log.w(
+          "WearConnection",
+          "Prepared-workout launch could not start; watch notification remains available",
+          failure);
+    }
   }
 
   private static void queryHeartRateReadiness(

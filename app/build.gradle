@@ -186,6 +186,7 @@ dependencies {
     latestImplementation "com.google.android.material:material:1.14.0"
     if (rootProject.ext.enableWear) {
         latestImplementation "com.google.android.gms:play-services-wearable:${rootProject.ext.googlePlayServicesWearableVersion}"
+        latestImplementation 'androidx.wear:wear-remote-interactions:1.2.0'
     }
 
     implementation "com.squareup.okhttp3:okhttp:5.5.1"

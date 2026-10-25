@@ -60,6 +60,7 @@
 - [x] Change selected-workout Start to preparation only; do not call `Tracker.start()` until an accepted start transition.
 - [x] Render watch preparation state with selected workout and truthful sensor/connection readiness; use supported visible continuation.
 - [x] Add transfer/lifecycle tests and merge as the next single PR after Task 1.
+- [ ] After a correlated `PREPARED` acknowledgement, request opening the watch UI with `RemoteActivityHelper` and a browsable Relven URI; preserve the prepared-workout notification as fallback, and treat request delivery as distinct from confirmed visible presentation (current PR).
 
 ### Task 3 — Shared start, countdown and controls
 

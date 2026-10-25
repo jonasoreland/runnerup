@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.util.PreparedWorkoutLaunchRoute;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.service.StateService;
 import org.runnerup.widget.MyDotsPageIndicator;
@@ -89,6 +90,26 @@ public class MainActivity extends ComponentActivity
     mGoogleApiClient = Wearable.getDataClient(this);
 
     requestPostNotificationsPermission();
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
+    if (!isPreparedWorkoutIntent(intent) || pager == null) return;
+
+    TrackerState state = getTrackerState();
+    if (state == TrackerState.INITIALIZED || state == TrackerState.CONNECTED) {
+      pager.setCurrentItem(RUN_INFO_ROW, 0, true);
+    }
+  }
+
+  private static boolean isPreparedWorkoutIntent(Intent intent) {
+    return intent != null
+        && PreparedWorkoutLaunchRoute.matches(
+            intent.getAction(),
+            intent.hasCategory(Intent.CATEGORY_BROWSABLE),
+            intent.getDataString());
   }
 
   /**
