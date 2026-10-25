@@ -9,6 +9,7 @@ public final class WearConnectionProvider {
   public enum HandshakeStatus {
     VERIFIED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     PROTOCOL_MISMATCH,
     TRANSPORT_ERROR,
@@ -31,6 +32,7 @@ public final class WearConnectionProvider {
   public enum PreparationStatus {
     PREPARED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     REJECTED,
     PROTOCOL_MISMATCH,
@@ -54,6 +56,7 @@ public final class WearConnectionProvider {
   public enum StrengthPreparationStatus {
     PREPARED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     REJECTED,
     PROTOCOL_MISMATCH,

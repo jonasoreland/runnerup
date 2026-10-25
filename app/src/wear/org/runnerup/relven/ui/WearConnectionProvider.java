@@ -4,15 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import com.google.android.gms.wearable.CapabilityClient;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
@@ -40,6 +43,7 @@ public final class WearConnectionProvider {
   public enum HandshakeStatus {
     VERIFIED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     PROTOCOL_MISMATCH,
     TRANSPORT_ERROR,
@@ -67,6 +71,7 @@ public final class WearConnectionProvider {
   public enum PreparationStatus {
     PREPARED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     REJECTED,
     PROTOCOL_MISMATCH,
@@ -90,6 +95,7 @@ public final class WearConnectionProvider {
   public enum StrengthPreparationStatus {
     PREPARED,
     NO_WATCH,
+    COMPANION_UNAVAILABLE,
     TIMEOUT,
     REJECTED,
     PROTOCOL_MISMATCH,
@@ -360,46 +366,94 @@ public final class WearConnectionProvider {
                       new ConnectionTestResult(HandshakeStatus.NO_WATCH, names, -1, null));
                   return;
                 }
-                WearHandshakeDiscovery.discover(
-                    new ArrayList<>(nodesById.keySet()),
-                    (nodeId, pingCallback) -> {
-                      Node candidate = nodesById.get(nodeId);
-                      if (candidate == null) {
-                        pingCallback.onResult(WearHandshakeDiscovery.Status.TRANSPORT_ERROR, -1L);
-                        return;
-                      }
-                      pingNode(
-                          appContext,
-                          candidate,
-                          names,
-                          result ->
-                              pingCallback.onResult(
-                                  WearHandshakeDiscovery.Status.valueOf(result.status.name()),
-                                  result.roundTripTimeMillis));
-                    },
-                    result -> {
-                      String verifiedNodeId =
-                          result.status == WearHandshakeDiscovery.Status.VERIFIED
-                              ? result.nodeId
-                              : null;
-                      if (verifiedNodeId != null) {
-                        appContext
-                            .getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
-                            .edit()
-                            .putString(TRUSTED_NODE_KEY, verifiedNodeId)
-                            .apply();
-                      }
-                      callback.onResult(
-                          new ConnectionTestResult(
-                              HandshakeStatus.valueOf(result.status.name()),
-                              names,
-                              result.roundTripTimeMillis,
-                              verifiedNodeId));
-                    });
+                Wearable.getCapabilityClient(appContext)
+                    .getCapability(
+                        Constants.Wear.Capability.RELVEN_WORKOUT_COMPANION,
+                        CapabilityClient.FILTER_REACHABLE)
+                    .addOnCompleteListener(
+                        capabilityTask -> {
+                          if (!capabilityTask.isSuccessful()
+                              || capabilityTask.getResult() == null) {
+                            callback.onResult(
+                                new ConnectionTestResult(
+                                    HandshakeStatus.TRANSPORT_ERROR, names, -1, null));
+                            return;
+                          }
+                          Set<String> advertisedNodeIds = new HashSet<>();
+                          for (Node companionNode : capabilityTask.getResult().getNodes()) {
+                            advertisedNodeIds.add(companionNode.getId());
+                          }
+                          List<String> companionNodeIds =
+                              selectRelvenCompanionNodeIds(
+                                  new ArrayList<>(nodesById.keySet()), advertisedNodeIds);
+                          if (companionNodeIds.isEmpty()) {
+                            callback.onResult(
+                                new ConnectionTestResult(
+                                    HandshakeStatus.COMPANION_UNAVAILABLE, names, -1, null));
+                            return;
+                          }
+                          discoverRelvenCompanion(
+                              appContext, names, nodesById, companionNodeIds, callback);
+                        });
               });
     } catch (RuntimeException exception) {
       callback.onResult(new ConnectionTestResult(HandshakeStatus.TRANSPORT_ERROR, null, -1, null));
     }
+  }
+
+  static List<String> selectRelvenCompanionNodeIds(
+      List<String> connectedNodeIds, Set<String> advertisedNodeIds) {
+    List<String> selected = new ArrayList<>();
+    Set<String> seen = new HashSet<>();
+    if (connectedNodeIds == null || advertisedNodeIds == null) return selected;
+    for (String nodeId : connectedNodeIds) {
+      if (nodeId != null && advertisedNodeIds.contains(nodeId) && seen.add(nodeId)) {
+        selected.add(nodeId);
+      }
+    }
+    return selected;
+  }
+
+  private static void discoverRelvenCompanion(
+      Context appContext,
+      List<String> names,
+      Map<String, Node> nodesById,
+      List<String> companionNodeIds,
+      ConnectionTestCallback callback) {
+    WearHandshakeDiscovery.discover(
+        companionNodeIds,
+        (nodeId, pingCallback) -> {
+          Node candidate = nodesById.get(nodeId);
+          if (candidate == null) {
+            pingCallback.onResult(WearHandshakeDiscovery.Status.TRANSPORT_ERROR, -1L);
+            return;
+          }
+          pingNode(
+              appContext,
+              candidate,
+              names,
+              result ->
+                  pingCallback.onResult(
+                      WearHandshakeDiscovery.Status.valueOf(result.status.name()),
+                      result.roundTripTimeMillis));
+        },
+        result -> {
+          String verifiedNodeId =
+              result.status == WearHandshakeDiscovery.Status.VERIFIED ? result.nodeId : null;
+          if (verifiedNodeId != null) {
+            appContext
+                .getSharedPreferences(TRUST_PREFERENCES, Context.MODE_PRIVATE)
+                .edit()
+                .putString(TRUSTED_NODE_KEY, verifiedNodeId)
+                .apply();
+          }
+          callback.onResult(
+              new ConnectionTestResult(
+                  HandshakeStatus.valueOf(result.status.name()),
+                  names,
+                  result.roundTripTimeMillis,
+                  verifiedNodeId));
+        });
   }
 
   private static void pingNode(
@@ -620,6 +674,8 @@ public final class WearConnectionProvider {
     switch (status) {
       case NO_WATCH:
         return StrengthPreparationStatus.NO_WATCH;
+      case COMPANION_UNAVAILABLE:
+        return StrengthPreparationStatus.COMPANION_UNAVAILABLE;
       case TIMEOUT:
         return StrengthPreparationStatus.TIMEOUT;
       case PROTOCOL_MISMATCH:
@@ -757,6 +813,8 @@ public final class WearConnectionProvider {
     switch (status) {
       case NO_WATCH:
         return PreparationStatus.NO_WATCH;
+      case COMPANION_UNAVAILABLE:
+        return PreparationStatus.COMPANION_UNAVAILABLE;
       case TIMEOUT:
         return PreparationStatus.TIMEOUT;
       case PROTOCOL_MISMATCH:

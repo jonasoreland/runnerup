@@ -291,6 +291,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
                 when (result.status) {
                   PreparationStatus.PREPARED -> "Klockan redo"
                   PreparationStatus.NO_WATCH -> "Ingen klocka ansluten · fortsätt på mobilen"
+                  PreparationStatus.COMPANION_UNAVAILABLE ->
+                    "Relven saknas på klockan · fortsätt på mobilen"
                   PreparationStatus.TIMEOUT -> "Klockan svarar inte · fortsätt på mobilen"
                   PreparationStatus.REJECTED -> "Klockan kunde inte läsa passet · fortsätt på mobilen"
                   PreparationStatus.PROTOCOL_MISMATCH ->

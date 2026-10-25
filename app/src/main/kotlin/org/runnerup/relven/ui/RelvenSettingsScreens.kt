@@ -39,6 +39,7 @@ internal enum class WearHandshakeState {
   Testing,
   Verified,
   NoWatch,
+  CompanionUnavailable,
   TimedOut,
   ProtocolMismatch,
   Failed,
@@ -62,6 +63,7 @@ internal fun wearHandshakeState(status: String?): WearHandshakeState = when (sta
   "PROTOCOL_MISMATCH" -> WearHandshakeState.ProtocolMismatch
   "UNSUPPORTED" -> WearHandshakeState.Unsupported
   "NO_WATCH" -> WearHandshakeState.NoWatch
+  "COMPANION_UNAVAILABLE" -> WearHandshakeState.CompanionUnavailable
   "TRANSPORT_ERROR" -> WearHandshakeState.Failed
   else -> WearHandshakeState.NotTested
 }
@@ -268,11 +270,12 @@ internal fun wearStateLabel(state: WearConnectionState): String = when (state) {
     "Wear OS-tjänsten svarade inte. Kontrollera att en kompatibel Wear OS-kompanjon är installerad och att Google Play-tjänster är uppdaterade."
 }
 
-private fun handshakeStateLabel(state: WearHandshakeState, roundTripMillis: Long?): String = when (state) {
+internal fun handshakeStateLabel(state: WearHandshakeState, roundTripMillis: Long?): String = when (state) {
   WearHandshakeState.NotTested -> "Relven-kontakt: inte testad"
   WearHandshakeState.Testing -> "Testar svar från Relven på klockan…"
   WearHandshakeState.Verified -> roundTripMillis?.let { "Relven svarar ($it ms)" } ?: "Relven svarar"
   WearHandshakeState.NoWatch -> "Ingen ansluten klocka att testa"
+  WearHandshakeState.CompanionUnavailable -> "Relven hittades inte på klockan · installera eller uppdatera appen"
   WearHandshakeState.TimedOut -> "Inget app-svar inom 5 sekunder"
   WearHandshakeState.ProtocolMismatch -> "Relven svarade, men protokollversionen stöds inte"
   WearHandshakeState.Failed -> "Anslutningstestet misslyckades"
