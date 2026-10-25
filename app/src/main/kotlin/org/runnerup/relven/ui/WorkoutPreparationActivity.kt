@@ -137,6 +137,17 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         cancelCountdown("Anslutningen till passmotorn försvann")
         return
       }
+      // Tracker setup can reset its current workout while its service finishes connecting.
+      // Reapply the explicit plan selection at the start boundary so Tracker.start() cannot
+      // fall back to a stale/default workout.
+      if (intent.getBooleanExtra(EXTRA_RESTORE_WORKOUT_FROM_INTENT, false)) {
+        selectedWorkoutAvailable = restoreSelectedWorkoutFromIntent(activeTracker)
+        if (!selectedWorkoutAvailable) {
+          updateTrackerState()
+          cancelCountdown("Det valda passet kunde inte läsas in")
+          return
+        }
+      }
       trackerStartIssued = true
       try {
         if (!activeTracker.startIfConnected()) {
@@ -150,6 +161,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         }
       } catch (error: RuntimeException) {
         trackerStartIssued = false
+        android.util.Log.e("WorkoutPreparation", "Tracker failed to start the prepared workout", error)
         cancelCountdown("Kunde inte starta passet")
         return
       }
@@ -172,12 +184,9 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
           tracker = (service as? Tracker.LocalBinder)?.service
           tracker?.let { activeTracker ->
-            if (restoreSelectedWorkout) {
-              restoreSelectedWorkout = false
-              selectedWorkoutAvailable = restoreSelectedWorkoutFromIntent(activeTracker)
-            }
-            connectTrackerForPreparation()
             activeTracker.setGpsReadinessListener { runOnUiThread(::updateGpsReadiness) }
+            activeTracker.registerTrackerStateListener(trackerStateListener)
+            connectTrackerForPreparation()
             if (state.value.phase != WorkoutPreparationPhase.PREPARING) {
               activeTracker.prepareWearWorkoutSession(
                   state.value.sessionId, state.value.watchReady)
@@ -185,7 +194,6 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             }
           }
           updateTrackerState()
-          tracker?.registerTrackerStateListener(trackerStateListener)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -210,6 +218,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
               trackerConnection.onTrackerReset()
               connectTrackerForPreparation()
             }
+            restoreSelectedWorkoutIfConnected()
             updateTrackerState()
           }
         }
@@ -329,8 +338,17 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
   }
 
   private fun updateTrackerState() {
+    restoreSelectedWorkoutIfConnected()
     trackerReady = tracker?.state == TrackerState.CONNECTED && selectedWorkoutAvailable
     updateGpsReadiness()
+  }
+
+  private fun restoreSelectedWorkoutIfConnected() {
+    val activeTracker = tracker ?: return
+    if (!WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+        restorePending = restoreSelectedWorkout, state = activeTracker.state)) return
+    selectedWorkoutAvailable = restoreSelectedWorkoutFromIntent(activeTracker)
+    restoreSelectedWorkout = false
   }
 
   private fun connectTrackerForPreparation() {

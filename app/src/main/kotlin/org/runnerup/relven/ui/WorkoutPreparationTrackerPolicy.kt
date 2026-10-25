@@ -11,6 +11,9 @@ internal object WorkoutPreparationTrackerPolicy {
 
   fun shouldRetryAfterCleanup(state: TrackerState): Boolean = state == TrackerState.INIT
 
+  fun shouldRestoreSelectedWorkout(restorePending: Boolean, state: TrackerState): Boolean =
+      restorePending && state == TrackerState.CONNECTED
+
   fun shouldInitiateConnection(connectionAttemptPending: Boolean, state: TrackerState): Boolean =
       !connectionAttemptPending && shouldConnect(state)
 

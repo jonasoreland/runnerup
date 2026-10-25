@@ -63,6 +63,25 @@ class WorkoutPreparationStateHolderTest {
   }
 
   @Test
+  fun selectedWorkoutIsRestoredOnlyAfterTrackerFinishesConnecting() {
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+            restorePending = true, TrackerState.INIT))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+            restorePending = true, TrackerState.CONNECTING))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+            restorePending = true, TrackerState.CLEANUP))
+    assertTrue(
+        WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+            restorePending = true, TrackerState.CONNECTED))
+    assertFalse(
+        WorkoutPreparationTrackerPolicy.shouldRestoreSelectedWorkout(
+            restorePending = false, TrackerState.CONNECTED))
+  }
+
+  @Test
   fun recreatedPreparationReconnectsWhenTrackerRestartedAfterProcessDeath() {
     assertTrue(
         WorkoutPreparationTrackerPolicy.shouldInitiateConnection(
