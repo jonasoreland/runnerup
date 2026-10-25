@@ -62,10 +62,16 @@ object WearControlsComposeContent {
       workoutName: String,
       upcomingStep: String,
       heartRateReadinessLabel: Int,
+      gpsReadinessLabel: String,
       state: WearControlPresentationState,
       startClick: Runnable) {
     view.setContent {
-      WearPreparedWorkoutScreen(workoutName, upcomingStep, heartRateReadinessLabel, state) { startClick.run() }
+      WearPreparedWorkoutScreen(
+          workoutName,
+          upcomingStep,
+          heartRateReadinessLabel,
+          gpsReadinessLabel,
+          state) { startClick.run() }
     }
   }
 
@@ -293,6 +299,7 @@ internal fun WearPreparedWorkoutScreen(
     workoutName: String,
     upcomingStep: String,
     heartRateReadinessLabel: Int,
+    gpsReadinessLabel: String,
     state: WearControlPresentationState,
     onStart: () -> Unit) {
   WearControlFrame {
@@ -304,6 +311,12 @@ internal fun WearPreparedWorkoutScreen(
       Text("Nästa: $upcomingStep", color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
       Text(
           stringResource(heartRateReadinessLabel),
+          color = SecondaryText,
+          fontSize = 9.sp,
+          textAlign = TextAlign.Center,
+          maxLines = 1)
+      Text(
+          gpsReadinessLabel,
           color = SecondaryText,
           fontSize = 9.sp,
           textAlign = TextAlign.Center,

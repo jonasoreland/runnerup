@@ -37,6 +37,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
   private var trackerReady by mutableStateOf(false)
   private var gpsReadiness by
       mutableStateOf(GpsPreparationUiState(GpsPreparationStatus.NOT_REQUIRED))
+  private val gpsReadinessPublisher = GpsReadinessPublisher()
   private var selectedWorkoutAvailable by mutableStateOf(true)
   private var transferStarted = false
   private var restoreSelectedWorkout = false
@@ -70,6 +71,8 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             if ((applied == org.runnerup.common.wear.WorkoutSessionProtocol.Result.ACCEPTED ||
                     applied == org.runnerup.common.wear.WorkoutSessionProtocol.Result.DUPLICATE) &&
                 state.acceptAuthoritativeCancel(command)) {
+              WearConnectionProvider.clearGpsReadiness(
+                  this@WorkoutPreparationActivity, state.value.sessionId)
               val shouldFinish = finishAfterCancel
               countdownHandler.removeCallbacksAndMessages(null)
               finishAfterCancel = false
@@ -150,6 +153,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         cancelCountdown("Kunde inte starta passet")
         return
       }
+      WearConnectionProvider.clearGpsReadiness(this@WorkoutPreparationActivity, state.value.sessionId)
       WearConnectionProvider.cancelWorkoutPreparation(this@WorkoutPreparationActivity, state.value.sessionId)
       runActivityLauncher.launch(Intent(this@WorkoutPreparationActivity, RunActivity::class.java))
     }
@@ -158,6 +162,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
   private val runActivityLauncher =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
+        WearConnectionProvider.clearGpsReadiness(this, state.value.sessionId)
         setResult(result.resultCode, result.data)
         finish()
       }
@@ -296,6 +301,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
                 }
             state.onWatchPreparationFinished(ready, status)
             tracker?.prepareWearWorkoutSession(sessionId, ready)
+            publishGpsReadinessIfReady()
             restoreCountdownIfNeeded()
           }
 
@@ -345,11 +351,13 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
               updatesActive = false,
               locationReceived = false,
               accuracyMeters = null)
+      publishGpsReadinessIfReady()
       return
     }
     val activeTracker = tracker
     if (activeTracker == null) {
       gpsReadiness = GpsPreparationUiState(GpsPreparationStatus.SEARCHING)
+      publishGpsReadinessIfReady()
       return
     }
     val accuracy = activeTracker.gpsAccuracyMeters.takeIf { it.isFinite() && it > 0f }
@@ -362,6 +370,24 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
             updatesActive = activeTracker.areGpsUpdatesActive(),
             locationReceived = activeTracker.hasGpsLocationFix(),
             accuracyMeters = accuracy)
+    publishGpsReadinessIfReady()
+  }
+
+  private fun publishGpsReadinessIfReady() {
+    if (!::state.isInitialized || !state.value.watchReady) return
+    val publication = gpsReadinessPublisher.next(gpsReadiness, SystemClock.elapsedRealtime()) ?: return
+    val payload =
+        try {
+          org.runnerup.common.wear.GpsPreparationProtocol.encode(
+              state.value.sessionId,
+              publication.revision,
+              publication.status,
+              publication.accuracyMeters)
+        } catch (invalid: java.io.IOException) {
+          android.util.Log.w("WorkoutPreparation", "Could not encode GPS readiness", invalid)
+          return
+        }
+    WearConnectionProvider.publishGpsReadiness(applicationContext, payload)
   }
 
   private fun startWorkout() {
@@ -422,6 +448,7 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
     }
     cancelCountdown("Passförberedelsen avbröts")
     WearConnectionProvider.cancelWorkoutPreparation(this, state.value.sessionId)
+    WearConnectionProvider.clearGpsReadiness(this, state.value.sessionId)
     resetPreparationTrackerIfOwned()
     finish()
   }

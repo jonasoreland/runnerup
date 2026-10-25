@@ -32,6 +32,7 @@ import org.runnerup.common.util.ValueModel;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
 import org.runnerup.hr.HeartRateReadiness;
 import org.runnerup.relven.strength.StrengthSession;
+import org.runnerup.service.PreparedGpsReadinessStore;
 import org.runnerup.service.PreparedStrengthSessionStore;
 import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
@@ -128,6 +129,8 @@ public class StartFragment extends Fragment
           prepared.getUpcomingStep(),
           org.runnerup.wear.ui.WearHeartRatePermissionPresentationKt.wearHeartRatePreparationLabel(
               HeartRateReadiness.inspect(activity)),
+          org.runnerup.wear.ui.WearGpsReadinessPresentation.INSTANCE.label(
+              new PreparedGpsReadinessStore(activity).load(prepared.getSessionId())),
           presentationState,
           () -> startPreparedWorkout(prepared.getSessionId()));
     } catch (java.io.IOException ignored) {
@@ -305,6 +308,7 @@ public class StartFragment extends Fragment
   @Override
   public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
     if ((PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key)
+            || PreparedGpsReadinessStore.READINESS_KEY.equals(key)
             || PreparedStrengthSessionStore.PREPARED_SESSION_KEY.equals(key)
             || WearStrengthExecutionStore.STATE_KEY.equals(key))
         && isAdded()) {

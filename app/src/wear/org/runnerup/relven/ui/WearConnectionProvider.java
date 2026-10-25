@@ -1,10 +1,13 @@
 package org.runnerup.relven.ui;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import com.google.android.gms.wearable.MessageClient;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.GpsPreparationProtocol;
 import org.runnerup.common.wear.HeartRateReadinessAttempt;
 import org.runnerup.common.wear.HeartRateReadinessProtocol;
 import org.runnerup.common.wear.StrengthExecutionProtocol;
@@ -141,6 +145,45 @@ public final class WearConnectionProvider {
   }
 
   private WearConnectionProvider() {}
+
+  /** Publishes the phone's current GPS preparation state for the already-prepared session. */
+  public static void publishGpsReadiness(Context context, byte[] encodedReadiness) {
+    final GpsPreparationProtocol.Readiness readiness;
+    try {
+      readiness = GpsPreparationProtocol.decode(encodedReadiness);
+    } catch (java.io.IOException invalid) {
+      android.util.Log.w("WearConnection", "Ignoring invalid GPS readiness", invalid);
+      return;
+    }
+    try {
+      PutDataMapRequest request =
+          PutDataMapRequest.create(GpsPreparationProtocol.dataItemPath(readiness.getSessionId()));
+      request.getDataMap().putByteArray(GpsPreparationProtocol.DATA_KEY, encodedReadiness);
+      Wearable.getDataClient(context.getApplicationContext())
+          .putDataItem(request.asPutDataRequest().setUrgent())
+          .addOnFailureListener(
+              error -> android.util.Log.w("WearConnection", "GPS readiness sync failed", error));
+    } catch (RuntimeException unavailable) {
+      android.util.Log.w("WearConnection", "GPS readiness sync unavailable", unavailable);
+    }
+  }
+
+  /** Removes the latest-value item only for the preparation that is ending. */
+  public static void clearGpsReadiness(Context context, String sessionId) {
+    try {
+      Uri uri =
+          new Uri.Builder()
+              .scheme(PutDataRequest.WEAR_URI_SCHEME)
+              .path(GpsPreparationProtocol.dataItemPath(sessionId))
+              .build();
+      Wearable.getDataClient(context.getApplicationContext())
+          .deleteDataItems(uri)
+          .addOnFailureListener(
+              error -> android.util.Log.w("WearConnection", "GPS readiness cleanup failed", error));
+    } catch (RuntimeException unavailable) {
+      android.util.Log.w("WearConnection", "GPS readiness cleanup unavailable", unavailable);
+    }
+  }
 
   public static boolean supportsStrengthResultSync() {
     return true;

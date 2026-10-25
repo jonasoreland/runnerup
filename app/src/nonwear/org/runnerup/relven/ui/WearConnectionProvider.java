@@ -102,6 +102,10 @@ public final class WearConnectionProvider {
 
   private WearConnectionProvider() {}
 
+  public static void publishGpsReadiness(Context context, byte[] encodedReadiness) {}
+
+  public static void clearGpsReadiness(Context context, String sessionId) {}
+
   public static boolean supportsStrengthResultSync() {
     return false;
   }

@@ -34,7 +34,10 @@ import androidx.wear.ongoing.Status;
 import androidx.wear.ongoing.Status.TextPart;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import java.io.IOException;
@@ -42,8 +45,10 @@ import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.GpsPreparationProtocol;
 import org.runnerup.common.wear.StrengthSessionAuthorityProtocol;
 import org.runnerup.common.wear.WearSessionProtocol;
+import org.runnerup.common.wear.WorkoutPreparationProtocol;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
@@ -89,6 +94,7 @@ public class ListenerService extends WearableListenerService {
           phoneNodeId = dataItem == null ? null : dataItem.getUri().getHost();
           processDeferredStrengthAuthorityCommand();
           retryPendingStrengthAuthorityProjection();
+          reconcileGpsReadiness();
           maybeShowNotification();
         });
     mGoogleApiClient.readData(
@@ -136,11 +142,15 @@ public class ListenerService extends WearableListenerService {
         continue;
       }
       boolean deleted = (type == DataEvent.TYPE_DELETED);
-      if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
+      if (path != null && path.startsWith(Constants.Wear.Path.GPS_READINESS_PREFIX + "/")) {
+        handleGpsReadinessDataItem(ev.getDataItem(), deleted);
+        continue;
+      } else if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         phoneRunning = !deleted;
         phoneNodeId = deleted ? null : ev.getDataItem().getUri().getHost();
         processDeferredStrengthAuthorityCommand();
         retryPendingStrengthAuthorityProjection();
+        reconcileGpsReadiness();
       } else if (Constants.Wear.Path.WEAR_APP.contentEquals(path)) {
         mainActivityRunning = !deleted;
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
@@ -194,10 +204,20 @@ public class ListenerService extends WearableListenerService {
       return;
     }
     if (Constants.Wear.Path.MSG_WORKOUT_CANCEL.equals(messageEvent.getPath())) {
+      String cancelledSessionId = null;
+      try {
+        cancelledSessionId =
+            WorkoutPreparationProtocol.decodeCancellation(messageEvent.getData()).getSessionId();
+      } catch (IOException malformed) {
+        Log.w(TAG, "Ignoring malformed workout cancellation", malformed);
+      }
       PreparedWorkoutReceiver receiver =
           new PreparedWorkoutReceiver(new PreparedWorkoutStore(this));
       if (receiver.cancel(messageEvent.getData())
           && new PreparedWorkoutStore(this).load() == null) {
+        if (cancelledSessionId != null) {
+          new PreparedGpsReadinessStore(this).clear(cancelledSessionId);
+        }
         NotificationManagerCompat.from(this).cancel(11);
       }
       return;
@@ -267,6 +287,10 @@ public class ListenerService extends WearableListenerService {
           org.runnerup.common.wear.WorkoutPreparationProtocol.decodeAcknowledgement(response);
       var preparation = org.runnerup.common.wear.WorkoutPreparationProtocol.decodePrepare(payload);
       if (acknowledgement.isAccepted()) notifyPreparedWorkout(preparation.getWorkoutName());
+      if (acknowledgement.isAccepted()) {
+        new PreparedGpsReadinessStore(this).clearForDifferentSession(preparation.getSessionId());
+        reconcileGpsReadiness();
+      }
     } catch (IOException impossibleAfterReceiverValidation) {
       Log.w(TAG, "Could not read stored workout preparation", impossibleAfterReceiverValidation);
     }
@@ -274,6 +298,55 @@ public class ListenerService extends WearableListenerService {
         .sendMessage(
             messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_WORKOUT_PREPARED, response)
         .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge prepared workout", error));
+  }
+
+  private void handleGpsReadinessDataItem(DataItem dataItem, boolean deleted) {
+    String sourceNodeId = dataItem.getUri().getHost();
+    if (phoneNodeId == null || !phoneNodeId.equals(sourceNodeId)) return;
+    String sessionId =
+        GpsPreparationProtocol.sessionIdFromDataItemPath(dataItem.getUri().getPath());
+    if (sessionId == null) return;
+    PreparedGpsReadinessStore store = new PreparedGpsReadinessStore(this);
+    if (deleted) {
+      store.clear(sessionId);
+      return;
+    }
+    try {
+      byte[] payload =
+          DataMapItem.fromDataItem(dataItem)
+              .getDataMap()
+              .getByteArray(GpsPreparationProtocol.DATA_KEY);
+      GpsPreparationProtocol.Readiness readiness = GpsPreparationProtocol.decode(payload);
+      if (!sessionId.equals(readiness.getSessionId())) return;
+      if (store.save(payload)) store.clearForDifferentSession(sessionId);
+    } catch (IOException | RuntimeException invalid) {
+      Log.w(TAG, "Ignoring invalid or unrelated GPS readiness", invalid);
+    }
+  }
+
+  /** Recovers the latest matching value when the Wear process or transport reconnects. */
+  private void reconcileGpsReadiness() {
+    if (phoneNodeId == null) return;
+    byte[] preparedPayload = new PreparedWorkoutStore(this).load();
+    if (preparedPayload == null) return;
+    try {
+      WorkoutPreparationProtocol.PrepareMessage prepared =
+          WorkoutPreparationProtocol.decodePrepare(preparedPayload);
+      android.net.Uri uri =
+          new android.net.Uri.Builder()
+              .scheme(PutDataRequest.WEAR_URI_SCHEME)
+              .path(GpsPreparationProtocol.dataItemPath(prepared.getSessionId()))
+              .build();
+      Wearable.getDataClient(this)
+          .getDataItem(uri)
+          .addOnSuccessListener(
+              item -> {
+                if (item != null) handleGpsReadinessDataItem(item, false);
+              })
+          .addOnFailureListener(error -> Log.w(TAG, "Unable to recover GPS readiness", error));
+    } catch (IOException | RuntimeException invalidPreparedWorkout) {
+      Log.w(TAG, "Cannot recover GPS readiness for an invalid workout", invalidPreparedWorkout);
+    }
   }
 
   private void processDeferredStrengthAuthorityCommand() {
