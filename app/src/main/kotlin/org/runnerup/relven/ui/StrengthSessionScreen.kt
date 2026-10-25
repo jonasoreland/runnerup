@@ -70,6 +70,7 @@ internal fun StrengthSessionScreen(
     onSkipPendingResult: () -> Unit,
     onSkipExercise: () -> Unit,
     onSkipRest: () -> Unit,
+    onBegin: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
     onFinish: () -> Unit,
@@ -214,6 +215,19 @@ internal fun StrengthSessionScreen(
                 color = RelvenColors.Orange,
                 fontWeight = FontWeight.SemiBold)
             when (session.phase) {
+              StrengthSession.Phase.PREPARING -> {
+                Text(
+                    "Redo att starta",
+                    color = RelvenColors.MutedText,
+                    fontSize = 16.sp)
+                Button(
+                    onClick = onBegin,
+                    enabled = !isSavingProgress,
+                    colors = ButtonDefaults.buttonColors(containerColor = RelvenColors.Orange),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                  Text("Starta pass")
+                }
+              }
               StrengthSession.Phase.REPETITIONS -> {
                 if (pendingResult != null) {
                   Text(
@@ -284,7 +298,8 @@ internal fun StrengthSessionScreen(
                   color = RelvenColors.MutedText)
             }
             if (session.phase != StrengthSession.Phase.PAUSED &&
-                session.phase != StrengthSession.Phase.AWAITING_RESULT) {
+                session.phase != StrengthSession.Phase.AWAITING_RESULT &&
+                session.phase != StrengthSession.Phase.PREPARING) {
               TextButton(
                   onClick = onSkipExercise,
                   enabled = !isSavingProgress,
@@ -299,7 +314,8 @@ internal fun StrengthSessionScreen(
           modifier = Modifier.fillMaxWidth(),
           horizontalArrangement = Arrangement.spacedBy(12.dp),
           verticalAlignment = Alignment.CenterVertically) {
-        if (session.phase != StrengthSession.Phase.PAUSED) {
+        if (session.phase != StrengthSession.Phase.PAUSED &&
+            session.phase != StrengthSession.Phase.PREPARING) {
           TextButton(onClick = onPause, enabled = !isSavingProgress, modifier = Modifier.weight(1f)) {
             Text(stringResource(R.string.Strength_session_pause))
           }
