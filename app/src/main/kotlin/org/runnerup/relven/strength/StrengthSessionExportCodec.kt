@@ -124,10 +124,10 @@ internal object StrengthSessionExportCodec {
               status = StrengthSession.SetResult.ResultStatus.valueOf(item.requiredText("status", 16)),
               exerciseCategory = item.optionalText("exerciseCategory"))
       require(result.setNumber in 1..exercise.sets()) { "Invalid set number" }
-      require(result.startedAtMillis == null || result.startedAtMillis <= finishedAtMillis) {
+      require(result.startedAtMillis?.let { it <= finishedAtMillis } != false) {
         "Set start occurs after session completion"
       }
-      require(result.completedAtMillis == null || result.completedAtMillis <= finishedAtMillis) {
+      require(result.completedAtMillis?.let { it <= finishedAtMillis } != false) {
         "Set completion occurs after session completion"
       }
       results += result

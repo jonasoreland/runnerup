@@ -6,7 +6,7 @@ import org.runnerup.workout.RelvenStrengthWorkoutParser
 import org.runnerup.common.wear.StrengthResultProtocol
 
 /** Immutable phone-side execution state for a validated strength or prehab workout. */
-internal data class StrengthSession(
+data class StrengthSession(
     val planId: String,
     val scheduledEntryId: String,
     val workout: RelvenStrengthWorkoutParser.Workout,
@@ -21,7 +21,7 @@ internal data class StrengthSession(
     val timerDeadlineElapsedRealtimeMillis: Long? = null,
     val timerAnchorElapsedRealtimeMillis: Long? = null,
     val timerClockObservedElapsedRealtimeMillis: Long? = null) {
-  enum class Phase { REPETITIONS, TIMED_WORK, REST, AWAITING_RESULT, PAUSED, COMPLETE }
+  enum class Phase { PREPARING, REPETITIONS, TIMED_WORK, REST, AWAITING_RESULT, PAUSED, COMPLETE }
 
   /** Identity and measured duration are retained until the user explicitly logs the timed result. */
   data class PendingSetResult(
@@ -68,6 +68,13 @@ internal data class StrengthSession(
 
   val isComplete: Boolean
     get() = phase == Phase.COMPLETE
+
+  /** Begins the first set only after the user accepts the prepared session. */
+  fun begin(nowElapsedRealtimeMillis: Long): StrengthSession {
+    check(phase == Phase.PREPARING) { "Session is not ready to begin" }
+    require(nowElapsedRealtimeMillis >= 0) { "Invalid monotonic time" }
+    return beginWork(0, 1, nowElapsedRealtimeMillis)
+  }
 
   /** Assigns deterministic transport identities to confirmed legacy/new results exactly once. */
   fun withStableResultIds(): StrengthSession {
@@ -571,7 +578,7 @@ internal data class StrengthSession(
     return ceil((deadline - nowElapsedRealtimeMillis).coerceAtLeast(0L) / 1_000.0).toInt()
   }
 
-  internal fun validateResult(result: SetResult, exercise: RelvenStrengthWorkoutParser.Exercise) {
+  fun validateResult(result: SetResult, exercise: RelvenStrengthWorkoutParser.Exercise) {
     require(result.status != SetResult.ResultStatus.COMPLETED ||
         result.repetitions != null || result.durationSeconds != null ||
         result.leftRepetitions != null || result.rightRepetitions != null) {
@@ -614,6 +621,28 @@ internal data class StrengthSession(
       values.sortedWith(compareBy(SetResult::exerciseIndex, SetResult::setNumber))
 
   companion object {
+    fun prepare(
+        planId: String,
+        scheduledEntryId: String,
+        workout: RelvenStrengthWorkoutParser.Workout,
+        nowElapsedRealtimeMillis: Long = 0L): StrengthSession {
+      require(planId.isNotBlank() && scheduledEntryId.isNotBlank()) { "Missing plan entry identity" }
+      require(workout.exercises().isNotEmpty()) { "Strength workout has no exercises" }
+      require(workout.exercises().sumOf { it.sets().toLong() } <= 100_000) { "Strength workout has too many sets" }
+      require(nowElapsedRealtimeMillis >= 0) { "Invalid monotonic time" }
+      return StrengthSession(
+          planId,
+          scheduledEntryId,
+          workout,
+          0,
+          1,
+          Phase.PREPARING,
+          0,
+          emptyList(),
+          executionId = UUID.randomUUID().toString(),
+          timerClockObservedElapsedRealtimeMillis = nowElapsedRealtimeMillis)
+    }
+
     fun start(
         planId: String,
         scheduledEntryId: String,

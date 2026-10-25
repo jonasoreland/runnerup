@@ -407,6 +407,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
                 updateStrengthSession { it.skipCurrentExercise(SystemClock.elapsedRealtime()) }
               },
               onSkipRest = { updateStrengthSession { it.skipRest(SystemClock.elapsedRealtime()) } },
+              onBegin = { updateStrengthSession { it.begin(SystemClock.elapsedRealtime()) } },
               onPause = { updateStrengthSession { it.pause(SystemClock.elapsedRealtime()) } },
               onResume = { updateStrengthSession { it.resume(SystemClock.elapsedRealtime()) } },
               onFinish = ::finishStrengthSession,
@@ -1646,7 +1647,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           strengthStoreMutex.withLock {
             val saved = StrengthSessionStore.loadInProgress(applicationContext)
             if (saved != null) saved
-            else StrengthSession.start(
+            else StrengthSession.prepare(
                 planId, entry.sessionId, workout, SystemClock.elapsedRealtime()).also {
               StrengthSessionStore.saveInProgress(applicationContext, it)
             }
@@ -1688,7 +1689,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
           strengthStoreMutex.withLock {
             val saved = StrengthSessionStore.loadInProgress(applicationContext)
             if (saved != null) saved
-            else StrengthSession.start(
+            else StrengthSession.prepare(
                 "quick-workout", UUID.randomUUID().toString(), workout, SystemClock.elapsedRealtime()).also {
               StrengthSessionStore.saveInProgress(applicationContext, it)
             }

@@ -97,6 +97,19 @@ class StrengthSessionHistoryStoreTest {
   }
 
   @Test
+  fun preparedSessionSurvivesStoreReopenWithoutStartingItsTimer() {
+    val prepared = StrengthSession.prepare("plan", "entry", workout, 10_000L)
+
+    StrengthSessionStore.saveInProgress(context, prepared)
+    val restored = StrengthSessionStore.loadInProgress(context)!!
+
+    assertEquals(StrengthSession.Phase.PREPARING, restored.phase)
+    assertEquals(null, restored.timerDeadlineElapsedRealtimeMillis)
+    assertEquals(0, restored.secondsRemaining)
+    assertEquals(prepared.executionId, restored.executionId)
+  }
+
+  @Test
   fun editingACompletedSetPersistsAtomicallyAndRejectsAStaleOverwrite() {
     val originalState = completeSession("scheduled", "run-1", 500)
     val original = CompletedStrengthSession(originalState, 500)

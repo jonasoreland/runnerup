@@ -114,8 +114,6 @@ private fun summarizeResults(results: List<StrengthSession.SetResult>): Measured
 }
 
 private fun knownRepetitionCount(result: StrengthSession.SetResult): Int? =
-    result.repetitions ?: if (result.leftRepetitions != null && result.rightRepetitions != null) {
-      result.leftRepetitions + result.rightRepetitions
-    } else {
-      null
+    result.repetitions ?: result.leftRepetitions?.let { left ->
+      result.rightRepetitions?.let { right -> left + right }
     }
