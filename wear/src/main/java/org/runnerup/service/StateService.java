@@ -37,6 +37,8 @@ import java.util.Objects;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.WorkoutSessionEventJournal;
+import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
@@ -65,6 +67,7 @@ public class StateService extends Service
   private static final int MAX_PROJECTION_ATTEMPTS = 8;
   private final ValueModel<Long> preparedCountdownDeadline = new ValueModel<>();
   private WorkoutSessionProtocol.ClockOffset watchClockOffset;
+  private WorkoutSessionEventJournalStore sessionEventStore;
   private long clockSampleReceivedAtWatchElapsedRealtimeMs = -1L;
   private String pendingClockRequestId;
   private long pendingClockRequestSentAtElapsedRealtimeMs = -1L;
@@ -77,6 +80,8 @@ public class StateService extends Service
   @Override
   public void onCreate() {
     super.onCreate();
+
+    sessionEventStore = new WorkoutSessionEventJournalStore(getApplicationContext());
 
     mDataClient = new WearableClient(getApplicationContext());
     mGoogleApiClient =
@@ -93,6 +98,7 @@ public class StateService extends Service
 
                     /* read already existing data */
                     readData(/* force= */ true);
+                    restorePendingSessionProjection();
                     retryPendingPhoneProjection();
                   }
 
@@ -506,19 +512,16 @@ public class StateService extends Service
     }
     workoutSessionId = sessionId;
     workoutCommandSequence = 0L;
-    workoutSessionState =
-        WorkoutSessionProtocol.SessionState.ready(sessionId, WorkoutSessionProtocol.Actor.WATCH);
-    lastCommittedSessionCommand = null;
-    pendingPhoneProjection = null;
+    restoreWatchSessionJournal(sessionId);
     pendingProjectionAttempts = 0;
     handler.removeCallbacks(pendingProjectionRetry);
     preparedCountdownDeadline.set(null);
     requestClockSync();
+    retryPendingPhoneProjection();
   }
 
   /** Commits the start on the watch, then projects the accepted event to the phone. */
   public boolean sendStart(String sessionId) {
-    if (checkConnection() != null) return false;
     if (!sessionId.equals(workoutSessionId)) setPreparedWorkoutSession(sessionId, false);
     long now = android.os.SystemClock.elapsedRealtime();
     return sendSessionCommand(
@@ -530,9 +533,11 @@ public class StateService extends Service
 
   public void sendPauseResume() {
     if (workoutSessionId != null) {
-      if (getTrackerState() == TrackerState.STARTED) {
+      if (workoutSessionState != null
+          && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.ACTIVE) {
         sendSessionCommand(WorkoutSessionProtocol.Action.PAUSE, 0L);
-      } else if (getTrackerState() == TrackerState.PAUSED) {
+      } else if (workoutSessionState != null
+          && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.PAUSED) {
         sendSessionCommand(WorkoutSessionProtocol.Action.RESUME, 0L);
       }
       return;
@@ -568,7 +573,10 @@ public class StateService extends Service
   }
 
   public void sendSkip() {
-    if (workoutSessionId != null && skipSupported && getTrackerState() == TrackerState.STARTED) {
+    if (workoutSessionId != null
+        && skipSupported
+        && workoutSessionState != null
+        && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.ACTIVE) {
       sendSessionCommand(WorkoutSessionProtocol.Action.SKIP, 0L);
     }
   }
@@ -578,12 +586,15 @@ public class StateService extends Service
   }
 
   public void sendFinish() {
-    if (getTrackerState() != TrackerState.STARTED && getTrackerState() != TrackerState.PAUSED)
-      return;
     if (workoutSessionId != null) {
+      if (workoutSessionState == null
+          || (workoutSessionState.getPhase() != WorkoutSessionProtocol.Phase.ACTIVE
+              && workoutSessionState.getPhase() != WorkoutSessionProtocol.Phase.PAUSED)) return;
       sendSessionCommand(WorkoutSessionProtocol.Action.FINISH, 0L);
       return;
     }
+    if (getTrackerState() != TrackerState.STARTED && getTrackerState() != TrackerState.PAUSED)
+      return;
     var msg = checkConnection();
     if (msg != null) {
       Log.d(TAG, "sendFinish => not connected: " + msg);
@@ -606,11 +617,10 @@ public class StateService extends Service
       long plannedStart,
       String commandId,
       long issuedAtElapsedRealtimeMs) {
-    var msg = checkConnection();
-    if (msg != null) {
-      Log.d(TAG, "sendSessionCommand => not connected: " + msg);
-      return false;
-    }
+    boolean connected = checkConnection() == null;
+    // RunnerUp on the phone is the recording engine. Until the watch can enact controls locally,
+    // do not show an offline pause/finish as accepted while the phone keeps recording.
+    if (!connected) return false;
     if (action == WorkoutSessionProtocol.Action.START
         && !hasFreshClockOffset(android.os.SystemClock.elapsedRealtime())) {
       requestClockSync();
@@ -634,6 +644,7 @@ public class StateService extends Service
           WorkoutSessionProtocol.applyAtAuthority(
               workoutSessionState, WorkoutSessionProtocol.Actor.WATCH, command);
       if (transition.getResult() != WorkoutSessionProtocol.Result.ACCEPTED) return false;
+      if (!persistWatchEvent(command)) return false;
       workoutSessionState = transition.getState();
       workoutCommandSequence = workoutSessionState.getLastSequence();
       lastCommittedSessionCommand = command;
@@ -703,6 +714,10 @@ public class StateService extends Service
       rejectPhoneSessionRequest(request);
       return;
     }
+    if (!persistWatchEvent(accepted)) {
+      rejectPhoneSessionRequest(request);
+      return;
+    }
     workoutSessionState = transition.getState();
     workoutCommandSequence = workoutSessionState.getLastSequence();
     lastCommittedSessionCommand = accepted;
@@ -732,13 +747,43 @@ public class StateService extends Service
   }
 
   private void sendAcceptedSessionProjection(WorkoutSessionProtocol.Command accepted) {
+    WorkoutSessionEventJournal journal = sessionEventStore.load(accepted.getSessionId());
+    if (journal == null || journal.pendingEvents().isEmpty()) return;
+    WorkoutSessionProtocol.Command firstPending = journal.pendingEvents().get(0);
     if (pendingPhoneProjection != null
-        && !pendingPhoneProjection.getCommandId().equals(accepted.getCommandId())) return;
-    if (pendingPhoneProjection == null) {
-      pendingPhoneProjection = accepted;
-      pendingProjectionAttempts = 0;
-    }
+        && !pendingPhoneProjection.getCommandId().equals(firstPending.getCommandId())) return;
+    if (pendingPhoneProjection == null) pendingProjectionAttempts = 0;
+    pendingPhoneProjection = firstPending;
     retryPendingPhoneProjection();
+  }
+
+  private boolean persistWatchEvent(WorkoutSessionProtocol.Command command) {
+    WorkoutSessionEventJournalStore.AppendResult result =
+        sessionEventStore.append(
+            command.getSessionId(), WorkoutSessionProtocol.Actor.WATCH, command);
+    return result == WorkoutSessionEventJournalStore.AppendResult.APPENDED
+        || result == WorkoutSessionEventJournalStore.AppendResult.DUPLICATE;
+  }
+
+  private void restoreWatchSessionJournal(String sessionId) {
+    WorkoutSessionEventJournal journal = sessionEventStore.load(sessionId);
+    if (journal == null || journal.getAuthority() != WorkoutSessionProtocol.Actor.WATCH) {
+      workoutSessionState =
+          WorkoutSessionProtocol.SessionState.ready(sessionId, WorkoutSessionProtocol.Actor.WATCH);
+      lastCommittedSessionCommand = null;
+      pendingPhoneProjection = null;
+      return;
+    }
+    workoutSessionState = journal.replayState();
+    workoutCommandSequence = journal.lastSequence();
+    lastCommittedSessionCommand =
+        journal.events().isEmpty() ? null : journal.events().get(journal.events().size() - 1);
+    pendingPhoneProjection =
+        journal.pendingEvents().isEmpty() ? null : journal.pendingEvents().get(0);
+  }
+
+  private void restorePendingSessionProjection() {
+    if (workoutSessionId != null) restoreWatchSessionJournal(workoutSessionId);
   }
 
   private void retryPendingPhoneProjection() {
@@ -792,14 +837,21 @@ public class StateService extends Service
           || !pending.getSessionId().equals(acknowledgement.getSessionId())
           || !pending.getCommandId().equals(acknowledgement.getCommandId())
           || pending.getSequence() != acknowledgement.getSequence()) return;
+      if (!sessionEventStore.acknowledge(
+          pending.getSessionId(), pending.getSequence(), pending.getCommandId())) return;
       handler.removeCallbacks(pendingProjectionRetry);
-      pendingPhoneProjection = null;
       pendingProjectionAttempts = 0;
       if (pending.getAction() == WorkoutSessionProtocol.Action.START) {
         preparedCountdownDeadline.set(pending.getPlannedStartElapsedRealtimeMs());
       } else if (pending.getAction() == WorkoutSessionProtocol.Action.CANCEL) {
         preparedCountdownDeadline.set(null);
       }
+      WorkoutSessionEventJournal journal = sessionEventStore.load(pending.getSessionId());
+      pendingPhoneProjection =
+          journal == null || journal.pendingEvents().isEmpty()
+              ? null
+              : journal.pendingEvents().get(0);
+      if (pendingPhoneProjection != null) retryPendingPhoneProjection();
     } catch (java.io.IOException malformed) {
       Log.w(TAG, "Ignoring malformed phone session acknowledgment", malformed);
     }

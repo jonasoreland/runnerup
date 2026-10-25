@@ -38,7 +38,10 @@ import java.util.List;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
+import org.runnerup.common.wear.WorkoutSessionEventJournal;
+import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
+import org.runnerup.common.wear.WorkoutSessionRecoveryPolicy;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
@@ -64,6 +67,7 @@ public class TrackerWear extends DefaultTrackerComponent
   public static final String NAME = "WEAR";
   private final Tracker tracker;
   private Context context;
+  private WorkoutSessionEventJournalStore sessionEventStore;
   private GoogleApiClient mGoogleApiClient;
   private WearableClient mWearableClient;
   private Formatter formatter;
@@ -185,6 +189,7 @@ public class TrackerWear extends DefaultTrackerComponent
   @Override
   public TrackerComponent.ResultCode onInit(final Callback callback, Context context) {
     this.context = context;
+    sessionEventStore = new WorkoutSessionEventJournalStore(context.getApplicationContext());
     if (!hasPlay()) {
       return ResultCode.RESULT_NOT_SUPPORTED;
     }
@@ -543,6 +548,24 @@ public class TrackerWear extends DefaultTrackerComponent
     }
     if (isAcceptedDuplicate(command)) {
       clearPendingPhoneSessionRequest(command);
+      if (command.getAction() == WorkoutSessionProtocol.Action.START) {
+        if (tracker.getState() == TrackerState.CONNECTED
+            && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.COUNTDOWN) {
+          scheduleWatchSessionStart(command);
+        } else if (tracker.getState() == TrackerState.STARTED
+            || tracker.getState() == TrackerState.PAUSED) {
+          // The persisted start is already reflected in the RunnerUp tracker.
+        } else {
+          return;
+        }
+        acknowledgeWatchSessionCommand(command);
+      } else {
+        if (WorkoutSessionRecoveryPolicy.shouldApplyControl(
+            command.getAction(), tracker.getState())) {
+          tracker.applyWatchSessionAction(command.getAction());
+        }
+        acknowledgeWatchSessionCommand(command);
+      }
       if (command.getAction() == WorkoutSessionProtocol.Action.START
           || command.getAction() == WorkoutSessionProtocol.Action.CANCEL) {
         try {
@@ -551,7 +574,6 @@ public class TrackerWear extends DefaultTrackerComponent
           Log.w(getName(), "Unable to relay duplicate preparation command", error);
         }
       }
-      acknowledgeWatchSessionCommand(command);
       return;
     }
     if (command.getAction() == WorkoutSessionProtocol.Action.START) {
@@ -904,12 +926,29 @@ public class TrackerWear extends DefaultTrackerComponent
       lastSessionCommandSequence = 0L;
       sessionStartAnnounced = false;
       lastAcceptedWatchCommand = null;
-      workoutSessionState =
-          WorkoutSessionProtocol.SessionState.ready(
-              sessionId,
-              watchReady ? WorkoutSessionProtocol.Actor.WATCH : WorkoutSessionProtocol.Actor.PHONE);
+      WorkoutSessionProtocol.Actor authority =
+          watchReady ? WorkoutSessionProtocol.Actor.WATCH : WorkoutSessionProtocol.Actor.PHONE;
+      WorkoutSessionEventJournal journal = sessionEventStore.load(sessionId);
+      if (journal != null && journal.getAuthority() == authority) {
+        workoutSessionState = journal.replayState();
+        lastSessionCommandSequence = journal.lastSequence();
+        if (!journal.events().isEmpty()) {
+          lastAcceptedWatchCommand = journal.events().get(journal.events().size() - 1);
+        }
+      } else {
+        workoutSessionState = WorkoutSessionProtocol.SessionState.ready(sessionId, authority);
+      }
+      scheduleRestoredWatchSessionStart(journal);
     }
     if (tracker.getState() == TrackerState.STARTED) announceSessionStarted();
+  }
+
+  private void scheduleRestoredWatchSessionStart(WorkoutSessionEventJournal journal) {
+    WorkoutSessionProtocol.Command start =
+        WorkoutSessionRecoveryPolicy.startToRecover(journal, tracker.getState());
+    if (start != null && workoutSessionState.getPhase() == WorkoutSessionProtocol.Phase.COUNTDOWN) {
+      scheduleWatchSessionStart(start);
+    }
   }
 
   public void resetWorkoutSession(String sessionId, boolean watchReady) {
@@ -936,6 +975,16 @@ public class TrackerWear extends DefaultTrackerComponent
             : WorkoutSessionProtocol.applyAtAuthority(
                 workoutSessionState, WorkoutSessionProtocol.Actor.PHONE, command);
     if (transition.getResult() == WorkoutSessionProtocol.Result.ACCEPTED) {
+      if (workoutSessionState.getAuthority() == WorkoutSessionProtocol.Actor.WATCH) {
+        WorkoutSessionEventJournalStore.AppendResult persisted =
+            sessionEventStore.append(
+                command.getSessionId(), WorkoutSessionProtocol.Actor.WATCH, command);
+        if (persisted != WorkoutSessionEventJournalStore.AppendResult.APPENDED
+            && persisted != WorkoutSessionEventJournalStore.AppendResult.DUPLICATE) {
+          Log.e(getName(), "Unable to persist watch-authoritative workout event");
+          return WorkoutSessionProtocol.Result.REJECTED;
+        }
+      }
       workoutSessionState = transition.getState();
       lastSessionCommandSequence = workoutSessionState.getLastSequence();
       if (workoutSessionState.getAuthority() == WorkoutSessionProtocol.Actor.WATCH) {
