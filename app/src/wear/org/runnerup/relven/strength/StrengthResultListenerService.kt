@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit
 import org.runnerup.common.util.Constants
 import org.runnerup.common.wear.StrengthResultOutboxStore
 import org.runnerup.common.wear.StrengthResultProtocol
+import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
 import org.runnerup.relven.ui.WearConnectionProvider
 
 /** Background phone endpoint for durable phone↔watch strength-result delivery. */
@@ -23,6 +24,7 @@ class StrengthResultListenerService : WearableListenerService() {
     worker.execute {
       if (isConnectedPeer(peer.id)) {
         WearConnectionProvider.sendPendingStrengthResult(applicationContext, peer.id)
+        WearConnectionProvider.sendPendingStrengthAuthorityCommand(applicationContext, null)
       }
     }
   }
@@ -35,11 +37,52 @@ class StrengthResultListenerService : WearableListenerService() {
         when (event.path) {
           Constants.Wear.Path.MSG_STRENGTH_RESULT -> receiveResult(event)
           Constants.Wear.Path.MSG_STRENGTH_RESULT_ACK -> receiveAcknowledgement(event)
+          Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_PROJECTION -> receiveStrengthProjection(event)
+          Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_RESPONSE -> receiveStrengthAuthorityResponse(event)
         }
       } catch (error: Exception) {
         Log.w(TAG, "Unable to process Wear strength result message", error)
       }
     }
+  }
+
+  private fun receiveStrengthProjection(event: MessageEvent) {
+    val projection = StrengthSessionAuthorityProtocol.decodeProjection(event.data)
+    val outcome =
+        StrengthSessionStore.applyAuthoritativeProjection(applicationContext, projection)
+    when (outcome) {
+      StrengthSessionStore.AuthorityProjectionApplyResult.COMMITTED,
+      StrengthSessionStore.AuthorityProjectionApplyResult.DUPLICATE -> {
+        if (outcome == StrengthSessionStore.AuthorityProjectionApplyResult.COMMITTED) {
+          sendBroadcast(
+              Intent(Constants.Intents.STRENGTH_RESULT_UPDATED)
+                  .setPackage(packageName)
+                  .putExtra(Constants.Intents.EXTRA_STRENGTH_EXECUTION_ID, projection.sessionId))
+        }
+        val ack =
+            StrengthSessionAuthorityProtocol.Acknowledgement(
+                projection.sessionId,
+                projection.requestId,
+                projection.revision,
+                if (outcome == StrengthSessionStore.AuthorityProjectionApplyResult.COMMITTED)
+                    StrengthSessionAuthorityProtocol.Outcome.COMMITTED
+                else StrengthSessionAuthorityProtocol.Outcome.DUPLICATE)
+        StrengthAuthorityCommandStore(applicationContext).acknowledge(projection.requestId)
+        Wearable.getMessageClient(applicationContext)
+            .sendMessage(
+                event.sourceNodeId,
+                Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_ACK,
+                StrengthSessionAuthorityProtocol.encodeAcknowledgement(ack))
+            .addOnFailureListener { error -> Log.w(TAG, "Strength projection ACK failed; watch will replay", error) }
+      }
+      else -> Log.w(TAG, "Rejected watch strength projection: $outcome")
+    }
+  }
+
+  private fun receiveStrengthAuthorityResponse(event: MessageEvent) {
+    val response = StrengthSessionAuthorityProtocol.decodeAcknowledgement(event.data)
+    StrengthAuthorityCommandStore(applicationContext).acknowledge(response.requestId)
+    Log.w(TAG, "Watch rejected strength command ${response.requestId}: ${response.outcome}")
   }
 
   private fun receiveResult(event: MessageEvent) {

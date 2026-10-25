@@ -53,10 +53,12 @@ object StrengthSessionCodec {
             .put("secondsRemaining", state.secondsRemaining)
             .put("results", results)
             .put("pendingResults", pendingResults)
+            .put("authorityRevision", state.authorityRevision)
     state.resumePhase?.let { root.put("resumePhase", it.name) }
     state.timerDeadlineElapsedRealtimeMillis?.let { root.put("timerDeadlineElapsedRealtimeMillis", it) }
     state.timerAnchorElapsedRealtimeMillis?.let { root.put("timerAnchorElapsedRealtimeMillis", it) }
     state.timerClockObservedElapsedRealtimeMillis?.let { root.put("timerClockObservedElapsedRealtimeMillis", it) }
+    state.lastAuthorityCommandId?.let { root.put("lastAuthorityCommandId", it) }
     finishedAtMillis?.let { root.put("finishedAtMillis", it) }
     return root.toString()
   }
@@ -69,7 +71,7 @@ object StrengthSessionCodec {
             "schemaVersion", "planId", "scheduledEntryId", "executionId", "workoutJson", "exerciseIndex",
             "setNumber", "phase", "secondsRemaining", "results", "resumePhase", "finishedAtMillis",
             "pendingResults", "timerDeadlineElapsedRealtimeMillis", "timerAnchorElapsedRealtimeMillis",
-            "timerClockObservedElapsedRealtimeMillis"))
+            "timerClockObservedElapsedRealtimeMillis", "authorityRevision", "lastAuthorityCommandId"))
     val version = root.optInt("schemaVersion", -1)
     require(version in 1..VERSION) { "Unknown strength session version" }
     val planId = root.getString("planId")
@@ -192,6 +194,17 @@ object StrengthSessionCodec {
     val timerDeadline = root.optionalLong("timerDeadlineElapsedRealtimeMillis")
     val timerAnchor = root.optionalLong("timerAnchorElapsedRealtimeMillis")
     val timerObserved = root.optionalLong("timerClockObservedElapsedRealtimeMillis")
+    val authorityRevision = if (version >= 5) root.getLong("authorityRevision") else 0L
+    val lastAuthorityCommandId = if (root.has("lastAuthorityCommandId")) root.getString("lastAuthorityCommandId") else null
+    require(authorityRevision >= 0L) { "Invalid strength authority revision" }
+    require((authorityRevision == 0L) == (lastAuthorityCommandId == null)) {
+      "Strength authority revision and command identity are inconsistent"
+    }
+    lastAuthorityCommandId?.let {
+      require(runCatching { java.util.UUID.fromString(it).toString() == it }.getOrDefault(false)) {
+        "Invalid strength authority command identity"
+      }
+    }
     val state =
         StrengthSession(
             planId,
@@ -207,7 +220,9 @@ object StrengthSessionCodec {
             pendingResults,
             timerDeadline,
             timerAnchor,
-            timerObserved)
+            timerObserved,
+            authorityRevision,
+            lastAuthorityCommandId)
     if (version >= 2) {
       results.forEach { result -> state.validateResult(result, workout.exercises()[result.exerciseIndex]) }
     }
@@ -265,5 +280,5 @@ object StrengthSessionCodec {
   private fun JSONObject.optionalLong(key: String): Long? = if (has(key)) getLong(key) else null
   private fun JSONObject.optionalDouble(key: String): Double? = if (has(key)) getDouble(key) else null
 
-  private const val VERSION = 4
+  private const val VERSION = 5
 }

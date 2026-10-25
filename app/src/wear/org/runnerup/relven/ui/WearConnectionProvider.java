@@ -117,6 +117,10 @@ public final class WearConnectionProvider {
     void onResult(StrengthPreparationResult result);
   }
 
+  public interface StrengthAuthorityCommandCallback {
+    void onResult(boolean transportAccepted);
+  }
+
   private interface HeartRateReadinessCallback {
     void onResult(HeartRateReadinessStatus status);
   }
@@ -179,6 +183,62 @@ public final class WearConnectionProvider {
             return;
           if (nodeId != null && !nodeId.equals(connection.verifiedNodeId)) return;
           sendStrengthResult(appContext, connection.verifiedNodeId, next);
+        });
+  }
+
+  /** Sends an idempotent phone request to the watch authority without mutating phone state. */
+  public static void requestStrengthAuthorityCommand(
+      Context context,
+      org.runnerup.common.wear.StrengthSessionAuthorityProtocol.Command command,
+      StrengthAuthorityCommandCallback callback) {
+    Context appContext = context.getApplicationContext();
+    if (!new org.runnerup.relven.strength.StrengthAuthorityCommandStore(appContext)
+        .enqueue(command)) {
+      callback.onResult(false);
+      return;
+    }
+    sendPendingStrengthAuthorityCommand(appContext, callback);
+  }
+
+  /** Retries the pending durable phone request with its original stable request ID. */
+  public static void sendPendingStrengthAuthorityCommand(
+      Context context, StrengthAuthorityCommandCallback callback) {
+    Context appContext = context.getApplicationContext();
+    org.runnerup.common.wear.StrengthSessionAuthorityProtocol.Command command =
+        new org.runnerup.relven.strength.StrengthAuthorityCommandStore(appContext).pending();
+    if (command == null) {
+      if (callback != null) callback.onResult(false);
+      return;
+    }
+    testConnection(
+        appContext,
+        connection -> {
+          if (connection.status != HandshakeStatus.VERIFIED || connection.verifiedNodeId == null) {
+            if (callback != null) callback.onResult(false);
+            return;
+          }
+          try {
+            Wearable.getMessageClient(appContext)
+                .sendMessage(
+                    connection.verifiedNodeId,
+                    Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_COMMAND,
+                    org.runnerup.common.wear.StrengthSessionAuthorityProtocol.encodeCommand(
+                        command))
+                .addOnSuccessListener(
+                    ignored -> {
+                      if (callback != null) callback.onResult(true);
+                    })
+                .addOnFailureListener(
+                    error -> {
+                      android.util.Log.w(
+                          "WearConnection", "Strength authority command delivery failed", error);
+                      if (callback != null) callback.onResult(false);
+                    });
+          } catch (RuntimeException error) {
+            android.util.Log.w(
+                "WearConnection", "Could not deliver strength authority command", error);
+            if (callback != null) callback.onResult(false);
+          }
         });
   }
 

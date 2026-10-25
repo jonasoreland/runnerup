@@ -284,6 +284,10 @@ public interface Constants {
       String MSG_STRENGTH_PREPARE = PREFIX + "/strength/prepare";
       String MSG_STRENGTH_PREPARED = PREFIX + "/strength/prepared";
       String MSG_STRENGTH_CANCEL = PREFIX + "/strength/cancel";
+      String MSG_STRENGTH_AUTHORITY_COMMAND = PREFIX + "/strength/authority/command";
+      String MSG_STRENGTH_AUTHORITY_PROJECTION = PREFIX + "/strength/authority/projection";
+      String MSG_STRENGTH_AUTHORITY_ACK = PREFIX + "/strength/authority/ack";
+      String MSG_STRENGTH_AUTHORITY_RESPONSE = PREFIX + "/strength/authority/response";
       String MSG_STRENGTH_RESULT = PREFIX + "/strength/result";
       String MSG_STRENGTH_RESULT_ACK = PREFIX + "/strength/result/ack";
 

@@ -23,6 +23,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -32,12 +35,14 @@ import androidx.wear.ongoing.Status.TextPart;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import java.io.IOException;
 import org.runnerup.BuildConfig;
 import org.runnerup.R;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.StrengthSessionAuthorityProtocol;
 import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
@@ -54,6 +59,17 @@ public class ListenerService extends WearableListenerService {
   private Boolean phoneRunning = null; // TrackerWear
   private Boolean mainActivityRunning = null;
   private Boolean phoneApp = null; // StartActivity
+  private String phoneNodeId;
+  private final DeferredStrengthAuthorityCommand deferredStrengthAuthorityCommand =
+      new DeferredStrengthAuthorityCommand();
+  private final Handler authorityRetryHandler = new Handler(Looper.getMainLooper());
+  private boolean authorityProjectionRetryScheduled;
+  private int authorityProjectionRetryAttempt;
+  private final Runnable authorityProjectionRetry =
+      () -> {
+        authorityProjectionRetryScheduled = false;
+        retryPendingStrengthAuthorityProjection();
+      };
 
   @Override
   public void onCreate() {
@@ -70,6 +86,9 @@ public class ListenerService extends WearableListenerService {
         Constants.Wear.Path.PHONE_NODE_ID,
         dataItem -> {
           phoneRunning = (dataItem != null);
+          phoneNodeId = dataItem == null ? null : dataItem.getUri().getHost();
+          processDeferredStrengthAuthorityCommand();
+          retryPendingStrengthAuthorityProjection();
           maybeShowNotification();
         });
     mGoogleApiClient.readData(
@@ -97,6 +116,7 @@ public class ListenerService extends WearableListenerService {
     if (mGoogleApiClient != null) {
       mGoogleApiClient = null;
     }
+    authorityRetryHandler.removeCallbacks(authorityProjectionRetry);
   }
 
   @Override
@@ -118,6 +138,9 @@ public class ListenerService extends WearableListenerService {
       boolean deleted = (type == DataEvent.TYPE_DELETED);
       if (Constants.Wear.Path.PHONE_NODE_ID.contentEquals(path)) {
         phoneRunning = !deleted;
+        phoneNodeId = deleted ? null : ev.getDataItem().getUri().getHost();
+        processDeferredStrengthAuthorityCommand();
+        retryPendingStrengthAuthorityProjection();
       } else if (Constants.Wear.Path.WEAR_APP.contentEquals(path)) {
         mainActivityRunning = !deleted;
       } else if (Constants.Wear.Path.TRACKER_STATE.contentEquals(path)) {
@@ -141,6 +164,23 @@ public class ListenerService extends WearableListenerService {
   @Override
   public void onMessageReceived(com.google.android.gms.wearable.MessageEvent messageEvent) {
     super.onMessageReceived(messageEvent);
+    if (Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_COMMAND.equals(messageEvent.getPath())) {
+      if (phoneNodeId == null) {
+        if (!deferredStrengthAuthorityCommand.defer(
+            messageEvent.getSourceNodeId(), messageEvent.getData())) {
+          Log.w(TAG, "Could not defer strength authority command while phone identity loads");
+        }
+      } else {
+        handleStrengthAuthorityCommand(messageEvent.getSourceNodeId(), messageEvent.getData());
+      }
+      return;
+    }
+    if (Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_ACK.equals(messageEvent.getPath())) {
+      if (phoneNodeId != null && phoneNodeId.equals(messageEvent.getSourceNodeId())) {
+        handleStrengthAuthorityAcknowledgement(messageEvent.getData());
+      }
+      return;
+    }
     if (Constants.Wear.Path.MSG_SESSION_PING.equals(messageEvent.getPath())) {
       try {
         byte[] response = WearSessionProtocol.respondToPing(messageEvent.getData());
@@ -188,6 +228,19 @@ public class ListenerService extends WearableListenerService {
           var saved =
               org.runnerup.relven.strength.StrengthSessionCodec.INSTANCE.decode(
                   preparation.getSessionJson());
+          if (!new WearStrengthExecutionStore(this).savePreparedSession(saved.getFirst())) {
+            response =
+                org.runnerup.common.wear.StrengthExecutionProtocol.encodeAcknowledgement(
+                    preparation.getSessionId(), preparation.getRequestId(), false);
+            Wearable.getMessageClient(this)
+                .sendMessage(
+                    messageEvent.getSourceNodeId(),
+                    Constants.Wear.Path.MSG_STRENGTH_PREPARED,
+                    response)
+                .addOnFailureListener(
+                    error -> Log.w(TAG, "Unable to reject strength preparation", error));
+            return;
+          }
           notifyPreparedStrengthSession(saved.getFirst().getWorkout().name());
         }
       } catch (IOException invalidStoredSession) {
@@ -221,6 +274,91 @@ public class ListenerService extends WearableListenerService {
         .sendMessage(
             messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_WORKOUT_PREPARED, response)
         .addOnFailureListener(error -> Log.w(TAG, "Unable to acknowledge prepared workout", error));
+  }
+
+  private void processDeferredStrengthAuthorityCommand() {
+    if (phoneNodeId == null) return;
+    DeferredStrengthAuthorityCommand.Pending pending =
+        deferredStrengthAuthorityCommand.takeFor(phoneNodeId);
+    if (pending != null) {
+      handleStrengthAuthorityCommand(pending.getSourceNodeId(), pending.getPayload());
+    }
+  }
+
+  private void handleStrengthAuthorityCommand(String sourceNodeId, byte[] payload) {
+    if (phoneNodeId == null || !phoneNodeId.equals(sourceNodeId)) return;
+    final StrengthSessionAuthorityProtocol.Command command;
+    try {
+      command = StrengthSessionAuthorityProtocol.decodeCommand(payload);
+    } catch (IllegalArgumentException malformed) {
+      Log.w(TAG, "Ignoring malformed strength authority command", malformed);
+      return;
+    }
+    WearStrengthExecutionStore store = new WearStrengthExecutionStore(this);
+    org.runnerup.relven.strength.StrengthSession current = store.load();
+    if (current == null || !current.getExecutionId().equals(command.getSessionId())) {
+      sendStrengthAuthorityResponse(
+          sourceNodeId,
+          new StrengthSessionAuthorityProtocol.Acknowledgement(
+              command.getSessionId(),
+              command.getRequestId(),
+              0L,
+              StrengthSessionAuthorityProtocol.Outcome.CONFLICT));
+      return;
+    }
+    StrengthSessionAuthorityProtocol.Transition transition =
+        StrengthSessionAuthorityProtocol.applyAtWatch(
+            current, command, SystemClock.elapsedRealtime());
+    if (transition.getOutcome() == StrengthSessionAuthorityProtocol.Outcome.COMMITTED) {
+      WearStrengthExecutionStore.CommitResult commit = store.commit(transition.getSession());
+      if (commit != WearStrengthExecutionStore.CommitResult.COMMITTED) {
+        sendStrengthAuthorityResponse(
+            sourceNodeId,
+            new StrengthSessionAuthorityProtocol.Acknowledgement(
+                command.getSessionId(),
+                command.getRequestId(),
+                current.getAuthorityRevision(),
+                StrengthSessionAuthorityProtocol.Outcome.CONFLICT));
+        return;
+      }
+    } else if (transition.getOutcome() != StrengthSessionAuthorityProtocol.Outcome.DUPLICATE) {
+      sendStrengthAuthorityResponse(
+          sourceNodeId,
+          new StrengthSessionAuthorityProtocol.Acknowledgement(
+              command.getSessionId(),
+              command.getRequestId(),
+              current.getAuthorityRevision(),
+              transition.getOutcome()));
+      return;
+    }
+    retryPendingStrengthAuthorityProjection();
+  }
+
+  private void handleStrengthAuthorityAcknowledgement(byte[] payload) {
+    try {
+      var acknowledgement = StrengthSessionAuthorityProtocol.decodeAcknowledgement(payload);
+      if (new WearStrengthExecutionStore(this).acknowledge(acknowledgement)) {
+        authorityRetryHandler.removeCallbacks(authorityProjectionRetry);
+        authorityProjectionRetryScheduled = false;
+        authorityProjectionRetryAttempt = 0;
+      }
+    } catch (RuntimeException invalid) {
+      Log.w(TAG, "Ignoring invalid strength authority acknowledgement", invalid);
+    }
+  }
+
+  private void sendStrengthAuthorityResponse(
+      String nodeId, StrengthSessionAuthorityProtocol.Acknowledgement acknowledgement) {
+    try {
+      Wearable.getMessageClient(this)
+          .sendMessage(
+              nodeId,
+              Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_RESPONSE,
+              StrengthSessionAuthorityProtocol.encodeAcknowledgement(acknowledgement))
+          .addOnFailureListener(error -> Log.w(TAG, "Strength rejection response failed", error));
+    } catch (RuntimeException error) {
+      Log.w(TAG, "Could not send strength authority response", error);
+    }
   }
 
   private void notifyPreparedWorkout(String workoutName) {
@@ -285,8 +423,32 @@ public class ListenerService extends WearableListenerService {
 
   @Override
   public void onPeerConnected(Node peer) {
+    super.onPeerConnected(peer);
     if (BuildConfig.DEBUG) {
       Log.i(TAG, "ListenerService.onPeerConnected: " + peer.getId());
+    }
+    if (phoneNodeId == null || !phoneNodeId.equals(peer.getId())) return;
+    retryPendingStrengthAuthorityProjection();
+  }
+
+  private void retryPendingStrengthAuthorityProjection() {
+    if (phoneNodeId == null) return;
+    byte[] pending = new WearStrengthExecutionStore(this).pendingProjection();
+    if (pending == null) {
+      authorityRetryHandler.removeCallbacks(authorityProjectionRetry);
+      authorityProjectionRetryScheduled = false;
+      authorityProjectionRetryAttempt = 0;
+      return;
+    }
+    Wearable.getMessageClient(this)
+        .sendMessage(phoneNodeId, Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_PROJECTION, pending)
+        .addOnFailureListener(error -> Log.w(TAG, "Strength projection replay failed", error));
+    if (!authorityProjectionRetryScheduled && authorityProjectionRetryAttempt < 3) {
+      long[] delaysMillis = {2_000L, 5_000L, 12_000L};
+      authorityProjectionRetryAttempt++;
+      authorityProjectionRetryScheduled = true;
+      authorityRetryHandler.postDelayed(
+          authorityProjectionRetry, delaysMillis[authorityProjectionRetryAttempt - 1]);
     }
   }
 

@@ -14,6 +14,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.runnerup.workout.RelvenStrengthWorkoutParser
 import org.runnerup.common.wear.StrengthResultProtocol
+import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
@@ -107,6 +108,50 @@ class StrengthSessionHistoryStoreTest {
     assertEquals(null, restored.timerDeadlineElapsedRealtimeMillis)
     assertEquals(0, restored.secondsRemaining)
     assertEquals(prepared.executionId, restored.executionId)
+  }
+
+  @Test
+  fun authoritativeWatchProjectionCommitsOnceAndRejectsStaleRevision() {
+    val prepared = StrengthSession.prepare("plan", "entry", workout, 10_000L)
+    StrengthSessionStore.saveInProgress(context, prepared)
+    val requestId = java.util.UUID.randomUUID().toString()
+    val projected = StrengthSessionAuthorityProtocol.applyAtWatch(
+        prepared,
+        StrengthSessionAuthorityProtocol.Command(
+            prepared.executionId,
+            requestId,
+            0L,
+            StrengthSessionAuthorityProtocol.Action.BEGIN),
+        11_000L).session
+    val projection = StrengthSessionAuthorityProtocol.decodeProjection(
+        StrengthSessionAuthorityProtocol.encodeProjection(projected, requestId, 11_500L))
+
+    assertEquals(
+        StrengthSessionStore.AuthorityProjectionApplyResult.COMMITTED,
+        StrengthSessionStore.applyAuthoritativeProjection(context, projection))
+    val restoredProjection = StrengthSessionStore.loadInProgress(context)!!
+    assertEquals(projected.phase, restoredProjection.phase)
+    assertEquals(projected.authorityRevision, restoredProjection.authorityRevision)
+    assertEquals(projected.lastAuthorityCommandId, restoredProjection.lastAuthorityCommandId)
+    assertEquals(
+        StrengthSessionStore.AuthorityProjectionApplyResult.DUPLICATE,
+        StrengthSessionStore.applyAuthoritativeProjection(context, projection))
+    val pauseId = java.util.UUID.randomUUID().toString()
+    val paused = StrengthSessionAuthorityProtocol.applyAtWatch(
+        projected,
+        StrengthSessionAuthorityProtocol.Command(
+            projected.executionId,
+            pauseId,
+            1L,
+            StrengthSessionAuthorityProtocol.Action.PAUSE),
+        12_000L).session
+    StrengthSessionStore.applyAuthoritativeProjection(
+        context,
+        StrengthSessionAuthorityProtocol.decodeProjection(
+            StrengthSessionAuthorityProtocol.encodeProjection(paused, pauseId, 12_500L)))
+    assertEquals(
+        StrengthSessionStore.AuthorityProjectionApplyResult.STALE,
+        StrengthSessionStore.applyAuthoritativeProjection(context, projection))
   }
 
   @Test

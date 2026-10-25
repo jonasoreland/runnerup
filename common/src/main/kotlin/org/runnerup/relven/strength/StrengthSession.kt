@@ -20,7 +20,9 @@ data class StrengthSession(
     val pendingResults: List<PendingSetResult> = emptyList(),
     val timerDeadlineElapsedRealtimeMillis: Long? = null,
     val timerAnchorElapsedRealtimeMillis: Long? = null,
-    val timerClockObservedElapsedRealtimeMillis: Long? = null) {
+    val timerClockObservedElapsedRealtimeMillis: Long? = null,
+    val authorityRevision: Long = 0L,
+    val lastAuthorityCommandId: String? = null) {
   enum class Phase { PREPARING, REPETITIONS, TIMED_WORK, REST, AWAITING_RESULT, PAUSED, COMPLETE }
 
   /** Identity and measured duration are retained until the user explicitly logs the timed result. */

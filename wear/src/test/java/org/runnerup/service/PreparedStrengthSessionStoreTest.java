@@ -37,7 +37,9 @@ public class PreparedStrengthSessionStoreTest {
             java.util.Collections.emptyList(),
             null,
             null,
-            1234L);
+            1234L,
+            0L,
+            null);
     byte[] conflict = prepare(conflictSession);
 
     assertTrue(store.save(first));

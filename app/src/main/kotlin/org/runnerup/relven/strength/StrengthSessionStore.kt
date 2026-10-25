@@ -2,12 +2,14 @@ package org.runnerup.relven.strength
 
 import android.content.Context
 import android.os.Build
+import android.os.SystemClock
 import android.system.Os
 import androidx.core.util.AtomicFile
 import org.json.JSONArray
 import org.json.JSONObject
 import org.runnerup.workout.RelvenStrengthWorkoutParser
 import org.runnerup.common.wear.StrengthResultProtocol
+import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -37,6 +39,67 @@ internal object StrengthSessionStore {
     CONFLICT,
     SESSION_MISSING,
     INVALID
+  }
+
+  internal enum class AuthorityProjectionApplyResult {
+    COMMITTED,
+    DUPLICATE,
+    STALE,
+    CONFLICT,
+    SESSION_MISSING,
+    INVALID
+  }
+
+  /** Persists a watch-authoritative control projection before its Data Layer acknowledgement. */
+  @Synchronized
+  @Throws(IOException::class)
+  fun applyAuthoritativeProjection(
+      context: Context,
+      projection: StrengthSessionAuthorityProtocol.Projection): AuthorityProjectionApplyResult {
+    val incoming = try {
+      StrengthSessionCodec.decode(projection.sessionJson).first
+    } catch (_: RuntimeException) {
+      return AuthorityProjectionApplyResult.INVALID
+    }
+    if (incoming.executionId != projection.sessionId ||
+        incoming.authorityRevision != projection.revision ||
+        incoming.lastAuthorityCommandId != projection.requestId ||
+        incoming.authorityRevision <= 0L) return AuthorityProjectionApplyResult.INVALID
+    val current = loadInProgress(context) ?: return AuthorityProjectionApplyResult.SESSION_MISSING
+    if (current.executionId != incoming.executionId) return AuthorityProjectionApplyResult.SESSION_MISSING
+    if (current.planId != incoming.planId || current.scheduledEntryId != incoming.scheduledEntryId ||
+        current.workout.sourceJson() != incoming.workout.sourceJson() ||
+        current.results != incoming.results || current.pendingResults != incoming.pendingResults) {
+      return AuthorityProjectionApplyResult.CONFLICT
+    }
+    if (incoming.authorityRevision == current.authorityRevision) {
+      val sameSnapshotIgnoringClock =
+          incoming == current.copy(
+              timerDeadlineElapsedRealtimeMillis = incoming.timerDeadlineElapsedRealtimeMillis,
+              timerAnchorElapsedRealtimeMillis = incoming.timerAnchorElapsedRealtimeMillis,
+              timerClockObservedElapsedRealtimeMillis = incoming.timerClockObservedElapsedRealtimeMillis)
+      return if (sameSnapshotIgnoringClock) AuthorityProjectionApplyResult.DUPLICATE
+      else AuthorityProjectionApplyResult.CONFLICT
+    }
+    if (incoming.authorityRevision < current.authorityRevision) return AuthorityProjectionApplyResult.STALE
+    if (current.authorityRevision == Long.MAX_VALUE || incoming.authorityRevision != current.authorityRevision + 1L) {
+      return AuthorityProjectionApplyResult.STALE
+    }
+    val receivedAt = SystemClock.elapsedRealtime()
+    val watchDeadline = incoming.timerDeadlineElapsedRealtimeMillis
+    val phoneClockProjection =
+        if (watchDeadline != null) {
+          val remainingMillis =
+              (watchDeadline - projection.projectedAtElapsedRealtimeMillis).coerceAtLeast(0L)
+          incoming.copy(
+              timerDeadlineElapsedRealtimeMillis = receivedAt + remainingMillis,
+              timerAnchorElapsedRealtimeMillis = receivedAt,
+              timerClockObservedElapsedRealtimeMillis = receivedAt)
+        } else {
+          incoming.copy(timerClockObservedElapsedRealtimeMillis = receivedAt)
+        }
+    saveInProgress(context, phoneClockProjection)
+    return AuthorityProjectionApplyResult.COMMITTED
   }
 
   @Synchronized

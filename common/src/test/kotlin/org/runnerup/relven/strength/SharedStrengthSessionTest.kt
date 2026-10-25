@@ -76,4 +76,17 @@ class SharedStrengthSessionTest {
     assertTrue(legacy.first.isComplete)
     assertNull(legacy.second)
   }
+
+  @Test
+  fun authorityRevisionAndCommandIdentitySurvivePersistence() {
+    val requestId = java.util.UUID.randomUUID().toString()
+    val session =
+        StrengthSession.prepare("plan", "entry", timedWorkout(), 10_000L)
+            .copy(authorityRevision = 7, lastAuthorityCommandId = requestId)
+
+    val restored = StrengthSessionCodec.decode(StrengthSessionCodec.encode(session, null)).first
+
+    assertEquals(7L, restored.authorityRevision)
+    assertEquals(requestId, restored.lastAuthorityCommandId)
+  }
 }
