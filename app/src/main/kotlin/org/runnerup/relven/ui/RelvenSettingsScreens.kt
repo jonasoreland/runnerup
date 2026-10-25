@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.runnerup.BuildConfig
 import org.runnerup.relven.settings.RelvenSettingsSnapshot
-import org.runnerup.view.AudioCueSettingsActivity
 import org.runnerup.view.HRSettingsActivity
 
 internal enum class WearConnectionState {
@@ -122,9 +121,6 @@ internal fun RelvenSettingsPageContent(
     SettingsPage.Voice -> SettingsCard {
       Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Röstinställningarna använder Relvens befintliga talmotor och sparade val.", color = RelvenColors.MutedText, lineHeight = 21.sp)
-        SettingsPrimaryButton("Öppna röstinställningar") {
-          context.startActivity(Intent(context, AudioCueSettingsActivity::class.java))
-        }
       }
     }
     SettingsPage.GpsSensors -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {

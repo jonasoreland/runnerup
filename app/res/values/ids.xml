@@ -2,4 +2,5 @@
 <resources>
     <item name="relven_start_fragment_container" type="id" />
     <item name="relven_start_fragment_controller" type="id" />
+    <item name="relven_audio_cue_settings_container" type="id" />
 </resources>

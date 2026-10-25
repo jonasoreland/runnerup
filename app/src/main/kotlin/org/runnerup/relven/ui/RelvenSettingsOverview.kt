@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentManager
 import org.runnerup.relven.health.HealthConnectSettingsSnapshot
 import org.runnerup.relven.health.HealthConnectSessionStatus
 import org.runnerup.relven.health.HealthConnectExportStatus
@@ -65,12 +66,16 @@ internal fun RelvenSettingsOverview(
     onRetryHealthConnectSession: (String) -> Unit,
     modifier: Modifier = Modifier,
     deviceState: RelvenSettingsDeviceState = RelvenSettingsDeviceState(),
-    pageActions: SettingsPageActions = SettingsPageActions()) {
+    pageActions: SettingsPageActions = SettingsPageActions(),
+    voiceSettingsFragmentManager: FragmentManager? = null) {
   BackHandler(enabled = route is SettingsRoute.Page) {
     onRouteChanged(SettingsRoute.Overview)
   }
+  val embeddedVoicePage = route == SettingsRoute.Page(SettingsPage.Voice) &&
+      voiceSettingsFragmentManager != null
   Column(
-      modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
+      modifier = if (embeddedVoicePage) modifier.fillMaxSize().padding(horizontal = 24.dp)
+          else modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
       verticalArrangement = Arrangement.spacedBy(16.dp)) {
     Spacer(Modifier.height(8.dp))
     when (route) {
@@ -99,42 +104,54 @@ internal fun RelvenSettingsOverview(
         }
       }
       is SettingsRoute.Page -> {
-        TextButton(onClick = { onRouteChanged(SettingsRoute.Overview) }) {
-          Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-          Text("Inställningar", modifier = Modifier.padding(start = 8.dp))
-        }
-        Text(route.page.title(), fontSize = 28.sp, fontWeight = FontWeight.Bold,
-            modifier = Modifier.semantics { heading() })
-        Text(route.page.intro(), color = RelvenColors.MutedText, lineHeight = 22.sp)
-        if (route.page == SettingsPage.HealthConnect) {
-          HealthConnectSettingsContent(
-              snapshot = healthConnect,
-              busy = healthConnectBusy,
-              message = healthConnectMessage,
-              onEnable = onEnableHealthConnectExport,
-              onDisable = onDisableHealthConnectExport,
-              onRequestPermissions = onRequestHealthConnectPermissions,
-              onManagePermissions = onManageHealthConnectPermissions,
-              onExportHistorical = onExportHistoricalWorkouts,
-              onSyncNow = onSyncHealthConnectNow,
-              onRefreshStatus = onRefreshHealthConnectStatus,
-              onRetry = onRetryHealthConnectSession)
+        if (route.page == SettingsPage.Voice && voiceSettingsFragmentManager != null) {
+          SettingsPageHeader(route.page, onRouteChanged)
+          AudioCueSettingsDestination(
+              fragmentManager = voiceSettingsFragmentManager,
+              modifier = Modifier.weight(1f).fillMaxWidth())
         } else {
-          RelvenSettingsPageContent(
-              page = route.page,
-              settings = settings,
-              deviceState = deviceState,
-              onKeepScreenOnChanged = onKeepScreenOnChanged,
-              onAutoStartGpsChanged = onAutoStartGpsChanged,
-              onAutoPauseChanged = onAutoPauseChanged,
-              onAutoLapChanged = onAutoLapChanged,
-              onAutoLapIntervalsChanged = onAutoLapIntervalsChanged,
-              actions = pageActions)
+          SettingsPageHeader(route.page, onRouteChanged)
+          if (route.page == SettingsPage.HealthConnect) {
+            HealthConnectSettingsContent(
+                snapshot = healthConnect,
+                busy = healthConnectBusy,
+                message = healthConnectMessage,
+                onEnable = onEnableHealthConnectExport,
+                onDisable = onDisableHealthConnectExport,
+                onRequestPermissions = onRequestHealthConnectPermissions,
+                onManagePermissions = onManageHealthConnectPermissions,
+                onExportHistorical = onExportHistoricalWorkouts,
+                onSyncNow = onSyncHealthConnectNow,
+                onRefreshStatus = onRefreshHealthConnectStatus,
+                onRetry = onRetryHealthConnectSession)
+          } else {
+            RelvenSettingsPageContent(
+                page = route.page,
+                settings = settings,
+                deviceState = deviceState,
+                onKeepScreenOnChanged = onKeepScreenOnChanged,
+                onAutoStartGpsChanged = onAutoStartGpsChanged,
+                onAutoPauseChanged = onAutoPauseChanged,
+                onAutoLapChanged = onAutoLapChanged,
+                onAutoLapIntervalsChanged = onAutoLapIntervalsChanged,
+                actions = pageActions)
+          }
         }
       }
     }
     Spacer(Modifier.height(8.dp))
   }
+}
+
+@Composable
+private fun SettingsPageHeader(page: SettingsPage, onRouteChanged: (SettingsRoute) -> Unit) {
+  TextButton(onClick = { onRouteChanged(SettingsRoute.Overview) }) {
+    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+    Text("Inställningar", modifier = Modifier.padding(start = 8.dp))
+  }
+  Text(page.title(), fontSize = 28.sp, fontWeight = FontWeight.Bold,
+      modifier = Modifier.semantics { heading() })
+  Text(page.intro(), color = RelvenColors.MutedText, lineHeight = 22.sp)
 }
 
 @Composable

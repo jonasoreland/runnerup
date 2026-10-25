@@ -28,3 +28,6 @@ internal sealed interface SettingsRoute {
 internal fun settingsRouteFromSaved(saved: String?): SettingsRoute =
     SettingsPage.entries.firstOrNull { it.name == saved }?.let(SettingsRoute::Page)
         ?: SettingsRoute.Overview
+
+internal fun voiceSettingsShortcutRoute(): SettingsRoute =
+    SettingsRoute.Page(SettingsPage.Voice)

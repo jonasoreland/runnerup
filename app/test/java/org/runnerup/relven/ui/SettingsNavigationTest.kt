@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -71,7 +72,7 @@ class SettingsNavigationTest {
         SettingsPage.Watch to "Ingen ansluten Wear OS-klocka hittades",
         SettingsPage.HealthConnect to "Anslutning",
         SettingsPage.Workout to "Automatisk paus",
-        SettingsPage.Voice to "Öppna röstinställningar",
+        SettingsPage.Voice to "Röstinställningarna använder Relvens befintliga talmotor",
         SettingsPage.GpsSensors to "Platstillstånd",
         SettingsPage.Appearance to "Relven använder mörkt tema",
         SettingsPage.LanguageUnits to "Kilometer",
@@ -96,6 +97,12 @@ class SettingsNavigationTest {
       }
       if (page == SettingsPage.GpsSensors) {
         composeRule.onNodeWithText("Behörighet för rörelsedata saknas", substring = true).fetchSemanticsNode()
+      }
+      if (page == SettingsPage.Voice) {
+        assertEquals(
+            "Voice settings are hosted in the central destination",
+            0,
+            composeRule.onAllNodesWithText("Öppna röstinställningar").fetchSemanticsNodes().size)
       }
     }
 

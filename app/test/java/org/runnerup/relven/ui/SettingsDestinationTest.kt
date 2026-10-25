@@ -41,6 +41,11 @@ class SettingsDestinationTest {
   }
 
   @Test
+  fun audioSettingsShortcutTargetsTheCentralVoiceDestination() {
+    assertEquals(SettingsRoute.Page(SettingsPage.Voice), voiceSettingsShortcutRoute())
+  }
+
+  @Test
   fun wearConnectionMappingDistinguishesDisconnectedUnsupportedAndFailedQueries() {
     assertEquals(WearConnectionState.Unavailable, wearConnectionState(false, false, null))
     assertEquals(WearConnectionState.ServiceUnavailable, wearConnectionState(true, false, null))

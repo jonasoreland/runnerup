@@ -91,6 +91,7 @@ import org.runnerup.relven.ui.GymExerciseDraft;
 import org.runnerup.relven.ui.GymExerciseOption;
 import org.runnerup.relven.ui.GymWorkoutDraftBuilder;
 import org.runnerup.relven.ui.GymWorkoutStarter;
+import org.runnerup.relven.ui.RelvenHomeActivity;
 import org.runnerup.relven.ui.StartReadinessItem;
 import org.runnerup.relven.ui.StartReadinessPresentation;
 import org.runnerup.relven.ui.StartReadinessPresentationFactory;
@@ -327,7 +328,12 @@ public class StartFragment extends Fragment implements TickListener, GpsInformat
 
               @Override
               public void onManageAudio(int tab) {
-                startActivity(new Intent(requireContext(), AudioCueSettingsActivity.class));
+                Activity activity = requireActivity();
+                if (activity instanceof RelvenHomeActivity) {
+                  ((RelvenHomeActivity) activity).openCentralVoiceSettings();
+                } else {
+                  startActivity(new Intent(activity, AudioCueSettingsActivity.class));
+                }
               }
 
               @Override

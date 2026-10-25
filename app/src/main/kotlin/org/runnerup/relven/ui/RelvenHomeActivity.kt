@@ -810,6 +810,11 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
     if (next == HomeDestination.History) loadActivityHistory()
   }
 
+  fun openCentralVoiceSettings() {
+    selectHomeDestination(HomeDestination.Settings)
+    settingsRoute = voiceSettingsShortcutRoute()
+  }
+
   private fun requestHealthConnectExport() {
     if (healthConnectSnapshot.availability != HealthConnectAvailabilityStatus.AVAILABLE) {
       healthConnectMessage = "Health Connect är inte tillgängligt på den här enheten."
@@ -2510,7 +2515,8 @@ private fun RelvenHome(
           onRefreshHealthConnectStatus = onRefreshHealthConnectStatus,
           onRetryHealthConnectSession = onRetryHealthConnectSession,
           deviceState = settingsDeviceState,
-          pageActions = settingsPageActions)
+          pageActions = settingsPageActions,
+          voiceSettingsFragmentManager = startFragmentManager)
     } else if (destination == HomeDestination.History) {
       ActivityHistoryScreen(
           loadState = activityHistoryState,
