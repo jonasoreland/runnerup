@@ -58,6 +58,8 @@ public class MainActivity extends ComponentActivity
   private DataClient mGoogleApiClient = null;
   private StateService mStateService;
   private final ValueModel<TrackerState> trackerState = new ValueModel<>();
+  private final ValueModel<org.runnerup.service.WearConnectionStatus> wearConnectionStatus =
+      new ValueModel<>(org.runnerup.service.WearConnectionStatus.CONNECTING);
   private final ValueModel<Bundle> headers = new ValueModel<>();
   private boolean pauseStep = false;
   private int scroll = 0;
@@ -185,6 +187,7 @@ public class MainActivity extends ComponentActivity
     if (mStateService != null) {
       mStateService.unregisterTrackerStateListener(this);
       mStateService.unregisterHeadersListener(this);
+      mStateService.getConnectionStatus().unregisterChangeListener(connectionStatusListener);
     }
     if (mIsBound) {
       getApplicationContext().unbindService(mStateServiceConnection);
@@ -343,10 +346,8 @@ public class MainActivity extends ComponentActivity
     if (mStateService != null) mStateService.retryConnection();
   }
 
-  public org.runnerup.service.WearConnectionStatus getWearConnectionStatus() {
-    return mStateService == null
-        ? org.runnerup.service.WearConnectionStatus.CONNECTING
-        : mStateService.getConnectionStatus().get();
+  public ValueModel<org.runnerup.service.WearConnectionStatus> getWearConnectionStatusModel() {
+    return wearConnectionStatus;
   }
 
   public void scrollToRunInfo() {
@@ -371,15 +372,25 @@ public class MainActivity extends ComponentActivity
             mStateService = ((StateService.LocalBinder) service).getService();
             mStateService.registerTrackerStateListener(MainActivity.this);
             mStateService.registerHeadersListener(MainActivity.this);
+            mStateService.getConnectionStatus().registerChangeListener(connectionStatusListener);
+            wearConnectionStatus.set(mStateService.getConnectionStatus().get());
             mStateService.readDataIfMissing();
           }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+          if (mStateService != null) {
+            mStateService.getConnectionStatus().unregisterChangeListener(connectionStatusListener);
+          }
           mStateService = null;
+          wearConnectionStatus.set(org.runnerup.service.WearConnectionStatus.DISCONNECTED);
         }
       };
+
+  private final ValueModel.ChangeListener<org.runnerup.service.WearConnectionStatus>
+      connectionStatusListener =
+          (instance, oldValue, newValue) -> runOnUiThread(() -> wearConnectionStatus.set(newValue));
 
   public TrackerState getTrackerState() {
     if (mStateService == null) return null;

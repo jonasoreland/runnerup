@@ -10,9 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.runnerup.common.tracker.TrackerState
+import org.runnerup.common.util.ValueModel
 import org.runnerup.service.WearConnectionStatus
 
 private val ScreenBackground = Color(0xFF03050B)
@@ -40,7 +47,7 @@ object WearConnectWaitingComposeContent {
       workoutName: String? = null,
       upcomingStep: String? = null,
       trackerState: TrackerState? = null,
-      connectionStatus: WearConnectionStatus = WearConnectionStatus.CONNECTING,
+      connectionStatus: ValueModel<WearConnectionStatus>? = null,
       onRetry: Runnable = Runnable {}
   ) {
     view.setContent {
@@ -60,11 +67,11 @@ internal fun preparedWorkoutConnectionStatus(trackerState: TrackerState?): Strin
       else -> "Väntar på telefonen · sensorer ej kontrollerade"
     }
 
-internal fun wearTransportStatusLabel(status: WearConnectionStatus): String =
+internal fun wearTransportStatusResourceId(status: WearConnectionStatus): Int =
     when (status) {
-      WearConnectionStatus.CONNECTING -> "Ansluter till telefonen"
-      WearConnectionStatus.CONNECTED -> "Data Layer ansluten · Relven-kontroll ej testad"
-      WearConnectionStatus.DISCONNECTED -> "Telefonens Data Layer frånkopplad"
+      WearConnectionStatus.CONNECTING -> org.runnerup.common.R.string.Wear_connection_connecting
+      WearConnectionStatus.CONNECTED -> org.runnerup.common.R.string.Wear_connection_connected
+      WearConnectionStatus.DISCONNECTED -> org.runnerup.common.R.string.Wear_connection_disconnected
     }
 
 internal fun isCompactWearConnectLayout(widthDp: Float, heightDp: Float): Boolean =
@@ -75,9 +82,22 @@ internal fun WearConnectWaitingScreen(
     workoutName: String?,
     upcomingStep: String?,
     trackerState: TrackerState? = null,
-    connectionStatus: WearConnectionStatus = WearConnectionStatus.CONNECTING,
+    connectionStatus: ValueModel<WearConnectionStatus>? = null,
     onRetry: () -> Unit = {}
 ) {
+  var transportStatus by
+      remember(connectionStatus) {
+        mutableStateOf(connectionStatus?.get() ?: WearConnectionStatus.CONNECTING)
+      }
+  DisposableEffect(connectionStatus) {
+    val listener =
+        ValueModel.ChangeListener<WearConnectionStatus> { _, _, newValue ->
+          transportStatus = newValue ?: WearConnectionStatus.DISCONNECTED
+        }
+    connectionStatus?.registerChangeListener(listener)
+    transportStatus = connectionStatus?.get() ?: WearConnectionStatus.CONNECTING
+    onDispose { connectionStatus?.unregisterChangeListener(listener) }
+  }
   Box(
       modifier = Modifier.fillMaxSize().clip(CircleShape).background(ScreenBackground),
       contentAlignment = Alignment.Center) {
@@ -111,7 +131,7 @@ internal fun WearConnectWaitingScreen(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis)
         Text(
-            text = wearTransportStatusLabel(connectionStatus),
+            text = stringResource(wearTransportStatusResourceId(transportStatus)),
             modifier = Modifier.padding(top = if (compact) 3.dp else 5.dp),
             color = SecondaryText,
             fontSize = if (compact) 7.sp else 9.sp,
@@ -155,9 +175,12 @@ internal fun WearConnectWaitingScreen(
         }
         Button(
             onClick = onRetry,
-            modifier = Modifier.padding(top = if (compact) 5.dp else 8.dp)) {
+            modifier = Modifier.padding(top = if (compact) 5.dp else 8.dp),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = AccentBlue, contentColor = ScreenBackground)) {
           Text(
-              text = "FÖRSÖK IGEN",
+              text = stringResource(org.runnerup.common.R.string.Wear_retry_connection),
               fontSize = if (compact) 8.sp else 10.sp,
               maxLines = 1,
               overflow = TextOverflow.Clip)

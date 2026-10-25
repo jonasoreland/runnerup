@@ -281,3 +281,8 @@
 ## Later phases
 
 See [roadmap](roadmap.md) and [feature parity](feature-parity.md). Do not use the owner's phone via ADB again until all phases are complete and the app is ready for manual testing.
+
+## Wear phone-peer readiness
+
+- **Current increment:** Wear transport status is `CONNECTED` only when Google Play services reports a connected phone node (matching the known phone node when available). A connected Wearable API client without a phone peer remains connecting/disconnected and follows the bounded retry policy. The waiting screen observes status changes while visible and uses localized retry/status labels with Relven's blue action styling.
+- **Verification:** Peer matching/status tests and Wear waiting-state resource mapping tests pass. An isolated Wear OS emulator shows the disconnected/waiting state and retry control. This verifies local rendering only; phone-to-watch application messaging and workout handoff are not verified because the phone emulator lacks the Wear companion setup. Physical devices were not used.

@@ -32,6 +32,8 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
 import java.util.Objects;
 import org.runnerup.common.tracker.TrackerState;
@@ -89,6 +91,7 @@ public class StateService extends Service
   private final ValueModel<WearConnectionStatus> connectionStatus =
       new ValueModel<>(WearConnectionStatus.CONNECTING);
   private int connectionFailureCount;
+  private long phonePeerQueryGeneration;
   private boolean serviceDestroyed;
   private final Runnable connectionRetry = this::retryAfterDelay;
   private MainActivity headersListener;
@@ -110,7 +113,7 @@ public class StateService extends Service
                   public void onConnected(Bundle connectionHint) {
                     connectionFailureCount = 0;
                     handler.removeCallbacks(connectionRetry);
-                    connectionStatus.set(WearConnectionStatus.CONNECTED);
+                    connectionStatus.set(WearConnectionStatus.CONNECTING);
                     /* set "our" data */
                     setData();
 
@@ -119,6 +122,7 @@ public class StateService extends Service
 
                     /* read already existing data */
                     readData(/* force= */ true);
+                    refreshPhonePeerStatus();
                     restorePendingSessionProjection();
                     retryPendingPhoneProjection();
                     retryPendingStrengthResult();
@@ -168,8 +172,9 @@ public class StateService extends Service
     if (serviceDestroyed || mGoogleApiClient == null) return;
     handler.removeCallbacks(connectionRetry);
     if (mGoogleApiClient.isConnected()) {
-      connectionStatus.set(WearConnectionStatus.CONNECTED);
+      connectionStatus.set(WearConnectionStatus.CONNECTING);
       readData(/* force= */ true);
+      refreshPhonePeerStatus();
       restorePendingSessionProjection();
       retryPendingPhoneProjection();
       retryPendingStrengthResult();
@@ -192,8 +197,9 @@ public class StateService extends Service
   private void retryAfterDelay() {
     if (serviceDestroyed || mGoogleApiClient == null) return;
     if (mGoogleApiClient.isConnected()) {
-      connectionStatus.set(WearConnectionStatus.CONNECTED);
+      connectionStatus.set(WearConnectionStatus.CONNECTING);
       readData(/* force= */ true);
+      refreshPhonePeerStatus();
       return;
     }
     if (!WearConnectionRetryPolicy.shouldRetry(
@@ -203,6 +209,49 @@ public class StateService extends Service
     }
     connectionStatus.set(WearConnectionStatus.CONNECTING);
     mGoogleApiClient.connect();
+  }
+
+  private void refreshPhonePeerStatus() {
+    long queryGeneration = ++phonePeerQueryGeneration;
+    if (serviceDestroyed || mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+      connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+      return;
+    }
+    connectionStatus.set(WearConnectionStatus.CONNECTING);
+    try {
+      NodeClient nodeClient = Wearable.getNodeClient(getApplicationContext());
+      nodeClient
+          .getConnectedNodes()
+          .addOnCompleteListener(
+              task -> {
+                if (serviceDestroyed || queryGeneration != phonePeerQueryGeneration) return;
+                if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()) {
+                  connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+                  scheduleConnectionRetry();
+                  return;
+                }
+                if (!task.isSuccessful() || task.getResult() == null) {
+                  connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+                  scheduleConnectionRetry();
+                  return;
+                }
+                java.util.List<String> connectedNodeIds = new java.util.ArrayList<>();
+                for (Node node : task.getResult()) connectedNodeIds.add(node.getId());
+                boolean peerConnected =
+                    WearPeerAvailability.isPhonePeerConnected(phoneNode, connectedNodeIds);
+                connectionStatus.set(WearPeerAvailability.status(true, peerConnected));
+                if (peerConnected) {
+                  connectionFailureCount = 0;
+                  handler.removeCallbacks(connectionRetry);
+                } else {
+                  scheduleConnectionRetry();
+                }
+              });
+    } catch (RuntimeException error) {
+      Log.w(TAG, "Unable to check connected phone peer", error);
+      connectionStatus.set(WearConnectionStatus.DISCONNECTED);
+      scheduleConnectionRetry();
+    }
   }
 
   public void readDataIfMissing() {
@@ -218,7 +267,10 @@ public class StateService extends Service
               phoneNode = dataItem.getUri().getHost();
               Log.d(TAG, "getDataItem => phoneNode:" + phoneNode);
               requestClockSync();
+            } else {
+              phoneNode = null;
             }
+            refreshPhonePeerStatus();
           });
     }
     if (force || trackerState.get() == null) {
@@ -598,6 +650,7 @@ public class StateService extends Service
       retryPendingStrengthResult();
       publishStrengthAuthorityProjection();
       readDataIfMissing();
+      refreshPhonePeerStatus();
     } else if (ev.getType() == DataEvent.TYPE_DELETED) {
       Log.d(TAG, "onDataChanged: " + ev.getDataItem().getUri() + ", phoneNode=null");
       phoneNode = null;
@@ -609,6 +662,7 @@ public class StateService extends Service
       clockRequestTimeout = null;
       preparedCountdownDeadline.set(null);
       resetState();
+      refreshPhonePeerStatus();
     }
   }
 

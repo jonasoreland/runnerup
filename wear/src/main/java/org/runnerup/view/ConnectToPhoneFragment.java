@@ -65,10 +65,12 @@ public final class ConnectToPhoneFragment extends Fragment
         getActivity() instanceof MainActivity
             ? ((MainActivity) getActivity()).getTrackerState()
             : null;
-    org.runnerup.service.WearConnectionStatus connectionStatus =
-        getActivity() instanceof MainActivity
-            ? ((MainActivity) getActivity()).getWearConnectionStatus()
-            : org.runnerup.service.WearConnectionStatus.DISCONNECTED;
+    org.runnerup.common.util.ValueModel<org.runnerup.service.WearConnectionStatus>
+        connectionStatus =
+            getActivity() instanceof MainActivity
+                ? ((MainActivity) getActivity()).getWearConnectionStatusModel()
+                : new org.runnerup.common.util.ValueModel<>(
+                    org.runnerup.service.WearConnectionStatus.DISCONNECTED);
     WearConnectWaitingComposeContent.bind(
         composeView,
         workoutName,

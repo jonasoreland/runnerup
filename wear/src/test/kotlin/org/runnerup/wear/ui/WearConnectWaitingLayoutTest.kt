@@ -15,13 +15,15 @@ class WearConnectWaitingLayoutTest {
   }
 
   @Test
-  fun transportStatusDoesNotClaimThatTheRelvenHandshakeWasVerified() {
-    assertEquals("Ansluter till telefonen", wearTransportStatusLabel(WearConnectionStatus.CONNECTING))
+  fun transportStatesUseLocalizedCopyThatDistinguishesTheAppHandshake() {
     assertEquals(
-        "Data Layer ansluten · Relven-kontroll ej testad",
-        wearTransportStatusLabel(WearConnectionStatus.CONNECTED))
+        org.runnerup.common.R.string.Wear_connection_connecting,
+        wearTransportStatusResourceId(WearConnectionStatus.CONNECTING))
     assertEquals(
-        "Telefonens Data Layer frånkopplad",
-        wearTransportStatusLabel(WearConnectionStatus.DISCONNECTED))
+        org.runnerup.common.R.string.Wear_connection_connected,
+        wearTransportStatusResourceId(WearConnectionStatus.CONNECTED))
+    assertEquals(
+        org.runnerup.common.R.string.Wear_connection_disconnected,
+        wearTransportStatusResourceId(WearConnectionStatus.DISCONNECTED))
   }
 }
