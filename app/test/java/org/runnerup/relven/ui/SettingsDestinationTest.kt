@@ -43,7 +43,7 @@ class SettingsDestinationTest {
   @Test
   fun wearConnectionMappingDistinguishesDisconnectedUnsupportedAndFailedQueries() {
     assertEquals(WearConnectionState.Unavailable, wearConnectionState(false, false, null))
-    assertEquals(WearConnectionState.Error, wearConnectionState(true, false, null))
+    assertEquals(WearConnectionState.ServiceUnavailable, wearConnectionState(true, false, null))
     assertEquals(WearConnectionState.Disconnected, wearConnectionState(true, true, emptyList()))
     assertEquals(WearConnectionState.TransportConnected, wearConnectionState(true, true, listOf("Watch")))
   }
