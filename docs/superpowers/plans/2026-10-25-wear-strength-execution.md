@@ -47,15 +47,17 @@
 ### Task 2: Strength preparation payload and watch store
 
 **Files:**
-- Add `common/.../wear/StrengthExecutionProtocol.java` for bounded prepare, projection and command messages.
-- Add `wear/.../service/WearStrengthSessionStore.java` using synchronous durable storage and the shared codec.
+- Add `common/.../wear/StrengthExecutionProtocol.java` for bounded strength preparation, acknowledgement and cancellation messages.
+- Add `wear/.../service/PreparedStrengthSessionStore.java` using synchronous durable storage and the shared codec.
 - Modify phone `WearConnectionProvider` and `RelvenHomeActivity` to prepare an existing in-progress strength execution to Wear with stable execution ID.
 - Modify the existing Wear preparation listener and tests to validate and store the session before ACK.
 
-- [ ] Add protocol/store tests for round trip, limits, stale replacement, exact retry, conflict and restart.
-- [ ] Run focused tests RED before implementation.
-- [ ] Implement the versioned protocol and append-before-ack store path.
-- [ ] Run common, app and Wear protocol/store tests.
+- [x] Add protocol/store tests for round trip, size limits, stale replacement, exact retry, conflict and store recreation.
+- [x] Run focused tests RED before implementation; oversized payload and delayed superseded retry regressions failed for their expected reasons.
+- [x] Implement the versioned protocol and durable-before-ack store path. Wear replacement/cancellation state is committed atomically; superseded IDs are tombstoned so delayed retries cannot resurrect them.
+- [x] Run common and Wear protocol/store tests plus the full common/app/Wear verification matrix.
+
+**Task 2 scope note:** This task transfers and displays prepared strength workouts only. It does not yet implement authoritative watch transitions, watch start controls, GPS/sensor readiness, run-workout changes, or paired-emulator runtime verification; those remain in Tasks 3–5 and the parent Wear plan.
 
 ### Task 3: Watch-authoritative session transitions
 

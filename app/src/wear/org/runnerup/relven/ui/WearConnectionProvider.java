@@ -13,12 +13,15 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.wear.HeartRateReadinessAttempt;
 import org.runnerup.common.wear.HeartRateReadinessProtocol;
+import org.runnerup.common.wear.StrengthExecutionProtocol;
+import org.runnerup.common.wear.StrengthPreparationAttempt;
 import org.runnerup.common.wear.StrengthResultOutboxStore;
 import org.runnerup.common.wear.StrengthResultProtocol;
 import org.runnerup.common.wear.WearHandshakeAttempt;
 import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.common.wear.WorkoutPreparationAttempt;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
+import org.runnerup.relven.strength.StrengthSession;
 
 /** Reads only currently connected Wear OS nodes through the existing Wear Data Layer. */
 public final class WearConnectionProvider {
@@ -77,6 +80,29 @@ public final class WearConnectionProvider {
     }
   }
 
+  public enum StrengthPreparationStatus {
+    PREPARED,
+    NO_WATCH,
+    TIMEOUT,
+    REJECTED,
+    PROTOCOL_MISMATCH,
+    TRANSPORT_ERROR,
+    UNSUPPORTED
+  }
+
+  public static final class StrengthPreparationResult {
+    public final StrengthPreparationStatus status;
+    public final String sessionId;
+    public final List<String> connectedNodes;
+
+    private StrengthPreparationResult(
+        StrengthPreparationStatus status, String sessionId, List<String> connectedNodes) {
+      this.status = status;
+      this.sessionId = sessionId;
+      this.connectedNodes = connectedNodes;
+    }
+  }
+
   public interface ConnectionTestCallback {
     void onResult(ConnectionTestResult result);
   }
@@ -85,6 +111,10 @@ public final class WearConnectionProvider {
     void onResult(WorkoutPreparationResult result);
 
     default void onHeartRateReadiness(HeartRateReadinessStatus status) {}
+  }
+
+  public interface StrengthPreparationCallback {
+    void onResult(StrengthPreparationResult result);
   }
 
   private interface HeartRateReadinessCallback {
@@ -396,6 +426,172 @@ public final class WearConnectionProvider {
               skipSupported,
               callback);
         });
+  }
+
+  /** Transfers a durable prepared strength session only after the companion handshake succeeds. */
+  public static void prepareStrengthSession(
+      Context context, StrengthSession session, StrengthPreparationCallback callback) {
+    if (session == null || session.getPhase() != StrengthSession.Phase.PREPARING) {
+      callback.onResult(
+          new StrengthPreparationResult(
+              StrengthPreparationStatus.REJECTED,
+              session == null ? null : session.getExecutionId(),
+              null));
+      return;
+    }
+    testConnection(
+        context,
+        connection -> {
+          if (connection.status != HandshakeStatus.VERIFIED || connection.verifiedNodeId == null) {
+            callback.onResult(
+                new StrengthPreparationResult(
+                    strengthPreparationFailure(connection.status),
+                    session.getExecutionId(),
+                    connection.connectedNodes));
+            return;
+          }
+          sendPreparedStrengthSession(
+              context.getApplicationContext(),
+              connection.verifiedNodeId,
+              connection.connectedNodes,
+              session,
+              callback);
+        });
+  }
+
+  /** Best-effort cancellation, scoped to the previously verified companion. */
+  public static void cancelStrengthPreparation(Context context, String sessionId) {
+    final byte[] payload;
+    try {
+      payload = StrengthExecutionProtocol.encodeCancellation(sessionId);
+    } catch (java.io.IOException invalidSession) {
+      return;
+    }
+    Context appContext = context.getApplicationContext();
+    testConnection(
+        appContext,
+        connection -> {
+          if (connection.status != HandshakeStatus.VERIFIED || connection.verifiedNodeId == null)
+            return;
+          try {
+            Wearable.getMessageClient(appContext)
+                .sendMessage(
+                    connection.verifiedNodeId, Constants.Wear.Path.MSG_STRENGTH_CANCEL, payload)
+                .addOnFailureListener(
+                    error -> android.util.Log.w("WearConnection", "Strength cancel failed", error));
+          } catch (RuntimeException error) {
+            android.util.Log.w("WearConnection", "Strength cancel unavailable", error);
+          }
+        });
+  }
+
+  private static StrengthPreparationStatus strengthPreparationFailure(HandshakeStatus status) {
+    switch (status) {
+      case NO_WATCH:
+        return StrengthPreparationStatus.NO_WATCH;
+      case TIMEOUT:
+        return StrengthPreparationStatus.TIMEOUT;
+      case PROTOCOL_MISMATCH:
+        return StrengthPreparationStatus.PROTOCOL_MISMATCH;
+      case UNSUPPORTED:
+        return StrengthPreparationStatus.UNSUPPORTED;
+      default:
+        return StrengthPreparationStatus.TRANSPORT_ERROR;
+    }
+  }
+
+  private static void sendPreparedStrengthSession(
+      Context context,
+      String nodeId,
+      List<String> names,
+      StrengthSession session,
+      StrengthPreparationCallback callback) {
+    final String sessionId = session.getExecutionId();
+    final String requestId = WearHandshakeAttempt.createRequestId();
+    final byte[] payload;
+    try {
+      payload = StrengthExecutionProtocol.encodePrepare(session, requestId);
+    } catch (java.io.IOException invalidSession) {
+      callback.onResult(
+          new StrengthPreparationResult(StrengthPreparationStatus.REJECTED, sessionId, names));
+      return;
+    }
+    final StrengthPreparationAttempt attempt =
+        new StrengthPreparationAttempt(nodeId, sessionId, requestId);
+    final MessageClient client = Wearable.getMessageClient(context);
+    final Handler handler = new Handler(Looper.getMainLooper());
+    final MessageClient.OnMessageReceivedListener[] listenerRef =
+        new MessageClient.OnMessageReceivedListener[1];
+    listenerRef[0] =
+        event -> {
+          StrengthPreparationAttempt.Result result =
+              attempt.onMessage(event.getSourceNodeId(), event.getPath(), event.getData());
+          finishStrengthPreparationIfTerminal(
+              result, sessionId, names, handler, listenerRef[0], client, callback);
+        };
+    Runnable timeout =
+        () ->
+            finishStrengthPreparationIfTerminal(
+                attempt.onTimeout(), sessionId, names, handler, listenerRef[0], client, callback);
+    handler.postAtTime(
+        timeout, listenerRef[0], android.os.SystemClock.uptimeMillis() + HANDSHAKE_TIMEOUT_MS);
+    client
+        .addListener(listenerRef[0])
+        .addOnSuccessListener(
+            ignored -> {
+              if (attempt.isCompleted()) return;
+              client
+                  .sendMessage(nodeId, Constants.Wear.Path.MSG_STRENGTH_PREPARE, payload)
+                  .addOnFailureListener(
+                      error ->
+                          finishStrengthPreparationIfTerminal(
+                              attempt.onTransportError(),
+                              sessionId,
+                              names,
+                              handler,
+                              listenerRef[0],
+                              client,
+                              callback));
+            })
+        .addOnFailureListener(
+            error ->
+                finishStrengthPreparationIfTerminal(
+                    attempt.onTransportError(),
+                    sessionId,
+                    names,
+                    handler,
+                    listenerRef[0],
+                    client,
+                    callback));
+  }
+
+  private static void finishStrengthPreparationIfTerminal(
+      StrengthPreparationAttempt.Result result,
+      String sessionId,
+      List<String> names,
+      Handler handler,
+      MessageClient.OnMessageReceivedListener listener,
+      MessageClient client,
+      StrengthPreparationCallback callback) {
+    if (result == StrengthPreparationAttempt.Result.IGNORE) return;
+    handler.removeCallbacksAndMessages(listener);
+    client.removeListener(listener);
+    StrengthPreparationStatus status;
+    switch (result) {
+      case PREPARED:
+        status = StrengthPreparationStatus.PREPARED;
+        break;
+      case REJECTED:
+        status = StrengthPreparationStatus.REJECTED;
+        break;
+      case TIMEOUT:
+        status = StrengthPreparationStatus.TIMEOUT;
+        break;
+      default:
+        status = StrengthPreparationStatus.TRANSPORT_ERROR;
+        break;
+    }
+    callback.onResult(new StrengthPreparationResult(status, sessionId, names));
   }
 
   /** Best-effort cancellation keyed by session identity; the watch rejects late retries. */

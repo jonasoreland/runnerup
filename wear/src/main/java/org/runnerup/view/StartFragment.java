@@ -31,6 +31,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
 import org.runnerup.hr.HeartRateReadiness;
+import org.runnerup.service.PreparedStrengthSessionStore;
 import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
 import org.runnerup.wear.ui.WearControlPresentationState;
@@ -63,6 +64,22 @@ public class StartFragment extends Fragment
 
   private void updateView(TrackerState state) {
     if (composeView == null || presentationState == null) return;
+    if (state != TrackerState.STARTED
+        && state != TrackerState.PAUSED
+        && state != TrackerState.CONNECTING) {
+      org.runnerup.wear.ui.PreparedStrengthSessionPresentation strength =
+          org.runnerup.wear.ui.PreparedStrengthSessionPresentationFactory.from(
+              new org.runnerup.service.PreparedStrengthSessionStore(activity).load());
+      if (strength != null) {
+        WearControlsComposeContent.bindPreparedStrengthWorkout(
+            composeView,
+            strength.getWorkoutName(),
+            strength.getExerciseName(),
+            strength.getPrescription(),
+            strength.getInstructions());
+        return;
+      }
+    }
     byte[] payload =
         state == TrackerState.INITIALIZED || state == TrackerState.CONNECTED
             ? new PreparedWorkoutStore(activity).load()
@@ -121,6 +138,9 @@ public class StartFragment extends Fragment
     activity
         .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
         .registerOnSharedPreferenceChangeListener(this);
+    activity
+        .getSharedPreferences(PreparedStrengthSessionStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .registerOnSharedPreferenceChangeListener(this);
     updateView(this.activity.getTrackerState());
   }
 
@@ -133,6 +153,9 @@ public class StartFragment extends Fragment
     activity.unregisterTrackerStateListener(this);
     activity
         .getSharedPreferences(PreparedWorkoutStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
+        .unregisterOnSharedPreferenceChangeListener(this);
+    activity
+        .getSharedPreferences(PreparedStrengthSessionStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
         .unregisterOnSharedPreferenceChangeListener(this);
     super.onPause();
   }
@@ -151,7 +174,9 @@ public class StartFragment extends Fragment
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-    if (PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key) && isAdded()) {
+    if ((PreparedWorkoutStore.PREPARED_WORKOUT_KEY.equals(key)
+            || PreparedStrengthSessionStore.PREPARED_SESSION_KEY.equals(key))
+        && isAdded()) {
       updateView(activity.getTrackerState());
     }
   }

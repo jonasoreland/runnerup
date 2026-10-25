@@ -162,6 +162,44 @@ public class ListenerService extends WearableListenerService {
       }
       return;
     }
+    if (Constants.Wear.Path.MSG_STRENGTH_CANCEL.equals(messageEvent.getPath())) {
+      PreparedStrengthSessionReceiver receiver =
+          new PreparedStrengthSessionReceiver(new PreparedStrengthSessionStore(this));
+      if (receiver.cancel(messageEvent.getData())) {
+        NotificationManagerCompat.from(this).cancel(12);
+      }
+      return;
+    }
+    if (Constants.Wear.Path.MSG_STRENGTH_PREPARE.equals(messageEvent.getPath())) {
+      byte[] payload = messageEvent.getData();
+      PreparedStrengthSessionReceiver receiver =
+          new PreparedStrengthSessionReceiver(new PreparedStrengthSessionStore(this));
+      byte[] response = receiver.receive(payload);
+      if (response == null) {
+        Log.w(TAG, "Ignoring invalid strength session preparation payload");
+        return;
+      }
+      try {
+        var acknowledgement =
+            org.runnerup.common.wear.StrengthExecutionProtocol.decodeAcknowledgement(response);
+        if (acknowledgement.isAccepted()) {
+          var preparation =
+              org.runnerup.common.wear.StrengthExecutionProtocol.decodePrepare(payload);
+          var saved =
+              org.runnerup.relven.strength.StrengthSessionCodec.INSTANCE.decode(
+                  preparation.getSessionJson());
+          notifyPreparedStrengthSession(saved.getFirst().getWorkout().name());
+        }
+      } catch (IOException invalidStoredSession) {
+        Log.w(TAG, "Could not read stored strength session", invalidStoredSession);
+      }
+      com.google.android.gms.wearable.Wearable.getMessageClient(this)
+          .sendMessage(
+              messageEvent.getSourceNodeId(), Constants.Wear.Path.MSG_STRENGTH_PREPARED, response)
+          .addOnFailureListener(
+              error -> Log.w(TAG, "Unable to acknowledge prepared strength session", error));
+      return;
+    }
     if (!Constants.Wear.Path.MSG_WORKOUT_PREPARE.equals(messageEvent.getPath())) return;
 
     byte[] payload = messageEvent.getData();
@@ -213,6 +251,36 @@ public class ListenerService extends WearableListenerService {
             .setAutoCancel(true)
             .build();
     NotificationManagerCompat.from(this).notify(11, notification);
+  }
+
+  private void notifyPreparedStrengthSession(String workoutName) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) return;
+
+    String channelId = "relven_strength_prepared";
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      NotificationManager manager = getSystemService(NotificationManager.class);
+      if (manager.getNotificationChannel(channelId) == null) {
+        manager.createNotificationChannel(
+            new NotificationChannel(
+                channelId, "Förberedda styrkepass", NotificationManager.IMPORTANCE_DEFAULT));
+      }
+    }
+    Intent intent = new Intent(this, MainActivity.class);
+    PendingIntent contentIntent =
+        PendingIntent.getActivity(
+            this, 12, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    Notification notification =
+        new NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_ongoing_notification)
+            .setContentTitle("Redo att starta")
+            .setContentText(workoutName)
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+            .setContentIntent(contentIntent)
+            .setAutoCancel(true)
+            .build();
+    NotificationManagerCompat.from(this).notify(12, notification);
   }
 
   @Override
