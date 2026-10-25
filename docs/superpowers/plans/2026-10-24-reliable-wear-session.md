@@ -48,6 +48,7 @@
 - [x] Add bounded versioned ping/pong paths and codec; prove tests fail before implementation.
 - [x] Implement watch listener pong response and phone test with timeout, matching source node and request ID.
 - [x] Show transport presence separately from app handshake in Settings; add explicit connection-test action and RTT/status.
+- [x] Advertise and query a Relven-specific Wear capability before pinging; distinguish connected-without-Relven from handshake timeout (capability-discovery PR).
 - [x] Verify build variants, package IDs, and listener manifest merge; run focused then full app/Wear tests and lint/build checks.
 - [x] Apply review fixes: test source/path/request/version filtering, single terminal completion, timeout/late response handling, unique request IDs, and stale Settings callback invalidation.
 - [x] Review, create exactly one PR, wait for checks, merge, then rebuild both debug APKs from updated master.
@@ -84,7 +85,7 @@
 - [x] Add a bounded, versioned journal keyed by stable session ID; validate authority, contiguous sequence, command ID and exact duplicate payload; persist events synchronously before projecting them.
 - [x] Keep acknowledged events as the replayable state history, with an ordered unacknowledged suffix; ACK only the matching head and retry after reconnect without dropping events.
 - [x] Restore the phone projection from the durable event history without changing WATCH authority; write the phone projection before acknowledging it.
-- [x] Refuse session commands while disconnected because the current RunnerUp recording engine remains phone-owned; replay only commands already accepted by the authority before transport loss. Do not show a watch-side pause/finish as accepted while the phone continues recording.
+- [x] Keep the current fail-safe guard against accepting watch controls while disconnected because RunnerUp recording remains phone-owned. This is an interim safety behavior and does not satisfy the requested watch-offline session recovery; replace it before the overall goal is complete.
 - [x] Add tests for process recreation including pending-start deadline recovery, Tracker control reconciliation, persisted idempotency markers for LAP/SKIP, replay order, duplicate/conflicting/stale/gapped events, ACK ordering/idempotency, invalid storage and phone/watch authority mismatch.
 
 #### Task 5B — Strength result synchronization
@@ -92,13 +93,13 @@
 - [x] Define a bounded, stable-ID result message that preserves confirmed repetition/duration, left/right, timestamps and optional notes without treating prescription as performance.
 - [x] Persist the watch and phone result outboxes before delivery; use exact result IDs to reject duplicates/conflicts and ACK only after the phone's existing `StrengthSessionStore` commits the result.
 - [x] Reconcile after reconnect and preserve confirmed partial results when the session ends early; add protocol/store and existing strength history/export regression tests.
-- [ ] Add the Wear active strength-set UI and a no-keyboard quick logger that produces these result events; synchronize the watch execution position and rest timer with phone projection.
+- [x] Add the Wear active strength-set UI and a no-keyboard quick logger that produces these result events; synchronize the watch execution position and rest timer with phone projection (PR #172).
 
 #### Task 5C — Terminal persistence and Health Connect handoff
 
-- [ ] Ensure authoritative completion is durably represented before final phone activity/result persistence; retain retryable terminal state when phone persistence is unavailable.
-- [ ] Queue Health Connect only from the finalized phone record through the existing idempotent outbox; test repeat completion, retry and restart do not create duplicate history or exports.
-- [ ] Run combined phone/Wear tests, APK assemblies and lint; review and merge each sub-PR before starting the next, building both APKs from master after every merge.
+- [x] Ensure authoritative completion is durably represented before final phone activity/result persistence; retain retryable terminal state when phone persistence is unavailable (PR #173).
+- [x] Queue Health Connect only from the finalized phone record through the existing idempotent outbox; test repeat completion, retry and restart do not create duplicate history or exports (PR #173).
+- [x] Run combined phone/Wear tests, APK assemblies and lint; review and merge each sub-PR before starting the next, building both APKs from master after every merge (PRs #173–#176).
 
 ### Task 6 — End-to-end emulator verification
 

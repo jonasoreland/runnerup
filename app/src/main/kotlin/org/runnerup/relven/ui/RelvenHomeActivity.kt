@@ -1732,6 +1732,7 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
                   when (result.status) {
                     WearConnectionProvider.StrengthPreparationStatus.PREPARED -> "Passet är förberett på klockan"
                     WearConnectionProvider.StrengthPreparationStatus.NO_WATCH -> "Ingen klocka nåbar · fortsätt på mobilen"
+                    WearConnectionProvider.StrengthPreparationStatus.COMPANION_UNAVAILABLE -> "Relven saknas på klockan · fortsätt på mobilen"
                     WearConnectionProvider.StrengthPreparationStatus.TIMEOUT -> "Klockan svarar inte · fortsätt på mobilen"
                     WearConnectionProvider.StrengthPreparationStatus.REJECTED -> "Klockan avvisade passet · fortsätt på mobilen"
                     WearConnectionProvider.StrengthPreparationStatus.PROTOCOL_MISMATCH -> "Uppdatera Relven på klockan · fortsätt på mobilen"

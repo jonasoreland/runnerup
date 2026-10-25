@@ -32,6 +32,12 @@ class WearHandshakePresentationTest {
   @Test
   fun handshakeFailureStatesRemainDistinct() {
     assertEquals(
+        WearHandshakeState.CompanionUnavailable,
+        wearHandshakeState(status = "COMPANION_UNAVAILABLE"))
+    assertTrue(
+        handshakeStateLabel(WearHandshakeState.CompanionUnavailable, null)
+            .contains("installera", ignoreCase = true))
+    assertEquals(
         WearHandshakeState.TimedOut,
         wearHandshakeState(status = "TIMEOUT"))
     assertEquals(

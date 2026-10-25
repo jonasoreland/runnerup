@@ -3,5 +3,7 @@
     <string-array name="android_wear_capabilities">
         <!-- Important: The value must match Constants.Wear.Capability.HEART_RATE_PROVIDER -->
         <item>runnerup_hr_provider</item>
+        <!-- Important: The value must match Constants.Wear.Capability.RELVEN_WORKOUT_COMPANION -->
+        <item>relven_workout_companion</item>
     </string-array>
 </resources>
