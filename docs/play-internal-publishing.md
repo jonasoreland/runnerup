@@ -1,8 +1,13 @@
 # Google Play Internal Publishing
 
-The manual workflow at **Actions → Publish Relven to Play Internal Testing → Run workflow** builds and uploads both the phone and Wear app bundles. It only runs on `master`, requires typing `PUBLISH_INTERNAL`, and requires an even phone version code that exceeds the highest version code already uploaded for this app. Wear uses the next code. The current local phone build is `24000374`, so the default suggested first code is `24000376`; check Play Console before running and raise it if any track already contains a higher code.
+The manual workflow at **Actions → Publish Relven to Play Internal Testing → Run workflow** supports two modes on `master`:
 
-The action signs with the original Relven upload keystore. Google Play uses the package ID `se.hampusandersson.relven`. The target repository currently has all five secret names below. GitHub never reveals their values, so their presence does not prove that the values are current or valid; validate them with a deliberately reviewed internal-track publish only when you are ready to publish.
+- `VALIDATE_SIGNING_ONLY` builds and validates signed phone and Wear bundles, prints their shared public SHA-256 signing-certificate fingerprint in the Actions job summary, and does not restore the Play service-account secret or run either upload action.
+- `PUBLISH_INTERNAL` builds, validates, and uploads the phone and Wear bundles to their internal testing tracks. This is the only mode that restores the Play service-account secret or can publish.
+
+Both modes require an even phone version code that exceeds the highest version code already uploaded for this app. Wear uses the next code. The current local phone build is `24000374`, so the default suggested first code is `24000376`; check Play Console before publishing and raise it if any track already contains a higher code.
+
+The action signs with the original Relven upload keystore. Google Play uses the package ID `se.hampusandersson.relven`. The target repository currently has all five secret names below. GitHub never reveals their values, so their presence does not prove that the values are current or valid. Run `VALIDATE_SIGNING_ONLY` to verify the keystore and compare the reported fingerprint with **Play Console → Setup → App integrity → Upload key certificate**. The fingerprint is public certificate data; it does not expose the private key. Run `PUBLISH_INTERNAL` only when you are ready to publish.
 
 ## Add the five repository secrets
 
@@ -16,7 +21,7 @@ In `HampusAndersson01/Relven-2.0`, open **Settings → Secrets and variables →
 | `ANDROID_KEY_PASSWORD` | The password for that alias/key |
 | `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_BASE64` | Base64 encoding of the Google Play service-account JSON key file |
 
-GitHub cannot show or copy secret values from either repository; `gh secret list` and the Actions settings page expose names only. The five names are present in `Relven-2.0`, but this repository has not run the publishing workflow to validate that they contain the original upload key and service-account key. Do not paste credentials into a chat, commit them, or store the generated `release.properties` file. If a secret value is missing or invalid, replace it from your secure credential files/password manager; do not assume GitHub can recover the old value.
+GitHub cannot show or copy secret values from either repository; `gh secret list` and the Actions settings page expose names only. The five names are present in `Relven-2.0`, but this repository has not run signing-only validation to verify the upload keystore. Validation-only mode does not check the Play service-account secret. Do not paste credentials into a chat, commit them, or store the generated `release.properties` file. If a secret value is missing or invalid, replace it from your secure credential files/password manager; do not assume GitHub can recover the old value.
 
 For the binary keystore and JSON key, PowerShell can pipe base64 directly into `gh secret set` without printing the encoded data:
 
@@ -36,6 +41,8 @@ In Google Play Console, open **Users and permissions**, invite the service accou
 
 ## Run the workflow
 
-Before dispatching, check the highest uploaded phone/Wear version code in Play Console. Choose an even phone code greater than every code already uploaded, leave room for Wear's `+1`, type `PUBLISH_INTERNAL`, and start the workflow on `master`. GitHub Actions secrets are managed as described in [GitHub's Actions secrets guide](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
+For a credentials check, choose a valid even phone version code greater than `24000374`, leave room for Wear's `+1`, type `VALIDATE_SIGNING_ONLY`, and start the workflow on `master`. Compare the SHA-256 fingerprint in the run summary with the upload certificate in Play Console. This mode builds bundles but performs no Play API upload.
+
+Before publishing, check the highest uploaded phone/Wear version code in Play Console. Choose an even phone code greater than every code already uploaded, leave room for Wear's `+1`, type `PUBLISH_INTERNAL`, and start the workflow on `master`. GitHub Actions secrets are managed as described in [GitHub's Actions secrets guide](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
 
 The action validates both bundle signatures, package IDs, version codes, watch form-factor metadata, and matching upload certificates before upload. It uploads Wear to `wear:internal` and phone to `internal`. Google Play processes the two bundles in separate API calls, so if one upload succeeds and the other fails, check the two tracks in Play Console before retrying.
