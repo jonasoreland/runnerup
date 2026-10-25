@@ -292,6 +292,8 @@ public interface Constants {
 
       /* Msg: Heart rate data from wear to phone */
       String MSG_HEART_RATE = PREFIX + "/hr/data";
+      String MSG_HR_READINESS_REQUEST = PREFIX + "/hr/readiness/request";
+      String MSG_HR_READINESS_RESPONSE = PREFIX + "/hr/readiness/response";
 
       /* Msg: Battery level from wear to phone */
       String MSG_BATTERY_LEVEL = PREFIX + "/battery/level";

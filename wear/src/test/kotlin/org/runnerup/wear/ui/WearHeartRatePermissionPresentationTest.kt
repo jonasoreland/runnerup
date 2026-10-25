@@ -8,6 +8,22 @@ import org.runnerup.common.R as CommonR
 
 class WearHeartRatePermissionPresentationTest {
   @Test
+  fun preparedWorkoutReadinessUsesActualSensorPermissionStatus() {
+    assertEquals(
+        CommonR.string.wear_hr_preparation_ready,
+        wearHeartRatePreparationLabel(HeartRatePermissionState.State.READY))
+    assertEquals(
+        CommonR.string.wear_hr_preparation_sensor_unavailable,
+        wearHeartRatePreparationLabel(HeartRatePermissionState.State.UNAVAILABLE))
+    assertEquals(
+        CommonR.string.wear_hr_preparation_permission_required,
+        wearHeartRatePreparationLabel(HeartRatePermissionState.State.NEEDS_PERMISSION))
+    assertEquals(
+        CommonR.string.wear_hr_preparation_background_permission_required,
+        wearHeartRatePreparationLabel(HeartRatePermissionState.State.NEEDS_BACKGROUND_PERMISSION))
+  }
+
+  @Test
   fun compactLayoutIsSelectedForSmallRoundAndShortDisplays() {
     assertEquals(true, isCompactWearPermissionLayout(192f, 192f))
     assertEquals(true, isCompactWearPermissionLayout(200f, 174f))

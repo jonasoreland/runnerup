@@ -41,3 +41,14 @@ internal fun wearHeartRatePermissionPresentation(
           WearHeartRatePermissionPresentation(
               R.string.wear_hr_permission_ready, R.string.wear_hr_permission_ready_details, null)
     }
+
+internal fun wearHeartRatePreparationLabel(state: HeartRatePermissionState.State): Int =
+    when (state) {
+      HeartRatePermissionState.State.READY -> R.string.wear_hr_preparation_ready
+      HeartRatePermissionState.State.UNAVAILABLE ->
+          R.string.wear_hr_preparation_sensor_unavailable
+      HeartRatePermissionState.State.NEEDS_PERMISSION ->
+          R.string.wear_hr_preparation_permission_required
+      HeartRatePermissionState.State.NEEDS_BACKGROUND_PERMISSION ->
+          R.string.wear_hr_preparation_background_permission_required
+    }

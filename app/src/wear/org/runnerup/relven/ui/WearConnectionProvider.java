@@ -8,8 +8,11 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
+import org.runnerup.common.wear.HeartRateReadinessAttempt;
+import org.runnerup.common.wear.HeartRateReadinessProtocol;
 import org.runnerup.common.wear.WearHandshakeAttempt;
 import org.runnerup.common.wear.WearSessionProtocol;
 import org.runnerup.common.wear.WorkoutPreparationAttempt;
@@ -18,6 +21,7 @@ import org.runnerup.common.wear.WorkoutPreparationProtocol;
 /** Reads only currently connected Wear OS nodes through the existing Wear Data Layer. */
 public final class WearConnectionProvider {
   private static final long HANDSHAKE_TIMEOUT_MS = 5000;
+  private static final long HEART_RATE_READINESS_TIMEOUT_MS = 2500;
 
   public enum HandshakeStatus {
     VERIFIED,
@@ -75,6 +79,20 @@ public final class WearConnectionProvider {
 
   public interface WorkoutPreparationCallback {
     void onResult(WorkoutPreparationResult result);
+
+    default void onHeartRateReadiness(HeartRateReadinessStatus status) {}
+  }
+
+  private interface HeartRateReadinessCallback {
+    void onResult(HeartRateReadinessStatus status);
+  }
+
+  public enum HeartRateReadinessStatus {
+    READY,
+    SENSOR_UNAVAILABLE,
+    PERMISSION_REQUIRED,
+    BACKGROUND_PERMISSION_REQUIRED,
+    UNKNOWN
   }
 
   public interface Callback {
@@ -137,8 +155,8 @@ public final class WearConnectionProvider {
       Context context, Node node, List<String> names, ConnectionTestCallback callback) {
     final String requestId = WearHandshakeAttempt.createRequestId();
     final AtomicLong sentAt = new AtomicLong(-1);
-    final MessageClient client = Wearable.getMessageClient(context);
     final Handler handler = new Handler(Looper.getMainLooper());
+    final MessageClient client = Wearable.getMessageClient(context);
     final WearHandshakeAttempt attempt = new WearHandshakeAttempt(node.getId(), requestId);
     final MessageClient.OnMessageReceivedListener[] listenerRef =
         new MessageClient.OnMessageReceivedListener[1];
@@ -356,6 +374,9 @@ public final class WearConnectionProvider {
               attempt.onMessage(event.getSourceNodeId(), event.getPath(), event.getData());
           if (result != WorkoutPreparationAttempt.Result.IGNORE) {
             finishPreparation(result, sessionId, names, handler, listenerRef[0], client, callback);
+            if (result == WorkoutPreparationAttempt.Result.PREPARED) {
+              queryHeartRateReadiness(context, nodeId, sessionId, callback::onHeartRateReadiness);
+            }
           }
         };
     handler.postAtTime(
@@ -440,6 +461,101 @@ public final class WearConnectionProvider {
         break;
     }
     callback.onResult(new WorkoutPreparationResult(status, sessionId, names));
+  }
+
+  private static void queryHeartRateReadiness(
+      Context context, String nodeId, String sessionId, HeartRateReadinessCallback callback) {
+    final String requestId = WearHandshakeAttempt.createRequestId();
+    final byte[] payload;
+    final HeartRateReadinessProtocol.Request request;
+    try {
+      payload = HeartRateReadinessProtocol.encodeRequest(sessionId, requestId);
+      request = HeartRateReadinessProtocol.decodeRequest(payload);
+    } catch (java.io.IOException invalidRequest) {
+      callback.onResult(HeartRateReadinessStatus.UNKNOWN);
+      return;
+    }
+
+    final Handler handler = new Handler(Looper.getMainLooper());
+    final MessageClient client;
+    try {
+      client = Wearable.getMessageClient(context);
+    } catch (RuntimeException unavailable) {
+      handler.post(() -> callback.onResult(HeartRateReadinessStatus.UNKNOWN));
+      return;
+    }
+    final HeartRateReadinessAttempt attempt = new HeartRateReadinessAttempt(nodeId, request);
+    final AtomicBoolean finished = new AtomicBoolean();
+    final MessageClient.OnMessageReceivedListener[] listenerRef =
+        new MessageClient.OnMessageReceivedListener[1];
+    Runnable completeUnknown =
+        () -> {
+          if (attempt.onTimeout()) {
+            completeHeartRateReadiness(
+                HeartRateReadinessStatus.UNKNOWN,
+                handler,
+                listenerRef[0],
+                client,
+                finished,
+                callback);
+          }
+        };
+    listenerRef[0] =
+        event -> {
+          HeartRateReadinessAttempt.Result result =
+              attempt.onMessage(event.getSourceNodeId(), event.getPath(), event.getData());
+          if (result == HeartRateReadinessAttempt.Result.IGNORE) return;
+          completeHeartRateReadiness(
+              mapReadiness(result), handler, listenerRef[0], client, finished, callback);
+        };
+    handler.postAtTime(
+        completeUnknown,
+        listenerRef[0],
+        android.os.SystemClock.uptimeMillis() + HEART_RATE_READINESS_TIMEOUT_MS);
+    try {
+      client
+          .addListener(listenerRef[0])
+          .addOnSuccessListener(
+              ignored -> {
+                if (attempt.isCompleted()) return;
+                client
+                    .sendMessage(nodeId, Constants.Wear.Path.MSG_HR_READINESS_REQUEST, payload)
+                    .addOnFailureListener(error -> completeUnknown.run());
+              })
+          .addOnFailureListener(error -> completeUnknown.run());
+    } catch (RuntimeException unavailable) {
+      completeUnknown.run();
+    }
+  }
+
+  private static HeartRateReadinessStatus mapReadiness(HeartRateReadinessAttempt.Result result) {
+    switch (result) {
+      case READY:
+        return HeartRateReadinessStatus.READY;
+      case SENSOR_UNAVAILABLE:
+        return HeartRateReadinessStatus.SENSOR_UNAVAILABLE;
+      case PERMISSION_REQUIRED:
+        return HeartRateReadinessStatus.PERMISSION_REQUIRED;
+      case BACKGROUND_PERMISSION_REQUIRED:
+        return HeartRateReadinessStatus.BACKGROUND_PERMISSION_REQUIRED;
+      default:
+        return HeartRateReadinessStatus.UNKNOWN;
+    }
+  }
+
+  private static void completeHeartRateReadiness(
+      HeartRateReadinessStatus status,
+      Handler handler,
+      MessageClient.OnMessageReceivedListener listener,
+      MessageClient client,
+      AtomicBoolean finished,
+      HeartRateReadinessCallback callback) {
+    if (!finished.compareAndSet(false, true)) return;
+    if (listener != null) {
+      handler.removeCallbacksAndMessages(listener);
+      client.removeListener(listener);
+    }
+    handler.post(() -> callback.onResult(status));
   }
 
   private static String displayName(Node node) {

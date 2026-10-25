@@ -23,6 +23,7 @@ internal data class WorkoutPreparationUiState(
     val phase: WorkoutPreparationPhase,
     val watchReady: Boolean,
     val status: String,
+    val heartRateReadiness: WearHeartRateReadiness = WearHeartRateReadiness.CHECKING,
     val plannedStartElapsedRealtimeMs: Long = 0L,
     val countdownValue: Int = 0
 )
@@ -64,6 +65,15 @@ internal class WorkoutPreparationStateHolder(
     authority = if (watchReady) WorkoutSessionProtocol.Actor.WATCH else WorkoutSessionProtocol.Actor.PHONE
     sessionState = WorkoutSessionProtocol.SessionState.ready(value.sessionId, authority)
     value = value.copy(phase = WorkoutPreparationPhase.READY, watchReady = watchReady, status = status)
+  }
+
+  fun onWatchHeartRateReadiness(
+      sessionId: String,
+      readiness: WearHeartRateReadiness
+  ): Boolean {
+    if (!value.watchReady || value.sessionId != sessionId) return false
+    value = value.copy(heartRateReadiness = readiness)
+    return true
   }
 
   fun requestStart(

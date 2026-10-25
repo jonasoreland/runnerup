@@ -118,6 +118,24 @@ internal fun WorkoutPreparationScreen(
       }
     }
 
+    if (state.watchReady) {
+      Surface(
+          modifier = Modifier.fillMaxWidth(),
+          color = RelvenColors.Surface,
+          shape = RoundedCornerShape(16.dp)) {
+        Column(
+            Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)) {
+          Text("PULS PÅ KLOCKAN", color = RelvenColors.Orange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+          Text(state.heartRateReadiness.label, color = RelvenColors.Text, fontSize = 14.sp)
+          Text(
+              "Pulsvärden visas i passvyn när de finns.",
+              color = RelvenColors.MutedText,
+              fontSize = 12.sp)
+        }
+      }
+    }
+
     Spacer(Modifier.weight(1f))
     Button(
         onClick = onStart,

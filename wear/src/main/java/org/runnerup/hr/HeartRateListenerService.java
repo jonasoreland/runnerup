@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 import org.runnerup.common.util.Constants;
+import org.runnerup.service.PreparedWorkoutStore;
 
 /**
  * A {@link WearableListenerService} that listens for messages from a connected phone to control
@@ -57,6 +58,32 @@ public class HeartRateListenerService extends WearableListenerService {
     String path = messageEvent.getPath();
     String sourceNodeId = messageEvent.getSourceNodeId(); // ID of the phone that sent the message
     Log.d(TAG, "onMessageReceived: " + path + " from " + sourceNodeId);
+
+    if (Constants.Wear.Path.MSG_HR_READINESS_REQUEST.equals(path)) {
+      byte[] preparedPayload = new PreparedWorkoutStore(this).load();
+      String preparedSessionId = null;
+      if (preparedPayload != null) {
+        try {
+          preparedSessionId =
+              org.runnerup.common.wear.WorkoutPreparationProtocol.decodePrepare(preparedPayload)
+                  .getSessionId();
+        } catch (java.io.IOException invalidStoredWorkout) {
+          Log.w(TAG, "Ignoring invalid stored workout during heart-rate readiness query");
+        }
+      }
+      byte[] response =
+          HeartRateReadinessResponder.respond(
+              messageEvent.getData(),
+              preparedSessionId,
+              HeartRateReadiness.toProtocolStatus(HeartRateReadiness.inspect(this)));
+      if (response != null) {
+        com.google.android.gms.wearable.Wearable.getMessageClient(this)
+            .sendMessage(sourceNodeId, Constants.Wear.Path.MSG_HR_READINESS_RESPONSE, response)
+            .addOnFailureListener(
+                error -> Log.w(TAG, "Unable to send heart-rate readiness", error));
+      }
+      return;
+    }
 
     Intent serviceIntent = new Intent(this, HeartRateService.class);
 

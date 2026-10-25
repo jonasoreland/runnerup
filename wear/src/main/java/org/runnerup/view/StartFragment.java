@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.ComposeView;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
+import org.runnerup.hr.HeartRateReadiness;
 import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
 import org.runnerup.wear.ui.WearControlPresentationState;
@@ -78,6 +79,8 @@ public class StartFragment extends Fragment
           composeView,
           prepared.getWorkoutName(),
           prepared.getUpcomingStep(),
+          org.runnerup.wear.ui.WearHeartRatePermissionPresentationKt.wearHeartRatePreparationLabel(
+              HeartRateReadiness.inspect(activity)),
           presentationState,
           () -> startPreparedWorkout(prepared.getSessionId()));
     } catch (java.io.IOException ignored) {

@@ -50,10 +50,11 @@ object WearControlsComposeContent {
       view: ComposeView,
       workoutName: String,
       upcomingStep: String,
+      heartRateReadinessLabel: Int,
       state: WearControlPresentationState,
       startClick: Runnable) {
     view.setContent {
-      WearPreparedWorkoutScreen(workoutName, upcomingStep, state) { startClick.run() }
+      WearPreparedWorkoutScreen(workoutName, upcomingStep, heartRateReadinessLabel, state) { startClick.run() }
     }
   }
 
@@ -81,6 +82,7 @@ object WearControlsComposeContent {
 internal fun WearPreparedWorkoutScreen(
     workoutName: String,
     upcomingStep: String,
+    heartRateReadinessLabel: Int,
     state: WearControlPresentationState,
     onStart: () -> Unit) {
   WearControlFrame {
@@ -90,6 +92,12 @@ internal fun WearPreparedWorkoutScreen(
       Text("REDO ATT STARTA", color = AccentBlue, fontSize = 10.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
       Text(workoutName, color = PrimaryText, fontSize = 13.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2)
       Text("Nästa: $upcomingStep", color = SecondaryText, fontSize = 10.sp, textAlign = TextAlign.Center, maxLines = 2)
+      Text(
+          stringResource(heartRateReadinessLabel),
+          color = SecondaryText,
+          fontSize = 9.sp,
+          textAlign = TextAlign.Center,
+          maxLines = 1)
       when {
         state.preparedCountdownSeconds != null ->
             Text(

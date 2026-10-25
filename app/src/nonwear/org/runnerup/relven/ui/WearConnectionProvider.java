@@ -60,6 +60,16 @@ public final class WearConnectionProvider {
 
   public interface WorkoutPreparationCallback {
     void onResult(WorkoutPreparationResult result);
+
+    default void onHeartRateReadiness(HeartRateReadinessStatus status) {}
+  }
+
+  public enum HeartRateReadinessStatus {
+    READY,
+    SENSOR_UNAVAILABLE,
+    PERMISSION_REQUIRED,
+    BACKGROUND_PERMISSION_REQUIRED,
+    UNKNOWN
   }
 
   private WearConnectionProvider() {}

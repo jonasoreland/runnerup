@@ -686,6 +686,10 @@
     <string name="wear_hr_permission_needed_details">Allow sensor access here before starting a phone workout.</string>
     <string name="wear_hr_grant_permission">Allow access</string>
     <string name="wear_hr_permission_ready">Heart rate ready</string>
+    <string name="wear_hr_preparation_ready">Pulse sensor available</string>
+    <string name="wear_hr_preparation_sensor_unavailable">No pulse sensor</string>
+    <string name="wear_hr_preparation_permission_required">Allow pulse access</string>
+    <string name="wear_hr_preparation_background_permission_required">Allow background pulse access</string>
     <string name="wear_hr_permission_ready_details">The phone can use this watch sensor during a workout.</string>
     <string name="wear_hr_background_permission_needed">Allow background heart rate</string>
     <string name="wear_hr_background_permission_details">Allow heart-rate access while a workout continues with the screen off.</string>

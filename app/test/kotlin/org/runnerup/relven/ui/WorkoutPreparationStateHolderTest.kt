@@ -7,8 +7,40 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
 import org.runnerup.common.tracker.TrackerState
+import org.runnerup.common.wear.HeartRateReadinessProtocol
 
 class WorkoutPreparationStateHolderTest {
+  @Test
+  fun heartRateReadinessKeepsMissingAndUnconfirmedStatesDistinct() {
+    assertEquals(
+        WearHeartRateReadiness.READY,
+        heartRateReadiness(HeartRateReadinessProtocol.Status.READY))
+    assertEquals(
+        WearHeartRateReadiness.SENSOR_UNAVAILABLE,
+        heartRateReadiness(HeartRateReadinessProtocol.Status.SENSOR_UNAVAILABLE))
+    assertEquals(
+        WearHeartRateReadiness.PERMISSION_REQUIRED,
+        heartRateReadiness(HeartRateReadinessProtocol.Status.PERMISSION_REQUIRED))
+    assertEquals(
+        WearHeartRateReadiness.BACKGROUND_PERMISSION_REQUIRED,
+        heartRateReadiness(HeartRateReadinessProtocol.Status.BACKGROUND_PERMISSION_REQUIRED))
+    assertEquals("Puls: status kunde inte bekräftas", WearHeartRateReadiness.UNKNOWN.label)
+  }
+
+  @Test
+  fun watchHeartRateReadinessUpdatesTheCurrentPreparedSessionWithoutGatingStart() {
+    val sessionId = newSessionId()
+    val state = WorkoutPreparationStateHolder(sessionId, "Löpning", "Uppvärmning")
+    state.onWatchPreparationFinished(true, "Klockan redo")
+
+    assertTrue(state.onWatchHeartRateReadiness(sessionId, WearHeartRateReadiness.READY))
+    assertEquals(WorkoutPreparationPhase.READY, state.value.phase)
+    assertEquals(WearHeartRateReadiness.READY, state.value.heartRateReadiness)
+    assertTrue(state.createStartCommand(10_000L) != null)
+    assertFalse(
+        state.onWatchHeartRateReadiness(newSessionId(), WearHeartRateReadiness.PERMISSION_REQUIRED))
+  }
+
   private fun newSessionId() = UUID.randomUUID().toString()
   @Test
   fun trackerConnectsDuringPreparationOnlyFromNonRecordingStates() {

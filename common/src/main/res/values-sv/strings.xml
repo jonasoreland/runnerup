@@ -699,6 +699,10 @@
   <string name="wear_hr_permission_needed_details">Tillåt sensoråtkomst här innan du startar ett pass på telefonen.</string>
   <string name="wear_hr_grant_permission">Tillåt åtkomst</string>
   <string name="wear_hr_permission_ready">Puls är redo</string>
+  <string name="wear_hr_preparation_ready">Puls: sensor tillgänglig</string>
+  <string name="wear_hr_preparation_sensor_unavailable">Puls: ingen sensor</string>
+  <string name="wear_hr_preparation_permission_required">Puls: tillåt åtkomst</string>
+  <string name="wear_hr_preparation_background_permission_required">Puls: tillåt i bakgrunden</string>
   <string name="wear_hr_permission_ready_details">Telefonen kan använda klockans sensor under ett pass.</string>
   <string name="wear_hr_background_permission_needed">Tillåt puls i bakgrunden</string>
   <string name="wear_hr_background_permission_details">Tillåt pulsåtkomst medan ett träningspass fortsätter med släckt skärm.</string>

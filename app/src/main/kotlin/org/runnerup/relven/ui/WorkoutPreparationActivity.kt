@@ -22,6 +22,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.content.ContextCompat
 import org.runnerup.common.tracker.TrackerState
 import org.runnerup.relven.ui.WearConnectionProvider.PreparationStatus
+import org.runnerup.relven.ui.WearConnectionProvider.HeartRateReadinessStatus
+import org.runnerup.relven.ui.WearConnectionProvider.WorkoutPreparationCallback
 import org.runnerup.tracker.Tracker
 import org.runnerup.view.RunActivity
 import org.runnerup.common.util.Constants
@@ -275,25 +277,45 @@ internal class WorkoutPreparationActivity : ComponentActivity() {
         state.value.upcomingStep,
         workoutJson,
         intent.getIntExtra(EXTRA_WORKOUT_TYPE, Constants.WORKOUT_TYPE.BASIC) !=
-            Constants.WORKOUT_TYPE.BASIC) { result ->
-          if (isFinishing || isDestroyed) return@prepareWorkout
-          val ready = result.status == PreparationStatus.PREPARED
-          val status =
-              when (result.status) {
-                PreparationStatus.PREPARED -> "Klockan redo"
-                PreparationStatus.NO_WATCH -> "Ingen klocka ansluten · fortsätt på mobilen"
-                PreparationStatus.TIMEOUT -> "Klockan svarar inte · fortsätt på mobilen"
-                PreparationStatus.REJECTED -> "Klockan kunde inte läsa passet · fortsätt på mobilen"
-                PreparationStatus.PROTOCOL_MISMATCH ->
-                  "Uppdatera Relven på klockan · fortsätt på mobilen"
-                PreparationStatus.UNSUPPORTED -> "Klockstöd saknas · fortsätt på mobilen"
-                PreparationStatus.TRANSPORT_ERROR ->
-                  "Klockan kunde inte nås · fortsätt på mobilen"
-              }
-          state.onWatchPreparationFinished(ready, status)
-          tracker?.prepareWearWorkoutSession(sessionId, ready)
-          restoreCountdownIfNeeded()
-        }
+            Constants.WORKOUT_TYPE.BASIC,
+        object : WorkoutPreparationCallback {
+          override fun onResult(result: WearConnectionProvider.WorkoutPreparationResult) {
+            if (isFinishing || isDestroyed) return
+            val ready = result.status == PreparationStatus.PREPARED
+            val status =
+                when (result.status) {
+                  PreparationStatus.PREPARED -> "Klockan redo"
+                  PreparationStatus.NO_WATCH -> "Ingen klocka ansluten · fortsätt på mobilen"
+                  PreparationStatus.TIMEOUT -> "Klockan svarar inte · fortsätt på mobilen"
+                  PreparationStatus.REJECTED -> "Klockan kunde inte läsa passet · fortsätt på mobilen"
+                  PreparationStatus.PROTOCOL_MISMATCH ->
+                    "Uppdatera Relven på klockan · fortsätt på mobilen"
+                  PreparationStatus.UNSUPPORTED -> "Klockstöd saknas · fortsätt på mobilen"
+                  PreparationStatus.TRANSPORT_ERROR ->
+                    "Klockan kunde inte nås · fortsätt på mobilen"
+                }
+            state.onWatchPreparationFinished(ready, status)
+            tracker?.prepareWearWorkoutSession(sessionId, ready)
+            restoreCountdownIfNeeded()
+          }
+
+          override fun onHeartRateReadiness(status: HeartRateReadinessStatus) {
+            val readiness =
+                when (status) {
+                  HeartRateReadinessStatus.READY -> WearHeartRateReadiness.READY
+                  HeartRateReadinessStatus.SENSOR_UNAVAILABLE ->
+                    WearHeartRateReadiness.SENSOR_UNAVAILABLE
+                  HeartRateReadinessStatus.PERMISSION_REQUIRED ->
+                    WearHeartRateReadiness.PERMISSION_REQUIRED
+                  HeartRateReadinessStatus.BACKGROUND_PERMISSION_REQUIRED ->
+                    WearHeartRateReadiness.BACKGROUND_PERMISSION_REQUIRED
+                  HeartRateReadinessStatus.UNKNOWN -> WearHeartRateReadiness.UNKNOWN
+                }
+            if (!isFinishing && !isDestroyed) {
+              state.onWatchHeartRateReadiness(sessionId, readiness)
+            }
+          }
+        })
   }
 
   private fun updateTrackerState() {

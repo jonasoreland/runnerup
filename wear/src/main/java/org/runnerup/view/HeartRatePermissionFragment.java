@@ -2,11 +2,8 @@ package org.runnerup.view;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +14,7 @@ import android.view.ViewGroup;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.core.content.ContextCompat;
 import org.runnerup.hr.HeartRatePermissionState;
+import org.runnerup.hr.HeartRateReadiness;
 import org.runnerup.wear.ui.WearHeartRatePermissionComposeContent;
 
 /** Visible watch surface for reviewing and granting the heart-rate sensor permission. */
@@ -25,7 +23,6 @@ public final class HeartRatePermissionFragment extends Fragment {
   private ComposeView composeView;
   private String permission;
   private String backgroundPermission;
-  private boolean sensorAvailable;
 
   @Override
   public View onCreateView(
@@ -37,9 +34,6 @@ public final class HeartRatePermissionFragment extends Fragment {
     permission = HeartRatePermissionState.permissionForSdk(Build.VERSION.SDK_INT);
     backgroundPermission =
         HeartRatePermissionState.backgroundPermissionForSdk(Build.VERSION.SDK_INT);
-    SensorManager sensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
-    sensorAvailable =
-        sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE) != null;
     refreshStatus();
     return composeView;
   }
@@ -70,12 +64,7 @@ public final class HeartRatePermissionFragment extends Fragment {
 
   private void refreshStatus() {
     if (composeView == null) return;
-    boolean granted = isPermissionGranted(permission);
-    boolean backgroundGranted =
-        backgroundPermission == null || isPermissionGranted(backgroundPermission);
-    HeartRatePermissionState.State state =
-        HeartRatePermissionState.resolve(
-            sensorAvailable, granted, backgroundGranted, Build.VERSION.SDK_INT);
+    HeartRatePermissionState.State state = HeartRateReadiness.inspect(activity);
     WearHeartRatePermissionComposeContent.bind(
         composeView, state, Build.VERSION.SDK_INT, this::requestMissingPermission);
   }

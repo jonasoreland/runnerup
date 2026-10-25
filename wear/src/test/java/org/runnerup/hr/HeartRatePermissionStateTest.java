@@ -3,8 +3,26 @@ package org.runnerup.hr;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.runnerup.common.wear.HeartRateReadinessProtocol;
 
 public class HeartRatePermissionStateTest {
+  @Test
+  public void readinessInspectionPreservesHardwareAndPermissionFailureReasons() {
+    assertEquals(
+        HeartRateReadinessProtocol.Status.READY,
+        HeartRateReadiness.toProtocolStatus(HeartRatePermissionState.State.READY));
+    assertEquals(
+        HeartRateReadinessProtocol.Status.SENSOR_UNAVAILABLE,
+        HeartRateReadiness.toProtocolStatus(HeartRatePermissionState.State.UNAVAILABLE));
+    assertEquals(
+        HeartRateReadinessProtocol.Status.PERMISSION_REQUIRED,
+        HeartRateReadiness.toProtocolStatus(HeartRatePermissionState.State.NEEDS_PERMISSION));
+    assertEquals(
+        HeartRateReadinessProtocol.Status.BACKGROUND_PERMISSION_REQUIRED,
+        HeartRateReadiness.toProtocolStatus(
+            HeartRatePermissionState.State.NEEDS_BACKGROUND_PERMISSION));
+  }
+
   @Test
   public void mapsWearOsVersionsToTheirHeartRatePermission() {
     assertEquals("android.permission.BODY_SENSORS", HeartRatePermissionState.permissionForSdk(32));
