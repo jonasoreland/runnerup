@@ -23,7 +23,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import org.runnerup.common.util.Constants;
-import org.runnerup.common.util.PreparedWorkoutLaunchRoute;
 import org.runnerup.common.wear.GpsPreparationProtocol;
 import org.runnerup.common.wear.HeartRateReadinessAttempt;
 import org.runnerup.common.wear.HeartRateReadinessProtocol;
@@ -719,12 +718,20 @@ public final class WearConnectionProvider {
           StrengthPreparationAttempt.Result result =
               attempt.onMessage(event.getSourceNodeId(), event.getPath(), event.getData());
           finishStrengthPreparationIfTerminal(
-              result, sessionId, names, handler, listenerRef[0], client, callback);
+              result, context, nodeId, sessionId, names, handler, listenerRef[0], client, callback);
         };
     Runnable timeout =
         () ->
             finishStrengthPreparationIfTerminal(
-                attempt.onTimeout(), sessionId, names, handler, listenerRef[0], client, callback);
+                attempt.onTimeout(),
+                context,
+                nodeId,
+                sessionId,
+                names,
+                handler,
+                listenerRef[0],
+                client,
+                callback);
     handler.postAtTime(
         timeout, listenerRef[0], android.os.SystemClock.uptimeMillis() + HANDSHAKE_TIMEOUT_MS);
     client
@@ -738,6 +745,8 @@ public final class WearConnectionProvider {
                       error ->
                           finishStrengthPreparationIfTerminal(
                               attempt.onTransportError(),
+                              context,
+                              nodeId,
                               sessionId,
                               names,
                               handler,
@@ -749,6 +758,8 @@ public final class WearConnectionProvider {
             error ->
                 finishStrengthPreparationIfTerminal(
                     attempt.onTransportError(),
+                    context,
+                    nodeId,
                     sessionId,
                     names,
                     handler,
@@ -759,6 +770,8 @@ public final class WearConnectionProvider {
 
   private static void finishStrengthPreparationIfTerminal(
       StrengthPreparationAttempt.Result result,
+      Context context,
+      String nodeId,
       String sessionId,
       List<String> names,
       Handler handler,
@@ -784,6 +797,11 @@ public final class WearConnectionProvider {
         break;
     }
     callback.onResult(new StrengthPreparationResult(status, sessionId, names));
+    PreparedWorkoutUiLauncher.afterStrengthPreparation(
+        result,
+        nodeId,
+        (targetNodeId, targetIntent) ->
+            requestPreparedWorkoutUi(context, targetNodeId, targetIntent));
   }
 
   /** Best-effort cancellation keyed by session identity; the watch rejects late retries. */
@@ -854,8 +872,12 @@ public final class WearConnectionProvider {
               attempt.onMessage(event.getSourceNodeId(), event.getPath(), event.getData());
           if (result != WorkoutPreparationAttempt.Result.IGNORE) {
             finishPreparation(result, sessionId, names, handler, listenerRef[0], client, callback);
+            PreparedWorkoutUiLauncher.afterWorkoutPreparation(
+                result,
+                nodeId,
+                (targetNodeId, targetIntent) ->
+                    requestPreparedWorkoutUi(context, targetNodeId, targetIntent));
             if (result == WorkoutPreparationAttempt.Result.PREPARED) {
-              requestPreparedWorkoutUi(context, nodeId);
               queryHeartRateReadiness(context, nodeId, sessionId, callback::onHeartRateReadiness);
             }
           }
@@ -948,13 +970,11 @@ public final class WearConnectionProvider {
    * Requests a visible watch activity after the prepared-workout ACK; notification remains
    * fallback.
    */
-  private static void requestPreparedWorkoutUi(Context context, String nodeId) {
+  private static void requestPreparedWorkoutUi(
+      Context context, String nodeId, Intent targetIntent) {
     Handler handler = new Handler(Looper.getMainLooper());
     Executor mainExecutor = command -> handler.post(command);
     try {
-      Intent targetIntent =
-          new Intent(Intent.ACTION_VIEW, Uri.parse(PreparedWorkoutLaunchRoute.URI_STRING))
-              .addCategory(Intent.CATEGORY_BROWSABLE);
       var launchRequest =
           new RemoteActivityHelper(context.getApplicationContext(), mainExecutor)
               .startRemoteActivity(targetIntent, nodeId);
