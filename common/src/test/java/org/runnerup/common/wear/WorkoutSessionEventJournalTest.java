@@ -37,6 +37,42 @@ public class WorkoutSessionEventJournalTest {
   }
 
   @Test
+  public void terminalCompletionSurvivesRestartAndRemainsIdempotentUntilAcknowledged() {
+    MemoryStorage storage = new MemoryStorage();
+    WorkoutSessionEventJournalStore store = new WorkoutSessionEventJournalStore(storage);
+    WorkoutSessionProtocol.Command start =
+        command(
+            1, "fef77b0a-7012-4dd7-a374-cf7a1dd6f083", WorkoutSessionProtocol.Action.START, 10_000);
+    WorkoutSessionProtocol.Command finish =
+        command(2, "23c507e2-97fc-4daa-92f4-bdd36ddad9e5", WorkoutSessionProtocol.Action.FINISH, 0);
+
+    assertEquals(
+        WorkoutSessionEventJournalStore.AppendResult.APPENDED,
+        store.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, start));
+    assertEquals(
+        WorkoutSessionEventJournalStore.AppendResult.APPENDED,
+        store.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, finish));
+
+    WorkoutSessionEventJournalStore reopened = new WorkoutSessionEventJournalStore(storage);
+    WorkoutSessionEventJournal restored = reopened.load(SESSION);
+    assertNotNull(restored);
+    assertEquals(WorkoutSessionProtocol.Phase.COMPLETED, restored.replayState().getPhase());
+    assertEquals(finish.getCommandId(), restored.pendingEvents().get(1).getCommandId());
+    assertEquals(
+        WorkoutSessionEventJournalStore.AppendResult.DUPLICATE,
+        reopened.append(SESSION, WorkoutSessionProtocol.Actor.WATCH, finish));
+    assertTrue(reopened.acknowledge(SESSION, 1, start.getCommandId()));
+    assertTrue(reopened.acknowledge(SESSION, 2, finish.getCommandId()));
+
+    WorkoutSessionEventJournal afterAcknowledgement =
+        new WorkoutSessionEventJournalStore(storage).load(SESSION);
+    assertNotNull(afterAcknowledgement);
+    assertTrue(afterAcknowledgement.pendingEvents().isEmpty());
+    assertEquals(
+        WorkoutSessionProtocol.Phase.COMPLETED, afterAcknowledgement.replayState().getPhase());
+  }
+
+  @Test
   public void retriesAreIdempotentButConflictingAndOutOfOrderEventsAreRejected() throws Exception {
     WorkoutSessionEventJournalStore store =
         new WorkoutSessionEventJournalStore(new MemoryStorage());

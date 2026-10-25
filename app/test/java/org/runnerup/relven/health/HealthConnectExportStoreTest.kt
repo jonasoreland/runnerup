@@ -63,6 +63,20 @@ class HealthConnectExportStoreTest {
   }
 
   @Test
+  fun repeatedFinalActivityQueueAfterStoreReopenKeepsOneStableExportVersion() {
+    val first = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
+    val reopened = HealthConnectExportStore.get(context, first.sessionId)!!
+
+    val retried = HealthConnectExportStore.enqueueUpsert(
+        context, HealthConnectWorkoutCodec.decode(reopened.payload!!), 200)
+
+    assertEquals(first.sessionId, retried.sessionId)
+    assertEquals(first.version, retried.version)
+    assertEquals(first.payload, retried.payload)
+    assertEquals(1, HealthConnectExportStore.pending(context).size)
+  }
+
+  @Test
   fun retryResetsAttemptStateWithoutChangingSessionIdentityOrVersion() {
     val queued = HealthConnectExportStore.enqueueUpsert(context, workout(), 100)
     assertTrue(HealthConnectExportStore.markStatus(

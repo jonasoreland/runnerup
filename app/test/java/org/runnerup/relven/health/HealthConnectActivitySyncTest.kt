@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import java.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -57,10 +58,76 @@ class HealthConnectActivitySyncTest {
     database.close()
   }
 
+  @Test
+  fun automaticSyncDoesNotQueuePositiveDurationActivityWithoutEndMarker() {
+    val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    context.getDir("relven-health-connect-outbox", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    HealthConnectExportPreferences.setEnabled(context, true)
+    val database = database()
+    val activityId = insertActivity(
+        database, Instant.parse("2026-10-24T08:00:00Z").epochSecond, deleted = false)
+
+    Api26HealthConnectActivitySyncBridge.onActivitySaved(context, database, activityId)
+
+    assertTrue(HealthConnectExportStore.pending(context).isEmpty())
+    assertNull(readRecordedHealthConnectWorkout(context, database, activityId, requireFinalized = true))
+    database.close()
+    HealthConnectExportPreferences.setEnabled(context, false)
+  }
+
+  @Test
+  fun automaticSyncCanExportFinalizedGpslessWorkoutWithoutInventingARoutePoint() {
+    val database = database()
+    val start = Instant.parse("2026-10-24T08:00:00Z")
+    val activityId = insertActivity(database, start.epochSecond, deleted = false, duration = 90)
+    org.runnerup.tracker.ActivityFinalizationStore.markFinalized(database, activityId, 10_000L, true)
+
+    val workout = readRecordedHealthConnectWorkout(
+        ApplicationProvider.getApplicationContext(), database, activityId, requireFinalized = true)
+
+    assertEquals(start.plusSeconds(90), workout!!.endTime)
+    assertTrue(workout.route.isEmpty())
+    database.close()
+  }
+
+  @Test
+  fun editingAnAlreadyPublishedLegacyActivityUpdatesItsExistingExport() {
+    val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+    context.getDir("relven-health-connect-outbox", android.content.Context.MODE_PRIVATE).deleteRecursively()
+    HealthConnectExportPreferences.setEnabled(context, true)
+    val database = database()
+    val activityId = insertActivity(
+        database, Instant.parse("2026-10-24T08:00:00Z").epochSecond, deleted = false)
+    val original = readRecordedHealthConnectWorkout(context, database, activityId)!!
+    val published = HealthConnectExportStore.enqueueUpsert(context, original, 1_000L)
+    assertTrue(
+        HealthConnectExportStore.markExported(
+            context,
+            original.sessionId,
+            published.version,
+            setOf(HealthConnectRecordKind.SESSION),
+            emptySet(),
+            2_000L))
+    database.update(
+        DB.ACTIVITY.TABLE,
+        ContentValues().apply { put(DB.ACTIVITY.NAME, "Edited run") },
+        "_id = ?",
+        arrayOf(activityId.toString()))
+
+    Api26HealthConnectActivitySyncBridge.onActivitySaved(context, database, activityId)
+
+    val updated = HealthConnectExportStore.get(context, original.sessionId)!!
+    assertEquals(1L, updated.version)
+    assertEquals("Edited run", HealthConnectWorkoutCodec.decode(updated.payload!!).title)
+    database.close()
+    HealthConnectExportPreferences.setEnabled(context, false)
+  }
+
   private fun database(): SQLiteDatabase = SQLiteDatabase.create(null).apply {
     execSQL("CREATE TABLE ${DB.ACTIVITY.TABLE} (_id INTEGER PRIMARY KEY, ${DB.ACTIVITY.START_TIME} INTEGER, ${DB.ACTIVITY.DISTANCE} REAL, ${DB.ACTIVITY.TIME} INTEGER, ${DB.ACTIVITY.NAME} TEXT, ${DB.ACTIVITY.COMMENT} TEXT, ${DB.ACTIVITY.SPORT} INTEGER, ${DB.ACTIVITY.DELETED} INTEGER)")
     execSQL("CREATE TABLE ${DB.LOCATION.TABLE} (_id INTEGER PRIMARY KEY AUTOINCREMENT, ${DB.LOCATION.ACTIVITY} INTEGER, ${DB.LOCATION.TYPE} INTEGER, ${DB.LOCATION.TIME} INTEGER, ${DB.LOCATION.LATITUDE} REAL, ${DB.LOCATION.LONGITUDE} REAL, ${DB.LOCATION.ALTITUDE} REAL, ${DB.LOCATION.HR} INTEGER, ${DB.LOCATION.SPEED} REAL, ${DB.LOCATION.CADENCE} REAL, ${DB.LOCATION.LAP} INTEGER)")
     execSQL("CREATE TABLE ${DB.LAP.TABLE} (_id INTEGER PRIMARY KEY AUTOINCREMENT, ${DB.LAP.ACTIVITY} INTEGER, ${DB.LAP.LAP} INTEGER, ${DB.LAP.DISTANCE} REAL)")
+    org.runnerup.tracker.ActivityFinalizationStore.ensureSchema(this)
   }
 
   private fun insertActivity(database: SQLiteDatabase, startSeconds: Long, deleted: Boolean, duration: Long? = 60): Long =

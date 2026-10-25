@@ -48,6 +48,7 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.relven.health.HealthConnectActivitySync;
+import org.runnerup.tracker.ActivityFinalizationStore;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.ProgressDialogCompat;
 import org.runnerup.workout.FileFormats;
@@ -57,6 +58,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   private static final String TAG = "DBHelper";
   private static final int DBVERSION = 31;
   private static final String DBNAME = "runnerup.db";
+  private final Context context;
 
   // DBVERSION update
   // private static final String CREATE_TABLE_DBINFO = "create table "
@@ -246,6 +248,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   private DBHelper(Context context, int a) {
     super(context, DBNAME, null, DBVERSION);
+    this.context = context.getApplicationContext();
   }
 
   @Override
@@ -253,6 +256,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     // DBVERSION update
     // arg0.execSQL(CREATE_TABLE_DBINFO);
     arg0.execSQL(CREATE_TABLE_ACTIVITY);
+    ActivityFinalizationStore.ensureSchema(arg0);
     arg0.execSQL(CREATE_TABLE_LAP);
     arg0.execSQL(CREATE_TABLE_LOCATION);
     arg0.execSQL(CREATE_TABLE_ACCOUNT);
@@ -386,6 +390,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
 
   @Override
   public void onOpen(SQLiteDatabase arg0) {
+    ActivityFinalizationStore.ensureSchema(arg0);
     // DBVERSION update
     //// Update "database contents"
     //// Only changes that can be safely applied backward/forward compatible
@@ -411,6 +416,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     // Temporary workaround: Always run at startup
     migrateFileSynchronizerInfo(arg0);
     insertAccounts(arg0);
+    HealthConnectActivitySync.reconcilePending(context, arg0);
   }
 
   /**

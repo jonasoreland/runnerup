@@ -43,6 +43,7 @@ import org.runnerup.common.wear.StrengthResultProtocol;
 import org.runnerup.common.wear.WorkoutSessionEventJournal;
 import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
+import org.runnerup.common.wear.WorkoutSessionTerminalDeliveryPolicy;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
@@ -453,6 +454,7 @@ public class StateService extends Service
         strengthResultRetryAttempt = 0;
         handler.removeCallbacks(strengthResultRetry);
         retryPendingStrengthResult();
+        retryPendingPhoneProjection();
       }
     } catch (java.io.IOException malformed) {
       Log.w(TAG, "Ignoring malformed strength result acknowledgment", malformed);
@@ -735,6 +737,7 @@ public class StateService extends Service
       if (workoutSessionState == null
           || (workoutSessionState.getPhase() != WorkoutSessionProtocol.Phase.ACTIVE
               && workoutSessionState.getPhase() != WorkoutSessionProtocol.Phase.PAUSED)) return;
+      publishStrengthAuthorityProjection();
       sendSessionCommand(WorkoutSessionProtocol.Action.FINISH, 0L);
       return;
     }
@@ -934,6 +937,10 @@ public class StateService extends Service
   private void retryPendingPhoneProjection() {
     WorkoutSessionProtocol.Command accepted = pendingPhoneProjection;
     if (accepted == null) return;
+    if (!canProjectSessionCommand(accepted)) {
+      retryPendingStrengthResult();
+      return;
+    }
     if (checkConnection() != null) return;
     try {
       WorkoutSessionProtocol.Command projection = accepted;
@@ -970,6 +977,24 @@ public class StateService extends Service
       handler.removeCallbacks(pendingProjectionRetry);
       handler.postDelayed(pendingProjectionRetry, PROJECTION_RETRY_DELAY_MS);
     }
+  }
+
+  private boolean canProjectSessionCommand(WorkoutSessionProtocol.Command command) {
+    boolean readable = strengthResultOutbox != null;
+    int pendingCount = 0;
+    if (readable) {
+      try {
+        pendingCount =
+            strengthResultOutbox.pending(StrengthResultOutboxStore.MAX_PENDING_RESULTS).size();
+      } catch (RuntimeException unavailable) {
+        readable = false;
+        Log.w(
+            TAG,
+            "Holding terminal workout projection until set-result storage is readable",
+            unavailable);
+      }
+    }
+    return WorkoutSessionTerminalDeliveryPolicy.canProject(command, readable, pendingCount);
   }
 
   private void handlePhoneSessionAcknowledgement(byte[] payload) {

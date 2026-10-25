@@ -80,6 +80,28 @@ public class TrackerRecoveryEligibilityTest {
     }
   }
 
+  @Test
+  public void activityWithPersistedFinalizationMarkerIsNotRecoverable() {
+    SQLiteDatabase database = createActivityDatabase();
+    try {
+      database.execSQL(
+          "INSERT INTO "
+              + Constants.DB.ACTIVITY.TABLE
+              + " (_id, "
+              + Constants.DB.ACTIVITY.TIME
+              + ", deleted) VALUES (82, 64, 0)");
+      ActivityFinalizationStore.markFinalized(database, 82, 10_000L, false);
+
+      try (Cursor cursor = queryActivity(database, 82)) {
+        assertFalse(
+            Tracker.isRecoverableActivity(
+                cursor, ActivityFinalizationStore.isFinalized(database, 82)));
+      }
+    } finally {
+      database.close();
+    }
+  }
+
   private static Cursor queryActivity(SQLiteDatabase database, long activityId) {
     return database.query(
         Constants.DB.ACTIVITY.TABLE,
@@ -101,6 +123,15 @@ public class TrackerRecoveryEligibilityTest {
             + " INTEGER, "
             + Constants.DB.ACTIVITY.DELETED
             + " INTEGER NOT NULL DEFAULT 0)");
+    database.execSQL(
+        "CREATE TABLE "
+            + Constants.DB.LOCATION.TABLE
+            + " ("
+            + Constants.DB.LOCATION.ACTIVITY
+            + " INTEGER, "
+            + Constants.DB.LOCATION.TYPE
+            + " INTEGER)");
+    ActivityFinalizationStore.ensureSchema(database);
     return database;
   }
 }

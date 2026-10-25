@@ -754,32 +754,26 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       return;
     }
     handler.removeCallbacks(checkpointRunnable);
-    if (!clearActiveCheckpointBeforeCompletion()) {
+    if (!persistTerminalActivity(save, manualDistance)) {
       activityCompletionGate.cancelCompletion();
-      Log.e("Tracker", "Unable to clear active workout checkpoint before completion");
+      Log.e("Tracker", "Unable to persist final workout state; keeping it available for retry");
       handler.post(checkpointRunnable);
       return;
     }
 
-    setNextLocationType(DB.LOCATION.TYPE_END);
-    internalOnLocationChanged(mLastLocationStarted);
+    if (!clearActiveCheckpointBeforeCompletion()) {
+      activityCompletionGate.cancelCompletion();
+      Log.e("Tracker", "Unable to clear active workout checkpoint after final persistence");
+      handler.post(checkpointRunnable);
+      return;
+    }
 
     if (save) {
-      saveActivity(manualDistance);
       liveLog(DB.LOCATION.TYPE_END);
       if (mDB != null) {
         HealthConnectActivitySync.onActivitySaved(this, mDB, mActivityId);
       }
     } else {
-      ContentValues tmp = new ContentValues();
-      tmp.put("deleted", 1);
-      String[] key = {Long.toString(mActivityId)};
-
-      if (mDB == null) {
-        Log.e("Tracker", "completeActivity called but mDB is null");
-      } else {
-        mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
-      }
       liveLog(DB.LOCATION.TYPE_DISCARD);
     }
 
@@ -789,10 +783,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     stopSelf();
   }
 
-  private void saveActivity(Double manualDistance) {
+  private int saveActivity(Double manualDistance) {
     if (mDB == null) {
       Log.e("Tracker", "saveActivity called but mDB is null");
-      return;
+      return 0;
     }
     ContentValues tmp = new ContentValues();
     if (mHeartbeatNanos > 0) {
@@ -820,7 +814,73 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
         Math.round(getTimeMs() / 1000.0d)); // time should be updated last for conditionalRecompute
 
     String[] key = {Long.toString(mActivityId)};
-    mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+    return mDB.update(DB.ACTIVITY.TABLE, tmp, "_id = ?", key);
+  }
+
+  private boolean hasPersistedEndMarker() {
+    if (mDB == null || mActivityId <= 0) return false;
+    try (Cursor cursor =
+        mDB.query(
+            DB.LOCATION.TABLE,
+            new String[] {"_id"},
+            DB.LOCATION.ACTIVITY + " = ? AND " + DB.LOCATION.TYPE + " = ?",
+            new String[] {Long.toString(mActivityId), Integer.toString(DB.LOCATION.TYPE_END)},
+            null,
+            null,
+            null,
+            "1")) {
+      return cursor.moveToFirst();
+    } catch (IllegalStateException exception) {
+      Log.e("Tracker", "Unable to verify the persisted workout end marker", exception);
+      return false;
+    }
+  }
+
+  private boolean persistTerminalActivity(boolean save, Double manualDistance) {
+    if (mDB == null || mActivityId <= 0) return false;
+    boolean persisted = false;
+    boolean transactionStarted = false;
+    try {
+      mDB.beginTransaction();
+      transactionStarted = true;
+      if (save) {
+        if (!persistEndLocationIfAvailable() || saveActivity(manualDistance) <= 0) return false;
+        if (!ActivityFinalizationStore.markFinalized(
+            mDB,
+            mActivityId,
+            System.currentTimeMillis(),
+            HealthConnectActivitySync.isAutomaticExportEnabled(this))) return false;
+      } else {
+        ContentValues deleted = new ContentValues();
+        deleted.put("deleted", 1);
+        String[] key = {Long.toString(mActivityId)};
+        if (mDB.update(DB.ACTIVITY.TABLE, deleted, "_id = ?", key) <= 0) return false;
+      }
+      mDB.setTransactionSuccessful();
+      persisted = true;
+    } catch (RuntimeException exception) {
+      Log.e("Tracker", "Unable to commit final workout data", exception);
+    } finally {
+      if (transactionStarted) {
+        try {
+          mDB.endTransaction();
+        } catch (RuntimeException exception) {
+          Log.e("Tracker", "Unable to finish final workout transaction", exception);
+          persisted = false;
+        }
+      }
+    }
+    return persisted;
+  }
+
+  private boolean persistEndLocationIfAvailable() {
+    Location lastActiveLocation =
+        mLastLocationStarted != null ? mLastLocationStarted : mLastLocation;
+    if (lastActiveLocation == null) return true;
+    if (hasPersistedEndMarker()) return true;
+    setNextLocationType(DB.LOCATION.TYPE_END);
+    internalOnLocationChanged(lastActiveLocation);
+    return hasPersistedEndMarker();
   }
 
   private void setNextLocationType(int newType) {
@@ -1196,7 +1256,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
             null,
             null,
             null)) {
-      return isRecoverableActivity(cursor);
+      return isRecoverableActivity(cursor, ActivityFinalizationStore.isFinalized(mDB, activityId));
     } catch (IllegalStateException exception) {
       Log.e("Tracker", "Unable to validate active workout activity", exception);
       return false;
@@ -1205,6 +1265,10 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
 
   static boolean isRecoverableActivity(Cursor cursor) {
     return cursor != null && cursor.moveToFirst() && cursor.getInt(0) == 0;
+  }
+
+  static boolean isRecoverableActivity(Cursor cursor, boolean finalized) {
+    return !finalized && isRecoverableActivity(cursor);
   }
 
   private void restorePersistedLocationState(ActiveWorkoutCheckpoint checkpoint) {

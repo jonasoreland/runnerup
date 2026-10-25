@@ -26,16 +26,18 @@ import kotlin.reflect.KClass
 internal object HealthConnectExportScheduler {
   private const val BRIDGE_CLASS = "org.runnerup.relven.health.Api26HealthConnectExportScheduler"
 
-  fun enqueue(context: Context, sessionId: String) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || sessionId.isBlank()) return
+  fun enqueue(context: Context, sessionId: String): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || sessionId.isBlank()) return false
     try {
       Class.forName(BRIDGE_CLASS).getMethod("enqueue", Context::class.java, String::class.java)
           .invoke(null, context.applicationContext, sessionId)
+      return true
     } catch (_: ReflectiveOperationException) {
       // The durable outbox remains available for the next explicit retry/backfill action.
     } catch (_: LinkageError) {
       // Keep recording and activity edits independent from optional Health Connect APIs.
     }
+    return false
   }
 }
 
