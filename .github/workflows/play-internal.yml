@@ -244,12 +244,17 @@ jobs:
 
           phone_cert=$(keytool '-J-Duser.language=en' '-J-Duser.country=US' -printcert -jarfile "$phone_aab" 2>/dev/null | sed -n 's/^[[:space:]]*SHA256:[[:space:]]*//p' | head -1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
           wear_cert=$(keytool '-J-Duser.language=en' '-J-Duser.country=US' -printcert -jarfile "$wear_aab" 2>/dev/null | sed -n 's/^[[:space:]]*SHA256:[[:space:]]*//p' | head -1 | tr -d ':' | tr '[:upper:]' '[:lower:]')
+          expected_upload_cert=08e72eaf13242389ea4c4e64965a5b0aac337c8792bfc8b5f52cfa8af02f9a89
           test -n "$phone_cert"
           test "$phone_cert" = "$wear_cert"
+          if [[ "$phone_cert" != "$expected_upload_cert" ]]; then
+            echo "Phone and Wear bundles do not use the upload certificate from the existing Relven Play release." >&2
+            exit 1
+          fi
           echo "Phone and Wear bundles use the same upload certificate."
           {
             echo "## Relven upload certificate validation"
-            echo "Phone and Wear bundles use the same upload certificate."
+            echo "Phone and Wear bundles use the upload certificate from the existing Relven Play release."
             echo "SHA-256 fingerprint (lowercase, no separators): `$phone_cert`"
           } >> "$GITHUB_STEP_SUMMARY"
 
