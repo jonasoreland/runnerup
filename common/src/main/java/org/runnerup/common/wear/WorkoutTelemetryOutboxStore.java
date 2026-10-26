@@ -71,6 +71,14 @@ public final class WorkoutTelemetryOutboxStore {
     return outbox == null ? 0 : outbox.acknowledgedThrough();
   }
 
+  /**
+   * Returns the last allocated sample sequence, including acknowledged samples, for safe restart.
+   */
+  public synchronized long lastSequence(String sessionId) {
+    WorkoutTelemetryOutbox outbox = load(sessionId);
+    return outbox == null ? 0 : outbox.lastSequence();
+  }
+
   private WorkoutTelemetryOutbox load(String sessionId) {
     if (sessionId == null || sessionId.trim().isEmpty()) return null;
     try {

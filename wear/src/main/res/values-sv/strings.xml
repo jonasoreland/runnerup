@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="workout_recorder_channel_name">Träningspass</string>
+    <string name="workout_recorder_notification_title">Pass pågår</string>
+    <string name="workout_recorder_notification_body">Klockans GPS och puls registreras</string>
+    <string name="workout_recorder_notification_unavailable">Passet fortsätter; klockans sensorer är inte tillgängliga</string>
+</resources>

@@ -1015,6 +1015,9 @@ public class StateService extends Service
     WorkoutSessionEventJournal journal = sessionEventStore.load(accepted.getSessionId());
     if (journal == null || journal.pendingEvents().isEmpty()) return;
     WorkoutSessionProtocol.Command firstPending = journal.pendingEvents().get(0);
+    // Recorder control follows every committed authority event, independently of whether the
+    // phone has acknowledged an earlier event in the projection journal.
+    WearExerciseRecorderStarter.dispatch(this, accepted);
     if (pendingPhoneProjection != null
         && !pendingPhoneProjection.getCommandId().equals(firstPending.getCommandId())) return;
     if (pendingPhoneProjection == null) pendingProjectionAttempts = 0;

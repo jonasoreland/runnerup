@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="workout_recorder_channel_name">Workout recording</string>
+    <string name="workout_recorder_notification_title">Workout in progress</string>
+    <string name="workout_recorder_notification_body">Recording watch GPS and heart rate</string>
+    <string name="workout_recorder_notification_unavailable">Workout continues; watch sensors are unavailable</string>
     <string name="permission_rationale_message">Relven behöver behörigheten %1$s för att fungera. Ge åtkomst i inställningarna.</string>
 </resources>

@@ -51,7 +51,7 @@
 - [x] **Step 7: Run common/Wear tests and inspect storage recovery and size limits.** `:common:testDebugUnitTest` passed (107 tests at that point).
 - [x] **Step 8: Run app/Wear unit tests, APK assemblies, lint, formatting, and `git diff --check`.** `:app:testLatestDebugUnitTest`, `:wear:testDebugUnitTest`, `:common:lintDebug`, both debug APK assemblies, and `git diff --check` passed. PR review/merge remains outstanding.
 
-## Task 2 — Health Services recorder and foreground lifecycle (next PR after Task 1 merges)
+## Task 2 — Health Services recorder and foreground lifecycle (PR after Task 1)
 
 **Files:** `wear/build.gradle`, `wear/src/main/AndroidManifest.xml`, new `WearExerciseRecorderService`, Health Services adapter, permission/readiness state, and tests.
 
@@ -61,6 +61,16 @@
 - Persist every usable sample through Task 1 outbox before notifying the UI or sending it.
 - Run as a foreground service with `health|location` types where required and a persistent localized notification.
 - Cover process recreation, duplicate commands, missing permissions/provider, sensor absence, and Health Services termination.
+
+Implementation notes:
+
+- `WearExerciseRecorderService` is started only from accepted watch-authority session projections in `StateService`; the existing session protocol remains authoritative for action ordering and start deadlines.
+- Every accepted event is delivered to the recorder even while older events wait for phone acknowledgment, and the recorder refuses to advance across a missing sequence.
+- Health Services samples are filtered against the active session phase and monotonic start/resume instant, then appended to the existing bounded telemetry outbox.
+- API 30+ Health Services loading is gated; the existing Wear minSdk remains supported. Location and heart-rate permissions are requested on workout start, but denied permissions do not block the workout lifecycle.
+- Controller, permission-policy, and outbox sequence-after-compaction unit tests pass. `:wear:testDebugUnitTest`, `:common:testDebugUnitTest`, `:wear:lintDebug`, `:wear:assembleDebug`, and `:app:assembleLatestDebug` pass. Runtime capture on a paired emulator remains for Task 4.
+
+- [x] **Task 2 implemented and locally verified.** PR review/merge remains outstanding.
 
 ## Task 3 — Durable phone inbox and route reconciliation (serial PR after Task 2)
 

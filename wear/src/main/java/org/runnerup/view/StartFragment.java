@@ -18,15 +18,21 @@ package org.runnerup.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.compose.ui.platform.ComposeView;
+import androidx.core.content.ContextCompat;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.common.wear.WorkoutPreparationProtocol;
@@ -38,6 +44,7 @@ import org.runnerup.service.PreparedWorkoutStore;
 import org.runnerup.service.StateService;
 import org.runnerup.service.WearStrengthExecutionController;
 import org.runnerup.service.WearStrengthExecutionStore;
+import org.runnerup.service.WearWorkoutRecorderPermissions;
 import org.runnerup.wear.ui.WearControlPresentationState;
 import org.runnerup.wear.ui.WearControlsComposeContent;
 import org.runnerup.wear.ui.WearStrengthWorkoutUiState;
@@ -56,6 +63,11 @@ public class StartFragment extends Fragment
   private WearStrengthExecutionController strengthController;
   private StrengthSession displayStrengthSession;
   private WearStrengthWorkoutUiState strengthUiState;
+  private java.util.List<String> recorderPermissionsToRequest;
+  private int recorderPermissionIndex;
+  private String waitingForRecorderPermission;
+  private String pendingPreparedSessionId;
+  private boolean recorderPermissionFlowActive;
   private final ValueModel.ChangeListener<Long> countdownListener =
       (instance, oldValue, newValue) -> {
         if (isAdded()) activity.runOnUiThread(this::updatePreparedCountdown);
@@ -246,6 +258,52 @@ public class StartFragment extends Fragment
   }
 
   private void startPreparedWorkout(String sessionId) {
+    if (!recorderPermissionFlowActive) {
+      pendingPreparedSessionId = sessionId;
+      recorderPermissionsToRequest = new java.util.ArrayList<>();
+      for (String permission : WearWorkoutRecorderPermissions.forSdk(Build.VERSION.SDK_INT)) {
+        if (!isPermissionGranted(permission)) recorderPermissionsToRequest.add(permission);
+      }
+      recorderPermissionIndex = 0;
+      recorderPermissionFlowActive = !recorderPermissionsToRequest.isEmpty();
+      if (recorderPermissionFlowActive) {
+        requestNextRecorderPermission();
+        return;
+      }
+    }
+    beginPreparedWorkout(sessionId);
+  }
+
+  private void requestNextRecorderPermission() {
+    while (recorderPermissionIndex < recorderPermissionsToRequest.size()) {
+      String permission = recorderPermissionsToRequest.get(recorderPermissionIndex++);
+      if (isPermissionGranted(permission)) continue;
+      waitingForRecorderPermission = permission;
+      if (WearWorkoutRecorderPermissions.requiresSettingsPage(permission, Build.VERSION.SDK_INT)) {
+        Intent settingsIntent =
+            new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                .setData(Uri.fromParts("package", activity.getPackageName(), null));
+        startActivity(settingsIntent);
+      } else {
+        Intent permissionIntent = new Intent(activity, RequestPermissionActivity.class);
+        permissionIntent.putExtra(
+            org.runnerup.common.util.Constants.Intents.EXTRA_PERMISSION_TO_REQUEST, permission);
+        startActivity(permissionIntent);
+      }
+      return;
+    }
+    recorderPermissionFlowActive = false;
+    String sessionId = pendingPreparedSessionId;
+    pendingPreparedSessionId = null;
+    if (sessionId != null) beginPreparedWorkout(sessionId);
+  }
+
+  private boolean isPermissionGranted(String permission) {
+    return ContextCompat.checkSelfPermission(activity, permission)
+        == PackageManager.PERMISSION_GRANTED;
+  }
+
+  private void beginPreparedWorkout(String sessionId) {
     StateService stateService = activity == null ? null : activity.getStateService();
     if (stateService == null) return;
     presentationState.startRequestSent();
@@ -284,6 +342,10 @@ public class StartFragment extends Fragment
         .getSharedPreferences(WearStrengthExecutionStore.PREFERENCES_NAME, Activity.MODE_PRIVATE)
         .registerOnSharedPreferenceChangeListener(this);
     updateView(this.activity.getTrackerState());
+    if (recorderPermissionFlowActive && waitingForRecorderPermission != null) {
+      waitingForRecorderPermission = null;
+      requestNextRecorderPermission();
+    }
   }
 
   @Override

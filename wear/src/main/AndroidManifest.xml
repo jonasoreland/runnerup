@@ -17,10 +17,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Health Services is used only on Wear OS 3+; older supported watches keep the existing UI. -->
+    <uses-sdk tools:overrideLibrary="androidx.health.services.client" />
+
     <uses-feature android:name="android.hardware.type.watch" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
     <!--
       Starting with Wear OS 6 (API 36), granular Health Platform permissions replace
@@ -148,6 +155,12 @@
         </service>
 
         <service android:name=".service.StateService" />
+
+        <service
+            android:name=".service.WearExerciseRecorderService"
+            android:exported="false"
+            android:foregroundServiceType="health|location"
+            tools:targetApi="30" />
 
         <meta-data
             android:name="com.google.android.gms.wearable.capabilities"
