@@ -24,7 +24,10 @@ public class ForegroundNotificationDisplayStrategy implements NotificationDispla
       int type = 0;
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         if (ContextCompat.checkSelfPermission(service, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+                == PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(
+                    service, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
           type = ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
