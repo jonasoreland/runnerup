@@ -60,6 +60,7 @@ import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
+import org.runnerup.db.ActivityRouteOrder;
 import org.runnerup.db.DBHelper;
 import org.runnerup.export.SyncManager;
 import org.runnerup.hr.HRProvider;
@@ -1305,7 +1306,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
             new String[] {Long.toString(mActivityId)},
             null,
             null,
-            "_id DESC",
+            ActivityRouteOrder.descending(mDB, mActivityId),
             "1")) {
       if (cursor.moveToFirst()) {
         Location location = new Location("Relven recovered track");

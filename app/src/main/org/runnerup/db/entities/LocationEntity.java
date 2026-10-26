@@ -108,7 +108,7 @@ public class LocationEntity extends AbstractEntity {
                 null,
                 null,
                 null,
-                "_id",
+                org.runnerup.db.ActivityRouteOrder.ascending(mDB, mID),
                 null);
         if (!c.moveToFirst()) {
           c.close();

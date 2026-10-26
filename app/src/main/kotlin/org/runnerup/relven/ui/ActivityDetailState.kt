@@ -2,6 +2,7 @@ package org.runnerup.relven.ui
 
 import android.database.sqlite.SQLiteDatabase
 import android.location.Location
+import org.runnerup.db.ActivityRouteOrder
 import org.runnerup.common.util.Constants.DB
 import org.runnerup.workout.Sport
 
@@ -82,8 +83,12 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
   var previousTime: Long? = null
   var cumulativeDistance = 0.0
   var cumulativeElapsedMillis = 0L
+  var timingSegment = 0
+  var hasUnknownWearElapsed = false
+  val wearRouteLocationIds = ActivityRouteOrder.wearRouteLocationIds(database, activityId)
   val columns =
       arrayOf(
+          DB.PRIMARY_KEY,
           DB.LOCATION.TYPE,
           DB.LOCATION.LATITUDE,
           DB.LOCATION.LONGITUDE,
@@ -103,8 +108,9 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           arrayOf(activityId.toString()),
           null,
           null,
-          "_id ASC")
+          ActivityRouteOrder.ascending(database, activityId))
       .use { cursor ->
+        val idIndex = cursor.getColumnIndexOrThrow(DB.PRIMARY_KEY)
         val typeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.TYPE)
         val latitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LATITUDE)
         val longitudeIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.LONGITUDE)
@@ -117,6 +123,7 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
         val speedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.SPEED)
         val cadenceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.CADENCE)
         while (cursor.moveToNext()) {
+          val isWearTelemetry = wearRouteLocationIds.contains(cursor.getLong(idIndex))
           val type = cursor.getInt(typeIndex)
           val latitude = cursor.getDouble(latitudeIndex)
           val longitude = cursor.getDouble(longitudeIndex)
@@ -127,7 +134,11 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
           val persistedDistanceMeters =
               if (cursor.isNull(distanceIndex)) null
               else cursor.getDouble(distanceIndex).takeIf { it.isFinite() && it >= 0.0 }
-          if (type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_RESUME) segment++
+          if (type == DB.LOCATION.TYPE_PAUSE || type == DB.LOCATION.TYPE_RESUME) {
+            segment++
+            timingSegment++
+            hasUnknownWearElapsed = false
+          }
           if (!latitude.isFinite() || latitude !in -90.0..90.0 || !longitude.isFinite() || longitude !in -180.0..180.0) {
             previousLatitude = null
             previousLongitude = null
@@ -154,10 +165,17 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
             if (persistedElapsedMillis >= cumulativeElapsedMillis) {
               cumulativeElapsedMillis = kotlin.math.round(persistedElapsedMillis).toLong()
             }
-          } else if (time != null && priorTime != null) {
+          } else if (!isWearTelemetry && time != null && priorTime != null) {
             cumulativeElapsedMillis += (time - priorTime).coerceAtLeast(0L)
           }
           if (type == DB.LOCATION.TYPE_GPS) {
+            if (isWearTelemetry && persistedElapsedMillis == null) {
+              if (!hasUnknownWearElapsed) timingSegment++
+              hasUnknownWearElapsed = true
+            } else if (hasUnknownWearElapsed) {
+              timingSegment++
+              hasUnknownWearElapsed = false
+            }
             points +=
                 RoutePoint(
                     latitude = latitude,
@@ -177,7 +195,8 @@ internal fun readActivityRoute(database: SQLiteDatabase, activityId: Long): List
                     elevationMeters =
                         if (cursor.isNull(altitudeIndex)) null
                         else cursor.getDouble(altitudeIndex).takeIf { it.isFinite() },
-                    segment = segment)
+                    segment = segment,
+                    timingSegment = timingSegment)
           }
           previousLatitude = latitude
           previousLongitude = longitude
@@ -201,7 +220,7 @@ internal fun readActivityRecoverySummary(
           arrayOf(activityId.toString()),
           null,
           null,
-          "_id ASC")
+          ActivityRouteOrder.ascending(database, activityId))
       .use { cursor ->
         val elapsedIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.ELAPSED)
         val distanceIndex = cursor.getColumnIndexOrThrow(DB.LOCATION.DISTANCE)

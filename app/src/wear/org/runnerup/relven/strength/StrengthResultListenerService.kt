@@ -17,6 +17,7 @@ import org.runnerup.common.wear.WorkoutTelemetryProtocol
 import org.runnerup.db.DBHelper
 import org.runnerup.relven.health.HealthConnectActivitySync
 import org.runnerup.relven.telemetry.WorkoutTelemetryInboxStore
+import org.runnerup.relven.telemetry.WorkoutTelemetryRouteReconciler
 import org.runnerup.relven.ui.WearConnectionProvider
 
 /** Background phone endpoint for durable phone↔watch strength-result delivery. */
@@ -138,6 +139,14 @@ class StrengthResultListenerService : WearableListenerService() {
     if (!result.shouldAcknowledge) {
       Log.w(TAG, "Wear telemetry batch was not committed: ${result.status}")
       return
+    }
+    val routeResult = WorkoutTelemetryRouteReconciler(database).reconcilePending(batch.sessionId)
+    if (!routeResult.success) {
+      Log.w(TAG, "Wear telemetry is durable but route reconciliation remains pending")
+      return
+    }
+    routeResult.updatedActivityIds.forEach { activityId ->
+      HealthConnectActivitySync.onActivitySaved(applicationContext, database, activityId)
     }
     val acknowledgement =
         WorkoutTelemetryProtocol.Ack(batch.sessionId, result.committedThroughSequence)
