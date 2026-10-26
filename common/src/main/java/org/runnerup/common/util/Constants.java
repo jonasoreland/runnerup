@@ -211,6 +211,8 @@ public interface Constants {
         BuildConfig.applicationIdFull + ".WORKOUT_SESSION_COMMAND_REJECTED";
     String EXTRA_WORKOUT_SESSION_COMMAND =
         BuildConfig.applicationIdFull + ".EXTRA_WORKOUT_SESSION_COMMAND";
+    String WORKOUT_TELEMETRY_AVAILABLE =
+        BuildConfig.applicationIdFull + ".WORKOUT_TELEMETRY_AVAILABLE";
     String STRENGTH_RESULT_UPDATED = BuildConfig.applicationIdFull + ".STRENGTH_RESULT_UPDATED";
     String EXTRA_STRENGTH_EXECUTION_ID =
         BuildConfig.applicationIdFull + ".EXTRA_STRENGTH_EXECUTION_ID";
@@ -281,6 +283,8 @@ public interface Constants {
       String MSG_WORKOUT_SESSION_COMMAND = PREFIX + "/workout/session/command";
       String MSG_WORKOUT_SESSION_ACK = PREFIX + "/workout/session/ack";
       String MSG_WORKOUT_SESSION_REJECT = PREFIX + "/workout/session/reject";
+      String MSG_WORKOUT_TELEMETRY = PREFIX + "/workout/telemetry";
+      String MSG_WORKOUT_TELEMETRY_ACK = PREFIX + "/workout/telemetry/ack";
       String GPS_READINESS_PREFIX = PREFIX + "/gps/readiness";
       String MSG_STRENGTH_PREPARE = PREFIX + "/strength/prepare";
       String MSG_STRENGTH_PREPARED = PREFIX + "/strength/prepared";

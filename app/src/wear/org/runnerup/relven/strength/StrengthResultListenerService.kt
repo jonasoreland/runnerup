@@ -13,7 +13,10 @@ import org.runnerup.common.util.Constants
 import org.runnerup.common.wear.StrengthResultOutboxStore
 import org.runnerup.common.wear.StrengthResultProtocol
 import org.runnerup.common.wear.StrengthSessionAuthorityProtocol
+import org.runnerup.common.wear.WorkoutTelemetryProtocol
+import org.runnerup.db.DBHelper
 import org.runnerup.relven.health.HealthConnectActivitySync
+import org.runnerup.relven.telemetry.WorkoutTelemetryInboxStore
 import org.runnerup.relven.ui.WearConnectionProvider
 
 /** Background phone endpoint for durable phone↔watch strength-result delivery. */
@@ -40,6 +43,7 @@ class StrengthResultListenerService : WearableListenerService() {
           Constants.Wear.Path.MSG_STRENGTH_RESULT_ACK -> receiveAcknowledgement(event)
           Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_PROJECTION -> receiveStrengthProjection(event)
           Constants.Wear.Path.MSG_STRENGTH_AUTHORITY_RESPONSE -> receiveStrengthAuthorityResponse(event)
+          Constants.Wear.Path.MSG_WORKOUT_TELEMETRY -> receiveWorkoutTelemetry(event)
         }
       } catch (error: Exception) {
         Log.w(TAG, "Unable to process Wear strength result message", error)
@@ -124,6 +128,25 @@ class StrengthResultListenerService : WearableListenerService() {
     if (result == StrengthResultOutboxStore.AcknowledgeResult.REMOVED) {
       WearConnectionProvider.sendPendingStrengthResult(applicationContext, event.sourceNodeId)
     }
+  }
+
+  private fun receiveWorkoutTelemetry(event: MessageEvent) {
+    val batch = WorkoutTelemetryProtocol.decodeBatch(event.data)
+    val database = DBHelper.getWritableDatabase(applicationContext)
+    val result =
+        WorkoutTelemetryInboxStore(database).commitBatch(batch, System.currentTimeMillis())
+    if (!result.shouldAcknowledge) {
+      Log.w(TAG, "Wear telemetry batch was not committed: ${result.status}")
+      return
+    }
+    val acknowledgement =
+        WorkoutTelemetryProtocol.Ack(batch.sessionId, result.committedThroughSequence)
+    Wearable.getMessageClient(applicationContext)
+        .sendMessage(
+            event.sourceNodeId,
+            Constants.Wear.Path.MSG_WORKOUT_TELEMETRY_ACK,
+            WorkoutTelemetryProtocol.encodeAck(acknowledgement))
+        .addOnFailureListener { error -> Log.w(TAG, "Wear telemetry ACK failed; watch will replay", error) }
   }
 
   private fun isConnectedPeer(nodeId: String): Boolean =

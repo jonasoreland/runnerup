@@ -34,6 +34,7 @@ import androidx.health.services.client.data.SampleDataPoint
 import java.time.Instant
 import java.util.concurrent.ExecutionException
 import org.runnerup.R
+import org.runnerup.common.util.Constants
 import org.runnerup.common.wear.WorkoutSessionProtocol
 import org.runnerup.common.wear.WorkoutTelemetryOutboxStore
 import org.runnerup.common.wear.WorkoutTelemetryProtocol
@@ -352,6 +353,7 @@ class WearExerciseRecorderService : Service() {
     val result = outboxStore.append(currentSession, sample)
     if (result == org.runnerup.common.wear.WorkoutTelemetryOutbox.AppendResult.APPENDED) {
       telemetrySequence = sample.sequence
+      sendBroadcast(Intent(Constants.Intents.WORKOUT_TELEMETRY_AVAILABLE).setPackage(packageName))
     } else {
       updateNotification(unavailable = true)
     }

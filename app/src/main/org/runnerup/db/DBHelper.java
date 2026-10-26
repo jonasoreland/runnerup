@@ -48,6 +48,7 @@ import org.runnerup.export.RunningAHEADSynchronizer;
 import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.relven.health.HealthConnectActivitySync;
+import org.runnerup.relven.telemetry.WorkoutTelemetryInboxStore;
 import org.runnerup.tracker.ActivityFinalizationStore;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.ProgressDialogCompat;
@@ -257,6 +258,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
     // arg0.execSQL(CREATE_TABLE_DBINFO);
     arg0.execSQL(CREATE_TABLE_ACTIVITY);
     ActivityFinalizationStore.ensureSchema(arg0);
+    WorkoutTelemetryInboxStore.ensureSchema(arg0);
     arg0.execSQL(CREATE_TABLE_LAP);
     arg0.execSQL(CREATE_TABLE_LOCATION);
     arg0.execSQL(CREATE_TABLE_ACCOUNT);
@@ -391,6 +393,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   @Override
   public void onOpen(SQLiteDatabase arg0) {
     ActivityFinalizationStore.ensureSchema(arg0);
+    WorkoutTelemetryInboxStore.ensureSchema(arg0);
     // DBVERSION update
     //// Update "database contents"
     //// Only changes that can be safely applied backward/forward compatible

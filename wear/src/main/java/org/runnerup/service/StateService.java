@@ -17,11 +17,15 @@
 package org.runnerup.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.DataApi;
@@ -35,7 +39,10 @@ import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeClient;
 import com.google.android.gms.wearable.Wearable;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.runnerup.common.tracker.TrackerState;
 import org.runnerup.common.util.Constants;
 import org.runnerup.common.util.ValueModel;
@@ -46,6 +53,8 @@ import org.runnerup.common.wear.WorkoutSessionEventJournal;
 import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
 import org.runnerup.common.wear.WorkoutSessionTerminalDeliveryPolicy;
+import org.runnerup.common.wear.WorkoutTelemetryOutboxStore;
+import org.runnerup.common.wear.WorkoutTelemetryProtocol;
 import org.runnerup.view.MainActivity;
 import org.runnerup.wear.WearableClient;
 
@@ -76,6 +85,20 @@ public class StateService extends Service
   private WorkoutSessionEventJournalStore sessionEventStore;
   private StrengthResultOutboxStore strengthResultOutbox;
   private StrengthResultInboxStore strengthResultInbox;
+  private WorkoutTelemetryOutboxStore workoutTelemetryOutbox;
+  private final ExecutorService telemetryExecutor = Executors.newSingleThreadExecutor();
+  private int telemetryRetryAttempt;
+  private int telemetrySessionCursor;
+  private boolean telemetrySendInFlight;
+  private final Runnable telemetryRetry = this::retryPendingWorkoutTelemetry;
+  private final BroadcastReceiver telemetryAvailableReceiver =
+      new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+          handler.removeCallbacks(telemetryRetry);
+          handler.postDelayed(telemetryRetry, 2_000L);
+        }
+      };
   private int strengthAuthorityProjectionRetryAttempt;
   private final Runnable strengthAuthorityProjectionRetry =
       this::publishStrengthAuthorityProjection;
@@ -103,6 +126,12 @@ public class StateService extends Service
     sessionEventStore = new WorkoutSessionEventJournalStore(getApplicationContext());
     strengthResultOutbox = new StrengthResultOutboxStore(getApplicationContext());
     strengthResultInbox = new StrengthResultInboxStore(getApplicationContext());
+    workoutTelemetryOutbox = new WorkoutTelemetryOutboxStore(getApplicationContext());
+    ContextCompat.registerReceiver(
+        this,
+        telemetryAvailableReceiver,
+        new IntentFilter(Constants.Intents.WORKOUT_TELEMETRY_AVAILABLE),
+        ContextCompat.RECEIVER_NOT_EXPORTED);
 
     mDataClient = new WearableClient(getApplicationContext());
     mGoogleApiClient =
@@ -126,6 +155,7 @@ public class StateService extends Service
                     restorePendingSessionProjection();
                     retryPendingPhoneProjection();
                     retryPendingStrengthResult();
+                    retryPendingWorkoutTelemetry();
                     publishStrengthAuthorityProjection();
                   }
 
@@ -178,6 +208,7 @@ public class StateService extends Service
       restorePendingSessionProjection();
       retryPendingPhoneProjection();
       retryPendingStrengthResult();
+      retryPendingWorkoutTelemetry();
       publishStrengthAuthorityProjection();
       return;
     }
@@ -397,7 +428,9 @@ public class StateService extends Service
     serviceDestroyed = true;
     handler.removeCallbacks(connectionRetry);
     handler.removeCallbacks(strengthAuthorityProjectionRetry);
+    handler.removeCallbacks(telemetryRetry);
     handler.removeCallbacksAndMessages(null);
+    telemetryExecutor.shutdownNow();
     trackerState.clearListeners();
     connectionStatus.clearListeners();
     preparedCountdownDeadline.clearListeners();
@@ -411,6 +444,11 @@ public class StateService extends Service
       }
       mGoogleApiClient.disconnect();
       mGoogleApiClient = null;
+    }
+    try {
+      unregisterReceiver(telemetryAvailableReceiver);
+    } catch (IllegalArgumentException ignored) {
+      // Receiver was not registered if service creation failed early.
     }
 
     super.onDestroy();
@@ -482,6 +520,10 @@ public class StateService extends Service
     } else if (Constants.Wear.Path.MSG_STRENGTH_RESULT_ACK.contentEquals(messageEvent.getPath())) {
       if (phoneNode == null || !phoneNode.equals(messageEvent.getSourceNodeId())) return;
       handlePhoneStrengthResultAcknowledgement(messageEvent.getData());
+    } else if (Constants.Wear.Path.MSG_WORKOUT_TELEMETRY_ACK.contentEquals(
+        messageEvent.getPath())) {
+      if (phoneNode == null || !phoneNode.equals(messageEvent.getSourceNodeId())) return;
+      handlePhoneWorkoutTelemetryAcknowledgement(messageEvent.getData());
     } else if (Constants.Wear.Path.MSG_WORKOUT_EVENT.contentEquals(messageEvent.getPath())) {
       data = DataMap.fromByteArray(messageEvent.getData()).toBundle();
       data.putLong(UPDATE_TIME, System.currentTimeMillis());
@@ -614,6 +656,99 @@ public class StateService extends Service
     }
   }
 
+  private void retryPendingWorkoutTelemetry() {
+    handler.removeCallbacks(telemetryRetry);
+    if (serviceDestroyed
+        || checkConnection() != null
+        || workoutTelemetryOutbox == null
+        || telemetrySendInFlight) return;
+    telemetrySendInFlight = true;
+    final String targetNode = phoneNode;
+    telemetryExecutor.execute(
+        () -> {
+          byte[] payload = null;
+          boolean hasPendingSessions = false;
+          try {
+            List<String> sessions = workoutTelemetryOutbox.pendingSessionIds();
+            if (!sessions.isEmpty()) {
+              hasPendingSessions = true;
+              int index = Math.floorMod(telemetrySessionCursor, sessions.size());
+              telemetrySessionCursor = (index + 1) % sessions.size();
+              WorkoutTelemetryProtocol.Batch batch =
+                  workoutTelemetryOutbox.pendingBatch(
+                      sessions.get(index),
+                      WorkoutTelemetryProtocol.MAX_BATCH_SAMPLES,
+                      WorkoutTelemetryProtocol.MAX_PAYLOAD_BYTES);
+              if (batch != null) payload = WorkoutTelemetryProtocol.encodeBatch(batch);
+            }
+          } catch (java.io.IOException | RuntimeException failure) {
+            Log.w(TAG, "Could not read pending workout telemetry", failure);
+          }
+          final byte[] encodedPayload = payload;
+          final boolean pending = hasPendingSessions;
+          handler.post(
+              () -> {
+                if (serviceDestroyed) {
+                  telemetrySendInFlight = false;
+                  return;
+                }
+                if (encodedPayload == null) {
+                  telemetrySendInFlight = false;
+                  if (!pending) {
+                    telemetryRetryAttempt = 0;
+                    telemetrySessionCursor = 0;
+                  } else {
+                    handler.postDelayed(telemetryRetry, 5_000L);
+                  }
+                  return;
+                }
+                if (targetNode == null
+                    || !targetNode.equals(phoneNode)
+                    || checkConnection() != null) {
+                  telemetrySendInFlight = false;
+                  handler.postDelayed(telemetryRetry, 2_000L);
+                  return;
+                }
+                Wearable.MessageApi.sendMessage(
+                        mGoogleApiClient,
+                        targetNode,
+                        Constants.Wear.Path.MSG_WORKOUT_TELEMETRY,
+                        encodedPayload)
+                    .setResultCallback(
+                        status -> {
+                          telemetrySendInFlight = false;
+                          long delay =
+                              Math.min(60_000L, 2_000L << Math.min(telemetryRetryAttempt, 5));
+                          telemetryRetryAttempt = Math.min(telemetryRetryAttempt + 1, 5);
+                          handler.postDelayed(telemetryRetry, delay);
+                        });
+              });
+        });
+  }
+
+  private void handlePhoneWorkoutTelemetryAcknowledgement(byte[] payload) {
+    try {
+      WorkoutTelemetryProtocol.Ack acknowledgement = WorkoutTelemetryProtocol.decodeAck(payload);
+      telemetryExecutor.execute(
+          () -> {
+            boolean acknowledged = workoutTelemetryOutbox.acknowledge(acknowledgement);
+            handler.post(
+                () -> {
+                  if (serviceDestroyed) return;
+                  if (acknowledged) {
+                    telemetryRetryAttempt = 0;
+                    handler.removeCallbacks(telemetryRetry);
+                    retryPendingWorkoutTelemetry();
+                  } else {
+                    Log.w(TAG, "Ignored non-contiguous or mismatched workout telemetry ACK");
+                  }
+                });
+          });
+    } catch (java.io.IOException | RuntimeException malformed) {
+      Log.w(TAG, "Ignored malformed workout telemetry ACK", malformed);
+    }
+  }
+
   @Override
   public void onDataChanged(DataEventBuffer dataEvents) {
     for (DataEvent ev : dataEvents) {
@@ -648,6 +783,7 @@ public class StateService extends Service
       requestClockSync();
       retryPendingPhoneProjection();
       retryPendingStrengthResult();
+      retryPendingWorkoutTelemetry();
       publishStrengthAuthorityProjection();
       readDataIfMissing();
       refreshPhonePeerStatus();

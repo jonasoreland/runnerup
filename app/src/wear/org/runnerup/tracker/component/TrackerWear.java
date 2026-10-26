@@ -18,6 +18,8 @@ package org.runnerup.tracker.component;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -42,6 +44,8 @@ import org.runnerup.common.wear.WorkoutSessionEventJournal;
 import org.runnerup.common.wear.WorkoutSessionEventJournalStore;
 import org.runnerup.common.wear.WorkoutSessionProtocol;
 import org.runnerup.common.wear.WorkoutSessionRecoveryPolicy;
+import org.runnerup.db.DBHelper;
+import org.runnerup.relven.telemetry.WorkoutTelemetryInboxStore;
 import org.runnerup.tracker.Tracker;
 import org.runnerup.tracker.WorkoutObserver;
 import org.runnerup.util.Formatter;
@@ -73,6 +77,7 @@ public class TrackerWear extends DefaultTrackerComponent
   private Formatter formatter;
   private String wearNode;
   private String requestedSessionId;
+  private String telemetryAssociatedSessionId;
   private long lastSessionCommandSequence;
   private boolean sessionStartAnnounced;
   private WorkoutSessionProtocol.SessionState workoutSessionState;
@@ -939,7 +944,48 @@ public class TrackerWear extends DefaultTrackerComponent
       ValueModel<TrackerState> instance, TrackerState oldValue, TrackerState newValue) {
     setTrackerState(newValue);
     reflectTrackerState(newValue);
+    if (newValue == TrackerState.STARTED || newValue == TrackerState.PAUSED) {
+      associateTelemetrySessionWithActivity();
+    }
     if (newValue == TrackerState.STARTED) announceSessionStarted();
+  }
+
+  private void associateTelemetrySessionWithActivity() {
+    String sessionId = requestedSessionId;
+    long activityId = tracker.getActivityId();
+    if (sessionId == null
+        || sessionId.isBlank()
+        || activityId <= 0
+        || sessionId.equals(telemetryAssociatedSessionId)
+        || context == null) return;
+    try {
+      SQLiteDatabase database = DBHelper.getWritableDatabase(context);
+      long startTimeMillis;
+      try (Cursor cursor =
+          database.query(
+              Constants.DB.ACTIVITY.TABLE,
+              new String[] {Constants.DB.ACTIVITY.START_TIME},
+              "_id = ?",
+              new String[] {Long.toString(activityId)},
+              null,
+              null,
+              null,
+              "1")) {
+        if (!cursor.moveToFirst()) return;
+        startTimeMillis = cursor.getLong(0) * 1000L;
+      }
+      WorkoutTelemetryInboxStore.AssociationResult result =
+          new WorkoutTelemetryInboxStore(database)
+              .associateActivity(sessionId, activityId, startTimeMillis);
+      if (result == WorkoutTelemetryInboxStore.AssociationResult.ASSOCIATED
+          || result == WorkoutTelemetryInboxStore.AssociationResult.DUPLICATE) {
+        telemetryAssociatedSessionId = sessionId;
+      } else {
+        Log.w(getName(), "Could not associate Wear telemetry with activity: " + result);
+      }
+    } catch (RuntimeException error) {
+      Log.w(getName(), "Could not persist Wear telemetry activity association", error);
+    }
   }
 
   public void prepareWorkoutSession(String sessionId, boolean watchReady) {
@@ -947,6 +993,7 @@ public class TrackerWear extends DefaultTrackerComponent
     if (!sessionId.equals(requestedSessionId)) {
       cancelScheduledWatchSessionStart();
       requestedSessionId = sessionId;
+      telemetryAssociatedSessionId = null;
       lastSessionCommandSequence = 0L;
       sessionStartAnnounced = false;
       lastAcceptedWatchCommand = null;
@@ -964,7 +1011,10 @@ public class TrackerWear extends DefaultTrackerComponent
       }
       scheduleRestoredWatchSessionStart(journal);
     }
-    if (tracker.getState() == TrackerState.STARTED) announceSessionStarted();
+    if (tracker.getState() == TrackerState.STARTED || tracker.getState() == TrackerState.PAUSED) {
+      associateTelemetrySessionWithActivity();
+      if (tracker.getState() == TrackerState.STARTED) announceSessionStarted();
+    }
   }
 
   private void scheduleRestoredWatchSessionStart(WorkoutSessionEventJournal journal) {

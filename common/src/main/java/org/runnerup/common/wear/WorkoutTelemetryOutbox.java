@@ -187,6 +187,20 @@ public final class WorkoutTelemetryOutbox {
     }
   }
 
+  static String sessionIdFromEncoded(byte[] payload) throws IOException {
+    if (payload == null || payload.length < 7 || payload.length > MAX_STORAGE_BYTES) {
+      throw new IOException("Invalid telemetry outbox size");
+    }
+    try (DataInputStream input = new DataInputStream(new ByteArrayInputStream(payload))) {
+      if (input.readInt() != MAGIC || input.readUnsignedByte() != VERSION) {
+        throw new IOException("Unsupported telemetry outbox");
+      }
+      String sessionId = input.readUTF();
+      decode(sessionId, payload);
+      return sessionId;
+    }
+  }
+
   private WorkoutTelemetryProtocol.Sample pendingAt(long sequence) {
     long index = sequence - acknowledgedThrough - 1;
     return index < 0 || index >= pending.size() ? null : pending.get((int) index);
