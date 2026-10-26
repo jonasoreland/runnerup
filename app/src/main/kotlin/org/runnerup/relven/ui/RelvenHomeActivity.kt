@@ -549,7 +549,9 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
             completedStrengthSessions = completedStrengthSessions,
             onStartStrength = ::startStrengthSession,
             onViewStrengthCompletion = { viewedStrengthCompletion = it },
-            onStartPlannedRunningWorkout = ::startPlannedRunningWorkout,
+            onStartPlannedRunningWorkout = { workout, name, document ->
+              startPlannedRunningWorkout(workout, name, document)
+            },
             strengthRecoveryNotice = strengthRecoveryNotice,
             onDismissStrengthRecoveryNotice = { strengthRecoveryNotice = false },
             pendingStrengthSessionChoice = pendingStrengthSessionChoice,
@@ -1679,9 +1681,10 @@ class RelvenHomeActivity : FragmentActivity(), GymWorkoutStarter {
 
   private fun startPlannedRunningWorkout(
       workout: org.runnerup.workout.Workout,
-      workoutName: String) {
+      workoutName: String,
+      plannedWorkoutJson: String? = null) {
     try {
-      val launch = plannedRunningWorkoutLaunchData(workout, workoutName)
+      val launch = plannedRunningWorkoutLaunchData(workout, workoutName, plannedWorkoutJson)
       startActivity(
           WorkoutPreparationActivity.intent(
               this,
@@ -2360,7 +2363,7 @@ private fun RelvenHome(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
-    onStartPlannedRunningWorkout: (org.runnerup.workout.Workout, String) -> Unit,
+    onStartPlannedRunningWorkout: (org.runnerup.workout.Workout, String, String?) -> Unit,
     strengthRecoveryNotice: Boolean,
     onDismissStrengthRecoveryNotice: () -> Unit,
     pendingStrengthSessionChoice: PendingStrengthSessionChoice?,
@@ -2594,7 +2597,9 @@ private fun RelvenHome(
             exerciseCatalog = (exerciseCatalogLoadState as? ExerciseCatalogLoadState.Loaded)?.catalog,
             onSaveFavoriteWorkout = onSaveFavoriteWorkout,
             onStartStrength = onStartStrength,
-            onStartRunning = onStartPlannedRunningWorkout,
+            onStartRunning = { workout, name, document ->
+              onStartPlannedRunningWorkout(workout, name, document)
+            },
             onViewStrengthCompletion = onViewStrengthCompletion,
             onOpenPlanLibrary = onOpenPlanLibrary,
             onReschedule = onReschedulePlan,

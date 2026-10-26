@@ -16,12 +16,15 @@ internal data class PlannedRunningWorkoutLaunchData(
 /** Builds the immutable workout payload passed from a plan entry into workout preparation. */
 internal fun plannedRunningWorkoutLaunchData(
     workout: Workout,
-    workoutName: String
+    workoutName: String,
+    plannedWorkoutJson: String? = null
 ): PlannedRunningWorkoutLaunchData {
   require(workout.sport == Constants.DB.ACTIVITY.SPORT_RUNNING) {
     "A planned running launch requires a running workout"
   }
-  val serialized = StringWriter().also { WorkoutSerializer.writeJSON(it, workout) }.toString()
+  val serialized =
+      plannedWorkoutJson?.takeIf(String::isNotBlank)
+          ?: StringWriter().also { WorkoutSerializer.writeJSON(it, workout) }.toString()
   val firstStep = workout.stepList.firstOrNull()?.step()?.name?.takeIf(String::isNotBlank)
   return PlannedRunningWorkoutLaunchData(
       workoutName = workoutName.trim().ifEmpty { "Löpning" },

@@ -77,7 +77,7 @@ internal fun PlanCalendarScreen(
     completedStrengthSessions: Map<String, CompletedStrengthSession> = emptyMap(),
     exerciseCatalog: ExerciseCatalog? = null,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit = { _, _ -> },
-    onStartRunning: (org.runnerup.workout.Workout, String) -> Unit = { _, _ -> },
+    onStartRunning: (org.runnerup.workout.Workout, String, String?) -> Unit = { _, _, _ -> },
     onSaveFavoriteWorkout: (String, String) -> Unit = { _, _ -> },
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit = {},
     onOpenPlanLibrary: () -> Unit,
@@ -131,7 +131,7 @@ private fun LoadedPlanCalendar(
     completedStrengthSessions: Map<String, CompletedStrengthSession>,
     exerciseCatalog: ExerciseCatalog?,
     onStartStrength: (String, PlanCalendarEntry.Workout) -> Unit,
-    onStartRunning: (org.runnerup.workout.Workout, String) -> Unit,
+    onStartRunning: (org.runnerup.workout.Workout, String, String?) -> Unit,
     onSaveFavoriteWorkout: (String, String) -> Unit,
     onViewStrengthCompletion: (CompletedStrengthSession) -> Unit,
     onOpenPlanLibrary: () -> Unit,
@@ -233,7 +233,9 @@ private fun LoadedPlanCalendar(
           onSaveFavoriteWorkout = onSaveFavoriteWorkout,
           onStartStrength = { onStartStrength(plan.id(), openedWorkout) },
           onStartRunning = {
-            openedWorkout.runningWorkout?.let { onStartRunning(it, openedWorkout.workoutName) }
+            openedWorkout.runningWorkout?.let {
+              onStartRunning(it, openedWorkout.workoutName, openedWorkout.workoutDocument)
+            }
           },
           onViewStrengthCompletion = onViewStrengthCompletion,
           exerciseCatalog = exerciseCatalog)
