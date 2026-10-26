@@ -185,7 +185,7 @@
     <string name="Mapbox_default_style">Mapbox style</string>
     <string name="RunnerUp_live_address">RunnerUp Live address</string>
     <string name="Autopause_after_s">Autopause after (s)</string>
-    <string name="Autopause_min_pace_minkm">Autopause minimum pace (min/km)</string>
+    <string name="Autopause_min_pace_minkm">Minimum recording pace (min/km)</string>
     <string name="Convert_rest_on_Interval_tab">Interval rest steps</string>
     <string name="Convert_rest_on_Advanced_tab">Recovery in countdown steps</string>
     <string name="Target_pace_moving_average_seconds">Target feedback moving average (s)</string>

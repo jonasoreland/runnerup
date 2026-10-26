@@ -67,20 +67,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="@string/Autopause_category"
-        android:title="@string/Autopause_category"
-        app:iconSpaceReserved="false">
-
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="@string/pref_autopause_active"
-            android:persistent="true"
-            android:summary="@string/Autopause_summary"
-            android:title="@string/Autopause"
-            app:iconSpaceReserved="false" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:key="@string/Countdown_category"
         android:title="@string/Countdown_category"
         app:iconSpaceReserved="false">
