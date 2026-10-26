@@ -12,7 +12,8 @@ internal data class RoutePoint(
     val speedMetersPerSecond: Double? = null,
     val cadencePerMinute: Double? = null,
     val elevationMeters: Double? = null,
-    val segment: Int = lap)
+    val segment: Int = lap,
+    val timingSegment: Int = segment)
 
 internal enum class RouteMetric {
   STANDARD,
@@ -26,7 +27,8 @@ internal enum class RouteMetric {
       when (this) {
         STANDARD -> null
         PACE -> {
-          if (previous == null || point.lap != previous.lap || point.segment != previous.segment) null
+          if (previous == null || point.lap != previous.lap || point.segment != previous.segment ||
+              point.timingSegment != previous.timingSegment) null
           else {
             val distance = point.distanceMeters - previous.distanceMeters
             val seconds = point.elapsedSeconds - previous.elapsedSeconds

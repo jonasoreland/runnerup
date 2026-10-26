@@ -117,7 +117,7 @@ public class RunKeeper {
             null,
             null,
             null,
-            null);
+            org.runnerup.db.ActivityRouteOrder.ascending(mDB, activityId));
     if (cursor.moveToFirst()) {
       long startTime = cursor.getLong(0);
       do {

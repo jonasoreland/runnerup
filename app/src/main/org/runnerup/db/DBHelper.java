@@ -49,6 +49,7 @@ import org.runnerup.export.StravaSynchronizer;
 import org.runnerup.export.WebDavSynchronizer;
 import org.runnerup.relven.health.HealthConnectActivitySync;
 import org.runnerup.relven.telemetry.WorkoutTelemetryInboxStore;
+import org.runnerup.relven.telemetry.WorkoutTelemetryRouteReconciler;
 import org.runnerup.tracker.ActivityFinalizationStore;
 import org.runnerup.util.FileUtil;
 import org.runnerup.util.ProgressDialogCompat;
@@ -394,6 +395,16 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   public void onOpen(SQLiteDatabase arg0) {
     ActivityFinalizationStore.ensureSchema(arg0);
     WorkoutTelemetryInboxStore.ensureSchema(arg0);
+    WorkoutTelemetryRouteReconciler.ensureSchema(arg0);
+    WorkoutTelemetryRouteReconciler.Result routeResult =
+        new WorkoutTelemetryRouteReconciler(arg0).reconcilePending(null);
+    if (routeResult.getSuccess()) {
+      for (long activityId : routeResult.getUpdatedActivityIds()) {
+        HealthConnectActivitySync.onActivitySaved(context, arg0, activityId);
+      }
+    } else {
+      Log.w(TAG, "Wear telemetry route backfill remains pending");
+    }
     // DBVERSION update
     //// Update "database contents"
     //// Only changes that can be safely applied backward/forward compatible

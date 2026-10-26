@@ -34,7 +34,7 @@ public class PathCursor {
             null,
             null,
             null,
-            null);
+            ActivityRouteOrder.ascending(mDB, activityId));
   }
 
   private boolean skipSimplified(boolean ok) {

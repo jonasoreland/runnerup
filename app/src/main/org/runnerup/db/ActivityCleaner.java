@@ -90,7 +90,7 @@ public class ActivityCleaner implements Constants {
             null,
             null,
             null,
-            "_id",
+            ActivityRouteOrder.ascending(db, activityId),
             null);
     if (c.moveToFirst()) {
       do {
@@ -251,7 +251,7 @@ public class ActivityCleaner implements Constants {
             null,
             null,
             null,
-            "_id",
+            ActivityRouteOrder.ascending(db, activityId),
             null);
     if (c.moveToFirst()) {
       Location[] p = {null, null};
