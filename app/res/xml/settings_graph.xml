@@ -41,5 +41,41 @@
             android:persistent="true"
             android:title="@string/Smooth_pace_filters"
             app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_hr_graph_smoothing"
+            android:persistent="true"
+            android:title="@string/Smooth_hr_graph"
+            app:iconSpaceReserved="false" />
+
+        <!--suppress AndroidDomInspection -->
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="mm(31);kz(5,13);sg(5)"
+            android:dependency="@string/pref_hr_graph_smoothing"
+            android:inputType="none"
+            android:key="@string/pref_hr_graph_smoothing_filters"
+            android:minHeight="48dp"
+            android:persistent="true"
+            android:title="@string/Smooth_hr_filters"
+            app:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/pref_elevation_graph_smoothing"
+            android:persistent="true"
+            android:title="@string/Smooth_elevation_graph"
+            app:iconSpaceReserved="false" />
+
+        <!--suppress AndroidDomInspection -->
+        <org.runnerup.widget.TextPreference
+            android:defaultValue="mm(31);kz(5,13);sg(5)"
+            android:dependency="@string/pref_elevation_graph_smoothing"
+            android:inputType="none"
+            android:key="@string/pref_elevation_graph_smoothing_filters"
+            android:minHeight="48dp"
+            android:persistent="true"
+            android:title="@string/Smooth_elevation_filters"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>
