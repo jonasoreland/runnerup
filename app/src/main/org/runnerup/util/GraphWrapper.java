@@ -36,6 +36,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -193,7 +194,7 @@ public class GraphWrapper implements Constants {
     double lastDistance = 0;
     long lastTime = 0;
     int lastLap = -1;
-    Double tot_distance = 0.0;
+    double tot_distance = 0.0;
     double tot_time = 0.0;
     for (LocationEntity loc : ll) {
       Long time = loc.getElapsed();
@@ -201,7 +202,7 @@ public class GraphWrapper implements Constants {
       tot_time = time.doubleValue();
       Integer lap = loc.getLap();
       lap = lap != null ? lap : 0;
-      tot_distance = tot_distance != null ? loc.getDistance() : lastDistance;
+      tot_distance = loc.getDistance() != null ? loc.getDistance() : lastDistance;
 
       double tot_X = xAxis.getX(tot_distance, time);
       if (lap != lastLap) {
@@ -479,16 +480,18 @@ public class GraphWrapper implements Constants {
       }
       if (axis != null) {
         axis.setEnabled(true);
-        axis.setTextColor(color);
+        int labelColor = ColorUtils.blendARGB(color, Color.WHITE, 0.3f);
+        axis.setTextColor(labelColor);
         axis.setAxisLineColor(color);
         axis.setTextSize(14f);
         axis.setValueFormatter(valueFormatter);
+        axis.setLabelPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
       }
 
       CheckBox cB = new CheckBox(graphTab.getContext());
       cB.setText(dataSet.getLabel());
       cB.setTextColor(color);
-      cB.setTextSize(12f);
+      cB.setTextSize(14f);
       cB.setChecked(true);
       cB.setOnCheckedChangeListener(
           (btn, checked) -> {
@@ -533,7 +536,114 @@ public class GraphWrapper implements Constants {
                     defaultFilterList);
         final String[] filters = filterList.split(";");
         StringBuilder s =
-            new StringBuilder("Applying filters(" + filters.length + ", >" + filterList + "<):");
+            new StringBuilder(
+                "Applying velocity filters(" + filters.length + ", >" + filterList + "<):");
+        for (String filter : filters) {
+          int[] args = getArgs(filter);
+          if (filter.startsWith("mm")) {
+            if (args.length == 1) {
+              f.movingMedian(args[0]);
+              s.append(" mm(").append(args[0]).append(")");
+            }
+          } else if (filter.startsWith("ma")) {
+            if (args.length == 1) {
+              f.movingAvergage(args[0]);
+              s.append(" ma(").append(args[0]).append(")");
+            }
+          } else if (filter.startsWith("kz")) {
+            if (args.length == 2) {
+              f.KolmogorovZurbenko(args[0], args[1]);
+              s.append(" kz(").append(args[0]).append(",").append(args[1]).append(")");
+            }
+          } else if (filter.startsWith("sg")) {
+            if (args.length == 1 && args[0] == 5) {
+              f.SavitzkyGolay5();
+              s.append(" sg(5)");
+            } else if (args.length == 1 && args[0] == 7) {
+              f.SavitzkyGolay7();
+              s.append(" sg(7)");
+            }
+          }
+        }
+        Log.d(getClass().getName(), s.toString());
+        f.complete();
+      }
+
+      boolean smoothHrData =
+          PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
+              .getBoolean(
+                  graphTab.getContext().getResources().getString(R.string.pref_hr_graph_smoothing),
+                  true);
+      if (!hrList.isEmpty() && smoothHrData) {
+        GraphFilter f = new GraphFilter(hrList);
+        final String defaultFilterList =
+            graphTab.getContext().getResources().getString(R.string.mm31kz513sg5);
+        final String filterList =
+            PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
+                .getString(
+                    graphTab
+                        .getContext()
+                        .getResources()
+                        .getString(R.string.pref_hr_graph_smoothing_filters),
+                    defaultFilterList);
+        final String[] filters = filterList.split(";");
+        StringBuilder s =
+            new StringBuilder("Applying HR filters(" + filters.length + ", >" + filterList + "<):");
+        for (String filter : filters) {
+          int[] args = getArgs(filter);
+          if (filter.startsWith("mm")) {
+            if (args.length == 1) {
+              f.movingMedian(args[0]);
+              s.append(" mm(").append(args[0]).append(")");
+            }
+          } else if (filter.startsWith("ma")) {
+            if (args.length == 1) {
+              f.movingAvergage(args[0]);
+              s.append(" ma(").append(args[0]).append(")");
+            }
+          } else if (filter.startsWith("kz")) {
+            if (args.length == 2) {
+              f.KolmogorovZurbenko(args[0], args[1]);
+              s.append(" kz(").append(args[0]).append(",").append(args[1]).append(")");
+            }
+          } else if (filter.startsWith("sg")) {
+            if (args.length == 1 && args[0] == 5) {
+              f.SavitzkyGolay5();
+              s.append(" sg(5)");
+            } else if (args.length == 1 && args[0] == 7) {
+              f.SavitzkyGolay7();
+              s.append(" sg(7)");
+            }
+          }
+        }
+        Log.d(getClass().getName(), s.toString());
+        f.complete();
+      }
+
+      boolean smoothElevationData =
+          PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
+              .getBoolean(
+                  graphTab
+                      .getContext()
+                      .getResources()
+                      .getString(R.string.pref_elevation_graph_smoothing),
+                  true);
+      if (!elevationList.isEmpty() && smoothElevationData) {
+        GraphFilter f = new GraphFilter(elevationList);
+        final String defaultFilterList =
+            graphTab.getContext().getResources().getString(R.string.mm31kz513sg5);
+        final String filterList =
+            PreferenceManager.getDefaultSharedPreferences(graphTab.getContext())
+                .getString(
+                    graphTab
+                        .getContext()
+                        .getResources()
+                        .getString(R.string.pref_elevation_graph_smoothing_filters),
+                    defaultFilterList);
+        final String[] filters = filterList.split(";");
+        StringBuilder s =
+            new StringBuilder(
+                "Applying elevation filters(" + filters.length + ", >" + filterList + "<):");
         for (String filter : filters) {
           int[] args = getArgs(filter);
           if (filter.startsWith("mm")) {
@@ -587,12 +697,10 @@ public class GraphWrapper implements Constants {
         chartBackColor =
             ((android.graphics.drawable.ColorDrawable) chart.getBackground()).getColor();
       }
-      int chartForeColor = Color.WHITE;
+      final int chartForeColor = Color.WHITE;
       if (chart.getForeground() instanceof android.graphics.drawable.ColorDrawable) {
-        chartForeColor =
-            ((android.graphics.drawable.ColorDrawable) chart.getForeground()).getColor();
+        ((android.graphics.drawable.ColorDrawable) chart.getForeground()).getColor();
       }
-      // Data mapping to MPAndroidChart
 
       // dataSets and axisFormatters are added in pairs
       List<ILineDataSet<Void>> dataSets = new ArrayList<>();
@@ -623,9 +731,7 @@ public class GraphWrapper implements Constants {
               }
             });
         setAxisAndLegend(
-            velocityDataSet,
-            ColorUtils.blendARGB(Color.BLUE, chartForeColor, 0.5f),
-            axisFormatters.get(axisFormatters.size() - 1));
+            velocityDataSet, Color.YELLOW, axisFormatters.get(axisFormatters.size() - 1));
         dataSets.add(velocityDataSet);
       }
 
@@ -686,9 +792,6 @@ public class GraphWrapper implements Constants {
                     + formatter.getElevationUnit()
                     + ")");
         elevationDataSet.setDrawFilledEnabled(true);
-        elevationDataSet.setFillDrawable(
-            new android.graphics.drawable.ColorDrawable(
-                ColorUtils.blendARGB(elevationDataSet.getColor(), chartBackColor, 0.5f)));
         final double[] finalInverseScaleParams = inverseScaleParams;
         axisFormatters.add(
             new IAxisValueFormatter() {
@@ -709,9 +812,11 @@ public class GraphWrapper implements Constants {
               }
             });
         setAxisAndLegend(
-            elevationDataSet,
-            ColorUtils.setAlphaComponent(Color.GREEN, 64),
-            axisFormatters.get(axisFormatters.size() - 1));
+            elevationDataSet, Color.MAGENTA, axisFormatters.get(axisFormatters.size() - 1));
+        elevationDataSet.setFillDrawable(
+            new android.graphics.drawable.ColorDrawable(
+                ColorUtils.setAlphaComponent(
+                    ColorUtils.blendARGB(elevationDataSet.getColor(), chartBackColor, 0.5f), 80)));
         dataSets.add(elevationDataSet);
       }
 
@@ -721,7 +826,7 @@ public class GraphWrapper implements Constants {
       chart.getXAxis().setTextSize(14f);
       chart
           .getXAxis()
-          .setPosition(com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM);
+          .setPosition(com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM_INSIDE);
       IAxisValueFormatter xAxisFormatter =
           new IAxisValueFormatter() {
             @NonNull
