@@ -19,9 +19,28 @@ package org.runnerup.util;
 
 public class SafeParse {
 
+  public static String normalizeDigits(String string) {
+    if (string == null) return null;
+    StringBuilder sb = new StringBuilder(string.length());
+    for (int i = 0; i < string.length(); i++) {
+      char c = string.charAt(i);
+      // Check for Arabic-Indic digits (0x0660 to 0x0669)
+      if (c >= '\u0660' && c <= '\u0669') {
+        sb.append((char) ('0' + (c - '\u0660')));
+      }
+      // Check for Extended Arabic-Indic / Persian digits (0x06F0 to 0x06F9)
+      else if (c >= '\u06f0' && c <= '\u06f9') {
+        sb.append((char) ('0' + (c - '\u06f0')));
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
+  }
+
   public static int parseInt(String string, int defaultValue) {
     try {
-      return Integer.parseInt(string);
+      return Integer.parseInt(normalizeDigits(string));
     } catch (Exception ex) {
     }
     return defaultValue;
@@ -29,7 +48,7 @@ public class SafeParse {
 
   public static long parseLong(String string, long defaultValue) {
     try {
-      return Long.parseLong(string);
+      return Long.parseLong(normalizeDigits(string));
     } catch (Exception ex) {
     }
     return defaultValue;
@@ -38,8 +57,8 @@ public class SafeParse {
   public static double parseDouble(String string, double defaultValue) {
     if (string == null) return defaultValue;
     try {
-      // Normalize input: replace comma with dot to support international format
-      String normalized = string.replace(',', '.');
+      // Normalize digits and replace comma with dot to support international format
+      String normalized = normalizeDigits(string).replace(',', '.');
       return Double.parseDouble(normalized);
     } catch (Exception ex) {
       return defaultValue;
@@ -53,7 +72,8 @@ public class SafeParse {
    */
   public static long parseSeconds(String string, long defaultValue) {
     try {
-      String[] split = string.split(":");
+      String normalized = normalizeDigits(string);
+      String[] split = normalized.split(":");
       long mul = 1;
       long sum = 0;
       for (int i = split.length - 1; i >= 0; i--) {
