@@ -196,8 +196,12 @@
     <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown after key press</string>
     <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Add a countdown Recovery or Rest step after a step ended by a key press</string>
     <string name="Step_countdown_time_s">Step countdown time (s)</string>
-    <string name="Smooth_pace_graph">Smooth pace graph</string>
-    <string name="Smooth_pace_filters">Smooth pace filter (s)</string>
+    <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Smooth pace graph</string>
+    <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Smooth pace filter (s)</string>
+    <string name="Smooth_hr_graph" tools:ignore="MissingTranslation">Smooth heart rate graph</string>
+    <string name="Smooth_hr_filters" tools:ignore="MissingTranslation">Smooth heart rate filter (s)</string>
+    <string name="Smooth_elevation_graph" tools:ignore="MissingTranslation">Smooth elevation graph</string>
+    <string name="Smooth_elevation_filters" tools:ignore="MissingTranslation">Smooth elevation filter (s)</string>
     <string name="Poll_interval_ms">GPS poll interval (ms)</string>
     <string name="Poll_distance_m">GPS poll distance (m)</string>
     <string name="Adjust_altitude">Adjust GPS altitude to geoid (EGM2008)</string>
