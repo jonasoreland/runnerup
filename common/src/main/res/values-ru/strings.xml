@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">км</string>
   <string name="metrics_distance_mi">ми</string>
@@ -170,7 +170,6 @@
   <string name="Mapbox_default_style">Стиль карты (Mapbox)</string>
   <string name="RunnerUp_live_address">RunnerUp live адрес сервера</string>
   <string name="Autopause_after_s">Автопауза - после N секунд (с) </string>
-  <string name="Autopause_min_pace_minkm">Автопауза - минимальный темп (мин/км)</string>
   <string name="Target_pace_moving_average_seconds">Среднее значение целевого темпа (с)</string>
   <string name="Target_pace_grace_seconds">Держать показатели темпа (с)</string>
   <string name="Autolap_during_intervals">Завершать круг в промежутках интервалов</string>
@@ -179,11 +178,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Добавить обратный отсчёт перед стартом</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Добавить обратный отсчет времени восстановления или отдыха после шага завершенного нажатием клавиши</string>
   <string name="Step_countdown_time_s">Время обратного отсчёта (с)</string>
-  <string name="Smooth_pace_graph">Сгладить график темпа</string>
-  <string name="Smooth_pace_filters">Настройки сглаживания (с)</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Сгладить график темпа</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Настройки сглаживания (с)</string>
   <string name="Poll_interval_ms">Интервал опроса (миллисекунд)</string>
   <string name="Poll_distance_m">Дистанция опроса (м)</string>
-  <string name="Adjust_altitude">Высота по GPS модели (EGM96)</string>
   <string name="Export">Экспорт</string>
   <string name="Import">Импорт</string>
   <string name="Experimental_HRM_devices">Тестовые HRM датчики</string>
@@ -280,7 +278,6 @@
   <string name="Request_permission_text">Нажмите \"ОК\", что бы разрешить.</string>
   <string name="Battery_optimization_check">Оптимизация батареи включена</string>
   <string name="Battery_optimization_check_text">Экономия заряда батареи снижает точность.\nЧтобы исправить, нажмите OK для перехода к системным настройкам \"Экономия заряда батарей\", затем переключите на \"Все приложения\", в списке найдите \"RunnerUp\" и выберите его, далее выберите \"Не экономить\" и нажмите \"Готово\".</string>
-  <string name="Battery_optimization_check_text_Android9">Оптимизация батареи снизит точность.\nНажмите OK, чтобы перейти к настройкам приложения, выберите \"Использование батареи\" и выберите \"Неограниченно\" или \"Не оптимизировать\".</string>
   <string name="Default">По умолчанию</string>
   <string name="Notes_about_your_workout">Заметка к тренировке</string>
   <string name="Downloading_from_1s">Загрузка из %1$s</string>
@@ -308,7 +305,6 @@
   <string name="Lap_start">Новый круг</string>
   <string name="Lap_start_summary">Сигнал для начала кругов и этапов Движения, Разминки и Заминки</string>
   <string name="Lock_activity_buttons">Блокировка кнопок</string>
-  <string name="Lock_activity_buttons_message">Блокировка кнопок активности быстрым нажатием на заголовок</string>
   <string name="Speed">скорость</string>
   <string name="Speed_unit_preference">Предпочтение в единиц скорости</string>
   <string name="path_simplification">Упрощение пути</string>

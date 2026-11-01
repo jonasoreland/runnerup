@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -171,7 +171,6 @@
   <string name="Mapbox_default_style">Estil de Mapbox</string>
   <string name="RunnerUp_live_address">Adreça RunnerUp Live</string>
   <string name="Autopause_after_s">Pausa automàtica rere (s)</string>
-  <string name="Autopause_min_pace_minkm">Ritme mínim pausa autom. (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Etapes de descans en intervals</string>
   <string name="Convert_rest_on_Advanced_tab">Recuperació en comptes enrere</string>
   <string name="Target_pace_moving_average_seconds">Freqüència de mesura de l\'objectiu (s)</string>
@@ -182,11 +181,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Compte enrere en prémer botó</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Afegiu un compte enrere d\'etapa Recuperació o Descans rere una etapa que acabi amb la pressió d\'un botó</string>
   <string name="Step_countdown_time_s">Compte enrere de l\'etapa (s)</string>
-  <string name="Smooth_pace_graph">Gràfic de ritme suau</string>
-  <string name="Smooth_pace_filters">Filtre de ritme suau (s)</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Gràfic de ritme suau</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Filtre de ritme suau (s)</string>
   <string name="Poll_interval_ms">Interval de sondeig del GPS (ms)</string>
   <string name="Poll_distance_m">Distància de sondeig del GPS (m)</string>
-  <string name="Adjust_altitude">Ajusta l\'altitud del GPS al geoide</string>
   <string name="Export">Exporta</string>
   <string name="Import">Importa</string>
   <string name="Experimental_HRM_devices">Dispositius MFC experimentals</string>
@@ -326,4 +324,5 @@
   <string name="Autopause_category">Pausa automàtica</string>
   <string name="Target_category">Entrenament d\'objectius</string>
   <string name="Activity_ongoing">Activitat en curs</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
 </resources>

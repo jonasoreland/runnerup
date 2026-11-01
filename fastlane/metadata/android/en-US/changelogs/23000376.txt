@@ -1,0 +1,8 @@
+#1346 Option to show on lockscreen
+#1355 Option to keep screen on when recording
+#1362 Volume to control lap/pause
+#1370 Elevation chart
+#1385 New charts, combined
+#1337 TCX export for non GPS activities
+#1365 Android 17
+#1394 Cleanup of deprecated API, many internal changes

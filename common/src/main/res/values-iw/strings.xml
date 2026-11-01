@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">ק\'\'מ</string>
   <string name="metrics_distance_mi">מייל</string>
@@ -173,7 +173,6 @@
   <string name="Mapbox_default_style">סגנון תיבת מפה</string>
   <string name="RunnerUp_live_address">כתובת RunnerUp חי</string>
   <string name="Autopause_after_s">הפסק אוטומטית לאחר (ש)</string>
-  <string name="Autopause_min_pace_minkm">הפסק אוטומטית במינימום קצב (דק/קמ)</string>
   <string name="Convert_rest_on_Interval_tab">שלבי מנוחה במרווחים</string>
   <string name="Convert_rest_on_Advanced_tab">התאוששות בשלבי ספירה לאחור</string>
   <string name="Target_pace_moving_average_seconds">יעד משוב לתזוזה מומצעת (ש)</string>
@@ -184,11 +183,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">ספירה לאחור לאחר שמקש נלחץ</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">הוסף ספירה לאחור להתאוששות או שלב מנוחה לאחר שמסתיים שלב בלחיצת מקשים</string>
   <string name="Step_countdown_time_s">שלב ספירה לאחור (ש)</string>
-  <string name="Smooth_pace_graph">גרף קצב חלק</string>
-  <string name="Smooth_pace_filters">מסנן קצב חלק (ש)</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">גרף קצב חלק</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">מסנן קצב חלק (ש)</string>
   <string name="Poll_interval_ms">GPS סקר מרווח (מש)</string>
   <string name="Poll_distance_m">GPS סקר מרווח (מ)</string>
-  <string name="Adjust_altitude">התאם את גובה GPS אל geoid (EGM96)</string>
   <string name="Export">ייצוא</string>
   <string name="Import">ייבוא</string>
   <string name="Experimental_HRM_devices">מכשירי דופק ניסוניים</string>
@@ -333,4 +331,5 @@
   <string name="Recovery_category">התאוששות</string>
   <string name="Target_category">יעד אימון</string>
   <string name="Sensors_summary">חיישנים והקלטה</string>
+  <!--Name of sports, these deprecate array.sportEntries-->
 </resources>
