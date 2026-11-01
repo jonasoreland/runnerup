@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -173,7 +173,6 @@
   <string name="Mapbox_default_style">Stile del Mapbox</string>
   <string name="RunnerUp_live_address">Indirizzo RunnerUp Live</string>
   <string name="Autopause_after_s">Pausa automatica dopo (s)</string>
-  <string name="Autopause_min_pace_minkm">Pausa automatica quando il passo è inferiore a (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Passi di riposo a intervalli</string>
   <string name="Convert_rest_on_Advanced_tab">Recupero nei passi di conto alla rovescia</string>
   <string name="Target_pace_moving_average_seconds">Tempo medio del ritmo obiettivo (s)</string>
@@ -184,11 +183,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown dopo pressione</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Aggiungi una fase conto alla rovescia Recupero o Riposo dopo una fase che termina con una pressione del tasto</string>
   <string name="Step_countdown_time_s">Conto alla rovescia della fase (s)</string>
-  <string name="Smooth_pace_graph">Grafico del passo ponderato</string>
-  <string name="Smooth_pace_filters">Filtro valori del passo</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Grafico del passo ponderato</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Filtro valori del passo</string>
   <string name="Poll_interval_ms">Intervallo polling (ms)</string>
   <string name="Poll_distance_m">Distanza polling (m)</string>
-  <string name="Adjust_altitude">Adegua l\'altitudine GPS al geoid (EGM96)</string>
   <string name="Export">Esporta</string>
   <string name="Import">Importa</string>
   <string name="Experimental_HRM_devices">Dispositivi HRM sperimentali</string>
@@ -285,7 +283,6 @@
   <string name="Request_permission_text">Concedi i permessi cliccando \"OK\"</string>
   <string name="Battery_optimization_check">Ottimizzazione batteria abilitata</string>
   <string name="Battery_optimization_check_text">L\'ottimizzazione della batteria diminuirà la precisione.\nPremere OK per aprire le impostazioni di sistema e selezionare \"Tutte le app\", cercare \"RunnerUp\", selezionare \"Non ottimizzare\".</string>
-  <string name="Battery_optimization_check_text_Android9">L\'ottimizzazione della batteria diminuirà la precisione.\nPremere Ok per aprire le impostazioni app, selezionare \"Utilizzo batteria\" e segliere \"Senza restrizioni\" o \"Non ottimizzare\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Note relative al tuo allenamento</string>
   <string name="Downloading_from_1s">Scaricando da %1$s</string>
@@ -314,7 +311,6 @@
   <string name="Lap_start">Inizio giro</string>
   <string name="Lap_start_summary">Notifiche di inizio giro e delle fasi Attivo, Riscaldamento e Defaticamento</string>
   <string name="Lock_activity_buttons">Blocca i pulsanti d\'attività</string>
-  <string name="Lock_activity_buttons_message">Blocca i pulsanti dell\'attività facendo tap velocemente sull\'intestazione</string>
   <string name="Speed">Velocità</string>
   <string name="Speed_unit_preference">Unità di velocità</string>
   <string name="path_simplification">Semplificazione del percorso</string>

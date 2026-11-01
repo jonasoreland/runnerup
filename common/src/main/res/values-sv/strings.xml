@@ -194,8 +194,12 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Nedräkning efter knapptryckning</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Lägg till nedräknings Återhämtning eller Vila steg efter steg som avslutas med knapptryckning</string>
   <string name="Step_countdown_time_s">Nedräkningssteg (s)</string>
-  <string name="Smooth_pace_graph">Utjämning tempograf</string>
-  <string name="Smooth_pace_filters">Utjämningsfilter tempo (s)</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Utjämning tempograf</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Utjämningsfilter tempo (s)</string>
+  <string name="Smooth_hr_graph" tools:ignore="MissingTranslation">Utjämning pulsgraf</string>
+  <string name="Smooth_hr_filters" tools:ignore="MissingTranslation">Utjämningsfilter puls</string>
+  <string name="Smooth_elevation_graph" tools:ignore="MissingTranslation">Utjämning höjdgraf</string>
+  <string name="Smooth_elevation_filters" tools:ignore="MissingTranslation">Utjämningsfilter höjd</string>
   <string name="Poll_interval_ms">GPS Uppdaterings intervall (ms)</string>
   <string name="Poll_distance_m">GPS Uppdaterings distans (m)</string>
   <string name="Adjust_altitude">Justera GPS höjd till geoid (EGM2008)</string>

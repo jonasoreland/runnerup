@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -169,14 +169,12 @@
   <string name="Mapbox_default_style">styl Mapboxa</string>
   <string name="RunnerUp_live_address">Adres RunnerUpLive</string>
   <string name="Autopause_after_s">Autopauza po (s)</string>
-  <string name="Autopause_min_pace_minkm">Autopauza przy tempie (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Interwał odpoczynku</string>
   <string name="Step_countdown_time_s">Odliczanie przed kolejnym interwałem (s)</string>
-  <string name="Smooth_pace_graph">Wygładzaj wykres tempa</string>
-  <string name="Smooth_pace_filters">Filtr wygładzający</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Wygładzaj wykres tempa</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Filtr wygładzający</string>
   <string name="Poll_interval_ms">Pomiar co (ms)</string>
   <string name="Poll_distance_m">Pomiar co (m)</string>
-  <string name="Adjust_altitude">Dopasuj wysokość GPS do geoidy (EGM96)</string>
   <string name="Export">Eksportuj</string>
   <string name="Import">Importuj</string>
   <string name="Experimental_HRM_devices">Eksperymentalne urządzenia HRM</string>

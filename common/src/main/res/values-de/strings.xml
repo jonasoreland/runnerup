@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -173,7 +173,6 @@
   <string name="Mapbox_default_style">Mapbox-Stil</string>
   <string name="RunnerUp_live_address">URL</string>
   <string name="Autopause_after_s">Automatische Pause nach (s)</string>
-  <string name="Autopause_min_pace_minkm">Paceschwelle (min/km) für autom. Pause</string>
   <string name="Convert_rest_on_Interval_tab">Intervall-Pausen-Schritte</string>
   <string name="Convert_rest_on_Advanced_tab">\"Erholung\" in Countdown Schritten</string>
   <string name="Target_pace_moving_average_seconds">Zielrückmeldung gleitender Mittelwert (s)</string>
@@ -184,11 +183,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Countdown nach Tastendruck</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Füge \"Erholung\" oder \"Ruhe\" Phasen einen Countdown nach Tastendruck hinzu</string>
   <string name="Step_countdown_time_s">Schritt Countdown-Zeit (s)</string>
-  <string name="Smooth_pace_graph">Pace-Graph glätten</string>
-  <string name="Smooth_pace_filters">Pace-Glättungsfilter</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Pace-Graph glätten</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Pace-Glättungsfilter</string>
   <string name="Poll_interval_ms">GPS-Abfrageintervall (ms)</string>
   <string name="Poll_distance_m">GPS-Abfrageabstand (m)</string>
-  <string name="Adjust_altitude">GPS-Höhe an Geoid anpassen (EGM96)</string>
   <string name="Export">Export</string>
   <string name="Import">Import</string>
   <string name="Experimental_HRM_devices">Experimentelle HRM-Geräte</string>
@@ -295,7 +293,6 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="Request_permission_text">Erlaube die Berechtigung mit \"OK\".</string>
   <string name="Battery_optimization_check">Batterie-Optimierungen aktiviert</string>
   <string name="Battery_optimization_check_text">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
-  <string name="Battery_optimization_check_text_Android9">Batterie-Optimierungen reduzieren die Genauigkeit.\nDrücke \"OK\", um in die Systemeinstellungen zu gelangen. Wähle \"Alle Apps\", suche nach \"RunnerUp\" und wähle \"Nicht optimieren\".</string>
   <string name="Default">Standard</string>
   <string name="Notes_about_your_workout">Notizen zur Trainingseinheit hinzufügen</string>
   <string name="Downloading_from_1s">Von %1$s wird heruntergeladen</string>
@@ -324,7 +321,6 @@ Für die Schrittfrequenz braucht es die \"Physical activity\" Berechtigung zusä
   <string name="Lap_start">Rundenstart</string>
   <string name="Lap_start_summary">Hinweis bei Rundenstart und Aktivität, Aufwärmen, Abkühlen</string>
   <string name="Lock_activity_buttons">Aktivitätsschaltflächen sperren</string>
-  <string name="Lock_activity_buttons_message">Aktivitätsschaltflächen durch schnelles Klicken auf die Kopfzeile sperren</string>
   <string name="Speed">Geschwindigkeit (km/h)</string>
   <string name="Speed_unit_preference">Pace/Geschwindigkeit</string>
   <string name="path_simplification">Track-Vereinfachung</string>

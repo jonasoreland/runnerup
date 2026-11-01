@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">公里</string>
   <string name="metrics_distance_mi">英里</string>
@@ -173,7 +173,6 @@
   <string name="Mapbox_default_style">Mapbox 风格</string>
   <string name="RunnerUp_live_address">RunnerUp Live地址</string>
   <string name="Autopause_after_s">自动暂停时间（秒）</string>
-  <string name="Autopause_min_pace_minkm">自动暂停配速 （分/公里）</string>
   <string name="Convert_rest_on_Interval_tab">在间歇标签页中转换休息</string>
   <string name="Convert_rest_on_Advanced_tab">在高级标签页中转换休息</string>
   <string name="Target_pace_moving_average_seconds">目标反馈移动平均（秒）</string>
@@ -184,11 +183,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">在按键停止步骤之后添加倒计时</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">在按键之后添加恢复和休息倒计时</string>
   <string name="Step_countdown_time_s">步骤倒计时时间（秒）</string>
-  <string name="Smooth_pace_graph">平滑配速图表</string>
-  <string name="Smooth_pace_filters">平滑配速过滤（秒）</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">平滑配速图表</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">平滑配速过滤（秒）</string>
   <string name="Poll_interval_ms">GPS采集间隔（毫秒）</string>
   <string name="Poll_distance_m">GPS采集距离（米）</string>
-  <string name="Adjust_altitude">使用geoid (EGM96)修正GPS高度</string>
   <string name="Export">导出</string>
   <string name="Import">导入</string>
   <string name="Experimental_HRM_devices">心率设备（试验性）</string>
@@ -287,7 +285,6 @@
   <string name="Request_permission_text">点击“确定”以授权</string>
   <string name="Battery_optimization_check">开启了电池优化</string>
   <string name="Battery_optimization_check_text">电池优化将会降低记录精度。\n点击“确定”前往系统设置-全部应用，搜索“RunnerUp”并选择“不要优化”。</string>
-  <string name="Battery_optimization_check_text_Android9">电池优化将会降低精度。\n按OK前往设置并选择“电池优化”，然后选择“不限制”或“不优化”。</string>
   <string name="Default">默认</string>
   <string name="Notes_about_your_workout">训练备注</string>
   <string name="Downloading_from_1s">从%1$s下载中</string>
@@ -316,7 +313,6 @@
   <string name="Lap_start">分段开始</string>
   <string name="Lap_start_summary">在记圈开始、开始活动、热身、冷身时语音提示</string>
   <string name="Lock_activity_buttons">锁定活动按钮</string>
-  <string name="Lock_activity_buttons_message">通过快速点击顶部锁定运动按钮</string>
   <string name="Speed">速度</string>
   <string name="Speed_unit_preference">速度单位</string>
   <string name="path_simplification">平滑/精简路径</string>

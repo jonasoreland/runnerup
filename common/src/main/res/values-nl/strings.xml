@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <!--~ Copyright (C) 2014 jonas.oreland@gmail.com
-  ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
+    ~
+    ~  This program is free software: you can redistribute it and/or modify
+    ~  it under the terms of the GNU General Public License as published by
+    ~  the Free Software Foundation, either version 3 of the License, or
+    ~  (at your option) any later version.
+    ~
+    ~  This program is distributed in the hope that it will be useful,
+    ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ~  GNU General Public License for more details.
+    ~
+    ~  You should have received a copy of the GNU General Public License
+    ~  along with this program.  If not, see <http://www.gnu.org/licenses/>.-->
   <!--metrics stuff-->
   <string name="metrics_distance_km">km</string>
   <string name="metrics_distance_mi">mi</string>
@@ -171,7 +171,6 @@
   <string name="Mapbox_default_style">Mapbox stijl</string>
   <string name="RunnerUp_live_address">RunnerUp live webadres</string>
   <string name="Autopause_after_s">Automatische pauze na (s)</string>
-  <string name="Autopause_min_pace_minkm">Automatische pauze minimum tempo (min/km)</string>
   <string name="Convert_rest_on_Interval_tab">Intervalruststappen</string>
   <string name="Convert_rest_on_Advanced_tab">Herstel in aftelstappen</string>
   <string name="Target_pace_moving_average_seconds">Doeltempo voortschrijdend gemiddelde (s)</string>
@@ -182,11 +181,10 @@
   <string name="Add_countdown_after_step_that_ends_with_user_press">Aftellen na indrukken toets</string>
   <string name="Add_countdown_after_step_that_ends_with_user_press_summary">Voeg een aftel Herstel of Rust stap toe nadat een stap beëindigd werd door een druk op een toets</string>
   <string name="Step_countdown_time_s">Aftellen tot staptijd (s)</string>
-  <string name="Smooth_pace_graph">Gladde tempo grafiek</string>
-  <string name="Smooth_pace_filters">Gladde tempo filter(s)</string>
+  <string name="Smooth_pace_graph" tools:ignore="MissingTranslation">Gladde tempo grafiek</string>
+  <string name="Smooth_pace_filters" tools:ignore="MissingTranslation">Gladde tempo filter(s)</string>
   <string name="Poll_interval_ms">Bijhouden interval (ms)</string>
   <string name="Poll_distance_m">Bijhouden afstand (m)</string>
-  <string name="Adjust_altitude">Pas GPS hoogte aan op basis van geoid (EGM96)</string>
   <string name="Export">Exporteer</string>
   <string name="Import">Importeer</string>
   <string name="Experimental_HRM_devices">Experimentele HRM apparaten</string>
