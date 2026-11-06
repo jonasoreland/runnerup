@@ -19,13 +19,17 @@ package org.runnerup.content;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import androidx.annotation.NonNull;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import org.runnerup.BuildConfig;
 import org.runnerup.workout.WorkoutSerializer;
 
@@ -104,6 +108,31 @@ public class WorkoutFileProvider extends ContentProvider {
 
   @Override
   public Cursor query(@NonNull Uri uri, String[] projection, String s, String[] as1, String s1) {
-    return null;
+    if (projection == null) {
+      projection = new String[] {OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
+    }
+    String[] cols = new String[projection.length];
+    Object[] values = new Object[projection.length];
+    int i = 0;
+    for (String col : projection) {
+      if (OpenableColumns.DISPLAY_NAME.equals(col)) {
+        cols[i] = OpenableColumns.DISPLAY_NAME;
+        String name = uri.getLastPathSegment();
+        if (name == null || name.isEmpty()) {
+          name = "workout.json";
+        }
+        values[i++] = name;
+      } else if (OpenableColumns.SIZE.equals(col)) {
+        cols[i] = OpenableColumns.SIZE;
+        Context ctx = getContext();
+        File file = ctx != null ? WorkoutSerializer.getFile(ctx, uri.getLastPathSegment()) : null;
+        values[i++] = (file != null && file.exists()) ? file.length() : 0L;
+      }
+    }
+    cols = Arrays.copyOf(cols, i);
+    values = Arrays.copyOf(values, i);
+    MatrixCursor cursor = new MatrixCursor(cols, 1);
+    cursor.addRow(values);
+    return cursor;
   }
 }
