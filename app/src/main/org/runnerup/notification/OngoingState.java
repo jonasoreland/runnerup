@@ -11,6 +11,7 @@ import org.runnerup.common.util.Constants;
 import org.runnerup.util.Formatter;
 import org.runnerup.view.RunActivity;
 import org.runnerup.workout.Scope;
+import org.runnerup.workout.SpeedUnit;
 import org.runnerup.workout.Sport;
 import org.runnerup.workout.WorkoutInfo;
 
@@ -76,9 +77,13 @@ public class OngoingState implements NotificationState {
     String time =
         formatter.formatElapsedTime(
             Formatter.Format.TXT_LONG, Math.round(workoutInfo.getTime(Scope.ACTIVITY)));
-    String pace =
+    String velocity =
         formatter.formatVelocityByPreferredUnit(
             Formatter.Format.TXT_SHORT, workoutInfo.getSpeed(Scope.ACTIVITY));
+    String velocityLabel =
+        formatter.getPreferredVelocityUnit() == SpeedUnit.PACE
+            ? context.getString(org.runnerup.common.R.string.pace)
+            : context.getString(org.runnerup.common.R.string.speed);
 
     String content =
         String.format(
@@ -87,8 +92,8 @@ public class OngoingState implements NotificationState {
             distance,
             context.getString(org.runnerup.common.R.string.time),
             time,
-            context.getString(org.runnerup.common.R.string.pace),
-            pace);
+            velocityLabel,
+            velocity);
     builder.setContentText(content);
 
     Notification n = builder.build();
