@@ -498,7 +498,7 @@ public class Formatter implements OnSharedPreferenceChangeListener {
       str = DateUtils.formatElapsedTime(val);
     }
     if (includeUnit) {
-      str = str + " " + getPaceUnit();
+      str += " " + getPaceUnit();
     }
     return str;
   }
