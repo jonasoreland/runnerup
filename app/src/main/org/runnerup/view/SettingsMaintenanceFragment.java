@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import org.runnerup.R;
@@ -98,11 +99,21 @@ public class SettingsMaintenanceFragment extends PreferenceFragmentCompat {
       };
   private final Preference.OnPreferenceClickListener onPruneClick =
       preference -> {
-        final ProgressDialogCompat dialog = new ProgressDialogCompat(requireContext());
-        dialog.setTitle(org.runnerup.common.R.string.Pruning_deleted_activities_from_database);
-        dialog.show();
-        DBHelper.purgeDeletedActivities(requireContext(), dialog, dialog::dismiss);
-        return false;
+        new AlertDialog.Builder(requireContext())
+            .setTitle(org.runnerup.common.R.string.Prune)
+            .setMessage(org.runnerup.common.R.string.Are_you_sure)
+            .setPositiveButton(
+                org.runnerup.common.R.string.Yes,
+                (d, which) -> {
+                  final ProgressDialogCompat dialog = new ProgressDialogCompat(requireContext());
+                  dialog.setTitle(
+                      org.runnerup.common.R.string.Pruning_deleted_activities_from_database);
+                  dialog.show();
+                  DBHelper.purgeDeletedActivities(requireContext(), dialog, dialog::dismiss);
+                })
+            .setNegativeButton(org.runnerup.common.R.string.No, null)
+            .show();
+        return true;
       };
 
   @Override
