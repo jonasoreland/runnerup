@@ -54,13 +54,8 @@ public class WorkoutBuilder {
     w.setWorkoutType(Constants.WORKOUT_TYPE.BASIC);
 
     if (prefs.getBoolean(res.getString(R.string.pref_countdown_active), false)) {
-      long val;
-      String vals = prefs.getString(res.getString(R.string.pref_countdown_time), "0");
-      try {
-        val = Long.parseLong(vals);
-      } catch (NumberFormatException e) {
-        val = 0;
-      }
+      String vals = prefs.getString(res.getString(R.string.pref_countdown_time), "15");
+      long val = SafeParse.parseLong(vals, 15);
       if (val > 0) {
         Step step = Step.createRestStep(Dimension.TIME, val, false);
         w.steps.add(step);
@@ -628,12 +623,8 @@ public class WorkoutBuilder {
       final boolean convertRestToRecovery =
           prefs.getBoolean(
               res.getString(R.string.pref_convert_advanced_distance_rest_to_recovery), true);
-      long val = 15; // default
       String vals = prefs.getString(res.getString(R.string.pref_step_countdown_time), "15");
-      try {
-        val = Long.parseLong(vals);
-      } catch (NumberFormatException e) {
-      }
+      long val = SafeParse.parseLong(vals, 15);
       if (val > 0) {
         StepListEntry[] stepArr = new StepListEntry[steps.size()];
         steps.toArray(stepArr);
