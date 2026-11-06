@@ -23,9 +23,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.util.Pair;
 import androidx.annotation.NonNull;
@@ -37,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.runnerup.BuildConfig;
@@ -202,6 +205,30 @@ public class ActivityProvider extends ContentProvider {
 
   @Override
   public Cursor query(@NonNull Uri uri, String[] projection, String s, String[] as1, String s1) {
-    return null;
+    if (projection == null) {
+      projection = new String[] {OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE};
+    }
+    String[] cols = new String[projection.length];
+    Object[] values = new Object[projection.length];
+    int i = 0;
+    for (String col : projection) {
+      if (OpenableColumns.DISPLAY_NAME.equals(col)) {
+        cols[i] = OpenableColumns.DISPLAY_NAME;
+        String name = uri.getLastPathSegment();
+        if (name == null || name.isEmpty()) {
+          int match = uriMatcher != null ? uriMatcher.match(uri) : UriMatcher.NO_MATCH;
+          name = "activity." + (match == TCX ? "tcx" : "gpx");
+        }
+        values[i++] = name;
+      } else if (OpenableColumns.SIZE.equals(col)) {
+        cols[i] = OpenableColumns.SIZE;
+        values[i++] = 0L;
+      }
+    }
+    cols = Arrays.copyOf(cols, i);
+    values = Arrays.copyOf(values, i);
+    MatrixCursor cursor = new MatrixCursor(cols, 1);
+    cursor.addRow(values);
+    return cursor;
   }
 }
