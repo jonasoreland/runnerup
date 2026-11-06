@@ -181,6 +181,12 @@ public class SyncManager {
 
   public synchronized void close() {
     executor.shutdown();
+    if (mSpinner != null && mSpinner.isShowing()) {
+      try {
+        mSpinner.dismiss();
+      } catch (Exception ignored) {
+      }
+    }
     if (mDB != null) {
       DBHelper.closeDB(mDB);
     }
