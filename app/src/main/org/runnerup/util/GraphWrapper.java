@@ -265,7 +265,7 @@ public class GraphWrapper implements Constants {
 
     for (int aData : data) {
       if (aData > 0) {
-        sum = sum + aData;
+        sum += aData;
         no++;
       }
     }
@@ -683,7 +683,7 @@ public class GraphWrapper implements Constants {
         }
         if (sum > 0) {
           for (int i = 0; i < hrzHist.length; i++) {
-            hrzHist[i] = hrzHist[i] / sum;
+            hrzHist[i] /= sum;
             s.append(" ").append(hrzHist[i]);
           }
         }
