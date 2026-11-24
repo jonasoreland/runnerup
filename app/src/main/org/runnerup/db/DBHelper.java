@@ -228,15 +228,15 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   private static SQLiteDatabase sWritableDB = null;
 
   public static synchronized SQLiteDatabase getReadableDatabase(Context context) {
-    if (sReadableDB == null) {
+    if (sReadableDB == null || !sReadableDB.isOpen()) {
       sReadableDB = getHelper(context).getReadableDatabase();
     }
     return sReadableDB;
   }
 
   public static synchronized SQLiteDatabase getWritableDatabase(Context context) {
-    if (sWritableDB == null) {
-      sWritableDB = getHelper(context).getReadableDatabase();
+    if (sWritableDB == null || !sWritableDB.isOpen()) {
+      sWritableDB = getHelper(context).getWritableDatabase();
     }
     return sWritableDB;
   }
@@ -616,8 +616,7 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
   public static void purgeDeletedActivities(
       Context ctx, final ProgressDialogCompat dialog, final Runnable onComplete) {
 
-    final DBHelper mDBHelper = DBHelper.getHelper(ctx);
-    final SQLiteDatabase db = mDBHelper.getWritableDatabase();
+    final SQLiteDatabase db = DBHelper.getWritableDatabase(ctx);
     String[] from = {"_id"};
     Cursor c = db.query(DB.ACTIVITY.TABLE, from, "deleted <> 0", null, null, null, null, null);
     final ArrayList<Long> list = new ArrayList<>(10);
@@ -651,23 +650,13 @@ public class DBHelper extends SQLiteOpenHelper implements Constants {
             // Post-execution step (runs on the main thread)
             handler.post(
                 () -> {
-                  try {
-                    db.close();
-                    mDBHelper.close();
-                  } catch (Exception ignored) {
-                  }
                   if (onComplete != null) {
                     onComplete.run();
                   }
                 });
           });
     } else {
-      // No activities to delete, just clean up
-      try {
-        db.close();
-        mDBHelper.close();
-      } catch (Exception ignored) {
-      }
+      // No activities to delete
       if (onComplete != null) {
         onComplete.run();
       }

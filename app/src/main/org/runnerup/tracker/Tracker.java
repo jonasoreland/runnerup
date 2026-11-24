@@ -132,7 +132,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   private PowerManager.WakeLock mWakeLock = null;
 
   public SQLiteDatabase getDatabase() {
-    if (mDB == null) {
+    if (mDB == null || !mDB.isOpen()) {
       mDB = DBHelper.getWritableDatabase(this);
     }
     return mDB;
@@ -323,6 +323,9 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
     ContentValues tmp = new ContentValues();
     tmp.put(DB.ACTIVITY.SPORT, sport);
     try {
+      if (mDB == null || !mDB.isOpen()) {
+        mDB = DBHelper.getWritableDatabase(this);
+      }
       mActivityId = mDB.insert(DB.ACTIVITY.TABLE, "nullColumnHack", tmp);
 
       tmp.clear();
@@ -567,6 +570,9 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
       tmp.put("deleted", 1);
       String[] key = {Long.toString(mActivityId)};
 
+      if (mDB == null || !mDB.isOpen()) {
+        mDB = DBHelper.getWritableDatabase(this);
+      }
       if (mDB == null) {
         Log.e("Tracker", "completeActivity called but mDB is null");
       } else {
@@ -581,7 +587,7 @@ public class Tracker extends Service implements LocationListenerCompat, Constant
   }
 
   private void saveActivity(Double manualDistance) {
-    if (mDB == null) {
+    if (mDB == null || !mDB.isOpen()) {
       mDB = DBHelper.getWritableDatabase(this);
     }
     if (mDB == null) {
