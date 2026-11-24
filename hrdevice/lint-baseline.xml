@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<issues format="6" by="lint 9.4.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.4.1)" variant="all" version="9.4.1">
+<issues format="6" by="lint 9.5.2" type="baseline" client="gradle" dependencies="false" name="AGP (9.5.2)" variant="all" version="9.5.2">
+
+    <issue
+        id="ObsoleteLintCustomCheck"
+        message="Library lint checks out of date;&#xA;these checks **will be skipped**!&#xA;&#xA;Lint found an issue registry (`androidx.lifecycle.lint.LifecycleRuntimeIssueRegistry`)&#xA;which was compiled against an older version of lint&#xA;than this one. This is usually fine, but not in this&#xA;case; some basic verification shows that the lint&#xA;check jar references (for example) the following API&#xA;which is no longer valid in this version of lint:&#xA;org.jetbrains.kotlin.asJava.elements.KtLightModifierList#getKotlinOrigin(): org.jetbrains.kotlin.psi.KtModifierList&#xA;(Referenced from androidx/lifecycle/lint/LifecycleWhenChecksKt.class)&#xA;&#xA;Therefore, this lint check library is **not** included&#xA;in analysis. This affects the following lint checks:&#xA;`UnsafeLifecycleWhenUsage`,`RepeatOnLifecycleWrongUsage`&#xA;&#xA;Recompile the checks against the latest version, or if&#xA;this is a check bundled with a third-party library, see&#xA;if there is a more recent version available.&#xA;&#xA;Version of Lint API this lint check is using is 14.&#xA;The Lint API version currently running is 16 (8.7+).">
+        <location
+            file="$GRADLE_USER_HOME/caches/9.9.1/transforms/b75bd1c4b2dd51b88eec4692ceaf45be/transformed/lifecycle-runtime-ktx-2.6.2/jars/lint.jar"/>
+    </issue>
 
     <issue
         id="UnusedAttribute"
