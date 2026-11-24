@@ -330,15 +330,17 @@ public class TrackerWear extends DefaultTrackerComponent
         lastCreatedWorkoutEvent = new Bundle();
       }
 
-      Dimension dim = currentStep.getDurationType();
-      if (dim != null) {
-        double remaining = tracker.getWorkout().getRemaining(Scope.STEP, dim);
-        if (remaining < 0) {
-          remaining = 0;
+      if (currentStep != null) {
+        Dimension dim = currentStep.getDurationType();
+        if (dim != null) {
+          double remaining = tracker.getWorkout().getRemaining(Scope.STEP, dim);
+          if (remaining < 0) {
+            remaining = 0;
+          }
+          lastCreatedWorkoutEvent.putString(
+              Wear.RunInfo.COUNTDOWN,
+              formatter.formatRemaining(Formatter.Format.TXT_SHORT, dim, remaining));
         }
-        lastCreatedWorkoutEvent.putString(
-            Wear.RunInfo.COUNTDOWN,
-            formatter.formatRemaining(Formatter.Format.TXT_SHORT, dim, remaining));
       }
     }
 
@@ -357,6 +359,7 @@ public class TrackerWear extends DefaultTrackerComponent
       new Runnable() {
         @Override
         public void run() {
+          if (currentStep == null) return;
           sendWorkoutEvent();
           mWorkoutSenderRunning = false;
 
