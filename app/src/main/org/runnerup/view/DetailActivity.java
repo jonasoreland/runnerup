@@ -21,7 +21,6 @@ import static org.runnerup.content.ActivityProvider.GPX_MIME;
 import static org.runnerup.content.ActivityProvider.TCX_MIME;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -1075,21 +1074,9 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                 return;
               }
 
-              final Context context = DetailActivity.this;
               final CharSequence fmt = items[which[0]];
-              final Intent intent = new Intent(Intent.ACTION_SEND);
-
-              if (fmt.equals("tcx")) {
-                intent.setType(TCX_MIME);
-              } else {
-                intent.setType(GPX_MIME);
-              }
-
-              // Use of content:// (or STREAM?) instead of file:// is not supported in ES and other
-              // apps
-              // Solid Explorer File Manager works though
-              String actType = Sport.textOf(getResources(), sport.getValueInt());
-              Uri uri =
+              final String actType = Sport.textOf(getResources(), sport.getValueInt());
+              final Uri uri =
                   Uri.parse(
                       "content://"
                           + ActivityProvider.AUTHORITY
@@ -1100,8 +1087,12 @@ public class DetailActivity extends AppCompatActivity implements Constants {
                           + "/"
                           + FileNameHelper.getExportFileName(mStartTime, actType)
                           + fmt);
-              intent.putExtra(Intent.EXTRA_STREAM, uri);
-              context.startActivity(
+              final Intent intent =
+                  new Intent(Intent.ACTION_SEND)
+                      .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                      .setType(fmt.equals("tcx") ? TCX_MIME : GPX_MIME)
+                      .putExtra(Intent.EXTRA_STREAM, uri);
+              startActivity(
                   Intent.createChooser(
                       intent, getString(org.runnerup.common.R.string.Share_activity)));
             })
